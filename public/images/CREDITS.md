@@ -4,7 +4,8 @@ All photographs are licensed for commercial use without attribution required (Un
 
 | File stem | Subject | Source | Photographer | License |
 |---|---|---|---|---|
-| `hero-altbau` | Berlin Altbau balconies, golden hour | [Pexels 17882001](https://www.pexels.com/photo/balconies-of-old-tenement-17882001/) | Ömer Gülen | [Pexels License](https://www.pexels.com/license/) |
+| `hero-rooftop` | Berlin rooftop sunset panorama (Klunkerkranich, Fernsehturm visible) | [Unsplash k08MDpZm5zY](https://unsplash.com/photos/k08MDpZm5zY) | Sebastian Herrmann | [Unsplash License](https://unsplash.com/license) |
+| `hero-altbau` (alternate) | Berlin Altbau balconies, golden hour | [Pexels 17882001](https://www.pexels.com/photo/balconies-of-old-tenement-17882001/) | Ömer Gülen | [Pexels License](https://www.pexels.com/license/) |
 | `problem-scaffolding` | Scaffolding-clad building at sunset | [Unsplash 4nDEdZZjaQQ](https://unsplash.com/photos/4nDEdZZjaQQ) | Cazper Vestblom | [Unsplash License](https://unsplash.com/license) |
 | `threestep-blueprint` | 1893 architectural blueprint | [Unsplash sAlWjm2huck](https://unsplash.com/photos/sAlWjm2huck) | Peter Joseph Weber / Art Institute of Chicago | [Unsplash License](https://unsplash.com/license) |
 | `domain-a-aerial` | Berlin aerial sunrise, urban grid | [Pexels 18909542](https://www.pexels.com/photo/aerial-view-of-berlin-at-sunrise-18909542/) | Naro K | [Pexels License](https://www.pexels.com/license/) |

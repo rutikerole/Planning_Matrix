@@ -1,6 +1,14 @@
 import { useId, useRef } from 'react'
 import { m, useScroll, useTransform } from 'framer-motion'
+import { cn } from '@/lib/utils'
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion'
+
+interface MatrixHeroProps {
+  /** "full" = labelled diagram with self-parallax (current default).
+   *  "seal" = compact 280-class corner mark, no labels, no internal parallax. */
+  size?: 'full' | 'seal'
+  className?: string
+}
 
 /* ── Geometry ──────────────────────────────────────────────────────────── */
 const CX = 270
@@ -43,21 +51,31 @@ const TRAVEL_DOTS: Array<[number, number, number]> = [
 ]
 
 /* ── Component ─────────────────────────────────────────────────────────── */
-export function MatrixHero() {
+export function MatrixHero({ size = 'full', className }: MatrixHeroProps = {}) {
+  const isSeal = size === 'seal'
   const reduced = usePrefersReducedMotion()
   const ref = useRef<HTMLDivElement>(null)
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ['start start', 'end start'],
   })
-  const y = useTransform(scrollYProgress, [0, 1], reduced ? [0, 0] : [0, 60])
+  // Seal mode: external Hero applies the parallax; internal stays at 0.
+  const y = useTransform(
+    scrollYProgress,
+    [0, 1],
+    reduced || isSeal ? [0, 0] : [0, 60],
+  )
   const id = useId().replace(/:/g, '')
 
   return (
     <m.div
       ref={ref}
       style={{ y }}
-      className="relative w-full max-w-[460px] mx-auto lg:max-w-[540px] aspect-square"
+      className={cn(
+        'relative w-full aspect-square',
+        isSeal ? 'max-w-[280px]' : 'max-w-[460px] mx-auto lg:max-w-[540px]',
+        className,
+      )}
     >
       <svg
         viewBox="0 0 540 540"
@@ -234,49 +252,53 @@ export function MatrixHero() {
           />
         </g>
 
-        {/* Labels */}
-        <g className="animate-fade-rise" style={{ animationDelay: '1.7s' }}>
-          <text
-            x="270"
-            y="20"
-            textAnchor="middle"
-            fontFamily="Inter, system-ui, sans-serif"
-            fontSize="10"
-            fontWeight="500"
-            letterSpacing="1.8"
-            fill="hsl(var(--muted-foreground))"
-          >
-            A · PLANUNGSRECHT
-          </text>
-        </g>
-        <g className="animate-fade-rise" style={{ animationDelay: '1.85s' }}>
-          <text
-            x="525"
-            y="403"
-            textAnchor="end"
-            fontFamily="Inter, system-ui, sans-serif"
-            fontSize="10"
-            fontWeight="500"
-            letterSpacing="1.8"
-            fill="hsl(var(--muted-foreground))"
-          >
-            B · BAUORDNUNGSRECHT
-          </text>
-        </g>
-        <g className="animate-fade-rise" style={{ animationDelay: '2.0s' }}>
-          <text
-            x="15"
-            y="403"
-            textAnchor="start"
-            fontFamily="Inter, system-ui, sans-serif"
-            fontSize="10"
-            fontWeight="500"
-            letterSpacing="1.8"
-            fill="hsl(var(--muted-foreground))"
-          >
-            C · SONSTIGE VORGABEN
-          </text>
-        </g>
+        {/* Labels — full mode only. Dropped in seal mode (illegible at 280px). */}
+        {!isSeal && (
+          <>
+            <g className="animate-fade-rise" style={{ animationDelay: '1.7s' }}>
+              <text
+                x="270"
+                y="20"
+                textAnchor="middle"
+                fontFamily="Inter, system-ui, sans-serif"
+                fontSize="10"
+                fontWeight="500"
+                letterSpacing="1.8"
+                fill="hsl(var(--muted-foreground))"
+              >
+                A · PLANUNGSRECHT
+              </text>
+            </g>
+            <g className="animate-fade-rise" style={{ animationDelay: '1.85s' }}>
+              <text
+                x="525"
+                y="403"
+                textAnchor="end"
+                fontFamily="Inter, system-ui, sans-serif"
+                fontSize="10"
+                fontWeight="500"
+                letterSpacing="1.8"
+                fill="hsl(var(--muted-foreground))"
+              >
+                B · BAUORDNUNGSRECHT
+              </text>
+            </g>
+            <g className="animate-fade-rise" style={{ animationDelay: '2.0s' }}>
+              <text
+                x="15"
+                y="403"
+                textAnchor="start"
+                fontFamily="Inter, system-ui, sans-serif"
+                fontSize="10"
+                fontWeight="500"
+                letterSpacing="1.8"
+                fill="hsl(var(--muted-foreground))"
+              >
+                C · SONSTIGE VORGABEN
+              </text>
+            </g>
+          </>
+        )}
       </svg>
     </m.div>
   )

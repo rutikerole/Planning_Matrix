@@ -176,6 +176,14 @@ export default {
           '0%, 100%': { opacity: '1' },
           '50%': { opacity: '0' },
         },
+        'ken-burns': {
+          '0%': { transform: 'scale(1) translate(0, 0)' },
+          '100%': { transform: 'scale(1.045) translate(-1%, -0.5%)' },
+        },
+        'gradient-shimmer': {
+          '0%, 100%': { transform: 'translate(0%, 0%)' },
+          '50%': { transform: 'translate(2.5%, 1.5%)' },
+        },
       },
       animation: {
         'accordion-down': 'accordion-down 220ms cubic-bezier(0.16, 1, 0.3, 1)',
@@ -189,6 +197,8 @@ export default {
         'mesh-drift-b': 'mesh-drift-b 35s ease-in-out infinite',
         'mesh-drift-c': 'mesh-drift-c 40s ease-in-out infinite',
         'blink-cursor': 'blink-cursor 1.05s ease-in-out infinite',
+        'ken-burns': 'ken-burns 24s cubic-bezier(0.45, 0, 0.55, 1) infinite alternate',
+        'gradient-shimmer': 'gradient-shimmer 38s ease-in-out infinite',
       },
     },
   },
