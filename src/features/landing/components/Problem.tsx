@@ -3,6 +3,7 @@ import { Container } from '@/components/shared/Container'
 import { Section } from '@/components/shared/Section'
 import { SectionHeader } from '@/components/shared/SectionHeader'
 import { AnimatedReveal } from '@/components/shared/AnimatedReveal'
+import { SectionBackdrop } from '../visuals/SectionBackdrop'
 import { cn } from '@/lib/utils'
 
 const BLOCKS = [
@@ -14,7 +15,8 @@ const BLOCKS = [
 export function Problem() {
   const { t } = useTranslation()
   return (
-    <Section id="problem" bordered>
+    <Section id="problem" bordered className="isolate">
+      <SectionBackdrop stem="problem-scaffolding" paperOpacity={0.9} parallax />
       <Container>
         <SectionHeader
           eyebrow={t('problem.eyebrow')}

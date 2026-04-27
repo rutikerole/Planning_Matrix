@@ -6,6 +6,7 @@ import { cn } from '@/lib/utils'
 import { Container } from '@/components/shared/Container'
 import { Section } from '@/components/shared/Section'
 import { SectionHeader } from '@/components/shared/SectionHeader'
+import { Picture } from '@/components/shared/Picture'
 import { DomainAVisual } from '../visuals/DomainAVisual'
 import { DomainBVisual } from '../visuals/DomainBVisual'
 import { DomainCVisual } from '../visuals/DomainCVisual'
@@ -50,6 +51,12 @@ const VISUALS: Record<TabKey, React.ReactNode> = {
   C: <DomainCVisual />,
 }
 
+const BACKDROP_STEMS: Record<TabKey, string> = {
+  A: 'domain-a-aerial',
+  B: 'domain-b-facade',
+  C: 'domain-c-heritage',
+}
+
 export function Domains() {
   const { t, i18n } = useTranslation()
   const [active, setActive] = useState<TabKey>('A')
@@ -82,7 +89,29 @@ export function Domains() {
   const activeTab = TABS.find((tab) => tab.key === active) ?? TABS[0]
 
   return (
-    <Section id="domains" bordered>
+    <Section id="domains" bordered className="isolate">
+      {/* Three per-tab backdrops, cross-fading on tab change */}
+      {(['A', 'B', 'C'] as TabKey[]).map((key) => (
+        <div
+          key={key}
+          aria-hidden="true"
+          className={cn(
+            'absolute inset-0 -z-10 overflow-hidden pointer-events-none transition-opacity duration-1000 ease-out',
+            active === key ? 'opacity-100' : 'opacity-0',
+          )}
+        >
+          <Picture
+            stem={BACKDROP_STEMS[key]}
+            alt=""
+            loading="lazy"
+            sizes="100vw"
+            className="absolute inset-0 w-full h-full"
+            imgClassName="absolute inset-0 w-full h-full object-cover object-center"
+          />
+          <div className="absolute inset-0 bg-paper" style={{ opacity: 0.88 }} />
+        </div>
+      ))}
+
       <Container>
         <SectionHeader
           eyebrow={t('domains.eyebrow')}

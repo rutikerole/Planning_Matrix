@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next'
 import { Container } from '@/components/shared/Container'
 import { Section } from '@/components/shared/Section'
 import { AnimatedReveal } from '@/components/shared/AnimatedReveal'
+import { SectionBackdrop } from '../visuals/SectionBackdrop'
 
 const PILLARS = [
   {
@@ -24,7 +25,8 @@ const PILLARS = [
 export function Trust() {
   const { t } = useTranslation()
   return (
-    <Section id="trust" bordered>
+    <Section id="trust" bordered className="isolate">
+      <SectionBackdrop stem="trust-pen" paperOpacity={0.85} parallax />
       <Container>
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-y-10 lg:gap-x-12">
           {/* Heading column */}

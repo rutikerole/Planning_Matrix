@@ -7,6 +7,7 @@ import { AnimatedReveal } from '@/components/shared/AnimatedReveal'
 import { CaptureMockup } from '../visuals/CaptureMockup'
 import { RecommendMockup } from '../visuals/RecommendMockup'
 import { ReleaseMockup } from '../visuals/ReleaseMockup'
+import { SectionBackdrop } from '../visuals/SectionBackdrop'
 
 interface Step {
   idx: '01' | '02' | '03'
@@ -39,7 +40,8 @@ const STEPS: Step[] = [
 export function Product() {
   const { t } = useTranslation()
   return (
-    <Section id="product" bordered>
+    <Section id="product" bordered className="isolate">
+      <SectionBackdrop stem="threestep-blueprint" paperOpacity={0.92} />
       <Container>
         <SectionHeader
           eyebrow={t('product.eyebrow')}

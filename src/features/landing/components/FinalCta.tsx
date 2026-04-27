@@ -3,6 +3,7 @@ import { Container } from '@/components/shared/Container'
 import { Section } from '@/components/shared/Section'
 import { AnimatedReveal } from '@/components/shared/AnimatedReveal'
 import { CtaButton } from '@/components/shared/CtaButton'
+import { SectionBackdrop } from '../visuals/SectionBackdrop'
 
 const MAILTO =
   'mailto:vibecoders786@gmail.com?subject=Planning%20Matrix%20%E2%80%94%20Fr%C3%BChzugang'
@@ -10,7 +11,8 @@ const MAILTO =
 export function FinalCta() {
   const { t } = useTranslation()
   return (
-    <Section id="cta" bordered>
+    <Section id="cta" bordered className="isolate">
+      <SectionBackdrop stem="finalcta-windows" paperOpacity={0.75} parallax />
       <Container>
         <div className="flex flex-col items-center text-center max-w-3xl mx-auto">
           <AnimatedReveal>
