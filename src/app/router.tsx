@@ -14,6 +14,7 @@ import { ProtectedRoute } from '@/components/shared/ProtectedRoute'
 import { ProjectGuard } from '@/components/shared/ProjectGuard'
 import { WizardPage } from '@/features/wizard'
 import { ChatWorkspacePage } from '@/features/chat/pages/ChatWorkspacePage'
+import { OverviewPage } from '@/features/chat/pages/OverviewPage'
 
 export function AppRouter() {
   const location = useLocation()
@@ -53,6 +54,16 @@ export function AppRouter() {
             <ProtectedRoute>
               <ProjectGuard>
                 <ChatWorkspacePage />
+              </ProjectGuard>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/projects/:id/overview"
+          element={
+            <ProtectedRoute>
+              <ProjectGuard>
+                <OverviewPage />
               </ProjectGuard>
             </ProtectedRoute>
           }

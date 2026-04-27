@@ -493,6 +493,21 @@
         "void": "unresolved"
       }
     },
+    "overview": {
+      "titlePrefix": "Overview",
+      "eyebrow": "Full overview",
+      "close": "Close",
+      "facts": "Key data",
+      "factsEmpty": "No facts extracted yet.",
+      "areas": "Areas",
+      "procedures": "Procedures",
+      "documents": "Documents",
+      "requiredFor": "Required for",
+      "roles": "Specialists",
+      "recommendations": "Recommendations",
+      "audit": "Audit",
+      "auditEmpty": "No events recorded yet."
+    },
     "rail": {
       "top3": "Top 3 next steps",
       "areas": "Areas",
