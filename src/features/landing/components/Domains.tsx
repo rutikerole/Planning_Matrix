@@ -6,6 +6,9 @@ import { cn } from '@/lib/utils'
 import { Container } from '@/components/shared/Container'
 import { Section } from '@/components/shared/Section'
 import { SectionHeader } from '@/components/shared/SectionHeader'
+import { DomainAVisual } from '../visuals/DomainAVisual'
+import { DomainBVisual } from '../visuals/DomainBVisual'
+import { DomainCVisual } from '../visuals/DomainCVisual'
 
 type TabKey = 'A' | 'B' | 'C'
 
@@ -15,7 +18,6 @@ interface TabDef {
   i18nTitle: string
   i18nQuestion: string
   i18nBody: string
-  chips: string[]
 }
 
 const TABS: TabDef[] = [
@@ -25,12 +27,6 @@ const TABS: TabDef[] = [
     i18nTitle: 'domains.tabAtitle',
     i18nQuestion: 'domains.tabAquestion',
     i18nBody: 'domains.tabAbody',
-    chips: [
-      'domains.tabAchipOne',
-      'domains.tabAchipTwo',
-      'domains.tabAchipThree',
-      'domains.tabAchipFour',
-    ],
   },
   {
     key: 'B',
@@ -38,12 +34,6 @@ const TABS: TabDef[] = [
     i18nTitle: 'domains.tabBtitle',
     i18nQuestion: 'domains.tabBquestion',
     i18nBody: 'domains.tabBbody',
-    chips: [
-      'domains.tabBchipOne',
-      'domains.tabBchipTwo',
-      'domains.tabBchipThree',
-      'domains.tabBchipFour',
-    ],
   },
   {
     key: 'C',
@@ -51,14 +41,14 @@ const TABS: TabDef[] = [
     i18nTitle: 'domains.tabCtitle',
     i18nQuestion: 'domains.tabCquestion',
     i18nBody: 'domains.tabCbody',
-    chips: [
-      'domains.tabCchipOne',
-      'domains.tabCchipTwo',
-      'domains.tabCchipThree',
-      'domains.tabCchipFour',
-    ],
   },
 ]
+
+const VISUALS: Record<TabKey, React.ReactNode> = {
+  A: <DomainAVisual />,
+  B: <DomainBVisual />,
+  C: <DomainCVisual />,
+}
 
 export function Domains() {
   const { t, i18n } = useTranslation()
@@ -76,7 +66,6 @@ export function Domains() {
   })
   const [bootstrapped, setBootstrapped] = useState(false)
 
-  // Recompute indicator position on tab change, language change, or window resize.
   useLayoutEffect(() => {
     const measure = () => {
       const el = triggersRef.current[active]
@@ -131,7 +120,6 @@ export function Domains() {
                 </TabsPrimitive.Trigger>
               ))}
 
-              {/* Sliding clay indicator */}
               {bootstrapped &&
                 (reduced ? (
                   <span
@@ -164,7 +152,7 @@ export function Domains() {
                   exit={reduced ? undefined : { opacity: 0, y: -6 }}
                   transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
                 >
-                  <div className="grid grid-cols-1 lg:grid-cols-12 gap-y-12 lg:gap-x-12">
+                  <div className="grid grid-cols-1 lg:grid-cols-12 gap-y-12 lg:gap-x-10 items-start">
                     <div className="lg:col-span-7">
                       <h3 className="font-display text-display-3 text-ink leading-[1.02] mb-6">
                         {t(activeTab.i18nTitle)}
@@ -176,27 +164,8 @@ export function Domains() {
                         {t(activeTab.i18nBody)}
                       </p>
                     </div>
-                    <div className="lg:col-span-4 lg:col-start-9 flex flex-col">
-                      <p className="eyebrow mb-5 inline-flex items-center text-muted-foreground/80">
-                        <span className="accent-dot" aria-hidden="true" />
-                        Beispiele
-                      </p>
-                      <ul className="flex flex-col gap-3">
-                        {activeTab.chips.map((chipKey) => (
-                          <li
-                            key={chipKey}
-                            className="inline-flex items-baseline gap-3 text-[15px] text-ink/85"
-                          >
-                            <span
-                              className="font-display italic text-clay tabular-nums shrink-0"
-                              aria-hidden="true"
-                            >
-                              ›
-                            </span>
-                            <span>{t(chipKey)}</span>
-                          </li>
-                        ))}
-                      </ul>
+                    <div className="lg:col-span-5 flex justify-center lg:justify-end">
+                      {VISUALS[active]}
                     </div>
                   </div>
                 </m.div>
