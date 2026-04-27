@@ -23,7 +23,34 @@ Live: <https://planning-matrix.vercel.app/>
 - **Phase 1** — landing page (typography, calm motion, sections)
 - **Phase 1.5** — visual upgrade (matrix hero, mockups, demo, dividers, hover lifts)
 - **Phase 1.6** — cinematic direction (full-bleed photographic hero, atmospheric backdrops, blueprint floor plan, elevated demo, ambient motion)
-- **Phase 2** — authentication (this README is for it)
+- **Phase 2** — authentication
+- **Phase 3** — chat core: two-question wizard, three-zone chat workspace, Anthropic-backed Edge Function, dossier-styled right rail, specialist roundtable
+
+## Phase 3 — Edge Function workflow
+
+### Apply migration (one-shot, ~30 s)
+
+Supabase Dashboard → SQL Editor → New query → paste the contents of `supabase/migrations/0003_planning_matrix_core.sql` → Run.
+
+### Set the Anthropic key as a function secret
+
+```bash
+npx supabase login                 # one-time
+npx supabase link --project-ref dklseznumnehutbarleg
+npx supabase secrets set ANTHROPIC_API_KEY=sk-ant-...
+```
+
+### Deploy `chat-turn`
+
+```bash
+npx supabase functions deploy chat-turn
+```
+
+The function reads `ANTHROPIC_API_KEY` + auto-injected `SUPABASE_URL` / `SUPABASE_ANON_KEY`, verifies the caller's JWT, RLS-scopes a Supabase client to that user, calls Claude Sonnet 4.5 with multi-block system caching (persona block carries `cache_control: { type: 'ephemeral' }`), validates the forced `respond` tool input against Zod, persists user + assistant + audit rows, returns the new project state. ~24 s on cold cache, ~22 s warm — second turn within 5 min reads ~6.3k cached tokens at the 90% discount.
+
+### Local dev against the deployed Edge Function
+
+`.env.local` already points the SPA at the production Supabase URL. `npm run dev` works against the same backend; the dev-mode `console.group('chat-turn ← HTTP …')` log surfaces the full request / response / costInfo (D13).
 
 ## Development
 
