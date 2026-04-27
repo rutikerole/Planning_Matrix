@@ -5,6 +5,7 @@ import { SmoothScroll } from '@/components/shared/SmoothScroll'
 import { Nav } from './components/Nav'
 import { Hero } from './components/Hero'
 import { Problem } from './components/Problem'
+import { Product } from './components/Product'
 import { Footer } from './components/Footer'
 
 export function LandingPage() {
@@ -22,6 +23,7 @@ export function LandingPage() {
       <main id="main" className="relative">
         <Hero />
         <Problem />
+        <Product />
       </main>
       <Footer />
       <GrainOverlay />
