@@ -1,14 +1,27 @@
+import { useTranslation } from 'react-i18next'
+import { GrainOverlay } from '@/components/shared/GrainOverlay'
+import { SmoothScroll } from '@/components/shared/SmoothScroll'
+import { Nav } from './components/Nav'
+import { Hero } from './components/Hero'
+import { Footer } from './components/Footer'
+
 export function LandingPage() {
+  const { t } = useTranslation()
   return (
-    <main className="min-h-dvh flex items-center justify-center px-6">
-      <div className="text-center">
-        <h1 className="text-5xl md:text-7xl font-light tracking-tight text-foreground">
-          Planning Matrix
-        </h1>
-        <p className="mt-6 text-base md:text-lg text-muted-foreground font-light">
-          German building permit decision-support, simplified.
-        </p>
-      </div>
-    </main>
+    <>
+      <SmoothScroll />
+      <a
+        href="#main"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[100] focus:bg-ink focus:text-paper focus:px-3 focus:py-2 focus:rounded-sm focus:text-sm"
+      >
+        {t('common.skipToContent')}
+      </a>
+      <Nav />
+      <main id="main" className="relative">
+        <Hero />
+      </main>
+      <Footer />
+      <GrainOverlay />
+    </>
   )
 }

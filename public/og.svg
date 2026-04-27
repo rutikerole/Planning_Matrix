@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <rect width="1200" height="630" fill="#f8f4ed"/>
+
+  <!-- Faint grain overlay tile -->
+  <defs>
+    <filter id="grain">
+      <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" stitchTiles="stitch"/>
+      <feColorMatrix values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.06 0"/>
+    </filter>
+  </defs>
+  <rect width="1200" height="630" filter="url(#grain)"/>
+
+  <!-- Eyebrow -->
+  <text
+    x="80"
+    y="120"
+    font-family="'Inter', system-ui, sans-serif"
+    font-size="18"
+    font-weight="500"
+    letter-spacing="3.6"
+    fill="#7a5232"
+  >PLANNING MATRIX</text>
+
+  <!-- Hairline -->
+  <rect x="80" y="148" width="120" height="1" fill="#181b23" opacity="0.5"/>
+
+  <!-- Headline (serif) -->
+  <text
+    x="80"
+    y="290"
+    font-family="'Instrument Serif', 'New York', 'Charter', 'Times New Roman', serif"
+    font-size="106"
+    fill="#181b23"
+  >Baugenehmigungen,</text>
+  <text
+    x="80"
+    y="402"
+    font-family="'Instrument Serif', 'New York', 'Charter', 'Times New Roman', serif"
+    font-size="106"
+    font-style="italic"
+    fill="#181b23"
+  >klar gedacht.</text>
+
+  <!-- Sub-headline -->
+  <text
+    x="80"
+    y="490"
+    font-family="'Inter', system-ui, sans-serif"
+    font-size="26"
+    fill="#5a5e6b"
+  >Vom Grundstück zur Genehmigungs-Roadmap. In zwei Fragen.</text>
+
+  <!-- Footer line -->
+  <rect x="80" y="552" width="1040" height="1" fill="#181b23" opacity="0.18"/>
+  <text
+    x="80"
+    y="588"
+    font-family="'Inter', system-ui, sans-serif"
+    font-size="20"
+    fill="#181b23"
+  >planning-matrix.vercel.app</text>
+  <text
+    x="1120"
+    y="588"
+    text-anchor="end"
+    font-family="'Inter', system-ui, sans-serif"
+    font-size="20"
+    fill="#7a5232"
+    letter-spacing="2"
+  >DE / EN</text>
+</svg>

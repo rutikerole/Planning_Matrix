@@ -2,11 +2,78 @@
 <html lang="de">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Planning Matrix</title>
+    <meta name="theme-color" content="#f8f4ed" />
+    <meta name="color-scheme" content="light" />
+
+    <title>Planning Matrix — Baugenehmigungen, klar gedacht.</title>
+    <meta
+      name="description"
+      content="Vom Grundstück zur Genehmigungs-Roadmap. In zwei Fragen. Planning Matrix kartiert für jedes Vorhaben den vollständigen Genehmigungsweg — empfohlen vom System, freigegeben durch Ihren Architekten."
+    />
+    <meta name="robots" content="index,follow" />
+    <meta name="author" content="Planning Matrix" />
+
+    <link rel="canonical" href="https://planning-matrix.vercel.app/" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/favicon.svg" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Planning Matrix" />
+    <meta property="og:locale" content="de_DE" />
+    <meta property="og:locale:alternate" content="en_US" />
+    <meta property="og:url" content="https://planning-matrix.vercel.app/" />
+    <meta property="og:title" content="Planning Matrix — Baugenehmigungen, klar gedacht." />
+    <meta
+      property="og:description"
+      content="Vom Grundstück zur Genehmigungs-Roadmap. In zwei Fragen."
+    />
+    <meta property="og:image" content="https://planning-matrix.vercel.app/og.svg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+
+    <!-- Twitter / X -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Planning Matrix — Baugenehmigungen, klar gedacht." />
+    <meta
+      name="twitter:description"
+      content="Vom Grundstück zur Genehmigungs-Roadmap. In zwei Fragen."
+    />
+    <meta name="twitter:image" content="https://planning-matrix.vercel.app/og.svg" />
+
+    <!-- Fonts: preconnect, then load with display=swap -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="preload"
+      as="style"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap"
+    />
+
+    <!-- Inline a tiny FOUC-killer: keeps body transparent until first paint commits. -->
+    <style>
+      html { background-color: #f8f4ed; }
+      body { background-color: #f8f4ed; color: #181b23; }
+    </style>
   </head>
   <body>
+    <noscript>
+      <div style="padding:32px;font-family:Georgia,serif;max-width:560px;margin:48px auto;color:#181b23;line-height:1.6;">
+        <h1 style="font-family:'Instrument Serif',Georgia,serif;font-size:2rem;margin-bottom:8px;">
+          Planning Matrix
+        </h1>
+        <p>Baugenehmigungen, klar gedacht. Vom Grundstück zur Genehmigungs-Roadmap. In zwei Fragen.</p>
+        <p style="margin-top:16px;">
+          Diese Seite benötigt JavaScript. Für frühen Zugang:
+          <a href="mailto:vibecoders786@gmail.com" style="color:#7a5232;">vibecoders786@gmail.com</a>
+        </p>
+      </div>
+    </noscript>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

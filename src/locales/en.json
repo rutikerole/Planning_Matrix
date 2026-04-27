@@ -1,1 +1,147 @@
-{}
+{
+  "common": {
+    "ctaPrimary": "Request early access",
+    "ctaSecondary": "How it works",
+    "ctaLogin": "Log in",
+    "languageGerman": "German",
+    "languageEnglish": "English",
+    "skipToContent": "Skip to main content",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu"
+  },
+  "nav": {
+    "product": "Product",
+    "audience": "For whom",
+    "pricing": "Pricing",
+    "faq": "FAQ"
+  },
+  "hero": {
+    "eyebrow": "Building permits, rethought.",
+    "headlineLineOne": "You can sketch a building in five minutes.",
+    "headlineLineTwo": "Getting it approved still takes five months.",
+    "subheadline": "Planning Matrix maps your full permit path in two questions — authorities, documents, specialist reports. Recommended by the system. Released by your certified architect.",
+    "trustline": "In pilot with architecture firms and developers in Thuringia and Saxony."
+  },
+  "problem": {
+    "eyebrow": "The problem",
+    "heading": "You can design a building in five minutes. Everything around it, you can't.",
+    "block1": "Volume, area, cost — automatic. AI renders — trivial. Creativity is no longer the bottleneck.",
+    "block2": "Today, you commission a full planning process just to find out which permits you actually need, which documents go to which authority, which specialist reports you must obtain.",
+    "block3": "Three questions. Six months. Before a single stone is laid."
+  },
+  "product": {
+    "eyebrow": "The system",
+    "heading": "Three steps. From plot to permit path.",
+    "step1Title": "Capture",
+    "step1Body": "You answer two questions: where do you want to build, what do you want to build? Nothing more.",
+    "step2Title": "Recommend",
+    "step2Body": "The system maps your project against German planning and building law — and produces a complete roadmap of permits, documents, and specialist reports.",
+    "step3Title": "Release",
+    "step3Body": "Your certified architect reviews the recommendation. Only their release turns the suggestion into a plan."
+  },
+  "domains": {
+    "eyebrow": "The three dimensions",
+    "heading": "How the system thinks.",
+    "subheading": "Every German building permit lives across three legal domains. Planning Matrix maps all three.",
+    "tabAlabel": "A · Zoning law",
+    "tabAtitle": "Planungsrecht",
+    "tabAquestion": "What may be built at this site?",
+    "tabAbody": "Bebauungsplan, Flächennutzungsplan, § 34 BauGB. Which use, which scale, which height — and who decides at the municipal level.",
+    "tabAchipOne": "Land-use plan",
+    "tabAchipTwo": "§ 34 BauGB",
+    "tabAchipThree": "Building scale",
+    "tabAchipFour": "Building height",
+    "tabBlabel": "B · Building code",
+    "tabBtitle": "Bauordnungsrecht",
+    "tabBquestion": "How must it be built?",
+    "tabBbody": "Landesbauordnung, setbacks, fire safety, parking. Which construction requirements apply — and which evidence must be filed with the application.",
+    "tabBchipOne": "State building code",
+    "tabBchipTwo": "Setbacks",
+    "tabBchipThree": "Fire safety",
+    "tabBchipFour": "Parking proof",
+    "tabClabel": "C · Adjacent rules",
+    "tabCtitle": "Sonstige Vorgaben",
+    "tabCquestion": "What other rules apply?",
+    "tabCbody": "Heritage protection, environment, water, emissions, energy. Which specialist authorities are involved in parallel — and at which point in the process.",
+    "tabCchipOne": "Heritage",
+    "tabCchipTwo": "Emissions",
+    "tabCchipThree": "Environment",
+    "tabCchipFour": "Energy / GEG"
+  },
+  "audience": {
+    "eyebrow": "For whom",
+    "heading": "Three perspectives. One system.",
+    "card1Tag": "Building owner",
+    "card1Title": "Clarity before you plan.",
+    "card1Body": "You understand early what your project actually costs — not in euros, but in permits, reports, and time. Before you engage your first architect.",
+    "card2Tag": "Architect",
+    "card2Title": "Research automatic. Judgment yours.",
+    "card2Body": "The system does the research. You do the judgment. Every recommendation is your release — fully traceable, always reviewable.",
+    "card3Tag": "Developer",
+    "card3Title": "Comparability at a glance.",
+    "card3Body": "You plan portfolios, not single projects. One permit roadmap per plot, one click to compare locations side by side."
+  },
+  "trust": {
+    "eyebrow": "Legal posture",
+    "heading": "Recommendation is not decision.",
+    "body1": "Planning Matrix is not legal advice. The system recommends — your certified architect releases. Every recommendation is provenance-tracked: which statute, which source, which version. Every transition is auditable.",
+    "body2": "What is ultimately submitted to the Bauamt carries a human seal. Not \"AI-powered approval.\" AI-assisted preparation — confirmed by a person.",
+    "pillarOneTitle": "Provenance",
+    "pillarOneBody": "Every recommendation tagged with statute, source, version, and reasoning.",
+    "pillarTwoTitle": "Audit trail",
+    "pillarTwoBody": "Every transition from suggestion to release fully logged.",
+    "pillarThreeTitle": "Architect release",
+    "pillarThreeBody": "Submission authority stays with the person — not the tool."
+  },
+  "pricing": {
+    "eyebrow": "Pricing",
+    "heading": "Pricing model in development.",
+    "body": "Planning Matrix is preparing for public launch. We are working with pilot partners on a pricing model that fits the reality of construction projects — not standard SaaS tiers. To shape it with us, talk to us.",
+    "note": "Preferred terms for pilot users."
+  },
+  "faq": {
+    "eyebrow": "Frequently asked",
+    "heading": "Short, honest answers.",
+    "q1": "Is Planning Matrix legal advice?",
+    "a1": "No. Planning Matrix is a recommendation system. Every recommendation is reviewed and released by a certified architect — only then does it become the basis of your application. Only the authority itself can give legally binding information.",
+    "q2": "Which German states are supported?",
+    "a2": "We are starting in Thuringia and expanding state by state. Which state comes next depends on the availability of the respective state building codes and on local pilot partnerships.",
+    "q3": "Who is liable for the recommendations?",
+    "a3": "Responsibility for the submitted application sits — as it does today — with the submitting architect. Planning Matrix documents the statutes and sources behind every recommendation. That provenance is part of the audit trail.",
+    "q4": "Do I still need my own architect?",
+    "a4": "Yes. Submission authority in Germany is bound to the person, not the tool. If you don't yet have an architect, we can introduce certified partners from our network on request.",
+    "q5": "How does Planning Matrix handle my data?",
+    "a5": "All data is processed and stored in the EU, GDPR-compliant. Project data is used solely to generate your roadmap — never for model training or third parties.",
+    "q6": "What does it cost?",
+    "a6": "The pricing model is being shaped with pilot partners. We will publish it once it holds up. Early users get preferred terms — talk to us."
+  },
+  "finalCta": {
+    "eyebrow": "Early access",
+    "heading": "Build with foresight.",
+    "body": "Early access is limited. We are working directly with pilot users in Thuringia and Saxony first.",
+    "cta": "Request early access"
+  },
+  "footer": {
+    "tagline": "Building permits, rethought.",
+    "colProductTitle": "Product",
+    "colProductFunctions": "Features",
+    "colProductDomains": "Three dimensions",
+    "colProductAudience": "For whom",
+    "colProductFaq": "FAQ",
+    "colCompanyTitle": "Company",
+    "colCompanyAbout": "About",
+    "colCompanyContact": "Contact",
+    "colCompanyAccess": "Early access",
+    "colLegalTitle": "Legal",
+    "colLegalImprint": "Imprint",
+    "colLegalPrivacy": "Privacy",
+    "colLegalTerms": "Terms",
+    "rightsReserved": "All rights reserved."
+  },
+  "notFound": {
+    "code": "404",
+    "heading": "This page does not exist.",
+    "body": "Maybe it was moved — or just a typo. No problem.",
+    "cta": "Back to home"
+  }
+}

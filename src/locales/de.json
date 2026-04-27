@@ -1,1 +1,147 @@
-{}
+{
+  "common": {
+    "ctaPrimary": "Frühen Zugang anfragen",
+    "ctaSecondary": "So funktioniert's",
+    "ctaLogin": "Anmelden",
+    "languageGerman": "Deutsch",
+    "languageEnglish": "Englisch",
+    "skipToContent": "Zum Hauptinhalt springen",
+    "openMenu": "Menü öffnen",
+    "closeMenu": "Menü schließen"
+  },
+  "nav": {
+    "product": "Produkt",
+    "audience": "Für wen",
+    "pricing": "Preise",
+    "faq": "FAQ"
+  },
+  "hero": {
+    "eyebrow": "Baugenehmigungen, klar gedacht.",
+    "headlineLineOne": "Sie zeichnen ein Gebäude in fünf Minuten.",
+    "headlineLineTwo": "Die Genehmigung dauert fünf Monate.",
+    "subheadline": "Planning Matrix kartiert in zwei Fragen den vollständigen Genehmigungspfad — Behörden, Dokumente, Fachgutachten. Empfohlen vom System. Freigegeben durch Ihren Architekten.",
+    "trustline": "In Pilot mit Architekturbüros und Projektentwicklern aus Thüringen und Sachsen."
+  },
+  "problem": {
+    "eyebrow": "Das Problem",
+    "heading": "Sie können ein Gebäude in fünf Minuten entwerfen. Drumherum nicht.",
+    "block1": "Volumen, Fläche, Kosten — automatisch. KI-Renderings — trivial. Der Engpass ist nicht mehr die Kreativität.",
+    "block2": "Heute beauftragen Sie einen vollständigen Planungsprozess, um herauszufinden, welche Genehmigungen Sie überhaupt benötigen, welche Unterlagen an welche Behörde gehen, welche Fachgutachten Sie einholen müssen.",
+    "block3": "Drei Fragen. Ein halbes Jahr. Bevor der erste Stein liegt."
+  },
+  "product": {
+    "eyebrow": "Das System",
+    "heading": "Drei Schritte. Vom Grundstück zum Genehmigungspfad.",
+    "step1Title": "Erfassen",
+    "step1Body": "Sie beantworten zwei Fragen: Wo soll gebaut werden, was soll gebaut werden? Mehr braucht es nicht.",
+    "step2Title": "Empfehlen",
+    "step2Body": "Das System kartiert Ihr Vorhaben gegen Planungs- und Bauordnungsrecht — und liefert eine vollständige Roadmap aus Genehmigungen, Unterlagen und Fachgutachten.",
+    "step3Title": "Freigeben",
+    "step3Body": "Ihr zertifizierter Architekt prüft die Empfehlung. Erst seine Freigabe macht aus dem Vorschlag einen Plan."
+  },
+  "domains": {
+    "eyebrow": "Die drei Dimensionen",
+    "heading": "Wie das System denkt.",
+    "subheading": "Jede Genehmigung in Deutschland verteilt sich auf drei Rechtsbereiche. Planning Matrix kartiert sie alle.",
+    "tabAlabel": "A · Planungsrecht",
+    "tabAtitle": "Planungsrecht",
+    "tabAquestion": "Was darf an diesem Ort gebaut werden?",
+    "tabAbody": "Bebauungsplan, Flächennutzungsplan, § 34 BauGB. Welche Nutzung, welches Maß, welche Höhe — und wer auf kommunaler Ebene darüber entscheidet.",
+    "tabAchipOne": "Bebauungsplan",
+    "tabAchipTwo": "§ 34 BauGB",
+    "tabAchipThree": "Maß der Nutzung",
+    "tabAchipFour": "Bauliche Höhe",
+    "tabBlabel": "B · Bauordnungsrecht",
+    "tabBtitle": "Bauordnungsrecht",
+    "tabBquestion": "Wie muss es gebaut werden?",
+    "tabBbody": "Landesbauordnung, Abstandsflächen, Brandschutz, Stellplätze. Welche Auflagen für die Ausführung gelten — und welche Nachweise mit dem Bauantrag eingereicht werden müssen.",
+    "tabBchipOne": "Landesbauordnung",
+    "tabBchipTwo": "Abstandsflächen",
+    "tabBchipThree": "Brandschutz",
+    "tabBchipFour": "Stellplatznachweis",
+    "tabClabel": "C · Sonstige Vorgaben",
+    "tabCtitle": "Sonstige Vorgaben",
+    "tabCquestion": "Was kommt von außen dazu?",
+    "tabCbody": "Denkmalschutz, Naturschutz, Wasserrecht, Immissionsschutz, Energie. Welche Fachbehörden parallel beteiligt werden müssen — und an welcher Stelle des Prozesses.",
+    "tabCchipOne": "Denkmalschutz",
+    "tabCchipTwo": "Immissionsschutz",
+    "tabCchipThree": "Naturschutz",
+    "tabCchipFour": "GEG / Energie"
+  },
+  "audience": {
+    "eyebrow": "Für wen",
+    "heading": "Drei Perspektiven. Ein System.",
+    "card1Tag": "Bauherr",
+    "card1Title": "Klarheit, bevor Sie planen.",
+    "card1Body": "Sie verstehen früh, was Ihr Vorhaben kostet — nicht in Euro, sondern in Genehmigungen, Gutachten und Zeit. Bevor Sie den ersten Architekten beauftragen.",
+    "card2Tag": "Architekt",
+    "card2Title": "Recherche automatisch. Beurteilung bei Ihnen.",
+    "card2Body": "Das System macht die Recherche. Sie machen die Beurteilung. Jede Empfehlung ist Ihre Freigabe — nachvollziehbar dokumentiert, jederzeit prüfbar.",
+    "card3Tag": "Projektentwickler",
+    "card3Title": "Vergleichbarkeit auf einen Blick.",
+    "card3Body": "Sie planen Portfolios, nicht Einzelvorhaben. Eine Genehmigungs-Roadmap pro Grundstück, ein Klick zur Vergleichbarkeit verschiedener Lagen."
+  },
+  "trust": {
+    "eyebrow": "Rechtlicher Rahmen",
+    "heading": "Empfehlen heißt nicht entscheiden.",
+    "body1": "Planning Matrix gibt keine Rechtsberatung. Das System empfiehlt — Ihr zertifizierter Architekt gibt frei. Jede Empfehlung ist provenance-verfolgt: welche Vorschrift, welche Quelle, welcher Stand. Jeder Übergang ist auditierbar.",
+    "body2": "Was am Ende beim Bauamt eingereicht wird, trägt ein menschliches Siegel. Nicht „AI-powered approval“. KI-unterstützte Vorbereitung — durch eine Person bestätigt.",
+    "pillarOneTitle": "Provenance",
+    "pillarOneBody": "Jede Empfehlung mit Norm, Quelle, Stand und Begründung versehen.",
+    "pillarTwoTitle": "Auditpfad",
+    "pillarTwoBody": "Jeder Übergang vom Vorschlag zur Freigabe vollständig protokolliert.",
+    "pillarThreeTitle": "Architektenfreigabe",
+    "pillarThreeBody": "Bauvorlageberechtigung bleibt bei der Person — nicht beim Werkzeug."
+  },
+  "pricing": {
+    "eyebrow": "Preise",
+    "heading": "Preismodell in Entwicklung.",
+    "body": "Planning Matrix befindet sich in der Vorbereitung des öffentlichen Starts. Wir arbeiten mit Pilotpartnern an einem Preismodell, das zur Realität von Bauvorhaben passt — nicht zu SaaS-Standardplänen. Wenn Sie früh mitgestalten möchten, sprechen Sie uns an.",
+    "note": "Bevorzugte Konditionen für Pilotnutzer."
+  },
+  "faq": {
+    "eyebrow": "Häufige Fragen",
+    "heading": "Kurze, ehrliche Antworten.",
+    "q1": "Ist Planning Matrix eine Rechtsberatung?",
+    "a1": "Nein. Planning Matrix ist ein Empfehlungssystem. Jede Empfehlung wird durch einen zertifizierten Architekten geprüft und freigegeben — erst dann wird sie zur Grundlage Ihres Bauantrags. Eine rechtsverbindliche Auskunft gibt nur die Behörde selbst.",
+    "q2": "Welche Bundesländer werden unterstützt?",
+    "a2": "Wir starten mit Thüringen und erweitern schrittweise auf weitere Bundesländer. Welche als nächstes verfügbar werden, hängt von der Verfügbarkeit der jeweiligen Landesbauordnungen und von Pilotpartnerschaften vor Ort ab.",
+    "q3": "Wer haftet für die Empfehlungen?",
+    "a3": "Die Verantwortung für den eingereichten Bauantrag liegt — wie heute auch — beim einreichenden Architekten. Planning Matrix dokumentiert lückenlos, auf welche Vorschriften und Quellen jede Empfehlung zurückgeht. Diese Provenance ist Teil des Auditpfads.",
+    "q4": "Brauche ich einen eigenen Architekten?",
+    "a4": "Ja. Bauvorlageberechtigung ist in Deutschland an die Person gebunden, nicht an das Werkzeug. Wenn Sie noch keinen Architekten haben, vermitteln wir auf Wunsch zertifizierte Partner aus unserem Netzwerk.",
+    "q5": "Wie geht Planning Matrix mit meinen Daten um?",
+    "a5": "Alle Daten werden in der EU verarbeitet und gespeichert, DSGVO-konform. Projektdaten werden ausschließlich zur Erstellung Ihrer Roadmap genutzt — nicht für Modelltraining oder Drittparteien.",
+    "q6": "Was kostet das?",
+    "a6": "Das Preismodell entsteht gerade gemeinsam mit Pilotpartnern. Wir veröffentlichen es, sobald es belastbar ist. Frühe Nutzer erhalten bevorzugte Konditionen — sprechen Sie uns an."
+  },
+  "finalCta": {
+    "eyebrow": "Frühzugang",
+    "heading": "Bauen Sie planbarer.",
+    "body": "Frühzugang ist begrenzt. Wir arbeiten zunächst direkt mit Pilotnutzern aus Thüringen und Sachsen.",
+    "cta": "Frühen Zugang anfragen"
+  },
+  "footer": {
+    "tagline": "Baugenehmigungen, klar gedacht.",
+    "colProductTitle": "Produkt",
+    "colProductFunctions": "Funktionen",
+    "colProductDomains": "Drei Dimensionen",
+    "colProductAudience": "Für wen",
+    "colProductFaq": "FAQ",
+    "colCompanyTitle": "Unternehmen",
+    "colCompanyAbout": "Über uns",
+    "colCompanyContact": "Kontakt",
+    "colCompanyAccess": "Frühzugang",
+    "colLegalTitle": "Rechtliches",
+    "colLegalImprint": "Impressum",
+    "colLegalPrivacy": "Datenschutz",
+    "colLegalTerms": "AGB",
+    "rightsReserved": "Alle Rechte vorbehalten."
+  },
+  "notFound": {
+    "code": "404",
+    "heading": "Diese Seite existiert nicht.",
+    "body": "Vielleicht wurde sie verschoben — oder es war ein Tippfehler. Kein Problem.",
+    "cta": "Zur Startseite"
+  }
+}
