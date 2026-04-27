@@ -91,21 +91,25 @@ export function SignUpPage() {
           console.error('[signUp]', error)
           setServerError(t('auth.errors.unexpected'))
         }
+        setSubmitting(false)
         return
       }
 
-      // Heuristic: when an email is already registered AND email-confirm
-      // is on, Supabase historically returns user with identities=[].
-      // If that signal is reliable in this version, surface it on the
-      // email field. If not (newer anti-enumeration releases), the user
-      // simply lands on /check-email and either gets a duplicate-confirm
-      // email or eventually realises they're already registered and
-      // uses "Bereits registriert? Anmelden".
-      if (data.user && Array.isArray(data.user.identities) && data.user.identities.length === 0) {
+      // Heuristic: when an email is already registered, Supabase
+      // historically returns user with identities=[]. If reliable on
+      // this version, surface the inline error; otherwise fall through
+      // to the autoconfirm path below — duplicate signups will fail
+      // gracefully on signInWithPassword anyway.
+      if (
+        data.user &&
+        Array.isArray(data.user.identities) &&
+        data.user.identities.length === 0
+      ) {
         form.setError('email', {
           type: 'server',
           message: 'auth.errors.emailAlreadyRegistered',
         })
+        setSubmitting(false)
         return
       }
 
@@ -134,7 +138,15 @@ export function SignUpPage() {
           password: values.password,
         })
         if (signInError) {
-          navigate(`/check-email?email=${encodeURIComponent(values.email)}`)
+          // Account exists but signin failed (network blip, race with
+          // trigger, etc.). Send to /sign-in with email prefilled +
+          // a "Konto erstellt — bitte anmelden" notice (postSignup=1).
+          // Better than dead-ending on /check-email when the autoconfirm
+          // trigger is doing the heavy lifting.
+          navigate(
+            `/sign-in?email=${encodeURIComponent(values.email)}&postSignup=1`,
+            { replace: true },
+          )
           return
         }
       }
