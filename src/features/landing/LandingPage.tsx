@@ -9,6 +9,9 @@ import { Product } from './components/Product'
 import { Domains } from './components/Domains'
 import { Audience } from './components/Audience'
 import { Trust } from './components/Trust'
+import { Pricing } from './components/Pricing'
+import { Faq } from './components/Faq'
+import { FinalCta } from './components/FinalCta'
 import { Footer } from './components/Footer'
 
 export function LandingPage() {
@@ -30,6 +33,9 @@ export function LandingPage() {
         <Domains />
         <Audience />
         <Trust />
+        <Pricing />
+        <Faq />
+        <FinalCta />
       </main>
       <Footer />
       <GrainOverlay />
