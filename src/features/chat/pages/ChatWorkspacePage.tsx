@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { ChatWorkspaceLayout } from '../components/ChatWorkspaceLayout'
 import { EmptyState } from '../components/EmptyState'
@@ -6,8 +6,11 @@ import { LeftRail } from '../components/LeftRail'
 import { RightRail } from '../components/RightRail'
 import { Thread } from '../components/Thread'
 import { InputBar } from '../components/Input'
+import { IdkPopover } from '../components/Input/IdkPopover'
+import { buildUserMessageText } from '../lib/userAnswerHelpers'
 import { useProject } from '../hooks/useProject'
 import { useMessages } from '../hooks/useMessages'
+import type { UserAnswer } from '@/types/chatTurn'
 
 /**
  * /projects/:id workspace. ProjectGuard upstream has already verified
@@ -37,27 +40,46 @@ export function ChatWorkspacePage() {
       .reverse()
       .find((m) => m.role === 'assistant') ?? null
 
+  const [idkOpen, setIdkOpen] = useState(false)
+
   if (!project) return null
 
-  // Stub onSubmit for #16; real useChatTurn mutation lands in commit #19.
-  const handleSubmit = (payload: unknown) => {
+  // Stub onSubmit for now; real useChatTurn mutation lands in commit #19.
+  const handleSubmit = (payload: { userMessage: string; userAnswer: UserAnswer }) => {
     if (import.meta.env.DEV) {
       // eslint-disable-next-line no-console
       console.info('[chat] submit (stub — wired in commit #19)', payload)
     }
   }
 
+  const handleIdkChoose = (mode: 'research' | 'assume' | 'skip') => {
+    const answer: UserAnswer = { kind: 'idk', mode }
+    handleSubmit({ userMessage: buildUserMessageText(answer), userAnswer: answer })
+  }
+
   return (
-    <ChatWorkspaceLayout
-      leftRail={<LeftRail project={project} messages={messages ?? []} />}
-      rightRail={<RightRail project={project} />}
-      inputBar={
-        hasMessages ? (
-          <InputBar lastAssistant={lastAssistant} onSubmit={handleSubmit} />
-        ) : null
-      }
-    >
-      {hasMessages ? <Thread messages={messages ?? []} /> : <EmptyState />}
-    </ChatWorkspaceLayout>
+    <>
+      <ChatWorkspaceLayout
+        leftRail={<LeftRail project={project} messages={messages ?? []} />}
+        rightRail={<RightRail project={project} />}
+        inputBar={
+          hasMessages ? (
+            <InputBar
+              lastAssistant={lastAssistant}
+              onSubmit={handleSubmit}
+              onIdkClick={() => setIdkOpen(true)}
+            />
+          ) : null
+        }
+      >
+        {hasMessages ? <Thread messages={messages ?? []} /> : <EmptyState />}
+      </ChatWorkspaceLayout>
+
+      <IdkPopover
+        open={idkOpen}
+        onClose={() => setIdkOpen(false)}
+        onChoose={handleIdkChoose}
+      />
+    </>
   )
 }
