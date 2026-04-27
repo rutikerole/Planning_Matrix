@@ -7,6 +7,7 @@ import { Hero } from './components/Hero'
 import { Problem } from './components/Problem'
 import { Product } from './components/Product'
 import { Domains } from './components/Domains'
+import { Audience } from './components/Audience'
 import { Footer } from './components/Footer'
 
 export function LandingPage() {
@@ -26,6 +27,7 @@ export function LandingPage() {
         <Problem />
         <Product />
         <Domains />
+        <Audience />
       </main>
       <Footer />
       <GrainOverlay />
