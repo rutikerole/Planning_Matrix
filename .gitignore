@@ -30,3 +30,7 @@ dist-ssr
 
 # Deploy
 .vercel
+
+# Supabase CLI scratch (project ref, version cache, etc.)
+supabase/.temp/
+supabase/.branches/

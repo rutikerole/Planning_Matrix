@@ -337,7 +337,66 @@
       "greetingNone": "Willkommen.",
       "body": "Ihr Projekt-Workspace folgt in Kürze.",
       "ctaSoon": "Neues Projekt — bald verfügbar",
+      "ctaNew": "Neues Projekt",
       "signOut": "Abmelden"
+    }
+  },
+  "wizard": {
+    "title": "Neues Projekt · Planning Matrix",
+    "cancel": "Abbrechen",
+    "cancelConfirm": "Eingaben werden verworfen. Fortfahren?",
+    "progress": {
+      "label": "Schritt {{current}} von {{total}}"
+    },
+    "q1": {
+      "eyebrow": "Planning Matrix · Initialisierung · 1 / 2",
+      "headline": "Was möchten Sie bauen?",
+      "sub": "Wählen Sie die Option, die Ihrem Vorhaben am nächsten kommt.",
+      "options": {
+        "neubau_einfamilienhaus": "Neubau Einfamilienhaus",
+        "neubau_mehrfamilienhaus": "Neubau Mehrfamilienhaus",
+        "sanierung": "Sanierung",
+        "umnutzung": "Umnutzung",
+        "abbruch": "Abbruch",
+        "sonstige": "Sonstiges"
+      },
+      "unsureLink": "Ich bin mir nicht sicher",
+      "unsureExplanation": {
+        "neubau_einfamilienhaus": "Ein vollständig neues Wohnhaus für ein bis zwei Wohneinheiten, freistehend oder im Reihenhaus-Verbund.",
+        "neubau_mehrfamilienhaus": "Ein neues Wohngebäude mit drei oder mehr Wohneinheiten — meistens mit höherer Gebäudeklasse und strengerem Brandschutz.",
+        "sanierung": "Bauliche Veränderungen am Bestand: energetische Modernisierung, Grundrissänderung, Aufstockung. Oft anzeigepflichtig statt genehmigungspflichtig.",
+        "umnutzung": "Eine bestehende Immobilie soll künftig anders genutzt werden — z. B. Gewerbe zu Wohnen oder umgekehrt. Plant in der Regel eine erneute baurechtliche Prüfung.",
+        "abbruch": "Geplanter Rückbau eines Bestandsgebäudes. Anzeigepflicht nach Art. 57 Abs. 5 BayBO; bei denkmalgeschütztem Bestand zusätzliche Genehmigungen.",
+        "sonstige": "Ein anderes Vorhaben. Wir starten mit dem Standard-Template für Einfamilienhäuser und passen das im Gespräch an Ihre Situation an."
+      }
+    },
+    "q2": {
+      "eyebrow": "Planning Matrix · Initialisierung · 2 / 2",
+      "headline": "Haben Sie bereits ein Grundstück?",
+      "sub": "Wenn ja, geben Sie die Adresse oder die Flurstücksbezeichnung an. Wenn nein, fahren wir mit Annahmen fort.",
+      "yes": "Ja",
+      "no": "Nein",
+      "addressLabel": "Adresse oder Flurstück",
+      "addressPlaceholder": "z. B. Hauptstraße 12, 91054 Erlangen",
+      "addressHelper": "Wir nutzen die Adresse zur Recherche von Bebauungsplan und örtlichen Satzungen.",
+      "addressInvalid": "Bitte geben Sie eine vollständige Adresse mit Hausnummer und Postleitzahl an.",
+      "noPlotNotice": "Hinweis: Ohne Grundstück können wir das Planungsrecht (Bereich A) und sonstige Vorgaben (Bereich C) noch nicht ermitteln. Wir arbeiten zunächst mit Standardannahmen und markieren betroffene Bereiche entsprechend."
+    },
+    "back": "Zurück",
+    "submit": "Projekt anlegen",
+    "submitLoading": "Projekt wird angelegt …",
+    "transition": {
+      "eyebrow": "Planning Matrix · Vorbereitung",
+      "headline": "Wir bereiten Ihren Tisch vor.",
+      "body": "Einen Moment, bitte."
+    },
+    "errors": {
+      "insertFailed": "Projekt konnte nicht angelegt werden. Bitte versuchen Sie es erneut.",
+      "primingFailed": "Wir konnten das Team nicht erreichen. Bitte versuchen Sie es erneut."
+    },
+    "placeholder": {
+      "q1": "Optionen erscheinen mit Commit #9.",
+      "q2": "Adressfeld erscheint mit Commit #10."
     }
   },
   "legal": {

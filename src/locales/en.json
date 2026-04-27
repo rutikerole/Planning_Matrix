@@ -337,7 +337,66 @@
       "greetingNone": "Welcome.",
       "body": "Your project workspace is on the way.",
       "ctaSoon": "New project — coming soon",
+      "ctaNew": "New project",
       "signOut": "Sign out"
+    }
+  },
+  "wizard": {
+    "title": "New project · Planning Matrix",
+    "cancel": "Cancel",
+    "cancelConfirm": "Your answers will be discarded. Continue?",
+    "progress": {
+      "label": "Step {{current}} of {{total}}"
+    },
+    "q1": {
+      "eyebrow": "Planning Matrix · Initialization · 1 / 2",
+      "headline": "What would you like to build?",
+      "sub": "Pick the option closest to your project.",
+      "options": {
+        "neubau_einfamilienhaus": "New single-family home",
+        "neubau_mehrfamilienhaus": "New multi-family building",
+        "sanierung": "Renovation",
+        "umnutzung": "Change of use",
+        "abbruch": "Demolition",
+        "sonstige": "Other"
+      },
+      "unsureLink": "I'm not sure",
+      "unsureExplanation": {
+        "neubau_einfamilienhaus": "A fully new residential building with one or two units — detached or part of a row-house cluster.",
+        "neubau_mehrfamilienhaus": "A new residential building with three or more units — usually a higher building class with stricter fire-protection requirements.",
+        "sanierung": "Modifying an existing building: energy upgrades, floor-plan changes, adding a storey. Often a notification rather than a full permit.",
+        "umnutzung": "Repurposing an existing property — for example commercial to residential or vice versa. Typically triggers a fresh building-law assessment.",
+        "abbruch": "Planned demolition of an existing building. Notification under Art. 57 (5) BayBO; additional approvals if heritage-protected.",
+        "sonstige": "A different project. We'll start with the standard single-family-home template and adapt it in conversation."
+      }
+    },
+    "q2": {
+      "eyebrow": "Planning Matrix · Initialization · 2 / 2",
+      "headline": "Do you already have a plot?",
+      "sub": "If yes, enter the address or parcel reference. If no, we'll proceed with assumptions.",
+      "yes": "Yes",
+      "no": "No",
+      "addressLabel": "Address or parcel",
+      "addressPlaceholder": "e.g. Hauptstraße 12, 91054 Erlangen",
+      "addressHelper": "We use the address to research the development plan and local statutes.",
+      "addressInvalid": "Please enter a full address with house number and postal code.",
+      "noPlotNotice": "Note: without a plot we can't yet assess zoning (Area A) or other provisions (Area C). We start with standard assumptions and mark affected areas accordingly."
+    },
+    "back": "Back",
+    "submit": "Create project",
+    "submitLoading": "Creating project …",
+    "transition": {
+      "eyebrow": "Planning Matrix · Preparing",
+      "headline": "We are preparing your table.",
+      "body": "One moment, please."
+    },
+    "errors": {
+      "insertFailed": "Project couldn't be created. Please try again.",
+      "primingFailed": "We couldn't reach the team. Please try again."
+    },
+    "placeholder": {
+      "q1": "Options arrive in commit #9.",
+      "q2": "Address field arrives in commit #10."
     }
   },
   "legal": {

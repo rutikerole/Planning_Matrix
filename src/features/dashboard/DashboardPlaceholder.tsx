@@ -1,6 +1,8 @@
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
+import { Link } from 'react-router-dom'
 import { m, useReducedMotion } from 'framer-motion'
+import { ArrowRight } from 'lucide-react'
 import { Container } from '@/components/shared/Container'
 import { LanguageSwitcher } from '@/components/shared/LanguageSwitcher'
 import { Picture } from '@/components/shared/Picture'
@@ -89,21 +91,20 @@ export function DashboardPlaceholder() {
             className="block h-px w-16 bg-clay/55 mb-10"
           />
 
-          {/* Disabled CTA placeholder — calm signal that something's
-              coming, not an interactive element. aria-disabled keeps
-              it announced; tabIndex=-1 keeps it out of tab order. */}
-          <span
-            role="button"
-            aria-disabled="true"
-            tabIndex={-1}
-            className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-sm border border-clay/35 text-[13.5px] font-medium text-ink/55 cursor-not-allowed select-none"
+          {/* Real CTA — wizard entrypoint. Mirrors the existing primary
+              CtaButton chrome (h-11, ink fill, paper text, calm hover
+              lift) so it sits cleanly inside the dashboard placeholder
+              layout while the project list comes in a later phase. */}
+          <Link
+            to="/projects/new"
+            className="group inline-flex items-center gap-2 h-11 px-5 rounded-[5px] bg-ink text-paper text-[14px] font-medium tracking-tight transition-[background-color,color,box-shadow,transform] duration-soft ease-soft hover:bg-ink/92 shadow-[0_1px_0_hsl(var(--paper)/0.05)_inset,0_2px_4px_-1px_hsl(220_15%_11%/0.18)] hover:shadow-[0_1px_0_hsl(var(--paper)/0.05)_inset,0_8px_18px_-6px_hsl(220_15%_11%/0.32)] motion-safe:hover:-translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink focus-visible:ring-offset-2 focus-visible:ring-offset-background"
           >
-            <span
-              className="size-1.5 rounded-full bg-clay/55"
+            <span>{t('dashboard.placeholder.ctaNew')}</span>
+            <ArrowRight
               aria-hidden="true"
+              className="size-4 -mr-1 shrink-0 transition-transform duration-soft ease-soft group-hover:translate-x-0.5"
             />
-            {t('dashboard.placeholder.ctaSoon')}
-          </span>
+          </Link>
 
           {user?.email && (
             <p className="mt-12 text-xs text-ink/45 tracking-tight">
