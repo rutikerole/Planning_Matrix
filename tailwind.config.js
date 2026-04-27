@@ -148,12 +148,42 @@ export default {
           '0%': { opacity: '0', transform: 'translateY(12px)' },
           '100%': { opacity: '1', transform: 'translateY(0)' },
         },
+        'draw-path': {
+          '0%': { strokeDashoffset: '1' },
+          '100%': { strokeDashoffset: '0' },
+        },
+        'breath-dot': {
+          '0%, 100%': { transform: 'scale(1)', opacity: '0.7' },
+          '50%': { transform: 'scale(1.35)', opacity: '1' },
+        },
+        'travel-dot': {
+          '0%, 100%': { opacity: '0.28' },
+          '40%, 60%': { opacity: '1' },
+        },
+        'mesh-drift-a': {
+          '0%, 100%': { transform: 'translate(0, 0)' },
+          '50%': { transform: 'translate(60px, 40px)' },
+        },
+        'mesh-drift-b': {
+          '0%, 100%': { transform: 'translate(0, 0)' },
+          '50%': { transform: 'translate(-50px, 60px)' },
+        },
+        'mesh-drift-c': {
+          '0%, 100%': { transform: 'translate(0, 0)' },
+          '50%': { transform: 'translate(40px, -50px)' },
+        },
       },
       animation: {
         'accordion-down': 'accordion-down 220ms cubic-bezier(0.16, 1, 0.3, 1)',
         'accordion-up': 'accordion-up 200ms cubic-bezier(0.4, 0, 0.2, 1)',
         'hairline-draw': 'hairline-draw 1.4s cubic-bezier(0.16, 1, 0.3, 1) both',
         'fade-rise': 'fade-rise 0.9s cubic-bezier(0.16, 1, 0.3, 1) both',
+        'draw-path': 'draw-path 1.2s cubic-bezier(0.16, 1, 0.3, 1) both',
+        'breath-dot': 'breath-dot 8s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+        'travel-dot': 'travel-dot 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+        'mesh-drift-a': 'mesh-drift-a 30s ease-in-out infinite',
+        'mesh-drift-b': 'mesh-drift-b 35s ease-in-out infinite',
+        'mesh-drift-c': 'mesh-drift-c 40s ease-in-out infinite',
       },
     },
   },
