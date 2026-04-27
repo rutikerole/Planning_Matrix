@@ -6,6 +6,7 @@ import { Nav } from './components/Nav'
 import { Hero } from './components/Hero'
 import { Problem } from './components/Problem'
 import { Product } from './components/Product'
+import { Domains } from './components/Domains'
 import { Footer } from './components/Footer'
 
 export function LandingPage() {
@@ -24,6 +25,7 @@ export function LandingPage() {
         <Hero />
         <Problem />
         <Product />
+        <Domains />
       </main>
       <Footer />
       <GrainOverlay />
