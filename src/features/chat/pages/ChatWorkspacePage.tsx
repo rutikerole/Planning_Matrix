@@ -5,6 +5,7 @@ import { EmptyState } from '../components/EmptyState'
 import { LeftRail } from '../components/LeftRail'
 import { RightRail } from '../components/RightRail'
 import { Thread } from '../components/Thread'
+import { InputBar } from '../components/Input'
 import { useProject } from '../hooks/useProject'
 import { useMessages } from '../hooks/useMessages'
 
@@ -31,13 +32,30 @@ export function ChatWorkspacePage() {
   }, [project?.name])
 
   const hasMessages = (messages?.length ?? 0) > 0
+  const lastAssistant =
+    [...(messages ?? [])]
+      .reverse()
+      .find((m) => m.role === 'assistant') ?? null
 
   if (!project) return null
+
+  // Stub onSubmit for #16; real useChatTurn mutation lands in commit #19.
+  const handleSubmit = (payload: unknown) => {
+    if (import.meta.env.DEV) {
+      // eslint-disable-next-line no-console
+      console.info('[chat] submit (stub — wired in commit #19)', payload)
+    }
+  }
 
   return (
     <ChatWorkspaceLayout
       leftRail={<LeftRail project={project} messages={messages ?? []} />}
       rightRail={<RightRail project={project} />}
+      inputBar={
+        hasMessages ? (
+          <InputBar lastAssistant={lastAssistant} onSubmit={handleSubmit} />
+        ) : null
+      }
     >
       {hasMessages ? <Thread messages={messages ?? []} /> : <EmptyState />}
     </ChatWorkspaceLayout>

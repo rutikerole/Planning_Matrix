@@ -412,6 +412,37 @@
       "label": "Systemhinweis",
       "tag": "SYSTEM"
     },
+    "input": {
+      "send": "Senden",
+      "continue": "Weiter",
+      "text": {
+        "label": "Ihre Antwort",
+        "placeholder": "Ihre Antwort…"
+      },
+      "yesno": {
+        "yes": "Ja",
+        "no": "Nein"
+      },
+      "multi": {
+        "submit": "Weiter",
+        "minHint": "Mindestens eine Option wählen."
+      },
+      "address": {
+        "placeholder": "z. B. Hauptstraße 12, 91054 Erlangen",
+        "helper": "Wir nutzen die Adresse zur Recherche von Bebauungsplan und örtlichen Satzungen.",
+        "invalid": "Bitte geben Sie eine vollständige Adresse mit Hausnummer und Postleitzahl an."
+      },
+      "idk": {
+        "label": "Weiß ich nicht",
+        "research": "Recherche durchführen lassen",
+        "researchExplain": "Wir prüfen verfügbare Quellen und markieren das Ergebnis als Annahme.",
+        "assume": "Als Annahme markieren",
+        "assumeExplain": "Wir gehen vorerst von einer typischen Konstellation aus und können später korrigieren.",
+        "skip": "Zurückstellen",
+        "skipExplain": "Diese Frage parken wir; sie blockiert nichts Wesentliches."
+      },
+      "cooldownPrefix": "Zu viele Anfragen — neuer Versuch in"
+    },
     "atTheTableEmpty": "Noch keine Fachperson aktiv.",
     "preliminaryFooter": "Vorläufig — bestätigt durch eine/n bauvorlageberechtigte/n Architekt/in.",
     "gates": {
