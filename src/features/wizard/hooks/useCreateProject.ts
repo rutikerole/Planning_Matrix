@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { useQueryClient } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
 import { postChatTurn, ChatTurnError } from '@/lib/chatApi'
+import { useAuthStore } from '@/stores/authStore'
 import { useWizardState } from './useWizardState'
 import { selectTemplate, type Intent } from '../lib/selectTemplate'
 import { deriveName } from '../lib/deriveName'
@@ -50,11 +51,24 @@ export function useCreateProject() {
     setError(null)
     setStatus('inserting')
 
+    // RLS requires owner_id = auth.uid() on insert. Read the current
+    // user from the auth store; if it's not present, abort the wizard
+    // (ProtectedRoute should have prevented this, but defend in depth).
+    const ownerId = useAuthStore.getState().user?.id
+    if (!ownerId) {
+      // eslint-disable-next-line no-console
+      console.error('[wizard] no authenticated user — refusing INSERT')
+      setStatus('insertFailed')
+      setError(t('wizard.errors.insertFailed'))
+      return
+    }
+
     // ── 1. INSERT project ────────────────────────────────────────────
     const templateId = selectTemplate(input.intent)
     const { data: projectRow, error: insertErr } = await supabase
       .from('projects')
       .insert({
+        owner_id: ownerId,
         intent: input.intent,
         has_plot: input.hasPlot,
         plot_address: input.hasPlot ? input.plotAddress : null,
