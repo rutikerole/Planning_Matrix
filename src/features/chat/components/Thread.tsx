@@ -42,19 +42,31 @@ export function Thread({ messages }: Props) {
 
   return (
     <ol className="flex flex-col gap-8">
-      {messages.map((m, idx) => {
-        const isHistory = initialIdsRef.current?.has(m.id) ?? false
+      {messages.map((row, idx) => {
+        const isHistory = initialIdsRef.current?.has(row.id) ?? false
         const showDivider = idx > 0 && idx % 6 === 0
+        // Find the previous assistant message for match-cut detection.
+        let previousSpecialist: string | null = null
+        for (let j = idx - 1; j >= 0; j--) {
+          if (messages[j].role === 'assistant' && messages[j].specialist) {
+            previousSpecialist = messages[j].specialist
+            break
+          }
+        }
         return (
-          <li key={m.id} className="flex flex-col gap-8">
+          <li key={row.id} className="flex flex-col gap-8">
             {showDivider && (
               <span aria-hidden="true" className="block h-px bg-border-strong/30 my-2" />
             )}
-            {m.role === 'user' && <MessageUser message={m} />}
-            {m.role === 'assistant' && (
-              <MessageAssistant message={m} isHistory={isHistory} />
+            {row.role === 'user' && <MessageUser message={row} />}
+            {row.role === 'assistant' && (
+              <MessageAssistant
+                message={row}
+                isHistory={isHistory}
+                previousSpecialist={previousSpecialist}
+              />
             )}
-            {m.role === 'system' && <MessageSystem message={m} />}
+            {row.role === 'system' && <MessageSystem message={row} />}
           </li>
         )
       })}

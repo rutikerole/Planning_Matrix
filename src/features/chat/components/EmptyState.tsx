@@ -27,24 +27,26 @@ export function EmptyState() {
         {t('chat.empty.eyebrow')}
       </p>
 
-      <h1 className="font-display text-title-lg md:text-headline text-ink leading-[1.1] -tracking-[0.018em]">
+      {/* Polish Move 6 — chapter-heading weight, not a loading subtitle. */}
+      <h1 className="font-display text-display-3 md:text-display-2 text-ink leading-[1.05] -tracking-[0.022em]">
         {t('chat.empty.headline').replace(/\.$/, '')}
         <span className="text-clay">.</span>
       </h1>
 
-      <p className="text-body-lg text-ink/70 leading-relaxed">
+      <p className="text-body-lg text-ink/65 leading-relaxed">
         {t('chat.empty.body')}
       </p>
 
-      <div className="relative h-px w-32 bg-border-strong/30 overflow-hidden mt-4">
+      {/* Hairline opacity-loop, w-32. */}
+      <div className="relative h-px w-32 bg-border-strong/30 overflow-hidden mt-6">
         {!reduced && (
           <m.div
             aria-hidden="true"
-            className="absolute inset-y-0 w-12 bg-clay"
-            initial={{ x: -48 }}
-            animate={{ x: 128 }}
+            className="absolute inset-0 bg-clay"
+            initial={{ opacity: 0.2 }}
+            animate={{ opacity: [0.2, 0.6, 0.2] }}
             transition={{
-              duration: 1.6,
+              duration: 2.4,
               ease: [0.4, 0, 0.6, 1],
               repeat: Infinity,
             }}

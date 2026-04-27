@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { postChatTurn, ChatTurnError } from '@/lib/chatApi'
 import { useChatStore } from '@/stores/chatStore'
+import { thinkingLabelToSection } from '../lib/thinkingLabelToSection'
 import type { MessageRow, ProjectRow } from '@/types/db'
 import type { ChatTurnRequest, UserAnswer } from '@/types/chatTurn'
 import type { Specialist } from '@/types/projectState'
@@ -84,10 +85,17 @@ export function useChatTurn(projectId: string) {
         .find((m) => m.role === 'assistant')
       const seedSpecialist = (lastAssistant?.specialist ?? 'moderator') as Specialist
 
+      // Polish Move 4 — derive the right-rail section likely to update
+      // from the previous assistant turn's content + the user's input.
+      // Heuristic; falls back to top3 on a miss.
+      const heuristicSource =
+        (lastAssistant?.content_de ?? '') + ' ' + input.userMessage
+      const activitySection = thinkingLabelToSection(heuristicSource)
+
       // input_options of the assistant doesn't carry thinking_label (we
       // don't persist that). Use a generic "Das Team berät sich." until
       // the rotating-label loop in ThinkingIndicator takes over after 6s.
-      setThinking(true, seedSpecialist, null, null)
+      setThinking(true, seedSpecialist, null, activitySection)
 
       clearFailed(clientRequestId)
       // Clear any prior interstitial — the user is engaging again.
