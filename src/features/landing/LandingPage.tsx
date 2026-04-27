@@ -8,6 +8,7 @@ import { Problem } from './components/Problem'
 import { Product } from './components/Product'
 import { Domains } from './components/Domains'
 import { Audience } from './components/Audience'
+import { Trust } from './components/Trust'
 import { Footer } from './components/Footer'
 
 export function LandingPage() {
@@ -28,6 +29,7 @@ export function LandingPage() {
         <Product />
         <Domains />
         <Audience />
+        <Trust />
       </main>
       <Footer />
       <GrainOverlay />
