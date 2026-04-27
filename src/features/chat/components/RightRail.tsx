@@ -1,12 +1,13 @@
 import { useTranslation } from 'react-i18next'
 import { useAuthStore } from '@/stores/authStore'
 import { isAdminEmail } from '@/lib/cn-feature-flags'
-import type { AreaState, Fact, ProjectState } from '@/types/projectState'
+import type { AreaState, ProjectState } from '@/types/projectState'
 import type { ProjectRow } from '@/types/db'
 import { Top3 } from './Top3'
 import { ProceduresPanel } from './ProceduresPanel'
 import { DocumentsPanel } from './DocumentsPanel'
 import { RolesPanel } from './RolesPanel'
+import { EckdatenPanel } from './EckdatenPanel'
 
 interface Props {
   project: ProjectRow
@@ -27,7 +28,7 @@ export function RightRail({ project }: Props) {
     <div className="w-full flex flex-col px-5 py-7 gap-8">
       <Top3 recommendations={recommendations} />
       <AreasPanel state={state} />
-      <EckdatenPanel facts={facts} project={project} />
+      <EckdatenPanel project={project} facts={facts} />
 
       <ProceduresPanel procedures={state.procedures ?? []} />
       <DocumentsPanel documents={state.documents ?? []} />
@@ -106,64 +107,6 @@ function AreaDot({ state }: { state: AreaState }) {
       className="block size-1.5 rounded-full border border-clay/45 shrink-0"
       aria-hidden="true"
     />
-  )
-}
-
-// ── Eckdaten ────────────────────────────────────────────────────────
-
-function EckdatenPanel({
-  facts,
-  project,
-}: {
-  facts: Fact[]
-  project: ProjectRow
-}) {
-  const { t } = useTranslation()
-
-  const derived: { key: string; value: string; qualifier: string }[] = [
-    {
-      key: t('chat.rail.intentLabel'),
-      value: t(`wizard.q1.options.${project.intent}`),
-      qualifier: 'CLIENT · DECIDED',
-    },
-  ]
-  if (project.has_plot && project.plot_address) {
-    derived.push({
-      key: t('chat.rail.plotLabel'),
-      value: project.plot_address,
-      qualifier: 'CLIENT · DECIDED',
-    })
-  }
-
-  const fromState = facts.map((f) => ({
-    key: f.key,
-    value: typeof f.value === 'string' ? f.value : JSON.stringify(f.value),
-    qualifier: `${f.qualifier.source} · ${f.qualifier.quality}`,
-  }))
-
-  const all = [...derived, ...fromState].slice(0, 6)
-
-  return (
-    <div className="flex flex-col gap-3 border-t border-border/40 pt-6">
-      <p className="eyebrow text-foreground/60 text-[10px] tracking-[0.18em]">
-        {t('chat.rail.facts')}
-      </p>
-      <ul className="flex flex-col gap-5">
-        {all.map((row, idx) => (
-          <li key={`${row.key}-${idx}`} className="flex flex-col gap-1">
-            <span className="text-[10px] text-clay/85 uppercase tracking-[0.18em]">
-              {row.key}
-            </span>
-            <span className="text-[14px] font-medium text-ink leading-snug break-words">
-              {row.value}
-            </span>
-            <span className="text-[9px] text-clay/60 italic uppercase tracking-[0.14em] tabular-nums">
-              {row.qualifier}
-            </span>
-          </li>
-        ))}
-      </ul>
-    </div>
   )
 }
 
