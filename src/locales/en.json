@@ -190,7 +190,10 @@
     "cta": "Back to home"
   },
   "auth": {
-    "phraseSignIn": "From the first sketch to the permit.",
+    "phraseSignUp": "From the first sketch to the permit.",
+    "phraseSignIn": "Welcome back.",
+    "phraseForgot": "A fresh start.",
+    "phraseReset": "Newly set.",
     "phraseRecover": "Recommendation is not decision.",
     "phraseVerify": "Build with foresight.",
     "showPassword": "Show password",

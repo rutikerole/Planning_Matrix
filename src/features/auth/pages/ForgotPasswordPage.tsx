@@ -68,8 +68,8 @@ export function ForgotPasswordPage() {
 
   return (
     <AuthShell
-      photoStem="trust-pen"
-      phraseKey="auth.phraseRecover"
+      photoStem="domain-c-heritage"
+      phraseKey="auth.phraseForgot"
       titleKey="auth.forgot.title"
     >
       <AuthCard

@@ -102,7 +102,7 @@ export function SignInPage() {
 
   return (
     <AuthShell
-      photoStem="hero-rooftop"
+      photoStem="domain-b-facade"
       phraseKey="auth.phraseSignIn"
       titleKey="auth.signIn.title"
     >

@@ -54,7 +54,7 @@ export function AuthShell({ photoStem, phraseKey, titleKey, children }: Props) {
 
       <main
         id="auth-main"
-        className="relative w-full lg:w-1/2 flex items-center justify-center px-6 sm:px-10 lg:px-14 xl:px-20 pt-24 pb-12 lg:pt-32"
+        className="relative w-full lg:w-1/2 flex items-start justify-center px-6 sm:px-10 lg:px-14 xl:px-20 pt-24 sm:pt-28 lg:pt-[16vh] xl:pt-[18vh] pb-16 lg:pb-24"
       >
         {children}
       </main>

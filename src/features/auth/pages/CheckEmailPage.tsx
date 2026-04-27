@@ -88,7 +88,7 @@ export function CheckEmailPage() {
 
   return (
     <AuthShell
-      photoStem="finalcta-windows"
+      photoStem="trust-pen"
       phraseKey="auth.phraseVerify"
       titleKey="auth.checkEmail.title"
     >

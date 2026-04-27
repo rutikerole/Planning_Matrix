@@ -169,7 +169,7 @@ export function SignUpPage() {
   return (
     <AuthShell
       photoStem="hero-rooftop"
-      phraseKey="auth.phraseSignIn"
+      phraseKey="auth.phraseSignUp"
       titleKey="auth.signUp.title"
     >
       <AuthCard

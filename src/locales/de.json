@@ -190,7 +190,10 @@
     "cta": "Zur Startseite"
   },
   "auth": {
-    "phraseSignIn": "Vom ersten Strich bis zur Genehmigung.",
+    "phraseSignUp": "Vom ersten Strich bis zur Genehmigung.",
+    "phraseSignIn": "Willkommen zurück.",
+    "phraseForgot": "Ein neuer Anfang.",
+    "phraseReset": "Frisch gesetzt.",
     "phraseRecover": "Empfehlen heißt nicht entscheiden.",
     "phraseVerify": "Bauen Sie planbarer.",
     "showPassword": "Passwort anzeigen",

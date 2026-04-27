@@ -112,8 +112,8 @@ export function ResetPasswordPage() {
 
   return (
     <AuthShell
-      photoStem="trust-pen"
-      phraseKey="auth.phraseRecover"
+      photoStem="finalcta-windows"
+      phraseKey="auth.phraseReset"
       titleKey="auth.reset.title"
     >
       <AuthCard

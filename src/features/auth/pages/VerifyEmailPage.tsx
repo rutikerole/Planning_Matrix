@@ -128,7 +128,7 @@ export function VerifyEmailPage() {
 
   return (
     <AuthShell
-      photoStem="finalcta-windows"
+      photoStem="hero-altbau"
       phraseKey="auth.phraseVerify"
       titleKey="auth.verify.title"
     >
