@@ -87,6 +87,9 @@ export function ForgotPasswordPage() {
                 {t('auth.forgot.successBody')}
               </p>
             </div>
+            <p className="text-xs text-ink/55 leading-relaxed -mt-2">
+              {t('auth.forgot.successSpam')}
+            </p>
             <Link
               to="/sign-in"
               className="self-start text-sm text-ink/85 underline underline-offset-4 decoration-clay/55 hover:decoration-clay hover:text-ink transition-colors"
