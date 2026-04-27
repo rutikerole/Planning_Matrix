@@ -109,6 +109,15 @@ export function SignUpPage() {
         return
       }
 
+      // If Supabase is configured with "Confirm email" OFF (Phase 2
+      // configuration: instant signup → dashboard, email-verification
+      // is a Phase 3 problem), signUp returns a populated session and
+      // the user is already signed in. Skip /check-email entirely.
+      if (data.session) {
+        navigate(safeNext(searchParams.get('next')), { replace: true })
+        return
+      }
+
       navigate(`/check-email?email=${encodeURIComponent(values.email)}`)
     } catch (e) {
       console.error('[signUp] network', e)
