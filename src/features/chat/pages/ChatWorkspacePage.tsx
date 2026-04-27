@@ -7,6 +7,7 @@ import { RightRail } from '../components/RightRail'
 import { Thread } from '../components/Thread'
 import { InputBar } from '../components/Input'
 import { IdkPopover } from '../components/Input/IdkPopover'
+import { OfflineBanner } from '../components/Banners'
 import { buildUserMessageText } from '../lib/userAnswerHelpers'
 import { useProject } from '../hooks/useProject'
 import { useMessages } from '../hooks/useMessages'
@@ -63,6 +64,7 @@ export function ChatWorkspacePage() {
 
   return (
     <>
+      <OfflineBanner />
       <ChatWorkspaceLayout
         leftRail={<LeftRail project={project} messages={messages ?? []} />}
         rightRail={<RightRail project={project} />}

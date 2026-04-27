@@ -1,11 +1,14 @@
-import { useEffect, useRef } from 'react'
+import { useRef } from 'react'
 import { useParams } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
+import { m, AnimatePresence, useReducedMotion } from 'framer-motion'
 import { MessageUser } from './MessageUser'
 import { MessageAssistant } from './MessageAssistant'
 import { MessageSystem } from './MessageSystem'
 import { ThinkingIndicator } from './ThinkingIndicator'
 import { CompletionInterstitial } from './CompletionInterstitial'
 import { useChatStore } from '@/stores/chatStore'
+import { useAutoScroll } from '../hooks/useAutoScroll'
 import type { MessageRow } from '@/types/db'
 
 interface Props {
@@ -23,30 +26,19 @@ interface Props {
  * up + new-messages pill ship in batch 4.
  */
 export function Thread({ messages }: Props) {
+  const { t } = useTranslation()
+  const reduced = useReducedMotion()
   const isThinking = useChatStore((s) => s.isAssistantThinking)
   const { id } = useParams<{ id: string }>()
   const projectId = id ?? ''
   const initialIdsRef = useRef<Set<string> | null>(null)
 
-  // Snapshot the ids present at first render so subsequent messages
-  // (the ones the user actually saw arrive) animate, while history
-  // renders instantly.
   if (initialIdsRef.current === null) {
     initialIdsRef.current = new Set(messages.map((m) => m.id))
   }
 
-  // Auto-scroll on message-count change — but not on first mount, which
-  // already lands at the top of the freshly-rendered page.
-  const lastCountRef = useRef(messages.length)
-  useEffect(() => {
-    if (messages.length > lastCountRef.current) {
-      window.scrollTo({
-        top: document.documentElement.scrollHeight,
-        behavior: 'smooth',
-      })
-    }
-    lastCountRef.current = messages.length
-  }, [messages.length])
+  // Auto-scroll: drives the new-message pill via the paused flag.
+  const { paused, resume } = useAutoScroll([messages.length, isThinking])
 
   return (
     <ol className="flex flex-col gap-8">
@@ -76,6 +68,28 @@ export function Thread({ messages }: Props) {
           <CompletionInterstitial projectId={projectId} />
         </li>
       )}
+
+      {/* New-message pill — appears when auto-scroll has paused and a
+       * new turn lands. Click resumes scrolling to the latest. */}
+      <AnimatePresence>
+        {paused && (
+          <m.li
+            initial={reduced ? false : { opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={reduced ? { opacity: 0 } : { opacity: 0, y: 4 }}
+            transition={{ duration: reduced ? 0 : 0.2 }}
+            className="fixed bottom-28 left-1/2 -translate-x-1/2 z-30"
+          >
+            <button
+              type="button"
+              onClick={resume}
+              className="text-[11px] text-clay bg-paper border border-border-strong/55 rounded-sm px-3 py-1.5 shadow-[0_4px_16px_-4px_hsl(220_15%_11%/0.18)] hover:bg-muted/40 transition-colors duration-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+            >
+              {t('chat.newMessagePill')}
+            </button>
+          </m.li>
+        )}
+      </AnimatePresence>
     </ol>
   )
 }
