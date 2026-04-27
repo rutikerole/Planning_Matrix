@@ -232,7 +232,9 @@
       "noAccount": "Noch kein Konto?",
       "signUpLink": "Konto erstellen",
       "resetSuccessTitle": "Passwort geändert",
-      "resetSuccessBody": "Ihr Passwort wurde erfolgreich geändert. Bitte melden Sie sich mit dem neuen Passwort an."
+      "resetSuccessBody": "Ihr Passwort wurde erfolgreich geändert. Bitte melden Sie sich mit dem neuen Passwort an.",
+      "postSignupTitle": "Konto erstellt",
+      "postSignupBody": "Bitte melden Sie sich an, um fortzufahren."
     },
     "forgot": {
       "title": "Passwort vergessen · Planning Matrix",
@@ -244,6 +246,7 @@
       "submitLoading": "Wird gesendet …",
       "successTitle": "Prüfen Sie Ihren Posteingang",
       "successBody": "Falls ein Konto mit dieser E-Mail-Adresse existiert, haben wir Ihnen einen Link zum Zurücksetzen gesendet.",
+      "successSpam": "E-Mail nicht angekommen? Prüfen Sie auch den Spam-Ordner.",
       "backToSignIn": "Zurück zur Anmeldung"
     },
     "reset": {

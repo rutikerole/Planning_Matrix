@@ -232,7 +232,9 @@
       "noAccount": "No account yet?",
       "signUpLink": "Create account",
       "resetSuccessTitle": "Password changed",
-      "resetSuccessBody": "Your password was changed successfully. Please sign in with your new password."
+      "resetSuccessBody": "Your password was changed successfully. Please sign in with your new password.",
+      "postSignupTitle": "Account created",
+      "postSignupBody": "Please sign in to continue."
     },
     "forgot": {
       "title": "Forgot password · Planning Matrix",
@@ -244,6 +246,7 @@
       "submitLoading": "Sending …",
       "successTitle": "Check your inbox",
       "successBody": "If an account with this email exists, we've sent you a link to reset your password.",
+      "successSpam": "Didn't receive the email? Check your spam folder.",
       "backToSignIn": "Back to sign in"
     },
     "reset": {

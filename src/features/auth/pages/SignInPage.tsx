@@ -31,6 +31,7 @@ export function SignInPage() {
   const [submitting, setSubmitting] = useState(false)
 
   const resetSuccess = searchParams.get('reset') === 'success'
+  const postSignup = searchParams.get('postSignup') === '1'
   const prefilledEmail = searchParams.get('email') ?? ''
 
   // Already signed in → redirect
@@ -125,6 +126,19 @@ export function SignInPage() {
             </strong>
             <span className="text-ink/70">
               {t('auth.signIn.resetSuccessBody')}
+            </span>
+          </div>
+        )}
+        {postSignup && !resetSuccess && (
+          <div
+            role="status"
+            className="border-l-2 border-clay pl-3.5 py-2 text-sm text-ink/85 mb-6"
+          >
+            <strong className="block font-medium text-ink/95">
+              {t('auth.signIn.postSignupTitle')}
+            </strong>
+            <span className="text-ink/70">
+              {t('auth.signIn.postSignupBody')}
             </span>
           </div>
         )}
