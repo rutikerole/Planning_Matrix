@@ -157,7 +157,7 @@ export default {
           '50%': { transform: 'scale(1.35)', opacity: '1' },
         },
         'travel-dot': {
-          '0%, 100%': { opacity: '0.28' },
+          '0%, 100%': { opacity: '0.4' },
           '40%, 60%': { opacity: '1' },
         },
         'mesh-drift-a': {

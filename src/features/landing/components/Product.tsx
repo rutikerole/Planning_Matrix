@@ -41,7 +41,7 @@ export function Product() {
   const { t } = useTranslation()
   return (
     <Section id="product" bordered className="isolate">
-      <SectionBackdrop stem="threestep-blueprint" paperOpacity={0.92} />
+      <SectionBackdrop stem="threestep-blueprint" paperOpacity={0.92} parallax />
       <Container>
         <SectionHeader
           eyebrow={t('product.eyebrow')}
