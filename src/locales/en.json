@@ -345,6 +345,12 @@
     "title": "New project · Planning Matrix",
     "cancel": "Cancel",
     "cancelConfirm": "Your answers will be discarded. Continue?",
+    "cancelDialog": {
+      "title": "Discard your answers?",
+      "body": "Your answers so far will be discarded and you'll return to the dashboard.",
+      "confirm": "Discard",
+      "dismiss": "Back to wizard"
+    },
     "progress": {
       "label": "Step {{current}} of {{total}}"
     },

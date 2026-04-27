@@ -5,6 +5,7 @@ import { m, useReducedMotion } from 'framer-motion'
 import { LanguageSwitcher } from '@/components/shared/LanguageSwitcher'
 import { Wordmark } from '@/components/shared/Wordmark'
 import { ProgressDots } from './ProgressDots'
+import { ConfirmDialog } from './ConfirmDialog'
 import { useWizardState } from '../hooks/useWizardState'
 
 interface Props {
@@ -25,17 +26,17 @@ export function WizardShell({ step, totalSteps = 2, children }: Props) {
   const navigate = useNavigate()
   const reset = useWizardState((s) => s.reset)
   const reduced = useReducedMotion()
+  const [cancelOpen, setCancelOpen] = useState(false)
 
   useEffect(() => {
     document.title = t('wizard.title')
     document.documentElement.lang = i18n.resolvedLanguage ?? 'de'
   }, [t, i18n.resolvedLanguage])
 
-  // Cancel — for #8 we wire a simple confirm; the styled dialog with
-  // focus trap arrives in commit #12.
-  const handleCancel = () => {
-    const confirmed = window.confirm(t('wizard.cancelConfirm'))
-    if (!confirmed) return
+  const handleCancelClick = () => setCancelOpen(true)
+  const handleCancelDismiss = () => setCancelOpen(false)
+  const handleCancelConfirm = () => {
+    setCancelOpen(false)
     reset()
     navigate('/dashboard', { replace: true })
   }
@@ -50,15 +51,18 @@ export function WizardShell({ step, totalSteps = 2, children }: Props) {
     >
       <BlueprintReveal />
 
-      <header className="relative z-10 px-6 sm:px-10 lg:px-14 xl:px-20">
-        <div className="flex h-16 md:h-[72px] items-center justify-between">
+      <header className="relative z-10 px-4 sm:px-10 lg:px-14 xl:px-20">
+        <div className="flex h-16 md:h-[72px] items-center justify-between gap-3">
           <Wordmark size="sm" />
-          <div className="flex items-center gap-5">
+          <div className="flex items-center gap-3 sm:gap-5">
             <LanguageSwitcher />
-            <span className="h-4 w-px bg-border-strong/55" aria-hidden="true" />
+            <span
+              className="hidden sm:block h-4 w-px bg-border-strong/55"
+              aria-hidden="true"
+            />
             <button
               type="button"
-              onClick={handleCancel}
+              onClick={handleCancelClick}
               className="text-[13px] font-medium text-ink/65 hover:text-ink transition-colors duration-soft px-2 py-1.5 rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/35 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
             >
               {t('wizard.cancel')}
@@ -74,6 +78,16 @@ export function WizardShell({ step, totalSteps = 2, children }: Props) {
       <footer className="relative z-10 pb-10 flex items-center justify-center">
         <ProgressDots count={totalSteps} active={step} />
       </footer>
+
+      <ConfirmDialog
+        open={cancelOpen}
+        title={t('wizard.cancelDialog.title')}
+        body={t('wizard.cancelDialog.body')}
+        confirmLabel={t('wizard.cancelDialog.confirm')}
+        cancelLabel={t('wizard.cancelDialog.dismiss')}
+        onConfirm={handleCancelConfirm}
+        onCancel={handleCancelDismiss}
+      />
     </m.div>
   )
 }

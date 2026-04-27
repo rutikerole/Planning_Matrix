@@ -345,6 +345,12 @@
     "title": "Neues Projekt · Planning Matrix",
     "cancel": "Abbrechen",
     "cancelConfirm": "Eingaben werden verworfen. Fortfahren?",
+    "cancelDialog": {
+      "title": "Eingaben verwerfen?",
+      "body": "Ihre bisherigen Antworten werden verworfen und Sie kehren zum Dashboard zurück.",
+      "confirm": "Verwerfen",
+      "dismiss": "Zurück zum Wizard"
+    },
     "progress": {
       "label": "Schritt {{current}} von {{total}}"
     },
