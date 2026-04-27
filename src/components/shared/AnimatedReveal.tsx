@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import { motion, useReducedMotion } from 'framer-motion'
+import { m, useReducedMotion } from 'framer-motion'
 
 interface Props {
   children: ReactNode
@@ -28,8 +28,7 @@ export function AnimatedReveal({
     return <div className={className}>{children}</div>
   }
 
-  const Component =
-    as === 'span' ? motion.span : as === 'li' ? motion.li : motion.div
+  const Component = as === 'span' ? m.span : as === 'li' ? m.li : m.div
 
   return (
     <Component
