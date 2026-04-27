@@ -332,10 +332,11 @@
   "dashboard": {
     "placeholder": {
       "title": "Dashboard · Planning Matrix",
-      "eyebrow": "Your workspace",
+      "eyebrow": "Dashboard · in progress",
       "greeting": "Welcome, {{name}}.",
       "greetingNone": "Welcome.",
       "body": "Your project workspace is on the way.",
+      "ctaSoon": "New project — coming soon",
       "signOut": "Sign out"
     }
   },

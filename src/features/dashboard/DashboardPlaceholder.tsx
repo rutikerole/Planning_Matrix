@@ -8,16 +8,6 @@ import { Wordmark } from '@/components/shared/Wordmark'
 import { useAuth } from '@/hooks/useAuth'
 import { useAuthStore } from '@/stores/authStore'
 
-/**
- * Phase 2.5 will replace this with the actual dashboard / two-question
- * wizard. For Phase 2 it's a calm placeholder behind ProtectedRoute,
- * proving that auth + session + protected routing work end-to-end.
- *
- * Visual: warm-paper canvas with the finalcta-windows photo at ~8 %
- * opacity behind, eyebrow + Instrument Serif greeting personalised
- * with the user's first name, "Ihr Projekt-Workspace folgt in Kürze."
- * subtitle, account email small and secondary, calm fade-in on mount.
- */
 export function DashboardPlaceholder() {
   const { t, i18n } = useTranslation()
   const auth = useAuth()
@@ -32,29 +22,27 @@ export function DashboardPlaceholder() {
 
   return (
     <div className="min-h-dvh bg-paper relative isolate flex flex-col overflow-hidden">
-      {/* Atmospheric backdrop — finalcta-windows at ~8 % through a
-          paper overlay. "Lights are on, your workspace is open." */}
+      {/* Atmospheric backdrop — domain-a-aerial at ~6% through a heavy
+          paper overlay. The architect's view from above, faint enough
+          that the type still does the work. */}
       <div aria-hidden="true" className="absolute inset-0 -z-10 overflow-hidden">
         <Picture
-          stem="finalcta-windows"
+          stem="domain-a-aerial"
           alt=""
           loading="lazy"
           sizes="100vw"
           className="absolute inset-0 w-full h-full"
           imgClassName="absolute inset-0 w-full h-full object-cover object-center"
         />
-        <div className="absolute inset-0 bg-paper" style={{ opacity: 0.92 }} />
+        <div className="absolute inset-0 bg-paper" style={{ opacity: 0.94 }} />
       </div>
 
-      <header className="relative z-10 border-b border-clay/15 backdrop-blur-sm bg-[hsl(var(--paper)/0.55)]">
+      <header className="relative z-10 border-b border-clay/15 backdrop-blur-sm bg-[hsl(var(--paper)/0.6)]">
         <Container className="flex h-16 md:h-[72px] items-center justify-between">
           <Wordmark />
           <div className="flex items-center gap-5">
             <LanguageSwitcher />
-            <span
-              className="h-4 w-px bg-border-strong/55"
-              aria-hidden="true"
-            />
+            <span className="h-4 w-px bg-border-strong/55" aria-hidden="true" />
             <button
               type="button"
               onClick={() => void auth.signOut()}
@@ -71,25 +59,54 @@ export function DashboardPlaceholder() {
           initial={reduced ? false : { opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-          className="max-w-xl text-center flex flex-col items-center"
+          className="w-full max-w-xl text-center flex flex-col items-center"
         >
           <p className="eyebrow inline-flex items-center mb-7 text-foreground/65">
             <span className="accent-dot" aria-hidden="true" />
             {t('dashboard.placeholder.eyebrow')}
           </p>
 
-          <h1 className="font-display text-display-3 md:text-display-2 text-ink leading-[1.02] mb-8">
-            {firstName
-              ? t('dashboard.placeholder.greeting', { name: firstName })
-              : t('dashboard.placeholder.greetingNone')}
+          <h1 className="font-display text-display-3 md:text-display-2 text-ink leading-[1.02] mb-7">
+            {firstName ? (
+              <>
+                {t('dashboard.placeholder.greeting', { name: firstName }).replace(/\.$/, '')}
+                <span className="text-clay">.</span>
+              </>
+            ) : (
+              <>
+                {t('dashboard.placeholder.greetingNone').replace(/\.$/, '')}
+                <span className="text-clay">.</span>
+              </>
+            )}
           </h1>
 
-          <p className="text-body-lg text-ink/70 leading-relaxed max-w-md mb-12">
+          <p className="text-body-lg text-ink/70 leading-relaxed max-w-md mb-10">
             {t('dashboard.placeholder.body')}
           </p>
 
+          <span
+            aria-hidden="true"
+            className="block h-px w-16 bg-clay/55 mb-10"
+          />
+
+          {/* Disabled CTA placeholder — calm signal that something's
+              coming, not an interactive element. aria-disabled keeps
+              it announced; tabIndex=-1 keeps it out of tab order. */}
+          <span
+            role="button"
+            aria-disabled="true"
+            tabIndex={-1}
+            className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-sm border border-clay/35 text-[13.5px] font-medium text-ink/55 cursor-not-allowed select-none"
+          >
+            <span
+              className="size-1.5 rounded-full bg-clay/55"
+              aria-hidden="true"
+            />
+            {t('dashboard.placeholder.ctaSoon')}
+          </span>
+
           {user?.email && (
-            <p className="text-xs text-ink/45 tracking-tight">
+            <p className="mt-12 text-xs text-ink/45 tracking-tight">
               <span className="inline-block size-1 rounded-full bg-clay align-middle mr-2" />
               {user.email}
             </p>
