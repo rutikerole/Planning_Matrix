@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { Link } from 'react-router-dom'
 import { Menu } from 'lucide-react'
 import { Drawer } from 'vaul'
 import { cn } from '@/lib/utils'
@@ -78,12 +79,12 @@ export function Nav() {
             className="h-4 w-px bg-border-strong/55"
             aria-hidden="true"
           />
-          <a
-            href="#"
-            className="text-[13.5px] font-medium text-ink/80 hover:text-ink transition-colors duration-soft px-2 py-1.5 rounded-sm hover:bg-muted/45"
+          <Link
+            to="/sign-in"
+            className="text-[13.5px] font-medium text-ink/80 hover:text-ink transition-colors duration-soft px-2 py-1.5 rounded-sm hover:bg-muted/45 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/35 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
           >
             {t('common.ctaLogin')}
-          </a>
+          </Link>
           <CtaButton href={MAILTO} variant="primary">
             {t('common.ctaPrimary')}
           </CtaButton>
@@ -127,12 +128,12 @@ export function Nav() {
                     </Drawer.Close>
                   ))}
                   <Drawer.Close asChild>
-                    <a
-                      href="#"
+                    <Link
+                      to="/sign-in"
                       className="text-[15px] text-muted-foreground hover:text-ink py-3 mt-2"
                     >
                       {t('common.ctaLogin')}
-                    </a>
+                    </Link>
                   </Drawer.Close>
                   <Drawer.Close asChild>
                     <CtaButton
