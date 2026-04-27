@@ -39,6 +39,27 @@
     "step3Title": "Release",
     "step3Body": "Your certified architect reviews the recommendation. Only their release turns the suggestion into a plan."
   },
+  "mockups": {
+    "captureLabel": "Input",
+    "capturePrompt": "What do you want to build?",
+    "captureAnswer": "Apartment building, 6 units",
+    "captureFooter": "Question 2 / 2",
+    "captureNext": "Next",
+    "recommendLabel": "Recommendation",
+    "recommendTitle": "Permit path",
+    "recommendItem1": "Building application · simplified",
+    "recommendItem2": "Fire safety statement",
+    "recommendItem3": "Parking proof",
+    "recommendItem4": "Statics · Structural plan",
+    "recommendItem5": "Energy certificate (GEG)",
+    "recommendFooter": "5 recommendations",
+    "releaseLabel": "Release",
+    "releaseRole": "Architect",
+    "releaseName": "M. Müller",
+    "releaseChamber": "AKB Berlin · 142···",
+    "releaseFooter": "Ready to file",
+    "stampVerified": "VERIFIED"
+  },
   "domains": {
     "eyebrow": "The three dimensions",
     "heading": "How the system thinks.",

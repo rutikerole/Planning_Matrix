@@ -39,6 +39,27 @@
     "step3Title": "Freigeben",
     "step3Body": "Ihr zertifizierter Architekt prüft die Empfehlung. Erst seine Freigabe macht aus dem Vorschlag einen Plan."
   },
+  "mockups": {
+    "captureLabel": "Eingabe",
+    "capturePrompt": "Was möchten Sie bauen?",
+    "captureAnswer": "Mehrfamilienhaus, 6 WE",
+    "captureFooter": "Frage 2 / 2",
+    "captureNext": "Weiter",
+    "recommendLabel": "Empfehlung",
+    "recommendTitle": "Genehmigungspfad",
+    "recommendItem1": "Bauantrag · vereinfachtes Verfahren",
+    "recommendItem2": "Nachweis Brandschutz",
+    "recommendItem3": "Stellplatznachweis",
+    "recommendItem4": "Statik · Tragwerksplanung",
+    "recommendItem5": "Energieausweis (GEG)",
+    "recommendFooter": "5 Empfehlungen",
+    "releaseLabel": "Freigabe",
+    "releaseRole": "Architekt:in",
+    "releaseName": "M. Müller",
+    "releaseChamber": "AKB Berlin · 142···",
+    "releaseFooter": "Bereit zur Einreichung",
+    "stampVerified": "VERIFIED"
+  },
   "domains": {
     "eyebrow": "Die drei Dimensionen",
     "heading": "Wie das System denkt.",
