@@ -8,9 +8,9 @@ import type {
   AreaState,
   Fact,
   ProjectState,
-  Recommendation,
 } from '@/types/projectState'
 import type { ProjectRow } from '@/types/db'
+import { Top3 } from './Top3'
 
 interface Props {
   project: ProjectRow
@@ -26,7 +26,7 @@ interface Props {
 export function RightRail({ project }: Props) {
   const { t } = useTranslation()
   const state = (project.state ?? {}) as Partial<ProjectState>
-  const recommendations = (state.recommendations ?? []).slice(0, 3)
+  const recommendations = state.recommendations ?? []
   const facts = (state.facts ?? []).slice(-5).reverse()
 
   return (
@@ -59,43 +59,6 @@ export function RightRail({ project }: Props) {
       </button>
 
       <CostTicker projectState={state} />
-    </div>
-  )
-}
-
-// ── Top 3 ───────────────────────────────────────────────────────────
-
-function Top3({ recommendations }: { recommendations: Recommendation[] }) {
-  const { t, i18n } = useTranslation()
-  const lang = (i18n.resolvedLanguage ?? 'de') as 'de' | 'en'
-  return (
-    <div className="flex flex-col gap-3">
-      <p className="eyebrow text-foreground/60 text-[10px]">{t('chat.rail.top3')}</p>
-      {recommendations.length === 0 ? (
-        <p className="text-[12px] text-clay/70 italic leading-relaxed">
-          {t('chat.rail.empty')}
-        </p>
-      ) : (
-        <ol className="flex flex-col gap-3">
-          {recommendations.map((rec) => (
-            <li
-              key={rec.id}
-              className="flex flex-col gap-1.5 border border-border-strong/30 rounded-sm bg-paper px-3.5 py-3"
-            >
-              <p className="font-display text-[18px] text-ink leading-snug">
-                <span className="text-clay font-medium tabular-nums mr-2">{rec.rank}.</span>
-                {lang === 'en' ? rec.title_en : rec.title_de}
-              </p>
-              <p className="text-[13px] text-ink/70 leading-relaxed">
-                {lang === 'en' ? rec.detail_en : rec.detail_de}
-              </p>
-              <p className="text-[10px] text-clay/75 italic mt-1">
-                {t('chat.preliminaryFooter')}
-              </p>
-            </li>
-          ))}
-        </ol>
-      )}
     </div>
   )
 }
