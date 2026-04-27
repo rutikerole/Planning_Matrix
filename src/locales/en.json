@@ -410,10 +410,36 @@
     "atTheTable": "At the table",
     "system": {
       "label": "System note",
-      "tag": "SYSTEM"
+      "tag": "SYSTEM",
+      "fallbackTemplateNotice": "You picked \"Other\". We start with the standard single-family-home template and adapt it as we talk."
     },
     "thinking": {
       "staticLabel": "thinking…"
+    },
+    "newMessagePill": "New message",
+    "banner": {
+      "offline": "Offline — your input will send once the connection returns."
+    },
+    "completion": {
+      "label": "Team note",
+      "invite": "Invite architect",
+      "openOverview": "Open full overview",
+      "viewAreas": "View areas",
+      "continue": "Continue",
+      "pause": "Pause project",
+      "inviteStub": "This feature is coming soon.",
+      "needs_designer": {
+        "tag": "Hand-off",
+        "body": "At this point we need a certified architect authorised to submit applications. You can share the project now or pause it for the moment."
+      },
+      "ready_for_review": {
+        "tag": "Checkpoint",
+        "body": "We've reached a solid interim point. You can review the current state or continue the consultation."
+      },
+      "blocked": {
+        "tag": "Pause",
+        "body": "We need further input to continue. Please complete the flagged areas or pause the project."
+      }
     },
     "status": {
       "nicht_erforderlich": "not required",

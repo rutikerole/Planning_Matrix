@@ -410,10 +410,30 @@
     "atTheTable": "Am Tisch",
     "system": {
       "label": "Systemhinweis",
-      "tag": "SYSTEM"
+      "tag": "SYSTEM",
+      "fallbackTemplateNotice": "Sie haben „Sonstiges“ gewählt. Wir arbeiten zunächst mit dem Standard-Template für Einfamilienhaus und passen das im Gespräch an."
     },
     "thinking": {
       "staticLabel": "denkt nach…"
+    },
+    "newMessagePill": "Neue Nachricht",
+    "banner": {
+      "offline": "Offline — Eingaben werden bei erneuter Verbindung gesendet."
+    },
+    "overview": {
+      "titlePrefix": "Übersicht",
+      "eyebrow": "Vollständige Übersicht",
+      "close": "Schließen",
+      "facts": "Eckdaten",
+      "factsEmpty": "Noch keine Fakten extrahiert.",
+      "areas": "Bereiche",
+      "procedures": "Verfahren",
+      "documents": "Dokumente",
+      "requiredFor": "Erforderlich für",
+      "roles": "Fachplaner",
+      "recommendations": "Empfehlungen",
+      "audit": "Audit",
+      "auditEmpty": "Noch keine Ereignisse protokolliert."
     },
     "status": {
       "nicht_erforderlich": "nicht erforderlich",

@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { ChatWorkspaceLayout } from '../components/ChatWorkspaceLayout'
 import { EmptyState } from '../components/EmptyState'
 import { LeftRail } from '../components/LeftRail'
@@ -14,6 +15,7 @@ import { useMessages } from '../hooks/useMessages'
 import { useChatTurn } from '../hooks/useChatTurn'
 import { useChatStore } from '@/stores/chatStore'
 import type { UserAnswer } from '@/types/chatTurn'
+import type { MessageRow } from '@/types/db'
 
 /**
  * /projects/:id workspace. ProjectGuard upstream has already verified
@@ -26,6 +28,7 @@ import type { UserAnswer } from '@/types/chatTurn'
  * commit #15; rails populate in commit #14.
  */
 export function ChatWorkspacePage() {
+  const { t } = useTranslation()
   const { id } = useParams<{ id: string }>()
   const projectId = id ?? ''
   const { data: project } = useProject(projectId)
@@ -36,6 +39,36 @@ export function ChatWorkspacePage() {
       document.title = `${project.name} · Planning Matrix`
     }
   }, [project?.name])
+
+  // D12 — when intent is "sonstige", surface a calm in-thread SYSTEM
+  // notice on the very first turn that the standard T-01 template is in
+  // use. Client-side only — never persisted.
+  const augmentedMessages = useMemo<MessageRow[]>(() => {
+    if (!messages || !project) return messages ?? []
+    if (project.intent !== 'sonstige') return messages
+    if (messages.length === 0) return messages
+    const synthetic: MessageRow = {
+      id: 'system:sonstige-notice',
+      project_id: projectId,
+      role: 'system',
+      specialist: null,
+      content_de: t('chat.system.fallbackTemplateNotice'),
+      content_en: t('chat.system.fallbackTemplateNotice', { lng: 'en' }),
+      input_type: null,
+      input_options: null,
+      allow_idk: null,
+      user_answer: null,
+      client_request_id: null,
+      model: null,
+      input_tokens: null,
+      output_tokens: null,
+      cache_read_tokens: null,
+      cache_write_tokens: null,
+      latency_ms: null,
+      created_at: messages[0].created_at,
+    }
+    return [synthetic, ...messages]
+  }, [messages, project, projectId, t])
 
   const hasMessages = (messages?.length ?? 0) > 0
   const lastAssistant =
@@ -79,7 +112,7 @@ export function ChatWorkspacePage() {
           ) : null
         }
       >
-        {hasMessages ? <Thread messages={messages ?? []} /> : <EmptyState />}
+        {hasMessages ? <Thread messages={augmentedMessages} /> : <EmptyState />}
       </ChatWorkspaceLayout>
 
       <IdkPopover
