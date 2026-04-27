@@ -408,6 +408,10 @@
   "chat": {
     "leaveProject": "Projekt verlassen",
     "atTheTable": "Am Tisch",
+    "system": {
+      "label": "Systemhinweis",
+      "tag": "SYSTEM"
+    },
     "atTheTableEmpty": "Noch keine Fachperson aktiv.",
     "preliminaryFooter": "Vorläufig — bestätigt durch eine/n bauvorlageberechtigte/n Architekt/in.",
     "gates": {
