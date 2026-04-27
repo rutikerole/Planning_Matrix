@@ -4,18 +4,33 @@ import { AnimatePresence, m, useReducedMotion } from 'framer-motion'
 import { cn } from '@/lib/utils'
 import { useWizardState } from '../hooks/useWizardState'
 import { isPlotAddressValid } from '../lib/plotValidation'
+import type { Intent } from '../lib/selectTemplate'
+
+interface Props {
+  /** Submit handler — orchestrates INSERT + first-turn priming + navigate. */
+  onSubmit: (input: {
+    intent: Intent
+    hasPlot: boolean
+    plotAddress: string | null
+  }) => Promise<void> | void
+  /** Optional submit error from the orchestrator (e.g. INSERT failed). */
+  submitError: string | null
+}
 
 /**
  * I-02 — "Haben Sie bereits ein Grundstück?". Two-pill toggle (Ja/Nein),
  * a conditional address input that slides in for "Ja", a calm clay
- * notice for "Nein". The primary CTA is rendered + disabled-state-
- * managed here; the actual submit handler (project insert + first-turn
- * priming) lands in commit #11.
+ * notice for "Nein". Primary CTA Projekt anlegen calls onSubmit when
+ * valid; insert errors surface inline above the back/submit row. The
+ * "submitting" visual state is owned by the wizard root, which swaps to
+ * TransitionScreen the moment INSERT begins — QuestionPlot never sees
+ * an in-flight state.
  */
-export function QuestionPlot() {
+export function QuestionPlot({ onSubmit, submitError }: Props) {
   const { t } = useTranslation()
   const reduced = useReducedMotion()
 
+  const intent = useWizardState((s) => s.intent)
   const hasPlot = useWizardState((s) => s.hasPlot)
   const plotAddress = useWizardState((s) => s.plotAddress)
   const setPlotChoice = useWizardState((s) => s.setPlotChoice)
@@ -36,21 +51,20 @@ export function QuestionPlot() {
   const addressValid = isPlotAddressValid(plotAddress)
   const showAddressError = touched && hasPlot === true && !addressValid
   const canSubmit =
-    hasPlot === false || (hasPlot === true && addressValid)
+    intent !== null &&
+    (hasPlot === false || (hasPlot === true && addressValid))
 
   const handleSubmit = () => {
+    if (!intent) return
     if (!canSubmit) {
       setTouched(true)
       return
     }
-    // Wired in commit #11 — project insert + first-turn priming + route.
-    if (import.meta.env.DEV) {
-      // eslint-disable-next-line no-console
-      console.info('[wizard] submit', {
-        hasPlot,
-        plotAddress: hasPlot ? plotAddress.trim() : null,
-      })
-    }
+    void onSubmit({
+      intent,
+      hasPlot: hasPlot === true,
+      plotAddress: hasPlot === true ? plotAddress.trim() : null,
+    })
   }
 
   return (
@@ -178,6 +192,16 @@ export function QuestionPlot() {
           </m.div>
         )}
       </AnimatePresence>
+
+      {/* Inline submit error — INSERT failure surfaces here. */}
+      {submitError && (
+        <p
+          role="alert"
+          className="text-sm text-destructive/85 leading-relaxed border-l-2 border-destructive/40 pl-4 py-1"
+        >
+          {submitError}
+        </p>
+      )}
 
       {/* Back + submit row */}
       <div className="flex items-center justify-between gap-4 pt-2 flex-wrap">
