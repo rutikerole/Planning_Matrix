@@ -55,12 +55,10 @@ export function ForgotPasswordPage() {
         }
         // For any other error: still show generic success — don't leak
         // whether the email is registered. Log for debugging.
-        // eslint-disable-next-line no-console
         console.warn('[forgotPassword]', error)
       }
       setSuccess(true)
     } catch (e) {
-      // eslint-disable-next-line no-console
       console.error('[forgotPassword] network', e)
       setServerError(t('auth.errors.network'))
     } finally {

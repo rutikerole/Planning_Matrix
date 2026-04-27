@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useAuth } from '@/hooks/useAuth'
-import { useAuthStore } from '@/stores/authStore'
 import { isSupabaseConfigured, supabase } from '@/lib/supabase'
 import {
   forgotPasswordSchema,
@@ -31,22 +30,19 @@ export function VerifyEmailPage() {
   const { t } = useTranslation()
   const navigate = useNavigate()
   const auth = useAuth()
-  const { user } = useAuthStore()
 
-  const [phase, setPhase] = useState<Phase>('loading')
+  const [phase, setPhase] = useState<Phase>(() =>
+    isSupabaseConfigured() ? 'loading' : 'error',
+  )
   const [serverError, setServerError] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
 
   // Within VERIFY_TIMEOUT_MS we expect the Supabase client's
-  // detectSessionInUrl to exchange ?code=… and emit SIGNED_IN. If a
-  // session shows up — either through that exchange or because the
-  // user was already signed in from a prior session — we treat it as
-  // success and redirect to dashboard.
+  // detectSessionInUrl to exchange ?code=… and emit SIGNED_IN. The
+  // INITIAL_SESSION callback also covers idempotent re-visits where
+  // the user was already signed in from a prior session.
   useEffect(() => {
-    if (!isSupabaseConfigured()) {
-      setPhase('error')
-      return
-    }
+    if (!isSupabaseConfigured()) return
 
     let cleared = false
     const timer = window.setTimeout(() => {
@@ -77,18 +73,6 @@ export function VerifyEmailPage() {
     }
   }, [navigate])
 
-  // If we already have a user when this page mounts (idempotent re-visit),
-  // show success and redirect.
-  useEffect(() => {
-    if (user && phase === 'loading') {
-      setPhase('success')
-      window.setTimeout(
-        () => navigate('/dashboard', { replace: true }),
-        REDIRECT_AFTER_SUCCESS_MS,
-      )
-    }
-  }, [user, phase, navigate])
-
   const form = useForm<ForgotPasswordInput>({
     resolver: zodResolver(forgotPasswordSchema),
     defaultValues: { email: '' },
@@ -112,14 +96,12 @@ export function VerifyEmailPage() {
           setServerError(t('auth.errors.rateLimit'))
           return
         }
-        // eslint-disable-next-line no-console
         console.warn('[verifyEmail] resend', error)
         setServerError(t('auth.errors.unexpected'))
         return
       }
       setPhase('resent')
     } catch (e) {
-      // eslint-disable-next-line no-console
       console.error('[verifyEmail] resend network', e)
       setServerError(t('auth.errors.network'))
     } finally {

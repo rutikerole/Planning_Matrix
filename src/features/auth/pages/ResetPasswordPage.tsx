@@ -28,7 +28,9 @@ export function ResetPasswordPage() {
   const navigate = useNavigate()
   const auth = useAuth()
 
-  const [phase, setPhase] = useState<Phase>('waiting')
+  const [phase, setPhase] = useState<Phase>(() =>
+    isSupabaseConfigured() ? 'waiting' : 'invalid',
+  )
   const [serverError, setServerError] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
 
@@ -37,10 +39,7 @@ export function ResetPasswordPage() {
   // doesn't fire, the link is invalid / expired / opened on a different
   // device, and we surface the corresponding state.
   useEffect(() => {
-    if (!isSupabaseConfigured()) {
-      setPhase('invalid')
-      return
-    }
+    if (!isSupabaseConfigured()) return
 
     let cleared = false
     const timer = window.setTimeout(() => {
@@ -92,7 +91,6 @@ export function ResetPasswordPage() {
           setServerError(t('auth.reset.sessionExpiredBody'))
           return
         }
-        // eslint-disable-next-line no-console
         console.error('[resetPassword]', error)
         setServerError(t('auth.errors.unexpected'))
         return
@@ -105,7 +103,6 @@ export function ResetPasswordPage() {
         navigate('/sign-in?reset=success', { replace: true })
       }, 2500)
     } catch (e) {
-      // eslint-disable-next-line no-console
       console.error('[resetPassword] network', e)
       setServerError(t('auth.errors.network'))
     } finally {

@@ -27,6 +27,17 @@ export function AuthShell({ photoStem, phraseKey, titleKey, children }: Props) {
 
   useEffect(() => {
     document.title = t(titleKey)
+    // Sync <html lang> for screen readers and search engines.
+    document.documentElement.lang = i18n.resolvedLanguage ?? 'de'
+    // Mirror to og:title and og:url for any in-page social-share UX
+    // (full unfurl support requires SSR/prerender — Phase 3).
+    const setMeta = (selector: string, value: string) => {
+      const el = document.querySelector(selector)
+      if (el) el.setAttribute('content', value)
+    }
+    setMeta('meta[property="og:title"]', t(titleKey))
+    setMeta('meta[name="twitter:title"]', t(titleKey))
+    setMeta('meta[property="og:url"]', window.location.href)
   }, [t, titleKey, i18n.resolvedLanguage])
 
   return (

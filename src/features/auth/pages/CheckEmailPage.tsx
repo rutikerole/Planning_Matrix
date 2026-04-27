@@ -63,7 +63,6 @@ export function CheckEmailPage() {
         ) {
           setServerError(t('auth.errors.rateLimit'))
         } else {
-          // eslint-disable-next-line no-console
           console.warn('[checkEmail] resend', error)
           setServerError(t('auth.errors.unexpected'))
         }
@@ -72,7 +71,6 @@ export function CheckEmailPage() {
       setInfo(t('auth.checkEmail.resendSent'))
       setCooldown(COOLDOWN_SECONDS)
     } catch (e) {
-      // eslint-disable-next-line no-console
       console.error('[checkEmail] resend network', e)
       setServerError(t('auth.errors.network'))
     }

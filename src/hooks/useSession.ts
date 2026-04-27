@@ -37,7 +37,6 @@ export function useSession(): void {
       if (error) {
         // Don't crash the app if the profile row is missing or RLS
         // misbehaves. Auth still works on `user` alone.
-        // eslint-disable-next-line no-console
         console.warn('[auth] failed to load profile:', error.message)
         setProfile(null)
         return

@@ -198,6 +198,12 @@ Click **Save** on the Confirm signup template.
 
 Click **Save** on the Reset Password template.
 
+### 5c. A note on the "From" sender identity
+
+Until Phase 3 (custom SMTP), the "From" header on every email Supabase sends will be the platform default — typically `noreply@mail.app.supabase.io` or similar. This is **fine for v1 development and pilot users** but is visibly **not Planning Matrix**, so test recipients shouldn't be surprised when the email arrives from a `supabase.io` address.
+
+Phase 3 will swap this out via custom SMTP (Resend / Postmark / AWS SES — Resend has a co-published guide with Supabase). At that point the From line becomes `Planning Matrix <noreply@planning-matrix.app>` or whichever sender-domain we provision. Until then: `supabase.io` is what testers will see, and that's expected.
+
 ---
 
 ## Step 6 — Add environment variables

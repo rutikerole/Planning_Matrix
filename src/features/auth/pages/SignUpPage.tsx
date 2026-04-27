@@ -88,7 +88,6 @@ export function SignUpPage() {
             message: 'auth.errors.passwordTooShort',
           })
         } else {
-          // eslint-disable-next-line no-console
           console.error('[signUp]', error)
           setServerError(t('auth.errors.unexpected'))
         }
@@ -112,7 +111,6 @@ export function SignUpPage() {
 
       navigate(`/check-email?email=${encodeURIComponent(values.email)}`)
     } catch (e) {
-      // eslint-disable-next-line no-console
       console.error('[signUp] network', e)
       setServerError(t('auth.errors.network'))
     } finally {

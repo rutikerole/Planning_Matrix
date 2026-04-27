@@ -85,7 +85,6 @@ export function SignInPage() {
           setServerError(t('auth.errors.rateLimit'))
           return
         }
-        // eslint-disable-next-line no-console
         console.error('[signIn]', error)
         setServerError(t('auth.errors.unexpected'))
         return
@@ -93,7 +92,6 @@ export function SignInPage() {
 
       navigate(safeNext(searchParams.get('next')), { replace: true })
     } catch (e) {
-      // eslint-disable-next-line no-console
       console.error('[signIn] network', e)
       setServerError(t('auth.errors.network'))
     } finally {
