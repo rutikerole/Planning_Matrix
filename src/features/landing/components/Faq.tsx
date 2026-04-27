@@ -36,7 +36,7 @@ export function Faq() {
                         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink focus-visible:ring-offset-2 focus-visible:ring-offset-background',
                       )}
                     >
-                      <span className="font-display text-title md:text-title-lg text-ink leading-[1.18] pr-6 transition-colors duration-soft group-hover:text-clay">
+                      <span className="font-display text-title md:text-title-lg text-ink leading-[1.18] pr-6 transition-colors duration-soft group-hover:text-clay group-data-[state=open]:text-clay">
                         {t(`faq.q${n}`)}
                       </span>
                       <span

@@ -35,8 +35,8 @@ export function Audience() {
         <div className="mt-20 md:mt-24 grid grid-cols-1 md:grid-cols-3 gap-px bg-border md:overflow-hidden">
           {CARDS.map((card, i) => (
             <AnimatedReveal key={card.tag} delay={i * 0.07}>
-              <article className="group relative h-full bg-background hover:bg-muted/40 transition-colors duration-calm ease-calm">
-                {/* Top hairline that picks up clay on hover */}
+              <article className="group relative h-full bg-background transition-[background-color,transform,box-shadow] duration-soft ease-soft hover:bg-muted/40 motion-safe:hover:-translate-y-1 motion-safe:hover:shadow-[0_22px_42px_-20px_hsl(220_15%_11%/0.16)]">
+                {/* Top hairline — picks up clay on hover */}
                 <span
                   aria-hidden="true"
                   className="absolute inset-x-8 top-0 h-px bg-border-strong group-hover:bg-clay transition-colors duration-soft"
@@ -49,7 +49,13 @@ export function Audience() {
                     />
                     {t(card.tag)}
                   </p>
-                  <h3 className="font-display text-title md:text-title-lg text-ink leading-[1.15]">
+                  <h3 className="relative font-display text-title md:text-title-lg text-ink leading-[1.15]">
+                    <span
+                      aria-hidden="true"
+                      className="absolute -left-6 top-[6px] md:top-2 inline-flex w-4 items-center justify-center text-[18px] text-clay opacity-0 -translate-x-1 group-hover:opacity-100 motion-safe:group-hover:translate-x-0 transition-[transform,opacity] duration-soft ease-soft leading-none"
+                    >
+                      →
+                    </span>
                     {t(card.title)}
                   </h3>
                   <p className="text-body-lg text-muted-foreground leading-relaxed">

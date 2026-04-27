@@ -60,7 +60,8 @@ export function Footer() {
           <p className="text-[13px] text-muted-foreground tabular-nums">
             <span
               aria-hidden="true"
-              className="inline-block size-1 rounded-full bg-clay align-middle mr-2.5"
+              className="inline-block size-1 rounded-full bg-clay align-middle mr-2.5 animate-breath-dot"
+              style={{ transformOrigin: 'center' }}
             />
             v0.1 · in Pilotphase
           </p>
