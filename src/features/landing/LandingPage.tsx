@@ -7,6 +7,7 @@ import { Hero } from './components/Hero'
 import { Problem } from './components/Problem'
 import { Product } from './components/Product'
 import { Domains } from './components/Domains'
+import { Demo } from './components/Demo'
 import { Audience } from './components/Audience'
 import { Trust } from './components/Trust'
 import { Pricing } from './components/Pricing'
@@ -31,6 +32,7 @@ export function LandingPage() {
         <Problem />
         <Product />
         <Domains />
+        <Demo />
         <Audience />
         <Trust />
         <Pricing />
