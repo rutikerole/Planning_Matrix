@@ -1,0 +1,11 @@
+# Supabase project config — Edge Function settings.
+#
+# verify_jwt = true is the platform default, but we set it explicitly so
+# the requirement is documented in code and will not silently flip if the
+# CLI default ever changes. Anything reaching chat-turn has already been
+# validated as an authenticated Supabase session by the platform; the
+# function additionally builds its Supabase client from the bearer token
+# so RLS enforcement is the sole authorisation boundary.
+
+[functions.chat-turn]
+verify_jwt = true
