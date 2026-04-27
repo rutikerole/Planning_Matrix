@@ -109,22 +109,46 @@ export function SignUpPage() {
         return
       }
 
-      // If Supabase is configured with "Confirm email" OFF (Phase 2
-      // configuration: instant signup → dashboard, email-verification
-      // is a Phase 3 problem), signUp returns a populated session and
-      // the user is already signed in. Skip /check-email entirely.
-      if (data.session) {
-        navigate(safeNext(searchParams.get('next')), { replace: true })
-        return
+      // Phase 2 v1: the autoconfirm trigger (supabase/migrations/
+      // 0002_autoconfirm.sql) flips email_confirmed_at = now() at the
+      // instant the auth.users row is inserted. By the time this code
+      // runs, the user is confirmed in the database — but signUp's
+      // own response was already prepared and may come back with
+      // session=null. So:
+      //
+      //   • If signUp returned a session, use it directly.
+      //   • If it didn't, immediately try signInWithPassword. The
+      //     trigger has already confirmed the user, so the signin
+      //     should succeed and yield a session.
+      //   • If even that fails (genuine email-confirmation requirement
+      //     somehow re-engaged), fall through to /check-email as a
+      //     defensive last resort.
+      //
+      // Either successful path leaves submitting=true; the auth store
+      // SIGNED_IN handler triggers the redirect-when-signed-in
+      // useEffect at the top of this component, which navigates to
+      // safeNext(?next=) — and the component unmounts.
+      if (!data.session) {
+        const { error: signInError } = await auth.signIn({
+          email: values.email,
+          password: values.password,
+        })
+        if (signInError) {
+          navigate(`/check-email?email=${encodeURIComponent(values.email)}`)
+          return
+        }
       }
-
-      navigate(`/check-email?email=${encodeURIComponent(values.email)}`)
+      // session present (or signin just succeeded) — the redirect
+      // useEffect handles navigation via the store update.
     } catch (e) {
       console.error('[signUp] network', e)
       setServerError(t('auth.errors.network'))
-    } finally {
       setSubmitting(false)
     }
+    // No finally{} — happy path leaves submitting=true so the form
+    // stays disabled until the auth store settles and the redirect
+    // useEffect navigates away. Error paths set submitting=false
+    // explicitly above.
   }
 
   const emailErrorKey = errors.email?.message
