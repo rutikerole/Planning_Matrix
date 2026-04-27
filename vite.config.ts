@@ -11,7 +11,32 @@ export default defineConfig({
     },
   },
   build: {
-    // Single SPA bundle; ~175 kB gzipped is acceptable for this marketing page.
     chunkSizeWarningLimit: 800,
+    rollupOptions: {
+      output: {
+        // Split vendors so the browser fetches in parallel and caches
+        // aggressively. Demo is lazy-loaded separately via React.lazy.
+        manualChunks(id) {
+          if (!id.includes('node_modules')) return
+          if (id.includes('framer-motion')) return 'motion'
+          if (id.includes('@radix-ui')) return 'radix'
+          if (
+            id.includes('i18next') ||
+            id.includes('react-i18next')
+          ) {
+            return 'i18n'
+          }
+          if (
+            id.includes('/react/') ||
+            id.includes('/react-dom/') ||
+            id.includes('/react-router-dom/') ||
+            id.includes('/react-router/') ||
+            id.includes('/scheduler/')
+          ) {
+            return 'react-vendor'
+          }
+        },
+      },
+    },
   },
 })
