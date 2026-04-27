@@ -1,16 +1,17 @@
+import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { useAuthStore } from '@/stores/authStore'
-import { isAdminEmail } from '@/lib/cn-feature-flags'
 import type { AreaState, ProjectState } from '@/types/projectState'
-import type { ProjectRow } from '@/types/db'
+import type { MessageRow, ProjectRow } from '@/types/db'
 import { Top3 } from './Top3'
 import { ProceduresPanel } from './ProceduresPanel'
 import { DocumentsPanel } from './DocumentsPanel'
 import { RolesPanel } from './RolesPanel'
 import { EckdatenPanel } from './EckdatenPanel'
+import { CostTicker } from './CostTicker'
 
 interface Props {
   project: ProjectRow
+  messages: MessageRow[]
 }
 
 /**
@@ -18,7 +19,7 @@ interface Props {
  * + Procedures / Documents / Roles panels (#21) + CostTicker. Dossier
  * register per Polish Move 3.
  */
-export function RightRail({ project }: Props) {
+export function RightRail({ project, messages }: Props) {
   const { t } = useTranslation()
   const state = (project.state ?? {}) as Partial<ProjectState>
   const recommendations = state.recommendations ?? []
@@ -36,15 +37,14 @@ export function RightRail({ project }: Props) {
 
       <div className="flex-1" />
 
-      <button
-        type="button"
-        disabled
-        className="text-[12px] text-clay/65 hover:text-ink underline underline-offset-4 decoration-clay/55 self-start cursor-not-allowed disabled:opacity-70"
+      <Link
+        to={`/projects/${project.id}/overview`}
+        className="text-[12px] text-clay/85 hover:text-ink underline underline-offset-4 decoration-clay/55 self-start transition-colors duration-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm"
       >
         {t('chat.rail.openOverview')}
-      </button>
+      </Link>
 
-      <CostTicker projectState={state} />
+      <CostTicker messages={messages} />
     </div>
   )
 }
@@ -110,16 +110,3 @@ function AreaDot({ state }: { state: AreaState }) {
   )
 }
 
-// ── Cost ticker ─────────────────────────────────────────────────────
-
-function CostTicker({ projectState: _projectState }: { projectState: Partial<ProjectState> }) {
-  const user = useAuthStore((s) => s.user)
-  if (!isAdminEmail(user?.email)) return null
-  // Real running total + breakdown tooltip in #28; this remains a
-  // placeholder confirming the admin gate works.
-  return (
-    <p className="text-[9px] text-clay/65 tabular-nums italic text-right">
-      ≈ 0 Tokens · 0,00 USD
-    </p>
-  )
-}

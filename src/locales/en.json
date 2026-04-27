@@ -417,6 +417,14 @@
       "staticLabel": "thinking…"
     },
     "newMessagePill": "New message",
+    "cost": {
+      "breakdown": "Breakdown",
+      "input": "Input",
+      "output": "Output",
+      "cacheRead": "Cache read",
+      "cacheWrite": "Cache write",
+      "usd": "Estimated cost"
+    },
     "banner": {
       "offline": "Offline — your input will send once the connection returns."
     },

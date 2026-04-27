@@ -417,6 +417,14 @@
       "staticLabel": "denkt nach…"
     },
     "newMessagePill": "Neue Nachricht",
+    "cost": {
+      "breakdown": "Aufschlüsselung",
+      "input": "Eingabe",
+      "output": "Ausgabe",
+      "cacheRead": "Cache-Lesen",
+      "cacheWrite": "Cache-Schreiben",
+      "usd": "Geschätzte Kosten"
+    },
     "banner": {
       "offline": "Offline — Eingaben werden bei erneuter Verbindung gesendet."
     },

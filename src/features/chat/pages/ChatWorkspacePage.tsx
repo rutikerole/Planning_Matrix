@@ -100,7 +100,7 @@ export function ChatWorkspacePage() {
       <OfflineBanner />
       <ChatWorkspaceLayout
         leftRail={<LeftRail project={project} messages={messages ?? []} />}
-        rightRail={<RightRail project={project} />}
+        rightRail={<RightRail project={project} messages={messages ?? []} />}
         inputBar={
           hasMessages ? (
             <InputBar
