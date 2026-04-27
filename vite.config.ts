@@ -10,4 +10,8 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
     },
   },
+  build: {
+    // Single SPA bundle; ~175 kB gzipped is acceptable for this marketing page.
+    chunkSizeWarningLimit: 800,
+  },
 })

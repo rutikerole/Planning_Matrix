@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useLayoutEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import * as TabsPrimitive from '@radix-ui/react-tabs'
 import { AnimatePresence, m, useReducedMotion } from 'framer-motion'
@@ -61,11 +61,36 @@ const TABS: TabDef[] = [
 ]
 
 export function Domains() {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const [active, setActive] = useState<TabKey>('A')
   const reduced = useReducedMotion()
 
-  const activeTab = TABS.find((t) => t.key === active) ?? TABS[0]
+  const triggersRef = useRef<Record<TabKey, HTMLButtonElement | null>>({
+    A: null,
+    B: null,
+    C: null,
+  })
+  const [bounds, setBounds] = useState<{ x: number; width: number }>({
+    x: 0,
+    width: 0,
+  })
+  const [bootstrapped, setBootstrapped] = useState(false)
+
+  // Recompute indicator position on tab change, language change, or window resize.
+  useLayoutEffect(() => {
+    const measure = () => {
+      const el = triggersRef.current[active]
+      if (el) {
+        setBounds({ x: el.offsetLeft, width: el.offsetWidth })
+        setBootstrapped(true)
+      }
+    }
+    measure()
+    window.addEventListener('resize', measure)
+    return () => window.removeEventListener('resize', measure)
+  }, [active, i18n.resolvedLanguage])
+
+  const activeTab = TABS.find((tab) => tab.key === active) ?? TABS[0]
 
   return (
     <Section id="domains" bordered>
@@ -83,43 +108,46 @@ export function Domains() {
           >
             <TabsPrimitive.List
               aria-label={t('domains.heading')}
-              className="flex flex-wrap gap-x-1 gap-y-2 border-b border-border"
+              className="relative flex flex-wrap gap-x-1 gap-y-2 border-b border-border"
             >
               {TABS.map((tab) => (
                 <TabsPrimitive.Trigger
                   key={tab.key}
                   value={tab.key}
+                  ref={(el) => {
+                    triggersRef.current[tab.key] = el
+                  }}
                   id={`domain-tab-${tab.key}`}
                   aria-controls={`domain-panel-${tab.key}`}
                   className={cn(
-                    'group relative inline-flex items-center px-1 sm:px-2 py-4 text-sm md:text-[15px] font-medium tracking-tight transition-colors duration-soft',
-                    'mr-4 sm:mr-8',
-                    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm',
+                    'relative inline-flex items-center px-1 sm:px-2 py-4 text-sm md:text-[15px] font-medium tracking-tight transition-colors duration-soft mr-4 sm:mr-8 rounded-sm',
+                    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink focus-visible:ring-offset-2 focus-visible:ring-offset-background',
                     active === tab.key
                       ? 'text-ink'
                       : 'text-muted-foreground hover:text-ink',
                   )}
                 >
-                  <span>{t(tab.i18nLabel)}</span>
-                  {active === tab.key &&
-                    (reduced ? (
-                      <span
-                        aria-hidden="true"
-                        className="pointer-events-none absolute inset-x-0 -bottom-px h-[2px] bg-clay"
-                      />
-                    ) : (
-                      <m.span
-                        layoutId="domain-tab-indicator"
-                        aria-hidden="true"
-                        className="pointer-events-none absolute inset-x-0 -bottom-px h-[2px] bg-clay"
-                        transition={{
-                          duration: 0.45,
-                          ease: [0.16, 1, 0.3, 1],
-                        }}
-                      />
-                    ))}
+                  {t(tab.i18nLabel)}
                 </TabsPrimitive.Trigger>
               ))}
+
+              {/* Sliding clay indicator */}
+              {bootstrapped &&
+                (reduced ? (
+                  <span
+                    aria-hidden="true"
+                    style={{ left: bounds.x, width: bounds.width }}
+                    className="pointer-events-none absolute -bottom-px h-[2px] bg-clay"
+                  />
+                ) : (
+                  <m.span
+                    aria-hidden="true"
+                    initial={false}
+                    animate={{ x: bounds.x, width: bounds.width }}
+                    transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+                    className="pointer-events-none absolute left-0 -bottom-px h-[2px] bg-clay"
+                  />
+                ))}
             </TabsPrimitive.List>
 
             <div
