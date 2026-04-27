@@ -9,29 +9,38 @@
 //   4. Per-request Supabase client scoped to the caller via the bearer
 //      token — every downstream query runs as the user, RLS-enforced.
 //   5. Load project + last 30 messages.
-//   6. Insert user message (if userMessage present).
+//   6. Insert user message, idempotently. If the unique partial index
+//      on (project_id, client_request_id) fires, look up the existing
+//      row; if there's an assistant message past it, short-circuit.
 //   7. Build messages array + live-state block, call Anthropic with
-//      forced tool_choice respond.
+//      forced tool_choice respond. Retry once on malformed tool input
+//      (callAnthropicWithRetry).
 //   8. Apply state mutations via projectStateHelpers.
 //   9. Insert assistant message.
-//  10. UPDATE project (state).
+//  10. UPDATE project (state) + best-effort project_events row.
 //  11. Return { ok: true, assistantMessage, projectState, costInfo }.
 //
-// Idempotency on duplicate user-message inserts (ON CONFLICT) and
-// retry-once-on-malformed-tool-input land in commit 7.
+// Every error envelope carries a requestId for log correlation.
 // ───────────────────────────────────────────────────────────────────────
 
 import { createClient } from '@supabase/supabase-js'
 import { buildCorsHeaders } from './cors.ts'
 import { buildSystemBlocks, buildLiveStateBlock } from './systemPrompt.ts'
-import { callAnthropic, estimateCostUsd, UpstreamError } from './anthropic.ts'
+import {
+  callAnthropicWithRetry,
+  estimateCostUsd,
+  UpstreamError,
+} from './anthropic.ts'
 import { MODEL } from './toolSchema.ts'
 import {
   loadProjectAndMessages,
-  insertUserMessage,
+  insertUserMessageOrFetchExisting,
   insertAssistantMessage,
   updateProjectState,
   mapMessagesForAnthropic,
+  findAssistantAfter,
+  logTurnEvent,
+  type MessageRow,
 } from './persistence.ts'
 import {
   hydrateProjectState,
@@ -41,33 +50,30 @@ import {
   chatTurnRequestSchema,
   type ChatTurnError,
   type ChatTurnResponse,
+  type AssistantMessageRow,
 } from '../../../src/types/chatTurn.ts'
-import type { Specialist, TemplateId } from '../../../src/types/projectState.ts'
+import type { ProjectState, Specialist, TemplateId } from '../../../src/types/projectState.ts'
 
 Deno.serve(async (req: Request) => {
+  const requestId = crypto.randomUUID()
   const origin = req.headers.get('Origin')
   const corsHeaders = buildCorsHeaders(origin)
+
+  const respond = (error: ChatTurnError, status: number) =>
+    jsonResponse({ ...error, requestId }, status, corsHeaders)
 
   // ── CORS preflight ────────────────────────────────────────────────
   if (req.method === 'OPTIONS') {
     return new Response(null, { status: 204, headers: corsHeaders })
   }
   if (req.method !== 'POST') {
-    return jsonResponse(
-      { code: 'validation', message: 'POST required' },
-      405,
-      corsHeaders,
-    )
+    return respond({ code: 'validation', message: 'POST required' }, 405)
   }
 
   // ── Auth ──────────────────────────────────────────────────────────
   const authHeader = req.headers.get('Authorization')
   if (!authHeader?.startsWith('Bearer ')) {
-    return jsonResponse(
-      { code: 'unauthenticated', message: 'Missing bearer token' },
-      401,
-      corsHeaders,
-    )
+    return respond({ code: 'unauthenticated', message: 'Missing bearer token' }, 401)
   }
 
   // ── Body ──────────────────────────────────────────────────────────
@@ -75,19 +81,11 @@ Deno.serve(async (req: Request) => {
   try {
     raw = await req.json()
   } catch {
-    return jsonResponse(
-      { code: 'validation', message: 'Invalid JSON body' },
-      400,
-      corsHeaders,
-    )
+    return respond({ code: 'validation', message: 'Invalid JSON body' }, 400)
   }
   const parsed = chatTurnRequestSchema.safeParse(raw)
   if (!parsed.success) {
-    return jsonResponse(
-      { code: 'validation', message: parsed.error.message },
-      400,
-      corsHeaders,
-    )
+    return respond({ code: 'validation', message: parsed.error.message }, 400)
   }
   const { projectId, userMessage, userAnswer, clientRequestId } = parsed.data
 
@@ -96,14 +94,13 @@ Deno.serve(async (req: Request) => {
   const supabaseUrl = Deno.env.get('SUPABASE_URL')
   const anonKey = Deno.env.get('SUPABASE_ANON_KEY')
   if (!apiKey || !supabaseUrl || !anonKey) {
-    return jsonResponse(
+    return respond(
       {
         code: 'internal',
         message:
           'Missing function env (ANTHROPIC_API_KEY / SUPABASE_URL / SUPABASE_ANON_KEY).',
       },
       500,
-      corsHeaders,
     )
   }
 
@@ -115,35 +112,70 @@ Deno.serve(async (req: Request) => {
 
   const { data: userData, error: userErr } = await supabase.auth.getUser()
   if (userErr || !userData?.user) {
-    return jsonResponse(
-      { code: 'unauthenticated', message: 'Invalid session' },
-      401,
-      corsHeaders,
-    )
+    return respond({ code: 'unauthenticated', message: 'Invalid session' }, 401)
   }
+
+  console.log(
+    `[chat-turn] [${requestId}] user=${userData.user.id} project=${projectId}`,
+  )
 
   // ── Load project + messages ──────────────────────────────────────
   const loadResult = await loadProjectAndMessages(supabase, projectId)
   if (!loadResult.ok) {
-    return jsonResponse(loadResult.error, loadResult.status, corsHeaders)
+    return respond(loadResult.error, loadResult.status)
   }
   const { project, messages: history } = loadResult
   const templateId = project.template_id as TemplateId
   const currentState = hydrateProjectState(project.state, templateId)
 
-  // ── Insert user message (if any) ─────────────────────────────────
-  const allRows = [...history]
+  // ── Insert user message (with idempotency) ───────────────────────
+  const allRows: MessageRow[] = [...history]
+  let userRow: MessageRow | null = null
   if (userMessage) {
-    const userInsert = await insertUserMessage(supabase, {
+    const userInsert = await insertUserMessageOrFetchExisting(supabase, {
       projectId,
       content: userMessage,
       userAnswer,
       clientRequestId,
     })
     if (!userInsert.ok) {
-      return jsonResponse(userInsert.error, 500, corsHeaders)
+      return respond(userInsert.error, userInsert.error.code === 'idempotency_replay' ? 409 : 500)
     }
-    allRows.push(userInsert.row)
+    userRow = userInsert.row
+
+    // Idempotency short-circuit: same client_request_id, prior turn
+    // already produced an assistant response. Return the cached pair
+    // without re-calling Anthropic.
+    if (userInsert.replayed) {
+      const cachedAssistant = await findAssistantAfter(
+        supabase,
+        projectId,
+        userRow.created_at,
+      )
+      if (cachedAssistant) {
+        console.log(
+          `[chat-turn] [${requestId}] idempotent replay — returning cached assistant ${cachedAssistant.id}`,
+        )
+        return respondSuccess(
+          cachedAssistant as unknown as AssistantMessageRow,
+          currentState,
+          {
+            inputTokens: cachedAssistant.input_tokens ?? 0,
+            outputTokens: cachedAssistant.output_tokens ?? 0,
+            cacheReadTokens: cachedAssistant.cache_read_tokens ?? 0,
+            cacheWriteTokens: cachedAssistant.cache_write_tokens ?? 0,
+          },
+          cachedAssistant.latency_ms ?? 0,
+          corsHeaders,
+        )
+      }
+      // No assistant past the user msg — last run crashed before
+      // persisting the response. Fall through and call Anthropic again.
+      console.log(
+        `[chat-turn] [${requestId}] idempotent retry detected; no cached assistant — calling Anthropic`,
+      )
+    }
+    allRows.push(userRow)
   }
 
   // ── Build messages array for Anthropic ───────────────────────────
@@ -171,16 +203,17 @@ Deno.serve(async (req: Request) => {
     lastSpecialist,
   })
 
-  // ── Anthropic call ───────────────────────────────────────────────
+  // ── Anthropic call (with one retry on malformed tool input) ──────
   let anthropicResult
   try {
-    anthropicResult = await callAnthropic({
+    anthropicResult = await callAnthropicWithRetry({
       apiKey,
       systemBlocks: buildSystemBlocks(liveStateText),
       messages: anthropicMessages,
     })
   } catch (err) {
-    return jsonResponse(translateUpstream(err), upstreamStatus(err), corsHeaders)
+    console.error(`[chat-turn] [${requestId}] upstream error`, err)
+    return respond(translateUpstream(err), upstreamStatus(err))
   }
   const { toolInput, usage, latencyMs } = anthropicResult
 
@@ -196,20 +229,54 @@ Deno.serve(async (req: Request) => {
     latencyMs,
   })
   if (!assistantInsert.ok) {
-    return jsonResponse(assistantInsert.error, 500, corsHeaders)
+    return respond(assistantInsert.error, 500)
   }
 
   // ── Persist state ────────────────────────────────────────────────
   const stateUpdate = await updateProjectState(supabase, projectId, newState)
   if (!stateUpdate.ok) {
-    return jsonResponse(stateUpdate.error, 500, corsHeaders)
+    return respond(stateUpdate.error, 500)
   }
 
-  // ── Done ─────────────────────────────────────────────────────────
-  const response: ChatTurnResponse = {
+  // ── Audit (best-effort, never blocks the response) ───────────────
+  await logTurnEvent(supabase, {
+    projectId,
+    beforeState: currentState,
+    afterState: newState,
+    reason: toolInput.completion_signal ?? null,
+  })
+
+  console.log(
+    `[chat-turn] [${requestId}] ok specialist=${toolInput.specialist} latency=${latencyMs}ms tokens(in/out/cR/cW)=${usage.inputTokens}/${usage.outputTokens}/${usage.cacheReadTokens}/${usage.cacheWriteTokens}`,
+  )
+
+  return respondSuccess(
+    assistantInsert.row,
+    newState,
+    usage,
+    latencyMs,
+    corsHeaders,
+  )
+})
+
+// ── Helpers ──────────────────────────────────────────────────────────
+
+function respondSuccess(
+  assistantMessage: AssistantMessageRow,
+  projectState: ProjectState,
+  usage: {
+    inputTokens: number
+    outputTokens: number
+    cacheReadTokens: number
+    cacheWriteTokens: number
+  },
+  latencyMs: number,
+  corsHeaders: Record<string, string>,
+): Response {
+  const body: ChatTurnResponse = {
     ok: true,
-    assistantMessage: assistantInsert.row,
-    projectState: newState,
+    assistantMessage,
+    projectState,
     costInfo: {
       inputTokens: usage.inputTokens,
       outputTokens: usage.outputTokens,
@@ -219,13 +286,11 @@ Deno.serve(async (req: Request) => {
       usdEstimate: estimateCostUsd(usage),
     },
   }
-  return new Response(JSON.stringify(response), {
+  return new Response(JSON.stringify(body), {
     status: 200,
     headers: { 'Content-Type': 'application/json', ...corsHeaders },
   })
-})
-
-// ── Helpers ──────────────────────────────────────────────────────────
+}
 
 function jsonResponse(
   error: ChatTurnError,
@@ -239,7 +304,9 @@ function jsonResponse(
   })
 }
 
-function findLastSpecialist(rows: { role: string; specialist: string | null }[]): Specialist | null {
+function findLastSpecialist(
+  rows: { role: string; specialist: string | null }[],
+): Specialist | null {
   for (let i = rows.length - 1; i >= 0; i--) {
     const r = rows[i]
     if (r.role === 'assistant' && r.specialist) {

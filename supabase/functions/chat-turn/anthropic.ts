@@ -227,6 +227,41 @@ function mapSdkError(err: unknown): never {
 }
 
 /**
+ * Wrap callAnthropic with a single retry on UpstreamError('invalid_response').
+ * The retry appends a stricter system reminder so the model knows to
+ * re-emit the tool call with the correct shape. If the second attempt
+ * also fails, the error bubbles to index.ts which translates it into
+ * a model_response_invalid envelope for the SPA.
+ *
+ * Note: 429 / 529 / 5xx / timeout are NOT retried here — those signal
+ * upstream load and need backoff at the SPA layer, not an immediate
+ * second hit.
+ */
+export async function callAnthropicWithRetry(
+  args: CallAnthropicArgs,
+): Promise<CallAnthropicResult> {
+  try {
+    return await callAnthropic(args)
+  } catch (err) {
+    if (err instanceof UpstreamError && err.code === 'invalid_response') {
+      const reminder = {
+        type: 'text' as const,
+        text:
+          'KORREKTUR: Ihre vorherige Antwort hat das Werkzeug `respond` nicht im erwarteten Format aufgerufen. ' +
+          'Pflichtfelder sind: `specialist`, `message_de`, `message_en`, `input_type`. ' +
+          'Bei `recommendations_delta`, `procedures_delta`, `documents_delta` und `roles_delta` muss jedes Element zusätzlich `op` (`upsert` oder `remove`) und `id` enthalten. ' +
+          'Bitte rufen Sie das Werkzeug erneut auf, ausschließlich mit zulässigen Feldern.',
+      }
+      return await callAnthropic({
+        ...args,
+        systemBlocks: [...args.systemBlocks, reminder],
+      })
+    }
+    throw err
+  }
+}
+
+/**
  * Estimate USD cost from a usage record. The SDK reports input_tokens
  * exclusive of cached portions (cache reads/writes are separate
  * counters), so we sum four buckets at four prices.

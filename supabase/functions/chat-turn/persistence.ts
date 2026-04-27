@@ -125,11 +125,22 @@ export async function loadProjectAndMessages(
   return { ok: true, project: project as ProjectRow, messages }
 }
 
-// ── Insert: user message ───────────────────────────────────────────────
+// ── Insert: user message (with idempotency) ────────────────────────────
 
 export type InsertResult<T> = { ok: true; row: T } | { ok: false; error: ChatTurnError }
 
-export async function insertUserMessage(
+export type UserInsertResult =
+  | { ok: true; row: MessageRow; replayed: boolean }
+  | { ok: false; error: ChatTurnError }
+
+/**
+ * Insert a user message, treating the unique partial index on
+ * (project_id, client_request_id) as the idempotency key. On conflict
+ * (Postgres 23505), look up the existing row and return it with
+ * `replayed: true` so the caller can short-circuit instead of calling
+ * Anthropic again.
+ */
+export async function insertUserMessageOrFetchExisting(
   supabase: SupabaseClient,
   args: {
     projectId: string
@@ -137,7 +148,7 @@ export async function insertUserMessage(
     userAnswer: UserAnswer | null
     clientRequestId: string
   },
-): Promise<InsertResult<MessageRow>> {
+): Promise<UserInsertResult> {
   const { data, error } = await supabase
     .from('messages')
     .insert({
@@ -150,19 +161,79 @@ export async function insertUserMessage(
     .select('*')
     .single()
 
-  if (error) {
-    // Unique-constraint conflict on (project_id, client_request_id) is
-    // handled in #7 via a fall-through to the existing assistant row.
-    // For now any DB error surfaces as persistence_failed.
+  if (!error) {
+    return { ok: true, row: data as MessageRow, replayed: false }
+  }
+
+  // 23505 = unique_violation. Anything else surfaces as persistence_failed.
+  if (error.code === '23505') {
+    const existing = await findExistingUserMessage(
+      supabase,
+      args.projectId,
+      args.clientRequestId,
+    )
+    if (existing) {
+      return { ok: true, row: existing, replayed: true }
+    }
     return {
       ok: false,
       error: {
-        code: 'persistence_failed',
-        message: `insertUserMessage: ${error.message}`,
+        code: 'idempotency_replay',
+        message:
+          'Unique conflict on client_request_id but existing row not visible (likely RLS). Refusing to silently overwrite.',
       },
     }
   }
-  return { ok: true, row: data as MessageRow }
+
+  return {
+    ok: false,
+    error: {
+      code: 'persistence_failed',
+      message: `insertUserMessage: ${error.message}`,
+    },
+  }
+}
+
+/**
+ * Look up a user message by its idempotency key. Returns null if not
+ * found (or if RLS hides it).
+ */
+export async function findExistingUserMessage(
+  supabase: SupabaseClient,
+  projectId: string,
+  clientRequestId: string,
+): Promise<MessageRow | null> {
+  const { data } = await supabase
+    .from('messages')
+    .select('*')
+    .eq('project_id', projectId)
+    .eq('client_request_id', clientRequestId)
+    .maybeSingle()
+  return (data as MessageRow | null) ?? null
+}
+
+/**
+ * Find the first assistant message strictly after a given timestamp.
+ * Used to detect "this turn was already processed" — if an assistant
+ * row sits past the user message's created_at, the previous run made
+ * it through and we short-circuit instead of paying for another
+ * Anthropic call.
+ */
+export async function findAssistantAfter(
+  supabase: SupabaseClient,
+  projectId: string,
+  afterCreatedAt: string,
+): Promise<MessageRow | null> {
+  const { data } = await supabase
+    .from('messages')
+    .select('*')
+    .eq('project_id', projectId)
+    .eq('role', 'assistant')
+    .gt('created_at', afterCreatedAt)
+    .order('created_at', { ascending: true })
+    .limit(1)
+    .maybeSingle()
+  return (data as MessageRow | null) ?? null
 }
 
 // ── Insert: assistant message ──────────────────────────────────────────
@@ -238,6 +309,36 @@ export async function updateProjectState(
     }
   }
   return { ok: true }
+}
+
+// ── Audit log: project_events ──────────────────────────────────────────
+
+/**
+ * Best-effort audit row per turn. Captures before/after state so a future
+ * audit UI can replay state evolution without parsing every assistant
+ * message. Failure here is logged but does not abort the turn — missing
+ * events are an audit gap, not a correctness issue.
+ */
+export async function logTurnEvent(
+  supabase: SupabaseClient,
+  args: {
+    projectId: string
+    beforeState: ProjectState
+    afterState: ProjectState
+    reason: string | null
+  },
+): Promise<void> {
+  const { error } = await supabase.from('project_events').insert({
+    project_id: args.projectId,
+    event_type: 'turn_processed',
+    before_state: args.beforeState,
+    after_state: args.afterState,
+    triggered_by: 'assistant',
+    reason: args.reason,
+  })
+  if (error) {
+    console.warn(`[chat-turn] project_events insert failed (non-fatal): ${error.message}`)
+  }
 }
 
 // ── Map messages to Anthropic shape ────────────────────────────────────
