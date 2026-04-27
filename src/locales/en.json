@@ -415,6 +415,18 @@
     "thinking": {
       "staticLabel": "thinking…"
     },
+    "status": {
+      "nicht_erforderlich": "not required",
+      "erforderlich": "required",
+      "liegt_vor": "available",
+      "freigegeben": "released",
+      "eingereicht": "submitted",
+      "genehmigt": "approved"
+    },
+    "role": {
+      "needed": "required",
+      "notNeeded": "not required"
+    },
     "input": {
       "send": "Send",
       "continue": "Continue",

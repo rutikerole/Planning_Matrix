@@ -1,27 +1,21 @@
-import { useState, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
-import { ChevronDown } from 'lucide-react'
-import { cn } from '@/lib/utils'
 import { useAuthStore } from '@/stores/authStore'
 import { isAdminEmail } from '@/lib/cn-feature-flags'
-import type {
-  AreaState,
-  Fact,
-  ProjectState,
-} from '@/types/projectState'
+import type { AreaState, Fact, ProjectState } from '@/types/projectState'
 import type { ProjectRow } from '@/types/db'
 import { Top3 } from './Top3'
+import { ProceduresPanel } from './ProceduresPanel'
+import { DocumentsPanel } from './DocumentsPanel'
+import { RolesPanel } from './RolesPanel'
 
 interface Props {
   project: ProjectRow
 }
 
 /**
- * Right rail — "Was wir wissen". Top-3 next steps, A/B/C area states,
- * Eckdaten (top facts), and three collapsibles (Verfahren / Dokumente
- * / Fachplaner) which are empty in this commit and populate as the
- * model emits deltas in batch 4. CostTicker at the bottom is admin-
- * only (D3).
+ * Right rail — "Was wir wissen". Top-3 (#20) + Areas + Eckdaten (#22)
+ * + Procedures / Documents / Roles panels (#21) + CostTicker. Dossier
+ * register per Polish Move 3.
  */
 export function RightRail({ project }: Props) {
   const { t } = useTranslation()
@@ -35,18 +29,9 @@ export function RightRail({ project }: Props) {
       <AreasPanel state={state} />
       <EckdatenPanel facts={facts} project={project} />
 
-      <CollapsibleEmpty
-        title={t('chat.rail.procedures')}
-        emptyCopy={t('chat.rail.proceduresEmpty')}
-      />
-      <CollapsibleEmpty
-        title={t('chat.rail.documents')}
-        emptyCopy={t('chat.rail.documentsEmpty')}
-      />
-      <CollapsibleEmpty
-        title={t('chat.rail.roles')}
-        emptyCopy={t('chat.rail.rolesEmpty')}
-      />
+      <ProceduresPanel procedures={state.procedures ?? []} />
+      <DocumentsPanel documents={state.documents ?? []} />
+      <RolesPanel roles={state.roles ?? []} />
 
       <div className="flex-1" />
 
@@ -74,21 +59,31 @@ function AreasPanel({ state }: { state: Partial<ProjectState> }) {
   }
 
   return (
-    <div className="flex flex-col gap-3">
-      <p className="eyebrow text-foreground/60 text-[10px]">{t('chat.rail.areas')}</p>
-      <ul className="flex flex-col gap-2">
+    <div className="flex flex-col gap-3 border-t border-border/40 pt-6">
+      <p className="eyebrow text-foreground/60 text-[10px] tracking-[0.18em]">
+        {t('chat.rail.areas')}
+      </p>
+      <ul className="flex flex-col gap-2.5">
         {(['A', 'B', 'C'] as const).map((key) => {
           const a = areas[key] ?? { state: 'PENDING' as AreaState }
           return (
             <li
               key={key}
-              className="flex items-center gap-3 text-[12px]"
+              className="flex items-center gap-3 text-[12px] py-1"
               title={a.reason ?? ''}
             >
               <AreaDot state={a.state} />
               <span className="font-mono text-[10px] text-ink/45 tabular-nums">{key}</span>
-              <span className="text-ink/80">{t(`chat.areas.${key}`)}</span>
-              <span className="ml-auto text-[10px] text-clay/75 uppercase tracking-[0.06em]">
+              <span className="text-ink/85">{t(`chat.areas.${key}`)}</span>
+              <span
+                className={
+                  a.state === 'VOID'
+                    ? 'ml-auto text-[10px] uppercase tracking-[0.16em] text-ink/30 line-through'
+                    : a.state === 'ACTIVE'
+                      ? 'ml-auto text-[10px] uppercase tracking-[0.16em] text-clay'
+                      : 'ml-auto text-[10px] uppercase tracking-[0.16em] text-clay/60'
+                }
+              >
                 {t(`chat.areas.state.${a.state.toLowerCase()}`)}
               </span>
             </li>
@@ -125,8 +120,6 @@ function EckdatenPanel({
 }) {
   const { t } = useTranslation()
 
-  // Always surface intent + plot as derived "facts" even before the
-  // model has extracted formal facts — they're known from the wizard.
   const derived: { key: string; value: string; qualifier: string }[] = [
     {
       key: t('chat.rail.intentLabel'),
@@ -151,57 +144,25 @@ function EckdatenPanel({
   const all = [...derived, ...fromState].slice(0, 6)
 
   return (
-    <div className="flex flex-col gap-3">
-      <p className="eyebrow text-foreground/60 text-[10px]">{t('chat.rail.facts')}</p>
-      <ul className="flex flex-col gap-2.5">
+    <div className="flex flex-col gap-3 border-t border-border/40 pt-6">
+      <p className="eyebrow text-foreground/60 text-[10px] tracking-[0.18em]">
+        {t('chat.rail.facts')}
+      </p>
+      <ul className="flex flex-col gap-5">
         {all.map((row, idx) => (
-          <li key={`${row.key}-${idx}`} className="flex flex-col gap-0.5">
-            <span className="text-[10px] text-clay/85 uppercase tracking-[0.06em]">
+          <li key={`${row.key}-${idx}`} className="flex flex-col gap-1">
+            <span className="text-[10px] text-clay/85 uppercase tracking-[0.18em]">
               {row.key}
             </span>
-            <span className="text-[13px] text-ink/85 leading-snug break-words">
+            <span className="text-[14px] font-medium text-ink leading-snug break-words">
               {row.value}
             </span>
-            <span className="text-[10px] text-ink/45 tabular-nums">{row.qualifier}</span>
+            <span className="text-[9px] text-clay/60 italic uppercase tracking-[0.14em] tabular-nums">
+              {row.qualifier}
+            </span>
           </li>
         ))}
       </ul>
-    </div>
-  )
-}
-
-// ── Collapsibles ────────────────────────────────────────────────────
-
-function CollapsibleEmpty({
-  title,
-  emptyCopy,
-}: {
-  title: string
-  emptyCopy: string
-}) {
-  const [open, setOpen] = useState(false)
-  return (
-    <div className="flex flex-col">
-      <button
-        type="button"
-        onClick={() => setOpen((v) => !v)}
-        aria-expanded={open}
-        className="flex items-center justify-between text-left text-[11px] tracking-[0.18em] uppercase font-medium text-foreground/60 hover:text-ink transition-colors duration-soft py-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/35 focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm"
-      >
-        <span>{title}</span>
-        <ChevronDown
-          aria-hidden="true"
-          className={cn(
-            'size-3 text-ink/55 transition-transform duration-soft',
-            open && 'rotate-180',
-          )}
-        />
-      </button>
-      {open && (
-        <p className="text-[12px] text-clay/70 italic leading-relaxed pt-2 pb-1">
-          {emptyCopy}
-        </p>
-      )}
     </div>
   )
 }
@@ -211,17 +172,11 @@ function CollapsibleEmpty({
 function CostTicker({ projectState: _projectState }: { projectState: Partial<ProjectState> }) {
   const user = useAuthStore((s) => s.user)
   if (!isAdminEmail(user?.email)) return null
-
-  // Cost numbers come from the most recent costInfo, which we'd need to
-  // accumulate from useChatTurn responses. For #14 this is a placeholder
-  // that confirms the gating works; the real running total ships with
-  // useChatTurn in batch 4.
+  // Real running total + breakdown tooltip in #28; this remains a
+  // placeholder confirming the admin gate works.
   return (
-    <p className="text-[9px] text-clay/65 tabular-nums">
-      ≈ 0 token used in this conversation
+    <p className="text-[9px] text-clay/65 tabular-nums italic text-right">
+      ≈ 0 Tokens · 0,00 USD
     </p>
   )
 }
-
-// suppress unused-locals when only the type position is used
-export type _ChildNode = ReactNode
