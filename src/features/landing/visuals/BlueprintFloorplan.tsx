@@ -23,21 +23,19 @@ export function BlueprintFloorplan({ className }: Props) {
 
   // Each path maps a sub-range of scroll progress to dashoffset 1 → 0.
   // Reduced-motion: drawn from the start (offset 0 always).
-  const r = (a: number, b: number) =>
-    useTransform(scrollYProgress, [a, b], reduced ? [0, 0] : [1, 0])
-
-  const dOuter = r(0.05, 0.18)
-  const dWallV = r(0.13, 0.26)
-  const dWallH = r(0.20, 0.33)
-  const dDoor1 = r(0.27, 0.38)
-  const dDoor2 = r(0.32, 0.43)
-  const dKitchen = r(0.36, 0.48)
-  const dBath = r(0.40, 0.52)
-  const dDimV = r(0.45, 0.57)
-  const dDimH = r(0.48, 0.60)
+  const offsetRange: [number, number] = reduced ? [0, 0] : [1, 0]
+  const dOuter = useTransform(scrollYProgress, [0.05, 0.18], offsetRange)
+  const dWallV = useTransform(scrollYProgress, [0.13, 0.26], offsetRange)
+  const dWallH = useTransform(scrollYProgress, [0.2, 0.33], offsetRange)
+  const dDoor1 = useTransform(scrollYProgress, [0.27, 0.38], offsetRange)
+  const dDoor2 = useTransform(scrollYProgress, [0.32, 0.43], offsetRange)
+  const dKitchen = useTransform(scrollYProgress, [0.36, 0.48], offsetRange)
+  const dBath = useTransform(scrollYProgress, [0.4, 0.52], offsetRange)
+  const dDimV = useTransform(scrollYProgress, [0.45, 0.57], offsetRange)
+  const dDimH = useTransform(scrollYProgress, [0.48, 0.6], offsetRange)
   const labels = useTransform(
     scrollYProgress,
-    [0.50, 0.62],
+    [0.5, 0.62],
     reduced ? [1, 1] : [0, 1],
   )
 

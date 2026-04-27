@@ -42,6 +42,25 @@
     />
     <meta name="twitter:image" content="https://planning-matrix.vercel.app/og.svg" />
 
+    <!-- Hero AVIF preload — kicks LCP load before JS parses.
+         Mobile and desktop variants picked by media query. -->
+    <link
+      rel="preload"
+      as="image"
+      type="image/avif"
+      href="/images/hero-rooftop-900.avif"
+      media="(max-width: 900px)"
+      fetchpriority="high"
+    />
+    <link
+      rel="preload"
+      as="image"
+      type="image/avif"
+      href="/images/hero-rooftop-1600.avif"
+      media="(min-width: 901px)"
+      fetchpriority="high"
+    />
+
     <!-- Fonts: preconnect, then load with display=swap -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
