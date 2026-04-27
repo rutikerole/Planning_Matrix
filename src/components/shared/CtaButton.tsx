@@ -32,10 +32,10 @@ export function CtaButton({
       rel={external ? 'noopener noreferrer' : undefined}
       aria-label={ariaLabel}
       className={cn(
-        'group inline-flex items-center gap-2 text-[14px] font-medium tracking-tight transition-colors duration-soft ease-soft',
+        'group inline-flex items-center gap-2 text-[14px] font-medium tracking-tight transition-[background-color,color,box-shadow,transform] duration-soft ease-soft',
         SIZE,
         variant === 'primary' &&
-          'rounded-[3px] bg-ink px-5 text-paper hover:bg-ink/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink focus-visible:ring-offset-2 focus-visible:ring-offset-background',
+          'rounded-[5px] bg-ink px-5 text-paper hover:bg-ink/92 shadow-[0_1px_0_hsl(var(--paper)/0.05)_inset,0_2px_4px_-1px_hsl(220_15%_11%/0.18)] hover:shadow-[0_1px_0_hsl(var(--paper)/0.05)_inset,0_8px_18px_-6px_hsl(220_15%_11%/0.32)] motion-safe:hover:-translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink focus-visible:ring-offset-2 focus-visible:ring-offset-background',
         variant === 'ghost' &&
           'text-ink hover:text-clay focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm',
         className,

@@ -8,7 +8,8 @@ import { Wordmark } from '@/components/shared/Wordmark'
 import { LanguageSwitcher } from '@/components/shared/LanguageSwitcher'
 import { CtaButton } from '@/components/shared/CtaButton'
 
-const MAILTO = 'mailto:vibecoders786@gmail.com?subject=Planning%20Matrix%20%E2%80%94%20Fr%C3%BChzugang'
+const MAILTO =
+  'mailto:vibecoders786@gmail.com?subject=Planning%20Matrix%20%E2%80%94%20Fr%C3%BChzugang'
 
 interface NavLink {
   href: string
@@ -51,9 +52,9 @@ export function Nav() {
   return (
     <header
       className={cn(
-        'fixed top-0 inset-x-0 z-40 transition-[background-color,backdrop-filter,border-color] duration-soft ease-soft',
+        'fixed top-0 inset-x-0 z-40 transition-[background-color,backdrop-filter,border-color,box-shadow] duration-soft ease-soft',
         scrolled
-          ? 'bg-background/72 backdrop-blur-xl backdrop-saturate-150 border-b border-border'
+          ? 'bg-paper/78 backdrop-blur-xl backdrop-saturate-150 border-b border-clay/15 shadow-[0_1px_0_hsl(var(--paper)/0.5)_inset]'
           : 'bg-transparent border-b border-transparent',
       )}
     >
@@ -61,7 +62,7 @@ export function Nav() {
         <Wordmark />
 
         <nav
-          className="hidden lg:flex items-center gap-9"
+          className="hidden lg:flex items-center gap-10"
           aria-label="Hauptnavigation"
         >
           {PRIMARY_LINKS.map((link) => (
@@ -71,15 +72,15 @@ export function Nav() {
           ))}
         </nav>
 
-        <div className="hidden lg:flex items-center gap-6">
+        <div className="hidden lg:flex items-center gap-5">
           <LanguageSwitcher />
           <span
-            className="h-4 w-px bg-border-strong"
+            className="h-4 w-px bg-border-strong/55"
             aria-hidden="true"
           />
           <a
             href="#"
-            className="text-[14px] font-medium text-ink/80 hover:text-ink transition-colors duration-soft"
+            className="text-[13.5px] font-medium text-ink/80 hover:text-ink transition-colors duration-soft px-2 py-1.5 rounded-sm hover:bg-muted/45"
           >
             {t('common.ctaLogin')}
           </a>
@@ -91,7 +92,6 @@ export function Nav() {
         {/* Mobile: hamburger trigger */}
         <div className="flex lg:hidden items-center gap-3">
           <LanguageSwitcher />
-          <span className="h-4 w-px bg-border-strong" aria-hidden="true" />
           <Drawer.Root>
             <Drawer.Trigger asChild>
               <button
@@ -135,7 +135,11 @@ export function Nav() {
                     </a>
                   </Drawer.Close>
                   <Drawer.Close asChild>
-                    <CtaButton href={MAILTO} variant="primary" className="mt-4 self-start">
+                    <CtaButton
+                      href={MAILTO}
+                      variant="primary"
+                      className="mt-4 self-start"
+                    >
                       {t('common.ctaPrimary')}
                     </CtaButton>
                   </Drawer.Close>
@@ -159,12 +163,12 @@ function NavInlineLink({
   return (
     <a
       href={href}
-      className="group relative inline-block py-1.5 text-[14px] font-medium text-ink/80 hover:text-ink transition-colors duration-soft"
+      className="group relative inline-block py-1.5 text-[13.5px] font-medium text-ink/80 hover:text-ink transition-colors duration-soft"
     >
       <span>{children}</span>
       <span
         aria-hidden="true"
-        className="pointer-events-none absolute left-0 right-0 -bottom-0.5 h-px origin-left scale-x-0 bg-clay transition-transform duration-soft ease-soft group-hover:scale-x-100"
+        className="pointer-events-none absolute left-0 right-0 -bottom-0.5 h-px origin-center scale-x-0 bg-clay transition-transform duration-calm ease-calm group-hover:scale-x-100"
       />
     </a>
   )

@@ -6,6 +6,67 @@ interface Props {
   asLink?: boolean
 }
 
+/**
+ * 2×2 matrix monogram — the visual essence of Planning Matrix:
+ * a four-quadrant grid with the bottom-right cell filled clay,
+ * reading as "the system has mapped a position." Hairline ink
+ * outlines on the other three cells.
+ */
+function MatrixMonogram({ size }: { size: 'sm' | 'lg' }) {
+  const px = size === 'sm' ? 18 : 22
+  return (
+    <svg
+      viewBox="0 0 22 22"
+      width={px}
+      height={px}
+      aria-hidden="true"
+      className="shrink-0"
+    >
+      {/* Top-left */}
+      <rect
+        x="1.5"
+        y="1.5"
+        width="8"
+        height="8"
+        fill="none"
+        stroke="hsl(var(--ink))"
+        strokeOpacity="0.85"
+        strokeWidth="1.1"
+      />
+      {/* Top-right */}
+      <rect
+        x="12.5"
+        y="1.5"
+        width="8"
+        height="8"
+        fill="none"
+        stroke="hsl(var(--ink))"
+        strokeOpacity="0.85"
+        strokeWidth="1.1"
+      />
+      {/* Bottom-left */}
+      <rect
+        x="1.5"
+        y="12.5"
+        width="8"
+        height="8"
+        fill="none"
+        stroke="hsl(var(--ink))"
+        strokeOpacity="0.85"
+        strokeWidth="1.1"
+      />
+      {/* Bottom-right — the "answered" cell, filled clay */}
+      <rect
+        x="12.5"
+        y="12.5"
+        width="8"
+        height="8"
+        fill="hsl(var(--clay))"
+      />
+    </svg>
+  )
+}
+
 export function Wordmark({ className, size = 'sm', asLink = true }: Props) {
   const inner = (
     <span
@@ -15,17 +76,15 @@ export function Wordmark({ className, size = 'sm', asLink = true }: Props) {
       )}
       aria-label="Planning Matrix"
     >
-      <span
-        aria-hidden="true"
-        className="block size-[7px] bg-clay shrink-0"
-      />
+      <MatrixMonogram size={size} />
       <span
         className={cn(
-          'font-sans font-medium tracking-[-0.012em] leading-none',
-          size === 'sm' ? 'text-[15px]' : 'text-[19px]',
+          'leading-none tracking-[-0.012em]',
+          size === 'sm' ? 'text-[16px]' : 'text-[20px]',
         )}
       >
-        Planning Matrix
+        <span className="font-sans font-medium">Planning</span>{' '}
+        <span className="font-serif italic font-normal -ml-0.5">Matrix</span>
       </span>
     </span>
   )
