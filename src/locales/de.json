@@ -412,6 +412,9 @@
       "label": "Systemhinweis",
       "tag": "SYSTEM"
     },
+    "thinking": {
+      "staticLabel": "denkt nach…"
+    },
     "input": {
       "send": "Senden",
       "continue": "Weiter",

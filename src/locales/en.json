@@ -412,6 +412,9 @@
       "label": "System note",
       "tag": "SYSTEM"
     },
+    "thinking": {
+      "staticLabel": "thinking…"
+    },
     "input": {
       "send": "Send",
       "continue": "Continue",

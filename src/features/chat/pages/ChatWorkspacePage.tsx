@@ -10,6 +10,8 @@ import { IdkPopover } from '../components/Input/IdkPopover'
 import { buildUserMessageText } from '../lib/userAnswerHelpers'
 import { useProject } from '../hooks/useProject'
 import { useMessages } from '../hooks/useMessages'
+import { useChatTurn } from '../hooks/useChatTurn'
+import { useChatStore } from '@/stores/chatStore'
 import type { UserAnswer } from '@/types/chatTurn'
 
 /**
@@ -41,15 +43,17 @@ export function ChatWorkspacePage() {
       .find((m) => m.role === 'assistant') ?? null
 
   const [idkOpen, setIdkOpen] = useState(false)
+  const chatTurn = useChatTurn(projectId)
+  const isThinking = useChatStore((s) => s.isAssistantThinking)
+
+  // Reset chat store when navigating away from a project.
+  const resetChatStore = useChatStore((s) => s.reset)
+  useEffect(() => () => resetChatStore(), [projectId, resetChatStore])
 
   if (!project) return null
 
-  // Stub onSubmit for now; real useChatTurn mutation lands in commit #19.
   const handleSubmit = (payload: { userMessage: string; userAnswer: UserAnswer }) => {
-    if (import.meta.env.DEV) {
-      // eslint-disable-next-line no-console
-      console.info('[chat] submit (stub — wired in commit #19)', payload)
-    }
+    chatTurn.mutate(payload)
   }
 
   const handleIdkChoose = (mode: 'research' | 'assume' | 'skip') => {
@@ -68,6 +72,7 @@ export function ChatWorkspacePage() {
               lastAssistant={lastAssistant}
               onSubmit={handleSubmit}
               onIdkClick={() => setIdkOpen(true)}
+              forceDisabled={isThinking}
             />
           ) : null
         }

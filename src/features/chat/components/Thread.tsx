@@ -2,6 +2,8 @@ import { useEffect, useRef } from 'react'
 import { MessageUser } from './MessageUser'
 import { MessageAssistant } from './MessageAssistant'
 import { MessageSystem } from './MessageSystem'
+import { ThinkingIndicator } from './ThinkingIndicator'
+import { useChatStore } from '@/stores/chatStore'
 import type { MessageRow } from '@/types/db'
 
 interface Props {
@@ -19,6 +21,7 @@ interface Props {
  * up + new-messages pill ship in batch 4.
  */
 export function Thread({ messages }: Props) {
+  const isThinking = useChatStore((s) => s.isAssistantThinking)
   const initialIdsRef = useRef<Set<string> | null>(null)
 
   // Snapshot the ids present at first render so subsequent messages
@@ -59,6 +62,11 @@ export function Thread({ messages }: Props) {
           </li>
         )
       })}
+      {isThinking && (
+        <li>
+          <ThinkingIndicator />
+        </li>
+      )}
     </ol>
   )
 }
