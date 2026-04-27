@@ -427,6 +427,27 @@
       "needed": "erforderlich",
       "notNeeded": "nicht erforderlich"
     },
+    "completion": {
+      "label": "Hinweis des Teams",
+      "invite": "Architekt/in einladen",
+      "openOverview": "Vollständige Übersicht öffnen",
+      "viewAreas": "Bereiche ansehen",
+      "continue": "Fortsetzen",
+      "pause": "Projekt pausieren",
+      "inviteStub": "Diese Funktion folgt in Kürze.",
+      "needs_designer": {
+        "tag": "Übergabe",
+        "body": "An diesem Punkt benötigen wir eine/n bauvorlageberechtigte/n Architekt/in. Sie können das Projekt jetzt teilen oder vorerst pausieren."
+      },
+      "ready_for_review": {
+        "tag": "Zwischenstand",
+        "body": "Wir haben einen guten Zwischenstand erreicht. Sie können den aktuellen Stand prüfen oder die Konsultation fortsetzen."
+      },
+      "blocked": {
+        "tag": "Pause",
+        "body": "Wir benötigen weitere Eingaben, um fortzufahren. Bitte ergänzen Sie die markierten Bereiche oder pausieren Sie das Projekt."
+      }
+    },
     "input": {
       "send": "Senden",
       "continue": "Weiter",

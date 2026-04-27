@@ -1,8 +1,10 @@
 import { useEffect, useRef } from 'react'
+import { useParams } from 'react-router-dom'
 import { MessageUser } from './MessageUser'
 import { MessageAssistant } from './MessageAssistant'
 import { MessageSystem } from './MessageSystem'
 import { ThinkingIndicator } from './ThinkingIndicator'
+import { CompletionInterstitial } from './CompletionInterstitial'
 import { useChatStore } from '@/stores/chatStore'
 import type { MessageRow } from '@/types/db'
 
@@ -22,6 +24,8 @@ interface Props {
  */
 export function Thread({ messages }: Props) {
   const isThinking = useChatStore((s) => s.isAssistantThinking)
+  const { id } = useParams<{ id: string }>()
+  const projectId = id ?? ''
   const initialIdsRef = useRef<Set<string> | null>(null)
 
   // Snapshot the ids present at first render so subsequent messages
@@ -65,6 +69,11 @@ export function Thread({ messages }: Props) {
       {isThinking && (
         <li>
           <ThinkingIndicator />
+        </li>
+      )}
+      {!isThinking && projectId && (
+        <li>
+          <CompletionInterstitial projectId={projectId} />
         </li>
       )}
     </ol>

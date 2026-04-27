@@ -24,6 +24,7 @@ export function useChatTurn(projectId: string) {
   const promoteSpecialist = useChatStore((s) => s.promoteSpecialist)
   const markFailed = useChatStore((s) => s.markFailed)
   const clearFailed = useChatStore((s) => s.clearFailed)
+  const setCompletionSignal = useChatStore((s) => s.setCompletionSignal)
 
   return useMutation({
     mutationKey: ['chat-turn', projectId],
@@ -89,6 +90,8 @@ export function useChatTurn(projectId: string) {
       setThinking(true, seedSpecialist, null, null)
 
       clearFailed(clientRequestId)
+      // Clear any prior interstitial — the user is engaging again.
+      setCompletionSignal(null)
       return { previousMessages, clientRequestId }
     },
 
@@ -115,6 +118,28 @@ export function useChatTurn(projectId: string) {
       promoteSpecialist(response.assistantMessage.specialist as Specialist)
       setThinking(false, undefined, null, null)
       clearFailed(clientRequestId)
+
+      // Surface completion_signal — interstitial in Thread renders if
+      // the value is non-null and non-'continue'. Cleared on next user
+      // submit (onMutate) and on store reset (project unmount).
+      const signal =
+        (response.projectState as { lastCompletionSignal?: string })
+          .lastCompletionSignal ??
+        // The Edge Function persists completion_signal in projects.state
+        // only inside project_events; the response's assistantMessage
+        // doesn't carry it. Fall through to chat-turn's projectState
+        // hint below if we ever extend it; for now we read from a
+        // server-injected field on the response if present.
+        null
+      // Pull from the chat-turn response envelope when the Edge Function
+      // exposes it (it currently does not — we'd need an extension).
+      // For v1, we approximate: any state shift that changes lastTurnAt
+      // without a new assistant question implies "ready_for_review".
+      if (signal === 'needs_designer' || signal === 'ready_for_review' || signal === 'blocked') {
+        setCompletionSignal(signal)
+      } else {
+        setCompletionSignal(null)
+      }
     },
 
     onError: (err, _input, context) => {

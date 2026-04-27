@@ -21,6 +21,13 @@ interface ChatState {
     | null
   /** Idempotency keys whose assistant turn failed — drives the Erneut senden affordance. */
   failedRequestIds: Set<string>
+  /** Latest completion_signal from chat-turn (cleared on next user submit or dismiss). */
+  lastCompletionSignal:
+    | 'continue'
+    | 'needs_designer'
+    | 'ready_for_review'
+    | 'blocked'
+    | null
 
   setThinking: (
     thinking: boolean,
@@ -31,6 +38,7 @@ interface ChatState {
   promoteSpecialist: (next: Specialist | null) => void
   markFailed: (clientRequestId: string) => void
   clearFailed: (clientRequestId: string) => void
+  setCompletionSignal: (signal: ChatState['lastCompletionSignal']) => void
   reset: () => void
 }
 
@@ -41,6 +49,7 @@ export const useChatStore = create<ChatState>((set) => ({
   currentThinkingLabel: null,
   currentActivitySection: null,
   failedRequestIds: new Set(),
+  lastCompletionSignal: null,
 
   setThinking: (thinking, specialist, label, activitySection) =>
     set((s) => ({
@@ -65,6 +74,7 @@ export const useChatStore = create<ChatState>((set) => ({
       next.delete(clientRequestId)
       return { failedRequestIds: next }
     }),
+  setCompletionSignal: (lastCompletionSignal) => set({ lastCompletionSignal }),
   reset: () =>
     set({
       isAssistantThinking: false,
@@ -73,5 +83,6 @@ export const useChatStore = create<ChatState>((set) => ({
       currentThinkingLabel: null,
       currentActivitySection: null,
       failedRequestIds: new Set(),
+      lastCompletionSignal: null,
     }),
 }))
