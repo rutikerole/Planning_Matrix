@@ -192,6 +192,27 @@ export function Domains() {
                       <p className="text-body-lg md:text-body-xl text-muted-foreground leading-relaxed max-w-2xl">
                         {t(activeTab.i18nBody)}
                       </p>
+
+                      {/* BauGB section chips — Tab A only, real statute references */}
+                      {active === 'A' && (
+                        <ul className="flex flex-wrap gap-2 mt-9">
+                          {[30, 31, 32, 33, 34, 35].map((n, i) => (
+                            <m.li
+                              key={n}
+                              initial={{ opacity: 0, y: 4 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              transition={{
+                                duration: 0.35,
+                                delay: 0.45 + i * 0.08,
+                                ease: [0.16, 1, 0.3, 1],
+                              }}
+                              className="inline-flex items-center text-[12px] font-medium tracking-tight text-clay border border-clay/45 px-2.5 py-1 rounded-sm tabular-nums"
+                            >
+                              § {n} BauGB
+                            </m.li>
+                          ))}
+                        </ul>
+                      )}
                     </div>
                     <div className="lg:col-span-5 flex justify-center lg:justify-end">
                       {VISUALS[active]}

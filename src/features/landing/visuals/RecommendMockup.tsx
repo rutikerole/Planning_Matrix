@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next'
+import { Check } from 'lucide-react'
 import { AnimatedReveal } from '@/components/shared/AnimatedReveal'
 import { MockupCard } from './MockupCard'
 
@@ -31,8 +32,10 @@ export function RecommendMockup() {
             <span className="flex items-center gap-3 text-[13px] text-ink/85">
               <span
                 aria-hidden="true"
-                className="block size-1.5 rounded-full bg-clay shrink-0"
-              />
+                className="size-4 rounded-full bg-clay/15 inline-flex items-center justify-center shrink-0"
+              >
+                <Check className="size-2.5 text-clay stroke-[3]" />
+              </span>
               <span className="leading-tight">{t(key)}</span>
             </span>
           </AnimatedReveal>
