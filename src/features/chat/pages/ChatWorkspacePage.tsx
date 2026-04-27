@@ -2,6 +2,8 @@ import { useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { ChatWorkspaceLayout } from '../components/ChatWorkspaceLayout'
 import { EmptyState } from '../components/EmptyState'
+import { LeftRail } from '../components/LeftRail'
+import { RightRail } from '../components/RightRail'
 import { useProject } from '../hooks/useProject'
 import { useMessages } from '../hooks/useMessages'
 
@@ -29,8 +31,13 @@ export function ChatWorkspacePage() {
 
   const hasMessages = (messages?.length ?? 0) > 0
 
+  if (!project) return null
+
   return (
-    <ChatWorkspaceLayout leftRail={null} rightRail={null}>
+    <ChatWorkspaceLayout
+      leftRail={<LeftRail project={project} messages={messages ?? []} />}
+      rightRail={<RightRail project={project} />}
+    >
       {hasMessages ? <ThreadPlaceholder count={messages?.length ?? 0} /> : <EmptyState />}
     </ChatWorkspaceLayout>
   )

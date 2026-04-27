@@ -406,6 +406,58 @@
     }
   },
   "chat": {
+    "leaveProject": "Projekt verlassen",
+    "atTheTable": "Am Tisch",
+    "atTheTableEmpty": "Noch keine Fachperson aktiv.",
+    "preliminaryFooter": "Vorläufig — bestätigt durch eine/n bauvorlageberechtigte/n Architekt/in.",
+    "gates": {
+      "00": "Übersicht",
+      "10": "Projekt",
+      "20": "Grundstück",
+      "30": "Beteiligte",
+      "40": "Baurechtliche Einordnung",
+      "41": "Planungsrecht",
+      "42": "Bauordnungsrecht",
+      "43": "Sonstige Vorgaben",
+      "44": "Verfahren",
+      "45": "Dokumente",
+      "50": "Planung",
+      "60": "Dokumente"
+    },
+    "specialists": {
+      "moderator": "Moderator",
+      "planungsrecht": "Planungsrecht",
+      "bauordnungsrecht": "Bauordnungsrecht",
+      "sonstige_vorgaben": "Sonstige Vorgaben",
+      "verfahren": "Verfahren",
+      "beteiligte": "Beteiligte",
+      "synthesizer": "Synthese"
+    },
+    "areas": {
+      "A": "Planungsrecht",
+      "B": "Bauordnungsrecht",
+      "C": "Sonstige Vorgaben",
+      "state": {
+        "active": "aktiv",
+        "pending": "ausstehend",
+        "void": "ungeklärt"
+      }
+    },
+    "rail": {
+      "top3": "Top 3 Schritte",
+      "areas": "Bereiche",
+      "facts": "Eckdaten",
+      "intentLabel": "Vorhaben",
+      "plotLabel": "Grundstück",
+      "procedures": "Verfahren",
+      "proceduresEmpty": "Verfahren erscheinen hier, sobald die Einordnung eindeutig ist.",
+      "documents": "Dokumente",
+      "documentsEmpty": "Dokumente erscheinen hier, sobald sich das Verfahren konkretisiert.",
+      "roles": "Fachplaner",
+      "rolesEmpty": "Fachplaner erscheinen hier, sobald die Anforderungen klar sind.",
+      "openOverview": "Vollständige Übersicht öffnen",
+      "empty": "Empfehlungen erscheinen hier, sobald genug Informationen vorliegen."
+    },
     "empty": {
       "eyebrow": "Planning Matrix",
       "headline": "Das Team versammelt sich.",

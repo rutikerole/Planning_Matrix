@@ -406,6 +406,58 @@
     }
   },
   "chat": {
+    "leaveProject": "Leave project",
+    "atTheTable": "At the table",
+    "atTheTableEmpty": "No specialist active yet.",
+    "preliminaryFooter": "Preliminary — confirmed by a certified architect.",
+    "gates": {
+      "00": "Overview",
+      "10": "Project",
+      "20": "Plot",
+      "30": "Parties",
+      "40": "Legal classification",
+      "41": "Zoning law",
+      "42": "Building code",
+      "43": "Adjacent rules",
+      "44": "Procedure",
+      "45": "Documents",
+      "50": "Planning",
+      "60": "Documents"
+    },
+    "specialists": {
+      "moderator": "Moderator",
+      "planungsrecht": "Zoning law",
+      "bauordnungsrecht": "Building code",
+      "sonstige_vorgaben": "Adjacent rules",
+      "verfahren": "Procedure",
+      "beteiligte": "Parties",
+      "synthesizer": "Synthesis"
+    },
+    "areas": {
+      "A": "Zoning law",
+      "B": "Building code",
+      "C": "Adjacent rules",
+      "state": {
+        "active": "active",
+        "pending": "pending",
+        "void": "unresolved"
+      }
+    },
+    "rail": {
+      "top3": "Top 3 next steps",
+      "areas": "Areas",
+      "facts": "Key data",
+      "intentLabel": "Project",
+      "plotLabel": "Plot",
+      "procedures": "Procedures",
+      "proceduresEmpty": "Procedures appear here once the classification is unambiguous.",
+      "documents": "Documents",
+      "documentsEmpty": "Documents appear here once the procedure is clear.",
+      "roles": "Specialists",
+      "rolesEmpty": "Specialist roles appear here once the requirements are clear.",
+      "openOverview": "Open full overview",
+      "empty": "Recommendations appear here once there's enough information."
+    },
     "empty": {
       "eyebrow": "Planning Matrix",
       "headline": "The team is gathering.",
