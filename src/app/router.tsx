@@ -11,7 +11,9 @@ import { VerifyEmailPage } from '@/features/auth/pages/VerifyEmailPage'
 import { DashboardPlaceholder } from '@/features/dashboard/DashboardPlaceholder'
 import { LegalPlaceholder } from '@/features/legal/LegalPlaceholder'
 import { ProtectedRoute } from '@/components/shared/ProtectedRoute'
+import { ProjectGuard } from '@/components/shared/ProjectGuard'
 import { WizardPage } from '@/features/wizard'
+import { ChatWorkspacePage } from '@/features/chat/pages/ChatWorkspacePage'
 
 export function AppRouter() {
   const location = useLocation()
@@ -42,6 +44,16 @@ export function AppRouter() {
           element={
             <ProtectedRoute>
               <WizardPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/projects/:id"
+          element={
+            <ProtectedRoute>
+              <ProjectGuard>
+                <ChatWorkspacePage />
+              </ProjectGuard>
             </ProtectedRoute>
           }
         />

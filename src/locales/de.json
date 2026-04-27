@@ -405,6 +405,20 @@
       "q2": "Adressfeld erscheint mit Commit #10."
     }
   },
+  "chat": {
+    "empty": {
+      "eyebrow": "Planning Matrix",
+      "headline": "Das Team versammelt sich.",
+      "body": "Einen Moment, bitte."
+    },
+    "notFound": {
+      "title": "Projekt nicht gefunden · Planning Matrix",
+      "eyebrow": "Planning Matrix",
+      "headline": "Projekt nicht gefunden.",
+      "body": "Dieses Projekt existiert nicht oder ist nicht über Ihren Zugang verfügbar.",
+      "cta": "Zum Dashboard"
+    }
+  },
   "legal": {
     "placeholder": {
       "eyebrow": "In Vorbereitung",
