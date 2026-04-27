@@ -1,5 +1,4 @@
 import { useTranslation } from 'react-i18next'
-import { LazyMotion, domAnimation } from 'framer-motion'
 import { GrainOverlay } from '@/components/shared/GrainOverlay'
 import { SmoothScroll } from '@/components/shared/SmoothScroll'
 import { Nav } from './components/Nav'
@@ -18,7 +17,7 @@ import { Footer } from './components/Footer'
 export function LandingPage() {
   const { t } = useTranslation()
   return (
-    <LazyMotion features={domAnimation} strict>
+    <>
       <SmoothScroll />
       <a
         href="#main"
@@ -41,6 +40,6 @@ export function LandingPage() {
       </main>
       <Footer />
       <GrainOverlay />
-    </LazyMotion>
+    </>
   )
 }

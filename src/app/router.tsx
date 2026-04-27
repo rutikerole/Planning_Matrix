@@ -1,4 +1,5 @@
-import { Route, Routes } from 'react-router-dom'
+import { Route, Routes, useLocation } from 'react-router-dom'
+import { AnimatePresence } from 'framer-motion'
 import { LandingPage } from '@/features/landing/LandingPage'
 import { NotFoundPage } from '@/features/not-found/NotFoundPage'
 import { SignUpPage } from '@/features/auth/pages/SignUpPage'
@@ -12,43 +13,46 @@ import { LegalPlaceholder } from '@/features/legal/LegalPlaceholder'
 import { ProtectedRoute } from '@/components/shared/ProtectedRoute'
 
 export function AppRouter() {
+  const location = useLocation()
   return (
-    <Routes>
-      <Route path="/" element={<LandingPage />} />
+    <AnimatePresence mode="wait" initial={false}>
+      <Routes location={location} key={location.pathname}>
+        <Route path="/" element={<LandingPage />} />
 
-      {/* Auth — public */}
-      <Route path="/sign-up" element={<SignUpPage />} />
-      <Route path="/sign-in" element={<SignInPage />} />
-      <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-      <Route path="/reset-password" element={<ResetPasswordPage />} />
-      <Route path="/check-email" element={<CheckEmailPage />} />
-      <Route path="/verify-email" element={<VerifyEmailPage />} />
+        {/* Auth — public */}
+        <Route path="/sign-up" element={<SignUpPage />} />
+        <Route path="/sign-in" element={<SignInPage />} />
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+        <Route path="/reset-password" element={<ResetPasswordPage />} />
+        <Route path="/check-email" element={<CheckEmailPage />} />
+        <Route path="/verify-email" element={<VerifyEmailPage />} />
 
-      {/* Protected */}
-      <Route
-        path="/dashboard"
-        element={
-          <ProtectedRoute>
-            <DashboardPlaceholder />
-          </ProtectedRoute>
-        }
-      />
+        {/* Protected */}
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <DashboardPlaceholder />
+            </ProtectedRoute>
+          }
+        />
 
-      {/* Legal placeholders — required for German B2B before public launch */}
-      <Route
-        path="/impressum"
-        element={<LegalPlaceholder titleKey="legal.imprintTitle" />}
-      />
-      <Route
-        path="/datenschutz"
-        element={<LegalPlaceholder titleKey="legal.privacyTitle" />}
-      />
-      <Route
-        path="/agb"
-        element={<LegalPlaceholder titleKey="legal.termsTitle" />}
-      />
+        {/* Legal placeholders — required for German B2B before public launch */}
+        <Route
+          path="/impressum"
+          element={<LegalPlaceholder titleKey="legal.imprintTitle" />}
+        />
+        <Route
+          path="/datenschutz"
+          element={<LegalPlaceholder titleKey="legal.privacyTitle" />}
+        />
+        <Route
+          path="/agb"
+          element={<LegalPlaceholder titleKey="legal.termsTitle" />}
+        />
 
-      <Route path="*" element={<NotFoundPage />} />
-    </Routes>
+        <Route path="*" element={<NotFoundPage />} />
+      </Routes>
+    </AnimatePresence>
   )
 }
