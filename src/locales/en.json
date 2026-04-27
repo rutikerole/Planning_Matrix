@@ -329,9 +329,10 @@
   "dashboard": {
     "placeholder": {
       "title": "Dashboard · Planning Matrix",
-      "eyebrow": "Coming soon",
-      "headline": "Welcome.",
-      "body": "Phase 2.5 follows — the two questions, the roadmap, the architect's release.",
+      "eyebrow": "Your workspace",
+      "greeting": "Welcome, {{name}}.",
+      "greetingNone": "Welcome.",
+      "body": "Your project workspace is on the way.",
       "signOut": "Sign out"
     }
   },
