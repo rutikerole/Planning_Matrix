@@ -63,7 +63,7 @@ export function WizardShell({ step, totalSteps = 2, children }: Props) {
        * headline + paper card stay the focal point. */}
       <BlueprintSubstrate lensRadius={220} breathing={false} driftPx={0} />
 
-      <header className="relative z-10 px-4 sm:px-10 lg:px-14 xl:px-20">
+      <header className="relative z-10 px-4 sm:px-10 lg:px-14 xl:px-20 pt-safe">
         <div className="flex h-16 md:h-[72px] items-center justify-between gap-3">
           <Wordmark />
           <div className="flex items-center gap-3 sm:gap-5">
@@ -75,7 +75,7 @@ export function WizardShell({ step, totalSteps = 2, children }: Props) {
             <button
               type="button"
               onClick={handleCancelClick}
-              className="text-[13px] font-medium text-ink/65 hover:text-ink transition-colors duration-soft px-2 py-1.5 rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/35 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+              className="min-h-[44px] inline-flex items-center text-[13px] font-medium text-ink/65 hover:text-ink transition-colors duration-soft px-2 py-1.5 rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/35 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
             >
               {t('wizard.cancel')}
             </button>
@@ -83,13 +83,13 @@ export function WizardShell({ step, totalSteps = 2, children }: Props) {
         </div>
       </header>
 
-      <main className="relative z-10 flex-1 flex items-start sm:items-center justify-center px-6 sm:px-10 pt-10 sm:pt-0 pb-24">
+      <main className="relative z-10 flex-1 flex items-start sm:items-center justify-center px-4 sm:px-10 pt-6 sm:pt-0 pb-20 sm:pb-24">
         <PaperSheet padded="md" className="w-full">
           {children}
         </PaperSheet>
       </main>
 
-      <footer className="relative z-10 pb-10 flex items-center justify-center">
+      <footer className="relative z-10 pb-6 sm:pb-10 pb-safe flex items-center justify-center">
         <WizardProgress count={totalSteps} active={step} />
       </footer>
 

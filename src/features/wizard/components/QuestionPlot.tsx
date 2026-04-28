@@ -209,12 +209,15 @@ export function QuestionPlot({ onSubmit, submitError }: Props) {
         </p>
       )}
 
-      {/* Back + submit row */}
-      <div className="flex items-center justify-between gap-4 pt-2 flex-wrap">
+      {/* Back + submit row.
+       * Mobile: stacked column with full-width 48 px primary submit on
+       * top (thumb-reach + Apple HIG primary-action floor) and the
+       * back-link below. Desktop unchanged. */}
+      <div className="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-between gap-4 pt-2">
         <button
           type="button"
           onClick={goBackToQ1}
-          className="font-serif italic text-[13px] text-clay/85 hover:text-ink underline underline-offset-4 decoration-clay/55 transition-colors duration-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm"
+          className="self-center sm:self-auto min-h-[44px] inline-flex items-center font-serif italic text-[13px] text-clay/85 hover:text-ink underline underline-offset-4 decoration-clay/55 transition-colors duration-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm"
         >
           ← {t('wizard.back')}
         </button>
@@ -225,7 +228,7 @@ export function QuestionPlot({ onSubmit, submitError }: Props) {
           aria-disabled={!canSubmit}
           onClick={handleSubmit}
           className={cn(
-            'group inline-flex items-center gap-2 h-11 px-5 rounded-[5px] text-[14px] font-medium tracking-tight transition-[background-color,color,box-shadow,transform,opacity] duration-soft ease-soft',
+            'group inline-flex items-center justify-center gap-2 w-full sm:w-auto h-12 sm:h-11 px-5 rounded-[5px] text-[14px] font-medium tracking-tight transition-[background-color,color,box-shadow,transform,opacity] duration-soft ease-soft',
             'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink focus-visible:ring-offset-2 focus-visible:ring-offset-background',
             canSubmit
               ? 'bg-ink text-paper hover:bg-ink/92 motion-safe:hover:-translate-y-px shadow-[0_1px_0_hsl(var(--paper)/0.05)_inset,0_2px_4px_-1px_hsl(220_15%_11%/0.18)] hover:shadow-[0_1px_0_hsl(var(--paper)/0.05)_inset,0_8px_18px_-6px_hsl(220_15%_11%/0.32)]'
