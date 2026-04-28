@@ -8,6 +8,8 @@ import { CoverHero } from '../components/CoverHero'
 import { VerdictSection } from '../components/VerdictSection'
 import { TopThreeHero } from '../components/TopThreeHero'
 import { LegalLandscape } from '../components/LegalLandscape'
+import { DocumentChecklist } from '../components/DocumentChecklist'
+import { SpecialistsRequired } from '../components/SpecialistsRequired'
 import type { ProjectState } from '@/types/projectState'
 
 /**
@@ -64,7 +66,16 @@ export function ResultPage() {
       {/* Section IV — Legal Landscape */}
       <LegalLandscape state={(project.state ?? {}) as Partial<ProjectState>} />
 
-      {/* Sections V–XII land in commits #62–#64. */}
+      {/* Section V — Document Checklist */}
+      <DocumentChecklist
+        project={project}
+        state={(project.state ?? {}) as Partial<ProjectState>}
+      />
+
+      {/* Section VI — Specialists Required */}
+      <SpecialistsRequired state={(project.state ?? {}) as Partial<ProjectState>} />
+
+      {/* Sections VII–XII land in commits #63–#64. */}
     </div>
   )
 }

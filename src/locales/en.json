@@ -687,6 +687,19 @@
       "empty": "No additional requirements identified.",
       "clickHint": "Click a citation to open its public source.",
       "sourceEyebrow": "Public source"
+    },
+    "checklist": {
+      "eyebrow": "Documents required",
+      "intro": "{{n}} documents to prepare for the application.",
+      "producerLabel": "Produced by",
+      "statusLabel": "Status",
+      "pdfCta": "Download checklist as PDF",
+      "pdfBusy": "Generating PDF …"
+    },
+    "specialists": {
+      "eyebrow": "The team",
+      "intro": "{{n}} specialists will be needed for your project.",
+      "effortLabel": "Estimated effort"
     }
   },
   "legal": {
