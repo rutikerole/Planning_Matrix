@@ -1,4 +1,8 @@
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useParams } from 'react-router-dom'
+import { Check } from 'lucide-react'
+import { cn } from '@/lib/utils'
 import type {
   EstimatedEffort,
   ProjectState,
@@ -131,6 +135,41 @@ interface RecommendationRowProps {
   t: (key: string, opts?: Record<string, unknown>) => string
 }
 
+/**
+ * Phase 3.6 #72 — `Begonnen` checkbox per recommendation, persisted in
+ * localStorage scoped to the project id. Survives reloads and stays
+ * client-only — chat-turn isn't called.
+ */
+function useStartedFlag(recId: string): [boolean, () => void] {
+  const { id: projectId } = useParams<{ id: string }>()
+  const storageKey = `pm:started:${projectId}:${recId}`
+  const [started, setStarted] = useState(false)
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    try {
+      setStarted(window.localStorage.getItem(storageKey) === '1')
+    } catch {
+      // Storage may be blocked (incognito iframe). Ignore.
+    }
+  }, [storageKey])
+
+  const toggle = () => {
+    setStarted((prev) => {
+      const next = !prev
+      try {
+        if (next) window.localStorage.setItem(storageKey, '1')
+        else window.localStorage.removeItem(storageKey)
+      } catch {
+        /* same — ignore */
+      }
+      return next
+    })
+  }
+
+  return [started, toggle]
+}
+
 function RecommendationRow({ rec, position, lang, t }: RecommendationRowProps) {
   const title = lang === 'en' ? rec.title_en : rec.title_de
   const detail = lang === 'en' ? rec.detail_en : rec.detail_de
@@ -145,18 +184,25 @@ function RecommendationRow({ rec, position, lang, t }: RecommendationRowProps) {
       : PARTY_LABELS_DE[rec.responsible_party]
     : '—'
 
+  const [started, toggleStarted] = useStartedFlag(rec.id)
+
   return (
     <li className="grid grid-cols-[64px_1fr] gap-x-5 sm:gap-x-7">
       <CircledNumeral n={position} size={56} />
-      <div className="flex flex-col gap-3 pt-1">
-        <h3 className="font-display text-[clamp(24px,3.4vw,36px)] text-ink leading-[1.1] -tracking-[0.012em]">
+      <div className={cn('flex flex-col gap-3 pt-1 transition-opacity duration-soft', started && 'opacity-60')}>
+        <h3
+          className={cn(
+            'font-display text-[clamp(24px,3.4vw,36px)] text-ink leading-[1.1] -tracking-[0.012em]',
+            started && 'line-through decoration-clay/40 decoration-1',
+          )}
+        >
           {title}
         </h3>
         <span aria-hidden="true" className="block h-px w-12 bg-ink/20" />
         <p className="text-[16px] text-ink/85 leading-[1.65] max-w-2xl">
           {detail}
         </p>
-        <div className="flex flex-wrap gap-x-10 gap-y-2 mt-3">
+        <div className="flex flex-wrap items-center gap-x-10 gap-y-2 mt-3">
           <MetaPair
             label={t('result.topThree.effortLabel', {
               defaultValue: 'Geschätzter Aufwand',
@@ -169,6 +215,29 @@ function RecommendationRow({ rec, position, lang, t }: RecommendationRowProps) {
             })}
             value={partyLabel}
           />
+          <button
+            type="button"
+            onClick={toggleStarted}
+            aria-pressed={started}
+            className={cn(
+              'inline-flex items-center gap-1.5 h-8 px-3 ml-auto text-[12px] font-medium border transition-colors duration-soft',
+              'rounded-[var(--pm-radius-pill)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/35 focus-visible:ring-offset-2 focus-visible:ring-offset-background',
+              started
+                ? 'bg-clay/15 border-clay/35 text-clay'
+                : 'bg-paper border-ink/15 text-ink/65 hover:border-ink/30 hover:text-ink',
+            )}
+          >
+            <Check
+              aria-hidden="true"
+              className={cn(
+                'size-3.5 transition-transform duration-soft',
+                started ? 'opacity-100 scale-100' : 'opacity-0 scale-50',
+              )}
+            />
+            {started
+              ? t('result.topThree.started', { defaultValue: 'Begonnen' })
+              : t('result.topThree.markStarted', { defaultValue: 'Als begonnen markieren' })}
+          </button>
         </div>
       </div>
     </li>

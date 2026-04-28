@@ -60,28 +60,37 @@ export function VerdictSection({ project, source }: Props) {
         <div className="flex flex-col gap-5">
           <h2
             id="verdict-heading"
-            className="font-display text-[clamp(36px,5.5vw,56px)] text-ink leading-[1.05] -tracking-[0.022em]"
+            className="font-display text-[clamp(28px,4vw,36px)] text-ink leading-[1.08] -tracking-[0.018em]"
           >
             {lang === 'en' ? primary.title_en : primary.title_de}
           </h2>
-          <p className="font-display text-[clamp(20px,3vw,32px)] text-ink/85 leading-tight italic">
-            {/* Article reference is captured in rationale — surface a
-             * small helper line here while we await the schema's
-             * dedicated `article_reference` field (Phase 4). */}
+          <p className="font-display text-[clamp(18px,2.4vw,22px)] text-ink/80 leading-tight italic">
             {(lang === 'en' ? primary.rationale_en : primary.rationale_de) ?? ''}
           </p>
 
-          <span aria-hidden="true" className="block h-px w-16 bg-clay/55 my-3" />
+          <span aria-hidden="true" className="block h-px w-16 bg-clay/55 my-1" />
 
-          <p className="text-[16px] text-ink/85 leading-[1.65] max-w-2xl">
-            {t('result.verdict.basisIntro', {
-              defaultValue: 'Diese Einordnung basiert auf:',
-            })}{' '}
-            {/* Render the determining factors from the LEGAL-source facts. */}
-            <DeterminingFactors state={state} />
-          </p>
+          {/* Phase 3.6 #72 — expandable "Warum dieses Verfahren?" */}
+          <details className="group">
+            <summary className="cursor-pointer text-[13px] font-medium text-ink/75 hover:text-ink inline-flex items-center gap-2 select-none list-none">
+              <span aria-hidden="true" className="font-serif italic text-clay group-open:rotate-90 inline-block transition-transform duration-soft">
+                ›
+              </span>
+              {t('result.verdict.whyToggle', {
+                defaultValue: 'Warum dieses Verfahren?',
+              })}
+            </summary>
+            <div className="pt-3 pl-5 flex flex-col gap-2.5 text-[14px] text-ink/85 leading-[1.6]">
+              <p>
+                {t('result.verdict.basisIntro', {
+                  defaultValue: 'Diese Einordnung basiert auf:',
+                })}
+              </p>
+              <DeterminingFactorsList state={state} />
+            </div>
+          </details>
 
-          <p className="text-[12px] text-clay/85 italic mt-2">
+          <p className="text-[12px] text-clay/85 italic">
             {t('result.verdict.confidenceLine', {
               defaultValue: 'Sicherheit der Einordnung:',
             })}{' '}
@@ -97,32 +106,46 @@ export function VerdictSection({ project, source }: Props) {
   )
 }
 
-function DeterminingFactors({ state }: { state: Partial<ProjectState> }) {
-  const { i18n } = useTranslation()
+/**
+ * Phase 3.6 #72 — ordered list of LEGAL-source / CALCULATED facts that
+ * drove the procedure determination, each rendered with its qualifier
+ * badge so the architect (or auditor) can sanity-check the chain.
+ */
+function DeterminingFactorsList({ state }: { state: Partial<ProjectState> }) {
+  const { i18n, t } = useTranslation()
   const lang = (i18n.resolvedLanguage ?? 'de') as 'de' | 'en'
 
   const facts = (state.facts ?? []).filter(
     (f) => f.qualifier?.source === 'LEGAL' || f.qualifier?.quality === 'CALCULATED',
   )
   if (facts.length === 0) {
-    return <span className="text-ink/60 italic">—</span>
+    return (
+      <p className="italic text-clay/65">
+        {t('result.verdict.noFactors', {
+          defaultValue: 'Noch keine bestimmenden Fakten erfasst.',
+        })}
+      </p>
+    )
   }
-  // Render up to 4 factors as a sentence with ` · ` separators.
   return (
-    <span>
-      {facts.slice(0, 4).map((f, idx) => {
-        const label =
+    <ol className="flex flex-col gap-1.5 list-decimal pl-5 marker:text-clay/65 marker:font-serif marker:italic">
+      {facts.slice(0, 6).map((f) => {
+        const label = factLabel(f.key, lang).label
+        const value =
           typeof f.value === 'string'
             ? f.value
-            : `${factLabel(f.key, lang).label}: ${factValueWithUnit(f.key, f.value, lang)}`
+            : factValueWithUnit(f.key, f.value, lang)
         return (
-          <span key={f.key}>
-            {idx > 0 && <span aria-hidden="true" className="text-ink/40 mx-2">·</span>}
-            <span className="text-ink">{label}</span>
-          </span>
+          <li key={f.key} className="leading-snug">
+            <span className="text-ink">{label}:</span>{' '}
+            <span className="text-ink/75">{value}</span>{' '}
+            <span className="ml-1 text-[10px] uppercase tracking-[0.16em] text-clay/65">
+              {f.qualifier.source} · {f.qualifier.quality.charAt(0)}
+            </span>
+          </li>
         )
       })}
-    </span>
+    </ol>
   )
 }
 

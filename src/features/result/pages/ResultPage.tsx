@@ -88,30 +88,35 @@ export function ResultPageBody({ project, messages, events, source }: BodyProps)
       <BlueprintSubstrate lensRadius={260} breathing={false} driftPx={0} />
 
       <CoverHero project={project} messages={messages} source={source} />
-      <VerdictSection project={project} source={source} />
-      <TopThreeHero state={(project.state ?? {}) as Partial<ProjectState>} />
-      <LegalLandscape state={(project.state ?? {}) as Partial<ProjectState>} />
-      <DocumentChecklist
-        project={project}
-        state={(project.state ?? {}) as Partial<ProjectState>}
-      />
-      <SpecialistsRequired state={(project.state ?? {}) as Partial<ProjectState>} />
-      <CostTimelinePanel state={(project.state ?? {}) as Partial<ProjectState>} />
-      <RiskFlags state={(project.state ?? {}) as Partial<ProjectState>} />
-      <ConfidenceDashboard state={(project.state ?? {}) as Partial<ProjectState>} />
-      <ConversationAppendix messages={messages} />
-      {!isShared && (
-        <SmartSuggestions
+
+      {/* Phase 3.6 #72 — sections II–XII run in operating mode. Cover
+        * hero (Section I) stays atelier above this wrapper. */}
+      <div data-mode="operating">
+        <VerdictSection project={project} source={source} />
+        <TopThreeHero state={(project.state ?? {}) as Partial<ProjectState>} />
+        <LegalLandscape state={(project.state ?? {}) as Partial<ProjectState>} />
+        <DocumentChecklist
           project={project}
           state={(project.state ?? {}) as Partial<ProjectState>}
         />
-      )}
-      <ExportHub
-        project={project}
-        messages={messages}
-        events={events}
-        source={source}
-      />
+        <SpecialistsRequired state={(project.state ?? {}) as Partial<ProjectState>} />
+        <CostTimelinePanel state={(project.state ?? {}) as Partial<ProjectState>} />
+        <RiskFlags state={(project.state ?? {}) as Partial<ProjectState>} />
+        <ConfidenceDashboard state={(project.state ?? {}) as Partial<ProjectState>} />
+        <ConversationAppendix messages={messages} />
+        {!isShared && (
+          <SmartSuggestions
+            project={project}
+            state={(project.state ?? {}) as Partial<ProjectState>}
+          />
+        )}
+        <ExportHub
+          project={project}
+          messages={messages}
+          events={events}
+          source={source}
+        />
+      </div>
     </div>
   )
 }

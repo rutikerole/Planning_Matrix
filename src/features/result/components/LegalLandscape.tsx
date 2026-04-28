@@ -142,6 +142,7 @@ function DomainBand({
                 <button
                   type="button"
                   disabled={!cite}
+                  aria-expanded={open}
                   onClick={() => setOpenCitationFor(open ? null : rowKey)}
                   className={
                     'text-left text-[12px] leading-snug truncate font-medium ' +
@@ -156,31 +157,53 @@ function DomainBand({
                 <span className="text-[11px] italic text-clay/85 leading-snug truncate text-right">
                   {row.status}
                 </span>
-                {open && cite && (
-                  <div className="absolute left-4 top-full z-20 mt-1 w-72 bg-paper border border-ink/15 rounded-[2px] shadow-[0_8px_32px_-12px_hsl(220_15%_11%/0.22)] p-4 flex flex-col gap-2">
-                    <p className="text-[10px] font-medium uppercase tracking-[0.20em] text-clay/85 leading-none">
-                      {t('result.legal.sourceEyebrow', {
-                        defaultValue: 'Öffentliche Quelle',
-                      })}
-                    </p>
-                    <p className="font-serif italic text-[14px] text-ink leading-snug">
-                      {cite.label}
-                    </p>
-                    <a
-                      href={cite.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-[12px] text-drafting-blue hover:text-ink underline underline-offset-4 decoration-drafting-blue/55 transition-colors duration-soft"
-                    >
-                      {cite.href.replace(/^https?:\/\//, '')} →
-                    </a>
-                  </div>
-                )}
               </li>
             )
           })
         )}
       </ul>
+      {/* Phase 3.6 #72 — inline expansion (Q5 locked: inline). The
+        * popover used to overlay the row; now the source + rationale
+        * unfold below the list so it prints cleanly and reads on
+        * mobile without overlap. */}
+      {(() => {
+        if (!openCitationFor) return null
+        const idx = parseInt(openCitationFor.split('-')[1] ?? '-1', 10)
+        const row = domain.rows[idx]
+        if (!row) return null
+        const cite = findCitation(row.label)
+        if (!cite) return null
+        return (
+          <div
+            className="border-t border-drafting-blue/20 bg-drafting-blue/[0.03] px-4 sm:px-5 py-4 flex flex-col gap-2"
+            role="region"
+            aria-label={cite.label}
+          >
+            <p className="text-[10px] font-medium uppercase tracking-[0.20em] text-clay/85 leading-none">
+              {t('result.legal.sourceEyebrow', {
+                defaultValue: 'Öffentliche Quelle',
+              })}
+            </p>
+            <p className="font-serif italic text-[14px] text-ink leading-snug">
+              {cite.label}
+            </p>
+            <p className="text-[12.5px] text-ink/75 leading-relaxed">
+              {t('result.legal.whyHint', {
+                defaultValue:
+                  'Diese Norm betrifft Sie weil sie in der laufenden Beurteilung des Vorhabens herangezogen wird. Eine verbindliche Auslegung erteilt nur die Genehmigungsbehörde.',
+              })}
+            </p>
+            <a
+              href={cite.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[12px] text-drafting-blue hover:text-ink underline underline-offset-4 decoration-drafting-blue/55 transition-colors duration-soft self-start"
+            >
+              {cite.href.replace(/^https?:\/\//, '')} →
+            </a>
+          </div>
+        )
+      })()}
     </div>
   )
 }

@@ -1,35 +1,36 @@
-import { useEffect, useState } from 'react'
+// ───────────────────────────────────────────────────────────────────────
+// Phase 3.6 #72 — Section V: Document checklist as a 3-column kanban
+//
+// Replaces the HOAI-grouped paper-tab checklist with a working surface:
+// Erforderlich → In Arbeit → Liegt vor. Click-to-move (Q6 locked: not
+// drag-and-drop). Status persists via projects.update; the "In Arbeit"
+// middle column is a localStorage flag (no canonical ItemStatus matches
+// "in progress").
+// ───────────────────────────────────────────────────────────────────────
+
+import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Download } from 'lucide-react'
+import { useQueryClient } from '@tanstack/react-query'
+import { ArrowLeft, ArrowRight, Check, Download, FileText } from 'lucide-react'
+import { cn } from '@/lib/utils'
+import { supabase } from '@/lib/supabase'
 import type { DocumentItem, ProjectState } from '@/types/projectState'
 import type { ProjectRow } from '@/types/db'
-import { groupByPhase, HOAI_LABELS_DE, HOAI_LABELS_EN, type HoaiPhase } from '../lib/hoaiPhases'
-import { isChecked, setChecked } from '../lib/checklistStorage'
 import { buildExportFilename } from '@/features/chat/lib/exportFilename'
-import { PaperCheckbox } from './PaperCheckbox'
 
 interface Props {
   project: ProjectRow
   state: Partial<ProjectState>
 }
 
-const STATUS_LABELS_DE: Record<string, string> = {
-  nicht_erforderlich: 'nicht erforderlich',
-  erforderlich: 'erforderlich',
-  liegt_vor: 'liegt vor',
-  freigegeben: 'freigegeben',
-  eingereicht: 'eingereicht',
-  genehmigt: 'genehmigt',
-}
+type Column = 'erforderlich' | 'in_arbeit' | 'liegt_vor'
 
-const STATUS_LABELS_EN: Record<string, string> = {
-  nicht_erforderlich: 'not required',
-  erforderlich: 'required',
-  liegt_vor: 'on hand',
-  freigegeben: 'approved',
-  eingereicht: 'submitted',
-  genehmigt: 'permitted',
-}
+const COMPLETE_STATUSES = new Set([
+  'liegt_vor',
+  'eingereicht',
+  'genehmigt',
+  'freigegeben',
+])
 
 const PARTY_LABELS_DE: Record<string, string> = {
   bauherr: 'Bauherr',
@@ -42,61 +43,195 @@ const PARTY_LABELS_DE: Record<string, string> = {
   bauamt: 'Bauamt',
 }
 
-/**
- * Phase 3.5 #62 — Section V: Erforderliche Unterlagen.
- *
- * Documents grouped by HOAI Leistungsphase (LP 1 ... LP 9), each with
- * a custom paper-tab checkbox + title + producer hint + status pill.
- * Toggling a checkbox persists per (project, doc) to localStorage so
- * the user can track progress across sessions.
- *
- * "Checkliste als PDF herunterladen" link triggers the focused
- * checklist export (one A4 page) — pdf-lib + brand fonts loaded
- * dynamically so the bundle stays small.
- */
 export function DocumentChecklist({ project, state }: Props) {
   const { t, i18n } = useTranslation()
   const lang = (i18n.resolvedLanguage ?? 'de') as 'de' | 'en'
+  const queryClient = useQueryClient()
   const documents = state.documents ?? []
-  const grouped = groupByPhase(documents)
   const totalCount = documents.length
 
+  // localStorage-backed `in_arbeit` flags. The kanban reads them at
+  // mount and forwards toggles to the cards.
+  const [inProgress, setInProgress] = useState<Set<string>>(new Set())
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    try {
+      const raw = window.localStorage.getItem(`pm:docs-progress:${project.id}`)
+      if (!raw) return
+      const arr = JSON.parse(raw)
+      if (Array.isArray(arr)) setInProgress(new Set(arr))
+    } catch {
+      /* corrupt blob — start fresh */
+    }
+  }, [project.id])
+
+  const persistProgress = (next: Set<string>) => {
+    try {
+      window.localStorage.setItem(
+        `pm:docs-progress:${project.id}`,
+        JSON.stringify(Array.from(next)),
+      )
+    } catch {
+      /* incognito etc — skip */
+    }
+  }
+
+  const setDocStatus = async (docId: string, status: DocumentItem['status']) => {
+    const cached = queryClient.getQueryData<ProjectRow>(['project', project.id])
+    const stateNow = (cached?.state ?? {}) as Partial<ProjectState>
+    const docs = (stateNow.documents ?? []).map((d) =>
+      d.id === docId ? { ...d, status } : d,
+    )
+    const nextState = { ...stateNow, documents: docs }
+    const { error } = await supabase
+      .from('projects')
+      .update({ state: nextState })
+      .eq('id', project.id)
+    if (error) {
+      if (import.meta.env.DEV) {
+        // eslint-disable-next-line no-console
+        console.warn('[DocumentChecklist] persist failed:', error.message)
+      }
+      return
+    }
+    queryClient.setQueryData<ProjectRow>(['project', project.id], (old) =>
+      old ? { ...old, state: nextState as ProjectRow['state'] } : old,
+    )
+  }
+
+  const columnize = useMemo(() => {
+    const cols: Record<Column, DocumentItem[]> = {
+      erforderlich: [],
+      in_arbeit: [],
+      liegt_vor: [],
+    }
+    documents.forEach((d) => {
+      if (COMPLETE_STATUSES.has(d.status)) {
+        cols.liegt_vor.push(d)
+      } else if (inProgress.has(d.id)) {
+        cols.in_arbeit.push(d)
+      } else {
+        cols.erforderlich.push(d)
+      }
+    })
+    return cols
+  }, [documents, inProgress])
+
   if (totalCount === 0) return null
+
+  const moveStart = (doc: DocumentItem) => {
+    const next = new Set(inProgress)
+    next.add(doc.id)
+    setInProgress(next)
+    persistProgress(next)
+  }
+  const moveDone = async (doc: DocumentItem) => {
+    const next = new Set(inProgress)
+    next.delete(doc.id)
+    setInProgress(next)
+    persistProgress(next)
+    await setDocStatus(doc.id, 'liegt_vor')
+  }
+  const moveBack = async (doc: DocumentItem) => {
+    const next = new Set(inProgress)
+    next.delete(doc.id)
+    setInProgress(next)
+    persistProgress(next)
+    if (COMPLETE_STATUSES.has(doc.status)) {
+      await setDocStatus(doc.id, 'erforderlich')
+    }
+  }
 
   return (
     <section
       id="sec-documents"
-      className="px-6 sm:px-12 lg:px-20 py-20 sm:py-24 max-w-3xl mx-auto w-full scroll-mt-16 flex flex-col gap-8"
+      className="px-6 sm:px-12 lg:px-20 py-20 sm:py-24 max-w-5xl mx-auto w-full scroll-mt-16 flex flex-col gap-8"
     >
       <header className="flex items-baseline gap-4">
         <span className="font-serif italic text-[20px] text-clay-deep tabular-figures leading-none w-10 shrink-0">
           V
         </span>
         <span className="text-[10px] uppercase tracking-[0.22em] font-medium text-foreground/65">
-          {t('result.checklist.eyebrow', { defaultValue: 'Erforderliche Unterlagen' })}
+          {t('result.checklist.eyebrow', {
+            defaultValue: 'Erforderliche Unterlagen',
+          })}
         </span>
       </header>
 
       <span aria-hidden="true" className="block h-px w-12 bg-ink/20" />
 
-      <p className="font-serif italic text-[15px] text-ink/65 leading-relaxed max-w-xl">
-        {t('result.checklist.intro', {
+      <p className="text-[14px] text-ink/75 leading-relaxed max-w-xl">
+        {t('result.checklist.kanbanIntro', {
           defaultValue:
-            '{{n}} Dokumente sind für die Antragstellung vorzubereiten.',
+            '{{n}} Dokumente sind für die Antragstellung vorzubereiten. Verschieben Sie Karten zwischen den Spalten, sobald Sie ein Dokument anfordern oder erhalten haben.',
           n: totalCount,
         })}
       </p>
 
-      <div className="flex flex-col gap-10">
-        {Array.from(grouped.entries()).map(([phase, docs]) => (
-          <PhaseGroup
-            key={phase}
-            phase={phase}
-            docs={docs}
-            project={project}
-            lang={lang}
-          />
-        ))}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <KanbanColumn
+          title={t('result.checklist.colRequired', {
+            defaultValue: 'Erforderlich',
+          })}
+          count={columnize.erforderlich.length}
+          tone="clay"
+        >
+          {columnize.erforderlich.map((doc) => (
+            <KanbanCard
+              key={doc.id}
+              doc={doc}
+              lang={lang}
+              actionLabel={t('result.checklist.startWork', {
+                defaultValue: 'Anfordern',
+              })}
+              actionIcon="forward"
+              onAction={() => moveStart(doc)}
+            />
+          ))}
+        </KanbanColumn>
+
+        <KanbanColumn
+          title={t('result.checklist.colInProgress', {
+            defaultValue: 'In Arbeit',
+          })}
+          count={columnize.in_arbeit.length}
+          tone="drafting-blue"
+        >
+          {columnize.in_arbeit.map((doc) => (
+            <KanbanCard
+              key={doc.id}
+              doc={doc}
+              lang={lang}
+              actionLabel={t('result.checklist.markDone', {
+                defaultValue: 'Liegt vor',
+              })}
+              actionIcon="check"
+              onAction={() => void moveDone(doc)}
+            />
+          ))}
+        </KanbanColumn>
+
+        <KanbanColumn
+          title={t('result.checklist.colDone', {
+            defaultValue: 'Liegt vor',
+          })}
+          count={columnize.liegt_vor.length}
+          tone="ink"
+        >
+          {columnize.liegt_vor.map((doc) => (
+            <KanbanCard
+              key={doc.id}
+              doc={doc}
+              lang={lang}
+              actionLabel={t('result.checklist.moveBack', {
+                defaultValue: 'Zurück',
+              })}
+              actionIcon="back"
+              onAction={() => void moveBack(doc)}
+              done
+            />
+          ))}
+        </KanbanColumn>
       </div>
 
       <div className="pt-2">
@@ -106,99 +241,98 @@ export function DocumentChecklist({ project, state }: Props) {
   )
 }
 
-function PhaseGroup({
-  phase,
-  docs,
-  project,
-  lang,
-}: {
-  phase: HoaiPhase
-  docs: DocumentItem[]
-  project: ProjectRow
-  lang: 'de' | 'en'
-}) {
-  const labels = lang === 'en' ? HOAI_LABELS_EN : HOAI_LABELS_DE
+interface KanbanColumnProps {
+  title: string
+  count: number
+  tone: 'clay' | 'drafting-blue' | 'ink'
+  children: React.ReactNode
+}
+
+function KanbanColumn({ title, count, tone, children }: KanbanColumnProps) {
+  const accent =
+    tone === 'clay'
+      ? 'border-clay/35 bg-clay/[0.04]'
+      : tone === 'drafting-blue'
+        ? 'border-drafting-blue/30 bg-drafting-blue/[0.03]'
+        : 'border-ink/20 bg-ink/[0.02]'
+  const headerColor =
+    tone === 'clay'
+      ? 'text-clay'
+      : tone === 'drafting-blue'
+        ? 'text-drafting-blue'
+        : 'text-ink'
   return (
-    <div className="grid grid-cols-[60px_1fr] gap-x-5">
-      <div className="flex flex-col gap-1">
-        <span className="font-serif italic text-[14px] text-clay-deep tabular-figures leading-none">
-          {phase}
+    <div className={cn('flex flex-col gap-3 rounded-[var(--pm-radius-card)] border p-4', accent)}>
+      <header className="flex items-baseline justify-between">
+        <span className={cn('text-[11px] font-medium uppercase tracking-[0.18em]', headerColor)}>
+          {title}
         </span>
-        <span className="text-[10px] uppercase tracking-[0.18em] text-clay/60 leading-snug">
-          {labels[phase]}
-        </span>
-      </div>
-      <ul className="flex flex-col gap-3">
-        {docs.map((doc) => (
-          <DocumentRow key={doc.id} project={project} doc={doc} lang={lang} />
-        ))}
+        <span className="font-serif italic text-clay tabular-nums">{count}</span>
+      </header>
+      <ul role="list" className="flex flex-col gap-2 min-h-[60px]">
+        {children}
       </ul>
     </div>
   )
 }
 
-function DocumentRow({
-  project,
-  doc,
-  lang,
-}: {
-  project: ProjectRow
+interface KanbanCardProps {
   doc: DocumentItem
   lang: 'de' | 'en'
-}) {
-  const { t } = useTranslation()
-  const [checked, setLocalChecked] = useState(false)
-  // Hydrate from localStorage on mount.
-  useEffect(() => {
-    setLocalChecked(isChecked(project.id, doc.id))
-  }, [project.id, doc.id])
+  actionLabel: string
+  actionIcon: 'forward' | 'back' | 'check'
+  onAction: () => void
+  done?: boolean
+}
 
+function KanbanCard({ doc, lang, actionLabel, actionIcon, onAction, done }: KanbanCardProps) {
+  const { t } = useTranslation()
   const title = lang === 'en' ? doc.title_en : doc.title_de
-  const statusLabel =
-    (lang === 'en' ? STATUS_LABELS_EN : STATUS_LABELS_DE)[doc.status] ?? doc.status
-  const producer =
-    doc.produced_by[0] ?? null
-  const producerLabel = producer
-    ? PARTY_LABELS_DE[producer] ?? producer
-    : null
+  const producer = doc.produced_by[0] ?? null
+  const producerLabel = producer ? PARTY_LABELS_DE[producer] ?? producer : null
+
+  const Icon =
+    actionIcon === 'forward' ? ArrowRight : actionIcon === 'back' ? ArrowLeft : Check
 
   return (
     <li
-      className="grid grid-cols-[24px_1fr] gap-x-3 px-3 py-3 border border-ink/12 rounded-[2px] bg-paper"
-      style={{
-        boxShadow: 'inset 0 1px 0 hsl(0 0% 100% / 0.55)',
-      }}
+      className={cn(
+        'flex flex-col gap-1.5 px-3 py-2.5 bg-paper border border-ink/15 rounded-[var(--pm-radius-card)]',
+        'transition-colors duration-soft hover:border-ink/30',
+      )}
+      style={{ boxShadow: 'var(--pm-shadow-card)' }}
     >
-      <PaperCheckbox
-        checked={checked}
-        onToggle={(next) => {
-          setLocalChecked(next)
-          setChecked(project.id, doc.id, next)
-        }}
-        ariaLabel={title}
-      />
-      <div className="flex flex-col gap-0.5">
+      <div className="flex items-baseline gap-2">
+        <FileText aria-hidden="true" className="size-3.5 shrink-0 text-clay/85" />
         <p
-          className={
-            'text-[15px] font-medium leading-snug ' +
-            (checked ? 'text-ink/55 line-through decoration-clay/55 decoration-1' : 'text-ink')
-          }
+          className={cn(
+            'text-[13px] font-medium leading-snug min-w-0 break-words',
+            done ? 'text-ink/70' : 'text-ink',
+          )}
         >
           {title}
         </p>
-        {producerLabel && (
-          <p className="text-[12px] italic text-clay/85 leading-snug">
-            {t('result.checklist.producerLabel', {
-              defaultValue: 'Wer erstellt?',
-            })}{' '}
-            {producerLabel}
-          </p>
-        )}
-        <p className="text-[11px] italic text-ink/55 leading-snug">
-          {t('result.checklist.statusLabel', { defaultValue: 'Status' })}:{' '}
-          <span className="text-clay/85 not-italic">{statusLabel}</span>
-        </p>
       </div>
+      {producerLabel && (
+        <p className="text-[11px] italic text-clay/85 leading-snug pl-5">
+          {t('result.checklist.producerLabel', { defaultValue: 'Wer erstellt?' })}{' '}
+          {producerLabel}
+        </p>
+      )}
+      <button
+        type="button"
+        onClick={onAction}
+        className={cn(
+          'inline-flex items-center gap-1.5 self-end h-7 px-3 text-[11.5px] font-medium border transition-colors duration-soft',
+          'rounded-[var(--pm-radius-pill)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/35 focus-visible:ring-offset-2 focus-visible:ring-offset-background',
+          done
+            ? 'border-ink/15 text-ink/65 hover:border-ink/30 hover:text-ink bg-paper'
+            : 'border-ink bg-ink text-paper hover:bg-ink/92',
+        )}
+      >
+        <Icon aria-hidden="true" className="size-3" />
+        {actionLabel}
+      </button>
     </li>
   )
 }
