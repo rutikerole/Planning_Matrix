@@ -1,4 +1,7 @@
 {
+  "a11y": {
+    "skipToMain": "Zum Hauptinhalt springen"
+  },
   "common": {
     "ctaPrimary": "Frühen Zugang anfragen",
     "ctaSecondary": "So funktioniert's",

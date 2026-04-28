@@ -5,6 +5,7 @@ import { LazyMotion, domAnimation } from 'framer-motion'
 import '@/lib/i18n'
 import { useSession } from '@/hooks/useSession'
 import { MobileFrame } from '@/components/MobileFrame'
+import { SkipLink } from '@/components/SkipLink'
 
 const queryClient = new QueryClient()
 
@@ -17,6 +18,10 @@ export function Providers({ children }: { children: ReactNode }) {
             * <html>. Mobile token block in globals.css activates when
             * the attribute reads "mobile". */}
           <MobileFrame>
+            {/* Phase 3.8 #89 — keyboard / screen-reader skip link.
+              * Only visible when focused. Routes anchors a #main-content
+              * id; pages without it gracefully fall through. */}
+            <SkipLink />
             <SessionGuard>{children}</SessionGuard>
           </MobileFrame>
         </BrowserRouter>

@@ -1,4 +1,7 @@
 {
+  "a11y": {
+    "skipToMain": "Skip to main content"
+  },
   "common": {
     "ctaPrimary": "Request early access",
     "ctaSecondary": "How it works",
