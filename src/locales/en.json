@@ -570,6 +570,9 @@
       "empty": "Recommendations appear here once there's enough information.",
       "cost": "Spend"
     },
+    "user": {
+      "bauherrTag": "Bauherr"
+    },
     "empty": {
       "eyebrow": "Planning Matrix · Atelier",
       "headline": "The atelier opens.",

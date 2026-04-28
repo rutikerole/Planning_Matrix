@@ -570,6 +570,9 @@
       "empty": "Empfehlungen erscheinen hier, sobald genug Informationen vorliegen.",
       "cost": "Aufwand"
     },
+    "user": {
+      "bauherrTag": "Bauherr"
+    },
     "empty": {
       "eyebrow": "Planning Matrix · Atelier",
       "headline": "Das Atelier öffnet.",
