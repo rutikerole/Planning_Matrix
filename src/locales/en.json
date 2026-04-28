@@ -723,6 +723,38 @@
       "totalEyebrow": "In total",
       "totalLabel": "Datapoints",
       "assumedLine": "marked as assumption. Assumptions get verified during architect consultation."
+    },
+    "appendix": {
+      "eyebrow": "Appendix · the consultation",
+      "summary": "{{n}} turns over {{m}} minutes",
+      "expand": "Open consultation log ▼",
+      "collapse": "collapse ▲"
+    },
+    "suggestions": {
+      "eyebrow": "You might also need",
+      "intro": "Based on your profile we suggest:",
+      "addAction": "Add to recommendations →",
+      "adding": "adding …",
+      "added": "✓ added"
+    },
+    "export": {
+      "eyebrow": "Take it home",
+      "intro": "Save this briefing as a file or share it with an architect.",
+      "download": "Download",
+      "busy": "generating …",
+      "pdf": { "title": "Full PDF", "body": "Atelier briefing format" },
+      "md": { "title": "Markdown checklist", "body": "For architects + tools" },
+      "json": { "title": "JSON data export", "body": "For integrations" },
+      "share": {
+        "title": "Share link",
+        "body": "30 days · Read-only",
+        "cta": "Coming in next commit"
+      },
+      "email": {
+        "title": "Send to architect",
+        "body": "Email with briefing link",
+        "cta": "Coming soon"
+      }
     }
   },
   "legal": {

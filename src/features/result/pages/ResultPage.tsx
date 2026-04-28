@@ -13,6 +13,9 @@ import { SpecialistsRequired } from '../components/SpecialistsRequired'
 import { CostTimelinePanel } from '../components/CostTimelinePanel'
 import { RiskFlags } from '../components/RiskFlags'
 import { ConfidenceDashboard } from '../components/ConfidenceDashboard'
+import { ConversationAppendix } from '../components/ConversationAppendix'
+import { SmartSuggestions } from '../components/SmartSuggestions'
+import { ExportHub } from '../components/ExportHub'
 import type { ProjectState } from '@/types/projectState'
 
 /**
@@ -87,7 +90,17 @@ export function ResultPage() {
       {/* Section IX — Confidence Dashboard (THE new primitive) */}
       <ConfidenceDashboard state={(project.state ?? {}) as Partial<ProjectState>} />
 
-      {/* Sections X–XII land in commit #64. */}
+      {/* Section X — Conversation Appendix */}
+      <ConversationAppendix messages={messages ?? []} />
+
+      {/* Section XI — Smart Suggestions */}
+      <SmartSuggestions
+        project={project}
+        state={(project.state ?? {}) as Partial<ProjectState>}
+      />
+
+      {/* Section XII — Export Hub */}
+      <ExportHub project={project} />
     </div>
   )
 }

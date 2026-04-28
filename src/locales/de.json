@@ -687,6 +687,74 @@
       "empty": "Keine zusätzlichen Vorgaben festgestellt.",
       "clickHint": "Klicken Sie auf eine Norm, um die öffentliche Quelle zu öffnen.",
       "sourceEyebrow": "Öffentliche Quelle"
+    },
+    "checklist": {
+      "eyebrow": "Erforderliche Unterlagen",
+      "intro": "{{n}} Dokumente sind für die Antragstellung vorzubereiten.",
+      "producerLabel": "Wer erstellt?",
+      "statusLabel": "Status",
+      "pdfCta": "Checkliste als PDF herunterladen",
+      "pdfBusy": "PDF wird erstellt …"
+    },
+    "specialists": {
+      "eyebrow": "Das Team",
+      "intro": "{{n}} Fachpersonen werden für Ihr Vorhaben benötigt.",
+      "effortLabel": "Geschätzter Aufwand"
+    },
+    "costTimeline": {
+      "eyebrow": "Kosten- und Zeitrahmen",
+      "intro": "Erste Einschätzung — bitte mit Architekt:in präzisieren.",
+      "timelineEyebrow": "Verfahrensdauer",
+      "totalLabel": "Gesamt",
+      "totalDuration": "ca. 4–6 Monate",
+      "costEyebrow": "Kostenrahmen",
+      "costSub": "(Honorare nach HOAI · ohne Bauleistung)",
+      "sumLabel": "Summe (geschätzt)",
+      "confidenceLine": "Sicherheit der Schätzung: ±25 %",
+      "caveat": "Diese Werte sind Orientierungswerte basierend auf typischen Bayern-Honoraren für Vorhaben dieser Klasse."
+    },
+    "risks": {
+      "eyebrow": "Was noch zu prüfen ist",
+      "intro_one": "Ein Punkt sollten Sie mit Ihrer Architekt:in besprechen.",
+      "intro_other": "{{n}} Punkte sollten Sie mit Ihrer Architekt:in besprechen."
+    },
+    "confidence": {
+      "eyebrow": "Datengüte",
+      "totalEyebrow": "Insgesamt",
+      "totalLabel": "Datenpunkte",
+      "assumedLine": "davon als Annahme markiert. Annahmen werden in der Beratung mit Architekt:in verifiziert."
+    },
+    "appendix": {
+      "eyebrow": "Appendix · die Beratung",
+      "summary": "{{n}} Wendungen über {{m}} Minuten",
+      "expand": "Beratungsverlauf öffnen ▼",
+      "collapse": "einklappen ▲"
+    },
+    "suggestions": {
+      "eyebrow": "Sie könnten auch benötigen",
+      "intro": "Auf Basis Ihres Profils empfehlen wir:",
+      "addAction": "Zu Empfehlungen hinzufügen →",
+      "adding": "wird hinzugefügt …",
+      "added": "✓ hinzugefügt"
+    },
+    "export": {
+      "eyebrow": "Mitnehmen",
+      "intro": "Dieses Briefing als Datei speichern oder mit einer/m Architekt:in teilen.",
+      "download": "Herunterladen",
+      "busy": "wird erstellt …",
+      "pdf": { "title": "Vollständiges PDF", "body": "Atelier-Briefing-Format" },
+      "md": { "title": "Markdown-Checkliste", "body": "Für Architekt:innen + Tools" },
+      "json": { "title": "JSON-Datenexport", "body": "Für Integrationen" },
+      "share": {
+        "title": "Link teilen",
+        "body": "30 Tage gültig · Nur lesender Zugriff",
+        "cta": "Folgt im nächsten Commit"
+      },
+      "email": {
+        "title": "An Architekt:in senden",
+        "body": "E-Mail mit Briefing-Link",
+        "cta": "Bald verfügbar"
+      }
     }
   },
   "legal": {
