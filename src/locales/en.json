@@ -438,6 +438,14 @@
   "chat": {
     "leaveProject": "Leave project",
     "jumpToLatest": "Jump to latest",
+    "contextSheet": {
+      "title": "Message options",
+      "fromYou": "You",
+      "fromAssistant": "Assistant",
+      "copy": "Copy text",
+      "copied": "Copied",
+      "close": "Close"
+    },
     "footer": {
       "briefingPrimary": "View briefing",
       "briefingSubtitle": "The full document",

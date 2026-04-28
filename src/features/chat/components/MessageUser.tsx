@@ -10,12 +10,18 @@
 // Timestamp is always visible (Q3 locked) as Inter 12 italic clay/72
 // in the bottom-right of the card. Hover surfaces the relative time
 // (gerade eben / vor 2 Min. / vor 3 Std. / 28. Apr 2026) via title.
+//
+// Phase 3.9 #97 — long-press on mobile opens MessageContextSheet.
 // ───────────────────────────────────────────────────────────────────────
 
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import type { MessageRow } from '@/types/db'
+import { useViewport } from '@/lib/useViewport'
+import { useLongPress } from '@/lib/useLongPress'
 import { MessageAttachment } from './MessageAttachment'
+import { MessageContextSheet } from './MessageContextSheet'
 import { formatRelativeShort } from '../lib/formatRelativeShort'
 
 interface Props {
@@ -23,10 +29,18 @@ interface Props {
 }
 
 export function MessageUser({ message }: Props) {
-  const { i18n } = useTranslation()
+  const { t, i18n } = useTranslation()
   const lang = (i18n.resolvedLanguage ?? 'de') as 'de' | 'en'
   const time = formatTime(message.created_at, lang)
   const tooltip = formatRelativeShort(new Date(message.created_at), lang)
+  const { isMobile } = useViewport()
+  const [sheetOpen, setSheetOpen] = useState(false)
+
+  const longPress = useLongPress({
+    onLongPress: () => {
+      if (isMobile) setSheetOpen(true)
+    },
+  })
 
   return (
     <div className="flex justify-end">
@@ -34,8 +48,10 @@ export function MessageUser({ message }: Props) {
         className={cn(
           'relative flex flex-col gap-1.5 max-w-[min(70%,520px)] px-4 py-3',
           'bg-[hsl(38_30%_94%)] border border-ink/8 rounded-xl',
+          isMobile && 'select-none',
         )}
         style={{ boxShadow: '0 1px 2px hsl(220 15% 11% / 0.03)' }}
+        {...(isMobile ? longPress : {})}
       >
         <p className="text-[15px] text-ink leading-[1.55] whitespace-pre-wrap break-words">
           {message.content_de}
@@ -57,6 +73,15 @@ export function MessageUser({ message }: Props) {
           {time}
         </p>
       </article>
+
+      {isMobile && (
+        <MessageContextSheet
+          open={sheetOpen}
+          onOpenChange={setSheetOpen}
+          fromLabel={t('chat.contextSheet.fromYou', { defaultValue: 'Sie' })}
+          text={message.content_de}
+        />
+      )}
     </div>
   )
 }

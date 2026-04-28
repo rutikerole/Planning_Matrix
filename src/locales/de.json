@@ -438,6 +438,14 @@
   "chat": {
     "leaveProject": "Projekt verlassen",
     "jumpToLatest": "Zum neuesten Beitrag",
+    "contextSheet": {
+      "title": "Nachrichtenoptionen",
+      "fromYou": "Sie",
+      "fromAssistant": "Assistent",
+      "copy": "Text kopieren",
+      "copied": "Kopiert",
+      "close": "Schließen"
+    },
     "footer": {
       "briefingPrimary": "Briefing ansehen",
       "briefingSubtitle": "Das ausführliche Dokument",

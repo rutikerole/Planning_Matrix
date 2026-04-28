@@ -1,8 +1,12 @@
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { m, useReducedMotion } from 'framer-motion'
 import { SpecialistTag } from './SpecialistTag'
 import { Typewriter } from './Typewriter'
+import { MessageContextSheet } from './MessageContextSheet'
 import type { MessageRow } from '@/types/db'
+import { useViewport } from '@/lib/useViewport'
+import { useLongPress } from '@/lib/useLongPress'
 
 interface Props {
   message: MessageRow
@@ -34,11 +38,28 @@ export function MessageAssistant({
   previousSpecialist,
   isHandoffTarget,
 }: Props) {
-  const { i18n } = useTranslation()
+  const { t, i18n } = useTranslation()
   const reduced = useReducedMotion()
   const lang = (i18n.resolvedLanguage ?? 'de') as 'de' | 'en'
   const text =
     lang === 'en' && message.content_en ? message.content_en : message.content_de
+  const { isMobile } = useViewport()
+  const [sheetOpen, setSheetOpen] = useState(false)
+
+  // Phase 3.9 #97 — long-press on mobile opens the context sheet.
+  // Bound on the article wrapper so the entire bubble surface is the
+  // hit target.
+  const longPress = useLongPress({
+    onLongPress: () => {
+      if (isMobile) setSheetOpen(true)
+    },
+  })
+
+  const specialistLabel = message.specialist
+    ? t(`chat.specialists.${message.specialist}`, {
+        defaultValue: message.specialist,
+      })
+    : t('chat.contextSheet.fromAssistant', { defaultValue: 'Assistent' })
 
   const isHandoff =
     !isHistory &&
@@ -50,6 +71,7 @@ export function MessageAssistant({
       className="relative flex flex-col gap-5"
       aria-label={`Specialist: ${message.specialist ?? 'unknown'}`}
       data-message-id={message.id}
+      {...(isMobile ? longPress : {})}
     >
       {/* Phase 3.2 #38 — marginalia rule. 1px clay vertical bracket left of
        * the body, 24px to the left, marking "this is one specialist's
@@ -102,6 +124,15 @@ export function MessageAssistant({
       <div className="text-[16px] text-ink leading-[1.65]">
         <Typewriter text={text} instant={isHistory} />
       </div>
+
+      {isMobile && (
+        <MessageContextSheet
+          open={sheetOpen}
+          onOpenChange={setSheetOpen}
+          fromLabel={specialistLabel}
+          text={text}
+        />
+      )}
     </article>
   )
 }
