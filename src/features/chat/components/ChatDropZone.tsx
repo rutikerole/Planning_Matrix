@@ -29,15 +29,16 @@ export function ChatDropZone({ children, disabled }: Props) {
   const dragCounter = useRef(0)
 
   // Suppress on coarse pointers (touch). The overlay would never fire
-  // anyway, but listening allocates DOM events on every render.
-  const [isFinePointer, setIsFinePointer] = useState(false)
+  // anyway, but listening allocates DOM events on every render. Initial
+  // value is read synchronously via useState's lazy init so we avoid a
+  // setState-in-effect cascade on mount.
+  const [isFinePointer, setIsFinePointer] = useState(() => {
+    if (typeof window === 'undefined' || !window.matchMedia) return true
+    return window.matchMedia('(pointer: fine)').matches
+  })
   useEffect(() => {
-    if (typeof window === 'undefined' || !window.matchMedia) {
-      setIsFinePointer(true)
-      return
-    }
+    if (typeof window === 'undefined' || !window.matchMedia) return
     const mq = window.matchMedia('(pointer: fine)')
-    setIsFinePointer(mq.matches)
     const handler = () => setIsFinePointer(mq.matches)
     mq.addEventListener?.('change', handler)
     return () => mq.removeEventListener?.('change', handler)

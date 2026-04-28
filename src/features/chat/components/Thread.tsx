@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { m, AnimatePresence, useReducedMotion } from 'framer-motion'
@@ -34,11 +34,11 @@ export function Thread({ messages }: Props) {
   const isStreaming = useChatStore((s) => s.streamingMessage !== null)
   const { id } = useParams<{ id: string }>()
   const projectId = id ?? ''
-  const initialIdsRef = useRef<Set<string> | null>(null)
-
-  if (initialIdsRef.current === null) {
-    initialIdsRef.current = new Set(messages.map((m) => m.id))
-  }
+  // Snapshot the set of message ids at mount so the typewriter renders
+  // these rows as "history" (instant). useState's lazy initializer runs
+  // exactly once on mount — replaces the previous read-and-write-ref-
+  // during-render pattern that the React 19 Hooks plugin flags.
+  const [initialIds] = useState<Set<string>>(() => new Set(messages.map((m) => m.id)))
 
   // Auto-scroll: drives the new-message pill via the paused flag.
   const { paused, resume } = useAutoScroll([messages.length, isThinking])
@@ -46,7 +46,7 @@ export function Thread({ messages }: Props) {
   return (
     <ol className="flex flex-col gap-8">
       {messages.map((row, idx) => {
-        const isHistory = initialIdsRef.current?.has(row.id) ?? false
+        const isHistory = initialIds.has(row.id)
         const showDivider = idx > 0 && idx % 6 === 0
         // Find the previous assistant message for match-cut detection.
         let previousSpecialist: string | null = null

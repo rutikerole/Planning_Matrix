@@ -20,6 +20,11 @@ interface Props {
 }
 
 export function EditableCell({ value, readOnly, onSave, ariaLabel }: Props) {
+  // `draft` is only meaningful while editing — when not editing, the
+  // displayed value IS the prop. This collapses the previous two-effect
+  // sync pattern into pure derivation: when the user clicks to edit,
+  // we seed the draft from the current value; otherwise the prop is
+  // the source of truth.
   const [editing, setEditing] = useState(false)
   const [draft, setDraft] = useState(value)
   const [busy, setBusy] = useState(false)
@@ -32,17 +37,16 @@ export function EditableCell({ value, readOnly, onSave, ariaLabel }: Props) {
     }
   }, [editing])
 
-  // Re-sync draft when an upstream change overwrites the value.
-  useEffect(() => {
-    if (!editing) setDraft(value)
-  }, [value, editing])
+  const startEdit = () => {
+    setDraft(value)
+    setEditing(true)
+  }
 
   const save = async () => {
     if (busy) return
     const next = draft.trim()
     if (next.length === 0 || next === value) {
       setEditing(false)
-      setDraft(value)
       return
     }
     setBusy(true)
@@ -65,7 +69,7 @@ export function EditableCell({ value, readOnly, onSave, ariaLabel }: Props) {
     return (
       <button
         type="button"
-        onClick={() => setEditing(true)}
+        onClick={startEdit}
         aria-label={ariaLabel}
         className={cn(
           'group inline-flex items-baseline gap-1.5 text-left text-[13px] text-ink leading-snug rounded-[2px]',

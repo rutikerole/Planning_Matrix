@@ -54,6 +54,13 @@ export function ChatWorkspacePage() {
     }
   }, [project?.name])
 
+  // Phase 3.4 #59 — capture mount time once so the recovery row's
+  // "more than an hour stale" check is based on a stable reference.
+  // useState's lazy initializer runs exactly once on mount; reading
+  // it during render is allowed (state IS the React-tracked render
+  // input), unlike reading a ref's current during render.
+  const [mountTime] = useState(() => Date.now())
+
   // D12 — when intent is "sonstige", surface a calm in-thread SYSTEM
   // notice on the very first turn that the standard T-01 template is in
   // use. Phase 3.4 #59 — also surface a calm "Sie waren zuletzt am …
@@ -66,7 +73,7 @@ export function ChatWorkspacePage() {
     // Recovery row: when last project activity is > 1 hour old at mount.
     if (messages.length > 0) {
       const lastTs = new Date(project.updated_at).getTime()
-      const hoursSince = (Date.now() - lastTs) / (1000 * 60 * 60)
+      const hoursSince = (mountTime - lastTs) / (1000 * 60 * 60)
       if (hoursSince > 1 && Number.isFinite(hoursSince)) {
         const lang = (i18n.resolvedLanguage ?? 'de') as 'de' | 'en'
         const formattedDate = new Date(project.updated_at).toLocaleString(
@@ -139,7 +146,7 @@ export function ChatWorkspacePage() {
       created_at: messages[0].created_at,
     }
     return [synthetic, ...result]
-  }, [messages, project, projectId, t, i18n.resolvedLanguage])
+  }, [messages, project, projectId, t, i18n.resolvedLanguage, mountTime])
 
   const hasMessages = (messages?.length ?? 0) > 0
   const lastAssistant =
@@ -167,7 +174,10 @@ export function ChatWorkspacePage() {
   // When recommendations grow (or change rank order), trigger the peek
   // (or badge in reduced-motion). Only fires below lg viewport — the
   // peek itself is lg:hidden via CSS, but we also gate the trigger
-  // logic via window.matchMedia so the badge state matches.
+  // logic via window.matchMedia so the badge state matches. The
+  // setState here is a legitimate "synchronize UI flag with external
+  // data" pattern — the rec list is owned by TanStack Query, not React.
+  /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
     const recs = (project?.state as { recommendations?: unknown[] })?.recommendations
     const count = recs?.length ?? 0
@@ -182,6 +192,7 @@ export function ChatWorkspacePage() {
     }
     lastRecCountRef.current = count
   }, [project?.state, rightOpen, reduced])
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   // Reset chat store when navigating away from a project.
   const resetChatStore = useChatStore((s) => s.reset)

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router-dom'
 import { Check } from 'lucide-react'
@@ -143,16 +143,16 @@ interface RecommendationRowProps {
 function useStartedFlag(recId: string): [boolean, () => void] {
   const { id: projectId } = useParams<{ id: string }>()
   const storageKey = `pm:started:${projectId}:${recId}`
-  const [started, setStarted] = useState(false)
-
-  useEffect(() => {
-    if (typeof window === 'undefined') return
+  // Lazy init reads from storage on mount synchronously. recId is stable
+  // for the row's lifetime, so we don't need to re-read on key change.
+  const [started, setStarted] = useState(() => {
+    if (typeof window === 'undefined') return false
     try {
-      setStarted(window.localStorage.getItem(storageKey) === '1')
+      return window.localStorage.getItem(storageKey) === '1'
     } catch {
-      // Storage may be blocked (incognito iframe). Ignore.
+      return false
     }
-  }, [storageKey])
+  })
 
   const toggle = () => {
     setStarted((prev) => {

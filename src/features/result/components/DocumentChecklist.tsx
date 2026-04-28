@@ -8,7 +8,7 @@
 // "in progress").
 // ───────────────────────────────────────────────────────────────────────
 
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useQueryClient } from '@tanstack/react-query'
 import { ArrowLeft, ArrowRight, Check, Download, FileText } from 'lucide-react'
@@ -47,23 +47,24 @@ export function DocumentChecklist({ project, state }: Props) {
   const { t, i18n } = useTranslation()
   const lang = (i18n.resolvedLanguage ?? 'de') as 'de' | 'en'
   const queryClient = useQueryClient()
-  const documents = state.documents ?? []
+  const documents = useMemo(() => state.documents ?? [], [state.documents])
   const totalCount = documents.length
 
   // localStorage-backed `in_arbeit` flags. The kanban reads them at
-  // mount and forwards toggles to the cards.
-  const [inProgress, setInProgress] = useState<Set<string>>(new Set())
-  useEffect(() => {
-    if (typeof window === 'undefined') return
+  // mount via lazy initial state and forwards toggles to the cards.
+  // Lazy init avoids the setState-in-effect cascade.
+  const [inProgress, setInProgress] = useState<Set<string>>(() => {
+    if (typeof window === 'undefined') return new Set()
     try {
       const raw = window.localStorage.getItem(`pm:docs-progress:${project.id}`)
-      if (!raw) return
+      if (!raw) return new Set()
       const arr = JSON.parse(raw)
-      if (Array.isArray(arr)) setInProgress(new Set(arr))
+      return Array.isArray(arr) ? new Set<string>(arr) : new Set()
     } catch {
       /* corrupt blob — start fresh */
+      return new Set()
     }
-  }, [project.id])
+  })
 
   const persistProgress = (next: Set<string>) => {
     try {

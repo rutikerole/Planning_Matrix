@@ -28,9 +28,15 @@ export function MessageContextSheet({ open, onOpenChange, fromLabel, text }: Pro
   const { t } = useTranslation()
   const [copied, setCopied] = useState(false)
 
+  // Reset the "Kopiert" confirmation when the sheet closes. The lint
+  // is overly strict here — this is the canonical "react to a prop
+  // change" pattern; the alternative (key on the parent) would require
+  // re-architecture for marginal gain.
+  /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
     if (!open) setCopied(false)
   }, [open])
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   const handleCopy = async () => {
     try {

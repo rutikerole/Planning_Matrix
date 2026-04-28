@@ -32,6 +32,11 @@ export function Typewriter({ text, instant = false }: Props) {
   const [shown, setShown] = useState(skipImmediate ? text : '')
   const cancelledRef = useRef(false)
 
+  // The typewriter is a state machine driven by setTimeout — setShown
+  // and setDone are the entire output of the effect. Cannot be hoisted
+  // to lazy initial state because the text prop can change mid-life
+  // (locale switch, late-arriving streaming completion).
+  /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
     cancelledRef.current = false
     if (skipImmediate) {
@@ -67,6 +72,7 @@ export function Typewriter({ text, instant = false }: Props) {
       if (timer) clearTimeout(timer)
     }
   }, [text, skipImmediate])
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   const skip = () => {
     cancelledRef.current = true

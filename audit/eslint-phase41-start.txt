@@ -1,0 +1,56 @@
+/Users/rutikerole/Planning_Matrix/src/features/chat/components/ChatDropZone.tsx
+  36:7  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+/Users/rutikerole/Planning_Matrix/src/features/chat/components/ChatDropZone.tsx:36:7
+/Users/rutikerole/Planning_Matrix/src/features/chat/components/ExportMenu.tsx
+  73:9  error  The value assigned to 'outputSize' is not used in subsequent statements  no-useless-assignment
+/Users/rutikerole/Planning_Matrix/src/features/chat/components/FactTicker.tsx
+  42:7  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+/Users/rutikerole/Planning_Matrix/src/features/chat/components/FactTicker.tsx:42:7
+/Users/rutikerole/Planning_Matrix/src/features/chat/components/Input/AttachmentChip.tsx
+  88:10  error  Error: Cannot create components during render
+/Users/rutikerole/Planning_Matrix/src/features/chat/components/Input/AttachmentChip.tsx:88:10
+/Users/rutikerole/Planning_Matrix/src/features/chat/components/Input/AttachmentChip.tsx:62:16
+  63 |   const { status, errorMessage } = attachment
+/Users/rutikerole/Planning_Matrix/src/features/chat/components/Input/AttachmentPicker.tsx
+  70:3  error  React Hook "useEffect" is called conditionally. React Hooks must be called in the exact same order in every component render  react-hooks/rules-of-hooks
+/Users/rutikerole/Planning_Matrix/src/features/chat/components/Input/InputBar.tsx
+  212:6  error  Error: Cannot create components during render
+/Users/rutikerole/Planning_Matrix/src/features/chat/components/Input/InputBar.tsx:212:6
+/Users/rutikerole/Planning_Matrix/src/features/chat/components/Input/InputBar.tsx:188:7
+/Users/rutikerole/Planning_Matrix/src/features/chat/components/MessageAttachment.tsx
+  134:8  error  Error: Cannot create components during render
+/Users/rutikerole/Planning_Matrix/src/features/chat/components/MessageAttachment.tsx:134:8
+/Users/rutikerole/Planning_Matrix/src/features/chat/components/MessageAttachment.tsx:104:16
+/Users/rutikerole/Planning_Matrix/src/features/chat/components/MessageContextSheet.tsx
+  32:16  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+/Users/rutikerole/Planning_Matrix/src/features/chat/components/MessageContextSheet.tsx:32:16
+/Users/rutikerole/Planning_Matrix/src/features/chat/components/ThinkingIndicator.tsx
+  65:7  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+/Users/rutikerole/Planning_Matrix/src/features/chat/components/ThinkingIndicator.tsx:65:7
+/Users/rutikerole/Planning_Matrix/src/features/chat/components/Thread.tsx
+  48:21  error  Error: Cannot access refs during render
+/Users/rutikerole/Planning_Matrix/src/features/chat/components/Thread.tsx:48:21
+/Users/rutikerole/Planning_Matrix/src/features/chat/components/Typewriter.tsx
+  38:7  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+/Users/rutikerole/Planning_Matrix/src/features/chat/components/Typewriter.tsx:38:7
+/Users/rutikerole/Planning_Matrix/src/features/chat/pages/ChatWorkspacePage.tsx
+   69:27  error  Error: Cannot call impure function during render
+/Users/rutikerole/Planning_Matrix/src/features/chat/pages/ChatWorkspacePage.tsx:69:27
+  179:22  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+/Users/rutikerole/Planning_Matrix/src/features/chat/pages/ChatWorkspacePage.tsx:179:22
+  226:24  error  React Hook "useViewport" is called conditionally. React Hooks must be called in the exact same order in every component render                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                react-hooks/rules-of-hooks
+/Users/rutikerole/Planning_Matrix/src/features/result/components/Cockpit/EditableCell.tsx
+  37:19  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+/Users/rutikerole/Planning_Matrix/src/features/result/components/Cockpit/EditableCell.tsx:37:19
+/Users/rutikerole/Planning_Matrix/src/features/result/components/Cockpit/StatusPill.tsx
+  108:17  error  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+/Users/rutikerole/Planning_Matrix/src/features/result/components/DocumentChecklist.tsx
+  50:9   warning  The 'documents' logical expression could make the dependencies of useMemo Hook (at line 117) change on every render. To fix this, wrap the initialization of 'documents' in its own useMemo() Hook                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             react-hooks/exhaustive-deps
+  62:31  error    Error: Calling setState synchronously within an effect can trigger cascading renders
+/Users/rutikerole/Planning_Matrix/src/features/result/components/DocumentChecklist.tsx:62:31
+/Users/rutikerole/Planning_Matrix/src/features/result/components/RoleGlyphs.tsx
+  170:17  error  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+/Users/rutikerole/Planning_Matrix/src/features/result/components/TopThreeHero.tsx
+  151:7  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+/Users/rutikerole/Planning_Matrix/src/features/result/components/TopThreeHero.tsx:151:7
+✖ 20 problems (19 errors, 1 warning)

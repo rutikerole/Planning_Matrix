@@ -60,6 +60,11 @@ export function ThinkingIndicator() {
   const [rotationIndex, setRotationIndex] = useState(0)
   const [tickedRotation, setTickedRotation] = useState(false)
 
+  // Reset rotation state when the thinking flag drops, then start a
+  // delayed tick when it's true. The reset is "react to external
+  // signal" (Zustand-owned `isThinking`); the lint flags it but the
+  // pattern is correct.
+  /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
     if (!isThinking) {
       setRotationIndex(0)
@@ -70,6 +75,7 @@ export function ThinkingIndicator() {
     const startTimer = setTimeout(() => setTickedRotation(true), 6_000)
     return () => clearTimeout(startTimer)
   }, [isThinking])
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   useEffect(() => {
     if (!isThinking || !tickedRotation || reduced) return

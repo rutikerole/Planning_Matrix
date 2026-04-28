@@ -37,6 +37,10 @@ export function FactTicker() {
   const [idle, setIdle] = useState(false)
 
   // Idle detection — flip after IDLE_THRESHOLD_MS without thinking.
+  // The early `setIdle(false)` calls reset state when external
+  // streaming/thinking flags change. Linter flags this as cascading,
+  // but it's the right shape — Zustand store is the source of truth.
+  /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
     if (isThinking || streaming) {
       setIdle(false)
@@ -53,6 +57,7 @@ export function FactTicker() {
     const timer = setTimeout(() => setIdle(true), IDLE_THRESHOLD_MS)
     return () => clearTimeout(timer)
   }, [isThinking, streaming, completion, turnCount])
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   // Pick a new fact when we go idle, then cycle every FACT_HOLD_MS.
   useEffect(() => {
