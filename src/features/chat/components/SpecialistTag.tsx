@@ -41,9 +41,7 @@ export function SpecialistTag({ specialist, className, withRoleLabel = true }: P
         <span>{tagLabel}</span>
       </p>
       {withRoleLabel && (
-        <p className="font-serif italic text-[13px] text-ink/55 leading-tight pl-3.5">
-          {roleLabelDe}
-        </p>
+        <p className="role-running-head pl-3.5">{roleLabelDe}</p>
       )}
     </div>
   )

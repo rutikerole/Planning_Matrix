@@ -57,27 +57,34 @@ export function Top3({ recommendations }: Props) {
                 transition={{ layout: { duration: reduced ? 0 : 0.32, ease: [0.16, 1, 0.3, 1] } }}
                 className="flex flex-col gap-2"
               >
-                <article className="flex flex-col gap-2 border border-border-strong/30 rounded-sm bg-paper px-5 py-6">
-                  <p className="font-display leading-snug text-ink">
-                    {/* Visible numbering = position, not model rank.
-                     * See docs/phase3-1-polish.md commit #29. */}
-                    <span className="font-serif italic text-[16px] text-clay tabular-nums mr-2.5">
+                <article className="relative flex flex-col gap-2 border border-border-strong/30 rounded-sm bg-paper px-5 py-6">
+                  {/* Phase 3.2 #40 — drafting-blue hairline running down the
+                   * left edge of the card, full height. */}
+                  <span
+                    aria-hidden="true"
+                    className="absolute left-0 top-0 bottom-0 w-px bg-drafting-blue/30"
+                  />
+                  <p className="font-display leading-snug text-ink display-tight">
+                    {/* Phase 3.2 #36 — number prefix bumped 16 → 28, clay-deep,
+                     * Instrument Serif italic, baseline-aligned. Visible
+                     * numbering = position, not model rank (Phase 3.1 #29). */}
+                    <span className="font-serif italic text-[28px] text-clay-deep tabular-figures mr-2.5 align-baseline">
                       {idx + 1}.
                     </span>
                     <span className="text-title-lg">
                       {lang === 'en' ? rec.title_en : rec.title_de}
                     </span>
                   </p>
-                  <p className="text-xs text-ink/85 leading-relaxed">
+                  <p className="text-xs text-ink/85 leading-[1.55]">
                     {lang === 'en' ? rec.detail_en : rec.detail_de}
                   </p>
                 </article>
                 {/* Footer line — OUTSIDE the card border. Hairline above,
-                 * then italic clay margin annotation. Reads as a printed
-                 * dossier note rather than a baked-in disclaimer. */}
+                 * then italic clay margin annotation. Phase 3.2 #36: italic
+                 * Serif, not Inter — different voice signals footnote register. */}
                 <div className="flex flex-col gap-1.5 px-5">
                   <span aria-hidden="true" className="block h-px w-12 bg-border-strong/40" />
-                  <p className="text-[10px] text-clay/70 italic leading-relaxed">
+                  <p className="font-serif italic text-[10px] text-ink/55 leading-relaxed">
                     {t('chat.preliminaryFooter')}
                   </p>
                 </div>
