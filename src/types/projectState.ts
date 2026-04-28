@@ -113,6 +113,12 @@ export interface Role {
  * Top-3 next steps shown in the right rail. The model keeps `rank` 1..n
  * up to date; the UI reorders with `layout` animations on rank change.
  */
+/** Phase 3.5 #61 — coarse effort estimate enum for recommendations. */
+export type EstimatedEffort = '1d' | '1-3d' | '1w' | '2-4w' | 'months'
+
+/** Phase 3.5 #61 — who owns a recommendation. */
+export type ResponsibleParty = 'bauherr' | 'architekt' | 'fachplaner' | 'bauamt'
+
 export interface Recommendation {
   id: string
   /** 1..n; the right rail surfaces ranks 1, 2, 3. */
@@ -123,6 +129,12 @@ export interface Recommendation {
   detail_en: string
   ctaLabel_de?: string
   ctaLabel_en?: string
+  /** Phase 3.5 #61 — coarse "how long does this take" estimate. */
+  estimated_effort?: EstimatedEffort
+  /** Phase 3.5 #61 — who's accountable for actioning this step. */
+  responsible_party?: ResponsibleParty
+  /** Phase 3.5 #61 — qualifier feeds the confidence radial in Section IX. */
+  qualifier?: { source: Source; quality: Quality }
   /** ISO-8601 instant the recommendation was created. */
   createdAt: string
 }

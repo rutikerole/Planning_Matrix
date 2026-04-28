@@ -161,6 +161,26 @@ export const respondToolDefinition = {
           detail_en: { type: 'string' },
           ctaLabel_de: { type: 'string' },
           ctaLabel_en: { type: 'string' },
+          estimated_effort: {
+            type: 'string',
+            enum: ['1d', '1-3d', '1w', '2-4w', 'months'],
+            description:
+              'Phase 3.5 — coarse effort estimate. 1d = ein Werktag · 1-3d = 1–3 Werktage · 1w = etwa eine Woche · 2-4w = 2–4 Wochen · months = mehrere Monate.',
+          },
+          responsible_party: {
+            type: 'string',
+            enum: ['bauherr', 'architekt', 'fachplaner', 'bauamt'],
+            description:
+              'Phase 3.5 — who is responsible for executing this recommendation.',
+          },
+          qualifier: {
+            type: 'object',
+            required: ['source', 'quality'],
+            properties: {
+              source: { type: 'string', enum: [...SOURCE_VALUES] },
+              quality: { type: 'string', enum: [...QUALITY_VALUES] },
+            },
+          },
         }),
       },
 

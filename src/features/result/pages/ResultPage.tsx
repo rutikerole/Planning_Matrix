@@ -6,6 +6,9 @@ import { useProject } from '@/features/chat/hooks/useProject'
 import { useMessages } from '@/features/chat/hooks/useMessages'
 import { CoverHero } from '../components/CoverHero'
 import { VerdictSection } from '../components/VerdictSection'
+import { TopThreeHero } from '../components/TopThreeHero'
+import { LegalLandscape } from '../components/LegalLandscape'
+import type { ProjectState } from '@/types/projectState'
 
 /**
  * Phase 3.5 — Result Page (`/projects/:id/result`).
@@ -55,7 +58,13 @@ export function ResultPage() {
       {/* Section II — Verdict */}
       <VerdictSection project={project} />
 
-      {/* Sections III–XII land in commits #61–#64. */}
+      {/* Section III — Top 3 Hero */}
+      <TopThreeHero state={(project.state ?? {}) as Partial<ProjectState>} />
+
+      {/* Section IV — Legal Landscape */}
+      <LegalLandscape state={(project.state ?? {}) as Partial<ProjectState>} />
+
+      {/* Sections V–XII land in commits #62–#64. */}
     </div>
   )
 }

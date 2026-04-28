@@ -253,6 +253,13 @@ Felder von \`respond\`:
   • completion_signal     — continue | needs_designer | ready_for_review | blocked
   • likely_user_replies   — bis zu 3 plausible Kurzantworten (≤ 6 Wörter)
 
+In jedem \`recommendations_delta\`-Eintrag (op: upsert) sollten Sie sofern
+sinnvoll auch \`estimated_effort\` (1d / 1-3d / 1w / 2-4w / months),
+\`responsible_party\` (bauherr / architekt / fachplaner / bauamt) und
+\`qualifier\` (source × quality) angeben. Diese Felder treiben die
+Briefing-Seite (Top-3-Hero, Confidence-Radial). Lassen Sie sie weg, wenn
+Sie keine fundierte Einschätzung haben — leeres Feld ist besser als rate.
+
 Wenn \`input_type\` = \`text\` und die Frage identifizierbare plausible
 Antworten hat, geben Sie bis zu 3 \`likely_user_replies\` an — z. B. bei
 „Wann wurde das Bestandsgebäude errichtet?" sinnvoll: [„Vor 1980",

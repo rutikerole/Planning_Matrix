@@ -675,6 +675,18 @@
         "body": "Die Einordnung erfordert weitere Angaben. Setzen Sie die Konsultation fort, um diesen Abschnitt zu vervollständigen.",
         "cta": "Zur Konsultation"
       }
+    },
+    "topThree": {
+      "eyebrow": "Die nächsten drei Schritte",
+      "effortLabel": "Geschätzter Aufwand",
+      "partyLabel": "Verantwortlich",
+      "moreToggle": "Weitere Empfehlungen ({{n}})"
+    },
+    "legal": {
+      "eyebrow": "Die rechtliche Landschaft",
+      "empty": "Keine zusätzlichen Vorgaben festgestellt.",
+      "clickHint": "Klicken Sie auf eine Norm, um die öffentliche Quelle zu öffnen.",
+      "sourceEyebrow": "Öffentliche Quelle"
     }
   },
   "legal": {

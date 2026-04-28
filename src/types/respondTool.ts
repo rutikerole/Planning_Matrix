@@ -88,6 +88,14 @@ const extractedFactSchema = z.object({
 // entry); removes only need an `id`. This forces the model to be explicit
 // about intent rather than letting a missing field silently mean "remove".
 
+const estimatedEffortSchema = z.enum(['1d', '1-3d', '1w', '2-4w', 'months'])
+const responsiblePartySchema = z.enum([
+  'bauherr',
+  'architekt',
+  'fachplaner',
+  'bauamt',
+])
+
 const recommendationDeltaSchema = z.discriminatedUnion('op', [
   z.object({
     op: z.literal('upsert'),
@@ -99,6 +107,14 @@ const recommendationDeltaSchema = z.discriminatedUnion('op', [
     detail_en: z.string().min(1).optional(),
     ctaLabel_de: z.string().optional(),
     ctaLabel_en: z.string().optional(),
+    /** Phase 3.5 #61 — coarse effort estimate for the result page. */
+    estimated_effort: estimatedEffortSchema.optional(),
+    /** Phase 3.5 #61 — who owns this step. */
+    responsible_party: responsiblePartySchema.optional(),
+    /** Phase 3.5 #61 — qualifier for the confidence radial (Section IX). */
+    qualifier: z
+      .object({ source: sourceSchema, quality: qualitySchema })
+      .optional(),
   }),
   z.object({
     op: z.literal('remove'),

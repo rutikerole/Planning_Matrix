@@ -170,6 +170,13 @@ export function applyRecommendationsDelta(
         ...(d.detail_en !== undefined ? { detail_en: d.detail_en } : {}),
         ...(d.ctaLabel_de !== undefined ? { ctaLabel_de: d.ctaLabel_de } : {}),
         ...(d.ctaLabel_en !== undefined ? { ctaLabel_en: d.ctaLabel_en } : {}),
+        ...(d.estimated_effort !== undefined
+          ? { estimated_effort: d.estimated_effort }
+          : {}),
+        ...(d.responsible_party !== undefined
+          ? { responsible_party: d.responsible_party }
+          : {}),
+        ...(d.qualifier !== undefined ? { qualifier: d.qualifier } : {}),
       }
     } else {
       const fresh: Recommendation = {
@@ -181,6 +188,9 @@ export function applyRecommendationsDelta(
         detail_en: d.detail_en ?? '',
         ctaLabel_de: d.ctaLabel_de,
         ctaLabel_en: d.ctaLabel_en,
+        estimated_effort: d.estimated_effort,
+        responsible_party: d.responsible_party,
+        qualifier: d.qualifier,
         createdAt: now,
       }
       recs.push(fresh)

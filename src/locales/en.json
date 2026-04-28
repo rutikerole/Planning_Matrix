@@ -675,6 +675,18 @@
         "body": "The classification needs more information. Continue the consultation to complete this section.",
         "cta": "Back to consultation"
       }
+    },
+    "topThree": {
+      "eyebrow": "The next three steps",
+      "effortLabel": "Estimated effort",
+      "partyLabel": "Responsible",
+      "moreToggle": "More recommendations ({{n}})"
+    },
+    "legal": {
+      "eyebrow": "The legal landscape",
+      "empty": "No additional requirements identified.",
+      "clickHint": "Click a citation to open its public source.",
+      "sourceEyebrow": "Public source"
     }
   },
   "legal": {
