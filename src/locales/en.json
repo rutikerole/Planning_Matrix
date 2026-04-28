@@ -553,7 +553,22 @@
       },
       "multi": {
         "submit": "Continue",
-        "minHint": "Select at least one option."
+        "minHint": "Select at least one option.",
+        "countSelected": "{{n}} selected",
+        "confirmIntoText": "Apply"
+      },
+      "thinkingPlaceholder": "Team is replying…",
+      "freeTextHint": "You can also reply in your own words.",
+      "continueOrType": "Click *Continue*, or type a message below.",
+      "attachment": {
+        "title": "Attach a file",
+        "comingSoon": "File upload for plans, photos and PDFs lands in the next update. You'll soon be able to attach existing drawings, development plans, and land registry extracts directly to the consultation.",
+        "understood": "Got it",
+        "close": "Close",
+        "remove": "Remove attachment",
+        "uploading": "Uploading…",
+        "failed": "Upload failed",
+        "list": "Attached files"
       },
       "address": {
         "placeholder": "e.g. Hauptstraße 12, 91054 Erlangen",

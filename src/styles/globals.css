@@ -82,6 +82,42 @@
     color: hsl(var(--paper));
   }
 
+  /* ─────────────────────────────────────────────────────────────────
+   * Phase 3.6 — Operating-mode tokens (sandboxed via attribute scope).
+   * Atelier defaults are the baseline at :root. Working surfaces opt in
+   * with `data-mode="operating"`; deliverable surfaces explicitly reset
+   * (or simply omit the attribute and inherit atelier).
+   * Sites: chat workspace root, overview cockpit, result-page sections
+   * II–XII container. Sites NOT to add: landing, auth, wizard, result
+   * cover hero, share view, PDF build.
+   * ────────────────────────────────────────────────────────────────── */
+  :root {
+    --pm-radius-input: 0;
+    --pm-radius-card: 0;
+    --pm-radius-pill: 0;
+    --pm-shadow-input: 0 0 0 transparent;
+    --pm-shadow-card: 0 0 0 transparent;
+    --pm-tracking-body: 0;
+  }
+
+  [data-mode='operating'] {
+    --pm-radius-input: 0.75rem;
+    --pm-radius-card: 1rem;
+    --pm-radius-pill: 9999px;
+    --pm-shadow-input: 0 1px 2px hsl(220 15% 11% / 0.04);
+    --pm-shadow-card: 0 1px 3px hsl(220 15% 11% / 0.06);
+    --pm-tracking-body: 0.005em;
+  }
+
+  [data-mode='deliverable'] {
+    --pm-radius-input: 0;
+    --pm-radius-card: 0;
+    --pm-radius-pill: 0;
+    --pm-shadow-input: 0 0 0 transparent;
+    --pm-shadow-card: 0 0 0 transparent;
+    --pm-tracking-body: 0;
+  }
+
   :focus-visible {
     outline: 2px solid hsl(var(--ink));
     outline-offset: 3px;
@@ -185,6 +221,29 @@
   .display-tight {
     letter-spacing: -0.02em;
     font-feature-settings: 'ss01' on;
+  }
+
+  /* Phase 3.6 #67 — horizontal chip row used above the input bar.
+   * Hides the native scrollbar (Firefox via inline style; WebKit here)
+   * and adds a soft right-edge fade to suggest scrollability when
+   * the row overflows on mobile. */
+  .pm-chip-row::-webkit-scrollbar {
+    display: none;
+  }
+  .pm-chip-row {
+    -ms-overflow-style: none;
+    mask-image: linear-gradient(
+      to right,
+      black 0%,
+      black calc(100% - 24px),
+      transparent 100%
+    );
+    -webkit-mask-image: linear-gradient(
+      to right,
+      black 0%,
+      black calc(100% - 24px),
+      transparent 100%
+    );
   }
 
   /* Phase 3.2 #36 — italic running head used as a "voice" label below

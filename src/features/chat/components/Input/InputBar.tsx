@@ -1,150 +1,326 @@
+// ───────────────────────────────────────────────────────────────────────
+// Phase 3.6 #67 — Persistent input bar with attachments + suggestion-
+// chip-above-input pattern.
+//
+// Replaces the Phase-3.0 swap behaviour where `input_type: 'none'` would
+// hide the textarea and surface a Continue button. The input bar is now
+// always visible — textarea + paperclip + send — and structured chips
+// render ABOVE the bar as suggestions, never replacements. The user can
+// always type.
+//
+// Q1 (locked): clicking a chip while text is in the textarea APPENDS on
+// a new line. The Bauherr typing a clarifying note shouldn't lose it.
+//
+// File-upload pipeline lands in #68; here the paperclip opens a stub
+// AttachmentPicker (Coming-Soon panel) so the open / close / focus
+// paths get exercised on the live deploy.
+// ───────────────────────────────────────────────────────────────────────
+
+import {
+  type KeyboardEvent,
+  useEffect,
+  useRef,
+  useState,
+} from 'react'
 import { useTranslation } from 'react-i18next'
+import { Paperclip, ArrowUp } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useChatStore } from '@/stores/chatStore'
 import type { MessageRow } from '@/types/db'
 import type { UserAnswer } from '@/types/chatTurn'
-import { InputText } from './InputText'
-import { InputYesNo } from './InputYesNo'
-import { InputSelect, type SelectOption } from './InputSelect'
-import { InputMultiSelect } from './InputMultiSelect'
-import { InputAddress } from './InputAddress'
-import { SuggestedReplies } from './SuggestedReplies'
+import { useInputState } from '../../hooks/useInputState'
+import { SuggestionChips } from './SuggestionChips'
+import { AttachmentChip } from './AttachmentChip'
+import { AttachmentPicker } from './AttachmentPicker'
+
+/** Resolve the send-now text for the Continue button. */
+function continueText(lang: 'de' | 'en'): string {
+  return lang === 'en' ? 'Continue.' : 'Weiter.'
+}
 
 interface Props {
   lastAssistant: MessageRow | null
   onSubmit: (payload: { userMessage: string; userAnswer: UserAnswer }) => void
-  /** Render the IDK trigger if allow_idk on the last assistant turn. */
+  /** Render the IDK trigger if `allow_idk` on the last assistant turn. */
   onIdkClick?: () => void
   /** Optional override (e.g. while a turn is in flight). */
   forceDisabled?: boolean
 }
 
+const MAX_ROWS = 5
+const MAX_LENGTH = 4000
+
 /**
- * Sticky bottom input bar. Reads the last assistant message's
- * input_type and dispatches to the right control. Each control yields
- * a structured UserAnswer + free-text userMessage; we forward both to
- * onSubmit. Disabled when assistant is thinking. Mobile safe-area
- * inset honoured.
+ * The persistent operating-mode input bar. Three-row layout:
+ *
+ *   1. Suggestion chips (yesno / select / multi / address / replies)   ↑ optional
+ *   2. Attachment chips (file row + remove-X)                          ↑ optional
+ *   3. Textarea + paperclip + send                                     ← always
+ *
+ * `data-mode="operating"` already lives on the chat workspace root, so
+ * the rounded-card / shadow tokens render correctly without any wrapper
+ * here.
  */
-export function InputBar({ lastAssistant, onSubmit, onIdkClick, forceDisabled }: Props) {
-  const { t } = useTranslation()
-  const inputType = lastAssistant?.input_type ?? 'text'
-  const allowIdk = lastAssistant?.allow_idk ?? false
-  const options = (lastAssistant?.input_options as SelectOption[] | null) ?? []
+export function InputBar({
+  lastAssistant,
+  onSubmit,
+  onIdkClick,
+  forceDisabled,
+}: Props) {
+  const { t, i18n } = useTranslation()
+  const lang = (i18n.resolvedLanguage ?? 'de') as 'de' | 'en'
   const disabled = !!forceDisabled
+  const allowIdk = lastAssistant?.allow_idk ?? false
   const completionSignal = useChatStore((s) => s.lastCompletionSignal)
-  const suggestedReplies = lastAssistant?.likely_user_replies ?? []
-  // Only show suggestions on free-text turns, when a non-continue
-  // completion_signal isn't owning the surface, and not while a turn
-  // is in flight.
-  const showSuggestions =
-    inputType === 'text' &&
-    suggestedReplies.length > 0 &&
-    !disabled &&
-    (completionSignal === null || completionSignal === 'continue')
+  const removeAttachment = useChatStore((s) => s.removeAttachment)
 
-  const submit = (answer: UserAnswer, userMessage: string) => {
-    onSubmit({ userMessage, userAnswer: answer })
+  const {
+    text,
+    setText,
+    activeSuggestion,
+    applySuggestion,
+    clearSuggestion,
+    attachments,
+    isEmpty,
+    buildSubmitAndClear,
+  } = useInputState()
+
+  const textareaRef = useRef<HTMLTextAreaElement>(null)
+  const [pickerOpen, setPickerOpen] = useState(false)
+
+  // Auto-grow up to MAX_ROWS, then scroll. Recompute on text change.
+  useEffect(() => {
+    const el = textareaRef.current
+    if (!el) return
+    el.style.height = '0px'
+    const lineHeight = parseFloat(getComputedStyle(el).lineHeight) || 22
+    const padding =
+      parseFloat(getComputedStyle(el).paddingTop) +
+      parseFloat(getComputedStyle(el).paddingBottom)
+    const max = lineHeight * MAX_ROWS + padding
+    el.style.height = `${Math.min(el.scrollHeight, max)}px`
+    el.style.overflowY = el.scrollHeight > max ? 'auto' : 'hidden'
+  }, [text])
+
+  // After a chip click, refocus the textarea so the user can edit
+  // immediately. Picker open never steals focus.
+  useEffect(() => {
+    if (activeSuggestion && !disabled && textareaRef.current) {
+      textareaRef.current.focus()
+      // Place caret at end so further typing reads naturally.
+      const len = textareaRef.current.value.length
+      textareaRef.current.setSelectionRange(len, len)
+    }
+  }, [activeSuggestion, disabled])
+
+  // Clear an active-suggestion if the user types over the chip text
+  // (so the structured signal isn't sent alongside arbitrary prose).
+  // Heuristic: if the textarea no longer contains the chip's
+  // canonical text, we drop the suggestion. Done in `buildSubmitAndClear`
+  // implicitly — here we just expose the manual clear via the chip-row.
+
+  const handleSubmit = () => {
+    if (disabled) return
+    const payload = buildSubmitAndClear()
+    if (!payload) return
+    onSubmit({
+      userMessage: payload.userMessage,
+      userAnswer: payload.userAnswer,
+    })
   }
 
-  let control: React.ReactNode
-  if (inputType === 'none') {
-    control = (
-      <button
-        type="button"
-        onClick={() => submit({ kind: 'text', text: 'Weiter.' }, 'Weiter.')}
-        disabled={disabled}
-        className={cn(
-          'h-11 px-5 rounded-[5px] bg-ink text-paper text-[14px] font-medium tracking-tight transition-colors duration-soft hover:bg-ink/92',
-          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink focus-visible:ring-offset-2 focus-visible:ring-offset-background',
-          disabled && 'opacity-60 pointer-events-none',
-        )}
-      >
-        {t('chat.input.continue')}
-      </button>
-    )
-  } else if (inputType === 'yesno') {
-    control = (
-      <InputYesNo
-        disabled={disabled}
-        onSubmit={(v) =>
-          submit({ kind: 'yesno', value: v }, v === 'ja' ? 'Ja' : 'Nein')
-        }
-      />
-    )
-  } else if (inputType === 'single_select' && options.length > 0) {
-    control = (
-      <InputSelect
-        options={options}
-        disabled={disabled}
-        onSubmit={(opt) =>
-          submit(
-            {
-              kind: 'single_select',
-              value: opt.value,
-              label_de: opt.label_de,
-              label_en: opt.label_en,
-            },
-            opt.label_de,
-          )
-        }
-      />
-    )
-  } else if (inputType === 'multi_select' && options.length > 0) {
-    control = (
-      <InputMultiSelect
-        options={options}
-        disabled={disabled}
-        onSubmit={(picked) =>
-          submit(
-            { kind: 'multi_select', values: picked },
-            picked.map((p) => p.label_de).join(', '),
-          )
-        }
-      />
-    )
-  } else if (inputType === 'address') {
-    control = (
-      <InputAddress
-        disabled={disabled}
-        onSubmit={(text) => submit({ kind: 'address', text }, text)}
-      />
-    )
-  } else {
-    control = (
-      <InputText
-        disabled={disabled}
-        onSubmit={(text) => submit({ kind: 'text', text }, text)}
-        autoFocus
-      />
-    )
+  const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
+    // Cmd/Ctrl+Enter always submits.
+    if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
+      e.preventDefault()
+      handleSubmit()
+      return
+    }
+    // Shift+Enter newline; Enter submits.
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault()
+      handleSubmit()
+    }
   }
+
+  // Show suggestion chips above the bar based on the last turn's input
+  // type. The chip surface itself decides what to render.
+  const showSuggestions = lastAssistant !== null
+
+  // Subtle hint above the bar reminding the user they can still type
+  // when the model expects a structured answer.
+  // Only shown when chips are present; avoids visual noise on plain
+  // text turns.
+  const inputType = lastAssistant?.input_type ?? 'text'
+  const showFreeTextHint =
+    showSuggestions &&
+    (inputType === 'yesno' || inputType === 'single_select' || inputType === 'multi_select')
 
   return (
-    <div className="sticky bottom-0 bg-paper/95 backdrop-blur-[2px] border-t border-border-strong/25">
-      <div className="flex justify-center px-6 sm:px-10 lg:px-14">
+    <div
+      className="sticky bottom-0 z-20 bg-paper/95 backdrop-blur-[2px] border-t border-border-strong/25"
+      data-pm-input-bar="true"
+    >
+      <div className="flex justify-center px-4 sm:px-6 lg:px-8">
         <div
-          className="w-full max-w-2xl py-4 sm:py-5"
-          style={{ paddingBottom: 'max(env(safe-area-inset-bottom, 0px), 1rem)' }}
+          className="w-full max-w-3xl py-3 sm:py-4 flex flex-col gap-2"
+          style={{ paddingBottom: 'max(env(safe-area-inset-bottom, 0px), 0.75rem)' }}
         >
+          {/* Suggestion chips above the bar — never replace it. */}
           {showSuggestions && (
-            <SuggestedReplies
-              replies={suggestedReplies}
+            <SuggestionChips
+              lastAssistant={lastAssistant}
               disabled={disabled}
-              onSelect={(text) => submit({ kind: 'text', text }, text)}
+              onPick={applySuggestion}
+              onContinue={() => {
+                // Continue is a direct send — primary CTA, no detour
+                // through the textarea. The italic helper next to the
+                // button covers the "or type instead" path. Avoids a
+                // stale-closure read on textarea state.
+                if (disabled) return
+                const msg = continueText(lang)
+                onSubmit({
+                  userMessage: msg,
+                  userAnswer: { kind: 'text', text: msg },
+                })
+              }}
+              completionSignal={completionSignal}
             />
           )}
-          <div className="flex items-end gap-4">
-            <div className="flex-1 min-w-0">{control}</div>
-            {allowIdk && !disabled && onIdkClick && (
+
+          {/* Attachment chips — always above the textarea, never replace. */}
+          {attachments.length > 0 && (
+            <ul
+              role="list"
+              aria-label={t('chat.input.attachment.list', {
+                defaultValue: 'Angehängte Dateien',
+              })}
+              className="flex flex-wrap items-center gap-2"
+            >
+              {attachments.map((a) => (
+                <li key={a.id}>
+                  <AttachmentChip
+                    attachment={a}
+                    onRemove={removeAttachment}
+                    disabled={disabled}
+                  />
+                </li>
+              ))}
+            </ul>
+          )}
+
+          {/* The textarea card — always visible. */}
+          <div
+            className={cn(
+              'pm-input-card flex items-end gap-2 bg-paper border border-ink/15 px-3 py-2',
+              'rounded-[var(--pm-radius-input)] transition-colors duration-soft',
+              'focus-within:border-ink/35',
+              disabled && 'opacity-95',
+            )}
+            style={{ boxShadow: 'var(--pm-shadow-input)' }}
+          >
+            {/* Paperclip — opens AttachmentPicker stub in #67; real
+              picker lands in #68. The button is always interactive so
+              users discover the affordance early; the panel itself
+              communicates that uploads are coming. */}
+            <div className="relative shrink-0 self-end pb-1">
+              <button
+                type="button"
+                onClick={() => setPickerOpen((v) => !v)}
+                disabled={disabled}
+                aria-label={t('chat.input.attachment.title', {
+                  defaultValue: 'Datei anhängen',
+                })}
+                aria-haspopup="dialog"
+                aria-expanded={pickerOpen}
+                className={cn(
+                  'inline-flex items-center justify-center size-9 rounded-full text-ink/55 hover:text-ink hover:bg-ink/[0.04] transition-colors duration-soft',
+                  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background',
+                  attachments.length > 0 && 'text-drafting-blue hover:text-drafting-blue',
+                  disabled && 'pointer-events-none',
+                )}
+              >
+                <Paperclip aria-hidden="true" className="size-[18px]" />
+              </button>
+              <AttachmentPicker open={pickerOpen} onOpenChange={setPickerOpen} />
+            </div>
+
+            {/* The textarea. */}
+            <textarea
+              ref={textareaRef}
+              value={text}
+              onChange={(e) => {
+                setText(e.target.value)
+                // If the user erases the chip text, drop the active
+                // suggestion so we don't send a stale structured signal.
+                if (
+                  activeSuggestion &&
+                  e.target.value.trim().length === 0
+                ) {
+                  clearSuggestion()
+                }
+              }}
+              onKeyDown={handleKeyDown}
+              rows={1}
+              maxLength={MAX_LENGTH + 200}
+              placeholder={
+                disabled
+                  ? t('chat.input.thinkingPlaceholder', {
+                      defaultValue: 'Team antwortet…',
+                    })
+                  : t('chat.input.text.placeholder')
+              }
+              aria-label={t('chat.input.text.label')}
+              disabled={disabled}
+              className={cn(
+                'flex-1 min-w-0 bg-transparent border-0 py-2 text-[15px] leading-[1.55] text-ink placeholder:text-ink/40 resize-none focus:outline-none',
+                disabled && 'placeholder:italic placeholder:text-clay/65',
+              )}
+              style={{ letterSpacing: 'var(--pm-tracking-body)' }}
+            />
+
+            {/* Send button — round, ink fill. */}
+            <button
+              type="button"
+              onClick={handleSubmit}
+              disabled={disabled || isEmpty}
+              aria-label={t('chat.input.send')}
+              className={cn(
+                'shrink-0 self-end inline-flex items-center justify-center size-9 mb-1 rounded-full transition-[background-color,opacity] duration-soft ease-soft',
+                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink focus-visible:ring-offset-2 focus-visible:ring-offset-background',
+                disabled || isEmpty
+                  ? 'bg-ink/15 text-ink/35 cursor-not-allowed'
+                  : 'bg-ink text-paper hover:bg-ink/92',
+              )}
+            >
+              <ArrowUp aria-hidden="true" className="size-[18px]" />
+            </button>
+          </div>
+
+          {/* Bottom row — IDK link + tiny helper hint. */}
+          <div className="flex items-center justify-between gap-3 px-1">
+            <p
+              className={cn(
+                'text-[11px] italic leading-relaxed transition-opacity duration-soft',
+                showFreeTextHint ? 'text-clay/70 opacity-100' : 'opacity-0',
+              )}
+              aria-hidden={!showFreeTextHint}
+            >
+              {t('chat.input.freeTextHint', {
+                defaultValue: 'Sie können auch frei antworten.',
+              })}
+            </p>
+            {allowIdk && !disabled && onIdkClick ? (
               <button
                 type="button"
                 onClick={onIdkClick}
                 aria-label={t('chat.input.idk.label')}
-                className="text-[11px] text-ink/65 hover:text-ink underline underline-offset-4 decoration-clay/55 self-center pb-3 transition-colors duration-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm"
+                className="text-[11px] text-ink/65 hover:text-ink underline underline-offset-4 decoration-clay/55 transition-colors duration-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm"
               >
                 {t('chat.input.idk.label')}
               </button>
+            ) : (
+              <span aria-hidden="true" />
             )}
           </div>
         </div>

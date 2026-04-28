@@ -20,7 +20,14 @@ interface Props {
  */
 export function ChatWorkspaceLayout({ leftRail, rightRail, inputBar, children }: Props) {
   return (
-    <div className="min-h-dvh bg-paper relative isolate">
+    <div
+      className="min-h-dvh bg-paper relative isolate"
+      // Phase 3.6 #67 — operating mode for the chat workspace. Atelier
+      // tokens stay the default; this attribute opts the chat surface
+      // into rounded corners + functional drop shadows + looser tracking
+      // without bleeding into the landing / auth / wizard / cover hero.
+      data-mode="operating"
+    >
       <BlueprintSubstrate />
       <div aria-hidden="true" className="grain-overlay-fixed" />
       <div className="mx-auto w-full max-w-[1440px] grid lg:grid-cols-[280px_minmax(0,1fr)_360px] grid-cols-1">

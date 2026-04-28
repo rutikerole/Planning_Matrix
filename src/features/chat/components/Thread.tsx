@@ -108,7 +108,10 @@ export function Thread({ messages }: Props) {
             animate={{ opacity: 1, y: 0 }}
             exit={reduced ? { opacity: 0 } : { opacity: 0, y: 4 }}
             transition={{ duration: reduced ? 0 : 0.2 }}
-            className="fixed bottom-28 left-1/2 -translate-x-1/2 z-30"
+            // Phase 3.6 #67 — anchor lifted to clear the persistent
+            // input bar (suggestion chips + attachments + textarea
+            // stack ~140 px tall in the worst case).
+            className="fixed bottom-40 sm:bottom-44 left-1/2 -translate-x-1/2 z-30"
           >
             <button
               type="button"

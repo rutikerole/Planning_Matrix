@@ -571,7 +571,22 @@
       },
       "multi": {
         "submit": "Weiter",
-        "minHint": "Mindestens eine Option wählen."
+        "minHint": "Mindestens eine Option wählen.",
+        "countSelected": "{{n}} ausgewählt",
+        "confirmIntoText": "Übernehmen"
+      },
+      "thinkingPlaceholder": "Team antwortet…",
+      "freeTextHint": "Sie können auch frei antworten.",
+      "continueOrType": "Klicken Sie *Weiter*, oder geben Sie unten eine Nachricht ein.",
+      "attachment": {
+        "title": "Datei anhängen",
+        "comingSoon": "Datei-Upload für Pläne, Fotos und PDFs ist im nächsten Update verfügbar. Sie werden den Bauantrag bald direkt mit Bestandsplänen, B-Plan-PDFs und Grundbuchauszügen anreichern können.",
+        "understood": "Verstanden",
+        "close": "Schließen",
+        "remove": "Anhang entfernen",
+        "uploading": "Wird hochgeladen…",
+        "failed": "Hochladen fehlgeschlagen",
+        "list": "Angehängte Dateien"
       },
       "address": {
         "placeholder": "z. B. Hauptstraße 12, 91054 Erlangen",

@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import type { Specialist } from '@/types/projectState'
+import type { PendingAttachment } from '@/types/chatInput'
 
 /**
  * Phase 3.4 #52 — streaming bubble surfaced while Anthropic is emitting
@@ -53,6 +54,11 @@ interface ChatState {
   /** Phase 3.4 #59 — timestamp of the last successful turn. Drives the
    * Auto-saved indicator. Null until the first turn lands. */
   lastSavedAt: Date | null
+  /** Phase 3.6 #67 — files staged in the input bar but not yet sent.
+   * The store owns the array so chip removal + post-send clearing live
+   * in one place; `useInputState` (the hook) wraps these for the
+   * component layer. Wiring to Supabase Storage lands in #68. */
+  pendingAttachments: PendingAttachment[]
 
   setThinking: (
     thinking: boolean,
@@ -72,6 +78,15 @@ interface ChatState {
   closeStreamingMessage: () => void
   /** Phase 3.4 #53 — increment turnCount + stamp lastSavedAt on success. */
   noteSuccessfulTurn: () => void
+  /** Phase 3.6 #67 — add a queued attachment row. */
+  addAttachment: (attachment: PendingAttachment) => void
+  /** Phase 3.6 #67 — patch a single attachment by id (status, errors, ids). */
+  updateAttachment: (id: string, patch: Partial<PendingAttachment>) => void
+  /** Phase 3.6 #67 — remove a chip pre-send. The Storage object cleanup
+   * happens in #68's `useDeleteFile` mutation; the store just drops it. */
+  removeAttachment: (id: string) => void
+  /** Phase 3.6 #67 — empty the pending list (called after a successful send). */
+  clearAttachments: () => void
   reset: () => void
 }
 
@@ -86,6 +101,7 @@ export const useChatStore = create<ChatState>((set) => ({
   streamingMessage: null,
   turnCount: 0,
   lastSavedAt: null,
+  pendingAttachments: [],
 
   setThinking: (thinking, specialist, label, activitySection) =>
     set((s) => ({
@@ -132,17 +148,67 @@ export const useChatStore = create<ChatState>((set) => ({
   noteSuccessfulTurn: () =>
     set((s) => ({ turnCount: s.turnCount + 1, lastSavedAt: new Date() })),
 
+  addAttachment: (attachment) =>
+    set((s) => ({ pendingAttachments: [...s.pendingAttachments, attachment] })),
+  updateAttachment: (id, patch) =>
+    set((s) => ({
+      pendingAttachments: s.pendingAttachments.map((a) =>
+        a.id === id ? { ...a, ...patch } : a,
+      ),
+    })),
+  removeAttachment: (id) =>
+    set((s) => {
+      const target = s.pendingAttachments.find((a) => a.id === id)
+      if (target?.previewUrl) {
+        try {
+          URL.revokeObjectURL(target.previewUrl)
+        } catch {
+          /* defensive — preview URL may already be revoked */
+        }
+      }
+      return {
+        pendingAttachments: s.pendingAttachments.filter((a) => a.id !== id),
+      }
+    }),
+  clearAttachments: () =>
+    set((s) => {
+      for (const a of s.pendingAttachments) {
+        if (a.previewUrl) {
+          try {
+            URL.revokeObjectURL(a.previewUrl)
+          } catch {
+            /* defensive */
+          }
+        }
+      }
+      return { pendingAttachments: [] }
+    }),
+
   reset: () =>
-    set({
-      isAssistantThinking: false,
-      currentSpecialist: null,
-      previousSpecialist: null,
-      currentThinkingLabel: null,
-      currentActivitySection: null,
-      failedRequestIds: new Set(),
-      lastCompletionSignal: null,
-      streamingMessage: null,
-      turnCount: 0,
-      lastSavedAt: null,
+    set((s) => {
+      // Revoke any object URLs the previous project staged so we don't
+      // leak blobs across project switches.
+      for (const a of s.pendingAttachments) {
+        if (a.previewUrl) {
+          try {
+            URL.revokeObjectURL(a.previewUrl)
+          } catch {
+            /* defensive */
+          }
+        }
+      }
+      return {
+        isAssistantThinking: false,
+        currentSpecialist: null,
+        previousSpecialist: null,
+        currentThinkingLabel: null,
+        currentActivitySection: null,
+        failedRequestIds: new Set(),
+        lastCompletionSignal: null,
+        streamingMessage: null,
+        turnCount: 0,
+        lastSavedAt: null,
+        pendingAttachments: [],
+      }
     }),
 }))
