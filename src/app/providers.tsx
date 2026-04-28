@@ -4,6 +4,7 @@ import { BrowserRouter } from 'react-router-dom'
 import { LazyMotion, domAnimation } from 'framer-motion'
 import '@/lib/i18n'
 import { useSession } from '@/hooks/useSession'
+import { MobileFrame } from '@/components/MobileFrame'
 
 const queryClient = new QueryClient()
 
@@ -12,7 +13,12 @@ export function Providers({ children }: { children: ReactNode }) {
     <QueryClientProvider client={queryClient}>
       <LazyMotion features={domAnimation} strict>
         <BrowserRouter>
-          <SessionGuard>{children}</SessionGuard>
+          {/* Phase 3.8 #83 — singleton mount sets data-pm-viewport on
+            * <html>. Mobile token block in globals.css activates when
+            * the attribute reads "mobile". */}
+          <MobileFrame>
+            <SessionGuard>{children}</SessionGuard>
+          </MobileFrame>
         </BrowserRouter>
       </LazyMotion>
     </QueryClientProvider>

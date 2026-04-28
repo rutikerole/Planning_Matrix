@@ -206,5 +206,20 @@ export default {
       },
     },
   },
-  plugins: [tailwindcssAnimate],
+  plugins: [
+    tailwindcssAnimate,
+    // Phase 3.8 #83 — safe-area utilities. `pt-safe`, `pb-safe`,
+    // `pl-safe`, `pr-safe` map to env(safe-area-inset-*) and gracefully
+    // fall back to 0 on browsers without notch / home indicator.
+    function ({ addUtilities }) {
+      addUtilities({
+        '.pt-safe': { 'padding-top': 'env(safe-area-inset-top, 0px)' },
+        '.pb-safe': { 'padding-bottom': 'env(safe-area-inset-bottom, 0px)' },
+        '.pl-safe': { 'padding-left': 'env(safe-area-inset-left, 0px)' },
+        '.pr-safe': { 'padding-right': 'env(safe-area-inset-right, 0px)' },
+        '.mt-safe': { 'margin-top': 'env(safe-area-inset-top, 0px)' },
+        '.mb-safe': { 'margin-bottom': 'env(safe-area-inset-bottom, 0px)' },
+      })
+    },
+  ],
 }
