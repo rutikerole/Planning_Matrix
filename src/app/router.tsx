@@ -16,6 +16,7 @@ import { WizardPage } from '@/features/wizard'
 import { ChatWorkspacePage } from '@/features/chat/pages/ChatWorkspacePage'
 import { OverviewPage } from '@/features/chat/pages/OverviewPage'
 import { ResultPage } from '@/features/result/pages/ResultPage'
+import { SharedResultPage } from '@/features/result/pages/SharedResultPage'
 
 export function AppRouter() {
   const location = useLocation()
@@ -79,6 +80,9 @@ export function AppRouter() {
             </ProtectedRoute>
           }
         />
+
+        {/* Phase 3.5 #65 — Public read-only share view. No auth required. */}
+        <Route path="/result/share/:token" element={<SharedResultPage />} />
 
         {/* Legal placeholders — required for German B2B before public launch */}
         <Route

@@ -251,3 +251,54 @@
     left: 24%;
   }
 }
+
+/* ──────────────────────────────────────────────────────────────────
+ * Phase 3.5 #65 — Result-Page print stylesheet
+ *
+ * Cmd+P on /projects/:id/result (or /result/share/:token) should
+ * produce a clean A4 deliverable. Scoped to the result page via
+ * the [data-print-target="result-page"] attribute so the rest of
+ * the product doesn't accidentally print "atelier" register.
+ * ────────────────────────────────────────────────────────────────── */
+@media print {
+  /* Reset page chrome: hide global navigation + every interactive
+   * affordance the result page itself flagged with data-no-print. */
+  body {
+    background: white !important;
+  }
+  nav,
+  [data-no-print="true"] {
+    display: none !important;
+  }
+
+  /* Atmosphere off — paper grain + blueprint substrate would just
+   * waste toner. Sections render on white paper with their own
+   * border/divider hairlines.*/
+  body::before,
+  .grain-overlay-fixed,
+  [data-print-target="result-page"] .fixed {
+    display: none !important;
+  }
+
+  [data-print-target="result-page"] {
+    background: white !important;
+  }
+
+  /* One section per page. The cover hero gets its own; the rest
+   * page-break naturally. `page-break-inside: avoid` keeps cards
+   * intact across page boundaries. */
+  [data-print-target="result-page"] section {
+    page-break-after: always;
+    page-break-inside: avoid;
+  }
+  [data-print-target="result-page"] section:last-child {
+    page-break-after: auto;
+  }
+
+  /* Tight, predictable margins. */
+  @page {
+    size: A4 portrait;
+    margin: 18mm;
+  }
+}
+
