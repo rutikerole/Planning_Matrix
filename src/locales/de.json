@@ -356,6 +356,8 @@
       "viewResult": "Ergebnis",
       "loading": "Projekte werden geladen …",
       "signOut": "Abmelden",
+      "archive": "Archivieren",
+      "restore": "Wiederherstellen",
       "state": {
         "in_progress": "Aktiv",
         "paused": "Pausiert",

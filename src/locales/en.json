@@ -356,6 +356,8 @@
       "viewResult": "Briefing",
       "loading": "Loading projects …",
       "signOut": "Sign out",
+      "archive": "Archive",
+      "restore": "Restore",
       "state": {
         "in_progress": "Active",
         "paused": "Paused",

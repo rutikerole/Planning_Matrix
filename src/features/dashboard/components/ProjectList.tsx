@@ -3,6 +3,8 @@ import { useTranslation } from 'react-i18next'
 import type { ProjectStatus } from '@/types/db'
 import type { ProjectListEntry } from '../hooks/useProjectsList'
 import { formatRelativeOrAbsolute, romanFor, type Lang } from '../lib/dashboardFormat'
+import { useViewport } from '@/lib/useViewport'
+import { SwipeableProjectRow } from './SwipeableProjectRow'
 
 interface Props {
   projects: ProjectListEntry[]
@@ -26,6 +28,23 @@ const STATE_LABEL_KEYS: Record<ProjectStatus, string> = {
 export function ProjectList({ projects }: Props) {
   const { t, i18n } = useTranslation()
   const lang = (i18n.resolvedLanguage ?? 'de') as Lang
+  const { isMobile } = useViewport()
+
+  if (isMobile) {
+    return (
+      <ul className="flex flex-col">
+        {projects.map((project, idx) => (
+          <SwipeableProjectRow
+            key={project.id}
+            project={project}
+            index={idx}
+            lang={lang}
+            showDivider={idx > 0}
+          />
+        ))}
+      </ul>
+    )
+  }
 
   return (
     <ul className="flex flex-col">
