@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
+import { useChatStore } from '@/stores/chatStore'
 import type { MessageRow } from '@/types/db'
 import type { UserAnswer } from '@/types/chatTurn'
 import { InputText } from './InputText'
@@ -7,6 +8,7 @@ import { InputYesNo } from './InputYesNo'
 import { InputSelect, type SelectOption } from './InputSelect'
 import { InputMultiSelect } from './InputMultiSelect'
 import { InputAddress } from './InputAddress'
+import { SuggestedReplies } from './SuggestedReplies'
 
 interface Props {
   lastAssistant: MessageRow | null
@@ -30,6 +32,16 @@ export function InputBar({ lastAssistant, onSubmit, onIdkClick, forceDisabled }:
   const allowIdk = lastAssistant?.allow_idk ?? false
   const options = (lastAssistant?.input_options as SelectOption[] | null) ?? []
   const disabled = !!forceDisabled
+  const completionSignal = useChatStore((s) => s.lastCompletionSignal)
+  const suggestedReplies = lastAssistant?.likely_user_replies ?? []
+  // Only show suggestions on free-text turns, when a non-continue
+  // completion_signal isn't owning the surface, and not while a turn
+  // is in flight.
+  const showSuggestions =
+    inputType === 'text' &&
+    suggestedReplies.length > 0 &&
+    !disabled &&
+    (completionSignal === null || completionSignal === 'continue')
 
   const submit = (answer: UserAnswer, userMessage: string) => {
     onSubmit({ userMessage, userAnswer: answer })
@@ -115,6 +127,13 @@ export function InputBar({ lastAssistant, onSubmit, onIdkClick, forceDisabled }:
           className="w-full max-w-2xl py-4 sm:py-5"
           style={{ paddingBottom: 'max(env(safe-area-inset-bottom, 0px), 1rem)' }}
         >
+          {showSuggestions && (
+            <SuggestedReplies
+              replies={suggestedReplies}
+              disabled={disabled}
+              onSelect={(text) => submit({ kind: 'text', text }, text)}
+            />
+          )}
           <div className="flex items-end gap-4">
             <div className="flex-1 min-w-0">{control}</div>
             {allowIdk && !disabled && onIdkClick && (

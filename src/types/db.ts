@@ -42,6 +42,8 @@ export interface MessageRow {
   allow_idk: boolean | null
   /** Phase 3.1 #33: hint shown in the next turn's ThinkingIndicator. */
   thinking_label_de: string | null
+  /** Phase 3.4 #54: up to 3 plausible short replies for free-text turns. */
+  likely_user_replies: string[] | null
   user_answer: unknown
   client_request_id: string | null
   model: string | null

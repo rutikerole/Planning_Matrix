@@ -216,6 +216,14 @@ export const respondToolDefinition = {
         description:
           'Whether the conversation should continue, escalate to a Designer, present an interim review, or block on missing data.',
       },
+
+      likely_user_replies: {
+        type: 'array',
+        maxItems: 3,
+        items: { type: 'string', maxLength: 60 },
+        description:
+          'Up to 3 plausible short replies (≤ 6 words each) the Bauherr might give to this question. Emit ONLY when input_type is "text" AND the question has identifiable plausible answers. Omit on the very first turn (address opener) and on free-form research follow-ups where suggestions would constrain the user. Match the conversation language: German for German conversations, English for English.',
+      },
     },
   },
 } as const

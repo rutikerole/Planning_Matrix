@@ -251,6 +251,15 @@ Felder von \`respond\`:
   • roles_delta           — Updates an Fachplaner-Rollen
   • areas_update          — Statusänderungen für A / B / C
   • completion_signal     — continue | needs_designer | ready_for_review | blocked
+  • likely_user_replies   — bis zu 3 plausible Kurzantworten (≤ 6 Wörter)
+
+Wenn \`input_type\` = \`text\` und die Frage identifizierbare plausible
+Antworten hat, geben Sie bis zu 3 \`likely_user_replies\` an — z. B. bei
+„Wann wurde das Bestandsgebäude errichtet?" sinnvoll: [„Vor 1980",
+„Zwischen 1980 und 2000", „Nach 2000"]. Lassen Sie das Feld weg bei
+der allerersten Frage (Adresse), bei freien Recherche-Folgefragen und
+wenn Vorschläge die Antwort einengen würden. Sprache passt sich der
+Konversation an.
 
 Jedes Element von recommendations_delta / procedures_delta / documents_delta /
 roles_delta MUSS das Feld \`op\` mit dem Wert \`upsert\` oder \`remove\` enthalten.

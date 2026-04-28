@@ -199,6 +199,26 @@ export const respondToolInputSchema = z
     areas_update: areasUpdateSchema.optional(),
 
     completion_signal: completionSignalSchema.optional(),
+
+    /**
+     * Phase 3.4 #54 — likely user replies for free-text turns.
+     *
+     * Up to 3 plausible short replies the user might give to the
+     * current message (≤ 6 words each). Rendered as paper-tab chips
+     * above the input bar; clicking a chip submits it as the user's
+     * next message. Optional — the model emits this only when the
+     * `input_type` is `text` AND the question has identifiable
+     * plausible answers (e.g. "Wann wurde das Bestandsgebäude
+     * errichtet?" → ["Vor 1980", "Zwischen 1980 und 2000", "Nach 2000"]).
+     *
+     * The model SHOULD omit this field for the very first turn
+     * (moderator's address opener) and any free-form research
+     * follow-up where suggestions would constrain the user.
+     */
+    likely_user_replies: z
+      .array(z.string().min(1).max(60))
+      .max(3)
+      .optional(),
   })
   .strict()
 
