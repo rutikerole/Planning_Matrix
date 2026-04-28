@@ -551,8 +551,11 @@
       "requiredFor": "Required for",
       "roles": "Specialists",
       "recommendations": "Recommendations",
-      "audit": "Audit",
-      "auditEmpty": "No events recorded yet."
+      "audit": "Audit log",
+      "auditEmpty": "No events recorded yet.",
+      "tabs": {
+        "intent": "Project"
+      }
     },
     "rail": {
       "top3": "Top 3 next steps",
