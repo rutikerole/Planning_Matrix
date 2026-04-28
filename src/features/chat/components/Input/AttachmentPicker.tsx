@@ -59,16 +59,11 @@ export function AttachmentPicker({ open, onOpenChange }: Props) {
   const [category, setCategory] = useState<FileCategory>('other')
   const { isMobile } = useViewport()
 
-  // Phase 3.8 #84 — on mobile, delegate to MobileAttachmentSheet which
-  // exposes camera / gallery / document as separate native pickers
-  // (Q3 locked: capture="environment" enables rear camera). Desktop
-  // keeps the popover + category-select picker below.
-  if (isMobile) {
-    return <MobileAttachmentSheet open={open} onOpenChange={onOpenChange} />
-  }
-
+  // Outside-click + Escape close — only attached on desktop while open.
+  // Hooks must run unconditionally, so the mobile / closed gating happens
+  // inside the effect rather than via an early return above it.
   useEffect(() => {
-    if (!open) return
+    if (isMobile || !open) return
     const onClick = (e: MouseEvent) => {
       if (panelRef.current && !panelRef.current.contains(e.target as Node)) {
         onOpenChange(false)
@@ -86,7 +81,16 @@ export function AttachmentPicker({ open, onOpenChange }: Props) {
       document.removeEventListener('mousedown', onClick)
       document.removeEventListener('keydown', onKey)
     }
-  }, [open, onOpenChange])
+  }, [isMobile, open, onOpenChange])
+
+  // Phase 3.8 #84 — on mobile, delegate to MobileAttachmentSheet which
+  // exposes camera / gallery / document as separate native pickers
+  // (Q3 locked: capture="environment" enables rear camera). Desktop
+  // keeps the popover + category-select picker below. The early return
+  // sits AFTER all hooks so rules-of-hooks holds across both branches.
+  if (isMobile) {
+    return <MobileAttachmentSheet open={open} onOpenChange={onOpenChange} />
+  }
 
   const handleFiles = async (files: FileList | null) => {
     if (!files || files.length === 0 || !projectId) return

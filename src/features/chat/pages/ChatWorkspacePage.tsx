@@ -187,6 +187,12 @@ export function ChatWorkspacePage() {
   const resetChatStore = useChatStore((s) => s.reset)
   useEffect(() => () => resetChatStore(), [projectId, resetChatStore])
 
+  // Phase 3.8 #84 — viewport branch (Q12 locked: separate Mobile* for
+  // major pages). Hooks must run unconditionally, so this lives above
+  // the `!project` early return; the inputBarNode + JSX below is what
+  // actually gates on isMobile.
+  const { isMobile } = useViewport()
+
   if (!project) return null
 
   const handleSubmit = (payload: {
@@ -223,7 +229,8 @@ export function ChatWorkspacePage() {
   // major pages). Mobile uses MobileChatWorkspace's collapsing header +
   // sticky compact progress + fixed-bottom keyboard-aware input bar.
   // Desktop continues with the unified-footer three-column layout.
-  const { isMobile } = useViewport()
+  // (`isMobile` itself is read above the `!project` return — see hooks
+  // ordering note there — so we just use the value here.)
 
   const inputBarNode = hasMessages ? (
     <InputBar
