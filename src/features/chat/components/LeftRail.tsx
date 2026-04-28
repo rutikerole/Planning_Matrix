@@ -1,5 +1,4 @@
 import { useTranslation } from 'react-i18next'
-import { Link } from 'react-router-dom'
 import { cn } from '@/lib/utils'
 import { Wordmark } from '@/components/shared/Wordmark'
 import type { AreaState } from '@/types/projectState'
@@ -7,9 +6,7 @@ import type { MessageRow, ProjectRow } from '@/types/db'
 import { SpecialistSigil } from './SpecialistSigils'
 import { ProgressMeter } from './ProgressMeter'
 import { VerlaufMap } from './VerlaufMap'
-import { ExportMenu } from './ExportMenu'
 import { AutoSavedIndicator } from './AutoSavedIndicator'
-import { useProjectEvents } from '../hooks/useProjectEvents'
 
 interface Props {
   project: ProjectRow
@@ -30,9 +27,6 @@ interface Props {
  * anchors the bottom of the rail as the "signature line."
  */
 export function LeftRail({ project, messages }: Props) {
-  const { t } = useTranslation()
-  const { data: events } = useProjectEvents(project.id)
-
   return (
     <div className="w-full flex flex-col px-5 py-7 gap-7">
       {/* Phase 3.3 #50 — wordmark anchored at the top of the rail as a
@@ -84,34 +78,10 @@ export function LeftRail({ project, messages }: Props) {
 
       <div className="flex-1" />
 
-      {/* Fountain-pen + inkwell footer signature */}
+      {/* Phase 3.7 #75 — Briefing/Cockpit/Export/Leave moved to the
+        * UnifiedFooter band that spans the workspace bottom. The
+        * fountain-pen signature stays as the rail's bottom decoration. */}
       <FountainPenFooter />
-
-      {/* Phase 3.5 #66 — Ergebnis ansehen (primary entry point to the
-       * result page; sits above the secondary export menu + overview
-       * link in the rail's footer cluster). */}
-      <Link
-        to={`/projects/${project.id}/result`}
-        className="inline-flex items-center gap-1.5 text-[13px] font-medium text-ink hover:text-clay-deep transition-colors duration-soft self-start focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/35 focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm"
-      >
-        <span className="font-serif italic text-clay-deep">→</span>
-        {t('chat.leftRail.viewResult', { defaultValue: 'Ergebnis ansehen' })}
-      </Link>
-
-      {/* Phase 3.4 #55 — Exportieren */}
-      <ExportMenu
-        project={project}
-        messages={messages}
-        events={events ?? []}
-        variant="ghost"
-      />
-
-      <Link
-        to="/dashboard"
-        className="text-[12px] text-clay/85 hover:text-ink transition-colors duration-soft underline-offset-4 hover:underline decoration-clay/55 self-start focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/35 focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm"
-      >
-        ← {t('chat.leaveProject')}
-      </Link>
     </div>
   )
 }

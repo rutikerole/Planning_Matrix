@@ -1,5 +1,3 @@
-import { Link } from 'react-router-dom'
-import { useTranslation } from 'react-i18next'
 import type { ProjectState } from '@/types/projectState'
 import type { MessageRow, ProjectRow } from '@/types/db'
 import { Top3 } from './Top3'
@@ -7,7 +5,6 @@ import { ProceduresPanel } from './ProceduresPanel'
 import { DocumentsPanel } from './DocumentsPanel'
 import { RolesPanel } from './RolesPanel'
 import { EckdatenPanel } from './EckdatenPanel'
-import { CostTicker } from './CostTicker'
 import { IntentAxonometric } from './IntentAxonometric'
 import { BereichePlanSection } from './BereichePlanSection'
 import { FactTicker } from './FactTicker'
@@ -31,8 +28,7 @@ interface Props {
  *   6. Overview link
  *   7. Cost ticker as scale-bar flourish
  */
-export function RightRail({ project, messages }: Props) {
-  const { t } = useTranslation()
+export function RightRail({ project, messages: _messages }: Props) {
   const state = (project.state ?? {}) as Partial<ProjectState>
   const recommendations = state.recommendations ?? []
   const facts = (state.facts ?? []).slice(-5).reverse()
@@ -58,19 +54,10 @@ export function RightRail({ project, messages }: Props) {
 
       <div className="flex-1" />
 
-      {/* 6. Overview link */}
-      <Link
-        to={`/projects/${project.id}/overview`}
-        className="text-[12px] text-clay/85 hover:text-ink underline underline-offset-4 decoration-clay/55 self-start transition-colors duration-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm"
-      >
-        {t('chat.rail.openOverview')}
-      </Link>
-
-      {/* 7. Phase 3.4 #56 — Bayern fact ticker, idle-only */}
+      {/* Phase 3.7 #75 — Open-cockpit link + CostTicker moved into the
+        * UnifiedFooter band. The FactTicker stays as the rail's idle
+        * decoration. */}
       <FactTicker />
-
-      {/* 8. Cost ticker — scale-bar flourish */}
-      <CostTicker messages={messages} />
     </div>
   )
 }

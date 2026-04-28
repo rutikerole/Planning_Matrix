@@ -4,7 +4,13 @@ import { BlueprintSubstrate } from '@/components/shared/BlueprintSubstrate'
 interface Props {
   leftRail?: ReactNode
   rightRail?: ReactNode
-  inputBar?: ReactNode
+  /**
+   * Phase 3.7 #75 — when provided, mounts as a fixed-position band
+   * spanning the full grid width below the three-column body. Bottom
+   * padding on the grid wrapper compensates so the last message
+   * doesn't disappear under the footer.
+   */
+  unifiedFooter?: ReactNode
   children: ReactNode
 }
 
@@ -18,7 +24,12 @@ interface Props {
  * is constrained to max-w-2xl + generous vertical padding so messages
  * read like a focused document, not a chat-app stream.
  */
-export function ChatWorkspaceLayout({ leftRail, rightRail, inputBar, children }: Props) {
+export function ChatWorkspaceLayout({
+  leftRail,
+  rightRail,
+  unifiedFooter,
+  children,
+}: Props) {
   return (
     <div
       className="min-h-dvh bg-paper relative isolate"
@@ -30,7 +41,15 @@ export function ChatWorkspaceLayout({ leftRail, rightRail, inputBar, children }:
     >
       <BlueprintSubstrate />
       <div aria-hidden="true" className="grain-overlay-fixed" />
-      <div className="mx-auto w-full max-w-[1440px] grid lg:grid-cols-[280px_minmax(0,1fr)_360px] grid-cols-1">
+      {/* Phase 3.7 #75 — bottom padding compensates for the fixed
+        * unified footer. Desktop reserves ~180 px (input + secondary
+        * actions stacked). Mobile reserves ~110 px (single bar). */}
+      <div
+        className={
+          'mx-auto w-full max-w-[1440px] grid lg:grid-cols-[280px_minmax(0,1fr)_360px] grid-cols-1 ' +
+          (unifiedFooter ? 'pb-[120px] lg:pb-[180px]' : '')
+        }
+      >
         <aside className="hidden lg:flex border-r border-border-strong/30 min-h-dvh">
           {leftRail}
         </aside>
@@ -39,13 +58,14 @@ export function ChatWorkspaceLayout({ leftRail, rightRail, inputBar, children }:
           <div className="flex-1 flex justify-center px-6 sm:px-10 lg:px-14">
             <div className="w-full max-w-2xl py-16 lg:py-20">{children}</div>
           </div>
-          {inputBar}
         </main>
 
         <aside className="hidden lg:flex border-l border-border-strong/30 min-h-dvh">
           {rightRail}
         </aside>
       </div>
+
+      {unifiedFooter}
     </div>
   )
 }

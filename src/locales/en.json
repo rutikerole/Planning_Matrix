@@ -435,6 +435,15 @@
     "leftRail": {
       "viewResult": "View briefing"
     },
+    "footer": {
+      "briefingPrimary": "View briefing",
+      "briefingSubtitle": "The full document",
+      "cockpitSecondary": "Open cockpit",
+      "exportSecondary": "Export",
+      "leaveSecondary": "← Leave project",
+      "overflowLabel": "More actions",
+      "overflowEyebrow": "Actions & overview"
+    },
     "atTheTable": "At the table",
     "verlauf": {
       "eyebrow": "Journey",

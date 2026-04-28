@@ -18,6 +18,8 @@ import { PaperCard } from '../components/PaperCard'
 import { ConversationCursor } from '../components/ConversationCursor'
 import { ChatDropZone } from '../components/ChatDropZone'
 import { ChatProgressBar } from '../components/Progress/ChatProgressBar'
+import { UnifiedFooter } from '../components/UnifiedFooter/UnifiedFooter'
+import { useProjectEvents } from '../hooks/useProjectEvents'
 import { buildUserMessageText } from '../lib/userAnswerHelpers'
 import { useProject } from '../hooks/useProject'
 import { useMessages } from '../hooks/useMessages'
@@ -42,6 +44,7 @@ export function ChatWorkspacePage() {
   const projectId = id ?? ''
   const { data: project } = useProject(projectId)
   const { data: messages } = useMessages(projectId)
+  const { data: events } = useProjectEvents(projectId)
 
   useEffect(() => {
     if (project?.name) {
@@ -229,13 +232,21 @@ export function ChatWorkspacePage() {
       <ChatWorkspaceLayout
         leftRail={<LeftRail project={project} messages={messages ?? []} />}
         rightRail={<RightRail project={project} messages={messages ?? []} />}
-        inputBar={
+        unifiedFooter={
           hasMessages ? (
-            <InputBar
-              lastAssistant={lastAssistant}
-              onSubmit={handleSubmit}
-              onIdkClick={() => setIdkOpen(true)}
-              forceDisabled={isThinking}
+            <UnifiedFooter
+              project={project}
+              messages={messages ?? []}
+              events={events ?? []}
+              inputBar={
+                <InputBar
+                  lastAssistant={lastAssistant}
+                  onSubmit={handleSubmit}
+                  onIdkClick={() => setIdkOpen(true)}
+                  forceDisabled={isThinking}
+                  embedded
+                />
+              }
             />
           ) : null
         }

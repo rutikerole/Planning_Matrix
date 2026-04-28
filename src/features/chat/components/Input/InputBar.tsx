@@ -21,6 +21,7 @@ import {
   useEffect,
   useRef,
   useState,
+  type ReactNode,
 } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Paperclip, ArrowUp } from 'lucide-react'
@@ -50,6 +51,13 @@ interface Props {
   onIdkClick?: () => void
   /** Optional override (e.g. while a turn is in flight). */
   forceDisabled?: boolean
+  /**
+   * Phase 3.7 #75 — when embedded inside `<UnifiedFooter>`, drop the
+   * outer sticky/border/bg wrapper. The footer owns the band chrome.
+   * Default false preserves the standalone behaviour for any caller
+   * that hasn't migrated to the unified footer yet.
+   */
+  embedded?: boolean
 }
 
 const MAX_ROWS = 5
@@ -71,6 +79,7 @@ export function InputBar({
   onSubmit,
   onIdkClick,
   forceDisabled,
+  embedded,
 }: Props) {
   const { t, i18n } = useTranslation()
   const lang = (i18n.resolvedLanguage ?? 'de') as 'de' | 'en'
@@ -170,16 +179,36 @@ export function InputBar({
     showSuggestions &&
     (inputType === 'yesno' || inputType === 'single_select' || inputType === 'multi_select')
 
-  return (
-    <div
-      className="sticky bottom-0 z-20 bg-paper/95 backdrop-blur-[2px] border-t border-border-strong/25"
-      data-pm-input-bar="true"
-    >
-      <div className="flex justify-center px-4 sm:px-6 lg:px-8">
+  // Phase 3.7 #75 — when embedded in UnifiedFooter, the band chrome
+  // (sticky position, border-top, background, safe-area inset) lives
+  // on the parent. We render only the inner stack: chips + attachments
+  // + textarea card + helper row.
+  const Outer = embedded
+    ? ({ children }: { children: ReactNode }) => (
+        <div className="w-full" data-pm-input-bar="embedded">
+          <div className="w-full flex flex-col gap-2">{children}</div>
+        </div>
+      )
+    : ({ children }: { children: ReactNode }) => (
         <div
-          className="w-full max-w-3xl py-3 sm:py-4 flex flex-col gap-2"
-          style={{ paddingBottom: 'max(env(safe-area-inset-bottom, 0px), 0.75rem)' }}
+          className="sticky bottom-0 z-20 bg-paper/95 backdrop-blur-[2px] border-t border-border-strong/25"
+          data-pm-input-bar="true"
         >
+          <div className="flex justify-center px-4 sm:px-6 lg:px-8">
+            <div
+              className="w-full max-w-3xl py-3 sm:py-4 flex flex-col gap-2"
+              style={{
+                paddingBottom: 'max(env(safe-area-inset-bottom, 0px), 0.75rem)',
+              }}
+            >
+              {children}
+            </div>
+          </div>
+        </div>
+      )
+
+  return (
+    <Outer>
           {/* Suggestion chips above the bar — never replace it. */}
           {showSuggestions && (
             <SuggestionChips
@@ -338,8 +367,6 @@ export function InputBar({
               <span aria-hidden="true" />
             )}
           </div>
-        </div>
-      </div>
-    </div>
+    </Outer>
   )
 }

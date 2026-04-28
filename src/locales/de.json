@@ -435,6 +435,15 @@
     "leftRail": {
       "viewResult": "Ergebnis ansehen"
     },
+    "footer": {
+      "briefingPrimary": "Briefing ansehen",
+      "briefingSubtitle": "Das ausführliche Dokument",
+      "cockpitSecondary": "Cockpit öffnen",
+      "exportSecondary": "Exportieren",
+      "leaveSecondary": "← Projekt verlassen",
+      "overflowLabel": "Weitere Aktionen",
+      "overflowEyebrow": "Aktionen & Übersicht"
+    },
     "atTheTable": "Am Tisch",
     "verlauf": {
       "eyebrow": "Verlauf",
