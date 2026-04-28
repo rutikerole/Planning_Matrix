@@ -47,8 +47,15 @@ export function TransitionScreen() {
           {t('wizard.transition.body')}
         </p>
 
-        {/* Hairline sweep loop — clay strip travelling left-to-right. */}
-        <div className="relative h-px w-32 bg-border-strong/30 overflow-hidden mt-6">
+        {/* Hairline sweep loop — clay strip travelling left-to-right.
+         * Polish Move 5: viewTransitionName matches the rule above the
+         * moderator's first nameplate so the browser morphs between
+         * routes (Chromium 95%+); the Framer Motion fallback handles
+         * the rest cleanly. */}
+        <div
+          className="relative h-px w-32 bg-border-strong/30 overflow-hidden mt-6"
+          style={{ viewTransitionName: 'pm-handoff-hairline' }}
+        >
           {!reduced && (
             <m.div
               aria-hidden="true"

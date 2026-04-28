@@ -53,6 +53,12 @@ export function Thread({ messages }: Props) {
             break
           }
         }
+        // Phase 3.1 #32 — the very first assistant message in the thread
+        // becomes the View Transitions API target so the wizard's
+        // transition-screen hairline morphs into its match-cut rule.
+        const isFirstAssistant =
+          row.role === 'assistant' &&
+          !messages.slice(0, idx).some((m) => m.role === 'assistant')
         return (
           <li key={row.id} className="flex flex-col gap-8">
             {showDivider && (
@@ -64,6 +70,7 @@ export function Thread({ messages }: Props) {
                 message={row}
                 isHistory={isHistory}
                 previousSpecialist={previousSpecialist}
+                isHandoffTarget={isFirstAssistant && !isHistory}
               />
             )}
             {row.role === 'system' && <MessageSystem message={row} />}

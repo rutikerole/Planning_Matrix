@@ -22,29 +22,35 @@ export function thinkingLabelToSection(text: string | null | undefined): Activit
   if (!text) return 'top3'
   const lower = text.toLowerCase()
 
-  // Order matters — more specific buckets first.
+  // Order matters — more specific buckets first. Keyword set expanded
+  // in Phase 3.1 #32 based on observed batch-4 live transcript phrasing
+  // ("Festsetzungen", "Vollgeschosse", "Verfahrensoptionen", "Gebietsart").
   if (
-    /\bfachplaner\b|\brolle\b|\btragwerk\b|\bbrandschutz\b|\benergieber|\bvermessung\b|\barchitekt/i.test(
+    /\bfachplaner\b|\brolle\b|\btragwerk\b|\bbrandschutz\b|\benergieber|\bvermessung\b|\barchitekt|\bbauvorlage/i.test(
       lower,
     )
   ) {
     return 'roles'
   }
-  if (/\bdokument|\bunterlage|\blageplan|\bbauzeichnung|\bnachweis/i.test(lower)) {
+  if (/\bdokument|\bunterlage|\blageplan|\bbauzeichnung|\bnachweis|\bgrundbuch|\bkataster/i.test(lower)) {
     return 'documents'
   }
-  if (/\bverfahren|\bgenehmigung|\bart\.?\s*5[789]\b/i.test(lower)) {
+  if (
+    /\bverfahren|\bgenehmigung|\bart\.?\s*5[789]\b|\bvereinfacht|\bregelverfahren|\bfreistellung/i.test(
+      lower,
+    )
+  ) {
     return 'procedures'
   }
   if (
-    /\bgeb(ä|ae)udeklasse\b|\beckdat|\bfakt|\badresse|\bplz|\bpostleit|\bgrundst(ü|ue)ck/i.test(
+    /\bgeb(ä|ae)udeklasse\b|\beckdat|\bfakt|\bvollgeschoss|\bbgf\b|\bbrutto[- ]?grundfl(ä|ae)che|\bgeschosszahl|\bgr(ö|oe)(ß|ss)enordnung\b/i.test(
       lower,
     )
   ) {
     return 'facts'
   }
   if (
-    /\bbereich\b|\bplanungsrecht\b|\bbauordnung\b|\bvorgabe\b|\bden(k|c)mal\b|\bnaturschutz\b/i.test(
+    /\bbereich\b|\bplanungsrecht\b|\bbauordnung\b|\bvorgabe\b|\bden(k|c)mal\b|\bnaturschutz\b|\bfestsetzung|\bgebietsart|\bwohngebiet|\bbaunvo|\bb-plan|\bbebauungsplan/i.test(
       lower,
     )
   ) {

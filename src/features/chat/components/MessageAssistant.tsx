@@ -10,6 +10,9 @@ interface Props {
   isHistory: boolean
   /** The specialist who spoke in the previous assistant message. */
   previousSpecialist?: string | null
+  /** Set on the very first assistant message — applies viewTransitionName so
+   *  the wizard's hairline morphs into this rule (Polish Move 5). */
+  isHandoffTarget?: boolean
 }
 
 /**
@@ -25,7 +28,12 @@ interface Props {
  * a row → no rule, no scale (continuous voice). Reduced-motion:
  * instant rule, instant scale.
  */
-export function MessageAssistant({ message, isHistory, previousSpecialist }: Props) {
+export function MessageAssistant({
+  message,
+  isHistory,
+  previousSpecialist,
+  isHandoffTarget,
+}: Props) {
   const { i18n } = useTranslation()
   const reduced = useReducedMotion()
   const lang = (i18n.resolvedLanguage ?? 'de') as 'de' | 'en'
@@ -48,6 +56,11 @@ export function MessageAssistant({ message, isHistory, previousSpecialist }: Pro
             <m.span
               aria-hidden="true"
               className="block h-px bg-gradient-to-r from-transparent via-border-strong/60 to-transparent"
+              style={
+                isHandoffTarget
+                  ? { viewTransitionName: 'pm-handoff-hairline' }
+                  : undefined
+              }
               initial={reduced ? false : { scaleX: 0, transformOrigin: 'left center' }}
               animate={{ scaleX: 1 }}
               transition={{ duration: reduced ? 0 : 0.32, ease: [0.16, 1, 0.3, 1] }}

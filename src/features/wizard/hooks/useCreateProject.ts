@@ -127,9 +127,21 @@ export function useCreateProject() {
     }
 
     // ── 4. Navigate ─────────────────────────────────────────────────
+    // Polish Move 5 — wrap navigation in document.startViewTransition
+    // so the wizard's transition-screen hairline morphs into the
+    // moderator's match-cut rule (both elements share viewTransitionName
+    // 'pm-handoff-hairline'). Falls back to a plain navigate where
+    // the API isn't supported (Firefox + older Safari).
     setStatus('navigating')
     reset()
-    navigate(`/projects/${projectId}`, { replace: true })
+    const target = `/projects/${projectId}`
+    type DocWithVT = Document & { startViewTransition?: (cb: () => void) => unknown }
+    const doc = document as DocWithVT
+    if (typeof doc.startViewTransition === 'function') {
+      doc.startViewTransition(() => navigate(target, { replace: true }))
+    } else {
+      navigate(target, { replace: true })
+    }
   }
 
   return { submit, status, error }
