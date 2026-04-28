@@ -1,6 +1,7 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { useReducedMotion } from 'framer-motion'
 import { ChatWorkspaceLayout } from '../components/ChatWorkspaceLayout'
 import { EmptyState } from '../components/EmptyState'
 import { LeftRail } from '../components/LeftRail'
@@ -9,6 +10,9 @@ import { Thread } from '../components/Thread'
 import { InputBar } from '../components/Input'
 import { IdkPopover } from '../components/Input/IdkPopover'
 import { OfflineBanner } from '../components/Banners'
+import { MobileTopBar } from '../components/MobileTopBar'
+import { MobileRailDrawer } from '../components/MobileRailDrawer'
+import { MobileRightRailPeek } from '../components/MobileRightRailPeek'
 import { buildUserMessageText } from '../lib/userAnswerHelpers'
 import { useProject } from '../hooks/useProject'
 import { useMessages } from '../hooks/useMessages'
@@ -79,6 +83,36 @@ export function ChatWorkspacePage() {
   const [idkOpen, setIdkOpen] = useState(false)
   const chatTurn = useChatTurn(projectId)
   const isThinking = useChatStore((s) => s.isAssistantThinking)
+  const reduced = useReducedMotion()
+  const { t: tT } = useTranslation()
+
+  // Mobile drawer state.
+  const [leftOpen, setLeftOpen] = useState(false)
+  const [rightOpen, setRightOpen] = useState(false)
+  const [peekVisible, setPeekVisible] = useState(false)
+  const [rightBadge, setRightBadge] = useState(false)
+  const lastRecCountRef = useRef<number>(
+    (project?.state as { recommendations?: unknown[] })?.recommendations?.length ?? 0,
+  )
+
+  // When recommendations grow (or change rank order), trigger the peek
+  // (or badge in reduced-motion). Only fires below lg viewport — the
+  // peek itself is lg:hidden via CSS, but we also gate the trigger
+  // logic via window.matchMedia so the badge state matches.
+  useEffect(() => {
+    const recs = (project?.state as { recommendations?: unknown[] })?.recommendations
+    const count = recs?.length ?? 0
+    if (count > lastRecCountRef.current) {
+      const isMobile =
+        typeof window !== 'undefined' && window.matchMedia('(max-width: 1023px)').matches
+      const drawerClosed = !rightOpen
+      if (isMobile && drawerClosed) {
+        if (reduced) setRightBadge(true)
+        else setPeekVisible(true)
+      }
+    }
+    lastRecCountRef.current = count
+  }, [project?.state, rightOpen, reduced])
 
   // Reset chat store when navigating away from a project.
   const resetChatStore = useChatStore((s) => s.reset)
@@ -95,9 +129,26 @@ export function ChatWorkspacePage() {
     handleSubmit({ userMessage: buildUserMessageText(answer), userAnswer: answer })
   }
 
+  const openLeftDrawer = () => {
+    setLeftOpen(true)
+  }
+  const openRightDrawer = () => {
+    setRightOpen(true)
+    setPeekVisible(false)
+    setRightBadge(false)
+  }
+
   return (
     <>
       <OfflineBanner />
+      <MobileTopBar
+        projectName={project.name}
+        onLeftClick={openLeftDrawer}
+        onRightClick={openRightDrawer}
+        rightBadge={rightBadge}
+        leftOpen={leftOpen}
+        rightOpen={rightOpen}
+      />
       <ChatWorkspaceLayout
         leftRail={<LeftRail project={project} messages={messages ?? []} />}
         rightRail={<RightRail project={project} messages={messages ?? []} />}
@@ -119,6 +170,28 @@ export function ChatWorkspacePage() {
         open={idkOpen}
         onClose={() => setIdkOpen(false)}
         onChoose={handleIdkChoose}
+      />
+
+      <MobileRailDrawer
+        open={leftOpen}
+        onOpenChange={setLeftOpen}
+        direction="left"
+        ariaLabel={tT('chat.mobile.openLeftRail')}
+      >
+        <LeftRail project={project} messages={messages ?? []} />
+      </MobileRailDrawer>
+      <MobileRailDrawer
+        open={rightOpen}
+        onOpenChange={setRightOpen}
+        direction="right"
+        ariaLabel={tT('chat.mobile.openRightRail')}
+      >
+        <RightRail project={project} messages={messages ?? []} />
+      </MobileRailDrawer>
+      <MobileRightRailPeek
+        visible={peekVisible}
+        onTap={openRightDrawer}
+        onDismiss={() => setPeekVisible(false)}
       />
     </>
   )

@@ -408,6 +408,13 @@
   "chat": {
     "leaveProject": "Leave project",
     "atTheTable": "At the table",
+    "mobile": {
+      "openLeftRail": "Open left sidebar",
+      "openRightRail": "Open right sidebar",
+      "expandRail": "Expand sidebar",
+      "peekLabel": "Update",
+      "peekTap": "Show update"
+    },
     "system": {
       "label": "System note",
       "tag": "SYSTEM",

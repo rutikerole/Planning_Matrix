@@ -408,6 +408,13 @@
   "chat": {
     "leaveProject": "Projekt verlassen",
     "atTheTable": "Am Tisch",
+    "mobile": {
+      "openLeftRail": "Linke Seitenleiste öffnen",
+      "openRightRail": "Rechte Seitenleiste öffnen",
+      "expandRail": "Seitenleiste erweitern",
+      "peekLabel": "Update",
+      "peekTap": "Aktualisierung anzeigen"
+    },
     "system": {
       "label": "Systemhinweis",
       "tag": "SYSTEM",
