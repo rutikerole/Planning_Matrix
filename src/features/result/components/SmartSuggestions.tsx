@@ -90,7 +90,7 @@ export function SmartSuggestions({ project, state }: Props) {
         <span className="font-serif italic text-[20px] text-clay-deep tabular-figures leading-none w-10 shrink-0">
           XI
         </span>
-        <span className="text-[10px] uppercase tracking-[0.22em] font-medium text-foreground/65">
+        <span className="text-[11px] uppercase tracking-[0.22em] font-medium text-foreground/65">
           {t('result.suggestions.eyebrow', {
             defaultValue: 'Sie könnten auch benötigen',
           })}

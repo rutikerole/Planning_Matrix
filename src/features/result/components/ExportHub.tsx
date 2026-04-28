@@ -124,7 +124,7 @@ export function ExportHub({ project, messages, events, source }: Props) {
         <span className="font-serif italic text-[20px] text-clay-deep tabular-figures leading-none w-10 shrink-0">
           XII
         </span>
-        <span className="text-[10px] uppercase tracking-[0.22em] font-medium text-foreground/65">
+        <span className="text-[11px] uppercase tracking-[0.22em] font-medium text-foreground/65">
           {t('result.export.eyebrow', { defaultValue: 'Mitnehmen' })}
         </span>
       </header>
@@ -196,7 +196,7 @@ export function ExportHub({ project, messages, events, source }: Props) {
             className="border border-drafting-blue/35 rounded-[2px] bg-paper px-5 py-4 flex flex-col gap-3"
             style={{ boxShadow: 'inset 0 1px 0 hsl(0 0% 100% / 0.55)' }}
           >
-            <p className="text-[10px] font-medium uppercase tracking-[0.20em] text-drafting-blue/85 leading-none">
+            <p className="text-[11px] font-medium uppercase tracking-[0.20em] text-drafting-blue/85 leading-none">
               {revoked
                 ? t('result.export.share.revokedEyebrow', { defaultValue: 'Link widerrufen' })
                 : t('result.export.share.activeEyebrow', { defaultValue: 'Aktiver Share-Link' })}

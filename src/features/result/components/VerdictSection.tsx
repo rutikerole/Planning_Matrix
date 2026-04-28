@@ -49,7 +49,7 @@ export function VerdictSection({ project, source }: Props) {
         <span className="font-serif italic text-[20px] text-clay-deep tabular-figures leading-none w-10 shrink-0">
           II
         </span>
-        <span className="text-[10px] uppercase tracking-[0.22em] font-medium text-foreground/65">
+        <span className="text-[11px] uppercase tracking-[0.22em] font-medium text-foreground/65">
           {t('result.verdict.eyebrow', { defaultValue: 'Das Verfahren' })}
         </span>
       </header>
@@ -120,7 +120,7 @@ function DeterminingFactorsList({ state }: { state: Partial<ProjectState> }) {
   )
   if (facts.length === 0) {
     return (
-      <p className="italic text-clay/65">
+      <p className="italic text-clay/72">
         {t('result.verdict.noFactors', {
           defaultValue: 'Noch keine bestimmenden Fakten erfasst.',
         })}
@@ -128,7 +128,7 @@ function DeterminingFactorsList({ state }: { state: Partial<ProjectState> }) {
     )
   }
   return (
-    <ol className="flex flex-col gap-1.5 list-decimal pl-5 marker:text-clay/65 marker:font-serif marker:italic">
+    <ol className="flex flex-col gap-1.5 list-decimal pl-5 marker:text-clay/72 marker:font-serif marker:italic">
       {facts.slice(0, 6).map((f) => {
         const label = factLabel(f.key, lang).label
         const value =
@@ -139,7 +139,7 @@ function DeterminingFactorsList({ state }: { state: Partial<ProjectState> }) {
           <li key={f.key} className="leading-snug">
             <span className="text-ink">{label}:</span>{' '}
             <span className="text-ink/75">{value}</span>{' '}
-            <span className="ml-1 text-[10px] uppercase tracking-[0.16em] text-clay/65">
+            <span className="ml-1 text-[11px] uppercase tracking-[0.16em] text-clay/72">
               {f.qualifier.source} · {f.qualifier.quality.charAt(0)}
             </span>
           </li>

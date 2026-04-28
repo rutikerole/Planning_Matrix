@@ -147,7 +147,7 @@ export function ExportMenu({ project, messages, events, variant = 'ghost' }: Pro
             aria-label={t('chat.export.menuLabel', { defaultValue: 'Exportieren' })}
             className="absolute right-0 top-full mt-2 w-[320px] z-30 bg-paper border border-ink/15 rounded-[2px] shadow-[0_8px_32px_-12px_hsl(220_15%_11%/0.22)] p-5 flex flex-col gap-4"
           >
-            <p className="text-[10px] font-medium uppercase tracking-[0.22em] text-clay/85">
+            <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-clay/85">
               {t('chat.export.eyebrow', { defaultValue: 'Exportieren' })}
             </p>
             <ExportRows lang={lang} busy={busy} onPick={triggerExport} t={t} />
@@ -178,7 +178,7 @@ export function ExportMenu({ project, messages, events, variant = 'ghost' }: Pro
                 {t('chat.export.menuLabel', { defaultValue: 'Exportieren' })}
               </Drawer.Title>
               <div className="flex items-center justify-between mb-4">
-                <p className="text-[10px] font-medium uppercase tracking-[0.22em] text-clay/85">
+                <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-clay/85">
                   {t('chat.export.eyebrow', { defaultValue: 'Exportieren' })}
                 </p>
                 <button

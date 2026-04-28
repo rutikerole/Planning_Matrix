@@ -107,6 +107,23 @@
     --pm-shadow-input: 0 1px 2px hsl(220 15% 11% / 0.04);
     --pm-shadow-card: 0 1px 3px hsl(220 15% 11% / 0.06);
     --pm-tracking-body: 0.005em;
+
+    /* Phase 3.7 #80 — typography uplift + softer-edge tokens.
+     * Eyebrows, timestamps, qualifier badges all bump 1 px and the
+     * clay opacity floor lifts from 55–65 % to 72 % so the small text
+     * actually reads at viewing distance. Buttons + cards in operating
+     * mode get rounded corners (atelier defaults at :root stay sharp). */
+    --pm-radius-button: 0.5rem;
+    --pm-radius-card-md: 0.5rem;
+    --pm-radius-card-lg: 0.75rem;
+    --pm-text-eyebrow: 0.75rem;
+    --pm-tracking-eyebrow: 0.18em;
+    --pm-text-timestamp: 0.75rem;
+    --pm-text-qualifier: 0.6875rem;
+    --pm-clay-text: hsl(25 30% 38% / 0.72);
+    --pm-clay-emphasized: hsl(25 30% 38% / 0.82);
+    --pm-ink-soft: hsl(220 15% 11% / 0.80);
+    --pm-ink-body: hsl(220 15% 11% / 0.90);
   }
 
   [data-mode='deliverable'] {

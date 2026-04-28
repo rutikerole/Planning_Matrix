@@ -65,7 +65,7 @@ export function VerlaufMap({ messages }: Props) {
 
   return (
     <div className="flex flex-col gap-3 border-t border-border/40 pt-6">
-      <p className="eyebrow text-foreground/60 text-[10px]">
+      <p className="eyebrow text-foreground/60 text-[11px]">
         {t('chat.verlauf.eyebrow', { defaultValue: 'Verlauf' })}
       </p>
 
@@ -133,7 +133,7 @@ export function VerlaufMap({ messages }: Props) {
             }}
           >
             <span
-              className="font-serif italic text-[10px] text-clay leading-none -ml-2 inline-block"
+              className="font-serif italic text-[11px] text-clay leading-none -ml-2 inline-block"
               style={{
                 transition: reduced ? 'none' : 'padding-left 320ms cubic-bezier(0.16, 1, 0.3, 1)',
               }}

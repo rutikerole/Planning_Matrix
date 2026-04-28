@@ -51,7 +51,7 @@ export function TitleBlock({ project }: Props) {
             {project.plot_address}
           </p>
         ) : (
-          <p className="font-serif italic text-[12px] text-clay/65 leading-tight">
+          <p className="font-serif italic text-[12px] text-clay/72 leading-tight">
             {t('chat.titleBlock.noPlot')}
           </p>
         )}

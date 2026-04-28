@@ -75,7 +75,7 @@ export function TopThreeHero({ state }: Props) {
         <span className="font-serif italic text-[20px] text-clay-deep tabular-figures leading-none w-10 shrink-0">
           III
         </span>
-        <span className="text-[10px] uppercase tracking-[0.22em] font-medium text-foreground/65">
+        <span className="text-[11px] uppercase tracking-[0.22em] font-medium text-foreground/65">
           {t('result.topThree.eyebrow', {
             defaultValue: 'Die nächsten drei Schritte',
           })}
@@ -111,7 +111,7 @@ export function TopThreeHero({ state }: Props) {
             {more.map((rec, idx) => (
               <li key={rec.id} className="flex flex-col gap-1">
                 <p className="font-serif text-[16px] text-ink leading-snug">
-                  <span className="text-clay/65 font-medium tabular-figures mr-2">
+                  <span className="text-clay/72 font-medium tabular-figures mr-2">
                     {idx + 4}.
                   </span>
                   {lang === 'en' ? rec.title_en : rec.title_de}
@@ -247,7 +247,7 @@ function RecommendationRow({ rec, position, lang, t }: RecommendationRowProps) {
 function MetaPair({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex flex-col gap-1.5 leading-none">
-      <span className="text-[10px] font-medium uppercase tracking-[0.18em] text-clay">
+      <span className="text-[11px] font-medium uppercase tracking-[0.18em] text-clay">
         {label}
       </span>
       <span className="font-serif italic text-[14px] text-ink/85 tabular-figures leading-snug">

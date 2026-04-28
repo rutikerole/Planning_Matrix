@@ -98,7 +98,7 @@ export function AttachmentChip({ attachment, onRemove, disabled }: Props) {
         {truncateMiddle(attachment.file.name)}
       </span>
 
-      <span className="text-clay/65 italic shrink-0 tabular-nums">
+      <span className="text-clay/72 italic shrink-0 tabular-nums">
         {formatBytes(attachment.file.size, lang)}
       </span>
 

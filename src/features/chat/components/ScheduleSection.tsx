@@ -56,11 +56,11 @@ export function ScheduleSection({
               className="block size-1 rounded-full bg-clay motion-safe:animate-[pmAmbientPulse_1.6s_ease-in-out_infinite]"
             />
           )}
-          <span className="text-[10px] tracking-[0.18em] uppercase font-medium text-foreground/65 hover:text-ink transition-colors duration-soft">
+          <span className="text-[11px] tracking-[0.18em] uppercase font-medium text-foreground/65 hover:text-ink transition-colors duration-soft">
             {title}
           </span>
           {typeof count === 'number' && count > 0 && (
-            <span className="font-serif italic text-[10px] text-clay/65 tabular-figures leading-none">
+            <span className="font-serif italic text-[11px] text-clay/72 tabular-figures leading-none">
               {String(count).padStart(2, '0')}
             </span>
           )}
@@ -110,7 +110,7 @@ interface ScheduleRowProps {
 export function ScheduleRow({ index, title, meta, sub, qualifier }: ScheduleRowProps) {
   return (
     <article className="grid grid-cols-[24px_1fr] gap-x-3 gap-y-1">
-      <span className="font-serif italic text-[11px] text-clay/55 tabular-figures leading-snug pt-0.5">
+      <span className="font-serif italic text-[11px] text-clay/72 tabular-figures leading-snug pt-0.5">
         {String(index).padStart(2, '0')}
       </span>
       <div className="flex items-baseline justify-between gap-3">
@@ -126,7 +126,7 @@ export function ScheduleRow({ index, title, meta, sub, qualifier }: ScheduleRowP
       {qualifier && (
         <>
           <span aria-hidden="true" />
-          <p className="text-[10px] text-clay/65 italic uppercase tracking-[0.14em] tabular-nums">
+          <p className="text-[11px] text-clay/72 italic uppercase tracking-[0.14em] tabular-nums">
             {qualifier}
           </p>
         </>

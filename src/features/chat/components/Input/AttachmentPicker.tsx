@@ -111,7 +111,7 @@ export function AttachmentPicker({ open, onOpenChange }: Props) {
 
       <label
         htmlFor={`${fileInputId}-category`}
-        className="text-[10px] font-medium uppercase tracking-[0.18em] text-clay/85 mt-1"
+        className="text-[11px] font-medium uppercase tracking-[0.18em] text-clay/85 mt-1"
       >
         {categoryLabel}
       </label>
@@ -164,7 +164,7 @@ export function AttachmentPicker({ open, onOpenChange }: Props) {
             className="absolute left-0 bottom-full mb-3 w-[340px] z-30 bg-paper border border-ink/15 shadow-[0_8px_32px_-12px_hsl(220_15%_11%/0.22)] rounded-[var(--pm-radius-card)] p-5 flex flex-col gap-3"
           >
             <div className="flex items-center justify-between">
-              <span className="inline-flex items-center gap-2 text-[10px] font-medium uppercase tracking-[0.22em] text-clay/85">
+              <span className="inline-flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.22em] text-clay/85">
                 <Paperclip aria-hidden="true" className="size-3.5" />
                 {heading}
               </span>
@@ -195,7 +195,7 @@ export function AttachmentPicker({ open, onOpenChange }: Props) {
             >
               <Drawer.Title className="sr-only">{heading}</Drawer.Title>
               <div className="flex items-center justify-between mb-1">
-                <span className="inline-flex items-center gap-2 text-[10px] font-medium uppercase tracking-[0.22em] text-clay/85">
+                <span className="inline-flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.22em] text-clay/85">
                   <Paperclip aria-hidden="true" className="size-3.5" />
                   {heading}
                 </span>

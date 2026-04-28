@@ -54,7 +54,7 @@ export function ProgressMeter() {
 
   return (
     <div className="flex flex-col gap-3">
-      <p className="eyebrow text-foreground/60 text-[10px]">
+      <p className="eyebrow text-foreground/60 text-[11px]">
         {t('chat.progress.eyebrow', { defaultValue: 'Fortschritt' })}
       </p>
 

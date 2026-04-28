@@ -76,10 +76,10 @@ export function BereichePlanSection({ state }: Props) {
   return (
     <div className="flex flex-col gap-3 border-t border-border/40 pt-6">
       <div className="flex items-baseline justify-between">
-        <p className="eyebrow text-foreground/60 text-[10px] tracking-[0.18em]">
+        <p className="eyebrow text-foreground/60 text-[11px] tracking-[0.18em]">
           {t('chat.rail.areas')}
         </p>
-        <span className="font-serif italic text-[9px] text-clay/65 tabular-figures">
+        <span className="font-serif italic text-[9px] text-clay/72 tabular-figures">
           Schnitt&nbsp;A·A
         </span>
       </div>
@@ -300,10 +300,10 @@ export function BereichePlanSection({ state }: Props) {
             <span
               className={
                 band.state === 'VOID'
-                  ? 'text-[10px] uppercase tracking-[0.20em] text-ink/30 line-through'
+                  ? 'text-[11px] uppercase tracking-[0.20em] text-ink/30 line-through'
                   : band.state === 'ACTIVE'
-                    ? 'text-[10px] uppercase tracking-[0.20em] text-clay'
-                    : 'text-[10px] uppercase tracking-[0.20em] text-clay/60'
+                    ? 'text-[11px] uppercase tracking-[0.20em] text-clay'
+                    : 'text-[11px] uppercase tracking-[0.20em] text-clay/60'
               }
             >
               {t(`chat.areas.state.${band.state.toLowerCase()}`)}

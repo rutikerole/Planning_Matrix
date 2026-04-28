@@ -201,7 +201,7 @@ function SpecialistsAtTheTable({ messages }: { messages: MessageRow[] }) {
 
   return (
     <div className="flex flex-col gap-3">
-      <p className="text-[10px] font-medium uppercase tracking-[0.22em] text-foreground/60">
+      <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-foreground/60">
         {t('chat.atTheTable')}
       </p>
       {distinctRecent.length === 0 ? (
@@ -227,7 +227,7 @@ function SpecialistsAtTheTable({ messages }: { messages: MessageRow[] }) {
                 >
                   {t(SPECIALIST_LABEL_KEYS[spec] ?? `chat.specialists.${spec}`)}
                 </span>
-                <span className="font-serif italic text-[10px] text-clay tabular-figures">
+                <span className="font-serif italic text-[11px] text-clay tabular-figures">
                   {turns}
                 </span>
                 {isActive && (

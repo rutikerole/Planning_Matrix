@@ -32,7 +32,7 @@ export function Top3({ recommendations }: Props) {
   return (
     <div className="flex flex-col gap-3">
       <div className="flex items-baseline justify-between">
-        <p className="eyebrow text-foreground/60 text-[10px] tracking-[0.18em]">
+        <p className="eyebrow text-foreground/60 text-[11px] tracking-[0.18em]">
           {t('chat.rail.top3')}
         </p>
         <span className="font-serif italic text-[9px] text-clay/60 tabular-figures">
@@ -88,7 +88,7 @@ export function Top3({ recommendations }: Props) {
                  * the card border. Margin annotation, not a chip. */}
                 <div className="flex flex-col gap-1.5 px-5">
                   <span aria-hidden="true" className="block h-px w-12 bg-border-strong/40" />
-                  <p className="font-serif italic text-[10px] text-ink/55 leading-relaxed">
+                  <p className="font-serif italic text-[11px] text-ink/55 leading-relaxed">
                     {t('chat.preliminaryFooter')}
                   </p>
                 </div>

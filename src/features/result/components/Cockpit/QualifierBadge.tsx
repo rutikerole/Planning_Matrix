@@ -39,7 +39,7 @@ export function QualifierBadge({ qualifier }: Props) {
     <span
       title={tooltip}
       className={cn(
-        'inline-flex items-center text-[10px] font-medium uppercase tracking-[0.16em] whitespace-nowrap',
+        'inline-flex items-center text-[11px] font-medium uppercase tracking-[0.16em] whitespace-nowrap',
         COLOR_BY_SOURCE[qualifier.source],
       )}
     >

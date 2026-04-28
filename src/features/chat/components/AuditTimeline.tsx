@@ -59,7 +59,7 @@ export function AuditTimeline({ events }: Props) {
             {/* Roman index in italic Serif clay-deep, anchors the row */}
             <span
               aria-hidden="true"
-              className="absolute -left-[180px] top-0 w-12 text-center font-serif italic text-[11px] text-clay/55 tabular-figures pt-1"
+              className="absolute -left-[180px] top-0 w-12 text-center font-serif italic text-[11px] text-clay/72 tabular-figures pt-1"
             >
               {String(idx + 1).padStart(2, '0')}
             </span>
@@ -69,7 +69,7 @@ export function AuditTimeline({ events }: Props) {
             >
               {dateStr}
               {timeStr && (
-                <span className="block text-[10px] text-clay/65">{timeStr}</span>
+                <span className="block text-[11px] text-clay/72">{timeStr}</span>
               )}
             </span>
             {/* Event detail — Inter 12 ink */}

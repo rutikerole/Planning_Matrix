@@ -324,7 +324,7 @@ export function InputBar({
               disabled={disabled}
               className={cn(
                 'flex-1 min-w-0 bg-transparent border-0 py-2 text-[15px] leading-[1.55] text-ink placeholder:text-ink/40 resize-none focus:outline-none',
-                disabled && 'placeholder:italic placeholder:text-clay/65',
+                disabled && 'placeholder:italic placeholder:text-clay/72',
               )}
               style={{ letterSpacing: 'var(--pm-tracking-body)' }}
             />

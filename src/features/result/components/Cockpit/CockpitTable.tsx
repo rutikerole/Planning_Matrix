@@ -89,7 +89,7 @@ export function CockpitTable<TRow>({
       )}
 
       {sorted.length === 0 ? (
-        <p className="text-[13px] italic text-clay/65 py-6">{emptyMessage}</p>
+        <p className="text-[13px] italic text-clay/72 py-6">{emptyMessage}</p>
       ) : (
         <div className="overflow-x-auto -mx-2 sm:mx-0">
           <table className="w-full min-w-[640px] sm:min-w-0">

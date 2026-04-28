@@ -55,10 +55,10 @@ export function CostTicker({ messages }: Props) {
   return (
     <div className="relative group flex flex-col gap-1.5 self-stretch border-t border-border/40 pt-4 mt-2">
       <div className="flex items-baseline justify-between gap-3">
-        <span className="text-[9px] uppercase tracking-[0.18em] text-clay/65">
+        <span className="text-[9px] uppercase tracking-[0.18em] text-clay/72">
           {t('chat.rail.cost')}
         </span>
-        <span className="font-serif italic text-[9px] text-clay/55 tabular-figures">
+        <span className="font-serif italic text-[9px] text-clay/72 tabular-figures">
           M&nbsp;1:1
         </span>
       </div>
@@ -91,13 +91,13 @@ export function CostTicker({ messages }: Props) {
           fillOpacity="0.55"
         />
       </svg>
-      <p className="font-serif italic text-[10px] text-clay/85 tabular-figures cursor-default text-right leading-snug">
+      <p className="font-serif italic text-[11px] text-clay/85 tabular-figures cursor-default text-right leading-snug">
         ≈ {formatTokensDe(tokens)} Tokens · {formatUsdDe(usd)}
       </p>
 
       {/* Breakdown popover */}
       <div className="hidden group-hover:flex group-focus-within:flex absolute right-0 bottom-full mb-2 w-60 flex-col gap-1.5 bg-paper border border-border-strong/45 rounded-sm px-3 py-2.5 shadow-[0_8px_24px_-8px_hsl(220_15%_11%/0.22)] z-20">
-        <p className="text-[10px] uppercase tracking-[0.22em] text-clay/85 mb-1">
+        <p className="text-[11px] uppercase tracking-[0.22em] text-clay/85 mb-1">
           {t('chat.cost.breakdown')}
         </p>
         <Row label={t('chat.cost.input')} value={formatTokensDe(totals.inputTokens)} />

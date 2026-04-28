@@ -27,7 +27,7 @@ export function AutoSavedIndicator() {
   if (!lastSavedAt) return null
 
   return (
-    <p className="font-serif italic text-[11px] text-clay/65 leading-none">
+    <p className="font-serif italic text-[11px] text-clay/72 leading-none">
       {t('chat.autoSaved.label', { defaultValue: 'Automatisch gespeichert' })}
       <span aria-hidden="true" className="mx-1.5">·</span>
       <span className="tabular-figures">{formatRelativeShort(lastSavedAt, lang)}</span>

@@ -106,7 +106,7 @@ export function ThinkingIndicator() {
         {label}
       </p>
       {reduced ? (
-        <p className="text-[11px] text-clay/65">{t('chat.thinking.staticLabel')}</p>
+        <p className="text-[11px] text-clay/72">{t('chat.thinking.staticLabel')}</p>
       ) : (
         <div className="flex items-center gap-1.5 mt-1 pm-pause-fade-in pm-pause-delay-280">
           {[0, 1, 2].map((i) => (

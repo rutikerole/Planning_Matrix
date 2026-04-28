@@ -121,7 +121,7 @@ export function CostTimelinePanel({ state }: Props) {
         <span className="font-serif italic text-[20px] text-clay-deep tabular-figures leading-none w-10 shrink-0">
           VII
         </span>
-        <span className="text-[10px] uppercase tracking-[0.22em] font-medium text-foreground/65">
+        <span className="text-[11px] uppercase tracking-[0.22em] font-medium text-foreground/65">
           {t('result.costTimeline.eyebrow', {
             defaultValue: 'Kosten- und Zeitrahmen',
           })}
@@ -187,7 +187,7 @@ export function CostTimelinePanel({ state }: Props) {
           {t('result.costTimeline.costEyebrow', {
             defaultValue: 'Kostenrahmen',
           })}
-          <span className="ml-2 font-serif italic text-clay/65 text-[11px] tracking-normal normal-case">
+          <span className="ml-2 font-serif italic text-clay/72 text-[11px] tracking-normal normal-case">
             {t('result.costTimeline.costSub', {
               defaultValue: '(Honorare nach HOAI · ohne Bauleistung)',
             })}

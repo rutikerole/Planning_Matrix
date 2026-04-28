@@ -59,7 +59,7 @@ export function MessageAttachment({ messageId }: Props) {
 
   if (query.isLoading) {
     return (
-      <div className="mt-2 inline-flex items-center gap-1.5 text-[11px] italic text-clay/65">
+      <div className="mt-2 inline-flex items-center gap-1.5 text-[11px] italic text-clay/72">
         <Loader2 aria-hidden="true" className="size-3 animate-spin" />
         {t('chat.input.attachment.uploading', {
           defaultValue: 'Wird hochgeladen…',
@@ -134,7 +134,7 @@ function AttachmentLink({ row, lang }: { row: ProjectFileRow; lang: 'de' | 'en' 
     >
       <Icon aria-hidden="true" className="size-4 shrink-0 text-clay/85 group-hover:text-drafting-blue" />
       <span className="truncate min-w-0">{truncateMiddle(row.file_name)}</span>
-      <span className="text-clay/65 italic shrink-0 tabular-nums">
+      <span className="text-clay/72 italic shrink-0 tabular-nums">
         {formatBytes(row.file_size, lang)}
       </span>
     </a>

@@ -47,7 +47,7 @@ export function ConversationAppendix({ messages }: Props) {
         <span className="font-serif italic text-[20px] text-clay-deep tabular-figures leading-none w-10 shrink-0">
           X
         </span>
-        <span className="text-[10px] uppercase tracking-[0.22em] font-medium text-foreground/65">
+        <span className="text-[11px] uppercase tracking-[0.22em] font-medium text-foreground/65">
           {t('result.appendix.eyebrow', {
             defaultValue: 'Appendix · die Beratung',
           })}
@@ -115,7 +115,7 @@ function AssistantTurn({
   const time = formatTime(message.created_at, lang)
   return (
     <article className="flex flex-col gap-1.5 max-w-[85%]">
-      <div className="flex items-center gap-2 text-[10px] font-medium uppercase tracking-[0.20em] text-clay leading-none">
+      <div className="flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.20em] text-clay leading-none">
         <SpecialistSigil specialist={specialist} />
         <span>{t(`chat.specialists.${specialist}`)}</span>
         <span aria-hidden="true" className="text-ink/30 mx-1">·</span>
@@ -133,7 +133,7 @@ function UserTurn({ message, lang }: { message: MessageRow; lang: 'de' | 'en' })
   return (
     <article className="flex justify-end">
       <div className="max-w-[80%] bg-paper border border-ink/12 rounded-[2px] px-4 py-2.5 flex flex-col gap-1">
-        <p className="text-[10px] font-medium uppercase tracking-[0.20em] text-clay/85 leading-none">
+        <p className="text-[11px] font-medium uppercase tracking-[0.20em] text-clay/85 leading-none">
           {lang === 'en' ? 'Owner' : 'Bauherr'}
           <span aria-hidden="true" className="text-ink/30 mx-1.5">·</span>
           <span className="font-serif italic text-clay-deep tabular-figures normal-case tracking-normal">

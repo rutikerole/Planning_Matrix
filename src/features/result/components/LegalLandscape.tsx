@@ -59,7 +59,7 @@ export function LegalLandscape({ state }: Props) {
         <span className="font-serif italic text-[20px] text-clay-deep tabular-figures leading-none w-10 shrink-0">
           IV
         </span>
-        <span className="text-[10px] uppercase tracking-[0.22em] font-medium text-foreground/65">
+        <span className="text-[11px] uppercase tracking-[0.22em] font-medium text-foreground/65">
           {t('result.legal.eyebrow', { defaultValue: 'Die rechtliche Landschaft' })}
         </span>
       </header>
@@ -79,7 +79,7 @@ export function LegalLandscape({ state }: Props) {
         ))}
       </div>
 
-      <p className="font-serif italic text-[12px] text-clay/65 leading-relaxed mt-2">
+      <p className="font-serif italic text-[12px] text-clay/72 leading-relaxed mt-2">
         {t('result.legal.clickHint', {
           defaultValue:
             'Klicken Sie auf eine Norm, um die öffentliche Quelle zu öffnen.',
@@ -112,7 +112,7 @@ function DomainBand({
         </span>
         <span
           className={
-            'text-[10px] font-medium uppercase tracking-[0.20em] tabular-nums ' +
+            'text-[11px] font-medium uppercase tracking-[0.20em] tabular-nums ' +
             relevanceTone(domain.relevance)
           }
         >
@@ -121,7 +121,7 @@ function DomainBand({
       </header>
       <ul className="flex flex-col">
         {domain.rows.length === 0 ? (
-          <li className="px-4 sm:px-5 py-4 font-serif italic text-[13px] text-clay/65">
+          <li className="px-4 sm:px-5 py-4 font-serif italic text-[13px] text-clay/72">
             {t('result.legal.empty', {
               defaultValue: 'Keine zusätzlichen Vorgaben festgestellt.',
             })}
@@ -179,7 +179,7 @@ function DomainBand({
             role="region"
             aria-label={cite.label}
           >
-            <p className="text-[10px] font-medium uppercase tracking-[0.20em] text-clay/85 leading-none">
+            <p className="text-[11px] font-medium uppercase tracking-[0.20em] text-clay/85 leading-none">
               {t('result.legal.sourceEyebrow', {
                 defaultValue: 'Öffentliche Quelle',
               })}

@@ -36,7 +36,7 @@ export function SpecialistsRequired({ state }: Props) {
         <span className="font-serif italic text-[20px] text-clay-deep tabular-figures leading-none w-10 shrink-0">
           VI
         </span>
-        <span className="text-[10px] uppercase tracking-[0.22em] font-medium text-foreground/65">
+        <span className="text-[11px] uppercase tracking-[0.22em] font-medium text-foreground/65">
           {t('result.specialists.eyebrow', { defaultValue: 'Das Team' })}
         </span>
       </header>
@@ -90,7 +90,7 @@ export function SpecialistsRequired({ state }: Props) {
               )}
               {lookup?.rangeHours && lookup.rangeHours !== '—' && (
                 <p className="text-[12px] text-ink/65 leading-none mt-1">
-                  <span className="text-[10px] font-medium uppercase tracking-[0.18em] text-clay mr-2">
+                  <span className="text-[11px] font-medium uppercase tracking-[0.18em] text-clay mr-2">
                     {t('result.specialists.effortLabel', {
                       defaultValue: 'Geschätzter Aufwand',
                     })}

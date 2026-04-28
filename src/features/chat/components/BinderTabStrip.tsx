@@ -86,7 +86,7 @@ export function BinderTabStrip({ tabs }: Props) {
                 <span className="font-serif italic text-[11px] text-clay-deep tabular-figures leading-none">
                   {tab.numeral}
                 </span>
-                <span className="text-[10px] font-medium uppercase tracking-[0.18em] leading-none">
+                <span className="text-[11px] font-medium uppercase tracking-[0.18em] leading-none">
                   {tab.label}
                 </span>
                 {/* Active indicator — clay underline at the bottom of the tab */}

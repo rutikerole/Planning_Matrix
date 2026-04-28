@@ -107,7 +107,7 @@ export function ChatProgressBar({ compact = false }: Props) {
             <span className="text-clay/70 ml-0.5">%</span>
           </span>
           {!compact && (
-            <span className="text-[10px] uppercase tracking-[0.18em] text-clay/65 leading-none">
+            <span className="text-[11px] uppercase tracking-[0.18em] text-clay/72 leading-none">
               {t('chat.progress.turnLabel', {
                 defaultValue: 'Turn',
               })}{' '}
@@ -179,7 +179,7 @@ function Segment({ segment, isLast, label, showLabel, isCurrent, reduced }: Segm
       {showLabel && (
         <p
           className={cn(
-            'mt-1.5 text-[10px] tracking-[0.10em] truncate text-center',
+            'mt-1.5 text-[11px] tracking-[0.10em] truncate text-center',
             isCurrent
               ? 'text-ink font-medium'
               : isDone

@@ -36,7 +36,7 @@ export function ConfidenceDashboard({ state }: Props) {
         <span className="font-serif italic text-[20px] text-clay-deep tabular-figures leading-none w-10 shrink-0">
           IX
         </span>
-        <span className="text-[10px] uppercase tracking-[0.22em] font-medium text-foreground/65">
+        <span className="text-[11px] uppercase tracking-[0.22em] font-medium text-foreground/65">
           {t('result.confidence.eyebrow', { defaultValue: 'Datengüte' })}
         </span>
       </header>
@@ -47,7 +47,7 @@ export function ConfidenceDashboard({ state }: Props) {
         <div className="relative">
           <ConfidenceRadial aggregate={aggregate} />
           <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-            <span className="text-[10px] font-medium uppercase tracking-[0.22em] text-clay leading-none">
+            <span className="text-[11px] font-medium uppercase tracking-[0.22em] text-clay leading-none">
               {t('result.confidence.totalEyebrow', {
                 defaultValue: 'Insgesamt',
               })}

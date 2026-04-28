@@ -80,7 +80,7 @@ export function RiskFlags({ state }: Props) {
         <span className="font-serif italic text-[20px] text-clay-deep tabular-figures leading-none w-10 shrink-0">
           VIII
         </span>
-        <span className="text-[10px] uppercase tracking-[0.22em] font-medium text-foreground/65">
+        <span className="text-[11px] uppercase tracking-[0.22em] font-medium text-foreground/65">
           {t('result.risks.eyebrow', {
             defaultValue: 'Was noch zu prüfen ist',
           })}
@@ -111,7 +111,7 @@ export function RiskFlags({ state }: Props) {
           >
             <TriangleGlyph />
             <div className="flex flex-col gap-1.5 min-w-0">
-              <span className="text-[10px] font-medium uppercase tracking-[0.20em] text-clay leading-none">
+              <span className="text-[11px] font-medium uppercase tracking-[0.20em] text-clay leading-none">
                 {tagLabel(it.tag, lang)}
               </span>
               <p className="text-[14px] text-ink/85 leading-[1.55] break-words">
@@ -154,7 +154,7 @@ export function RiskFlags({ state }: Props) {
               })}
             </Drawer.Title>
             <div className="flex items-center justify-between">
-              <span className="text-[10px] font-medium uppercase tracking-[0.22em] text-clay/85">
+              <span className="text-[11px] font-medium uppercase tracking-[0.22em] text-clay/85">
                 {t('result.risks.resolveTitle', {
                   defaultValue: 'Annahme klären',
                 })}
@@ -185,7 +185,7 @@ export function RiskFlags({ state }: Props) {
 
                 <label
                   htmlFor="risk-resolve-input"
-                  className="text-[10px] font-medium uppercase tracking-[0.18em] text-clay/85 mt-2"
+                  className="text-[11px] font-medium uppercase tracking-[0.18em] text-clay/85 mt-2"
                 >
                   {t('result.risks.resolveValueLabel', {
                     defaultValue: 'Tatsächlicher Wert',

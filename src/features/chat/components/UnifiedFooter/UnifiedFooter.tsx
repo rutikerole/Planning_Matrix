@@ -104,7 +104,7 @@ export function UnifiedFooter({ project, messages, events, inputBar }: Props) {
                 })}
               </Drawer.Title>
               <div className="flex items-center justify-between">
-                <span className="text-[10px] font-medium uppercase tracking-[0.20em] text-clay/85">
+                <span className="text-[11px] font-medium uppercase tracking-[0.20em] text-clay/85">
                   {t('chat.footer.overflowEyebrow', {
                     defaultValue: 'Aktionen & Übersicht',
                   })}
