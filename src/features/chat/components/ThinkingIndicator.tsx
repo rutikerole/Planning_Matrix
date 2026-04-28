@@ -86,12 +86,29 @@ export function ThinkingIndicator() {
 
   return (
     <article className="flex flex-col gap-3" aria-live="polite" aria-busy="true">
-      <SpecialistTag specialist={specialist} />
-      <p className="text-[11px] text-clay/85 leading-relaxed italic">{label}</p>
+      {/* Phase 3.2 — Addition B "Pause moment". A small clay ink-blot
+       * fades and grows in over 360ms before the SpecialistTag joins.
+       * Reads as the moderator dipping the pen before the table speaks
+       * again. Reduced-motion: blot renders instantly at full size, no
+       * choreography. */}
+      <span
+        aria-hidden="true"
+        className={
+          reduced
+            ? 'block size-2 rounded-full bg-clay/45'
+            : 'block size-2 rounded-full bg-clay/45 pm-pause-blot'
+        }
+      />
+      <div className={reduced ? '' : 'pm-pause-fade-in'}>
+        <SpecialistTag specialist={specialist} />
+      </div>
+      <p className={`text-[11px] text-clay/85 leading-relaxed italic ${reduced ? '' : 'pm-pause-fade-in pm-pause-delay-160'}`}>
+        {label}
+      </p>
       {reduced ? (
         <p className="text-[11px] text-clay/65">{t('chat.thinking.staticLabel')}</p>
       ) : (
-        <div className="flex items-center gap-1.5 mt-1">
+        <div className="flex items-center gap-1.5 mt-1 pm-pause-fade-in pm-pause-delay-280">
           {[0, 1, 2].map((i) => (
             <span
               key={i}
@@ -102,9 +119,27 @@ export function ThinkingIndicator() {
               }}
             />
           ))}
-          <style>{`@keyframes pmTravelDot { 0%, 100% { opacity: 0.3; transform: translateY(0); } 50% { opacity: 1; transform: translateY(-2px); } }`}</style>
         </div>
       )}
+      <style>{`
+        @keyframes pmTravelDot {
+          0%, 100% { opacity: 0.3; transform: translateY(0); }
+          50%      { opacity: 1; transform: translateY(-2px); }
+        }
+        @keyframes pmPauseBlot {
+          0%   { transform: scale(0.2); opacity: 0; }
+          60%  { transform: scale(1.1); opacity: 0.95; }
+          100% { transform: scale(1); opacity: 1; }
+        }
+        @keyframes pmPauseFade {
+          from { opacity: 0; transform: translateY(2px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+        .pm-pause-blot      { animation: pmPauseBlot 360ms cubic-bezier(0.16, 1, 0.3, 1) both; transform-origin: center; }
+        .pm-pause-fade-in   { animation: pmPauseFade 320ms cubic-bezier(0.16, 1, 0.3, 1) both; }
+        .pm-pause-delay-160 { animation-delay: 160ms; }
+        .pm-pause-delay-280 { animation-delay: 280ms; }
+      `}</style>
     </article>
   )
 }

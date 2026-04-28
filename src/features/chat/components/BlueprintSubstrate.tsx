@@ -77,8 +77,13 @@ export function BlueprintSubstrate() {
       className="fixed inset-0 -z-10 pointer-events-none"
       style={{ willChange: reduced ? 'auto' : 'transform' }}
     >
-      {/* Ink grid — always visible at base opacity. */}
-      <div className="absolute inset-0 bg-blueprint-ink" />
+      {/* Ink grid — always visible at base opacity. Phase 3.2 #46: a
+       * very slow ambient "table breath" loops opacity 0.94 → 1 → 0.94
+       * over 14s; imperceptible per-frame, registered over time.
+       * Reduced-motion: static at 1.0. */}
+      <div
+        className={`absolute inset-0 bg-blueprint-ink ${reduced ? '' : 'pm-table-breath'}`}
+      />
       {/* Drafting-blue grid — only inside the cursor lens. */}
       {!reduced && pos && (
         <div
@@ -102,6 +107,11 @@ export function BlueprintSubstrate() {
             url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24'><path d='M 24 0 L 0 0 L 0 24' fill='none' stroke='hsl(212 38%25 32%25 / 0.08)' stroke-width='0.5'/></svg>");
           background-size: 96px 96px, 24px 24px;
         }
+        @keyframes pmTableBreath {
+          0%, 100% { opacity: 0.94; }
+          50%      { opacity: 1; }
+        }
+        .pm-table-breath { animation: pmTableBreath 14s ease-in-out infinite; }
       `}</style>
     </div>
   )

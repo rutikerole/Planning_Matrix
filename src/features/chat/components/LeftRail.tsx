@@ -262,14 +262,28 @@ function FountainPenFooter() {
         strokeWidth="1"
         strokeLinejoin="round"
       />
-      {/* Tiny ink line trailing off — suggests writing */}
+      {/* Tiny ink line trailing off — suggests writing.
+       * Phase 3.2 #46: signature shimmer — a slow opacity pulse on the
+       * trailing ink line so the rail's "signature line" feels alive
+       * even when the workspace is still. Reduced-motion: static. */}
       <path
         d="M 22 33 L 56 31"
         stroke="currentColor"
         strokeWidth="0.7"
         strokeLinecap="round"
         strokeOpacity="0.7"
+        className="pm-signature-shimmer"
       />
+      <style>{`
+        @keyframes pmSignatureShimmer {
+          0%, 100% { stroke-opacity: 0.45; }
+          50%      { stroke-opacity: 0.85; }
+        }
+        .pm-signature-shimmer { animation: pmSignatureShimmer 8s ease-in-out infinite; }
+        @media (prefers-reduced-motion: reduce) {
+          .pm-signature-shimmer { animation: none; stroke-opacity: 0.7; }
+        }
+      `}</style>
     </svg>
   )
 }
