@@ -1,9 +1,26 @@
 # Manager demo — prep notes
 
-> Placeholder shipped in Phase 3.1 #34, refreshed in Phase 3.3 #51
-> after the unification batch. The dashboard is now the entry point —
-> start there, not chat workspace. Capture screenshots / recordings
-> in §7 once the demo's been walked end-to-end.
+> Placeholder shipped in Phase 3.1 #34, refreshed in Phase 3.3 #51,
+> Phase 3.6 #74. The dashboard is the entry point. Phase 3.6 added
+> mode separation — the demo now alternates between deliverable
+> register (landing → auth → wizard → cover hero → PDF → share) and
+> operating register (chat input bar → progress → overview cockpit →
+> result page sections II–XII). Capture screenshots / recordings in
+> §7 once the demo's been walked end-to-end.
+
+## Phase 3.6 demo walk (the new sequence)
+
+1. **Landing (`/`) — DELIVERABLE.** Atelier defaults: paper grain, blueprint substrate, italic Serif headlines, photographic atmospheres. Don't dwell — the manager has seen it.
+2. **Sign-up → wizard — DELIVERABLE.** Two-question initialization, paper-card chrome, Roman-numeral progress, atelier transition with pen-drawing-the-scale-line. This is what makes Neo not feel like "generic AI chatbot #4823."
+3. **Chat workspace — OPERATING.** Persistent rounded input bar at the bottom (always visible — no more Continue-button replacement). Type a message, hit Enter, watch the streaming response. **Tap the paperclip** — opens the file picker; pick a B-Plan PDF and a photo; chips appear in the input bar; click Send.
+4. **Top-of-thread progress bar.** 7 segments mapping to the conversation gates, current segment fills in drafting-blue/65, percent + turn count on the right. Replaces the dotted hairline.
+5. **Suggestion chips above the bar.** Yes/No, single-select, multi-select, address — chips render above the textarea, never replace it. Click a chip → fills the textarea (append on newline if text already there). Multi-select keeps a `Übernehmen` button.
+6. **Overview cockpit (`/projects/:id/overview`) — OPERATING.** Linear-style header + 8 sortable tabs (Projekt / Daten / Bereiche / Verfahren / Dokumente / Team / Empfehlungen / Audit). Click the value cell on a CLIENT-source fact in the Daten tab → inline editor → Enter saves. The change appears in the Audit tab as `fact_corrected_by_owner`.
+7. **Result page (`/projects/:id/result`) — MIXED.** Section I (cover hero) is sacred atelier — the moment. Sections II–XII run in operating mode: Verdict has an expandable "Warum dieses Verfahren?", Top-3 has per-card "Begonnen" toggles (localStorage), Legal Landscape has inline rule-text expansion, Documents is a 3-column kanban (Erforderlich / In Arbeit / Liegt vor) with click-to-move, Risk Flags has "Diese Annahme klären" → drawer that converts ASSUMED → CLIENT/DECIDED.
+8. **Export.** Click Export → PDF → file downloads. After 3.6 #73, this works with or without brand TTFs (the `winAnsiSafe` sanitizer covers the Helvetica fallback path). On simulated failure (block `/fonts/` in DevTools) the calm error UI appears with a "Markdown stattdessen" CTA.
+9. **Share view.** Generate a link → open in incognito → read-only result page renders. Cover hero animation plays; sections II–XII show without owner-only affordances.
+
+The point of the alternation: the manager *feels* atelier on the deliverable surfaces (where it earns its keep) and *feels* density-honest function on the working surfaces (where atelier was actively hurting). Don't say "we have two modes" — let them feel it.
 
 ## Suggested structure (delete and replace as you populate)
 
