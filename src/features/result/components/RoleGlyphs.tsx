@@ -161,19 +161,5 @@ export function RoleGlyph({
   return <Glyph className={className} />
 }
 
-/**
- * Heuristic: map a role title (German) to the glyph key. Pattern-based;
- * falls through to `bauamt` for any obvious "amt/behörde" mention,
- * `architekt` for any "architekt:in", etc. Returns null when no
- * confident match — caller renders the dot fallback.
- */
-export function inferRoleGlyphKey(titleDe: string): string {
-  const t = titleDe.toLowerCase()
-  if (/architekt|bauvorlageberechtigt/.test(t)) return 'architekt'
-  if (/tragwerk|statik/.test(t)) return 'tragwerksplaner'
-  if (/energieberat|w(ä|ae)rmeschutz|energie/.test(t)) return 'energieberater'
-  if (/vermess/.test(t)) return 'vermesser'
-  if (/brandschutz/.test(t)) return 'brandschutzplaner'
-  if (/bauamt|beh(ö|oe)rde|amt/.test(t)) return 'bauamt'
-  return 'architekt' // safest default for "Fachplaner"-style entries
-}
+// inferRoleGlyphKey moved to ./RoleGlyphs.helpers — that's where new
+// code should import it from. This file now only exports components.

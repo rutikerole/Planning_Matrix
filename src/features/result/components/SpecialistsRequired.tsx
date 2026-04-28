@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import type { ProjectState } from '@/types/projectState'
-import { RoleGlyph, inferRoleGlyphKey } from './RoleGlyphs'
+import { RoleGlyph } from './RoleGlyphs'
+import { inferRoleGlyphKey } from './RoleGlyphs.helpers'
 import { ROLE_EFFORT_LOOKUP, type RoleKey } from '../lib/roleEffortLookup'
 
 interface Props {

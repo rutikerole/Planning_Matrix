@@ -70,7 +70,7 @@ export function ExportMenu({ project, messages, events, variant = 'ghost' }: Pro
     const succeededEvent = `${kind}_export_succeeded` as ExportEventType
     const failedEvent = `${kind}_export_failed` as ExportEventType
     logExportEvent({ projectId: project.id, eventType: attemptedEvent })
-    let outputSize: number | null = null
+    let outputSize: number
     try {
       if (kind === 'pdf') {
         const { buildExportPdf } = await import('../lib/exportPdf')
@@ -101,7 +101,7 @@ export function ExportMenu({ project, messages, events, variant = 'ghost' }: Pro
       logExportEvent({
         projectId: project.id,
         eventType: succeededEvent,
-        reason: outputSize ? `bytes=${outputSize}` : null,
+        reason: `bytes=${outputSize}`,
       })
       setOpen(false)
     } catch (err) {
