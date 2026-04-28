@@ -1,6 +1,6 @@
 # Mobile support
 
-Planning Matrix is mobile-first as of Phase 3.8 (2026-04-29). This document captures the supported device matrix, known limitations, and how to escalate issues.
+Planning Matrix is mobile-first as of Phase 3.8 (2026-04-29) and went through its completion pass in Phase 3.9 (2026-04-28). This document captures the supported device matrix, known limitations, and how to escalate issues.
 
 ## Supported devices
 
@@ -37,12 +37,27 @@ Planning Matrix is mobile-first as of Phase 3.8 (2026-04-29). This document capt
 - **Keyboard handling:** `useKeyboardHeight` watches `visualViewport`; mobile input bar floats above the soft keyboard with a 120 ms transition.
 - **Bundle size:** main entry chunk capped at 250 KB gzipped via `scripts/verify-bundle-size.mjs` (build fails on regression). Current: 136 KB gzipped.
 
-## Known limitations
+## Phase 3.9 deliverables
 
-- **VoiceOver / TalkBack labels:** primitives in place, but real-device pass needs to be performed by a human tester. Flagged in Phase 3.8 #89's commit message.
-- **Dashboard swipe gestures (Q11 locked):** `useSwipeGesture` hook ships in #87, but wiring onto the existing Link-wrapped project rows requires a row-shape refactor. Deferred to Phase 3.9 polish.
-- **Long-press → message context sheet:** `useLongPress` hook ships, wiring deferred to Phase 3.9.
-- **Result-page section vertical-stack rewrites (per-section Mobile* variants):** the spec-listed `MobileLegalLandscape`, `MobileDocumentChecklist`, `MobileCostTimelinePanel` were not built — the existing components already use `grid-cols-1 sm:grid-cols-N` patterns that stack naturally on mobile. If a specific section feels cramped on real-device testing, build the Mobile* variant in Phase 3.9.
+The completion pass closed every Phase 3.8 footnote without re-opening the foundation:
+
+- **MobileAuthShell** (#91) — sign-in / sign-up / forgot-password / reset-password / verify-email / check-email get a centered single-column register on mobile; the desktop split-screen stays.
+- **Wizard polish** (#92) — `pt-safe` header, 48 px primary submit, flex-col-reverse so the primary action is in thumb-reach.
+- **Dashboard swipe** (#93) — `SwipeableProjectRow` wires Phase 3.8's `useSwipeGesture` onto the project list. Swipe-left reveals Archivieren / Wiederherstellen via the new `useSetProjectStatus` mutation. Tap on row body navigates; tap on revealed action commits. Honours iOS edge-buffer.
+- **Result-page section variants** (#94–#96):
+    - LegalLandscape rows stack vertical (label + status header line above, full-width relevance bar below).
+    - DocumentChecklist columns become native `<details>`/`<summary>` accordions on mobile so a 12-card "Erforderlich" pile doesn't bury later columns. Card action button h-7 → h-9 + full-width on mobile.
+    - CostTimelinePanel phase rows stack vertical; the cost-breakdown rows already used `flex justify-between` and read fine.
+- **Long-press → MessageContextSheet** (#97) — vaul drawer at the bottom; Kopieren (Clipboard API + 1.6 s confirmation) + Schließen. 500 ms hold; 5 px movement cancels so scrolling never triggers.
+- **Touch-target sweep** (#98) — RiskFlags resolve CTA, TopThreeHero begun-toggle, SuggestionChips, ScheduleSection collapse, MessageAttachment pill, AttachmentChip × button all bumped to ≥44 px on mobile.
+- **Zoom-on-focus floor** (#99) — every text input/textarea bumped to 16 px on mobile so iOS Safari doesn't auto-zoom on focus. Auth fields already used `text-base`.
+- **A11y audit** (#100) — SwipeableProjectRow action gets a contextual aria-label; ConfirmDialog confirm/cancel bumped h-10 → h-11; verified Drawer.Title sr-only on every vaul drawer + aria-live regions on streaming surfaces.
+- **Cleanup** (#101) — ~1,700 LOC of orphaned components removed (Phase-3.4 structured-input shells, Phase-3.8 AdaptiveAnimation, shadcn scaffolds, etc.).
+
+## Known limitations (post-3.9)
+
+- **VoiceOver / TalkBack labels:** primitives in place, but real-device pass needs to be performed by a human tester. Flagged in Phase 3.8 #89's commit message; still pending after 3.9.
+- **MobileTopBar tablet fallback (640–1023 px):** lives in the `lg:hidden` desktop branch of `ChatWorkspacePage` and is still load-bearing; not removed in 3.9 #101 cleanup despite the brief listing it.
 - **iOS 100dvh on iPhone X (iOS 14):** `100dvh` requires Safari 16+. Older iPhones (X / 11 on stale iOS) might experience layout jitter on address-bar collapse. Acceptable for Tier 3.
 
 ## Testing protocol (Rutik)
