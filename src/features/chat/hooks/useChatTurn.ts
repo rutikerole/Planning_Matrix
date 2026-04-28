@@ -1,9 +1,14 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { postChatTurn, ChatTurnError } from '@/lib/chatApi'
+import { useTranslation } from 'react-i18next'
+import {
+  postChatTurn,
+  postChatTurnStreaming,
+  ChatTurnError,
+} from '@/lib/chatApi'
 import { useChatStore } from '@/stores/chatStore'
 import { thinkingLabelToSection } from '../lib/thinkingLabelToSection'
 import type { MessageRow, ProjectRow } from '@/types/db'
-import type { ChatTurnRequest, UserAnswer } from '@/types/chatTurn'
+import type { ChatTurnRequest, ChatTurnResponse, UserAnswer } from '@/types/chatTurn'
 import type { Specialist } from '@/types/projectState'
 
 interface SubmitInput {
@@ -18,14 +23,25 @@ interface SubmitInput {
  * stable clientRequestId (passed from caller or generated). Error
  * surfaces as Erneut-senden affordance below the failed user message
  * (chatStore.failedRequestIds drives the UI in MessageUser).
+ *
+ * Phase 3.4 #52: prefers streaming. The Edge Function emits SSE frames
+ * carrying tool-input JSON deltas; the client extracts the user-visible
+ * text progressively and pushes it into chatStore.streamingMessage.
+ * On any streaming-side failure, falls back to a single non-streaming
+ * retry with the same clientRequestId — idempotency on the server
+ * dedupes the user-message insert.
  */
 export function useChatTurn(projectId: string) {
   const queryClient = useQueryClient()
+  const { i18n } = useTranslation()
   const setThinking = useChatStore((s) => s.setThinking)
   const promoteSpecialist = useChatStore((s) => s.promoteSpecialist)
   const markFailed = useChatStore((s) => s.markFailed)
   const clearFailed = useChatStore((s) => s.clearFailed)
   const setCompletionSignal = useChatStore((s) => s.setCompletionSignal)
+  const openStreamingMessage = useChatStore((s) => s.openStreamingMessage)
+  const appendStreamingText = useChatStore((s) => s.appendStreamingText)
+  const closeStreamingMessage = useChatStore((s) => s.closeStreamingMessage)
 
   return useMutation({
     mutationKey: ['chat-turn', projectId],
@@ -39,15 +55,67 @@ export function useChatTurn(projectId: string) {
         userAnswer: input.userAnswer,
         clientRequestId,
       }
-      const response = await postChatTurn(request)
-      return { response, clientRequestId, optimisticUserMessage: input.userMessage, optimisticUserAnswer: input.userAnswer }
+      const lang = (i18n.resolvedLanguage ?? 'de') as 'de' | 'en'
+      const lastAssistant = mostRecentAssistant(
+        queryClient.getQueryData<MessageRow[]>(['messages', projectId]) ?? [],
+      )
+      const seedSpecialist = (lastAssistant?.specialist ?? 'moderator') as Specialist
+
+      // Open the streaming bubble immediately. ThinkingIndicator hides
+      // when streamingMessage is non-null (Thread.tsx swap).
+      const streamingId = `streaming-${clientRequestId}`
+      openStreamingMessage(streamingId, seedSpecialist)
+
+      const response = await new Promise<
+        Extract<ChatTurnResponse, { ok: true }>
+      >((resolve, reject) => {
+        let textArrived = false
+        let resolved = false
+
+        postChatTurnStreaming(request, lang, {
+          onTextDelta: (delta) => {
+            textArrived = true
+            appendStreamingText(delta)
+          },
+          onComplete: (env) => {
+            if (resolved) return
+            resolved = true
+            resolve(env)
+          },
+          onError: async (err) => {
+            if (resolved) return
+            resolved = true
+            // If the stream failed mid-way after some text had already
+            // arrived, the user has seen partial content — falling back
+            // to non-streaming would yield a duplicate render. Bubble
+            // the error so the SPA shows the Erneut-senden affordance.
+            // If no text arrived (i.e. the streaming endpoint failed
+            // before any progress), fall back to one non-streaming
+            // retry — idempotency on the server makes this safe.
+            if (textArrived) {
+              reject(err)
+              return
+            }
+            try {
+              const fallback = await postChatTurn(request)
+              resolve(fallback)
+            } catch (fallbackErr) {
+              reject(fallbackErr)
+            }
+          },
+        }).catch(reject)
+      })
+
+      return {
+        response,
+        clientRequestId,
+        optimisticUserMessage: input.userMessage,
+        optimisticUserAnswer: input.userAnswer,
+      }
     },
 
     onMutate: (input) => {
       const clientRequestId = input.clientRequestId ?? crypto.randomUUID()
-      // We don't await cancelQueries; rely on the optimistic write
-      // landing first. cancelQueries can be added later if a flicker
-      // is seen on slow networks.
 
       const previousMessages =
         queryClient.getQueryData<MessageRow[]>(['messages', projectId]) ?? []
@@ -79,19 +147,10 @@ export function useChatTurn(projectId: string) {
         [...previousMessages, placeholder],
       )
 
-      // Find the most recent assistant message; its specialist seeds the
-      // ThinkingIndicator's tag. Its thinking_label_de (Phase 3.1 #33,
-      // persisted on the messages row) seeds the indicator's hint copy
-      // and the right-rail ambient activity heuristic.
-      const lastAssistant = [...previousMessages]
-        .reverse()
-        .find((m) => m.role === 'assistant')
+      const lastAssistant = mostRecentAssistant(previousMessages)
       const seedSpecialist = (lastAssistant?.specialist ?? 'moderator') as Specialist
       const seedLabel = lastAssistant?.thinking_label_de ?? null
 
-      // Polish Move 4 — derive the right-rail section likely to update.
-      // If the previous assistant left a thinking_label_de, prefer that;
-      // else fall back to scanning the previous turn's body + user input.
       const heuristicSource =
         seedLabel ?? (lastAssistant?.content_de ?? '') + ' ' + input.userMessage
       const activitySection = thinkingLabelToSection(heuristicSource)
@@ -99,15 +158,12 @@ export function useChatTurn(projectId: string) {
       setThinking(true, seedSpecialist, seedLabel, activitySection)
 
       clearFailed(clientRequestId)
-      // Clear any prior interstitial — the user is engaging again.
       setCompletionSignal(null)
       return { previousMessages, clientRequestId }
     },
 
     onSuccess: ({ response, clientRequestId }) => {
-      // Append the assistant message to cache. The optimistic user
-      // placeholder stays in place; on next page load the real DB row
-      // takes over (its synthetic id never collides with real UUIDs).
+      // Append the persisted assistant message to cache.
       const current =
         queryClient.getQueryData<MessageRow[]>(['messages', projectId]) ?? []
       queryClient.setQueryData<MessageRow[]>(
@@ -115,7 +171,6 @@ export function useChatTurn(projectId: string) {
         [...current, response.assistantMessage as unknown as MessageRow],
       )
 
-      // Update project cache with new state.
       queryClient.setQueryData<ProjectRow | null | undefined>(
         ['project', projectId],
         (old) =>
@@ -126,12 +181,10 @@ export function useChatTurn(projectId: string) {
 
       promoteSpecialist(response.assistantMessage.specialist as Specialist)
       setThinking(false, undefined, null, null)
+      // Close the streaming bubble — the persisted message takes over.
+      closeStreamingMessage()
       clearFailed(clientRequestId)
 
-      // Phase 3.1 #30 — completion_signal piped through the response
-      // envelope. Interstitial in Thread renders when this is anything
-      // other than 'continue'. Cleared on next user submit (onMutate)
-      // and on store reset (project unmount).
       const signal = response.completionSignal
       if (signal && signal !== 'continue') {
         setCompletionSignal(signal)
@@ -144,6 +197,7 @@ export function useChatTurn(projectId: string) {
       const clientRequestId = context?.clientRequestId
       if (clientRequestId) markFailed(clientRequestId)
       setThinking(false, undefined, null, null)
+      closeStreamingMessage()
 
       if (import.meta.env.DEV) {
         // eslint-disable-next-line no-console
@@ -160,4 +214,11 @@ export function useChatTurn(projectId: string) {
       }
     },
   })
+}
+
+function mostRecentAssistant(messages: MessageRow[]): MessageRow | undefined {
+  for (let i = messages.length - 1; i >= 0; i--) {
+    if (messages[i].role === 'assistant') return messages[i]
+  }
+  return undefined
 }

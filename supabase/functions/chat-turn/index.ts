@@ -42,6 +42,7 @@ import {
   logTurnEvent,
   type MessageRow,
 } from './persistence.ts'
+import { runStreamingTurn, acceptsStream } from './streaming.ts'
 import {
   hydrateProjectState,
   applyToolInputToState,
@@ -166,6 +167,7 @@ Deno.serve(async (req: Request) => {
             cacheWriteTokens: cachedAssistant.cache_write_tokens ?? 0,
           },
           cachedAssistant.latency_ms ?? 0,
+          'continue',
           corsHeaders,
         )
       }
@@ -202,6 +204,24 @@ Deno.serve(async (req: Request) => {
     lastUserMessageText: userMessage,
     lastSpecialist,
   })
+
+  // ── Streaming branch (Phase 3.4 #52) ─────────────────────────────
+  // If the caller asked for SSE, hand off to the streaming pipeline.
+  // The streaming variant runs the same persistence work after Anthropic
+  // signals message_stop, so the persisted artefacts are identical.
+  if (acceptsStream(req)) {
+    console.log(`[chat-turn] [${requestId}] streaming path`)
+    return runStreamingTurn({
+      apiKey,
+      systemBlocks: buildSystemBlocks(liveStateText),
+      messages: anthropicMessages,
+      supabase,
+      projectId,
+      currentState,
+      corsHeaders,
+      requestId,
+    })
+  }
 
   // ── Anthropic call (with one retry on malformed tool input) ──────
   let anthropicResult

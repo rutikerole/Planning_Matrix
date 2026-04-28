@@ -6,6 +6,7 @@ import { MessageUser } from './MessageUser'
 import { MessageAssistant } from './MessageAssistant'
 import { MessageSystem } from './MessageSystem'
 import { ThinkingIndicator } from './ThinkingIndicator'
+import { StreamingAssistantBubble } from './StreamingAssistantBubble'
 import { CompletionInterstitial } from './CompletionInterstitial'
 import { useChatStore } from '@/stores/chatStore'
 import { useAutoScroll } from '../hooks/useAutoScroll'
@@ -29,6 +30,7 @@ export function Thread({ messages }: Props) {
   const { t } = useTranslation()
   const reduced = useReducedMotion()
   const isThinking = useChatStore((s) => s.isAssistantThinking)
+  const isStreaming = useChatStore((s) => s.streamingMessage !== null)
   const { id } = useParams<{ id: string }>()
   const projectId = id ?? ''
   const initialIdsRef = useRef<Set<string> | null>(null)
@@ -77,12 +79,21 @@ export function Thread({ messages }: Props) {
           </li>
         )
       })}
-      {isThinking && (
+      {/* Phase 3.4 #52 — when streamingMessage is set, render the
+       * streaming bubble in place of the ThinkingIndicator. The bubble
+       * keeps the same shape as MessageAssistant so swap-to-persisted
+       * at stream-complete is visually seamless. */}
+      {isStreaming && (
+        <li>
+          <StreamingAssistantBubble />
+        </li>
+      )}
+      {isThinking && !isStreaming && (
         <li>
           <ThinkingIndicator />
         </li>
       )}
-      {!isThinking && projectId && (
+      {!isThinking && !isStreaming && projectId && (
         <li>
           <CompletionInterstitial projectId={projectId} />
         </li>

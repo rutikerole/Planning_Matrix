@@ -1,6 +1,23 @@
 import { create } from 'zustand'
 import type { Specialist } from '@/types/projectState'
 
+/**
+ * Phase 3.4 #52 — streaming bubble surfaced while Anthropic is emitting
+ * the assistant's response. Replaces the ThinkingIndicator in the
+ * thread for the duration of the stream. Cleared when persistence
+ * completes and the persisted assistant message lands in the
+ * react-query cache.
+ */
+export interface StreamingMessage {
+  /** Synthetic id used as a render key. Different from the persisted UUID. */
+  id: string
+  specialist: Specialist | null
+  /** User-visible text extracted from the model's tool input as it streams. */
+  contentSoFar: string
+  /** True after the final `complete` SSE frame lands. Cursor disappears. */
+  isComplete: boolean
+}
+
 interface ChatState {
   /** True between SPA submit and Edge Function response. Drives ThinkingIndicator. */
   isAssistantThinking: boolean
@@ -28,6 +45,8 @@ interface ChatState {
     | 'ready_for_review'
     | 'blocked'
     | null
+  /** Phase 3.4 #52 — streaming assistant bubble (null when no stream is in flight). */
+  streamingMessage: StreamingMessage | null
 
   setThinking: (
     thinking: boolean,
@@ -39,6 +58,12 @@ interface ChatState {
   markFailed: (clientRequestId: string) => void
   clearFailed: (clientRequestId: string) => void
   setCompletionSignal: (signal: ChatState['lastCompletionSignal']) => void
+  /** Phase 3.4 #52 — open a streaming bubble (called from useChatTurn.onMutate). */
+  openStreamingMessage: (id: string, specialist: Specialist | null) => void
+  /** Phase 3.4 #52 — append a text delta extracted from the model's JSON. */
+  appendStreamingText: (delta: string) => void
+  /** Phase 3.4 #52 — close the streaming bubble (after `complete` SSE frame). */
+  closeStreamingMessage: () => void
   reset: () => void
 }
 
@@ -50,6 +75,7 @@ export const useChatStore = create<ChatState>((set) => ({
   currentActivitySection: null,
   failedRequestIds: new Set(),
   lastCompletionSignal: null,
+  streamingMessage: null,
 
   setThinking: (thinking, specialist, label, activitySection) =>
     set((s) => ({
@@ -75,6 +101,24 @@ export const useChatStore = create<ChatState>((set) => ({
       return { failedRequestIds: next }
     }),
   setCompletionSignal: (lastCompletionSignal) => set({ lastCompletionSignal }),
+
+  openStreamingMessage: (id, specialist) =>
+    set({
+      streamingMessage: { id, specialist, contentSoFar: '', isComplete: false },
+    }),
+  appendStreamingText: (delta) =>
+    set((s) =>
+      s.streamingMessage
+        ? {
+            streamingMessage: {
+              ...s.streamingMessage,
+              contentSoFar: s.streamingMessage.contentSoFar + delta,
+            },
+          }
+        : {},
+    ),
+  closeStreamingMessage: () => set({ streamingMessage: null }),
+
   reset: () =>
     set({
       isAssistantThinking: false,
@@ -84,5 +128,6 @@ export const useChatStore = create<ChatState>((set) => ({
       currentActivitySection: null,
       failedRequestIds: new Set(),
       lastCompletionSignal: null,
+      streamingMessage: null,
     }),
 }))

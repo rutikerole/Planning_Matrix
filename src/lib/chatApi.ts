@@ -7,13 +7,17 @@
 // response / costInfo to console.group so cache-write/read patterns are
 // visible from DevTools (D13).
 //
-// Retry policy: NONE here. The SPA owns retry at the call-site (the
-// chat workspace decides when to retry priming, the input bar decides
-// when to back off after 429). Idempotency via clientRequestId is what
-// makes retry safe — same UUID, same persisted turn.
+// Phase 3.4 #52: adds `postChatTurnStreaming` — same auth + body, but
+// requests `Accept: text/event-stream` and parses the SSE response
+// progressively, dispatching to caller-supplied handlers.
+//
+// Retry policy: NONE here. The SPA owns retry at the call-site.
+// Idempotency via clientRequestId is what makes retry safe — same UUID,
+// same persisted turn.
 // ───────────────────────────────────────────────────────────────────────
 
 import { supabase } from '@/lib/supabase'
+import { TextFieldExtractor } from '@/lib/streamingExtractor'
 import type {
   ChatTurnRequest,
   ChatTurnResponse,
@@ -25,6 +29,7 @@ export type ChatApiErrorCode =
   | 'no_session'
   | 'malformed_response'
   | 'network'
+  | 'streaming_failed'
 
 export class ChatTurnError extends Error {
   readonly code: ChatApiErrorCode
@@ -48,20 +53,18 @@ export class ChatTurnError extends Error {
   }
 }
 
-/**
- * POST a turn to the Edge Function. Throws ChatTurnError on any failure
- * mode (no session, network, non-2xx with error envelope, malformed
- * body). Returns the success body shape on 2xx.
- */
-export async function postChatTurn(
-  request: ChatTurnRequest,
-): Promise<Extract<ChatTurnResponse, { ok: true }>> {
+interface RequestEnv {
+  url: string
+  anonKey: string
+  accessToken: string
+}
+
+async function resolveEnv(): Promise<RequestEnv> {
   const { data: sessionData } = await supabase.auth.getSession()
   const session = sessionData.session
   if (!session?.access_token) {
     throw new ChatTurnError('no_session', null, null, 401, 'No active Supabase session')
   }
-
   const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string | undefined
   const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined
   if (!supabaseUrl || !anonKey) {
@@ -73,17 +76,29 @@ export async function postChatTurn(
       'Supabase env vars missing — check VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY',
     )
   }
+  return {
+    url: `${supabaseUrl}/functions/v1/chat-turn`,
+    anonKey,
+    accessToken: session.access_token,
+  }
+}
 
-  const url = `${supabaseUrl}/functions/v1/chat-turn`
-
+/**
+ * POST a turn to the Edge Function (synchronous JSON envelope). Used
+ * as the fallback path when streaming fails.
+ */
+export async function postChatTurn(
+  request: ChatTurnRequest,
+): Promise<Extract<ChatTurnResponse, { ok: true }>> {
+  const env = await resolveEnv()
   let response: Response
   try {
-    response = await fetch(url, {
+    response = await fetch(env.url, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        apikey: anonKey,
-        Authorization: `Bearer ${session.access_token}`,
+        apikey: env.anonKey,
+        Authorization: `Bearer ${env.accessToken}`,
       },
       body: JSON.stringify(request),
     })
@@ -110,9 +125,6 @@ export async function postChatTurn(
     )
   }
 
-  // D13 — DEV-mode visibility into cache-write/read pattern. Verify
-  // first call shows cacheWriteTokens > 0; second call within 5 min
-  // should show cacheWriteTokens=0 and cacheReadTokens > 0.
   if (import.meta.env.DEV) {
     /* eslint-disable no-console */
     console.group(`%cchat-turn ← HTTP ${response.status}`, 'color:#7a5232')
@@ -139,4 +151,188 @@ export async function postChatTurn(
   }
 
   return body
+}
+
+// ── Streaming variant ────────────────────────────────────────────────
+
+export interface StreamingHandlers {
+  /** Fired once per extracted text fragment from the model's tool input. */
+  onTextDelta: (delta: string) => void
+  /** Fired once when persistence completes. Resolves the mutation. */
+  onComplete: (envelope: Extract<ChatTurnResponse, { ok: true }>) => void
+  /** Fired when the stream errors. The mutation falls back to non-streaming. */
+  onError: (err: ChatTurnError) => void
+}
+
+interface StreamCompleteFrame {
+  type: 'complete'
+  assistantMessage: Extract<ChatTurnResponse, { ok: true }>['assistantMessage']
+  projectState: Extract<ChatTurnResponse, { ok: true }>['projectState']
+  completionSignal: Extract<ChatTurnResponse, { ok: true }>['completionSignal']
+  costInfo: Extract<ChatTurnResponse, { ok: true }>['costInfo']
+  requestId?: string
+}
+interface StreamDeltaFrame {
+  type: 'json_delta'
+  partial: string
+}
+interface StreamErrorFrame {
+  type: 'error'
+  code: ChatTurnErrorCode | 'internal'
+  message: string
+  retryAfterMs?: number
+  requestId?: string
+}
+type StreamFrame = StreamDeltaFrame | StreamCompleteFrame | StreamErrorFrame
+
+/**
+ * POST a turn with `Accept: text/event-stream` and parse SSE frames as
+ * they arrive. Calls handlers per the streaming protocol documented in
+ * supabase/functions/chat-turn/streaming.ts.
+ *
+ * The active locale (`'de'` or `'en'`) selects which message field we
+ * extract from the tool input JSON.
+ */
+export async function postChatTurnStreaming(
+  request: ChatTurnRequest,
+  lang: 'de' | 'en',
+  handlers: StreamingHandlers,
+): Promise<void> {
+  let env: RequestEnv
+  try {
+    env = await resolveEnv()
+  } catch (err) {
+    handlers.onError(
+      err instanceof ChatTurnError
+        ? err
+        : new ChatTurnError(
+            'no_session',
+            null,
+            null,
+            401,
+            err instanceof Error ? err.message : String(err),
+          ),
+    )
+    return
+  }
+
+  let response: Response
+  try {
+    response = await fetch(env.url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'text/event-stream',
+        apikey: env.anonKey,
+        Authorization: `Bearer ${env.accessToken}`,
+      },
+      body: JSON.stringify(request),
+    })
+  } catch (err) {
+    handlers.onError(
+      new ChatTurnError(
+        'network',
+        null,
+        null,
+        0,
+        err instanceof Error ? err.message : 'Network error reaching chat-turn',
+      ),
+    )
+    return
+  }
+
+  if (!response.ok || !response.body) {
+    handlers.onError(
+      new ChatTurnError(
+        'streaming_failed',
+        null,
+        null,
+        response.status,
+        `Streaming endpoint returned HTTP ${response.status}`,
+      ),
+    )
+    return
+  }
+
+  const reader = response.body.getReader()
+  const decoder = new TextDecoder('utf-8')
+  const extractor = new TextFieldExtractor(lang === 'en' ? 'message_en' : 'message_de')
+  let sseBuffer = ''
+
+  try {
+    while (true) {
+      const { value, done } = await reader.read()
+      if (done) break
+      sseBuffer += decoder.decode(value, { stream: true })
+
+      // Each SSE event ends with `\n\n`. Pull complete events out of
+      // the buffer and process them; leave any partial trailing event.
+      let idx: number
+      while ((idx = sseBuffer.indexOf('\n\n')) !== -1) {
+        const eventBlock = sseBuffer.slice(0, idx)
+        sseBuffer = sseBuffer.slice(idx + 2)
+        const dataLines = eventBlock
+          .split('\n')
+          .filter((l) => l.startsWith('data: '))
+          .map((l) => l.slice(6))
+        if (dataLines.length === 0) continue
+        const payload = dataLines.join('\n')
+        let frame: StreamFrame
+        try {
+          frame = JSON.parse(payload) as StreamFrame
+        } catch {
+          continue
+        }
+        handleFrame(frame)
+      }
+    }
+  } catch (err) {
+    handlers.onError(
+      new ChatTurnError(
+        'streaming_failed',
+        null,
+        null,
+        0,
+        err instanceof Error ? err.message : 'Streaming read error',
+      ),
+    )
+    return
+  }
+
+  function handleFrame(frame: StreamFrame) {
+    if (frame.type === 'json_delta') {
+      const text = extractor.feed(frame.partial)
+      if (text.length > 0) handlers.onTextDelta(text)
+    } else if (frame.type === 'complete') {
+      if (import.meta.env.DEV) {
+        /* eslint-disable no-console */
+        console.group('%cchat-turn ← STREAM complete', 'color:#7a5232')
+        console.info('request', request)
+        console.info('costInfo', frame.costInfo)
+        console.info('cacheWriteTokens', frame.costInfo.cacheWriteTokens)
+        console.info('cacheReadTokens', frame.costInfo.cacheReadTokens)
+        console.info('latencyMs', frame.costInfo.latencyMs)
+        console.groupEnd()
+        /* eslint-enable no-console */
+      }
+      handlers.onComplete({
+        ok: true,
+        assistantMessage: frame.assistantMessage,
+        projectState: frame.projectState,
+        completionSignal: frame.completionSignal,
+        costInfo: frame.costInfo,
+      })
+    } else if (frame.type === 'error') {
+      handlers.onError(
+        new ChatTurnError(
+          // Cast — server emits a known set of codes, fall back to internal.
+          (frame.code as ChatApiErrorCode) ?? 'streaming_failed',
+          frame.retryAfterMs ?? null,
+          frame.requestId ?? null,
+          0,
+          frame.message,
+        ),
+      )
+    }
+  }
 }
