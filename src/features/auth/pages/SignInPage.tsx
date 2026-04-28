@@ -9,6 +9,8 @@ import { signInSchema, safeNext, type SignInInput } from '@/lib/authValidation'
 import { AuthShell } from '../components/AuthShell'
 import { AuthCard } from '../components/AuthCard'
 import { AuthFooter } from '../components/AuthFooter'
+import { MobileAuthShell } from '../components/MobileAuthShell'
+import { useViewport } from '@/lib/useViewport'
 import { EmailField } from '../components/EmailField'
 import { ErrorAlert } from '../components/ErrorAlert'
 import { PasswordField } from '../components/PasswordField'
@@ -100,24 +102,14 @@ export function SignInPage() {
     }
   }
 
-  return (
-    <AuthShell
-      photoStem="domain-b-facade"
-      phraseKey="auth.phraseSignIn"
-      titleKey="auth.signIn.title"
-      captionKey="auth.photoCaption.domain-b-facade"
-    >
-      <AuthCard
-        eyebrow={t('auth.signIn.eyebrow')}
-        heading={
-          <>
-            {t('auth.signIn.headline').replace(/\.$/, '')}
-            <span className="text-clay">.</span>
-          </>
-        }
-        intro={t('auth.signIn.intro')}
-      >
-        {resetSuccess && (
+  const { isMobile } = useViewport()
+
+  // Phase 3.9 #91 — extracted body so it renders inside MobileAuthShell
+  // (mobile) or AuthCard wrapped in AuthShell (desktop) without
+  // duplicating form logic.
+  const formBody = (
+    <>
+      {resetSuccess && (
           <div
             role="status"
             className="border-l-2 border-clay pl-3.5 py-2 text-sm text-ink/85 mb-6"
@@ -189,6 +181,39 @@ export function SignInPage() {
           linkLabel={t('auth.signIn.signUpLink')}
           to="/sign-up"
         />
+    </>
+  )
+
+  if (isMobile) {
+    return (
+      <MobileAuthShell
+        titleKey="auth.signIn.title"
+        headingKey="auth.signIn.headline"
+        subtitleKey="auth.signIn.intro"
+      >
+        {formBody}
+      </MobileAuthShell>
+    )
+  }
+
+  return (
+    <AuthShell
+      photoStem="domain-b-facade"
+      phraseKey="auth.phraseSignIn"
+      titleKey="auth.signIn.title"
+      captionKey="auth.photoCaption.domain-b-facade"
+    >
+      <AuthCard
+        eyebrow={t('auth.signIn.eyebrow')}
+        heading={
+          <>
+            {t('auth.signIn.headline').replace(/\.$/, '')}
+            <span className="text-clay">.</span>
+          </>
+        }
+        intro={t('auth.signIn.intro')}
+      >
+        {formBody}
       </AuthCard>
     </AuthShell>
   )
