@@ -16,6 +16,7 @@ import { MobileRailDrawer } from '../components/MobileRailDrawer'
 import { MobileRightRailPeek } from '../components/MobileRightRailPeek'
 import { PaperCard } from '../components/PaperCard'
 import { ConversationCursor } from '../components/ConversationCursor'
+import { ChatDropZone } from '../components/ChatDropZone'
 import { ChatProgressBar } from '../components/Progress/ChatProgressBar'
 import { buildUserMessageText } from '../lib/userAnswerHelpers'
 import { useProject } from '../hooks/useProject'
@@ -183,13 +184,25 @@ export function ChatWorkspacePage() {
 
   if (!project) return null
 
-  const handleSubmit = (payload: { userMessage: string; userAnswer: UserAnswer }) => {
-    chatTurn.mutate(payload)
+  const handleSubmit = (payload: {
+    userMessage: string
+    userAnswer: UserAnswer
+    attachmentIds?: string[]
+  }) => {
+    chatTurn.mutate({
+      userMessage: payload.userMessage,
+      userAnswer: payload.userAnswer,
+      attachmentIds: payload.attachmentIds ?? [],
+    })
   }
 
   const handleIdkChoose = (mode: 'research' | 'assume' | 'skip') => {
     const answer: UserAnswer = { kind: 'idk', mode }
-    handleSubmit({ userMessage: buildUserMessageText(answer), userAnswer: answer })
+    handleSubmit({
+      userMessage: buildUserMessageText(answer),
+      userAnswer: answer,
+      attachmentIds: [],
+    })
   }
 
   const openLeftDrawer = () => {
@@ -228,7 +241,7 @@ export function ChatWorkspacePage() {
         }
       >
         {hasMessages ? (
-          <>
+          <ChatDropZone disabled={isThinking}>
             {/* Phase 3.6 #69 — loud progress indicator at the top of the
               * thread. Sticky to the message column; the left-rail
               * ProgressMeter stays mounted as a secondary indicator. */}
@@ -238,7 +251,7 @@ export function ChatWorkspacePage() {
             <PaperCard project={project}>
               <Thread messages={augmentedMessages} />
             </PaperCard>
-          </>
+          </ChatDropZone>
         ) : (
           <EmptyState />
         )}

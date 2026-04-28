@@ -5,6 +5,10 @@ import {
   postChatTurnStreaming,
   ChatTurnError,
 } from '@/lib/chatApi'
+import {
+  fetchPersistedUserMessageId,
+  linkFilesToMessage,
+} from '@/lib/uploadApi'
 import { useChatStore } from '@/stores/chatStore'
 import { thinkingLabelToSection } from '../lib/thinkingLabelToSection'
 import type { MessageRow, ProjectRow } from '@/types/db'
@@ -15,6 +19,9 @@ interface SubmitInput {
   userMessage: string
   userAnswer: UserAnswer
   clientRequestId?: string
+  /** Phase 3.6 #68 — project_files row ids to bind to the persisted
+   * user message after chat-turn returns. */
+  attachmentIds?: string[]
 }
 
 /**
@@ -112,6 +119,7 @@ export function useChatTurn(projectId: string) {
         clientRequestId,
         optimisticUserMessage: input.userMessage,
         optimisticUserAnswer: input.userAnswer,
+        attachmentIds: input.attachmentIds ?? [],
       }
     },
 
@@ -164,7 +172,7 @@ export function useChatTurn(projectId: string) {
       return { previousMessages, clientRequestId }
     },
 
-    onSuccess: ({ response, clientRequestId }) => {
+    onSuccess: ({ response, clientRequestId, attachmentIds }) => {
       // Append the persisted assistant message to cache.
       const current =
         queryClient.getQueryData<MessageRow[]>(['messages', projectId]) ?? []
@@ -193,6 +201,30 @@ export function useChatTurn(projectId: string) {
         setCompletionSignal(signal)
       } else {
         setCompletionSignal(null)
+      }
+
+      // Phase 3.6 #68 — bind uploaded files to the persisted user
+      // message. Done out-of-band: chat-turn doesn't return the user
+      // message id, so we look it up by client_request_id then update
+      // each project_files.message_id. Best-effort; failures are logged
+      // in DEV but don't break the turn.
+      if (attachmentIds.length > 0) {
+        void (async () => {
+          const userMsgId = await fetchPersistedUserMessageId({
+            projectId,
+            clientRequestId,
+          })
+          if (!userMsgId) return
+          await linkFilesToMessage({
+            fileIds: attachmentIds,
+            messageId: userMsgId,
+          })
+          // Invalidate the messages cache so MessageAttachment refetches
+          // with the now-linked rows.
+          queryClient.invalidateQueries({
+            queryKey: ['messageAttachments', userMsgId],
+          })
+        })()
       }
     },
 

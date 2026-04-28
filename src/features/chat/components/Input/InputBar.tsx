@@ -29,6 +29,7 @@ import { useChatStore } from '@/stores/chatStore'
 import type { MessageRow } from '@/types/db'
 import type { UserAnswer } from '@/types/chatTurn'
 import { useInputState } from '../../hooks/useInputState'
+import { useDeleteFile } from '../../hooks/useDeleteFile'
 import { SuggestionChips } from './SuggestionChips'
 import { AttachmentChip } from './AttachmentChip'
 import { AttachmentPicker } from './AttachmentPicker'
@@ -40,7 +41,11 @@ function continueText(lang: 'de' | 'en'): string {
 
 interface Props {
   lastAssistant: MessageRow | null
-  onSubmit: (payload: { userMessage: string; userAnswer: UserAnswer }) => void
+  onSubmit: (payload: {
+    userMessage: string
+    userAnswer: UserAnswer
+    attachmentIds: string[]
+  }) => void
   /** Render the IDK trigger if `allow_idk` on the last assistant turn. */
   onIdkClick?: () => void
   /** Optional override (e.g. while a turn is in flight). */
@@ -72,7 +77,7 @@ export function InputBar({
   const disabled = !!forceDisabled
   const allowIdk = lastAssistant?.allow_idk ?? false
   const completionSignal = useChatStore((s) => s.lastCompletionSignal)
-  const removeAttachment = useChatStore((s) => s.removeAttachment)
+  const deleteFile = useDeleteFile()
 
   const {
     text,
@@ -126,6 +131,15 @@ export function InputBar({
     onSubmit({
       userMessage: payload.userMessage,
       userAnswer: payload.userAnswer,
+      attachmentIds: payload.attachmentIds,
+    })
+  }
+
+  const handleRemoveAttachment = (localId: string) => {
+    const target = attachments.find((a) => a.id === localId)
+    deleteFile.mutate({
+      localId,
+      fileRowId: target?.fileRowId ?? null,
     })
   }
 
@@ -182,6 +196,7 @@ export function InputBar({
                 onSubmit({
                   userMessage: msg,
                   userAnswer: { kind: 'text', text: msg },
+                  attachmentIds: [],
                 })
               }}
               completionSignal={completionSignal}
@@ -201,7 +216,7 @@ export function InputBar({
                 <li key={a.id}>
                   <AttachmentChip
                     attachment={a}
-                    onRemove={removeAttachment}
+                    onRemove={handleRemoveAttachment}
                     disabled={disabled}
                   />
                 </li>

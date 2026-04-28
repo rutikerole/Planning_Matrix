@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next'
 import type { MessageRow } from '@/types/db'
+import { MessageAttachment } from './MessageAttachment'
 
 interface Props {
   message: MessageRow
@@ -41,6 +42,13 @@ export function MessageUser({ message }: Props) {
         <p className="text-[15px] text-ink leading-[1.55] whitespace-pre-wrap break-words">
           {message.content_de}
         </p>
+
+        {/* Phase 3.6 #68 — attachments inline below the body. Skip
+          * for optimistic placeholder messages (id starts with
+          * "pending-") since the row hasn't been persisted yet. */}
+        {!message.id.startsWith('pending-') && (
+          <MessageAttachment messageId={message.id} />
+        )}
 
         {/* Timestamp — italic Serif clay, right-aligned */}
         <p className="font-serif italic text-[10px] text-clay/65 tabular-figures self-end leading-none mt-1.5">
