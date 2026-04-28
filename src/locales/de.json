@@ -433,9 +433,6 @@
   "chat": {
     "leaveProject": "Projekt verlassen",
     "jumpToLatest": "Zum neuesten Beitrag",
-    "leftRail": {
-      "viewResult": "Ergebnis ansehen"
-    },
     "footer": {
       "briefingPrimary": "Briefing ansehen",
       "briefingSubtitle": "Das ausführliche Dokument",

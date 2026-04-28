@@ -138,6 +138,16 @@
 
 ---
 
+## D20 · The polish pass (Phase 3.7 · 2026-04-29)
+
+**Question:** Phase 3.6 shipped the working machinery (chat input, file upload, progress, cockpit, result-page interactivity, PDF fix), but Rutik's live walk surfaced nine concrete bugs that made the application *feel* unfinished even though it *worked*. How do we close the gap between "shipped" and "feels right" without scope creep?
+
+**Answer:** Seven primary commits + two mid-batch hotfixes + Patch A baked into #76 (#75–#82, plus #75a Continue-chip hotfix and a chrome-removal hotfix on the unified footer). Surgical fixes only — no new architecture, no new dependencies, no migrations. New: unified sticky footer spanning the three-column grid (`<UnifiedFooter>` with FooterLeftColumn carrying the Briefing primary CTA at drafting-blue/15 + FooterRightColumn with the compact ScaleBar + CostTicker), extracted SendButton with abort-controller wiring (Q2), redesigned user message card without the BAUHERR eyebrow tag (Q11), redesigned scroll-to-latest as a circular FAB (Patch A), back-to-conversation link on the result page, T-01 Einfamilienhaus axonometric redrawn with mathematical 30° projection via `src/lib/axonometric.ts`, real architectural ScaleBar (alternating ink/paper segments), locale plumbed through to Anthropic via a non-cached system block AFTER the cached PERSONA_BLOCK so prompt cache stays warm (Q4), typography legibility sweep across operating mode (clay/55–65 → clay/72, text-[10px] → text-[11px]) with cover hero kept atelier (Q6), build-time DE/EN parity gate via `scripts/verify-locale-parity.mjs` (Q5: prebuild fail).
+
+**Reasoning:** "Surgical, no scope creep" is the discipline. The mid-batch interrupts (Patch A jump-to-latest FAB, Patch B Continue-as-chip integration, footer-chrome removal, bigger axonometric + bigger labels) all stayed inside their commits' boundaries — when Rutik flagged a sub-bug after #75 had shipped, it became a hotfix commit (#75a / chrome-removal) rather than re-opening the parent. Locale plumbing was diagnostic-first per the #73 PDF discipline: the bug was fully traced (chatTurnRequestSchema had no `locale` field; system prompt was statically German-first; `MessageAssistant.tsx:41` already did the right render-time fallback) before a line of fix code shipped. The cache-warmth check (`cache_read_tokens > 0` on the second turn) is the gate Rutik confirms post-deploy; the locale block is positioned AFTER `cache_control: ephemeral` so the cache stays warm. The parity gate catches future drift before it reaches Rutik. Plan locked via `PHASE_3_7_PLAN.md` §6 Q1–Q11 (Q11 added on confirmation: BAUHERR tag drop) before any code shipped — same plan-first discipline as Phase 3.2 / 3.3 / 3.4 / 3.5 / 3.6.
+
+---
+
 ## D19 · Operating-mode separation (Phase 3.6 · 2026-04-28)
 
 **Question:** The atelier vocabulary built across 3.2 / 3.3 / 3.4 / 3.5 reads beautifully on deliverable surfaces but fights the user on working surfaces — the chat input bar replacing the textarea with "Continue", no file uploads, KEY DATA showing raw `STRUCTURAL.EXECUTION_DRAWINGS_REQUIRED`, the progress hairline communicating nothing, the PDF silently failing, the overview reading as newspaper. How do we keep what works on deliverable surfaces and fix what hurts on working ones?
