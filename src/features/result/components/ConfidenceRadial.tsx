@@ -51,7 +51,8 @@ export function ConfidenceRadial({ aggregate, size = 240 }: Props) {
         width={size}
         height={size}
         aria-hidden="true"
-        className="text-clay/35"
+        data-pm-confidence-radial="true"
+        className="text-clay/35 max-w-full h-auto"
       >
         <circle
           cx={center}
@@ -73,6 +74,8 @@ export function ConfidenceRadial({ aggregate, size = 240 }: Props) {
       width={size}
       height={size}
       aria-hidden="true"
+      data-pm-confidence-radial="true"
+      className="max-w-full h-auto"
     >
       {slices.map((s) => (
         <path

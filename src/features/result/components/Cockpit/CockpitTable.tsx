@@ -10,6 +10,7 @@
 import { useMemo, useState, type ReactNode } from 'react'
 import { ChevronDown, ChevronUp } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { useViewport } from '@/lib/useViewport'
 
 export interface CockpitColumn<TRow> {
   id: string
@@ -45,6 +46,7 @@ export function CockpitTable<TRow>({
   const [sortBy, setSortBy] = useState<string | null>(null)
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc')
   const [search, setSearch] = useState('')
+  const { isMobile } = useViewport()
 
   const filtered = useMemo(() => {
     if (!search.trim() || !searchable) return rows
@@ -90,6 +92,43 @@ export function CockpitTable<TRow>({
 
       {sorted.length === 0 ? (
         <p className="text-[13px] italic text-clay/72 py-6">{emptyMessage}</p>
+      ) : isMobile ? (
+        // Phase 3.8 #85 — mobile card list. Each row renders as a
+        // vertical card: first column = eyebrow label, second = value
+        // (the data point), remaining columns flow as a meta row at
+        // the bottom. Tap-friendly heights, no horizontal scroll.
+        <ul className="flex flex-col gap-2.5">
+          {sorted.map((row) => {
+            const [labelCol, valueCol, ...metaCols] = columns
+            return (
+              <li
+                key={rowKey(row)}
+                className="bg-paper border border-ink/12 rounded-[var(--pm-radius-card,0.5rem)] px-4 py-3 flex flex-col gap-1.5"
+                style={{ boxShadow: 'var(--pm-shadow-card)' }}
+              >
+                {labelCol && (
+                  <div className="text-[11px] font-medium uppercase tracking-[0.16em] text-clay/85 leading-none">
+                    {labelCol.render(row)}
+                  </div>
+                )}
+                {valueCol && (
+                  <div className="text-[15px] text-ink leading-snug">
+                    {valueCol.render(row)}
+                  </div>
+                )}
+                {metaCols.length > 0 && (
+                  <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1 text-[12px] text-ink/75">
+                    {metaCols.map((col) => (
+                      <span key={col.id} className="inline-flex items-center">
+                        {col.render(row)}
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </li>
+            )
+          })}
+        </ul>
       ) : (
         <div className="overflow-x-auto -mx-2 sm:mx-0">
           <table className="w-full min-w-[640px] sm:min-w-0">

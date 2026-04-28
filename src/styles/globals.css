@@ -183,6 +183,21 @@
     -webkit-tap-highlight-color: transparent;
   }
 
+  /* Phase 3.8 #85 — Mobile spacing scale-down. Result-page sections
+   * use py-20 / py-24 (80–96 px) on desktop; that wastes vertical
+   * space on phone. Compress to py-10 (40 px) on mobile so the user
+   * scrolls through 12 sections without fatigue. */
+  [data-pm-viewport='mobile'] [id^='sec-'] {
+    padding-top: 2.5rem; /* 40 px */
+    padding-bottom: 2.5rem;
+  }
+  /* Phase 3.8 #85 — Confidence radial scales 240 → 200 on mobile via
+   * a max-width constraint on its outer wrapper. */
+  [data-pm-viewport='mobile'] [data-pm-confidence-radial] {
+    max-width: 200px;
+    max-height: 200px;
+  }
+
   :focus-visible {
     outline: 2px solid hsl(var(--ink));
     outline-offset: 3px;
