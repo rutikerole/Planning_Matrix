@@ -59,6 +59,13 @@ interface ChatState {
    * in one place; `useInputState` (the hook) wraps these for the
    * component layer. Wiring to Supabase Storage lands in #68. */
   pendingAttachments: PendingAttachment[]
+  /**
+   * Phase 3.7 #76 (Q2) — AbortController for the currently in-flight
+   * chat-turn request. SendButton calls `abortStreaming()` to cancel a
+   * mid-stream response; useChatTurn sets/clears the controller around
+   * its mutation lifecycle.
+   */
+  currentAbortController: AbortController | null
 
   setThinking: (
     thinking: boolean,
@@ -87,6 +94,12 @@ interface ChatState {
   removeAttachment: (id: string) => void
   /** Phase 3.6 #67 — empty the pending list (called after a successful send). */
   clearAttachments: () => void
+  /** Phase 3.7 #76 — register the in-flight AbortController. Pass null
+   * to clear after the mutation settles. */
+  setAbortController: (controller: AbortController | null) => void
+  /** Phase 3.7 #76 — abort the in-flight chat-turn (SendButton stop
+   * affordance). No-op when nothing is in flight. */
+  abortStreaming: () => void
   reset: () => void
 }
 
@@ -102,6 +115,7 @@ export const useChatStore = create<ChatState>((set) => ({
   turnCount: 0,
   lastSavedAt: null,
   pendingAttachments: [],
+  currentAbortController: null,
 
   setThinking: (thinking, specialist, label, activitySection) =>
     set((s) => ({
@@ -184,6 +198,27 @@ export const useChatStore = create<ChatState>((set) => ({
       return { pendingAttachments: [] }
     }),
 
+  setAbortController: (controller) =>
+    set({ currentAbortController: controller }),
+  abortStreaming: () => {
+    const controller = useChatStore.getState().currentAbortController
+    if (controller) {
+      try {
+        controller.abort()
+      } catch {
+        /* defensive — already aborted */
+      }
+    }
+    // Eagerly clear the streaming bubble + thinking flag; the in-flight
+    // promise will reject on its own and useChatTurn's onError clears
+    // the rest. This makes the UI feel instant.
+    set({
+      streamingMessage: null,
+      isAssistantThinking: false,
+      currentAbortController: null,
+    })
+  },
+
   reset: () =>
     set((s) => {
       // Revoke any object URLs the previous project staged so we don't
@@ -195,6 +230,14 @@ export const useChatStore = create<ChatState>((set) => ({
           } catch {
             /* defensive */
           }
+        }
+      }
+      // Abort any in-flight request when the user navigates away.
+      if (s.currentAbortController) {
+        try {
+          s.currentAbortController.abort()
+        } catch {
+          /* defensive */
         }
       }
       return {
@@ -209,6 +252,7 @@ export const useChatStore = create<ChatState>((set) => ({
         turnCount: 0,
         lastSavedAt: null,
         pendingAttachments: [],
+        currentAbortController: null,
       }
     }),
 }))

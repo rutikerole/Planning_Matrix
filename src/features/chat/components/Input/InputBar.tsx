@@ -24,7 +24,7 @@ import {
   type ReactNode,
 } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Paperclip, ArrowUp } from 'lucide-react'
+import { Paperclip } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useChatStore } from '@/stores/chatStore'
 import type { MessageRow } from '@/types/db'
@@ -34,6 +34,7 @@ import { useDeleteFile } from '../../hooks/useDeleteFile'
 import { SuggestionChips } from './SuggestionChips'
 import { AttachmentChip } from './AttachmentChip'
 import { AttachmentPicker } from './AttachmentPicker'
+import { SendButton } from './SendButton'
 
 /** Resolve the send-now text for the Continue button. */
 function continueText(lang: 'de' | 'en'): string {
@@ -328,22 +329,10 @@ export function InputBar({
               style={{ letterSpacing: 'var(--pm-tracking-body)' }}
             />
 
-            {/* Send button — round, ink fill. */}
-            <button
-              type="button"
-              onClick={handleSubmit}
-              disabled={disabled || isEmpty}
-              aria-label={t('chat.input.send')}
-              className={cn(
-                'shrink-0 self-end inline-flex items-center justify-center size-9 mb-1 rounded-full transition-[background-color,opacity] duration-soft ease-soft',
-                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink focus-visible:ring-offset-2 focus-visible:ring-offset-background',
-                disabled || isEmpty
-                  ? 'bg-ink/15 text-ink/35 cursor-not-allowed'
-                  : 'bg-ink text-paper hover:bg-ink/92',
-              )}
-            >
-              <ArrowUp aria-hidden="true" className="size-[18px]" />
-            </button>
+            {/* Phase 3.7 #76 — extracted SendButton. Adds streaming-stop
+              * affordance backed by chatStore's AbortController, hover
+              * scale, and a sharper disabled style. */}
+            <SendButton isEmpty={isEmpty} disabled={disabled} onSend={handleSubmit} />
           </div>
 
           {/* Bottom row — IDK link + tiny helper hint. */}

@@ -2,6 +2,7 @@ import { useRef } from 'react'
 import { useParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { m, AnimatePresence, useReducedMotion } from 'framer-motion'
+import { ArrowDown } from 'lucide-react'
 import { MessageUser } from './MessageUser'
 import { MessageAssistant } from './MessageAssistant'
 import { MessageSystem } from './MessageSystem'
@@ -99,26 +100,33 @@ export function Thread({ messages }: Props) {
         </li>
       )}
 
-      {/* New-message pill — appears when auto-scroll has paused and a
-       * new turn lands. Click resumes scrolling to the latest. */}
+      {/* Phase 3.7 #76 (Patch A) — "Jump to latest" floating-action
+        * button. Used to be a paper-tab pill in atelier register that
+        * read as a label, not an action. Now a circular FAB:
+        * paper bg + ink/85 border + ink ArrowDown + drop shadow.
+        * Anchored bottom-right of the message column above the
+        * unified footer. Aria-label localized. */}
       <AnimatePresence>
         {paused && (
           <m.li
-            initial={reduced ? false : { opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={reduced ? { opacity: 0 } : { opacity: 0, y: 4 }}
-            transition={{ duration: reduced ? 0 : 0.2 }}
-            // Phase 3.6 #67 — anchor lifted to clear the persistent
-            // input bar (suggestion chips + attachments + textarea
-            // stack ~140 px tall in the worst case).
-            className="fixed bottom-40 sm:bottom-44 left-1/2 -translate-x-1/2 z-30"
+            initial={reduced ? false : { opacity: 0, y: 8, scale: 0.92 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={reduced ? { opacity: 0 } : { opacity: 0, y: 4, scale: 0.92 }}
+            transition={{ duration: reduced ? 0 : 0.2, ease: [0.16, 1, 0.3, 1] }}
+            className="fixed right-6 bottom-[calc(180px+1rem)] sm:right-10 lg:right-[calc(360px+1rem)] z-30"
           >
             <button
               type="button"
               onClick={resume}
-              className="text-[11px] text-clay bg-paper border border-border-strong/55 rounded-sm px-3 py-1.5 shadow-[0_4px_16px_-4px_hsl(220_15%_11%/0.18)] hover:bg-muted/40 transition-colors duration-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+              aria-label={t('chat.jumpToLatest', {
+                defaultValue: 'Zum neuesten Beitrag',
+              })}
+              title={t('chat.jumpToLatest', {
+                defaultValue: 'Zum neuesten Beitrag',
+              })}
+              className="inline-flex items-center justify-center size-10 bg-paper border border-ink/85 rounded-full text-ink/85 shadow-[0_4px_16px_-4px_hsl(220_15%_11%/0.22)] hover:bg-ink hover:text-paper motion-safe:hover:scale-[1.05] transition-[background-color,color,transform] duration-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
             >
-              {t('chat.newMessagePill')}
+              <ArrowDown aria-hidden="true" className="size-[16px]" />
             </button>
           </m.li>
         )}

@@ -50,6 +50,7 @@ export function useChatTurn(projectId: string) {
   const appendStreamingText = useChatStore((s) => s.appendStreamingText)
   const closeStreamingMessage = useChatStore((s) => s.closeStreamingMessage)
   const noteSuccessfulTurn = useChatStore((s) => s.noteSuccessfulTurn)
+  const setAbortController = useChatStore((s) => s.setAbortController)
 
   return useMutation({
     mutationKey: ['chat-turn', projectId],
@@ -69,6 +70,11 @@ export function useChatTurn(projectId: string) {
       )
       const seedSpecialist = (lastAssistant?.specialist ?? 'moderator') as Specialist
 
+      // Phase 3.7 #76 — register an AbortController so SendButton's
+      // stop affordance can interrupt the in-flight stream.
+      const abortController = new AbortController()
+      setAbortController(abortController)
+
       // Open the streaming bubble immediately. ThinkingIndicator hides
       // when streamingMessage is non-null (Thread.tsx swap).
       const streamingId = `streaming-${clientRequestId}`
@@ -80,38 +86,36 @@ export function useChatTurn(projectId: string) {
         let textArrived = false
         let resolved = false
 
-        postChatTurnStreaming(request, lang, {
-          onTextDelta: (delta) => {
-            textArrived = true
-            appendStreamingText(delta)
+        postChatTurnStreaming(
+          request,
+          lang,
+          {
+            onTextDelta: (delta) => {
+              textArrived = true
+              appendStreamingText(delta)
+            },
+            onComplete: (env) => {
+              if (resolved) return
+              resolved = true
+              resolve(env)
+            },
+            onError: async (err) => {
+              if (resolved) return
+              resolved = true
+              if (textArrived) {
+                reject(err)
+                return
+              }
+              try {
+                const fallback = await postChatTurn(request, abortController.signal)
+                resolve(fallback)
+              } catch (fallbackErr) {
+                reject(fallbackErr)
+              }
+            },
           },
-          onComplete: (env) => {
-            if (resolved) return
-            resolved = true
-            resolve(env)
-          },
-          onError: async (err) => {
-            if (resolved) return
-            resolved = true
-            // If the stream failed mid-way after some text had already
-            // arrived, the user has seen partial content — falling back
-            // to non-streaming would yield a duplicate render. Bubble
-            // the error so the SPA shows the Erneut-senden affordance.
-            // If no text arrived (i.e. the streaming endpoint failed
-            // before any progress), fall back to one non-streaming
-            // retry — idempotency on the server makes this safe.
-            if (textArrived) {
-              reject(err)
-              return
-            }
-            try {
-              const fallback = await postChatTurn(request)
-              resolve(fallback)
-            } catch (fallbackErr) {
-              reject(fallbackErr)
-            }
-          },
-        }).catch(reject)
+          abortController.signal,
+        ).catch(reject)
       })
 
       return {
@@ -193,6 +197,7 @@ export function useChatTurn(projectId: string) {
       setThinking(false, undefined, null, null)
       // Close the streaming bubble — the persisted message takes over.
       closeStreamingMessage()
+      setAbortController(null)
       noteSuccessfulTurn()
       clearFailed(clientRequestId)
 
@@ -233,6 +238,7 @@ export function useChatTurn(projectId: string) {
       if (clientRequestId) markFailed(clientRequestId)
       setThinking(false, undefined, null, null)
       closeStreamingMessage()
+      setAbortController(null)
 
       if (import.meta.env.DEV) {
         // eslint-disable-next-line no-console

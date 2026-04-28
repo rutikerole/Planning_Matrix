@@ -89,6 +89,7 @@ async function resolveEnv(): Promise<RequestEnv> {
  */
 export async function postChatTurn(
   request: ChatTurnRequest,
+  signal?: AbortSignal,
 ): Promise<Extract<ChatTurnResponse, { ok: true }>> {
   const env = await resolveEnv()
   let response: Response
@@ -101,6 +102,7 @@ export async function postChatTurn(
         Authorization: `Bearer ${env.accessToken}`,
       },
       body: JSON.stringify(request),
+      signal,
     })
   } catch (err) {
     throw new ChatTurnError(
@@ -197,6 +199,7 @@ export async function postChatTurnStreaming(
   request: ChatTurnRequest,
   lang: 'de' | 'en',
   handlers: StreamingHandlers,
+  signal?: AbortSignal,
 ): Promise<void> {
   let env: RequestEnv
   try {
@@ -227,6 +230,7 @@ export async function postChatTurnStreaming(
         Authorization: `Bearer ${env.accessToken}`,
       },
       body: JSON.stringify(request),
+      signal,
     })
   } catch (err) {
     handlers.onError(

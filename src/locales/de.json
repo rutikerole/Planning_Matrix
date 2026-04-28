@@ -432,6 +432,7 @@
   },
   "chat": {
     "leaveProject": "Projekt verlassen",
+    "jumpToLatest": "Zum neuesten Beitrag",
     "leftRail": {
       "viewResult": "Ergebnis ansehen"
     },
@@ -569,6 +570,7 @@
     },
     "input": {
       "send": "Senden",
+      "stop": "Antwort stoppen",
       "continue": "Weiter",
       "text": {
         "label": "Ihre Antwort",
