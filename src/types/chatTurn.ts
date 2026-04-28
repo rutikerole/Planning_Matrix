@@ -111,12 +111,20 @@ export interface AssistantMessageRow {
   created_at: string
 }
 
+export type CompletionSignal =
+  | 'continue'
+  | 'needs_designer'
+  | 'ready_for_review'
+  | 'blocked'
+
 export type ChatTurnResponse =
   | {
       ok: true
       assistantMessage: AssistantMessageRow
       projectState: ProjectState
       costInfo: CostInfo
+      /** Echoed from tool_input.completion_signal — drives the in-thread interstitial. */
+      completionSignal: CompletionSignal
     }
   | {
       ok: false

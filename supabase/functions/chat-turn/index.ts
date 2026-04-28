@@ -255,6 +255,7 @@ Deno.serve(async (req: Request) => {
     newState,
     usage,
     latencyMs,
+    toolInput.completion_signal ?? 'continue',
     corsHeaders,
   )
 })
@@ -271,12 +272,14 @@ function respondSuccess(
     cacheWriteTokens: number
   },
   latencyMs: number,
+  completionSignal: 'continue' | 'needs_designer' | 'ready_for_review' | 'blocked',
   corsHeaders: Record<string, string>,
 ): Response {
   const body: ChatTurnResponse = {
     ok: true,
     assistantMessage,
     projectState,
+    completionSignal,
     costInfo: {
       inputTokens: usage.inputTokens,
       outputTokens: usage.outputTokens,
