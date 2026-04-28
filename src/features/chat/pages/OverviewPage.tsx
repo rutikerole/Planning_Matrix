@@ -1,39 +1,66 @@
-import { useEffect } from 'react'
-import { useParams, Link, useNavigate } from 'react-router-dom'
+// ───────────────────────────────────────────────────────────────────────
+// Phase 3.6 #71 — Overview cockpit (operating mode)
+//
+// Drops the editorial register Rutik called "newspaper or blog." Eight
+// tabs, each a Linear-style table: Projekt / Daten / Bereiche /
+// Verfahren / Dokumente / Team / Empfehlungen / Audit. Edit-in-place
+// on every CLIENT-source fact (Q4 locked). Paper substrate stays;
+// huge italic Serif headlines are gone; densities are honest.
+// ───────────────────────────────────────────────────────────────────────
+
+import { useEffect, useMemo, useState } from 'react'
+import { useParams, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { X } from 'lucide-react'
-import { LanguageSwitcher } from '@/components/shared/LanguageSwitcher'
-import { Wordmark } from '@/components/shared/Wordmark'
+import { useQueryClient } from '@tanstack/react-query'
+import { factLabel, factValueWithUnit } from '@/lib/factLabel'
 import { useProject } from '../hooks/useProject'
 import { useProjectEvents } from '../hooks/useProjectEvents'
 import { useMessages } from '../hooks/useMessages'
-import { StatusPill } from '../components/StatusPill'
-import { BinderTabStrip } from '../components/BinderTabStrip'
-import { AuditTimeline } from '../components/AuditTimeline'
-import { ExportMenu } from '../components/ExportMenu'
-import type { ProjectState } from '@/types/projectState'
-import { factLabel, factValueWithUnit } from '@/lib/factLabel'
+import type {
+  Fact,
+  ProjectState,
+  Recommendation,
+  Role,
+} from '@/types/projectState'
+import { CockpitHeader } from '../../result/components/Cockpit/CockpitHeader'
+import {
+  CockpitTabs,
+  type CockpitTab,
+} from '../../result/components/Cockpit/CockpitTabs'
+import {
+  CockpitTable,
+  type CockpitColumn,
+} from '../../result/components/Cockpit/CockpitTable'
+import {
+  StatusPill,
+  type CockpitStatusKind,
+} from '../../result/components/Cockpit/StatusPill'
+import { QualifierBadge } from '../../result/components/Cockpit/QualifierBadge'
+import { EditableCell } from '../../result/components/Cockpit/EditableCell'
+import { saveFactValue } from '../../result/components/Cockpit/saveFact'
 
-/**
- * Phase 3.2 #44 — overview rebuilt as an architectural project binder.
- *
- *   • Sticky header carries a paper-tab strip across all 8 sections,
- *     each tab a Roman numeral above an uppercase tracked label;
- *     scroll-spy underlines the closest section in clay.
- *   • Each section is rendered in the schedule register established
- *     in #40: a 24px Roman-numeral column + uppercase eyebrow + count.
- *   • Audit log: vertical hairline timeline with tick marks and
- *     italic-Serif timestamps printed left of the rule.
- */
+type TabId =
+  | 'project'
+  | 'facts'
+  | 'areas'
+  | 'procedures'
+  | 'documents'
+  | 'roles'
+  | 'recommendations'
+  | 'audit'
+
 export function OverviewPage() {
   const { t, i18n } = useTranslation()
+  const lang = (i18n.resolvedLanguage ?? 'de') as 'de' | 'en'
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
   const projectId = id ?? ''
   const { data: project } = useProject(projectId)
   const { data: events } = useProjectEvents(projectId)
   const { data: messages } = useMessages(projectId)
-  const lang = (i18n.resolvedLanguage ?? 'de') as 'de' | 'en'
+
+  const [active, setActive] = useState<TabId>('project')
 
   useEffect(() => {
     if (project?.name) {
@@ -47,374 +74,681 @@ export function OverviewPage() {
   }, [project?.name, projectId, t, navigate])
 
   if (!project) return null
+
   const state = (project.state ?? {}) as Partial<ProjectState>
   const facts = state.facts ?? []
   const procedures = state.procedures ?? []
   const documents = state.documents ?? []
   const roles = state.roles ?? []
-  const recommendations = (state.recommendations ?? []).slice().sort((a, b) => a.rank - b.rank)
-  const areas = state.areas ?? {
-    A: { state: 'PENDING' as const },
-    B: { state: 'PENDING' as const },
-    C: { state: 'PENDING' as const },
-  }
+  const recommendations = (state.recommendations ?? [])
+    .slice()
+    .sort((a, b) => a.rank - b.rank)
+  const areas =
+    state.areas ?? {
+      A: { state: 'PENDING' as const },
+      B: { state: 'PENDING' as const },
+      C: { state: 'PENDING' as const },
+    }
 
-  const tabs = [
-    { id: 'sec-vorhaben', numeral: 'I', label: t('chat.overview.tabs.intent') },
-    { id: 'sec-eckdaten', numeral: 'II', label: t('chat.overview.facts') },
-    { id: 'sec-bereiche', numeral: 'III', label: t('chat.overview.areas') },
-    { id: 'sec-verfahren', numeral: 'IV', label: t('chat.overview.procedures') },
-    { id: 'sec-dokumente', numeral: 'V', label: t('chat.overview.documents') },
-    { id: 'sec-fachplaner', numeral: 'VI', label: t('chat.overview.roles') },
-    { id: 'sec-empfehlungen', numeral: 'VII', label: t('chat.overview.recommendations') },
-    { id: 'sec-audit', numeral: 'VIII', label: t('chat.overview.audit') },
+  const tabs: CockpitTab<TabId>[] = [
+    { id: 'project', label: t('cockpit.tabs.project', { defaultValue: 'Projekt' }) },
+    {
+      id: 'facts',
+      label: t('cockpit.tabs.facts', { defaultValue: 'Daten' }),
+      count: facts.length,
+    },
+    {
+      id: 'areas',
+      label: t('cockpit.tabs.areas', { defaultValue: 'Bereiche' }),
+    },
+    {
+      id: 'procedures',
+      label: t('cockpit.tabs.procedures', { defaultValue: 'Verfahren' }),
+      count: procedures.length,
+    },
+    {
+      id: 'documents',
+      label: t('cockpit.tabs.documents', { defaultValue: 'Dokumente' }),
+      count: documents.length,
+    },
+    {
+      id: 'roles',
+      label: t('cockpit.tabs.roles', { defaultValue: 'Team' }),
+      count: roles.length,
+    },
+    {
+      id: 'recommendations',
+      label: t('cockpit.tabs.recommendations', { defaultValue: 'Empfehlungen' }),
+      count: recommendations.length,
+    },
+    {
+      id: 'audit',
+      label: t('cockpit.tabs.audit', { defaultValue: 'Audit' }),
+      count: events?.length ?? 0,
+    },
   ]
 
   return (
-    <div className="min-h-dvh bg-paper">
-      <header className="sticky top-0 z-10 bg-paper/95 backdrop-blur-[2px] border-b border-ink/12">
-        <div className="mx-auto max-w-[1100px] px-6 sm:px-10 lg:px-14 flex h-16 md:h-[64px] items-center justify-between gap-4">
-          <Wordmark />
-          <p className="hidden sm:block text-[12px] font-serif italic text-clay/85 truncate max-w-md">
-            {t('chat.overview.eyebrow')} · {project.name}
-          </p>
-          <div className="flex items-center gap-3">
-            {/* Phase 3.4 #55 — Exportieren primary CTA in the binder header */}
-            <ExportMenu
-              project={project}
-              messages={messages ?? []}
-              events={events ?? []}
-              variant="primary"
-            />
-            <LanguageSwitcher />
-            <Link
-              to={`/projects/${projectId}`}
-              aria-label={t('chat.overview.close')}
-              className="size-9 inline-flex items-center justify-center rounded-sm text-ink/65 hover:text-ink hover:bg-muted/40 transition-colors duration-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-            >
-              <X aria-hidden="true" className="size-4" />
-            </Link>
-          </div>
-        </div>
-        {/* Paper-tab strip */}
-        <div className="mx-auto max-w-[1100px] px-2 sm:px-6">
-          <BinderTabStrip tabs={tabs} />
-        </div>
-      </header>
+    <div className="min-h-dvh bg-paper" data-mode="operating">
+      <CockpitHeader
+        project={project}
+        messages={messages ?? []}
+        events={events ?? []}
+        closeTo={`/projects/${projectId}`}
+      />
+      <CockpitTabs<TabId> tabs={tabs} active={active} onChange={setActive} />
 
-      <main className="mx-auto max-w-[1100px] px-6 sm:px-10 lg:px-14 py-12 flex flex-col gap-12">
-        {/* I · Vorhaben (project header) */}
-        <BinderSection id="sec-vorhaben" numeral="I" title={t('chat.overview.tabs.intent')}>
-          <div className="flex flex-col gap-3">
-            <p className="text-[10px] uppercase tracking-[0.22em] text-clay/85">
-              {t('chat.overview.eyebrow')}
-            </p>
-            <h1 className="font-display text-display-3 text-ink leading-[1.05] -tracking-[0.02em]">
-              {project.name}
-            </h1>
-            {project.plot_address && (
-              <p className="font-serif italic text-[14px] text-ink/65">
-                {project.plot_address}
-              </p>
-            )}
-          </div>
-        </BinderSection>
-
-        {/* II · Eckdaten */}
-        <BinderSection
-          id="sec-eckdaten"
-          numeral="II"
-          title={t('chat.overview.facts')}
-          count={facts.length}
-        >
-          {facts.length === 0 ? (
-            <Empty copy={t('chat.overview.factsEmpty')} />
-          ) : (
-            <ul className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-5">
-              {facts.map((f, i) => (
-                <li
-                  key={`${f.key}-${i}`}
-                  className="grid grid-cols-[28px_1fr] gap-x-3"
-                >
-                  <span className="font-serif italic text-[12px] text-clay-deep tabular-figures pt-1 leading-none border-r border-border/40 pr-2 text-center">
-                    {String(i + 1).padStart(2, '0')}
-                  </span>
-                  <div className="flex flex-col gap-1">
-                    <span className="text-[10px] text-clay/85 uppercase tracking-[0.18em]">
-                      {factLabel(f.key, lang).label}
-                    </span>
-                    <span className="text-[14px] font-medium text-ink leading-snug break-words">
-                      {factValueWithUnit(f.key, f.value, lang)}
-                    </span>
-                    <span className="text-[9px] text-clay/60 italic uppercase tracking-[0.14em]">
-                      {f.qualifier.source} · {f.qualifier.quality}
-                    </span>
-                    {f.evidence && (
-                      <span className="font-serif italic text-[11px] text-ink/55 mt-0.5">
-                        {f.evidence}
-                      </span>
-                    )}
-                  </div>
-                </li>
-              ))}
-            </ul>
-          )}
-        </BinderSection>
-
-        {/* III · Bereiche */}
-        <BinderSection id="sec-bereiche" numeral="III" title={t('chat.overview.areas')}>
-          <ul className="flex flex-col gap-4">
-            {(['A', 'B', 'C'] as const).map((key) => {
-              const a = areas[key] ?? { state: 'PENDING' as const }
-              return (
-                <li key={key} className="grid grid-cols-[28px_1fr] gap-x-3">
-                  <span className="font-serif italic text-[18px] text-clay-deep tabular-figures leading-none pt-0.5 text-center">
-                    {key}
-                  </span>
-                  <div className="flex flex-col gap-1">
-                    <p className="text-[14px] font-medium text-ink leading-snug">
-                      {t(`chat.areas.${key}`)}
-                      <span
-                        className={
-                          a.state === 'VOID'
-                            ? 'ml-3 text-[10px] uppercase tracking-[0.20em] text-ink/30 line-through'
-                            : a.state === 'ACTIVE'
-                              ? 'ml-3 text-[10px] uppercase tracking-[0.20em] text-clay'
-                              : 'ml-3 text-[10px] uppercase tracking-[0.20em] text-clay/60'
-                        }
-                      >
-                        {t(`chat.areas.state.${a.state.toLowerCase()}`)}
-                      </span>
-                    </p>
-                    {a.reason && (
-                      <p className="font-serif italic text-[12px] text-ink/65">{a.reason}</p>
-                    )}
-                  </div>
-                </li>
-              )
-            })}
-          </ul>
-        </BinderSection>
-
-        {/* IV · Verfahren */}
-        <BinderSection
-          id="sec-verfahren"
-          numeral="IV"
-          title={t('chat.overview.procedures')}
-          count={procedures.length}
-        >
-          {procedures.length === 0 ? (
-            <Empty copy={t('chat.rail.proceduresEmpty')} />
-          ) : (
-            <ScheduleList>
-              {procedures.map((p, idx) => (
-                <ScheduleEntry
-                  key={p.id}
-                  index={idx + 1}
-                  title={lang === 'en' ? p.title_en : p.title_de}
-                  meta={<StatusPill status={p.status} />}
-                  body={lang === 'en' ? p.rationale_en : p.rationale_de}
-                  qualifier={`${p.qualifier.source} · ${p.qualifier.quality}`}
-                />
-              ))}
-            </ScheduleList>
-          )}
-        </BinderSection>
-
-        {/* V · Dokumente */}
-        <BinderSection
-          id="sec-dokumente"
-          numeral="V"
-          title={t('chat.overview.documents')}
-          count={documents.length}
-        >
-          {documents.length === 0 ? (
-            <Empty copy={t('chat.rail.documentsEmpty')} />
-          ) : (
-            <ScheduleList>
-              {documents.map((d, idx) => (
-                <ScheduleEntry
-                  key={d.id}
-                  index={idx + 1}
-                  title={lang === 'en' ? d.title_en : d.title_de}
-                  meta={<StatusPill status={d.status} />}
-                  body={
-                    d.required_for.length > 0
-                      ? `${t('chat.overview.requiredFor')}: ${d.required_for.join(', ')}`
-                      : undefined
-                  }
-                />
-              ))}
-            </ScheduleList>
-          )}
-        </BinderSection>
-
-        {/* VI · Fachplaner */}
-        <BinderSection
-          id="sec-fachplaner"
-          numeral="VI"
-          title={t('chat.overview.roles')}
-          count={roles.length}
-        >
-          {roles.length === 0 ? (
-            <Empty copy={t('chat.rail.rolesEmpty')} />
-          ) : (
-            <ScheduleList>
-              {roles
-                .slice()
-                .sort((a, b) => (a.needed === b.needed ? 0 : a.needed ? -1 : 1))
-                .map((r, idx) => (
-                  <ScheduleEntry
-                    key={r.id}
-                    index={idx + 1}
-                    title={lang === 'en' ? r.title_en : r.title_de}
-                    meta={
-                      <span
-                        className={
-                          r.needed
-                            ? 'text-[10px] uppercase tracking-[0.20em] text-clay'
-                            : 'text-[10px] uppercase tracking-[0.20em] text-ink/40'
-                        }
-                      >
-                        {r.needed ? t('chat.role.needed') : t('chat.role.notNeeded')}
-                      </span>
-                    }
-                    body={r.rationale_de || undefined}
-                    qualifier={`${r.qualifier.source} · ${r.qualifier.quality}`}
-                  />
-                ))}
-            </ScheduleList>
-          )}
-        </BinderSection>
-
-        {/* VII · Empfehlungen */}
-        <BinderSection
-          id="sec-empfehlungen"
-          numeral="VII"
-          title={t('chat.overview.recommendations')}
-          count={recommendations.length}
-        >
-          {recommendations.length === 0 ? (
-            <Empty copy={t('chat.rail.empty')} />
-          ) : (
-            <ol className="flex flex-col gap-6">
-              {recommendations.map((r, idx) => (
-                <li key={r.id} className="grid grid-cols-[40px_1fr] gap-x-4">
-                  <span className="font-serif italic text-[28px] text-clay-deep tabular-figures leading-none">
-                    {idx + 1}.
-                  </span>
-                  <div className="flex flex-col gap-2">
-                    <p className="font-display text-title-lg text-ink leading-snug display-tight">
-                      {lang === 'en' ? r.title_en : r.title_de}
-                    </p>
-                    <p className="text-[13px] text-ink/75 leading-[1.55]">
-                      {lang === 'en' ? r.detail_en : r.detail_de}
-                    </p>
-                    <span aria-hidden="true" className="block h-px w-12 bg-border-strong/40 mt-1" />
-                    <p className="font-serif italic text-[10px] text-ink/55 leading-relaxed">
-                      {t('chat.preliminaryFooter')}
-                    </p>
-                  </div>
-                </li>
-              ))}
-            </ol>
-          )}
-        </BinderSection>
-
-        {/* VIII · Audit log */}
-        <BinderSection
-          id="sec-audit"
-          numeral="VIII"
-          title={t('chat.overview.audit')}
-          count={events?.length ?? 0}
-        >
-          {!events || events.length === 0 ? (
-            <Empty copy={t('chat.overview.auditEmpty')} />
-          ) : (
-            <AuditTimeline events={events} />
-          )}
-        </BinderSection>
+      <main className="mx-auto max-w-[1200px] px-4 sm:px-6 lg:px-8 py-8">
+        {active === 'project' && (
+          <ProjectMetaTab project={project} />
+        )}
+        {active === 'facts' && (
+          <FactsTab
+            facts={facts}
+            lang={lang}
+            onSave={async (key, next) =>
+              saveFactValue({
+                queryClient,
+                projectId,
+                factKey: key,
+                nextValue: next,
+              })
+            }
+          />
+        )}
+        {active === 'areas' && <AreasTab areas={areas} />}
+        {active === 'procedures' && (
+          <ProceduresTab procedures={procedures} lang={lang} />
+        )}
+        {active === 'documents' && (
+          <DocumentsTab documents={documents} lang={lang} />
+        )}
+        {active === 'roles' && <RolesTab roles={roles} lang={lang} />}
+        {active === 'recommendations' && (
+          <RecommendationsTab
+            recommendations={recommendations}
+            lang={lang}
+          />
+        )}
+        {active === 'audit' && <AuditTab events={events ?? []} lang={lang} />}
       </main>
+
+      <footer className="mx-auto max-w-[1200px] px-4 sm:px-6 lg:px-8 py-10 mt-auto">
+        <p className="text-[11px] italic text-clay/65 leading-relaxed">
+          {t('chat.preliminaryFooter')}
+        </p>
+      </footer>
     </div>
   )
 }
 
-function BinderSection({
-  id,
-  numeral,
-  title,
-  count,
-  children,
+// ── Tab: Projekt (project meta) ────────────────────────────────────────
+
+function ProjectMetaTab({ project }: { project: NonNullable<ReturnType<typeof useProject>['data']> }) {
+  const { t, i18n } = useTranslation()
+  const lang = (i18n.resolvedLanguage ?? 'de') as 'de' | 'en'
+
+  const rows = [
+    {
+      key: 'name',
+      label: t('cockpit.project.name', { defaultValue: 'Projektname' }),
+      value: project.name,
+    },
+    {
+      key: 'intent',
+      label: t('cockpit.project.intent', { defaultValue: 'Vorhaben' }),
+      value: t(`wizard.q1.options.${project.intent}`, {
+        defaultValue: project.intent,
+      }),
+    },
+    {
+      key: 'plot',
+      label: t('cockpit.project.plot', { defaultValue: 'Grundstück' }),
+      value: project.plot_address ?? '—',
+    },
+    {
+      key: 'bundesland',
+      label: t('cockpit.project.bundesland', { defaultValue: 'Bundesland' }),
+      value: project.bundesland,
+    },
+    {
+      key: 'template',
+      label: t('cockpit.project.template', { defaultValue: 'Template' }),
+      value: project.template_id,
+    },
+    {
+      key: 'created',
+      label: t('cockpit.project.created', { defaultValue: 'Erstellt' }),
+      value: formatDate(project.created_at, lang),
+    },
+    {
+      key: 'updated',
+      label: t('cockpit.project.updated', { defaultValue: 'Zuletzt aktiv' }),
+      value: formatDate(project.updated_at, lang),
+    },
+  ]
+
+  return (
+    <CockpitTable
+      rows={rows}
+      rowKey={(r) => r.key}
+      emptyMessage="—"
+      columns={[
+        {
+          id: 'label',
+          header: t('cockpit.cols.attribute', { defaultValue: 'Attribut' }),
+          render: (r) => <span className="text-ink/70">{r.label}</span>,
+          className: 'w-1/3',
+        },
+        {
+          id: 'value',
+          header: t('cockpit.cols.value', { defaultValue: 'Wert' }),
+          render: (r) => <span className="text-ink">{r.value}</span>,
+        },
+      ]}
+    />
+  )
+}
+
+// ── Tab: Daten (facts) ─────────────────────────────────────────────────
+
+function FactsTab({
+  facts,
+  lang,
+  onSave,
 }: {
+  facts: Fact[]
+  lang: 'de' | 'en'
+  onSave: (key: string, next: string) => Promise<void>
+}) {
+  const { t } = useTranslation()
+
+  type Row = { fact: Fact; label: string; value: string; isClient: boolean }
+  const rows: Row[] = useMemo(
+    () =>
+      facts.map((f) => ({
+        fact: f,
+        label: factLabel(f.key, lang).label,
+        value: factValueWithUnit(f.key, f.value, lang),
+        isClient: f.qualifier?.source === 'CLIENT',
+      })),
+    [facts, lang],
+  )
+
+  const columns: CockpitColumn<Row>[] = [
+    {
+      id: 'label',
+      header: t('cockpit.cols.label', { defaultValue: 'Bezeichnung' }),
+      sortValue: (r) => r.label.toLowerCase(),
+      render: (r) => <span className="text-ink/70">{r.label}</span>,
+      className: 'w-2/5',
+    },
+    {
+      id: 'value',
+      header: t('cockpit.cols.value', { defaultValue: 'Wert' }),
+      render: (r) => (
+        <EditableCell
+          value={r.value}
+          readOnly={!r.isClient}
+          ariaLabel={`${r.label} bearbeiten`}
+          onSave={(next) => onSave(r.fact.key, next)}
+        />
+      ),
+    },
+    {
+      id: 'qualifier',
+      header: t('cockpit.cols.qualifier', { defaultValue: 'Quelle' }),
+      sortValue: (r) => `${r.fact.qualifier.source}-${r.fact.qualifier.quality}`,
+      render: (r) => <QualifierBadge qualifier={r.fact.qualifier} />,
+      className: 'w-32',
+    },
+    {
+      id: 'evidence',
+      header: t('cockpit.cols.evidence', { defaultValue: 'Beleg' }),
+      render: (r) => (
+        <span className="text-[12px] italic text-ink/55 line-clamp-2">
+          {r.fact.evidence ?? r.fact.qualifier.reason ?? '—'}
+        </span>
+      ),
+      className: 'w-1/4',
+    },
+  ]
+
+  return (
+    <CockpitTable
+      rows={rows}
+      rowKey={(r) => r.fact.key}
+      columns={columns}
+      searchable={(r) =>
+        `${r.label} ${r.value} ${r.fact.evidence ?? ''} ${r.fact.qualifier.reason ?? ''}`
+      }
+      searchPlaceholder={t('cockpit.search', { defaultValue: 'Daten durchsuchen…' })}
+      emptyMessage={t('chat.overview.factsEmpty')}
+    />
+  )
+}
+
+// ── Tab: Bereiche ──────────────────────────────────────────────────────
+
+interface AreaRow {
+  letter: 'A' | 'B' | 'C'
+  state: 'ACTIVE' | 'PENDING' | 'VOID'
+  reason?: string
+}
+
+function AreasTab({
+  areas,
+}: {
+  areas: NonNullable<ProjectState['areas']>
+}) {
+  const { t } = useTranslation()
+  const rows: AreaRow[] = (['A', 'B', 'C'] as const).map((key) => ({
+    letter: key,
+    state: areas[key]?.state ?? 'PENDING',
+    reason: areas[key]?.reason,
+  }))
+
+  const stateKind = (s: AreaRow['state']): CockpitStatusKind =>
+    s === 'ACTIVE' ? 'active' : s === 'VOID' ? 'void' : 'pending'
+
+  return (
+    <CockpitTable
+      rows={rows}
+      rowKey={(r) => r.letter}
+      emptyMessage="—"
+      columns={[
+        {
+          id: 'letter',
+          header: '',
+          render: (r) => (
+            <span className="font-medium tracking-[0.18em] text-clay/85 text-[12px]">
+              {r.letter}
+            </span>
+          ),
+          className: 'w-12',
+        },
+        {
+          id: 'name',
+          header: t('chat.overview.areas', { defaultValue: 'Bereich' }),
+          render: (r) => (
+            <span className="text-ink">{t(`chat.areas.${r.letter}`)}</span>
+          ),
+        },
+        {
+          id: 'state',
+          header: t('cockpit.cols.state', { defaultValue: 'Status' }),
+          render: (r) => <StatusPill kind={stateKind(r.state)} />,
+          className: 'w-32',
+        },
+        {
+          id: 'reason',
+          header: t('cockpit.cols.reason', { defaultValue: 'Begründung' }),
+          render: (r) => (
+            <span className="text-[12px] italic text-ink/65">
+              {r.reason ?? '—'}
+            </span>
+          ),
+          className: 'w-2/5',
+        },
+      ]}
+    />
+  )
+}
+
+// ── Tab: Verfahren ─────────────────────────────────────────────────────
+
+function ProceduresTab({
+  procedures,
+  lang,
+}: {
+  procedures: NonNullable<ProjectState['procedures']>
+  lang: 'de' | 'en'
+}) {
+  const { t } = useTranslation()
+  type Row = { p: NonNullable<ProjectState['procedures']>[number]; title: string }
+  const rows: Row[] = procedures.map((p) => ({
+    p,
+    title: lang === 'en' ? p.title_en : p.title_de,
+  }))
+  return (
+    <CockpitTable
+      rows={rows}
+      rowKey={(r) => r.p.id}
+      searchable={(r) =>
+        `${r.title} ${lang === 'en' ? r.p.rationale_en : r.p.rationale_de}`
+      }
+      searchPlaceholder={t('cockpit.search', { defaultValue: 'Verfahren durchsuchen…' })}
+      emptyMessage={t('chat.rail.proceduresEmpty')}
+      columns={[
+        {
+          id: 'title',
+          header: t('cockpit.cols.title', { defaultValue: 'Verfahren' }),
+          sortValue: (r) => r.title.toLowerCase(),
+          render: (r) => <span className="text-ink">{r.title}</span>,
+        },
+        {
+          id: 'status',
+          header: t('cockpit.cols.state', { defaultValue: 'Status' }),
+          render: (r) => <StatusPill kind={statusKindFromItemStatus(r.p.status)} />,
+          className: 'w-36',
+        },
+        {
+          id: 'rationale',
+          header: t('cockpit.cols.rationale', { defaultValue: 'Begründung' }),
+          render: (r) => (
+            <span className="text-[12px] italic text-ink/65">
+              {(lang === 'en' ? r.p.rationale_en : r.p.rationale_de) || '—'}
+            </span>
+          ),
+          className: 'w-2/5',
+        },
+        {
+          id: 'qualifier',
+          header: t('cockpit.cols.qualifier', { defaultValue: 'Quelle' }),
+          render: (r) => <QualifierBadge qualifier={r.p.qualifier} />,
+          className: 'w-28',
+        },
+      ]}
+    />
+  )
+}
+
+// ── Tab: Dokumente ─────────────────────────────────────────────────────
+
+function DocumentsTab({
+  documents,
+  lang,
+}: {
+  documents: NonNullable<ProjectState['documents']>
+  lang: 'de' | 'en'
+}) {
+  const { t } = useTranslation()
+  type Row = { d: NonNullable<ProjectState['documents']>[number]; title: string }
+  const rows: Row[] = documents.map((d) => ({
+    d,
+    title: lang === 'en' ? d.title_en : d.title_de,
+  }))
+  return (
+    <CockpitTable
+      rows={rows}
+      rowKey={(r) => r.d.id}
+      searchable={(r) => `${r.title} ${r.d.required_for.join(' ')}`}
+      searchPlaceholder={t('cockpit.search', { defaultValue: 'Dokumente durchsuchen…' })}
+      emptyMessage={t('chat.rail.documentsEmpty')}
+      columns={[
+        {
+          id: 'title',
+          header: t('cockpit.cols.title', { defaultValue: 'Dokument' }),
+          sortValue: (r) => r.title.toLowerCase(),
+          render: (r) => <span className="text-ink">{r.title}</span>,
+        },
+        {
+          id: 'status',
+          header: t('cockpit.cols.state', { defaultValue: 'Status' }),
+          render: (r) => <StatusPill kind={statusKindFromItemStatus(r.d.status)} />,
+          className: 'w-36',
+        },
+        {
+          id: 'required_for',
+          header: t('cockpit.cols.requiredFor', { defaultValue: 'Erforderlich für' }),
+          render: (r) => (
+            <span className="text-[12px] text-ink/65">
+              {r.d.required_for.length > 0 ? r.d.required_for.join(', ') : '—'}
+            </span>
+          ),
+          className: 'w-1/3',
+        },
+        {
+          id: 'qualifier',
+          header: t('cockpit.cols.qualifier', { defaultValue: 'Quelle' }),
+          render: (r) => <QualifierBadge qualifier={r.d.qualifier} />,
+          className: 'w-28',
+        },
+      ]}
+    />
+  )
+}
+
+// ── Tab: Team / Rollen ─────────────────────────────────────────────────
+
+function RolesTab({
+  roles,
+  lang,
+}: {
+  roles: Role[]
+  lang: 'de' | 'en'
+}) {
+  const { t } = useTranslation()
+  type Row = { r: Role; title: string }
+  const rows: Row[] = [...roles]
+    .sort((a, b) => (a.needed === b.needed ? 0 : a.needed ? -1 : 1))
+    .map((r) => ({ r, title: lang === 'en' ? r.title_en : r.title_de }))
+  return (
+    <CockpitTable
+      rows={rows}
+      rowKey={(r) => r.r.id}
+      searchable={(r) => `${r.title} ${r.r.rationale_de ?? ''}`}
+      searchPlaceholder={t('cockpit.search', { defaultValue: 'Team durchsuchen…' })}
+      emptyMessage={t('chat.rail.rolesEmpty')}
+      columns={[
+        {
+          id: 'title',
+          header: t('cockpit.cols.title', { defaultValue: 'Rolle' }),
+          sortValue: (r) => r.title.toLowerCase(),
+          render: (r) => <span className="text-ink">{r.title}</span>,
+        },
+        {
+          id: 'needed',
+          header: t('cockpit.cols.state', { defaultValue: 'Status' }),
+          render: (r) => (
+            <StatusPill kind={r.r.needed ? 'needed' : 'not_needed'} />
+          ),
+          className: 'w-32',
+        },
+        {
+          id: 'rationale',
+          header: t('cockpit.cols.rationale', { defaultValue: 'Begründung' }),
+          render: (r) => (
+            <span className="text-[12px] italic text-ink/65">
+              {r.r.rationale_de ?? '—'}
+            </span>
+          ),
+          className: 'w-1/2',
+        },
+        {
+          id: 'qualifier',
+          header: t('cockpit.cols.qualifier', { defaultValue: 'Quelle' }),
+          render: (r) => <QualifierBadge qualifier={r.r.qualifier} />,
+          className: 'w-28',
+        },
+      ]}
+    />
+  )
+}
+
+// ── Tab: Empfehlungen ──────────────────────────────────────────────────
+
+function RecommendationsTab({
+  recommendations,
+  lang,
+}: {
+  recommendations: Recommendation[]
+  lang: 'de' | 'en'
+}) {
+  const { t } = useTranslation()
+  return (
+    <CockpitTable
+      rows={recommendations}
+      rowKey={(r) => r.id}
+      emptyMessage={t('chat.rail.empty')}
+      columns={[
+        {
+          id: 'rank',
+          header: '#',
+          sortValue: (r) => r.rank,
+          render: (r) => (
+            <span className="font-medium tabular-nums text-clay">{r.rank}</span>
+          ),
+          className: 'w-10',
+        },
+        {
+          id: 'title',
+          header: t('cockpit.cols.title', { defaultValue: 'Empfehlung' }),
+          sortValue: (r) => (lang === 'en' ? r.title_en : r.title_de).toLowerCase(),
+          render: (r) => (
+            <span className="text-ink font-medium leading-snug">
+              {lang === 'en' ? r.title_en : r.title_de}
+            </span>
+          ),
+        },
+        {
+          id: 'detail',
+          header: t('cockpit.cols.detail', { defaultValue: 'Details' }),
+          render: (r) => (
+            <span className="text-[12px] text-ink/70 leading-snug line-clamp-3">
+              {lang === 'en' ? r.detail_en : r.detail_de}
+            </span>
+          ),
+          className: 'w-2/5',
+        },
+        {
+          id: 'effort',
+          header: t('cockpit.cols.effort', { defaultValue: 'Aufwand' }),
+          render: (r) =>
+            r.estimated_effort ? (
+              <span className="text-[11px] uppercase tracking-[0.14em] text-clay">
+                {r.estimated_effort}
+              </span>
+            ) : (
+              <span className="text-ink/30">—</span>
+            ),
+          className: 'w-24',
+        },
+        {
+          id: 'owner',
+          header: t('cockpit.cols.owner', { defaultValue: 'Verantwortlich' }),
+          render: (r) =>
+            r.responsible_party ? (
+              <span className="text-[12px] capitalize text-ink/70">
+                {r.responsible_party}
+              </span>
+            ) : (
+              <span className="text-ink/30">—</span>
+            ),
+          className: 'w-32',
+        },
+      ]}
+    />
+  )
+}
+
+// ── Tab: Audit ─────────────────────────────────────────────────────────
+
+interface ProjectEventLike {
   id: string
-  numeral: string
-  title: string
-  count?: number
-  children: React.ReactNode
-}) {
-  return (
-    <section
-      id={id}
-      className="flex flex-col gap-5 border-t border-ink/12 pt-8 scroll-mt-32"
-    >
-      <header className="flex items-baseline gap-4">
-        <span className="font-serif italic text-[20px] text-clay-deep tabular-figures leading-none w-10 shrink-0">
-          {numeral}
-        </span>
-        <span className="text-[10px] uppercase tracking-[0.22em] font-medium text-foreground/65">
-          {title}
-        </span>
-        {typeof count === 'number' && count > 0 && (
-          <span className="font-serif italic text-[11px] text-clay/60 tabular-figures leading-none">
-            {String(count).padStart(2, '0')}
-          </span>
-        )}
-      </header>
-      <div className="pl-14">{children}</div>
-    </section>
-  )
+  created_at: string
+  triggered_by: string
+  event_type: string
+  reason?: string | null
 }
 
-function ScheduleList({ children }: { children: React.ReactNode }) {
-  return <ul className="flex flex-col gap-5">{children}</ul>
-}
-
-function ScheduleEntry({
-  index,
-  title,
-  meta,
-  body,
-  qualifier,
+function AuditTab({
+  events,
+  lang,
 }: {
-  index: number
-  title: string
-  meta?: React.ReactNode
-  body?: string
-  qualifier?: string
+  events: ProjectEventLike[]
+  lang: 'de' | 'en'
 }) {
+  const { t } = useTranslation()
   return (
-    <li className="grid grid-cols-[28px_1fr] gap-x-3">
-      <span className="font-serif italic text-[12px] text-clay/55 tabular-figures pt-1 leading-none text-center">
-        {String(index).padStart(2, '0')}
-      </span>
-      <div className="flex flex-col gap-1">
-        <div className="flex items-baseline justify-between gap-3">
-          <p className="text-[14px] font-medium text-ink leading-snug">{title}</p>
-          {meta}
-        </div>
-        {body && (
-          <p className="text-[12px] text-ink/70 leading-relaxed">{body}</p>
-        )}
-        {qualifier && (
-          <p className="text-[10px] text-clay/65 italic uppercase tracking-[0.14em]">
-            {qualifier}
-          </p>
-        )}
-      </div>
-    </li>
+    <CockpitTable
+      rows={events}
+      rowKey={(e) => e.id}
+      searchable={(e) => `${e.event_type} ${e.reason ?? ''} ${e.triggered_by}`}
+      searchPlaceholder={t('cockpit.search', { defaultValue: 'Audit durchsuchen…' })}
+      emptyMessage={t('chat.overview.auditEmpty')}
+      columns={[
+        {
+          id: 'when',
+          header: t('cockpit.cols.when', { defaultValue: 'Zeitpunkt' }),
+          sortValue: (e) => e.created_at,
+          render: (e) => (
+            <span className="font-serif italic text-clay-deep tabular-nums whitespace-nowrap">
+              {formatDateTime(e.created_at, lang)}
+            </span>
+          ),
+          className: 'w-44',
+        },
+        {
+          id: 'type',
+          header: t('cockpit.cols.event', { defaultValue: 'Ereignis' }),
+          sortValue: (e) => e.event_type,
+          render: (e) => <span className="text-ink">{e.event_type}</span>,
+          className: 'w-1/3',
+        },
+        {
+          id: 'who',
+          header: t('cockpit.cols.who', { defaultValue: 'Ausgelöst' }),
+          render: (e) => (
+            <span className="text-[12px] uppercase tracking-[0.14em] text-clay">
+              {e.triggered_by}
+            </span>
+          ),
+          className: 'w-32',
+        },
+        {
+          id: 'reason',
+          header: t('cockpit.cols.reason', { defaultValue: 'Grund' }),
+          render: (e) => (
+            <span className="text-[12px] italic text-ink/65">
+              {e.reason ?? '—'}
+            </span>
+          ),
+        },
+      ]}
+    />
   )
 }
 
-function Empty({ copy }: { copy: string }) {
-  return <p className="font-serif italic text-[12px] text-clay/70 leading-relaxed">{copy}</p>
+// ── Helpers ────────────────────────────────────────────────────────────
+
+function statusKindFromItemStatus(s: string): CockpitStatusKind {
+  switch (s) {
+    case 'erforderlich':
+      return 'erforderlich'
+    case 'liegt_vor':
+      return 'liegt_vor'
+    case 'eingereicht':
+      return 'eingereicht'
+    case 'genehmigt':
+      return 'genehmigt'
+    case 'freigegeben':
+      return 'freigegeben'
+    case 'nicht_erforderlich':
+      return 'nicht_erforderlich'
+    default:
+      return 'pending'
+  }
+}
+
+function formatDate(iso: string, lang: 'de' | 'en'): string {
+  const d = new Date(iso)
+  if (Number.isNaN(d.getTime())) return ''
+  return d.toLocaleDateString(lang === 'en' ? 'en-GB' : 'de-DE', {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
+  })
+}
+
+function formatDateTime(iso: string, lang: 'de' | 'en'): string {
+  const d = new Date(iso)
+  if (Number.isNaN(d.getTime())) return ''
+  return d.toLocaleString(lang === 'en' ? 'en-GB' : 'de-DE', {
+    day: '2-digit',
+    month: 'short',
+    year: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+  })
 }
