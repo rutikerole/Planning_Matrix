@@ -20,6 +20,7 @@
 
 import { PDFDocument, rgb, type PDFPage } from 'pdf-lib'
 import { loadBrandFonts, type BrandFonts } from '@/lib/fontLoader'
+import { factLabel, factValueWithUnit } from '@/lib/factLabel'
 import type { MessageRow, ProjectRow } from '@/types/db'
 import type { AreaState, ProjectState } from '@/types/projectState'
 
@@ -202,16 +203,15 @@ export async function buildExportPdf({
       )
       y -= 30
       for (const f of facts) {
-        const value = typeof f.value === 'string' ? f.value : JSON.stringify(f.value)
         const result = drawScheduleEntry({
           doc,
           page,
           fonts,
           y,
           index: facts.indexOf(f) + 1,
-          title: f.key,
+          title: factLabel(f.key, lang).label,
           meta: '',
-          body: value,
+          body: factValueWithUnit(f.key, f.value, lang),
           qualifier: `${f.qualifier.source} · ${f.qualifier.quality}`,
         })
         page = result.page

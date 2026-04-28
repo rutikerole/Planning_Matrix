@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next'
 import { AnimatePresence, m, useReducedMotion } from 'framer-motion'
 import type { Fact } from '@/types/projectState'
 import type { ProjectRow } from '@/types/db'
+import { factLabel, factValueWithUnit } from '@/lib/factLabel'
 
 interface Props {
   project: ProjectRow
@@ -32,7 +33,8 @@ const ROMAN = ['I', 'II', 'III', 'IV', 'V', 'VI']
  * facts. Reads like the Eckdaten block of a German A1 Bauantrag form.
  */
 export function EckdatenPanel({ project, facts }: Props) {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
+  const lang = (i18n.resolvedLanguage ?? 'de') as 'de' | 'en'
   const reduced = useReducedMotion()
 
   const derived: RailFact[] = [
@@ -56,8 +58,8 @@ export function EckdatenPanel({ project, facts }: Props) {
 
   const fromState: RailFact[] = facts.map((f) => ({
     id: `fact:${f.key}`,
-    key: f.key,
-    value: typeof f.value === 'string' ? f.value : JSON.stringify(f.value),
+    key: factLabel(f.key, lang).label,
+    value: factValueWithUnit(f.key, f.value, lang),
     qualifier: `${f.qualifier.source} · ${f.qualifier.quality}`,
     evidence: f.evidence ?? f.qualifier.reason,
   }))

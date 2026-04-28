@@ -12,6 +12,7 @@ import { BinderTabStrip } from '../components/BinderTabStrip'
 import { AuditTimeline } from '../components/AuditTimeline'
 import { ExportMenu } from '../components/ExportMenu'
 import type { ProjectState } from '@/types/projectState'
+import { factLabel, factValueWithUnit } from '@/lib/factLabel'
 
 /**
  * Phase 3.2 #44 — overview rebuilt as an architectural project binder.
@@ -140,10 +141,10 @@ export function OverviewPage() {
                   </span>
                   <div className="flex flex-col gap-1">
                     <span className="text-[10px] text-clay/85 uppercase tracking-[0.18em]">
-                      {f.key}
+                      {factLabel(f.key, lang).label}
                     </span>
                     <span className="text-[14px] font-medium text-ink leading-snug break-words">
-                      {typeof f.value === 'string' ? f.value : JSON.stringify(f.value)}
+                      {factValueWithUnit(f.key, f.value, lang)}
                     </span>
                     <span className="text-[9px] text-clay/60 italic uppercase tracking-[0.14em]">
                       {f.qualifier.source} · {f.qualifier.quality}

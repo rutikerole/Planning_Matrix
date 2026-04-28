@@ -2,6 +2,7 @@ import { Link, useParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import type { ProjectRow } from '@/types/db'
 import type { ProjectState } from '@/types/projectState'
+import { factLabel, factValueWithUnit } from '@/lib/factLabel'
 
 interface Props {
   project: ProjectRow
@@ -97,6 +98,9 @@ export function VerdictSection({ project, source }: Props) {
 }
 
 function DeterminingFactors({ state }: { state: Partial<ProjectState> }) {
+  const { i18n } = useTranslation()
+  const lang = (i18n.resolvedLanguage ?? 'de') as 'de' | 'en'
+
   const facts = (state.facts ?? []).filter(
     (f) => f.qualifier?.source === 'LEGAL' || f.qualifier?.quality === 'CALCULATED',
   )
@@ -110,7 +114,7 @@ function DeterminingFactors({ state }: { state: Partial<ProjectState> }) {
         const label =
           typeof f.value === 'string'
             ? f.value
-            : `${f.key}: ${JSON.stringify(f.value)}`
+            : `${factLabel(f.key, lang).label}: ${factValueWithUnit(f.key, f.value, lang)}`
         return (
           <span key={f.key}>
             {idx > 0 && <span aria-hidden="true" className="text-ink/40 mx-2">·</span>}

@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next'
 import type { ProjectState } from '@/types/projectState'
+import { factLabel, factValueWithUnit } from '@/lib/factLabel'
 
 interface Props {
   state: Partial<ProjectState>
@@ -131,8 +132,9 @@ function collectRisks(
   // Assumed facts → ANNAHME
   ;(state.facts ?? []).forEach((f) => {
     if (f.qualifier?.quality !== 'ASSUMED') return
-    const value = typeof f.value === 'string' ? f.value : JSON.stringify(f.value)
-    const body = f.evidence ?? `${f.key}: ${value}`
+    const labelText = factLabel(f.key, lang).label
+    const value = factValueWithUnit(f.key, f.value, lang)
+    const body = f.evidence ?? `${labelText}: ${value}`
     out.push({ id: `f-${f.key}`, tag: 'ANNAHME', body })
   })
 

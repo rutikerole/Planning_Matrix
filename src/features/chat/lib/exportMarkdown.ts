@@ -7,6 +7,7 @@
 
 import type { ProjectRow } from '@/types/db'
 import type { ProjectState, AreaState } from '@/types/projectState'
+import { factLabel, factValueWithUnit } from '@/lib/factLabel'
 
 interface ProjectEventRow {
   id: string
@@ -160,8 +161,9 @@ export function buildExportMarkdown({ project, events, lang }: BuildArgs): strin
     lines.push(`## ${t('Eckdaten', 'Key data')}`)
     lines.push('')
     facts.forEach((f) => {
-      const value = typeof f.value === 'string' ? f.value : JSON.stringify(f.value)
-      lines.push(`- **${f.key}:** ${value} *(${f.qualifier.source} · ${f.qualifier.quality})*`)
+      const label = factLabel(f.key, lang).label
+      const value = factValueWithUnit(f.key, f.value, lang)
+      lines.push(`- **${label}:** ${value} *(${f.qualifier.source} · ${f.qualifier.quality})*`)
       if (f.evidence) lines.push(`  ${f.evidence}`)
     })
     lines.push('')
