@@ -653,6 +653,30 @@
       "cta": "Zum Dashboard"
     }
   },
+  "result": {
+    "titlePrefix": "Briefing",
+    "cover": {
+      "docNoLabel": "Atelier-Briefing No.",
+      "subtitle": "Bauantrag-Vorbereitung",
+      "createdLabel": "Erstellt",
+      "bauherrLabel": "Bauherr",
+      "sessionLabel": "Bearbeitungszeit",
+      "minutes": "Min.",
+      "turns": "Wendungen",
+      "readOnly": "Schreibgeschützt",
+      "validUntil": "gültig bis",
+      "caveat": "Vorläufige Einschätzung — bestätigt durch eine/n bauvorlageberechtigte/n Architekt/in."
+    },
+    "verdict": {
+      "eyebrow": "Das Verfahren",
+      "basisIntro": "Diese Einordnung basiert auf:",
+      "confidenceLine": "Sicherheit der Einordnung:",
+      "empty": {
+        "body": "Die Einordnung erfordert weitere Angaben. Setzen Sie die Konsultation fort, um diesen Abschnitt zu vervollständigen.",
+        "cta": "Zur Konsultation"
+      }
+    }
+  },
   "legal": {
     "placeholder": {
       "eyebrow": "In Vorbereitung",

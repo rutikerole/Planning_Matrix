@@ -653,6 +653,30 @@
       "cta": "Back to dashboard"
     }
   },
+  "result": {
+    "titlePrefix": "Briefing",
+    "cover": {
+      "docNoLabel": "Atelier briefing No.",
+      "subtitle": "Permit preparation",
+      "createdLabel": "Created",
+      "bauherrLabel": "Bauherr",
+      "sessionLabel": "Time spent",
+      "minutes": "min.",
+      "turns": "turns",
+      "readOnly": "Read-only",
+      "validUntil": "valid until",
+      "caveat": "Preliminary assessment — confirmed by a licensed architect (bauvorlageberechtigt)."
+    },
+    "verdict": {
+      "eyebrow": "The procedure",
+      "basisIntro": "This classification is based on:",
+      "confidenceLine": "Classification confidence:",
+      "empty": {
+        "body": "The classification needs more information. Continue the consultation to complete this section.",
+        "cta": "Back to consultation"
+      }
+    }
+  },
   "legal": {
     "placeholder": {
       "eyebrow": "Coming soon",
