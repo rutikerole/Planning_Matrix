@@ -685,6 +685,7 @@
   },
   "result": {
     "titlePrefix": "Briefing",
+    "backToChat": "Zurück zum Gespräch",
     "cover": {
       "docNoLabel": "Atelier-Briefing No.",
       "subtitle": "Bauantrag-Vorbereitung",

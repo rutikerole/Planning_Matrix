@@ -685,6 +685,7 @@
   },
   "result": {
     "titlePrefix": "Briefing",
+    "backToChat": "Back to conversation",
     "cover": {
       "docNoLabel": "Atelier briefing No.",
       "subtitle": "Permit preparation",

@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
-import { useParams } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { ArrowLeft } from 'lucide-react'
 import { BlueprintSubstrate } from '@/components/shared/BlueprintSubstrate'
 import { useProject } from '@/features/chat/hooks/useProject'
 import { useMessages } from '@/features/chat/hooks/useMessages'
@@ -78,6 +79,7 @@ export function ResultPage() {
  * section receives `source` so it can hide owner-only affordances.
  */
 export function ResultPageBody({ project, messages, events, source }: BodyProps) {
+  const { t } = useTranslation()
   const isShared = source.kind === 'shared'
   return (
     <div
@@ -86,6 +88,22 @@ export function ResultPageBody({ project, messages, events, source }: BodyProps)
       data-document-no={project.id}
     >
       <BlueprintSubstrate lensRadius={260} breathing={false} driftPx={0} />
+
+      {/* Phase 3.7 #77 — Zurück-zum-Gespräch link in the top-left of
+        * the result page, owner-mode only. Hidden in shared view (the
+        * recipient never had a conversation to return to). Sized small
+        * so it doesn't compete with the cover hero's typography but
+        * gives the architect / Bauherr a clear way back. */}
+      {!isShared && (
+        <Link
+          to={`/projects/${project.id}`}
+          data-no-print="true"
+          className="fixed top-5 left-5 z-30 inline-flex items-center gap-1.5 h-9 px-3 bg-paper/85 backdrop-blur-[2px] border border-ink/15 rounded-full text-[12.5px] text-ink/75 hover:text-ink hover:border-ink/30 hover:bg-paper transition-colors duration-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/35 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+        >
+          <ArrowLeft aria-hidden="true" className="size-3.5" />
+          {t('result.backToChat', { defaultValue: 'Zurück zum Gespräch' })}
+        </Link>
+      )}
 
       <CoverHero project={project} messages={messages} source={source} />
 
