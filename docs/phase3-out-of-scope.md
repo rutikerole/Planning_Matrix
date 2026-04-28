@@ -3,6 +3,18 @@
 > What didn't ship in Phase 3 and lives in the Phase 4+ backlog. Sorted
 > by how often we'll be tempted to slot them in early.
 
+## Resolved in Phase 3.1
+
+These shipped in the polish sweep — see `docs/phase3-1-polish.md`:
+
+- ✅ **Mobile drawers** (vaul left + right rails, 85% width, peek-on-new-recommendation, reduced-motion badge fallback) — commit #31, D15.
+- ✅ **completion_signal end-to-end** — Edge Function now exposes the model's signal in the response envelope; `useChatTurn.onSuccess` reads it; `CompletionInterstitial` renders model-driven flavours — commit #30.
+- ✅ **Top-3 numbering bug** (1, 1, 2 → 1, 2, 3) — commit #29 fixed the visible numbering and added `normalizeRecommendations` to keep persisted ranks sequential — D14.
+- ✅ **Recommendations cap** at 12 — commit #29/#30 share the same normalize/cap path — D14.
+- ✅ **MAX_TOKENS tuning** (2048 → 1280) to bound worst-case latency — commit #33.
+- ✅ **`thinking_label_de` persistence** so the indicator hint survives across turns — commit #33 + migration `0004_thinking_label.sql`.
+- ✅ **View Transitions API** for the wizard → chat handoff (Polish Move 5) — commit #32, with Framer Motion fallback for non-Chromium.
+
 ## Real external integrations
 
 - **B-Plan / F-Plan / Grundbuch** integration. The Edge Function honestly tells the user it can't run live lookups (system prompt §EHRLICHKEITSPFLICHT) and marks resulting facts as `LEGAL/ASSUMED`.

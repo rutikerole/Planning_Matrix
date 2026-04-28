@@ -113,7 +113,25 @@
 
 ---
 
+## D14 · Recommendations cap (Phase 3.1)
+
+**Question:** What stops the model from accumulating dozens of recommendations across a long conversation?
+
+**Answer:** A constant cap of **12** in `applyRecommendationsDelta` → `normalizeRecommendations`. After every delta, the helper sorts by rank-then-createdAt, slices to 12, then renormalises ranks 1..N.
+
+**Reasoning:** Twelve gives the visible top-3 plus 9 in the Overview modal — generous headroom for a conversation while bounding worst-case storage. Older drops by lowest rank (i.e. least important per the model). Tied to the Phase 3.1 #29 numbering fix because the renormalize step + cap share the same code path.
+
+## D15 · Mobile drawers ship in Phase 3.1, not Phase 3
+
+**Question:** Why did mobile drawers slip from Phase 3 batch 4 to Phase 3.1?
+
+**Answer:** Batch 4 hit context-budget limits with the polish lift carrying the most weight; we deferred the drawer implementation to keep the polish moves clean. Phase 3.1 batch 4 ships them via vaul (already a dep), 85% screen-width drawers from left and right edges, with the right-rail peek-on-new-recommendation behaviour and a reduced-motion fallback badge dot.
+
+**Reasoning:** Pattern: defer mechanical work that can be added cleanly later, ship the design moves that need careful first-pass thinking on time. Mobile drawers are mechanical (vaul does the heavy lift); the polish moves needed the room. This decision documents the deferral pattern so we know it was deliberate.
+
+---
+
 **Carried forward — instructions A and B (added 2026-04-27 mid-conversation):**
 
 - **A** — `PLAN.md` is **not** deleted after the chat ships. It moves to `docs/phase3-plan.md` and is committed in the final commit of this phase. Future-Rutik and future-Claude need the decision archaeology.
-- **B** — `docs/phase3-decisions.md` (this file) ships alongside the moved plan, one section per D1–D13.
+- **B** — `docs/phase3-decisions.md` (this file) ships alongside the moved plan, one section per D1–D15.

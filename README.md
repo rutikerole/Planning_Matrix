@@ -25,6 +25,7 @@ Live: <https://planning-matrix.vercel.app/>
 - **Phase 1.6** — cinematic direction (full-bleed photographic hero, atmospheric backdrops, blueprint floor plan, elevated demo, ambient motion)
 - **Phase 2** — authentication
 - **Phase 3** — chat core: two-question wizard, three-zone chat workspace, Anthropic-backed Edge Function, dossier-styled right rail, specialist roundtable
+- **Phase 3.1** — polish sweep: Top-3 numbering fix, completion_signal end-to-end, mobile drawers (vaul), View Transitions API for the wizard handoff, MAX_TOKENS tuning, `thinking_label_de` persistence (`docs/phase3-1-polish.md`)
 
 ## Phase 3 — Edge Function workflow
 
