@@ -408,6 +408,11 @@
   "chat": {
     "leaveProject": "Leave project",
     "atTheTable": "At the table",
+    "titleBlock": {
+      "eyebrow": "Project",
+      "noPlot": "No plot specified",
+      "created": "Created"
+    },
     "mobile": {
       "openLeftRail": "Open left sidebar",
       "openRightRail": "Open right sidebar",

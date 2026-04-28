@@ -13,6 +13,8 @@ import { OfflineBanner } from '../components/Banners'
 import { MobileTopBar } from '../components/MobileTopBar'
 import { MobileRailDrawer } from '../components/MobileRailDrawer'
 import { MobileRightRailPeek } from '../components/MobileRightRailPeek'
+import { PaperCard } from '../components/PaperCard'
+import { ConversationCursor } from '../components/ConversationCursor'
 import { buildUserMessageText } from '../lib/userAnswerHelpers'
 import { useProject } from '../hooks/useProject'
 import { useMessages } from '../hooks/useMessages'
@@ -164,8 +166,15 @@ export function ChatWorkspacePage() {
           ) : null
         }
       >
-        {hasMessages ? <Thread messages={augmentedMessages} /> : <EmptyState />}
+        {hasMessages ? (
+          <PaperCard project={project}>
+            <Thread messages={augmentedMessages} />
+          </PaperCard>
+        ) : (
+          <EmptyState />
+        )}
       </ChatWorkspaceLayout>
+      <ConversationCursor />
 
       <IdkPopover
         open={idkOpen}

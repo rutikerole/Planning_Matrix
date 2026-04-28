@@ -408,6 +408,11 @@
   "chat": {
     "leaveProject": "Projekt verlassen",
     "atTheTable": "Am Tisch",
+    "titleBlock": {
+      "eyebrow": "Projekt",
+      "noPlot": "Kein Grundstück angegeben",
+      "created": "Erstellt"
+    },
     "mobile": {
       "openLeftRail": "Linke Seitenleiste öffnen",
       "openRightRail": "Rechte Seitenleiste öffnen",
