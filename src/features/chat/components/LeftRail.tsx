@@ -64,8 +64,13 @@ export function LeftRail({ project, messages }: Props) {
 
       <span aria-hidden="true" className="block h-px bg-ink/12" />
 
-      {/* Phase 3.4 #53 — progress meter */}
-      <ProgressMeter />
+      {/* Phase 3.4 #53 — progress meter. Phase 3.6 #69 demotes this
+        * to a secondary indicator (Q8 locked: keep, demote visually);
+        * the loud bar at the top of the thread is now the dominant
+        * signal of conversation depth. */}
+      <div className="opacity-70">
+        <ProgressMeter />
+      </div>
 
       <span aria-hidden="true" className="block h-px bg-ink/12" />
 

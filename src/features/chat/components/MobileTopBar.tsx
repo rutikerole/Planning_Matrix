@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import { useChatStore } from '@/stores/chatStore'
 import { estimateProgress } from '../lib/progressEstimate'
-import { ProgressMeterCompact } from './ProgressMeterCompact'
+import { ChatProgressBarMobile } from './Progress/ChatProgressBarMobile'
 
 interface Props {
   projectName: string
@@ -68,9 +68,13 @@ export function MobileTopBar({
             type="button"
             onClick={onProgressClick}
             aria-label={t('chat.progress.expand', { defaultValue: 'Fortschritt anzeigen' })}
-            className="flex-1 min-w-0 flex items-center justify-center px-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm"
+            className="flex-1 min-w-0 flex items-stretch justify-center px-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm"
           >
-            <ProgressMeterCompact />
+            {/* Phase 3.6 #69 — segment row + percent (no labels). Tap
+              * opens the top drawer with the full ChatProgressBar. */}
+            <div className="flex-1 self-center">
+              <ChatProgressBarMobile />
+            </div>
           </button>
         ) : (
           <div

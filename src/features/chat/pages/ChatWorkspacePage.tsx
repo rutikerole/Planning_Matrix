@@ -16,7 +16,7 @@ import { MobileRailDrawer } from '../components/MobileRailDrawer'
 import { MobileRightRailPeek } from '../components/MobileRightRailPeek'
 import { PaperCard } from '../components/PaperCard'
 import { ConversationCursor } from '../components/ConversationCursor'
-import { ProgressMeter } from '../components/ProgressMeter'
+import { ChatProgressBar } from '../components/Progress/ChatProgressBar'
 import { buildUserMessageText } from '../lib/userAnswerHelpers'
 import { useProject } from '../hooks/useProject'
 import { useMessages } from '../hooks/useMessages'
@@ -228,9 +228,17 @@ export function ChatWorkspacePage() {
         }
       >
         {hasMessages ? (
-          <PaperCard project={project}>
-            <Thread messages={augmentedMessages} />
-          </PaperCard>
+          <>
+            {/* Phase 3.6 #69 — loud progress indicator at the top of the
+              * thread. Sticky to the message column; the left-rail
+              * ProgressMeter stays mounted as a secondary indicator. */}
+            <div className="hidden lg:block -mt-12 mb-6 lg:-mt-16">
+              <ChatProgressBar />
+            </div>
+            <PaperCard project={project}>
+              <Thread messages={augmentedMessages} />
+            </PaperCard>
+          </>
         ) : (
           <EmptyState />
         )}
@@ -279,7 +287,10 @@ export function ChatWorkspacePage() {
               {t('chat.progress.eyebrow', { defaultValue: 'Fortschritt' })}
             </Drawer.Title>
             <div className="absolute top-2 left-1/2 -translate-x-1/2 h-1 w-10 rounded-full bg-clay/40" />
-            <ProgressMeter />
+            {/* Phase 3.6 #69 — full progress bar with labels in the
+              * mobile top drawer. Tapping the condensed bar in the top
+              * bar opens this drawer. */}
+            <ChatProgressBar />
           </Drawer.Content>
         </Drawer.Portal>
       </Drawer.Root>

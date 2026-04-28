@@ -50,3 +50,107 @@ export function estimateTurnsRemaining(progress: number): string {
   const hi = Math.max(lo, Math.ceil(remainingFloat + 1))
   return lo === hi ? String(lo) : `${lo}–${hi}`
 }
+
+// ───────────────────────────────────────────────────────────────────────
+// Phase 3.6 #69 — segment-aware progress
+//
+// The top-of-thread bar shows the user's journey across the seven
+// conversation gates. Each segment is `done` / `current` / `upcoming`;
+// the current segment fills proportionally based on the specialist's
+// own anchor + relative turn position so the bar still moves between
+// specialist handoffs.
+// ───────────────────────────────────────────────────────────────────────
+
+export type SegmentState = 'done' | 'current' | 'upcoming'
+
+export interface ProgressSegment {
+  /** Specialist this segment represents. */
+  specialist: Specialist
+  state: SegmentState
+  /** 0..1 fill within this segment — only meaningful when state='current'. */
+  fill: number
+}
+
+export interface SegmentProgress {
+  segments: ProgressSegment[]
+  /** Overall percentage (0..100). */
+  percent: number
+  /** Index of the current segment in `segments`. */
+  currentIdx: number
+}
+
+/** Order of the seven gates. Mirrors VerlaufMap from Phase 3.4. */
+export const SEGMENT_ORDER: Specialist[] = [
+  'moderator',
+  'planungsrecht',
+  'bauordnungsrecht',
+  'sonstige_vorgaben',
+  'verfahren',
+  'beteiligte',
+  'synthesizer',
+]
+
+/**
+ * Compute per-segment progress for the top-of-thread bar.
+ *
+ * Heuristic:
+ *   • The current specialist (or its index in `SEGMENT_ORDER`) marks
+ *     the current segment.
+ *   • All segments before it are `done`.
+ *   • All segments after are `upcoming`.
+ *   • Within the current segment, fill = (overall progress -
+ *     anchor_of_current) / (anchor_of_next - anchor_of_current),
+ *     clamped to [0, 1].
+ *
+ * When `completion_signal === 'ready_for_review'` the caller can pass
+ * `forceComplete` to fill every segment.
+ */
+export function computeSegmentProgress(
+  turnCount: number,
+  currentSpecialist: Specialist | null,
+  forceComplete = false,
+): SegmentProgress {
+  if (forceComplete) {
+    return {
+      segments: SEGMENT_ORDER.map((spec) => ({
+        specialist: spec,
+        state: 'done' as SegmentState,
+        fill: 1,
+      })),
+      percent: 100,
+      currentIdx: SEGMENT_ORDER.length - 1,
+    }
+  }
+
+  const overall = estimateProgress(turnCount, currentSpecialist)
+  const idx = currentSpecialist
+    ? Math.max(0, SEGMENT_ORDER.indexOf(currentSpecialist))
+    : 0
+
+  const currentAnchor = SPECIALIST_PROGRESS[SEGMENT_ORDER[idx]]
+  const nextAnchor =
+    idx + 1 < SEGMENT_ORDER.length
+      ? SPECIALIST_PROGRESS[SEGMENT_ORDER[idx + 1]]
+      : 1
+
+  const span = Math.max(0.001, nextAnchor - currentAnchor)
+  const within = Math.max(0, Math.min(1, (overall - currentAnchor) / span))
+
+  const segments: ProgressSegment[] = SEGMENT_ORDER.map((specialist, i) => {
+    if (i < idx) return { specialist, state: 'done' as SegmentState, fill: 1 }
+    if (i === idx) {
+      return {
+        specialist,
+        state: 'current' as SegmentState,
+        fill: within,
+      }
+    }
+    return { specialist, state: 'upcoming' as SegmentState, fill: 0 }
+  })
+
+  return {
+    segments,
+    percent: Math.round(overall * 100),
+    currentIdx: idx,
+  }
+}
