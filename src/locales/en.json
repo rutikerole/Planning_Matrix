@@ -414,10 +414,11 @@
       "created": "Created"
     },
     "mobile": {
+      "eyebrow": "Project",
       "openLeftRail": "Open left sidebar",
       "openRightRail": "Open right sidebar",
       "expandRail": "Expand sidebar",
-      "peekLabel": "Update",
+      "peekLabel": "Note",
       "peekTap": "Show update"
     },
     "system": {

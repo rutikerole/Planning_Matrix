@@ -414,10 +414,11 @@
       "created": "Erstellt"
     },
     "mobile": {
+      "eyebrow": "Projekt",
       "openLeftRail": "Linke Seitenleiste öffnen",
       "openRightRail": "Rechte Seitenleiste öffnen",
       "expandRail": "Seitenleiste erweitern",
-      "peekLabel": "Update",
+      "peekLabel": "Notiz",
       "peekTap": "Aktualisierung anzeigen"
     },
     "system": {
