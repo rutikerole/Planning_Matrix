@@ -138,6 +138,16 @@
 
 ---
 
+## D18 · Result page architecture (Phase 3.5 · 2026-04-28)
+
+**Question:** The Result Page is the product's most important deliverable — twelve sections that read top-to-bottom as a real architectural-document briefing. How do we ship the right structural decisions across schema, auth, print, and the one new visual primitive?
+
+**Answer:** Seven commits (#60–#66). Migration 0006 creates `project_share_tokens`. Two new Edge Functions: `create-share-token` (auth, owner-only) and `get-shared-project` (anon, validates token, queries with service role). Public route `/result/share/:token` mounts `<SharedResultPage>` which calls `useSharedProject(token)` and renders the same `<ResultPageBody>` the owned page uses with `source.kind === 'shared'` so mutation affordances hide. Recommendations gain optional `estimated_effort`, `responsible_party`, and `qualifier` (no Postgres migration — `projects.state` is JSONB; only Zod + persona changed). Print stylesheet scoped via `[data-print-target="result-page"]`. The one new visual primitive (240×240 confidence-radial doughnut) lives in `<ConfidenceRadial>`.
+
+**Reasoning:** Edge Function with service role beats RLS-policy-allowing-anon for share access — keeps the projects table's read posture conservative + centralizes token validity in one auditable place. Schema migration applied additively (no breaking change to existing rows; new fields optional). The atelier vocabulary is locked across 3.2/3.3/3.4 — Phase 3.5 reuses every primitive verbatim and only invents the confidence radial. PDF export reuses pdf-lib + brand-fonts scaffolding from #55. Plan locked via PHASE_3_5_PLAN.md §6 Q1–Q10 before any code shipped.
+
+---
+
 ## D17 · Streaming + engagement layer (Phase 3.4 · 2026-04-28)
 
 **Question:** Three real UX problems — no sense of progress, no way to take work home, slow + boring during latency. How do we ship them in one batch without breaking Phase 3.2 / 3.3 atelier consistency?

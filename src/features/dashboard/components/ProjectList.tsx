@@ -59,6 +59,16 @@ export function ProjectList({ projects }: Props) {
                     {project.plot_address}
                   </p>
                 )}
+                {/* Phase 3.5 #66 — Ergebnis quick-link, parallel to the
+                 * row's chat-workspace navigation. stopPropagation so
+                 * the outer Link doesn't fire. */}
+                <Link
+                  to={`/projects/${project.id}/result`}
+                  onClick={(e) => e.stopPropagation()}
+                  className="font-serif italic text-[12px] text-clay/85 hover:text-ink underline underline-offset-4 decoration-clay/55 self-start transition-colors duration-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm leading-snug"
+                >
+                  {t('dashboard.atelier.viewResult', { defaultValue: 'Ergebnis' })} →
+                </Link>
                 <p className="text-[11px] text-ink/55 leading-relaxed flex flex-wrap items-baseline gap-x-2">
                   <span>
                     {t('dashboard.atelier.lastActivityLabel')}:{' '}

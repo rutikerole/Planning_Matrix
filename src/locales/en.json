@@ -350,6 +350,7 @@
       "turnCountLabel_other": "turns",
       "projectsHeading": "Projects",
       "newCta": "+ New",
+      "viewResult": "Briefing",
       "loading": "Loading projects …",
       "signOut": "Sign out",
       "state": {
@@ -431,6 +432,9 @@
   },
   "chat": {
     "leaveProject": "Leave project",
+    "leftRail": {
+      "viewResult": "View briefing"
+    },
     "atTheTable": "At the table",
     "verlauf": {
       "eyebrow": "Journey",

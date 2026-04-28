@@ -350,6 +350,7 @@
       "turnCountLabel_other": "Wendungen",
       "projectsHeading": "Projekte",
       "newCta": "+ Neu",
+      "viewResult": "Ergebnis",
       "loading": "Projekte werden geladen …",
       "signOut": "Abmelden",
       "state": {
@@ -431,6 +432,9 @@
   },
   "chat": {
     "leaveProject": "Projekt verlassen",
+    "leftRail": {
+      "viewResult": "Ergebnis ansehen"
+    },
     "atTheTable": "Am Tisch",
     "verlauf": {
       "eyebrow": "Verlauf",

@@ -82,6 +82,17 @@ export function LeftRail({ project, messages }: Props) {
       {/* Fountain-pen + inkwell footer signature */}
       <FountainPenFooter />
 
+      {/* Phase 3.5 #66 — Ergebnis ansehen (primary entry point to the
+       * result page; sits above the secondary export menu + overview
+       * link in the rail's footer cluster). */}
+      <Link
+        to={`/projects/${project.id}/result`}
+        className="inline-flex items-center gap-1.5 text-[13px] font-medium text-ink hover:text-clay-deep transition-colors duration-soft self-start focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/35 focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm"
+      >
+        <span className="font-serif italic text-clay-deep">→</span>
+        {t('chat.leftRail.viewResult', { defaultValue: 'Ergebnis ansehen' })}
+      </Link>
+
       {/* Phase 3.4 #55 — Exportieren */}
       <ExportMenu
         project={project}
