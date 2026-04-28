@@ -115,7 +115,7 @@ export function CostTimelinePanel({ state }: Props) {
   return (
     <section
       id="sec-cost-timeline"
-      className="px-6 sm:px-12 lg:px-20 py-20 sm:py-24 max-w-3xl mx-auto w-full scroll-mt-16 flex flex-col gap-8"
+      className="px-4 sm:px-12 lg:px-20 py-14 sm:py-24 max-w-3xl mx-auto w-full scroll-mt-16 flex flex-col gap-8"
     >
       <header className="flex items-baseline gap-4">
         <span className="font-serif italic text-[20px] text-clay-deep tabular-figures leading-none w-10 shrink-0">
@@ -144,34 +144,42 @@ export function CostTimelinePanel({ state }: Props) {
             defaultValue: 'Verfahrensdauer',
           })}
         </p>
-        <div className="border border-ink/12 rounded-[2px] bg-paper p-5 flex flex-col gap-3">
+        <div className="border border-ink/12 rounded-[2px] bg-paper p-4 sm:p-5 flex flex-col gap-3">
+          {/* Phase 3.9 #96 — vertical timeline rows on mobile.
+            * Mobile (< 640 px): label + range on a flex row, bar
+            * full-width below it (relative to column width). Desktop
+            * keeps the original 3-column grid. */}
           {PHASES.map((p) => {
             const widthPct = Math.round((p.weight / totalWeight) * 100)
             return (
               <div
                 key={p.key}
-                className="grid grid-cols-[140px_1fr_auto] items-center gap-3 text-[13px]"
+                className="flex flex-col gap-1.5 sm:grid sm:grid-cols-[140px_1fr_auto] sm:items-center sm:gap-3 text-[13px]"
               >
-                <span className="text-ink/85">{lang === 'en' ? p.labelEn : p.labelDe}</span>
+                <div className="flex items-baseline justify-between gap-3 sm:contents">
+                  <span className="text-ink/85">
+                    {lang === 'en' ? p.labelEn : p.labelDe}
+                  </span>
+                  <span className="sm:order-3 font-serif italic text-clay-deep tabular-figures whitespace-nowrap text-right">
+                    {lang === 'en' ? p.rangeEn : p.rangeDe}
+                  </span>
+                </div>
                 <span
                   aria-hidden="true"
-                  className="block h-2 bg-clay/45 rounded-[1px]"
+                  className="block h-2 bg-clay/45 rounded-[1px] sm:order-2"
                   style={{ width: `${widthPct}%` }}
                 />
-                <span className="font-serif italic text-clay-deep tabular-figures whitespace-nowrap">
-                  {lang === 'en' ? p.rangeEn : p.rangeDe}
-                </span>
               </div>
             )
           })}
           <span aria-hidden="true" className="block h-px w-full bg-ink/15 mt-2" />
-          <div className="grid grid-cols-[140px_1fr_auto] items-center gap-3 text-[14px]">
+          <div className="flex items-baseline justify-between sm:grid sm:grid-cols-[140px_1fr_auto] sm:items-center gap-3 text-[14px]">
             <span className="font-medium text-ink">
               {t('result.costTimeline.totalLabel', {
                 defaultValue: 'Gesamt',
               })}
             </span>
-            <span aria-hidden="true" />
+            <span aria-hidden="true" className="hidden sm:block" />
             <span className="font-serif italic text-clay-deep tabular-figures">
               {t('result.costTimeline.totalDuration', {
                 defaultValue: 'ca. 4–6 Monate',
@@ -193,7 +201,7 @@ export function CostTimelinePanel({ state }: Props) {
             })}
           </span>
         </p>
-        <div className="border border-ink/12 rounded-[2px] bg-paper p-5 flex flex-col gap-2.5">
+        <div className="border border-ink/12 rounded-[2px] bg-paper p-4 sm:p-5 flex flex-col gap-2.5">
           {COST_LINES.map((line) => (
             <div
               key={line.key}
