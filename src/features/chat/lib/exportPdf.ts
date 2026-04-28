@@ -21,8 +21,20 @@
 import { PDFDocument, rgb, type PDFPage } from 'pdf-lib'
 import { loadBrandFonts, type BrandFonts } from '@/lib/fontLoader'
 import { factLabel, factValueWithUnit } from '@/lib/factLabel'
+import { winAnsiSafe } from '@/lib/winAnsiSafe'
 import type { MessageRow, ProjectRow } from '@/types/db'
 import type { AreaState, ProjectState } from '@/types/projectState'
+
+/**
+ * Phase 3.6 #73 — sanitize unicode that pdf-lib's WinAnsi-encoded
+ * Helvetica fallback can't draw. Active only when
+ * fonts.usingFallback === true; fontkit + brand TTFs handle full
+ * unicode natively. Module-scope mutable: set once at the top of
+ * buildExportPdf, read by helper functions. The PDF build is a
+ * single synchronous pipeline driven from one entry point, so
+ * sharing this here is safe in practice.
+ */
+let safe: (s: string) => string = (s: string) => s
 
 interface ProjectEventRow {
   id: string
@@ -76,6 +88,8 @@ export async function buildExportPdf({
   doc.setProducer('Planning Matrix')
 
   const fonts = await loadBrandFonts(doc)
+  safe = fonts.usingFallback ? winAnsiSafe : (s: string) => s
+
   const state = (project.state ?? {}) as Partial<ProjectState>
 
   // ── Page 1: title ──────────────────────────────────────────────
@@ -103,7 +117,7 @@ export async function buildExportPdf({
     drawSectionHeader(page, fonts, y, lang === 'en' ? 'IV  PROCEDURES' : 'IV  VERFAHREN')
     y -= 30
     if (procs.length === 0) {
-      page.drawText(lang === 'en' ? '— None recorded.' : '— Noch nicht erfasst.', {
+      page.drawText(safe(lang === 'en' ? '- None recorded.' : '- Noch nicht erfasst.'), {
         x: MARGIN + 40,
         y,
         size: 11,
@@ -233,14 +247,14 @@ export async function buildExportPdf({
     for (const ev of events.slice(0, 30)) {
       ;({ page, y } = ensureSpace(doc, page, y, 30))
       const when = formatDateTime(ev.created_at, lang)
-      page.drawText(when, {
+      page.drawText(safe(when), {
         x: MARGIN,
         y,
         size: 9,
         font: fonts.serifItalic,
         color: CLAY_DEEP,
       })
-      page.drawText(`${ev.triggered_by}  ·  ${ev.event_type}`, {
+      page.drawText(safe(`${ev.triggered_by}  ·  ${ev.event_type}`), {
         x: MARGIN + 130,
         y,
         size: 10,
@@ -249,7 +263,7 @@ export async function buildExportPdf({
       })
       y -= 14
       if (ev.reason) {
-        page.drawText(ev.reason, {
+        page.drawText(safe(ev.reason), {
           x: MARGIN + 130,
           y,
           size: 9,
@@ -268,7 +282,7 @@ export async function buildExportPdf({
   const today = formatDate(new Date().toISOString(), lang)
   const footer = `${lang === 'en' ? 'Generated with Planning Matrix' : 'Generiert mit Planning Matrix'}  ·  planning-matrix.app  ·  ${today}`
   allPages.forEach((p, i) => {
-    p.drawText(footer, {
+    p.drawText(safe(footer), {
       x: MARGIN,
       y: 28,
       size: 8,
@@ -276,7 +290,7 @@ export async function buildExportPdf({
       color: rgb(0.13, 0.14, 0.16),
       opacity: 0.55,
     })
-    p.drawText(`${i + 1} / ${allPages.length}`, {
+    p.drawText(safe(`${i + 1} / ${allPages.length}`), {
       x: PAGE_WIDTH - MARGIN - 40,
       y: 28,
       size: 8,
@@ -315,7 +329,7 @@ async function drawTitlePage(
   const { page } = startPage(doc)
 
   // Wordmark up top
-  page.drawText('Planning Matrix', {
+  page.drawText(safe('Planning Matrix'), {
     x: MARGIN,
     y: PAGE_HEIGHT - MARGIN - 6,
     size: 11,
@@ -325,7 +339,9 @@ async function drawTitlePage(
 
   // Eyebrow
   page.drawText(
-    lang === 'en' ? 'PROJECT  ·  EXPORTED PROJECT BRIEF' : 'PROJEKT  ·  EXPORT-BRIEFING',
+    safe(
+      lang === 'en' ? 'PROJECT  ·  EXPORTED PROJECT BRIEF' : 'PROJEKT  ·  EXPORT-BRIEFING',
+    ),
     {
       x: MARGIN,
       y: PAGE_HEIGHT / 2 + 60,
@@ -336,7 +352,7 @@ async function drawTitlePage(
   )
 
   // Intent (display)
-  page.drawText(project.name, {
+  page.drawText(safe(project.name), {
     x: MARGIN,
     y: PAGE_HEIGHT / 2 + 20,
     size: 28,
@@ -346,7 +362,7 @@ async function drawTitlePage(
 
   // Address
   if (project.plot_address) {
-    page.drawText(project.plot_address, {
+    page.drawText(safe(project.plot_address), {
       x: MARGIN,
       y: PAGE_HEIGHT / 2 - 8,
       size: 14,
@@ -367,7 +383,7 @@ async function drawTitlePage(
 
   // Created
   page.drawText(
-    `${lang === 'en' ? 'Created' : 'Erstellt'}: ${formatDate(project.created_at, lang)}`,
+    safe(`${lang === 'en' ? 'Created' : 'Erstellt'}: ${formatDate(project.created_at, lang)}`),
     {
       x: MARGIN,
       y: PAGE_HEIGHT / 2 - 50,
@@ -381,11 +397,16 @@ async function drawTitlePage(
   // Axonometric placeholder — simple hand-drawn building glyph
   drawAxonometricGlyph(page, MARGIN, PAGE_HEIGHT / 2 - 200, 120)
 
-  // Footer caveat
+  // Footer caveat. Em-dashes flattened to hyphens unconditionally so
+  // the literal copy doesn't depend on the runtime sanitizer being
+  // active; safe() also runs in case the source ever drifts.
+  // Umlauts are Latin-1 and survive Helvetica intact.
   page.drawText(
-    lang === 'en'
-      ? 'Preliminary assessment — confirmed by a licensed architect (bauvorlageberechtigt).'
-      : 'Vorläufige Zusammenfassung — bestätigt durch eine/n bauvorlageberechtigte/n Architekt/in.',
+    safe(
+      lang === 'en'
+        ? 'Preliminary assessment - confirmed by a licensed architect (bauvorlageberechtigt).'
+        : 'Vorläufige Zusammenfassung - bestätigt durch eine/n bauvorlageberechtigte/n Architekt/in.',
+    ),
     {
       x: MARGIN,
       y: MARGIN + 56,
@@ -454,7 +475,7 @@ function drawTop3Page(
       opacity: 0.35,
     })
     // Italic-Serif numeral
-    page.drawText(`${idx + 1}.`, {
+    page.drawText(safe(`${idx + 1}.`), {
       x: MARGIN,
       y: y - 4,
       size: 22,
@@ -462,7 +483,7 @@ function drawTop3Page(
       color: CLAY_DEEP,
     })
     // Title
-    page.drawText(title, {
+    page.drawText(safe(title), {
       x: MARGIN + 28,
       y,
       size: 14,
@@ -475,7 +496,7 @@ function drawTop3Page(
     if (detail) {
       const wrapped = wrapText(detail, 80)
       wrapped.forEach((line) => {
-        page.drawText(line, {
+        page.drawText(safe(line), {
           x: MARGIN + 28,
           y,
           size: 11,
@@ -486,12 +507,14 @@ function drawTop3Page(
         y -= 14
       })
     }
-    // Footer caveat
+    // Footer caveat. Em-dash flattened — same rationale as the cover.
     y -= 4
     page.drawText(
-      lang === 'en'
-        ? '— Preliminary; confirmation by a licensed architect required.'
-        : '— Vorläufig; Bestätigung durch eine/n bauvorlageberechtigte/n Architekt/in.',
+      safe(
+        lang === 'en'
+          ? '- Preliminary; confirmation by a licensed architect required.'
+          : '- Vorläufig; Bestätigung durch eine/n bauvorlageberechtigte/n Architekt/in.',
+      ),
       {
         x: MARGIN + 28,
         y,
@@ -575,7 +598,7 @@ function drawBereichePage(
       borderWidth: 0.5,
       borderOpacity: 0.3,
     })
-    page.drawText(key, {
+    page.drawText(safe(key), {
       x: diagramX + 8,
       y: bandTop - bandH + 11,
       size: 11,
@@ -599,14 +622,14 @@ function drawBereichePage(
     const a = areas[key]
     if (!a) return
     const labelText = `${key}  ${labels[key][lang]}`
-    page.drawText(labelText, {
+    page.drawText(safe(labelText), {
       x: MARGIN,
       y: legendY,
       size: 12,
       font: fonts.interMedium,
       color: INK,
     })
-    page.drawText(stateLabels[a.state], {
+    page.drawText(safe(stateLabels[a.state]), {
       x: MARGIN + 200,
       y: legendY,
       size: 10,
@@ -616,7 +639,7 @@ function drawBereichePage(
     })
     legendY -= 18
     if (a.reason) {
-      page.drawText(a.reason, {
+      page.drawText(safe(a.reason), {
         x: MARGIN,
         y: legendY,
         size: 10,
@@ -659,7 +682,7 @@ function drawHatching(
 
 function drawSectionHeader(page: PDFPage, fonts: BrandFonts, y: number, title: string) {
   // Italic Serif numeral + uppercase tracked title
-  page.drawText(title, {
+  page.drawText(safe(title), {
     x: MARGIN,
     y,
     size: 11,
@@ -703,7 +726,7 @@ function drawScheduleEntry({
   ;({ page, y } = ensureSpace(doc, page, y, 64))
 
   // Italic Serif row index in 24px column on the left
-  page.drawText(String(index).padStart(2, '0'), {
+  page.drawText(safe(String(index).padStart(2, '0')), {
     x: MARGIN,
     y: y - 2,
     size: 11,
@@ -713,7 +736,7 @@ function drawScheduleEntry({
   })
 
   // Title
-  page.drawText(title, {
+  page.drawText(safe(title), {
     x: MARGIN + 32,
     y,
     size: 12,
@@ -722,7 +745,7 @@ function drawScheduleEntry({
     maxWidth: PAGE_WIDTH - MARGIN * 2 - 100 - 32,
   })
   if (meta) {
-    page.drawText(meta, {
+    page.drawText(safe(meta), {
       x: PAGE_WIDTH - MARGIN - 100,
       y,
       size: 9,
@@ -735,7 +758,7 @@ function drawScheduleEntry({
   if (body) {
     const wrapped = wrapText(body, 72)
     wrapped.slice(0, 3).forEach((line) => {
-      page.drawText(line, {
+      page.drawText(safe(line), {
         x: MARGIN + 32,
         y,
         size: 10,
@@ -748,7 +771,7 @@ function drawScheduleEntry({
   }
 
   if (qualifier) {
-    page.drawText(qualifier, {
+    page.drawText(safe(qualifier), {
       x: MARGIN + 32,
       y,
       size: 8,

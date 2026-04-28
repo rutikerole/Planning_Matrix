@@ -1,12 +1,13 @@
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Drawer } from 'vaul'
-import { Download, X } from 'lucide-react'
+import { AlertTriangle, Copy, Download, X } from 'lucide-react'
 import type { MessageRow, ProjectRow } from '@/types/db'
 import type { ProjectEventRow } from '../hooks/useProjectEvents'
 import { buildExportFilename } from '../lib/exportFilename'
 import { buildExportMarkdown } from '../lib/exportMarkdown'
 import { buildExportJson } from '../lib/exportJson'
+import { logExportEvent, type ExportEventType } from '@/lib/telemetry'
 
 interface Props {
   project: ProjectRow
@@ -25,11 +26,19 @@ interface Props {
  * Desktop: anchored popover from the trigger.
  * Mobile (≤ md): vaul drawer (bottom direction).
  */
+interface ExportError {
+  kind: 'pdf' | 'md' | 'json'
+  message: string
+  /** Full Error string — only surfaced in DEV (Q7 locked). */
+  stack: string | null
+}
+
 export function ExportMenu({ project, messages, events, variant = 'ghost' }: Props) {
   const { t, i18n } = useTranslation()
   const lang = (i18n.resolvedLanguage ?? 'de') as 'de' | 'en'
   const [open, setOpen] = useState(false)
   const [busy, setBusy] = useState<'pdf' | 'md' | 'json' | null>(null)
+  const [error, setError] = useState<ExportError | null>(null)
   const containerRef = useRef<HTMLDivElement>(null)
 
   // Desktop click-outside: close popover on outside click or Escape.
@@ -56,36 +65,75 @@ export function ExportMenu({ project, messages, events, variant = 'ghost' }: Pro
 
   const triggerExport = async (kind: 'pdf' | 'md' | 'json') => {
     setBusy(kind)
+    setError(null)
+    const attemptedEvent = `${kind}_export_attempted` as ExportEventType
+    const succeededEvent = `${kind}_export_succeeded` as ExportEventType
+    const failedEvent = `${kind}_export_failed` as ExportEventType
+    logExportEvent({ projectId: project.id, eventType: attemptedEvent })
+    let outputSize: number | null = null
     try {
       if (kind === 'pdf') {
         const { buildExportPdf } = await import('../lib/exportPdf')
         const bytes = await buildExportPdf({ project, messages, events, lang })
+        outputSize = bytes.byteLength
         download(
           new Blob([bytes as BlobPart], { type: 'application/pdf' }),
           buildExportFilename(project.name, 'pdf'),
         )
       } else if (kind === 'md') {
         const md = buildExportMarkdown({ project, events, lang })
+        outputSize = md.length
         download(
           new Blob([md], { type: 'text/markdown;charset=utf-8' }),
           buildExportFilename(project.name, 'md'),
         )
       } else {
         const json = buildExportJson({ project, messages, events })
+        const serialized = JSON.stringify(json, null, 2)
+        outputSize = serialized.length
         download(
-          new Blob([JSON.stringify(json, null, 2)], {
+          new Blob([serialized], {
             type: 'application/json;charset=utf-8',
           }),
           buildExportFilename(project.name, 'json'),
         )
       }
+      logExportEvent({
+        projectId: project.id,
+        eventType: succeededEvent,
+        reason: outputSize ? `bytes=${outputSize}` : null,
+      })
+      setOpen(false)
     } catch (err) {
+      const message = err instanceof Error ? err.message : String(err)
+      const stack = err instanceof Error ? err.stack ?? null : null
       // eslint-disable-next-line no-console
       console.error('[export] failed', err)
+      logExportEvent({
+        projectId: project.id,
+        eventType: failedEvent,
+        reason: message,
+      })
+      setError({ kind, message, stack })
+      // Keep the menu open so the user sees the error panel.
     } finally {
       setBusy(null)
-      setOpen(false)
     }
+  }
+
+  const copyError = async () => {
+    if (!error) return
+    const text = `[Planning Matrix] ${error.kind} export failed: ${error.message}`
+    try {
+      await navigator.clipboard.writeText(text)
+    } catch {
+      /* clipboard may be blocked; ignore — DEV stack still shows */
+    }
+  }
+
+  const tryMarkdownInstead = () => {
+    setError(null)
+    void triggerExport('md')
   }
 
   return (
@@ -103,6 +151,15 @@ export function ExportMenu({ project, messages, events, variant = 'ghost' }: Pro
               {t('chat.export.eyebrow', { defaultValue: 'Exportieren' })}
             </p>
             <ExportRows lang={lang} busy={busy} onPick={triggerExport} t={t} />
+            {error && (
+              <ExportErrorPanel
+                error={error}
+                onCopy={copyError}
+                onMd={tryMarkdownInstead}
+                onDismiss={() => setError(null)}
+                t={t}
+              />
+            )}
           </div>
         )}
       </div>
@@ -134,6 +191,17 @@ export function ExportMenu({ project, messages, events, variant = 'ghost' }: Pro
                 </button>
               </div>
               <ExportRows lang={lang} busy={busy} onPick={triggerExport} t={t} />
+              {error && (
+                <div className="mt-4">
+                  <ExportErrorPanel
+                    error={error}
+                    onCopy={copyError}
+                    onMd={tryMarkdownInstead}
+                    onDismiss={() => setError(null)}
+                    t={t}
+                  />
+                </div>
+              )}
             </Drawer.Content>
           </Drawer.Portal>
         </Drawer.Root>
@@ -274,4 +342,90 @@ function download(blob: Blob, filename: string) {
   a.click()
   document.body.removeChild(a)
   URL.revokeObjectURL(url)
+}
+
+interface ExportErrorPanelProps {
+  error: ExportError
+  onCopy: () => void
+  onMd: () => void
+  onDismiss: () => void
+  t: (key: string, opts?: { defaultValue?: string }) => string
+}
+
+/**
+ * Phase 3.6 #73 — calm error UI surfaced when an export fails. Replaces
+ * the previous silent-fail behaviour where the menu would just close.
+ * Q7 locked: stack trace shown only in DEV.
+ */
+function ExportErrorPanel({
+  error,
+  onCopy,
+  onMd,
+  onDismiss,
+  t,
+}: ExportErrorPanelProps) {
+  const showStack = import.meta.env.DEV && error.stack
+  return (
+    <div
+      role="alert"
+      className="mt-1 flex flex-col gap-3 border border-destructive/35 bg-destructive/[0.04] rounded-[var(--pm-radius-card)] p-4"
+    >
+      <div className="flex items-baseline gap-2">
+        <AlertTriangle aria-hidden="true" className="size-4 shrink-0 text-destructive" />
+        <p className="text-[12px] font-medium uppercase tracking-[0.18em] text-destructive">
+          {t('chat.export.error.eyebrow', {
+            defaultValue: 'Export fehlgeschlagen',
+          })}
+        </p>
+      </div>
+      <p className="text-[13px] text-ink/85 leading-relaxed">
+        {error.kind === 'pdf'
+          ? t('chat.export.error.pdfBody', {
+              defaultValue:
+                'Der PDF-Export ist leider fehlgeschlagen. Versuchen Sie stattdessen die Markdown-Checkliste oder den JSON-Datenexport.',
+            })
+          : t('chat.export.error.mdBody', {
+              defaultValue:
+                'Der Export ist leider fehlgeschlagen. Bitte erneut versuchen.',
+            })}
+      </p>
+      {showStack && (
+        <pre className="text-[10.5px] leading-snug text-ink/65 bg-paper border border-ink/12 rounded-[2px] p-2 max-h-32 overflow-auto whitespace-pre-wrap break-words">
+          {error.stack}
+        </pre>
+      )}
+      <div className="flex flex-wrap items-center gap-2">
+        {error.kind === 'pdf' && (
+          <button
+            type="button"
+            onClick={onMd}
+            className="inline-flex items-center gap-1.5 h-9 px-4 text-[13px] font-medium text-paper bg-ink hover:bg-ink/92 rounded-[var(--pm-radius-pill)] transition-colors duration-soft"
+          >
+            {t('chat.export.error.tryMd', {
+              defaultValue: 'Markdown stattdessen',
+            })}
+          </button>
+        )}
+        <button
+          type="button"
+          onClick={onCopy}
+          className="inline-flex items-center gap-1.5 h-9 px-3 text-[12px] text-ink/70 hover:text-ink rounded-[var(--pm-radius-pill)] hover:bg-ink/[0.04] transition-colors duration-soft"
+        >
+          <Copy className="size-3.5" aria-hidden="true" />
+          {t('chat.export.error.copy', {
+            defaultValue: 'Fehler kopieren',
+          })}
+        </button>
+        <button
+          type="button"
+          onClick={onDismiss}
+          className="ml-auto inline-flex items-center h-9 px-3 text-[12px] text-ink/55 hover:text-ink rounded-[var(--pm-radius-pill)] transition-colors duration-soft"
+        >
+          {t('chat.export.error.dismiss', {
+            defaultValue: 'Schließen',
+          })}
+        </button>
+      </div>
+    </div>
+  )
 }
