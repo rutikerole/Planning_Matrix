@@ -40,6 +40,8 @@ export interface MessageRow {
   input_type: string | null
   input_options: unknown
   allow_idk: boolean | null
+  /** Phase 3.1 #33: hint shown in the next turn's ThinkingIndicator. */
+  thinking_label_de: string | null
   user_answer: unknown
   client_request_id: string | null
   model: string | null

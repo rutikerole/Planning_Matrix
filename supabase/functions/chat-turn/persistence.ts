@@ -254,6 +254,10 @@ export async function insertAssistantMessage(
   },
 ): Promise<InsertResult<AssistantMessageRow>> {
   const t = args.toolInput
+  // Phase 3.1 #33: thinking_label_de persists per assistant turn so
+  // the next turn's ThinkingIndicator can show the prior turn's
+  // explicit hint. Requires migration 0004_thinking_label.sql to be
+  // applied before this code reaches production.
   const { data, error } = await supabase
     .from('messages')
     .insert({
@@ -265,6 +269,7 @@ export async function insertAssistantMessage(
       input_type: t.input_type,
       input_options: t.input_options ?? null,
       allow_idk: t.allow_idk ?? true,
+      thinking_label_de: t.thinking_label_de ?? null,
       model: args.model,
       input_tokens: args.usage.inputTokens,
       output_tokens: args.usage.outputTokens,

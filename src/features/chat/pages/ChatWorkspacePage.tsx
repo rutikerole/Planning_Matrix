@@ -61,6 +61,7 @@ export function ChatWorkspacePage() {
       input_type: null,
       input_options: null,
       allow_idk: null,
+      thinking_label_de: null,
       user_answer: null,
       client_request_id: null,
       model: null,

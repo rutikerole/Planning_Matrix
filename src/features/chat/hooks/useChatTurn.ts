@@ -62,6 +62,7 @@ export function useChatTurn(projectId: string) {
         input_type: null,
         input_options: null,
         allow_idk: null,
+        thinking_label_de: null,
         user_answer: input.userAnswer,
         client_request_id: clientRequestId,
         model: null,
@@ -78,24 +79,24 @@ export function useChatTurn(projectId: string) {
         [...previousMessages, placeholder],
       )
 
-      // Find the most recent assistant message; its specialist + thinking_label
-      // become the seed for the indicator while the new turn computes.
+      // Find the most recent assistant message; its specialist seeds the
+      // ThinkingIndicator's tag. Its thinking_label_de (Phase 3.1 #33,
+      // persisted on the messages row) seeds the indicator's hint copy
+      // and the right-rail ambient activity heuristic.
       const lastAssistant = [...previousMessages]
         .reverse()
         .find((m) => m.role === 'assistant')
       const seedSpecialist = (lastAssistant?.specialist ?? 'moderator') as Specialist
+      const seedLabel = lastAssistant?.thinking_label_de ?? null
 
-      // Polish Move 4 — derive the right-rail section likely to update
-      // from the previous assistant turn's content + the user's input.
-      // Heuristic; falls back to top3 on a miss.
+      // Polish Move 4 — derive the right-rail section likely to update.
+      // If the previous assistant left a thinking_label_de, prefer that;
+      // else fall back to scanning the previous turn's body + user input.
       const heuristicSource =
-        (lastAssistant?.content_de ?? '') + ' ' + input.userMessage
+        seedLabel ?? (lastAssistant?.content_de ?? '') + ' ' + input.userMessage
       const activitySection = thinkingLabelToSection(heuristicSource)
 
-      // input_options of the assistant doesn't carry thinking_label (we
-      // don't persist that). Use a generic "Das Team berät sich." until
-      // the rotating-label loop in ThinkingIndicator takes over after 6s.
-      setThinking(true, seedSpecialist, null, activitySection)
+      setThinking(true, seedSpecialist, seedLabel, activitySection)
 
       clearFailed(clientRequestId)
       // Clear any prior interstitial — the user is engaging again.

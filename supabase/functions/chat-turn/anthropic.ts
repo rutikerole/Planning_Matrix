@@ -35,7 +35,14 @@ import {
 } from '../../../src/types/respondTool.ts'
 
 // ── Configuration ──────────────────────────────────────────────────────
-const MAX_TOKENS = 2048
+// Phase 3.1 #33: dropped from 2048 → 1280 based on batch-4 telemetry
+// (median ~1500 output tokens, max 1715). 1280 caps the worst-case
+// latency at ~43s vs 46s observed; the model truncates cleanly mid-
+// thought when a real response would have run longer.
+//
+// TODO(phase-4): evaluate streaming or Sonnet 4.6 upgrade if
+// truncation rate climbs above 5% in production telemetry.
+const MAX_TOKENS = 1280
 const ABORT_TIMEOUT_MS = 50_000
 
 // Sonnet 4.5 pricing in USD per million tokens (April 2026).
