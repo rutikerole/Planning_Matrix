@@ -330,15 +330,30 @@
     "signOut": "Abmelden"
   },
   "dashboard": {
-    "placeholder": {
-      "title": "Dashboard · Planning Matrix",
-      "eyebrow": "Dashboard · in Aufbau",
+    "atelier": {
+      "docTitle": "Atelier · Planning Matrix",
+      "eyebrow": "Atelier · Willkommen",
       "greeting": "Willkommen, {{name}}.",
       "greetingNone": "Willkommen.",
-      "body": "Ihr Projekt-Workspace folgt in Kürze.",
-      "ctaSoon": "Neues Projekt — bald verfügbar",
-      "ctaNew": "Neues Projekt",
-      "signOut": "Abmelden"
+      "lastActivitySentence": "Letzte Aktivität",
+      "lastActivityLabel": "Letzte Aktivität",
+      "turnCountLabel_one": "Wendung",
+      "turnCountLabel_other": "Wendungen",
+      "projectsHeading": "Projekte",
+      "newCta": "+ Neu",
+      "loading": "Projekte werden geladen …",
+      "signOut": "Abmelden",
+      "state": {
+        "in_progress": "Aktiv",
+        "paused": "Pausiert",
+        "archived": "Entwurf",
+        "completed": "Abgeschlossen"
+      },
+      "empty": {
+        "headline": "Noch kein Projekt.",
+        "body": "Beginnen Sie mit Ihrem ersten Vorhaben.",
+        "cta": "Neues Projekt"
+      }
     }
   },
   "wizard": {

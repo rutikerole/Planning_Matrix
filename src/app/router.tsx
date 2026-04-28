@@ -8,7 +8,7 @@ import { ForgotPasswordPage } from '@/features/auth/pages/ForgotPasswordPage'
 import { ResetPasswordPage } from '@/features/auth/pages/ResetPasswordPage'
 import { CheckEmailPage } from '@/features/auth/pages/CheckEmailPage'
 import { VerifyEmailPage } from '@/features/auth/pages/VerifyEmailPage'
-import { DashboardPlaceholder } from '@/features/dashboard/DashboardPlaceholder'
+import { DashboardPage } from '@/features/dashboard/DashboardPage'
 import { LegalPlaceholder } from '@/features/legal/LegalPlaceholder'
 import { ProtectedRoute } from '@/components/shared/ProtectedRoute'
 import { ProjectGuard } from '@/components/shared/ProjectGuard'
@@ -36,7 +36,7 @@ export function AppRouter() {
           path="/dashboard"
           element={
             <ProtectedRoute>
-              <DashboardPlaceholder />
+              <DashboardPage />
             </ProtectedRoute>
           }
         />
