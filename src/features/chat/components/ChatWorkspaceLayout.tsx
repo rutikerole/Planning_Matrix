@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import { BlueprintSubstrate } from './BlueprintSubstrate'
 
 interface Props {
   leftRail?: ReactNode
@@ -20,7 +21,8 @@ interface Props {
 export function ChatWorkspaceLayout({ leftRail, rightRail, inputBar, children }: Props) {
   return (
     <div className="min-h-dvh bg-paper relative isolate">
-      <div aria-hidden="true" className="absolute inset-0 bg-blueprint pointer-events-none -z-10" />
+      <BlueprintSubstrate />
+      <div aria-hidden="true" className="grain-overlay-fixed" />
       <div className="mx-auto w-full max-w-[1440px] grid lg:grid-cols-[280px_minmax(0,1fr)_360px] grid-cols-1">
         <aside className="hidden lg:flex border-r border-border-strong/30 min-h-dvh">
           {leftRail}

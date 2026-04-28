@@ -87,9 +87,13 @@ export default {
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
         paper: 'hsl(var(--paper))',
+        'paper-tinted': 'hsl(var(--paper-tinted))',
         ink: 'hsl(var(--ink))',
         clay: 'hsl(var(--clay))',
         'clay-soft': 'hsl(var(--clay-soft))',
+        'clay-light': 'hsl(var(--clay-light))',
+        'clay-deep': 'hsl(var(--clay-deep))',
+        'drafting-blue': 'hsl(var(--drafting-blue))',
         card: {
           DEFAULT: 'hsl(var(--card))',
           foreground: 'hsl(var(--card-foreground))',
