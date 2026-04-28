@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import { cn } from '@/lib/utils'
+import { useViewport } from '@/lib/useViewport'
 
 interface Props {
   children: ReactNode
@@ -22,13 +23,19 @@ export function SubmitButton({
   loadingLabel,
   className,
 }: Props) {
+  const { isMobile } = useViewport()
+  // Phase 3.8 #86 — primary actions go from h-11 (44 px) to h-12
+  // (48 px) on mobile per Apple HIG primary-action floor + full-width
+  // by default to dominate the viewport.
+  const sizeClass = isMobile ? 'h-12 w-full text-[15px]' : 'h-11 text-[14px]'
   return (
     <button
       type="submit"
       aria-busy={loading || undefined}
       disabled={disabled || loading}
       className={cn(
-        'group relative inline-flex h-11 items-center justify-center gap-2 px-5 rounded-[5px] bg-ink text-paper text-[14px] font-medium tracking-tight',
+        'group relative inline-flex items-center justify-center gap-2 px-5 rounded-[5px] bg-ink text-paper font-medium tracking-tight',
+        sizeClass,
         'shadow-[0_1px_0_hsl(var(--paper)/0.05)_inset,0_2px_4px_-1px_hsl(220_15%_11%/0.18)]',
         'hover:bg-ink/92 hover:shadow-[0_1px_0_hsl(var(--paper)/0.05)_inset,0_8px_18px_-6px_hsl(220_15%_11%/0.32)]',
         'motion-safe:hover:-translate-y-px',
