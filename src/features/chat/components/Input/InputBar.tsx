@@ -41,6 +41,40 @@ function continueText(lang: 'de' | 'en'): string {
   return lang === 'en' ? 'Continue.' : 'Weiter.'
 }
 
+// Two module-level shell components for the bar's outer chrome. The
+// embedded variant is used when InputBar is composed into UnifiedFooter
+// (which owns the sticky band). The standalone variant carries its own
+// sticky / safe-area inset chrome. Defining them at module level keeps
+// the children stable across renders — previously they were defined
+// inside InputBar's body, which forced focus-loss on every keystroke.
+function EmbeddedShell({ children }: { children: ReactNode }) {
+  return (
+    <div className="w-full" data-pm-input-bar="embedded">
+      <div className="w-full flex flex-col gap-2">{children}</div>
+    </div>
+  )
+}
+
+function StandaloneShell({ children }: { children: ReactNode }) {
+  return (
+    <div
+      className="sticky bottom-0 z-20 bg-paper/95 backdrop-blur-[2px] border-t border-border-strong/25"
+      data-pm-input-bar="true"
+    >
+      <div className="flex justify-center px-4 sm:px-6 lg:px-8">
+        <div
+          className="w-full max-w-3xl py-3 sm:py-4 flex flex-col gap-2"
+          style={{
+            paddingBottom: 'max(env(safe-area-inset-bottom, 0px), 0.75rem)',
+          }}
+        >
+          {children}
+        </div>
+      </div>
+    </div>
+  )
+}
+
 interface Props {
   lastAssistant: MessageRow | null
   onSubmit: (payload: {
@@ -184,32 +218,10 @@ export function InputBar({
   // (sticky position, border-top, background, safe-area inset) lives
   // on the parent. We render only the inner stack: chips + attachments
   // + textarea card + helper row.
-  const Outer = embedded
-    ? ({ children }: { children: ReactNode }) => (
-        <div className="w-full" data-pm-input-bar="embedded">
-          <div className="w-full flex flex-col gap-2">{children}</div>
-        </div>
-      )
-    : ({ children }: { children: ReactNode }) => (
-        <div
-          className="sticky bottom-0 z-20 bg-paper/95 backdrop-blur-[2px] border-t border-border-strong/25"
-          data-pm-input-bar="true"
-        >
-          <div className="flex justify-center px-4 sm:px-6 lg:px-8">
-            <div
-              className="w-full max-w-3xl py-3 sm:py-4 flex flex-col gap-2"
-              style={{
-                paddingBottom: 'max(env(safe-area-inset-bottom, 0px), 0.75rem)',
-              }}
-            >
-              {children}
-            </div>
-          </div>
-        </div>
-      )
+  const Shell = embedded ? EmbeddedShell : StandaloneShell
 
   return (
-    <Outer>
+    <Shell>
           {/* Suggestion chips above the bar — never replace it. */}
           {showSuggestions && (
             <SuggestionChips
@@ -361,6 +373,6 @@ export function InputBar({
               <span aria-hidden="true" />
             )}
           </div>
-    </Outer>
+    </Shell>
   )
 }

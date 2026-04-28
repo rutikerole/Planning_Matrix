@@ -26,11 +26,6 @@ interface Props {
   messageId: string
 }
 
-function pickIcon(mime: string) {
-  if (mime.startsWith('image/')) return ImageIcon
-  return FileText
-}
-
 function formatBytes(bytes: number, lang: 'de' | 'en'): string {
   if (bytes < 1024) return `${bytes} B`
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(0)} KB`
@@ -101,7 +96,7 @@ export function MessageAttachment({ messageId }: Props) {
 
 function AttachmentLink({ row, lang }: { row: ProjectFileRow; lang: 'de' | 'en' }) {
   const { t } = useTranslation()
-  const Icon = pickIcon(row.file_type)
+  const isImageMime = row.file_type.startsWith('image/')
 
   const handleClick = async (e: React.MouseEvent) => {
     e.preventDefault()
@@ -131,7 +126,11 @@ function AttachmentLink({ row, lang }: { row: ProjectFileRow; lang: 'de' | 'en' 
         name: row.file_name,
       })}
     >
-      <Icon aria-hidden="true" className="size-4 shrink-0 text-clay/85 group-hover:text-drafting-blue" />
+      {isImageMime ? (
+        <ImageIcon aria-hidden="true" className="size-4 shrink-0 text-clay/85 group-hover:text-drafting-blue" />
+      ) : (
+        <FileText aria-hidden="true" className="size-4 shrink-0 text-clay/85 group-hover:text-drafting-blue" />
+      )}
       <span className="truncate min-w-0">{truncateMiddle(row.file_name)}</span>
       <span className="text-clay/72 italic shrink-0 tabular-nums">
         {formatBytes(row.file_size, lang)}

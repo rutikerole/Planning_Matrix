@@ -27,15 +27,6 @@ interface Props {
   disabled?: boolean
 }
 
-const FILE_ICON_MIME: Array<{ test: (mime: string) => boolean; icon: typeof FileText }> = [
-  { test: (m) => m.startsWith('image/'), icon: ImageIcon },
-  { test: () => true, icon: FileText },
-]
-
-function pickIcon(mime: string) {
-  return FILE_ICON_MIME.find((row) => row.test(mime))!.icon
-}
-
 function formatBytes(bytes: number, lang: 'de' | 'en'): string {
   if (bytes < 1024) return `${bytes} B`
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(0)} KB`
@@ -59,8 +50,8 @@ export function AttachmentChip({ attachment, onRemove, disabled }: Props) {
   const { t, i18n } = useTranslation()
   const lang = (i18n.resolvedLanguage ?? 'de') as 'de' | 'en'
 
-  const Icon = pickIcon(attachment.file.type)
   const { status, errorMessage } = attachment
+  const isImageMime = attachment.file.type.startsWith('image/')
 
   const isFailed = status === 'failed'
   const isInFlight = status === 'queued' || status === 'uploading'
@@ -84,8 +75,16 @@ export function AttachmentChip({ attachment, onRemove, disabled }: Props) {
           alt=""
           className="size-6 rounded-sm object-cover border border-ink/10 shrink-0"
         />
+      ) : isImageMime ? (
+        <ImageIcon
+          aria-hidden="true"
+          className={cn(
+            'size-4 shrink-0',
+            isFailed ? 'text-destructive' : 'text-clay/85',
+          )}
+        />
       ) : (
-        <Icon
+        <FileText
           aria-hidden="true"
           className={cn(
             'size-4 shrink-0',
