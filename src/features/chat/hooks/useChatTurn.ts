@@ -58,13 +58,17 @@ export function useChatTurn(projectId: string) {
 
     mutationFn: async (input: SubmitInput) => {
       const clientRequestId = input.clientRequestId ?? crypto.randomUUID()
+      const lang = (i18n.resolvedLanguage ?? 'de') as 'de' | 'en'
       const request: ChatTurnRequest = {
         projectId,
         userMessage: input.userMessage,
         userAnswer: input.userAnswer,
         clientRequestId,
+        // Phase 3.7 #79 — tell the Edge Function which locale the user
+        // is in so the system prompt can adapt. Q4 locked: forwarded on
+        // every turn, including first-turn priming.
+        locale: lang,
       }
-      const lang = (i18n.resolvedLanguage ?? 'de') as 'de' | 'en'
       const lastAssistant = mostRecentAssistant(
         queryClient.getQueryData<MessageRow[]>(['messages', projectId]) ?? [],
       )

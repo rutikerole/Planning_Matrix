@@ -385,17 +385,66 @@ export function buildLiveStateBlock(input: BuildLiveStateInput): string {
 }
 
 /**
- * Compose the multi-block system array as Anthropic expects it. Block 1
- * (persona) carries cache_control: ephemeral; Block 2 (live state)
- * does not, so it stays fresh per turn while everything before it
- * stays in cache.
+ * Phase 3.7 #79 — locale-aware addendum. Tells the model whether to
+ * make `message_en` first-class native English or just a backup mirror.
+ * Lives OUTSIDE the cached PERSONA_BLOCK so the prompt cache stays
+ * warm; the addendum is small enough that the per-turn cost is
+ * negligible (~150 tokens, well below the 1024-token cache-write
+ * threshold). Cache-read tokens on the second turn of a fresh
+ * conversation are the gate for "did this break the cache?" — if they
+ * stay non-zero, this addendum is safely positioned.
  */
-export function buildSystemBlocks(liveStateText: string) {
+export function buildLocaleBlock(locale: 'de' | 'en' | undefined): string {
+  if (locale === 'en') {
+    return [
+      '═══════════════════════════════════════════════════════════════',
+      'NUTZER-LOCALE',
+      '═══════════════════════════════════════════════════════════════',
+      'Der Nutzer hat die Oberfläche auf ENGLISCH umgeschaltet. Die UI',
+      'rendert message_en als Hauptinhalt; message_de wird im Hintergrund',
+      'mitgespeichert (Audit + Locale-Switch).',
+      '',
+      'PFLICHT: message_en muss eine vollwertige, native englische',
+      'Antwort sein — keine mechanische Übersetzung, sondern eigenständig',
+      'formuliert in formellem britischem Englisch ("Mr/Ms ...", "would",',
+      '"shall"). Behalten Sie die Sie-Register-Strenge des deutschen',
+      'Originals bei. Zitieren Sie deutsche Normen unverändert',
+      '("Art. 58 BayBO", "§ 34 BauGB") — übersetzen Sie sie nicht.',
+      '',
+      'message_de bleibt formales Deutsch (Sie). Beide Felder bilden',
+      'denselben semantischen Inhalt ab.',
+    ].join('\n')
+  }
+  return [
+    '═══════════════════════════════════════════════════════════════',
+    'NUTZER-LOCALE',
+    '═══════════════════════════════════════════════════════════════',
+    'Der Nutzer arbeitet auf DEUTSCH. message_de ist primär.',
+    'message_en bleibt eine vollwertige englische Spiegelung im Sinne',
+    'der Audit- und Locale-Switch-Anforderung.',
+  ].join('\n')
+}
+
+/**
+ * Compose the multi-block system array as Anthropic expects it. Block 1
+ * (persona) carries cache_control: ephemeral; Block 2 (locale-aware
+ * addendum, fresh per turn) and Block 3 (live state) don't, so they
+ * stay fresh while everything before stays in cache.
+ */
+export function buildSystemBlocks(
+  liveStateText: string,
+  locale?: 'de' | 'en',
+) {
   return [
     {
       type: 'text' as const,
       text: PERSONA_BLOCK_V1,
       cache_control: { type: 'ephemeral' as const },
+    },
+    // Phase 3.7 #79 — locale-aware addendum. NOT cached.
+    {
+      type: 'text' as const,
+      text: buildLocaleBlock(locale),
     },
     {
       type: 'text' as const,

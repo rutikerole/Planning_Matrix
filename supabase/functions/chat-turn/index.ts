@@ -88,7 +88,8 @@ Deno.serve(async (req: Request) => {
   if (!parsed.success) {
     return respond({ code: 'validation', message: parsed.error.message }, 400)
   }
-  const { projectId, userMessage, userAnswer, clientRequestId } = parsed.data
+  const { projectId, userMessage, userAnswer, clientRequestId, locale } =
+    parsed.data
 
   // ── Env ───────────────────────────────────────────────────────────
   const apiKey = Deno.env.get('ANTHROPIC_API_KEY')
@@ -210,10 +211,10 @@ Deno.serve(async (req: Request) => {
   // The streaming variant runs the same persistence work after Anthropic
   // signals message_stop, so the persisted artefacts are identical.
   if (acceptsStream(req)) {
-    console.log(`[chat-turn] [${requestId}] streaming path`)
+    console.log(`[chat-turn] [${requestId}] streaming path locale=${locale ?? 'de'}`)
     return runStreamingTurn({
       apiKey,
-      systemBlocks: buildSystemBlocks(liveStateText),
+      systemBlocks: buildSystemBlocks(liveStateText, locale),
       messages: anthropicMessages,
       supabase,
       projectId,
@@ -228,7 +229,7 @@ Deno.serve(async (req: Request) => {
   try {
     anthropicResult = await callAnthropicWithRetry({
       apiKey,
-      systemBlocks: buildSystemBlocks(liveStateText),
+      systemBlocks: buildSystemBlocks(liveStateText, locale),
       messages: anthropicMessages,
     })
   } catch (err) {

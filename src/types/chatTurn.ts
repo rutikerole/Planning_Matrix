@@ -54,6 +54,16 @@ export const chatTurnRequestSchema = z.object({
   userAnswer: userAnswerSchema.nullable(),
   /** Idempotency key — same retry, same id. */
   clientRequestId: z.string().uuid(),
+  /**
+   * Phase 3.7 #79 — UI locale at the moment the user sent the turn.
+   * Optional + defaults to 'de' on the server so old SPA versions still
+   * work. The Edge Function appends a small locale-aware text block
+   * AFTER the cached PERSONA_BLOCK so the model knows whether to make
+   * `message_en` first-class native English or just a backup mirror.
+   * Cache stays warm because the locale block lives outside the
+   * cached portion.
+   */
+  locale: z.enum(['de', 'en']).optional(),
 })
 
 export type ChatTurnRequest = z.infer<typeof chatTurnRequestSchema>
