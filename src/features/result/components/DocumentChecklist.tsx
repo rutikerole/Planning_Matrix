@@ -145,7 +145,7 @@ export function DocumentChecklist({ project, state }: Props) {
   return (
     <section
       id="sec-documents"
-      className="px-6 sm:px-12 lg:px-20 py-20 sm:py-24 max-w-5xl mx-auto w-full scroll-mt-16 flex flex-col gap-8"
+      className="px-4 sm:px-12 lg:px-20 py-14 sm:py-24 max-w-5xl mx-auto w-full scroll-mt-16 flex flex-col gap-8"
     >
       <header className="flex items-baseline gap-4">
         <span className="font-serif italic text-[20px] text-clay-deep tabular-figures leading-none w-10 shrink-0">
@@ -249,6 +249,12 @@ interface KanbanColumnProps {
 }
 
 function KanbanColumn({ title, count, tone, children }: KanbanColumnProps) {
+  // Phase 3.9 #95 — mobile collapsibility. Column body is wrapped in
+  // <details>/<summary> on small viewports so a 3-column stack of long
+  // checklists doesn't bury later sections. The summary is a 44 px hit
+  // target; chevron flips on open via the [&[open]] descendant variant.
+  // Desktop (md:) renders the same shape but `details` opens by default
+  // and the summary's chevron + cursor are suppressed (md:[&_summary]:cursor-default).
   const accent =
     tone === 'clay'
       ? 'border-clay/35 bg-clay/[0.04]'
@@ -262,17 +268,31 @@ function KanbanColumn({ title, count, tone, children }: KanbanColumnProps) {
         ? 'text-drafting-blue'
         : 'text-ink'
   return (
-    <div className={cn('flex flex-col gap-3 rounded-[var(--pm-radius-card)] border p-4', accent)}>
-      <header className="flex items-baseline justify-between">
+    <details
+      open
+      className={cn(
+        'group rounded-[var(--pm-radius-card)] border p-4 [&_summary::-webkit-details-marker]:hidden',
+        accent,
+      )}
+    >
+      <summary className="flex items-baseline justify-between min-h-[44px] cursor-pointer md:cursor-default list-none select-none">
         <span className={cn('text-[11px] font-medium uppercase tracking-[0.18em]', headerColor)}>
           {title}
         </span>
-        <span className="font-serif italic text-clay tabular-nums">{count}</span>
-      </header>
-      <ul role="list" className="flex flex-col gap-2 min-h-[60px]">
+        <span className="flex items-baseline gap-3">
+          <span className="font-serif italic text-clay tabular-nums">{count}</span>
+          <span
+            aria-hidden="true"
+            className="md:hidden text-ink/45 text-[14px] leading-none transition-transform duration-soft group-open:rotate-90"
+          >
+            ›
+          </span>
+        </span>
+      </summary>
+      <ul role="list" className="flex flex-col gap-2 min-h-[60px] mt-3">
         {children}
       </ul>
-    </div>
+    </details>
   )
 }
 
@@ -323,7 +343,7 @@ function KanbanCard({ doc, lang, actionLabel, actionIcon, onAction, done }: Kanb
         type="button"
         onClick={onAction}
         className={cn(
-          'inline-flex items-center gap-1.5 self-end h-7 px-3 text-[11.5px] font-medium border transition-colors duration-soft',
+          'inline-flex items-center gap-1.5 self-stretch sm:self-end justify-center h-9 sm:h-7 px-3 text-[12px] sm:text-[11.5px] font-medium border transition-colors duration-soft',
           'rounded-[var(--pm-radius-pill)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/35 focus-visible:ring-offset-2 focus-visible:ring-offset-background',
           done
             ? 'border-ink/15 text-ink/65 hover:border-ink/30 hover:text-ink bg-paper'
