@@ -1,4 +1,7 @@
 import { useTranslation } from 'react-i18next'
+import { useChatStore } from '@/stores/chatStore'
+import { estimateProgress } from '../lib/progressEstimate'
+import { ProgressMeterCompact } from './ProgressMeterCompact'
 
 interface Props {
   projectName: string
@@ -7,6 +10,9 @@ interface Props {
   rightBadge: boolean
   leftOpen: boolean
   rightOpen: boolean
+  /** Phase 3.4 #53 — opens the progress drawer when the user taps
+   *  the compact meter. Provided by ChatWorkspacePage. */
+  onProgressClick?: () => void
 }
 
 /**
@@ -31,8 +37,15 @@ export function MobileTopBar({
   rightBadge,
   leftOpen,
   rightOpen,
+  onProgressClick,
 }: Props) {
   const { t } = useTranslation()
+  const turnCount = useChatStore((s) => s.turnCount)
+  const currentSpecialist = useChatStore((s) => s.currentSpecialist)
+  // Show the compact meter once the conversation has moved past the
+  // very beginning. Below ~5%, the title block is more useful.
+  const progress = estimateProgress(turnCount, currentSpecialist)
+  const showCompact = progress > 0.05 && Boolean(onProgressClick)
 
   return (
     <div className="lg:hidden sticky top-0 z-20 bg-paper/95 backdrop-blur-[2px] border-b border-ink/15">
@@ -47,19 +60,32 @@ export function MobileTopBar({
           <FoldedTabIcon side="left" />
         </button>
 
-        {/* Title block — eyebrow + name + hairline rule */}
-        <div
-          className="flex-1 min-w-0 flex flex-col justify-center text-center px-2"
-          title={projectName}
-        >
-          <p className="text-[9px] font-medium uppercase tracking-[0.22em] text-clay/85 leading-none">
-            {t('chat.mobile.eyebrow', { defaultValue: 'Projekt' })}
-          </p>
-          <p className="text-[13px] font-medium text-ink truncate mt-1">
-            {projectName.split('·')[0]?.trim() ?? projectName}
-          </p>
-          <span aria-hidden="true" className="block h-px w-12 bg-ink/20 self-center mt-1.5" />
-        </div>
+        {/* Title block OR compact progress meter — meter takes over once
+         * the conversation has moved past ~5% so the user always sees
+         * progress on the most-attended surface. */}
+        {showCompact ? (
+          <button
+            type="button"
+            onClick={onProgressClick}
+            aria-label={t('chat.progress.expand', { defaultValue: 'Fortschritt anzeigen' })}
+            className="flex-1 min-w-0 flex items-center justify-center px-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm"
+          >
+            <ProgressMeterCompact />
+          </button>
+        ) : (
+          <div
+            className="flex-1 min-w-0 flex flex-col justify-center text-center px-2"
+            title={projectName}
+          >
+            <p className="text-[9px] font-medium uppercase tracking-[0.22em] text-clay/85 leading-none">
+              {t('chat.mobile.eyebrow', { defaultValue: 'Projekt' })}
+            </p>
+            <p className="text-[13px] font-medium text-ink truncate mt-1">
+              {projectName.split('·')[0]?.trim() ?? projectName}
+            </p>
+            <span aria-hidden="true" className="block h-px w-12 bg-ink/20 self-center mt-1.5" />
+          </div>
+        )}
 
         <button
           type="button"

@@ -47,6 +47,12 @@ interface ChatState {
     | null
   /** Phase 3.4 #52 — streaming assistant bubble (null when no stream is in flight). */
   streamingMessage: StreamingMessage | null
+  /** Phase 3.4 #53 — count of successful assistant turns this session.
+   * Drives the progress meter algorithm. Resets on project unmount. */
+  turnCount: number
+  /** Phase 3.4 #59 — timestamp of the last successful turn. Drives the
+   * Auto-saved indicator. Null until the first turn lands. */
+  lastSavedAt: Date | null
 
   setThinking: (
     thinking: boolean,
@@ -64,6 +70,8 @@ interface ChatState {
   appendStreamingText: (delta: string) => void
   /** Phase 3.4 #52 — close the streaming bubble (after `complete` SSE frame). */
   closeStreamingMessage: () => void
+  /** Phase 3.4 #53 — increment turnCount + stamp lastSavedAt on success. */
+  noteSuccessfulTurn: () => void
   reset: () => void
 }
 
@@ -76,6 +84,8 @@ export const useChatStore = create<ChatState>((set) => ({
   failedRequestIds: new Set(),
   lastCompletionSignal: null,
   streamingMessage: null,
+  turnCount: 0,
+  lastSavedAt: null,
 
   setThinking: (thinking, specialist, label, activitySection) =>
     set((s) => ({
@@ -119,6 +129,9 @@ export const useChatStore = create<ChatState>((set) => ({
     ),
   closeStreamingMessage: () => set({ streamingMessage: null }),
 
+  noteSuccessfulTurn: () =>
+    set((s) => ({ turnCount: s.turnCount + 1, lastSavedAt: new Date() })),
+
   reset: () =>
     set({
       isAssistantThinking: false,
@@ -129,5 +142,7 @@ export const useChatStore = create<ChatState>((set) => ({
       failedRequestIds: new Set(),
       lastCompletionSignal: null,
       streamingMessage: null,
+      turnCount: 0,
+      lastSavedAt: null,
     }),
 }))

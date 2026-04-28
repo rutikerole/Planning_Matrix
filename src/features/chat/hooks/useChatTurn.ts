@@ -42,6 +42,7 @@ export function useChatTurn(projectId: string) {
   const openStreamingMessage = useChatStore((s) => s.openStreamingMessage)
   const appendStreamingText = useChatStore((s) => s.appendStreamingText)
   const closeStreamingMessage = useChatStore((s) => s.closeStreamingMessage)
+  const noteSuccessfulTurn = useChatStore((s) => s.noteSuccessfulTurn)
 
   return useMutation({
     mutationKey: ['chat-turn', projectId],
@@ -183,6 +184,7 @@ export function useChatTurn(projectId: string) {
       setThinking(false, undefined, null, null)
       // Close the streaming bubble — the persisted message takes over.
       closeStreamingMessage()
+      noteSuccessfulTurn()
       clearFailed(clientRequestId)
 
       const signal = response.completionSignal

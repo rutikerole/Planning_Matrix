@@ -432,6 +432,16 @@
   "chat": {
     "leaveProject": "Projekt verlassen",
     "atTheTable": "Am Tisch",
+    "progress": {
+      "eyebrow": "Fortschritt",
+      "percent": "ca. {{n}} % erfasst",
+      "overflow": "ca. > 95 %",
+      "remaining": "ca. {{n}} Wendungen verbleibend.",
+      "current": "Aktuell:",
+      "readyForReview": "Bereit zur Überprüfung.",
+      "nearEnd": "Wir nähern uns dem Ende.",
+      "expand": "Fortschritt anzeigen"
+    },
     "titleBlock": {
       "eyebrow": "Projekt",
       "noPlot": "Kein Grundstück angegeben",

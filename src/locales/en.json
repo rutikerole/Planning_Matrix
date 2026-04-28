@@ -432,6 +432,16 @@
   "chat": {
     "leaveProject": "Leave project",
     "atTheTable": "At the table",
+    "progress": {
+      "eyebrow": "Progress",
+      "percent": "approx. {{n}} % covered",
+      "overflow": "approx. > 95 %",
+      "remaining": "approx. {{n}} turns remaining.",
+      "current": "Currently:",
+      "readyForReview": "Ready for review.",
+      "nearEnd": "Approaching the end.",
+      "expand": "Show progress"
+    },
     "titleBlock": {
       "eyebrow": "Project",
       "noPlot": "No plot specified",

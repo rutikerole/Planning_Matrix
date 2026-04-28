@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useReducedMotion } from 'framer-motion'
+import { Drawer } from 'vaul'
 import { ChatWorkspaceLayout } from '../components/ChatWorkspaceLayout'
 import { EmptyState } from '../components/EmptyState'
 import { LeftRail } from '../components/LeftRail'
@@ -15,6 +16,7 @@ import { MobileRailDrawer } from '../components/MobileRailDrawer'
 import { MobileRightRailPeek } from '../components/MobileRightRailPeek'
 import { PaperCard } from '../components/PaperCard'
 import { ConversationCursor } from '../components/ConversationCursor'
+import { ProgressMeter } from '../components/ProgressMeter'
 import { buildUserMessageText } from '../lib/userAnswerHelpers'
 import { useProject } from '../hooks/useProject'
 import { useMessages } from '../hooks/useMessages'
@@ -94,6 +96,8 @@ export function ChatWorkspacePage() {
   const [rightOpen, setRightOpen] = useState(false)
   const [peekVisible, setPeekVisible] = useState(false)
   const [rightBadge, setRightBadge] = useState(false)
+  // Phase 3.4 #53 — progress overlay sheet on mobile.
+  const [progressOpen, setProgressOpen] = useState(false)
   const lastRecCountRef = useRef<number>(
     (project?.state as { recommendations?: unknown[] })?.recommendations?.length ?? 0,
   )
@@ -151,6 +155,7 @@ export function ChatWorkspacePage() {
         rightBadge={rightBadge}
         leftOpen={leftOpen}
         rightOpen={rightOpen}
+        onProgressClick={() => setProgressOpen(true)}
       />
       <ChatWorkspaceLayout
         leftRail={<LeftRail project={project} messages={messages ?? []} />}
@@ -203,6 +208,25 @@ export function ChatWorkspacePage() {
         onTap={openRightDrawer}
         onDismiss={() => setPeekVisible(false)}
       />
+
+      {/* Phase 3.4 #53 — progress overlay (mobile only via lg:hidden on
+       * the trigger). Top-direction vaul drawer; tap the compact meter
+       * in the top bar to open. */}
+      <Drawer.Root open={progressOpen} onOpenChange={setProgressOpen} direction="top">
+        <Drawer.Portal>
+          <Drawer.Overlay className="fixed inset-0 bg-ink/40 backdrop-blur-[2px] z-40" />
+          <Drawer.Content
+            aria-label={t('chat.progress.eyebrow', { defaultValue: 'Fortschritt' })}
+            className="fixed inset-x-0 top-0 z-50 bg-paper border-b border-ink/15 shadow-[0_8px_32px_-12px_hsl(220_15%_11%/0.22)] outline-none px-6 pt-10 pb-8"
+          >
+            <Drawer.Title className="sr-only">
+              {t('chat.progress.eyebrow', { defaultValue: 'Fortschritt' })}
+            </Drawer.Title>
+            <div className="absolute top-2 left-1/2 -translate-x-1/2 h-1 w-10 rounded-full bg-clay/40" />
+            <ProgressMeter />
+          </Drawer.Content>
+        </Drawer.Portal>
+      </Drawer.Root>
     </>
   )
 }

@@ -5,6 +5,7 @@ import { Wordmark } from '@/components/shared/Wordmark'
 import type { AreaState } from '@/types/projectState'
 import type { MessageRow, ProjectRow } from '@/types/db'
 import { SpecialistSigil } from './SpecialistSigils'
+import { ProgressMeter } from './ProgressMeter'
 
 interface Props {
   project: ProjectRow
@@ -53,6 +54,11 @@ export function LeftRail({ project, messages }: Props) {
 
       {/* Roman-numeral spec index */}
       <SpecIndex project={project} />
+
+      <span aria-hidden="true" className="block h-px bg-ink/12" />
+
+      {/* Phase 3.4 #53 — progress meter */}
+      <ProgressMeter />
 
       <span aria-hidden="true" className="block h-px bg-ink/12" />
 
