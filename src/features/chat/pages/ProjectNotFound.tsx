@@ -30,7 +30,7 @@ export function ProjectNotFound() {
     >
       <header className="relative z-10 px-6 sm:px-10 lg:px-14 xl:px-20">
         <div className="flex h-16 md:h-[72px] items-center justify-between">
-          <Wordmark size="sm" />
+          <Wordmark />
           <LanguageSwitcher />
         </div>
       </header>

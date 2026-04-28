@@ -65,7 +65,7 @@ export function WizardShell({ step, totalSteps = 2, children }: Props) {
 
       <header className="relative z-10 px-4 sm:px-10 lg:px-14 xl:px-20">
         <div className="flex h-16 md:h-[72px] items-center justify-between gap-3">
-          <Wordmark size="sm" />
+          <Wordmark />
           <div className="flex items-center gap-3 sm:gap-5">
             <LanguageSwitcher />
             <span

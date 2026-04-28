@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 import { cn } from '@/lib/utils'
+import { Wordmark } from '@/components/shared/Wordmark'
 import type { AreaState } from '@/types/projectState'
 import type { MessageRow, ProjectRow } from '@/types/db'
 import { SpecialistSigil } from './SpecialistSigils'
@@ -28,6 +29,11 @@ export function LeftRail({ project, messages }: Props) {
 
   return (
     <div className="w-full flex flex-col px-5 py-7 gap-7">
+      {/* Phase 3.3 #50 — wordmark anchored at the top of the rail as a
+       * persistent identity anchor. Desktop only (mobile keeps the
+       * folded-paper-tab triggers + title-block centre). */}
+      <Wordmark size="xs" />
+
       {/* Project header */}
       <div className="flex flex-col gap-1.5">
         <p className="font-serif text-[16px] text-ink leading-tight truncate" title={project.name}>

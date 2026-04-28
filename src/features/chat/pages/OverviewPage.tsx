@@ -70,7 +70,7 @@ export function OverviewPage() {
     <div className="min-h-dvh bg-paper">
       <header className="sticky top-0 z-10 bg-paper/95 backdrop-blur-[2px] border-b border-ink/12">
         <div className="mx-auto max-w-[1100px] px-6 sm:px-10 lg:px-14 flex h-16 md:h-[64px] items-center justify-between gap-4">
-          <Wordmark size="sm" />
+          <Wordmark />
           <p className="hidden sm:block text-[12px] font-serif italic text-clay/85 truncate max-w-md">
             {t('chat.overview.eyebrow')} · {project.name}
           </p>

@@ -55,7 +55,7 @@ export function DashboardPage() {
 
       <header className="relative z-10 border-b border-ink/12 bg-paper/85 backdrop-blur-[2px]">
         <Container className="flex h-16 md:h-[72px] items-center justify-between">
-          <Wordmark />
+          <Wordmark tone="drafting-blue" />
           <div className="flex items-center gap-5">
             <LanguageSwitcher />
             <span className="h-4 w-px bg-ink/20" aria-hidden="true" />
