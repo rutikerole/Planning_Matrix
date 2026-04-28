@@ -24,7 +24,7 @@ export function MessageSystem({ message }: Props) {
       className="flex flex-col gap-2 border-y border-border-strong/40 py-3"
       aria-label={t('chat.system.label')}
     >
-      <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-clay leading-none">
+      <p className="text-[11px] font-medium uppercase tracking-[0.20em] text-clay leading-none">
         {t('chat.system.tag')}
       </p>
       <p className="text-[13px] text-ink/80 leading-relaxed">{text}</p>

@@ -36,7 +36,7 @@ export function StatusPill({ status, className }: Props) {
   return (
     <span
       className={cn(
-        'inline-block text-[10px] uppercase tracking-[0.16em] tabular-nums',
+        'inline-block text-[10px] uppercase tracking-[0.20em] tabular-nums',
         STATUS_STYLES[status],
         className,
       )}

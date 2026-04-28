@@ -87,7 +87,7 @@ export function IdkPopover({ open, onClose, onChoose }: Props) {
           >
             <h2
               id="idk-dialog-title"
-              className="px-3 pt-2 pb-3 text-[11px] font-medium uppercase tracking-[0.16em] text-clay"
+              className="px-3 pt-2 pb-3 text-[11px] font-medium uppercase tracking-[0.22em] text-clay"
             >
               {t('chat.input.idk.label')}
             </h2>

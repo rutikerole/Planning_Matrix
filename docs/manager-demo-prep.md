@@ -1,44 +1,67 @@
 # Manager demo — prep notes
 
-> // TODO(rutik): fill before demo
->
-> Placeholder shipped in Phase 3.1 commit #34 so the file exists in
-> the tree. Use this to capture the demo script, screenshots, the
-> talking points you want to land, and any rough edges to disclaim.
+> Placeholder shipped in Phase 3.1 #34, refreshed in Phase 3.3 #51
+> after the unification batch. The dashboard is now the entry point —
+> start there, not chat workspace. Capture screenshots / recordings
+> in §7 once the demo's been walked end-to-end.
 
 ## Suggested structure (delete and replace as you populate)
 
-### 1 · Open with the wizard
+### 1 · Open with the dashboard (Phase 3.3 #47)
 
-- Sign in. Land on dashboard.
-- Click `Neues Projekt`.
-- Q1 → `Neubau Einfamilienhaus`. Q2 → `Ja`, address.
-- Click `Projekt anlegen`. **Watch the transition cinema** (Polish Move 5).
+- Sign in. Land on `/dashboard`.
+- **No "in Aufbau" eyebrow** — the dashboard is now `ATELIER · WILLKOMMEN`,
+  Instrument Serif welcome headline, italic Serif activity sentence
+  ("Drei laufende Projekte. Letzte Aktivität: heute, 11:31.").
+- Project list reads as architectural-schedule index — Roman numerals
+  I/II/III in italic Serif clay-deep, Instrument Serif project names,
+  italic clay timestamps + Wendungen counts, state pills (● Aktiv /
+  ○ Pausiert / ─ Entwurf / ✓ Abgeschlossen), drafting-blue arrow chevrons.
+- Hover a row → ink darken + arrow shifts +2px right + numeral +1px.
+- Background is paper grain + blueprint substrate (no rooftop photo).
+- Wordmark in the top-left is the new axonometric building glyph at
+  drafting-blue 85% (#50). Pause to point this out — "the same lockup
+  is on every screen now."
 
-### 2 · The team enters the room
+### 2 · Open the wizard (Phase 3.3 #48)
+
+- Click `+ Neu` (or `Neues Projekt` if 0 projects).
+- Q1 paper card with title block: eyebrow, Roman numeral I on a
+  hairline rule, Instrument Serif headline + clay punctuation, italic
+  Serif sub. NorthArrow rosette top-right of the sheet (animates in).
+- Chips are paper-tab cards. Hover lifts 1px + drafting-blue 5% tint.
+- Pick `Neubau Einfamilienhaus`.
+- Q2 paper card with Roman numeral II active. Yes/No paper-tab toggle.
+  Address input lives in a `<PaperSheet padded="sm">` wrapper with
+  italic Serif helper.
+- Click `Projekt anlegen`. **Watch the transition cinema** — atelier
+  illustration with the pen drawing the 1cm scale line, "Der Tisch
+  wird gedeckt." headline, Polish Move 5 hairline morph into chat.
+
+### 3 · The team enters the room
 
 - Moderator's first message renders with typewriter.
 - Note: italic German role label below the tag (Polish Move 1 — the move that does the most work for product feeling).
 - Right rail starts populating — first the Eckdaten, then maybe one Top-3 entry.
 
-### 3 · The handoff
+### 4 · The handoff
 
 - Answer the moderator. Watch the match-cut as Planungsrecht takes over (Polish Move 2: hairline draws across, then the new nameplate scales in).
 - Right rail's `Bereiche` flips A from PENDING to ACTIVE.
 - Ambient activity dot pulses next to the section about to update during the next thinking phase (Polish Move 4).
 
-### 4 · The honesty moment
+### 5 · The honesty moment
 
 - When Planungsrecht asks something specific the user might not know, click `Weiß ich nicht` → `Recherche durchführen lassen`.
 - The model honestly says it can't run a live B-Plan lookup, marks the assumption, continues.
 - This is the moment that lands trust with a serious German Bauherr.
 
-### 5 · The dossier crystallises
+### 6 · The dossier crystallises
 
 - After 3-4 turns, walk through the right rail: Top-3 with serif italic numbers and outside-the-card footer line, Eckdaten in three-row blocks, Verfahren / Dokumente / Fachplaner expanding.
 - Click `Vollständige Übersicht öffnen` to show the architect's view.
 
-### 6 · Mobile
+### 7 · Mobile
 
 - Open the same project on a phone (or DevTools mobile emulation).
 - Hamburger opens the gates list. Rail icon opens the dossier. Both swipe-close.
@@ -60,3 +83,17 @@
 ## Captured screenshots and recordings
 
 - // TODO: paste links / file paths here once captured
+
+### Phase 3.3 — required captures (per brief §3.5)
+
+- Dashboard (full, populated)
+- Dashboard (empty state with atelier table illustration)
+- Wizard Q1 with new paper card
+- Wizard Q2
+- Sign-in page
+- Sign-up page
+- Wordmark zoomed in (showing the axonometric glyph + tightened lockup)
+- Mobile dashboard (375×812)
+- Short screen recording of dashboard → wizard → chat workspace
+  (~12 seconds), showing the unified visual language across all
+  three surfaces.

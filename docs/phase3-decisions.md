@@ -135,3 +135,13 @@
 
 - **A** — `PLAN.md` is **not** deleted after the chat ships. It moves to `docs/phase3-plan.md` and is committed in the final commit of this phase. Future-Rutik and future-Claude need the decision archaeology.
 - **B** — `docs/phase3-decisions.md` (this file) ships alongside the moved plan, one section per D1–D15.
+
+---
+
+## D16 · Atelier unification across all surfaces (Phase 3.3 · 2026-04-28)
+
+**Question:** Phase 3.2 brought the chat workspace to "demo-ready German atelier" register, but the surfaces around it (dashboard, wizard, auth, wordmark) lagged. How do we bring them up to the same standard without inventing new vocabulary?
+
+**Answer:** Five commits (#47–#51) of unification only — no new vocabulary. Dashboard rebuilt with project list as architectural-schedule index (Roman numerals + state pills + arrows + atelier substrate replacing the rooftop photo). Wizard wrapped in shared `<PaperSheet>` chrome with Roman-numeral progress and paper-tab chips. Auth headlines + photo captions reskinned (input focus state moves from clay → drafting-blue/60 to align with chat workspace). Wordmark replaces the 4-square monogram with a hand-drawn 16×16 axonometric building glyph, tightened lockup, context-aware tone. Final pass audits every surface for paper grain, blueprint substrate placement, eyebrow tracking (0.20em tags / 0.22em sections — `0.16em` legacy from Phase 3.0 retired everywhere outside the locked landing demo).
+
+**Reasoning:** The atelier vocabulary already proved itself in 12 commits across Phase 3.2. The risk in 3.3 is *invention*, not execution. By extracting `<BlueprintSubstrate>` to a shared component and adding a small `<PaperSheet>` primitive — not a new chrome system — the dashboard, wizard, and auth all speak the chat workspace's language without redesign noise. Plan locked via PHASE_3_3_PLAN.md §6 Q1–Q8 before any code shipped (same plan-first discipline as Phase 3.2).

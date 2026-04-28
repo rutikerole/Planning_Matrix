@@ -166,10 +166,10 @@ export function OverviewPage() {
                       <span
                         className={
                           a.state === 'VOID'
-                            ? 'ml-3 text-[10px] uppercase tracking-[0.16em] text-ink/30 line-through'
+                            ? 'ml-3 text-[10px] uppercase tracking-[0.20em] text-ink/30 line-through'
                             : a.state === 'ACTIVE'
-                              ? 'ml-3 text-[10px] uppercase tracking-[0.16em] text-clay'
-                              : 'ml-3 text-[10px] uppercase tracking-[0.16em] text-clay/60'
+                              ? 'ml-3 text-[10px] uppercase tracking-[0.20em] text-clay'
+                              : 'ml-3 text-[10px] uppercase tracking-[0.20em] text-clay/60'
                         }
                       >
                         {t(`chat.areas.state.${a.state.toLowerCase()}`)}
@@ -261,8 +261,8 @@ export function OverviewPage() {
                       <span
                         className={
                           r.needed
-                            ? 'text-[10px] uppercase tracking-[0.16em] text-clay'
-                            : 'text-[10px] uppercase tracking-[0.16em] text-ink/40'
+                            ? 'text-[10px] uppercase tracking-[0.20em] text-clay'
+                            : 'text-[10px] uppercase tracking-[0.20em] text-ink/40'
                         }
                       >
                         {r.needed ? t('chat.role.needed') : t('chat.role.notNeeded')}

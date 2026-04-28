@@ -36,8 +36,8 @@ export function RolesPanel({ roles }: Props) {
                 <span
                   className={
                     r.needed
-                      ? 'text-[10px] uppercase tracking-[0.16em] text-clay'
-                      : 'text-[10px] uppercase tracking-[0.16em] text-ink/40'
+                      ? 'text-[10px] uppercase tracking-[0.20em] text-clay'
+                      : 'text-[10px] uppercase tracking-[0.20em] text-ink/40'
                   }
                 >
                   {r.needed ? t('chat.role.needed') : t('chat.role.notNeeded')}

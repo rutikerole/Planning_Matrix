@@ -178,7 +178,7 @@ function ChevronAction({
       type="button"
       onClick={onClick}
       className={
-        'group inline-flex items-center gap-2.5 text-[12px] font-medium uppercase tracking-[0.16em] transition-colors duration-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm px-1 py-1 ' +
+        'group inline-flex items-center gap-2.5 text-[12px] font-medium uppercase tracking-[0.20em] transition-colors duration-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm px-1 py-1 ' +
         (tone === 'primary'
           ? 'text-ink hover:text-clay-deep'
           : 'text-ink/65 hover:text-ink')

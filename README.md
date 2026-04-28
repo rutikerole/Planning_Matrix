@@ -26,6 +26,8 @@ Live: <https://planning-matrix.vercel.app/>
 - **Phase 2** — authentication
 - **Phase 3** — chat core: two-question wizard, three-zone chat workspace, Anthropic-backed Edge Function, dossier-styled right rail, specialist roundtable
 - **Phase 3.1** — polish sweep: Top-3 numbering fix, completion_signal end-to-end, mobile drawers (vaul), View Transitions API for the wizard handoff, MAX_TOKENS tuning, `thinking_label_de` persistence (`docs/phase3-1-polish.md`)
+- **Phase 3.2** — atelier visual makeover of the chat workspace: paper grain + blueprint substrate, drafting-blue accent, OpenType stack, paper card + title block + north arrow, specialist sigils + marginalia rule, Roman-numeral spec index, axonometric right rail with intent drawing + plan-section bands + schedule blocks, atelier-empty illustration, octagonal completion stamps, project-binder overview, atelier mobile, ambient motion + Pause moment (`docs/phase3-2-design-notes.md`)
+- **Phase 3.3** — atelier unification across dashboard, wizard, auth, wordmark: dashboard rebuilt as project-list schedule index, wizard wrapped in shared `<PaperSheet>` chrome with Roman-numeral progress + paper-tab chips, auth headlines + photo captions reskinned, wordmark refined to axonometric building glyph + tightened Inter/Serif lockup, eyebrow tracking unified to 0.20em / 0.22em (`docs/phase3-3-plan.md`)
 
 ## Phase 3 — Edge Function workflow
 

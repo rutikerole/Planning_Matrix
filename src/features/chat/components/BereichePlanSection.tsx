@@ -202,10 +202,10 @@ export function BereichePlanSection({ state }: Props) {
             <span
               className={
                 band.state === 'VOID'
-                  ? 'text-[10px] uppercase tracking-[0.16em] text-ink/30 line-through'
+                  ? 'text-[10px] uppercase tracking-[0.20em] text-ink/30 line-through'
                   : band.state === 'ACTIVE'
-                    ? 'text-[10px] uppercase tracking-[0.16em] text-clay'
-                    : 'text-[10px] uppercase tracking-[0.16em] text-clay/60'
+                    ? 'text-[10px] uppercase tracking-[0.20em] text-clay'
+                    : 'text-[10px] uppercase tracking-[0.20em] text-clay/60'
               }
             >
               {t(`chat.areas.state.${band.state.toLowerCase()}`)}

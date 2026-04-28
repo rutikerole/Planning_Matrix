@@ -97,7 +97,7 @@ export function CostTicker({ messages }: Props) {
 
       {/* Breakdown popover */}
       <div className="hidden group-hover:flex group-focus-within:flex absolute right-0 bottom-full mb-2 w-60 flex-col gap-1.5 bg-paper border border-border-strong/45 rounded-sm px-3 py-2.5 shadow-[0_8px_24px_-8px_hsl(220_15%_11%/0.22)] z-20">
-        <p className="text-[10px] uppercase tracking-[0.16em] text-clay/85 mb-1">
+        <p className="text-[10px] uppercase tracking-[0.22em] text-clay/85 mb-1">
           {t('chat.cost.breakdown')}
         </p>
         <Row label={t('chat.cost.input')} value={formatTokensDe(totals.inputTokens)} />
