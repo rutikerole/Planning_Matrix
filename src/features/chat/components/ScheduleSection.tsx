@@ -43,7 +43,7 @@ export function ScheduleSection({
         type="button"
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
-        className="flex items-center justify-between text-left gap-3 py-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/35 focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm"
+        className="flex items-center justify-between text-left gap-3 py-2 min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/35 focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm"
       >
         <span className="flex items-baseline gap-3">
           {/* Roman numeral, anchored to a 24px column for row alignment */}

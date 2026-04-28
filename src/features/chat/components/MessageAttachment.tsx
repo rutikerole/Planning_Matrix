@@ -123,7 +123,7 @@ function AttachmentLink({ row, lang }: { row: ProjectFileRow; lang: 'de' | 'en' 
       onClick={handleClick}
       title={row.file_name}
       className={cn(
-        'group inline-flex items-center gap-2 max-w-full px-3 py-1.5 border border-ink/15 bg-paper text-[12.5px] text-ink',
+        'group inline-flex items-center gap-2 max-w-full px-3 py-2 sm:py-1.5 min-h-[44px] sm:min-h-0 border border-ink/15 bg-paper text-[12.5px] text-ink',
         'rounded-[var(--pm-radius-pill)] transition-colors duration-soft hover:border-ink/30 hover:bg-drafting-blue/[0.04]',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/35 focus-visible:ring-offset-2 focus-visible:ring-offset-background',
       )}

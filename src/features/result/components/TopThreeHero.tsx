@@ -220,7 +220,7 @@ function RecommendationRow({ rec, position, lang, t }: RecommendationRowProps) {
             onClick={toggleStarted}
             aria-pressed={started}
             className={cn(
-              'inline-flex items-center gap-1.5 h-8 px-3 ml-auto text-[12px] font-medium border transition-colors duration-soft',
+              'inline-flex items-center gap-1.5 h-11 sm:h-8 px-4 sm:px-3 ml-auto text-[12px] font-medium border transition-colors duration-soft',
               'rounded-[var(--pm-radius-pill)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/35 focus-visible:ring-offset-2 focus-visible:ring-offset-background',
               started
                 ? 'bg-clay/15 border-clay/35 text-clay'

@@ -122,7 +122,7 @@ export function RiskFlags({ state }: Props) {
               <button
                 type="button"
                 onClick={() => openResolve(it)}
-                className="shrink-0 inline-flex items-center h-8 px-3 text-[12px] font-medium text-paper bg-ink hover:bg-ink/92 rounded-[var(--pm-radius-pill)] transition-colors duration-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                className="shrink-0 inline-flex items-center h-11 sm:h-8 px-4 sm:px-3 text-[12px] font-medium text-paper bg-ink hover:bg-ink/92 rounded-[var(--pm-radius-pill)] transition-colors duration-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink focus-visible:ring-offset-2 focus-visible:ring-offset-background"
               >
                 {t('result.risks.resolveCta', {
                   defaultValue: 'Diese Annahme klären',

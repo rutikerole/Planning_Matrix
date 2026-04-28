@@ -131,7 +131,7 @@ export function AttachmentChip({ attachment, onRemove, disabled }: Props) {
           defaultValue: 'Anhang entfernen',
         })}
         className={cn(
-          'shrink-0 inline-flex items-center justify-center size-5 -mr-1 rounded-full text-ink/55 hover:text-ink hover:bg-ink/[0.06] transition-colors duration-soft',
+          'shrink-0 inline-flex items-center justify-center size-9 sm:size-5 -mr-2 sm:-mr-1 rounded-full text-ink/55 hover:text-ink hover:bg-ink/[0.06] transition-colors duration-soft',
           'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/40 focus-visible:ring-offset-1 focus-visible:ring-offset-background',
         )}
       >

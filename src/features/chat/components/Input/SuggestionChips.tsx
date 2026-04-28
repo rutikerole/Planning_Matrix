@@ -156,7 +156,7 @@ function ChipRow({
 
 function chipBase(highlighted = false): string {
   return cn(
-    'inline-flex items-center gap-1.5 px-3.5 py-2 border text-[13px] leading-snug shrink-0',
+    'inline-flex items-center gap-1.5 px-3.5 py-2.5 sm:py-2 min-h-[44px] sm:min-h-0 border text-[13px] leading-snug shrink-0',
     'rounded-[var(--pm-radius-pill)] transition-[background-color,color,border-color,transform] duration-soft ease-soft',
     'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/35 focus-visible:ring-offset-2 focus-visible:ring-offset-background',
     highlighted
