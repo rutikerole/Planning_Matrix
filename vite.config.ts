@@ -20,6 +20,14 @@ export default defineConfig({
           if (!id.includes('node_modules')) return
           if (id.includes('framer-motion')) return 'motion'
           if (id.includes('@radix-ui')) return 'radix'
+          // Phase 3.8 #88 — Supabase + TanStack Query are heavy enough
+          // to warrant their own cache-friendly chunks. Both stay
+          // shared across routes so the second navigation is free.
+          if (id.includes('@supabase')) return 'supabase'
+          if (id.includes('@tanstack/react-query')) return 'tanstack-query'
+          if (id.includes('zod')) return 'zod'
+          if (id.includes('lucide-react')) return 'lucide'
+          if (id.includes('vaul')) return 'vaul'
           if (
             id.includes('i18next') ||
             id.includes('react-i18next')
