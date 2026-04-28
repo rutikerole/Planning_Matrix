@@ -1,14 +1,16 @@
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { m, useReducedMotion } from 'framer-motion'
+import { AtelierIllustration } from '@/features/chat/components/AtelierIllustration'
 
 /**
- * Calm full-bleed paper screen shown while we INSERT the project + prime
- * the first Anthropic turn. Eyebrow · serif headline · short body, with
- * a hairline sweep loop underneath. No spinner, no progress bar. Total
- * wallclock typically 2–6 s.
+ * Phase 3.2 #42 — transition screen as an architectural drawing.
  *
- * Document title swap so the browser tab matches the moment.
+ * Same atelier-empty illustration the chat workspace uses for its
+ * priming state, so the wizard → chat handoff feels continuous —
+ * the table is being set, then the team takes their seats. The
+ * hairline below the body keeps its viewTransitionName so Polish
+ * Move 5 (browser-level rule morph) still works on Chromium.
  */
 export function TransitionScreen() {
   const { t } = useTranslation()
@@ -32,28 +34,29 @@ export function TransitionScreen() {
       aria-live="polite"
       aria-busy="true"
     >
-      <div className="w-full max-w-[34rem] flex flex-col items-center text-center gap-6">
-        <p className="eyebrow inline-flex items-center text-foreground/65">
-          <span className="accent-dot" aria-hidden="true" />
-          {t('wizard.transition.eyebrow')}
-        </p>
+      <div className="w-full max-w-[34rem] flex flex-col items-center text-center gap-7">
+        <AtelierIllustration />
 
-        <h1 className="font-display text-display-3 md:text-display-2 text-ink leading-[1.05] -tracking-[0.02em]">
-          {t('wizard.transition.headline').replace(/\.$/, '')}
-          <span className="text-clay">.</span>
-        </h1>
+        <div className="flex flex-col items-center gap-4">
+          <p className="eyebrow inline-flex items-center text-foreground/65">
+            <span className="accent-dot" aria-hidden="true" />
+            {t('wizard.transition.eyebrow')}
+          </p>
 
-        <p className="text-body-lg text-ink/70 leading-relaxed">
-          {t('wizard.transition.body')}
-        </p>
+          <h1 className="font-display text-display-3 md:text-display-2 text-ink leading-[1.05] -tracking-[0.02em]">
+            {t('wizard.transition.headline').replace(/\.$/, '')}
+            <span className="text-clay">.</span>
+          </h1>
 
-        {/* Hairline sweep loop — clay strip travelling left-to-right.
-         * Polish Move 5: viewTransitionName matches the rule above the
-         * moderator's first nameplate so the browser morphs between
-         * routes (Chromium 95%+); the Framer Motion fallback handles
-         * the rest cleanly. */}
+          <p className="font-serif italic text-[16px] text-ink/70 leading-relaxed">
+            {t('wizard.transition.body')}
+          </p>
+        </div>
+
+        {/* Hairline sweep loop — viewTransitionName carries Polish Move 5
+         * across the route boundary. */}
         <div
-          className="relative h-px w-32 bg-border-strong/30 overflow-hidden mt-6"
+          className="relative h-px w-32 bg-border-strong/30 overflow-hidden mt-2"
           style={{ viewTransitionName: 'pm-handoff-hairline' }}
         >
           {!reduced && (

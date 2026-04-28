@@ -393,8 +393,8 @@
     "submitLoading": "Projekt wird angelegt …",
     "transition": {
       "eyebrow": "Planning Matrix · Vorbereitung",
-      "headline": "Wir bereiten Ihren Tisch vor.",
-      "body": "Einen Moment, bitte."
+      "headline": "Der Tisch wird gedeckt.",
+      "body": "Wir richten Ihren Zeichentisch ein — einen Moment, bitte."
     },
     "errors": {
       "insertFailed": "Projekt konnte nicht angelegt werden. Bitte versuchen Sie es erneut.",
@@ -570,9 +570,10 @@
       "empty": "Empfehlungen erscheinen hier, sobald genug Informationen vorliegen."
     },
     "empty": {
-      "eyebrow": "Planning Matrix",
-      "headline": "Das Team versammelt sich.",
-      "body": "Einen Moment, bitte."
+      "eyebrow": "Planning Matrix · Atelier",
+      "headline": "Das Atelier öffnet.",
+      "body": "Einen Moment, bitte — das Team setzt sich an den Tisch.",
+      "illustrationAlt": "Zeichentisch mit Transparentpapier, Federhalter, gerollten Plänen, Hauptbuch und Kaffeetasse — axonometrische Skizze."
     },
     "notFound": {
       "title": "Projekt nicht gefunden · Planning Matrix",

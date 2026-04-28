@@ -393,8 +393,8 @@
     "submitLoading": "Creating project …",
     "transition": {
       "eyebrow": "Planning Matrix · Preparing",
-      "headline": "We are preparing your table.",
-      "body": "One moment, please."
+      "headline": "Setting the table.",
+      "body": "We're laying out your drafting board — one moment."
     },
     "errors": {
       "insertFailed": "Project couldn't be created. Please try again.",
@@ -570,9 +570,10 @@
       "empty": "Recommendations appear here once there's enough information."
     },
     "empty": {
-      "eyebrow": "Planning Matrix",
-      "headline": "The team is gathering.",
-      "body": "One moment, please."
+      "eyebrow": "Planning Matrix · Atelier",
+      "headline": "The atelier opens.",
+      "body": "One moment — the team is taking their seats.",
+      "illustrationAlt": "Drafting table with tracing paper, fountain pen, rolled plans, ledger and coffee cup — axonometric sketch."
     },
     "notFound": {
       "title": "Project not found · Planning Matrix",
