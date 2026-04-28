@@ -113,6 +113,7 @@ export function SwipeableProjectRow({ project, index, lang, showDivider }: Props
           onClick={onAction}
           disabled={pending}
           tabIndex={revealed ? 0 : -1}
+          aria-label={`${actionLabel}: ${project.name}`}
           className="w-full flex items-center justify-center text-[12px] font-medium uppercase tracking-[0.18em] text-paper bg-ink/85 hover:bg-ink active:bg-ink disabled:opacity-60 transition-colors duration-soft"
         >
           {actionLabel}

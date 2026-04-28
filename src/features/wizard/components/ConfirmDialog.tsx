@@ -121,14 +121,14 @@ export function ConfirmDialog({
                 ref={cancelButtonRef}
                 type="button"
                 onClick={onCancel}
-                className="h-10 px-4 rounded-sm border border-border-strong/55 text-[13.5px] font-medium text-ink/85 hover:bg-muted/40 hover:text-ink transition-colors duration-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                className="h-11 sm:h-10 px-4 rounded-sm border border-border-strong/55 text-[13.5px] font-medium text-ink/85 hover:bg-muted/40 hover:text-ink transition-colors duration-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
               >
                 {cancelLabel}
               </button>
               <button
                 type="button"
                 onClick={onConfirm}
-                className="h-10 px-4 rounded-sm bg-ink text-paper text-[13.5px] font-medium hover:bg-ink/92 transition-colors duration-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                className="h-11 sm:h-10 px-4 rounded-sm bg-ink text-paper text-[13.5px] font-medium hover:bg-ink/92 transition-colors duration-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink focus-visible:ring-offset-2 focus-visible:ring-offset-background"
               >
                 {confirmLabel}
               </button>
