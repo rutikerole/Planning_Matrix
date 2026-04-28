@@ -51,6 +51,7 @@ export function useChatTurn(projectId: string) {
   const closeStreamingMessage = useChatStore((s) => s.closeStreamingMessage)
   const noteSuccessfulTurn = useChatStore((s) => s.noteSuccessfulTurn)
   const setAbortController = useChatStore((s) => s.setAbortController)
+  const setRateLimit = useChatStore((s) => s.setRateLimit)
 
   return useMutation({
     mutationKey: ['chat-turn', projectId],
@@ -204,6 +205,9 @@ export function useChatTurn(projectId: string) {
       setAbortController(null)
       noteSuccessfulTurn()
       clearFailed(clientRequestId)
+      // Phase 4.1 #125 — clear any prior rate-limit banner once a turn
+      // succeeds (either the bucket rolled over or the user waited).
+      setRateLimit(null)
 
       const signal = response.completionSignal
       if (signal && signal !== 'continue') {
@@ -244,6 +248,15 @@ export function useChatTurn(projectId: string) {
       closeStreamingMessage()
       setAbortController(null)
 
+      // Phase 4.1 #125 — surface rate-limit envelopes to the UI banner.
+      if (
+        err instanceof ChatTurnError &&
+        err.code === 'rate_limit_exceeded' &&
+        err.rateLimit
+      ) {
+        setRateLimit(err.rateLimit)
+      }
+
       if (import.meta.env.DEV) {
         console.error('[chat-turn] mutation error', err)
         if (err instanceof ChatTurnError) {
@@ -252,6 +265,7 @@ export function useChatTurn(projectId: string) {
             httpStatus: err.httpStatus,
             requestId: err.requestId,
             retryAfterMs: err.retryAfterMs,
+            rateLimit: err.rateLimit,
           })
         }
       }

@@ -31,11 +31,19 @@ export type ChatApiErrorCode =
   | 'network'
   | 'streaming_failed'
 
+export interface RateLimitInfo {
+  currentCount: number
+  maxCount: number
+  resetAt: string
+}
+
 export class ChatTurnError extends Error {
   readonly code: ChatApiErrorCode
   readonly retryAfterMs: number | null
   readonly requestId: string | null
   readonly httpStatus: number
+  /** Phase 4.1 #125 — populated when code === 'rate_limit_exceeded'. */
+  readonly rateLimit: RateLimitInfo | null
 
   constructor(
     code: ChatApiErrorCode,
@@ -43,6 +51,7 @@ export class ChatTurnError extends Error {
     requestId: string | null,
     httpStatus: number,
     message: string,
+    rateLimit: RateLimitInfo | null = null,
   ) {
     super(message)
     this.name = 'ChatTurnError'
@@ -50,6 +59,7 @@ export class ChatTurnError extends Error {
     this.retryAfterMs = retryAfterMs
     this.requestId = requestId
     this.httpStatus = httpStatus
+    this.rateLimit = rateLimit
   }
 }
 
@@ -147,6 +157,7 @@ export async function postChatTurn(
       body.error.requestId ?? null,
       response.status,
       body.error.message,
+      body.error.rateLimit ?? null,
     )
   }
 
@@ -244,14 +255,35 @@ export async function postChatTurnStreaming(
   }
 
   if (!response.ok || !response.body) {
+    // Phase 4.1 #125 — when the function rejected the request before
+    // reaching the SSE phase (rate-limit, auth, validation), it sent a
+    // structured JSON error envelope. Parse it so the UI gets the
+    // proper code + rateLimit info instead of a generic streaming_failed.
+    let parsedError: ChatTurnError | null = null
+    try {
+      const body = (await response.json()) as ChatTurnResponse
+      if (!body.ok) {
+        parsedError = new ChatTurnError(
+          body.error.code,
+          body.error.retryAfterMs ?? null,
+          body.error.requestId ?? null,
+          response.status,
+          body.error.message,
+          body.error.rateLimit ?? null,
+        )
+      }
+    } catch {
+      /* fall through to the generic streaming_failed envelope below */
+    }
     handlers.onError(
-      new ChatTurnError(
-        'streaming_failed',
-        null,
-        null,
-        response.status,
-        `Streaming endpoint returned HTTP ${response.status}`,
-      ),
+      parsedError ??
+        new ChatTurnError(
+          'streaming_failed',
+          null,
+          null,
+          response.status,
+          `Streaming endpoint returned HTTP ${response.status}`,
+        ),
     )
     return
   }

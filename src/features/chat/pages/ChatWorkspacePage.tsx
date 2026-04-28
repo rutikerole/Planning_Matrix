@@ -20,6 +20,7 @@ import { ConversationCursor } from '../components/ConversationCursor'
 import { ChatDropZone } from '../components/ChatDropZone'
 import { ChatProgressBar } from '../components/Progress/ChatProgressBar'
 import { UnifiedFooter } from '../components/UnifiedFooter/UnifiedFooter'
+import { RateLimitBanner } from '../components/RateLimitBanner'
 import { useProjectEvents } from '../hooks/useProjectEvents'
 import { MobileChatWorkspace } from '../components/MobileChatWorkspace'
 import { useViewport } from '@/lib/useViewport'
@@ -255,6 +256,7 @@ export function ChatWorkspacePage() {
     <>
       <SEO titleKey="seo.title.project" params={{ name: project.name }} />
       <OfflineBanner />
+      <RateLimitBanner />
       {isMobile ? (
         <MobileChatWorkspace
           project={project}

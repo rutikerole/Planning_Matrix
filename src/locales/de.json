@@ -525,7 +525,9 @@
       "usd": "Geschätzte Kosten"
     },
     "banner": {
-      "offline": "Offline — Eingaben werden bei erneuter Verbindung gesendet."
+      "offline": "Offline — Eingaben werden bei erneuter Verbindung gesendet.",
+      "rateLimit": "Sie haben in dieser Stunde sehr viele Nachrichten gesendet ({{count}} von {{max}}). Bitte warten Sie bis {{time}}.",
+      "rateLimitDismiss": "Hinweis ausblenden"
     },
     "overview": {
       "titlePrefix": "Übersicht",

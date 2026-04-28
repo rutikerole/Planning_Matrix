@@ -525,7 +525,9 @@
       "usd": "Estimated cost"
     },
     "banner": {
-      "offline": "Offline — your input will send once the connection returns."
+      "offline": "Offline — your input will send once the connection returns.",
+      "rateLimit": "You have sent a lot of messages this hour ({{count}} of {{max}}). Please wait until {{time}}.",
+      "rateLimitDismiss": "Dismiss"
     },
     "completion": {
       "label": "Team note",

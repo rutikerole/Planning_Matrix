@@ -121,6 +121,44 @@ Deno.serve(async (req: Request) => {
     `[chat-turn] [${requestId}] user=${userData.user.id} project=${projectId}`,
   )
 
+  // ── Rate limit ───────────────────────────────────────────────────
+  // Phase 4.1 #125 — guard the Anthropic credit budget. The RPC is
+  // SECURITY DEFINER and atomic (insert ... on conflict ... do update);
+  // it returns one row whose `allowed` flag tells us whether the
+  // caller is within their per-hour cap. Failures here fall through
+  // to a 500 — we don't want to silently bypass the limiter on infra
+  // hiccups.
+  const RATE_LIMIT_PER_HOUR = 50
+  const { data: rateRows, error: rateErr } = await supabase.rpc(
+    'increment_chat_turn_rate_limit',
+    { p_user_id: userData.user.id, p_max_per_hour: RATE_LIMIT_PER_HOUR },
+  )
+  if (rateErr) {
+    console.error(`[chat-turn] [${requestId}] rate-limit RPC failed:`, rateErr)
+    return respond(
+      { code: 'internal', message: 'Rate-limit check failed' },
+      500,
+    )
+  }
+  const rateRow = Array.isArray(rateRows) ? rateRows[0] : rateRows
+  if (rateRow && !rateRow.allowed) {
+    console.log(
+      `[chat-turn] [${requestId}] rate limit exceeded: ${rateRow.current_count}/${rateRow.max_count}`,
+    )
+    return respond(
+      {
+        code: 'rate_limit_exceeded',
+        message: 'Too many chat turns this hour',
+        rateLimit: {
+          currentCount: rateRow.current_count,
+          maxCount: rateRow.max_count,
+          resetAt: rateRow.reset_at,
+        },
+      },
+      429,
+    )
+  }
+
   // ── Load project + messages ──────────────────────────────────────
   const loadResult = await loadProjectAndMessages(supabase, projectId)
   if (!loadResult.ok) {

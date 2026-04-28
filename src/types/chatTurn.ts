@@ -79,6 +79,7 @@ export type ChatTurnErrorCode =
   | 'upstream_timeout'
   | 'model_response_invalid'
   | 'persistence_failed'
+  | 'rate_limit_exceeded'
   | 'internal'
 
 export interface ChatTurnError {
@@ -86,6 +87,13 @@ export interface ChatTurnError {
   message: string
   retryAfterMs?: number
   requestId?: string
+  /** Phase 4.1 #125 — populated when code === 'rate_limit_exceeded'. */
+  rateLimit?: {
+    currentCount: number
+    maxCount: number
+    /** ISO timestamp when the bucket resets. */
+    resetAt: string
+  }
 }
 
 // ── Response ───────────────────────────────────────────────────────────

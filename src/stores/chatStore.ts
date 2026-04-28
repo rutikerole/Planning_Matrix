@@ -67,6 +67,17 @@ interface ChatState {
    */
   currentAbortController: AbortController | null
 
+  /**
+   * Phase 4.1 #125 — populated when the most recent chat-turn was
+   * rejected with HTTP 429. Drives the RateLimitBanner above the
+   * workspace. Cleared on the next successful turn.
+   */
+  lastRateLimit: {
+    currentCount: number
+    maxCount: number
+    resetAt: string
+  } | null
+
   setThinking: (
     thinking: boolean,
     specialist?: Specialist | null,
@@ -100,6 +111,8 @@ interface ChatState {
   /** Phase 3.7 #76 — abort the in-flight chat-turn (SendButton stop
    * affordance). No-op when nothing is in flight. */
   abortStreaming: () => void
+  /** Phase 4.1 #125 — set / clear the last rate-limit envelope. */
+  setRateLimit: (info: ChatState['lastRateLimit']) => void
   reset: () => void
 }
 
@@ -116,6 +129,7 @@ export const useChatStore = create<ChatState>((set) => ({
   lastSavedAt: null,
   pendingAttachments: [],
   currentAbortController: null,
+  lastRateLimit: null,
 
   setThinking: (thinking, specialist, label, activitySection) =>
     set((s) => ({
@@ -219,6 +233,8 @@ export const useChatStore = create<ChatState>((set) => ({
     })
   },
 
+  setRateLimit: (info) => set({ lastRateLimit: info }),
+
   reset: () =>
     set((s) => {
       // Revoke any object URLs the previous project staged so we don't
@@ -253,6 +269,7 @@ export const useChatStore = create<ChatState>((set) => ({
         lastSavedAt: null,
         pendingAttachments: [],
         currentAbortController: null,
+        lastRateLimit: null,
       }
     }),
 }))
