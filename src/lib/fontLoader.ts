@@ -65,7 +65,6 @@ export async function loadBrandFonts(doc: PDFDocument): Promise<BrandFonts> {
 
   if (allMissing) {
     if (import.meta.env.DEV) {
-      // eslint-disable-next-line no-console
       console.warn(
         '[fontLoader] No brand TTFs in /public/fonts — falling back to Helvetica. ' +
           'See /public/fonts/README.md.',

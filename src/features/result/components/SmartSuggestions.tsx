@@ -74,7 +74,6 @@ export function SmartSuggestions({ project, state }: Props) {
       )
       setAdded((prev) => new Set(prev).add(suggestionId))
     } catch (err) {
-      // eslint-disable-next-line no-console
       console.error('[smart-suggestion] failed to add', err)
     } finally {
       setBusy(null)

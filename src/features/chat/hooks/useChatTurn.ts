@@ -245,10 +245,8 @@ export function useChatTurn(projectId: string) {
       setAbortController(null)
 
       if (import.meta.env.DEV) {
-        // eslint-disable-next-line no-console
         console.error('[chat-turn] mutation error', err)
         if (err instanceof ChatTurnError) {
-          // eslint-disable-next-line no-console
           console.info('[chat-turn] error detail', {
             code: err.code,
             httpStatus: err.httpStatus,

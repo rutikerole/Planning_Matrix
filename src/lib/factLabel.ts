@@ -36,7 +36,6 @@ export function factLabel(key: string, locale: FactLocale): FactLabel {
 
   if (import.meta.env.DEV && !warned.has(key)) {
     warned.add(key)
-    // eslint-disable-next-line no-console
     console.warn(
       `[factLabel] unmapped key: ${key}. Falling back to humanizer. ` +
         `Add it to /src/locales/factLabels.${locale}.ts.`,

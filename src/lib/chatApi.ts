@@ -128,7 +128,6 @@ export async function postChatTurn(
   }
 
   if (import.meta.env.DEV) {
-    /* eslint-disable no-console */
     console.group(`%cchat-turn ← HTTP ${response.status}`, 'color:#7a5232')
     console.info('request', request)
     console.info('response', body)
@@ -139,7 +138,6 @@ export async function postChatTurn(
       console.info('latencyMs', body.costInfo.latencyMs)
     }
     console.groupEnd()
-    /* eslint-enable no-console */
   }
 
   if (!body.ok) {
@@ -309,7 +307,6 @@ export async function postChatTurnStreaming(
       if (text.length > 0) handlers.onTextDelta(text)
     } else if (frame.type === 'complete') {
       if (import.meta.env.DEV) {
-        /* eslint-disable no-console */
         console.group('%cchat-turn ← STREAM complete', 'color:#7a5232')
         console.info('request', request)
         console.info('costInfo', frame.costInfo)
@@ -317,7 +314,6 @@ export async function postChatTurnStreaming(
         console.info('cacheReadTokens', frame.costInfo.cacheReadTokens)
         console.info('latencyMs', frame.costInfo.latencyMs)
         console.groupEnd()
-        /* eslint-enable no-console */
       }
       handlers.onComplete({
         ok: true,

@@ -107,7 +107,6 @@ export function ExportMenu({ project, messages, events, variant = 'ghost' }: Pro
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err)
       const stack = err instanceof Error ? err.stack ?? null : null
-      // eslint-disable-next-line no-console
       console.error('[export] failed', err)
       logExportEvent({
         projectId: project.id,

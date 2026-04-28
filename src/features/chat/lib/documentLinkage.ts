@@ -142,7 +142,6 @@ export async function applyDocumentLinkage({
 
   if (error) {
     if (import.meta.env.DEV) {
-      // eslint-disable-next-line no-console
       console.warn('[documentLinkage] persist failed:', error.message)
     }
     return

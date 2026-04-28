@@ -28,7 +28,7 @@ interface Props {
  *   6. Overview link
  *   7. Cost ticker as scale-bar flourish
  */
-export function RightRail({ project, messages: _messages }: Props) {
+export function RightRail({ project }: Props) {
   const state = (project.state ?? {}) as Partial<ProjectState>
   const recommendations = state.recommendations ?? []
   const facts = (state.facts ?? []).slice(-5).reverse()

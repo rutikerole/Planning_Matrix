@@ -75,7 +75,6 @@ export function ExportHub({ project, messages, events, source }: Props) {
         )
       }
     } catch (err) {
-      // eslint-disable-next-line no-console
       console.error('[result-export] failed', err)
     } finally {
       setBusy(null)
@@ -94,7 +93,6 @@ export function ExportHub({ project, messages, events, source }: Props) {
         // permission denied / not focused — fine, user can copy manually
       }
     } catch (err) {
-      // eslint-disable-next-line no-console
       console.error('[share-token] create failed', err)
     } finally {
       setBusy(null)
@@ -108,7 +106,6 @@ export function ExportHub({ project, messages, events, source }: Props) {
       await revokeShareToken(share.token)
       setRevoked(true)
     } catch (err) {
-      // eslint-disable-next-line no-console
       console.error('[share-token] revoke failed', err)
     } finally {
       setBusy(null)

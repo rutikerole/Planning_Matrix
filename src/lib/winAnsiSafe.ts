@@ -28,9 +28,11 @@ const REPLACEMENTS: Array<[RegExp, string]> = [
   [/←/g, '<-'], // ←
   [/↑/g, '^'], // ↑
   [/↓/g, 'v'], // ↓
-  // Whitespace edge cases
+  // Whitespace edge cases — regexes match NBSP and zero-width by codepoint.
+  /* eslint-disable no-irregular-whitespace */
   [/ /g, ' '], // nbsp → space (WinAnsi has nbsp at 0xA0 but pdf-lib's Helvetica WinAnsi mapping is fussy)
   [/​|‌|‍|﻿/g, ''], // zero-widths
+  /* eslint-enable no-irregular-whitespace */
   // Common ligatures pdf-lib's Helvetica often refuses
   [/ﬁ/g, 'fi'], // ﬁ
   [/ﬂ/g, 'fl'], // ﬂ

@@ -55,7 +55,6 @@ export async function saveFactValue({
 
   if (error) {
     if (import.meta.env.DEV) {
-      // eslint-disable-next-line no-console
       console.warn('[saveFact] persist failed:', error.message)
     }
     throw error

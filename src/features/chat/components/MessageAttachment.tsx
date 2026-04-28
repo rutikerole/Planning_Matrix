@@ -109,7 +109,6 @@ function AttachmentLink({ row, lang }: { row: ProjectFileRow; lang: 'de' | 'en' 
       const url = await fetchSignedFileUrl(row.id)
       window.open(url, '_blank', 'noopener,noreferrer')
     } catch (err) {
-      // eslint-disable-next-line no-console
       console.error('[MessageAttachment] signed URL failed', err)
       // Friendly fallback — the user sees the chip but the browser
       // doesn't open the file. Less surprising than a silent click.

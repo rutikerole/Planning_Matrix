@@ -56,7 +56,6 @@ export function useCreateProject() {
     // (ProtectedRoute should have prevented this, but defend in depth).
     const ownerId = useAuthStore.getState().user?.id
     if (!ownerId) {
-      // eslint-disable-next-line no-console
       console.error('[wizard] no authenticated user — refusing INSERT')
       setStatus('insertFailed')
       setError(t('wizard.errors.insertFailed'))
@@ -80,7 +79,6 @@ export function useCreateProject() {
       .single()
 
     if (insertErr || !projectRow) {
-      // eslint-disable-next-line no-console
       console.error('[wizard] project insert failed', insertErr)
       setStatus('insertFailed')
       setError(t('wizard.errors.insertFailed'))
@@ -113,10 +111,8 @@ export function useCreateProject() {
     } catch (err) {
       // Project row exists; the chat workspace will surface a retry
       // affordance for the missing first turn (D7).
-      // eslint-disable-next-line no-console
       console.warn('[wizard] first-turn priming failed; routing anyway', err)
       if (err instanceof ChatTurnError && import.meta.env.DEV) {
-        // eslint-disable-next-line no-console
         console.info('[wizard] priming error detail', {
           code: err.code,
           httpStatus: err.httpStatus,

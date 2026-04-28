@@ -89,7 +89,6 @@ export function DocumentChecklist({ project, state }: Props) {
       .eq('id', project.id)
     if (error) {
       if (import.meta.env.DEV) {
-        // eslint-disable-next-line no-console
         console.warn('[DocumentChecklist] persist failed:', error.message)
       }
       return
@@ -385,7 +384,6 @@ function ChecklistPdfLink({
       document.body.removeChild(a)
       URL.revokeObjectURL(url)
     } catch (err) {
-      // eslint-disable-next-line no-console
       console.error('[checklist-pdf] failed', err)
     } finally {
       setBusy(false)

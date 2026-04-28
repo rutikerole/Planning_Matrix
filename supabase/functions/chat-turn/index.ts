@@ -132,7 +132,6 @@ Deno.serve(async (req: Request) => {
 
   // ── Insert user message (with idempotency) ───────────────────────
   const allRows: MessageRow[] = [...history]
-  let userRow: MessageRow | null = null
   if (userMessage) {
     const userInsert = await insertUserMessageOrFetchExisting(supabase, {
       projectId,
@@ -143,7 +142,7 @@ Deno.serve(async (req: Request) => {
     if (!userInsert.ok) {
       return respond(userInsert.error, userInsert.error.code === 'idempotency_replay' ? 409 : 500)
     }
-    userRow = userInsert.row
+    const userRow = userInsert.row
 
     // Idempotency short-circuit: same client_request_id, prior turn
     // already produced an assistant response. Return the cached pair

@@ -38,7 +38,6 @@ import {
   insertAssistantMessage,
   updateProjectState,
   logTurnEvent,
-  type MessageRow,
 } from './persistence.ts'
 import { applyToolInputToState } from '../../../src/lib/projectStateHelpers.ts'
 import {

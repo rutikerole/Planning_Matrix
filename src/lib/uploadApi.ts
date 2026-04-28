@@ -239,7 +239,6 @@ export async function linkFilesToMessage(args: {
     // Non-fatal — the file still exists, just without the link. Log in
     // DEV for diagnostic purposes; the audit trail still has the rows.
     if (import.meta.env.DEV) {
-      // eslint-disable-next-line no-console
       console.warn('[uploadApi] linkFilesToMessage failed:', error.message)
     }
   }
@@ -262,7 +261,6 @@ export async function fetchPersistedUserMessageId(args: {
     .maybeSingle()
   if (error) {
     if (import.meta.env.DEV) {
-      // eslint-disable-next-line no-console
       console.warn('[uploadApi] fetchPersistedUserMessageId failed:', error.message)
     }
     return null
@@ -285,7 +283,6 @@ export async function fetchMessageAttachments(
     .order('created_at', { ascending: true })
   if (error) {
     if (import.meta.env.DEV) {
-      // eslint-disable-next-line no-console
       console.warn('[uploadApi] fetchMessageAttachments failed:', error.message)
     }
     return []

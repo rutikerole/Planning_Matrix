@@ -48,7 +48,6 @@ export function logExportEvent(args: LogArgs): void {
     })
     .then((res) => {
       if (res.error && import.meta.env.DEV) {
-        // eslint-disable-next-line no-console
         console.warn('[telemetry] event insert failed:', res.error.message)
       }
     })

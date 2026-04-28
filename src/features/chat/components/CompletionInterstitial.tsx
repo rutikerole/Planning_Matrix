@@ -59,7 +59,6 @@ export function CompletionInterstitial({ projectId }: Props) {
 
   const inviteArchitectStub = () => {
     setCompletionSignal(null)
-    // eslint-disable-next-line no-alert
     alert(t('chat.completion.inviteStub'))
   }
 

@@ -48,7 +48,6 @@ export function MobileChatWorkspace({
   rightOpen,
   onLeftOpenChange,
   onRightOpenChange,
-  onProgressClick: _onProgressClick,
   rightBadge,
   children,
 }: Props) {
