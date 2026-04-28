@@ -105,6 +105,7 @@ export function SignInPage() {
       photoStem="domain-b-facade"
       phraseKey="auth.phraseSignIn"
       titleKey="auth.signIn.title"
+      captionKey="auth.photoCaption.domain-b-facade"
     >
       <AuthCard
         eyebrow={t('auth.signIn.eyebrow')}

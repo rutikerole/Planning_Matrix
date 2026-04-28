@@ -91,6 +91,7 @@ export function CheckEmailPage() {
       photoStem="trust-pen"
       phraseKey="auth.phraseVerify"
       titleKey="auth.checkEmail.title"
+      captionKey="auth.photoCaption.trust-pen"
     >
       <AuthCard
         eyebrow={t('auth.checkEmail.eyebrow')}

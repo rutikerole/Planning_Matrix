@@ -199,6 +199,15 @@
     "showPassword": "Show password",
     "hidePassword": "Hide password",
     "capsLock": "Caps Lock is on.",
+    "_photoCaptionsNote": "FICTIONAL_PLACEHOLDER — replace with real attribution when available.",
+    "photoCaption": {
+      "domain-b-facade": "Atelier · Berlin · 2024",
+      "hero-rooftop": "Atelier · Munich · 2025",
+      "domain-c-heritage": "Atelier · Hamburg · 2023",
+      "finalcta-windows": "Atelier · Stuttgart · 2024",
+      "trust-pen": "Atelier · Cologne · 2025",
+      "hero-altbau": "Atelier · Leipzig · 2024"
+    },
     "signUp": {
       "title": "Create account · Planning Matrix",
       "eyebrow": "Planning Matrix · Sign up",
@@ -223,8 +232,8 @@
     "signIn": {
       "title": "Sign in · Planning Matrix",
       "eyebrow": "Planning Matrix · Sign in",
-      "headline": "Sign in.",
-      "intro": "Sign in to your account.",
+      "headline": "Welcome back.",
+      "intro": "Resume your work.",
       "emailLabel": "Email address",
       "emailPlaceholder": "name@example.com",
       "passwordLabel": "Password",
@@ -240,10 +249,10 @@
       "postSignupBody": "Please sign in to continue."
     },
     "forgot": {
-      "title": "Forgot password · Planning Matrix",
-      "eyebrow": "Recover account",
-      "headline": "Forgot your password?",
-      "intro": "Enter your email address. We'll send you a reset link.",
+      "title": "Reset password · Planning Matrix",
+      "eyebrow": "Planning Matrix · Recover account",
+      "headline": "Reset password.",
+      "intro": "We'll send you a link to reset your password.",
       "emailLabel": "Email address",
       "submit": "Send link",
       "submitLoading": "Sending …",
@@ -254,8 +263,8 @@
     },
     "reset": {
       "title": "New password · Planning Matrix",
-      "eyebrow": "New password",
-      "headline": "Reset password.",
+      "eyebrow": "Planning Matrix · New password",
+      "headline": "New password.",
       "intro": "Choose a new password for your account.",
       "passwordLabel": "New password",
       "confirmLabel": "Confirm password",
@@ -270,8 +279,8 @@
       "sessionExpiredBody": "Please request a new link."
     },
     "checkEmail": {
-      "title": "Check your email · Planning Matrix",
-      "eyebrow": "Confirmation required",
+      "title": "Check your inbox · Planning Matrix",
+      "eyebrow": "Planning Matrix · Confirmation required",
       "headline": "Check your inbox.",
       "body": "We sent a confirmation link to {{email}}. Click the link to activate your account.",
       "unverifiedHeadline": "Email address not yet confirmed.",
@@ -285,8 +294,8 @@
       "backToSignIn": "Back to sign in"
     },
     "verify": {
-      "title": "Confirm email · Planning Matrix",
-      "eyebrow": "Confirmation",
+      "title": "Verify email · Planning Matrix",
+      "eyebrow": "Planning Matrix · Confirmation",
       "loadingTitle": "Confirming …",
       "successTitle": "Email address confirmed.",
       "successBody": "Redirecting to your account.",

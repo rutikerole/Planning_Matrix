@@ -12,6 +12,8 @@ interface Props {
   phraseKey: string
   /** i18n key for the document title (`<title>`). */
   titleKey: string
+  /** Phase 3.3 #49 — i18n key for the photo caption tab. Optional. */
+  captionKey?: string
   children: ReactNode
 }
 
@@ -25,7 +27,7 @@ interface Props {
  * motion.div so AnimatePresence (mounted at the router) can crossfade
  * between auth routes — gated by useReducedMotion for accessibility.
  */
-export function AuthShell({ photoStem, phraseKey, titleKey, children }: Props) {
+export function AuthShell({ photoStem, phraseKey, titleKey, captionKey, children }: Props) {
   const { t, i18n } = useTranslation()
   const reduced = useReducedMotion()
 
@@ -65,7 +67,11 @@ export function AuthShell({ photoStem, phraseKey, titleKey, children }: Props) {
         {children}
       </main>
 
-      <AuthPhotoPane stem={photoStem} phrase={t(phraseKey)} />
+      <AuthPhotoPane
+        stem={photoStem}
+        phrase={t(phraseKey)}
+        caption={captionKey ? t(captionKey) : undefined}
+      />
     </m.div>
   )
 }

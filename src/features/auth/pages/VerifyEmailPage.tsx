@@ -131,6 +131,7 @@ export function VerifyEmailPage() {
       photoStem="hero-altbau"
       phraseKey="auth.phraseVerify"
       titleKey="auth.verify.title"
+      captionKey="auth.photoCaption.hero-altbau"
     >
       <AuthCard
         eyebrow={t('auth.verify.eyebrow')}

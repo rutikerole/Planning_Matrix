@@ -71,6 +71,7 @@ export function ForgotPasswordPage() {
       photoStem="domain-c-heritage"
       phraseKey="auth.phraseForgot"
       titleKey="auth.forgot.title"
+      captionKey="auth.photoCaption.domain-c-heritage"
     >
       <AuthCard
         eyebrow={t('auth.forgot.eyebrow')}

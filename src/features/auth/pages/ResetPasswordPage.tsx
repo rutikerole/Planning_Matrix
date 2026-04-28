@@ -115,6 +115,7 @@ export function ResetPasswordPage() {
       photoStem="finalcta-windows"
       phraseKey="auth.phraseReset"
       titleKey="auth.reset.title"
+      captionKey="auth.photoCaption.finalcta-windows"
     >
       <AuthCard
         eyebrow={t('auth.reset.eyebrow')}

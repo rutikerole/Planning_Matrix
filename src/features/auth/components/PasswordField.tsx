@@ -122,8 +122,8 @@ export function PasswordField({
           onBlur={handleBlur}
           onChange={handleChange}
           className={cn(
-            'w-full bg-transparent border-0 border-b border-ink/30 py-2.5 pl-0 pr-9 text-base text-ink placeholder:text-ink/40 transition-colors duration-soft ease-soft',
-            'focus:border-ink/75 focus:outline-none',
+            'w-full bg-transparent border-0 border-b border-ink/25 py-2.5 pl-0 pr-9 text-base text-ink placeholder:text-ink/40 transition-colors duration-soft ease-soft',
+            'focus:border-drafting-blue/60 focus:outline-none',
             'focus-visible:ring-2 focus-visible:ring-ink/35 focus-visible:ring-offset-4 focus-visible:ring-offset-background',
             'disabled:opacity-50 disabled:pointer-events-none',
             error && 'border-clay/80',

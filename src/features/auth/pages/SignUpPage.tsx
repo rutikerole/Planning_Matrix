@@ -171,6 +171,7 @@ export function SignUpPage() {
       photoStem="hero-rooftop"
       phraseKey="auth.phraseSignUp"
       titleKey="auth.signUp.title"
+      captionKey="auth.photoCaption.hero-rooftop"
     >
       <AuthCard
         eyebrow={t('auth.signUp.eyebrow')}

@@ -199,10 +199,19 @@
     "showPassword": "Passwort anzeigen",
     "hidePassword": "Passwort verbergen",
     "capsLock": "Hinweis: Feststelltaste ist aktiv.",
+    "_photoCaptionsNote": "FICTIONAL_PLACEHOLDER — replace with real attribution when available.",
+    "photoCaption": {
+      "domain-b-facade": "Atelier · Berlin · 2024",
+      "hero-rooftop": "Atelier · München · 2025",
+      "domain-c-heritage": "Atelier · Hamburg · 2023",
+      "finalcta-windows": "Atelier · Stuttgart · 2024",
+      "trust-pen": "Atelier · Köln · 2025",
+      "hero-altbau": "Atelier · Leipzig · 2024"
+    },
     "signUp": {
-      "title": "Konto erstellen · Planning Matrix",
+      "title": "Konto anlegen · Planning Matrix",
       "eyebrow": "Planning Matrix · Anmeldung",
-      "headline": "Konto erstellen.",
+      "headline": "Konto anlegen.",
       "intro": "Beginnen Sie mit zwei Fragen — Sie erhalten einen vollständigen Genehmigungspfad.",
       "fullNameLabel": "Vor- und Nachname",
       "fullNamePlaceholder": "Max Mustermann",
@@ -223,8 +232,8 @@
     "signIn": {
       "title": "Anmelden · Planning Matrix",
       "eyebrow": "Planning Matrix · Anmeldung",
-      "headline": "Anmelden.",
-      "intro": "Melden Sie sich in Ihrem Konto an.",
+      "headline": "Willkommen zurück.",
+      "intro": "Setzen Sie Ihre Arbeit fort.",
       "emailLabel": "E-Mail-Adresse",
       "emailPlaceholder": "name@beispiel.de",
       "passwordLabel": "Passwort",
@@ -240,10 +249,10 @@
       "postSignupBody": "Bitte melden Sie sich an, um fortzufahren."
     },
     "forgot": {
-      "title": "Passwort vergessen · Planning Matrix",
-      "eyebrow": "Konto wiederherstellen",
-      "headline": "Passwort vergessen?",
-      "intro": "Geben Sie Ihre E-Mail-Adresse ein. Wir senden Ihnen einen Link zum Zurücksetzen.",
+      "title": "Passwort zurücksetzen · Planning Matrix",
+      "eyebrow": "Planning Matrix · Konto wiederherstellen",
+      "headline": "Passwort zurücksetzen.",
+      "intro": "Wir senden Ihnen einen Link zum Zurücksetzen.",
       "emailLabel": "E-Mail-Adresse",
       "submit": "Link senden",
       "submitLoading": "Wird gesendet …",
@@ -254,8 +263,8 @@
     },
     "reset": {
       "title": "Neues Passwort · Planning Matrix",
-      "eyebrow": "Neues Passwort",
-      "headline": "Passwort zurücksetzen.",
+      "eyebrow": "Planning Matrix · Neues Passwort",
+      "headline": "Neues Passwort.",
       "intro": "Wählen Sie ein neues Passwort für Ihr Konto.",
       "passwordLabel": "Neues Passwort",
       "confirmLabel": "Passwort wiederholen",
@@ -270,8 +279,8 @@
       "sessionExpiredBody": "Bitte fordern Sie einen neuen Link an."
     },
     "checkEmail": {
-      "title": "E-Mail prüfen · Planning Matrix",
-      "eyebrow": "Bestätigung erforderlich",
+      "title": "Posteingang prüfen · Planning Matrix",
+      "eyebrow": "Planning Matrix · Bestätigung erforderlich",
       "headline": "Prüfen Sie Ihren Posteingang.",
       "body": "Wir haben einen Bestätigungslink an {{email}} gesendet. Klicken Sie auf den Link, um Ihr Konto zu aktivieren.",
       "unverifiedHeadline": "E-Mail-Adresse noch nicht bestätigt.",
@@ -286,7 +295,7 @@
     },
     "verify": {
       "title": "E-Mail bestätigen · Planning Matrix",
-      "eyebrow": "Bestätigung",
+      "eyebrow": "Planning Matrix · Bestätigung",
       "loadingTitle": "Bestätigung läuft …",
       "successTitle": "E-Mail-Adresse bestätigt.",
       "successBody": "Sie werden zu Ihrem Konto weitergeleitet.",
