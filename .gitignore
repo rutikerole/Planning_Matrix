@@ -34,3 +34,8 @@ dist-ssr
 # Supabase CLI scratch (project ref, version cache, etc.)
 supabase/.temp/
 supabase/.branches/
+
+# Playwright artifacts (Phase 4.1 #126)
+playwright-report/
+test-results/
+.playwright/
