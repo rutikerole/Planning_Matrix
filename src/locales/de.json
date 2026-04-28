@@ -482,7 +482,11 @@
     "system": {
       "label": "Systemhinweis",
       "tag": "SYSTEM",
-      "fallbackTemplateNotice": "Sie haben „Sonstiges“ gewählt. Wir arbeiten zunächst mit dem Standard-Template für Einfamilienhaus und passen das im Gespräch an."
+      "fallbackTemplateNotice": "Sie haben „Sonstiges“ gewählt. Wir arbeiten zunächst mit dem Standard-Template für Einfamilienhaus und passen das im Gespräch an.",
+      "recoveryNotice": "Sie waren zuletzt am {{date}} hier. Wir setzen die Konsultation an derselben Stelle fort."
+    },
+    "autoSaved": {
+      "label": "Automatisch gespeichert"
     },
     "thinking": {
       "staticLabel": "denkt nach…"

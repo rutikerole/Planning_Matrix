@@ -138,6 +138,16 @@
 
 ---
 
+## D17 · Streaming + engagement layer (Phase 3.4 · 2026-04-28)
+
+**Question:** Three real UX problems — no sense of progress, no way to take work home, slow + boring during latency. How do we ship them in one batch without breaking Phase 3.2 / 3.3 atelier consistency?
+
+**Answer:** Seven commits (#52–#59). Streaming foundation first (#52 Server-Sent Events from Anthropic, client-side state-machine extraction of the user-visible text from `input_json_delta` chunks — keeps the persona prompt + tool_choice contract untouched, no cache invalidation). Then progress meter (#53 — Roman-numeral spec-index vocabulary applied to a 16-cell SVG bar; chatStore gains turnCount + lastSavedAt). Suggested replies (#54 — `likely_user_replies` integrated into the `respond` tool schema, persisted via 0005 migration; paper-tab chips above the input bar). Export (#55 — pdf-lib + fontkit dynamic-imported; Inter + Instrument Serif TTFs lazy-loaded on click; Markdown + JSON + PDF brief). Engagement (#56 — 7 sigil micro-animations + 30 Bayern facts flagged `verifyBeforePublicLaunch`). Section celebration (#57 — checkmark + ripple + brightness pulse on PENDING → ACTIVE). Conversation map (#58 — 7 gates per Q7 override). Auto-saved + recovery (#59).
+
+**Reasoning:** Streaming alone solves ~70% of the perceived-latency problem; the rest of the engagement layer absorbs the remainder. The atelier vocabulary is locked across Phase 3.2 / 3.3, so #52–#59 invent only ONE new visual primitive (the drafting-blue `▌` streaming cursor — Q9). Schema migration is additive (`messages.likely_user_replies text[] null`); brand fonts ship as a /public/fonts/ convention with Helvetica fallback; PDF + fontkit are code-split so the main JS bundle stays unchanged. Plan locked via PHASE_3_4_PLAN.md §6 Q1–Q10 (with Q5 + Q7 overrides) before any code shipped — same plan-first discipline as Phase 3.2 / 3.3.
+
+---
+
 ## D16 · Atelier unification across all surfaces (Phase 3.3 · 2026-04-28)
 
 **Question:** Phase 3.2 brought the chat workspace to "demo-ready German atelier" register, but the surfaces around it (dashboard, wizard, auth, wordmark) lagged. How do we bring them up to the same standard without inventing new vocabulary?

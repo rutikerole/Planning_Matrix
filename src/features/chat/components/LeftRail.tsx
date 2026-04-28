@@ -8,6 +8,7 @@ import { SpecialistSigil } from './SpecialistSigils'
 import { ProgressMeter } from './ProgressMeter'
 import { VerlaufMap } from './VerlaufMap'
 import { ExportMenu } from './ExportMenu'
+import { AutoSavedIndicator } from './AutoSavedIndicator'
 import { useProjectEvents } from '../hooks/useProjectEvents'
 
 interface Props {
@@ -52,6 +53,8 @@ export function LeftRail({ project, messages }: Props) {
             {project.plot_address}
           </p>
         )}
+        {/* Phase 3.4 #59 — auto-saved indicator */}
+        <AutoSavedIndicator />
       </div>
 
       <span aria-hidden="true" className="block h-px bg-ink/15" />

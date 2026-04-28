@@ -482,7 +482,11 @@
     "system": {
       "label": "System note",
       "tag": "SYSTEM",
-      "fallbackTemplateNotice": "You picked \"Other\". We start with the standard single-family-home template and adapt it as we talk."
+      "fallbackTemplateNotice": "You picked \"Other\". We start with the standard single-family-home template and adapt it as we talk.",
+      "recoveryNotice": "You were last here on {{date}}. We'll continue the consultation from where you left off."
+    },
+    "autoSaved": {
+      "label": "Auto-saved"
     },
     "thinking": {
       "staticLabel": "thinking…"

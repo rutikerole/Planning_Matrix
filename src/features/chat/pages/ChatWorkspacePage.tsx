@@ -36,7 +36,7 @@ import type { MessageRow } from '@/types/db'
  * commit #15; rails populate in commit #14.
  */
 export function ChatWorkspacePage() {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const { id } = useParams<{ id: string }>()
   const projectId = id ?? ''
   const { data: project } = useProject(projectId)
@@ -50,11 +50,66 @@ export function ChatWorkspacePage() {
 
   // D12 — when intent is "sonstige", surface a calm in-thread SYSTEM
   // notice on the very first turn that the standard T-01 template is in
-  // use. Client-side only — never persisted.
+  // use. Phase 3.4 #59 — also surface a calm "Sie waren zuletzt am …
+  // hier" recovery notice when the user returns to a project that's
+  // been quiet for > 1 hour. Client-side only — never persisted.
   const augmentedMessages = useMemo<MessageRow[]>(() => {
     if (!messages || !project) return messages ?? []
-    if (project.intent !== 'sonstige') return messages
-    if (messages.length === 0) return messages
+    let result = messages
+
+    // Recovery row: when last project activity is > 1 hour old at mount.
+    if (messages.length > 0) {
+      const lastTs = new Date(project.updated_at).getTime()
+      const hoursSince = (Date.now() - lastTs) / (1000 * 60 * 60)
+      if (hoursSince > 1 && Number.isFinite(hoursSince)) {
+        const lang = (i18n.resolvedLanguage ?? 'de') as 'de' | 'en'
+        const formattedDate = new Date(project.updated_at).toLocaleString(
+          lang === 'en' ? 'en-GB' : 'de-DE',
+          {
+            day: '2-digit',
+            month: 'long',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+          },
+        )
+        const recovery: MessageRow = {
+          id: 'system:recovery-notice',
+          project_id: projectId,
+          role: 'system',
+          specialist: null,
+          content_de: t('chat.system.recoveryNotice', {
+            defaultValue:
+              'Sie waren zuletzt am {{date}} hier. Wir setzen die Konsultation an derselben Stelle fort.',
+            date: formattedDate,
+          }),
+          content_en: t('chat.system.recoveryNotice', {
+            lng: 'en',
+            defaultValue:
+              "You were last here on {{date}}. We'll continue the consultation from where you left off.",
+            date: formattedDate,
+          }),
+          input_type: null,
+          input_options: null,
+          allow_idk: null,
+          thinking_label_de: null,
+          likely_user_replies: null,
+          user_answer: null,
+          client_request_id: null,
+          model: null,
+          input_tokens: null,
+          output_tokens: null,
+          cache_read_tokens: null,
+          cache_write_tokens: null,
+          latency_ms: null,
+          created_at: messages[messages.length - 1].created_at,
+        }
+        result = [...result, recovery]
+      }
+    }
+
+    if (project.intent !== 'sonstige' || messages.length === 0) return result
+
     const synthetic: MessageRow = {
       id: 'system:sonstige-notice',
       project_id: projectId,
@@ -77,8 +132,8 @@ export function ChatWorkspacePage() {
       latency_ms: null,
       created_at: messages[0].created_at,
     }
-    return [synthetic, ...messages]
-  }, [messages, project, projectId, t])
+    return [synthetic, ...result]
+  }, [messages, project, projectId, t, i18n.resolvedLanguage])
 
   const hasMessages = (messages?.length ?? 0) > 0
   const lastAssistant =
