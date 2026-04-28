@@ -20,6 +20,8 @@ import { ChatDropZone } from '../components/ChatDropZone'
 import { ChatProgressBar } from '../components/Progress/ChatProgressBar'
 import { UnifiedFooter } from '../components/UnifiedFooter/UnifiedFooter'
 import { useProjectEvents } from '../hooks/useProjectEvents'
+import { MobileChatWorkspace } from '../components/MobileChatWorkspace'
+import { useViewport } from '@/lib/useViewport'
 import { buildUserMessageText } from '../lib/userAnswerHelpers'
 import { useProject } from '../hooks/useProject'
 import { useMessages } from '../hooks/useMessages'
@@ -217,56 +219,97 @@ export function ChatWorkspacePage() {
     setRightBadge(false)
   }
 
+  // Phase 3.8 #84 — viewport branch (Q12 locked: separate Mobile* for
+  // major pages). Mobile uses MobileChatWorkspace's collapsing header +
+  // sticky compact progress + fixed-bottom keyboard-aware input bar.
+  // Desktop continues with the unified-footer three-column layout.
+  const { isMobile } = useViewport()
+
+  const inputBarNode = hasMessages ? (
+    <InputBar
+      lastAssistant={lastAssistant}
+      onSubmit={handleSubmit}
+      onIdkClick={() => setIdkOpen(true)}
+      forceDisabled={isThinking}
+      embedded
+    />
+  ) : null
+
   return (
     <>
       <OfflineBanner />
-      <MobileTopBar
-        projectName={project.name}
-        onLeftClick={openLeftDrawer}
-        onRightClick={openRightDrawer}
-        rightBadge={rightBadge}
-        leftOpen={leftOpen}
-        rightOpen={rightOpen}
-        onProgressClick={() => setProgressOpen(true)}
-      />
-      <ChatWorkspaceLayout
-        leftRail={<LeftRail project={project} messages={messages ?? []} />}
-        rightRail={<RightRail project={project} messages={messages ?? []} />}
-        unifiedFooter={
-          hasMessages ? (
-            <UnifiedFooter
-              project={project}
-              messages={messages ?? []}
-              events={events ?? []}
-              inputBar={
-                <InputBar
-                  lastAssistant={lastAssistant}
-                  onSubmit={handleSubmit}
-                  onIdkClick={() => setIdkOpen(true)}
-                  forceDisabled={isThinking}
-                  embedded
+      {isMobile ? (
+        <MobileChatWorkspace
+          project={project}
+          leftRail={<LeftRail project={project} messages={messages ?? []} />}
+          rightRail={<RightRail project={project} messages={messages ?? []} />}
+          inputBar={inputBarNode}
+          leftOpen={leftOpen}
+          rightOpen={rightOpen}
+          onLeftOpenChange={setLeftOpen}
+          onRightOpenChange={(open) => {
+            setRightOpen(open)
+            if (open) {
+              setPeekVisible(false)
+              setRightBadge(false)
+            }
+          }}
+          onProgressClick={() => setProgressOpen(true)}
+          rightBadge={rightBadge}
+        >
+          {hasMessages ? (
+            <ChatDropZone disabled={isThinking}>
+              <PaperCard project={project}>
+                <Thread messages={augmentedMessages} />
+              </PaperCard>
+            </ChatDropZone>
+          ) : (
+            <EmptyState />
+          )}
+        </MobileChatWorkspace>
+      ) : (
+        <>
+          <MobileTopBar
+            projectName={project.name}
+            onLeftClick={openLeftDrawer}
+            onRightClick={openRightDrawer}
+            rightBadge={rightBadge}
+            leftOpen={leftOpen}
+            rightOpen={rightOpen}
+            onProgressClick={() => setProgressOpen(true)}
+          />
+          <ChatWorkspaceLayout
+            leftRail={<LeftRail project={project} messages={messages ?? []} />}
+            rightRail={<RightRail project={project} messages={messages ?? []} />}
+            unifiedFooter={
+              hasMessages ? (
+                <UnifiedFooter
+                  project={project}
+                  messages={messages ?? []}
+                  events={events ?? []}
+                  inputBar={inputBarNode}
                 />
-              }
-            />
-          ) : null
-        }
-      >
-        {hasMessages ? (
-          <ChatDropZone disabled={isThinking}>
-            {/* Phase 3.6 #69 — loud progress indicator at the top of the
-              * thread. Sticky to the message column; the left-rail
-              * ProgressMeter stays mounted as a secondary indicator. */}
-            <div className="hidden lg:block -mt-12 mb-6 lg:-mt-16">
-              <ChatProgressBar />
-            </div>
-            <PaperCard project={project}>
-              <Thread messages={augmentedMessages} />
-            </PaperCard>
-          </ChatDropZone>
-        ) : (
-          <EmptyState />
-        )}
-      </ChatWorkspaceLayout>
+              ) : null
+            }
+          >
+            {hasMessages ? (
+              <ChatDropZone disabled={isThinking}>
+                {/* Phase 3.6 #69 — loud progress indicator at the top of the
+                  * thread. Sticky to the message column; the left-rail
+                  * ProgressMeter stays mounted as a secondary indicator. */}
+                <div className="hidden lg:block -mt-12 mb-6 lg:-mt-16">
+                  <ChatProgressBar />
+                </div>
+                <PaperCard project={project}>
+                  <Thread messages={augmentedMessages} />
+                </PaperCard>
+              </ChatDropZone>
+            ) : (
+              <EmptyState />
+            )}
+          </ChatWorkspaceLayout>
+        </>
+      )}
       <ConversationCursor />
 
       <IdkPopover

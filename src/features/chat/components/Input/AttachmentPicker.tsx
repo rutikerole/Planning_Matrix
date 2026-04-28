@@ -20,6 +20,8 @@ import { Paperclip, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type { FileCategory } from '@/types/chatInput'
 import { useUploadFile } from '../../hooks/useUploadFile'
+import { useViewport } from '@/lib/useViewport'
+import { MobileAttachmentSheet } from './MobileAttachmentSheet'
 
 interface Props {
   open: boolean
@@ -55,6 +57,15 @@ export function AttachmentPicker({ open, onOpenChange }: Props) {
   const panelRef = useRef<HTMLDivElement>(null)
   const fileInputId = useId()
   const [category, setCategory] = useState<FileCategory>('other')
+  const { isMobile } = useViewport()
+
+  // Phase 3.8 #84 — on mobile, delegate to MobileAttachmentSheet which
+  // exposes camera / gallery / document as separate native pickers
+  // (Q3 locked: capture="environment" enables rear camera). Desktop
+  // keeps the popover + category-select picker below.
+  if (isMobile) {
+    return <MobileAttachmentSheet open={open} onOpenChange={onOpenChange} />
+  }
 
   useEffect(() => {
     if (!open) return
