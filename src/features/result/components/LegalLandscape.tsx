@@ -53,7 +53,7 @@ export function LegalLandscape({ state }: Props) {
   return (
     <section
       id="sec-legal"
-      className="px-6 sm:px-12 lg:px-20 py-20 sm:py-24 max-w-4xl mx-auto w-full scroll-mt-16 flex flex-col gap-8"
+      className="px-4 sm:px-12 lg:px-20 py-14 sm:py-24 max-w-4xl mx-auto w-full scroll-mt-16 flex flex-col gap-8"
     >
       <header className="flex items-baseline gap-4">
         <span className="font-serif italic text-[20px] text-clay-deep tabular-figures leading-none w-10 shrink-0">
@@ -135,26 +135,34 @@ function DomainBand({
               <li
                 key={rowKey}
                 className={
-                  'relative grid grid-cols-[120px_1fr_auto] sm:grid-cols-[160px_1fr_auto] gap-x-4 items-center px-4 sm:px-5 py-3 ' +
+                  'relative px-4 sm:px-5 py-3 sm:py-3 ' +
+                  // Mobile: stacked label-row → bar → status. Desktop:
+                  // 3-column grid as before. Phase 3.9 #94.
+                  'flex flex-col gap-2 sm:grid sm:grid-cols-[160px_1fr_auto] sm:gap-x-4 sm:gap-y-0 sm:items-center ' +
                   (idx > 0 ? 'border-t border-ink/12' : '')
                 }
               >
-                <button
-                  type="button"
-                  disabled={!cite}
-                  aria-expanded={open}
-                  onClick={() => setOpenCitationFor(open ? null : rowKey)}
-                  className={
-                    'text-left text-[12px] leading-snug truncate font-medium ' +
-                    (cite
-                      ? 'text-ink hover:text-drafting-blue transition-colors duration-soft cursor-pointer underline-offset-4 hover:underline decoration-clay/55'
-                      : 'text-ink/85')
-                  }
-                >
-                  {row.label}
-                </button>
+                <div className="flex items-baseline justify-between gap-3 sm:contents">
+                  <button
+                    type="button"
+                    disabled={!cite}
+                    aria-expanded={open}
+                    onClick={() => setOpenCitationFor(open ? null : rowKey)}
+                    className={
+                      'text-left text-[13px] sm:text-[12px] leading-snug font-medium min-h-[28px] inline-flex items-center sm:truncate sm:min-h-0 ' +
+                      (cite
+                        ? 'text-ink hover:text-drafting-blue transition-colors duration-soft cursor-pointer underline-offset-4 hover:underline decoration-clay/55'
+                        : 'text-ink/85')
+                    }
+                  >
+                    {row.label}
+                  </button>
+                  <span className="sm:hidden text-[11px] italic text-clay/85 leading-snug text-right shrink-0">
+                    {row.status}
+                  </span>
+                </div>
                 <RelevanceBar relevance={row.relevance} />
-                <span className="text-[11px] italic text-clay/85 leading-snug truncate text-right">
+                <span className="hidden sm:inline text-[11px] italic text-clay/85 leading-snug truncate text-right">
                   {row.status}
                 </span>
               </li>
@@ -213,7 +221,7 @@ function RelevanceBar({ relevance }: { relevance: Relevance }) {
     return (
       <span
         aria-hidden="true"
-        className="block h-1 w-full max-w-[180px] bg-transparent border-t border-dashed border-ink/25 mt-2"
+        className="block h-1 w-full sm:max-w-[180px] bg-transparent border-t border-dashed border-ink/25"
       />
     )
   }
@@ -222,7 +230,7 @@ function RelevanceBar({ relevance }: { relevance: Relevance }) {
   return (
     <div
       aria-hidden="true"
-      className="flex items-center gap-px h-1 w-full max-w-[180px]"
+      className="flex items-center gap-px h-1 w-full sm:max-w-[180px]"
     >
       {Array.from({ length: 12 }, (_, i) => {
         const filled = (i + 1) * (100 / 12) <= fillPct
