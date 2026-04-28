@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
+import { SpecialistSigil } from './SpecialistSigils'
 
 interface Props {
   specialist: string
@@ -37,11 +38,13 @@ export function SpecialistTag({ specialist, className, withRoleLabel = true }: P
   return (
     <div className={cn('flex flex-col gap-1.5 leading-none', className)}>
       <p className="inline-flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.20em] text-clay">
-        <span aria-hidden="true" className="size-1.5 rounded-full bg-clay shrink-0" />
+        {/* Phase 3.2 #38 — sigil replaces the simple clay dot.
+         * 14×14 architectural drawing glyph in drafting-blue. */}
+        <SpecialistSigil specialist={specialist} />
         <span>{tagLabel}</span>
       </p>
       {withRoleLabel && (
-        <p className="role-running-head pl-3.5">{roleLabelDe}</p>
+        <p className="role-running-head pl-[18px]">{roleLabelDe}</p>
       )}
     </div>
   )

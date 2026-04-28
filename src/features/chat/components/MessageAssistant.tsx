@@ -47,9 +47,21 @@ export function MessageAssistant({
 
   return (
     <article
-      className="flex flex-col gap-4"
+      className="relative flex flex-col gap-5"
       aria-label={`Specialist: ${message.specialist ?? 'unknown'}`}
     >
+      {/* Phase 3.2 #38 — marginalia rule. 1px clay vertical bracket left of
+       * the body, 24px to the left, marking "this is one specialist's
+       * contribution." Draws bottom-to-top in 320ms; reduced-motion: instant. */}
+      {!isHistory && (
+        <m.span
+          aria-hidden="true"
+          className="absolute -left-6 top-12 w-px h-16 bg-clay/35"
+          initial={reduced ? false : { scaleY: 0, transformOrigin: 'bottom center' }}
+          animate={{ scaleY: 1 }}
+          transition={{ duration: reduced ? 0 : 0.32, ease: [0.16, 1, 0.3, 1] }}
+        />
+      )}
       {message.specialist && (
         <div className="flex flex-col gap-3">
           {isHandoff && (
@@ -83,7 +95,10 @@ export function MessageAssistant({
           </m.div>
         </div>
       )}
-      <div className="text-[15px] text-ink leading-relaxed">
+      {/* Phase 3.2 #38 — body bumped Inter 15 → 16, leading 1.65. The
+       * citation auto-bold from highlightCitations stays; we don't
+       * compete with it here. */}
+      <div className="text-[16px] text-ink leading-[1.65]">
         <Typewriter text={text} instant={isHistory} />
       </div>
     </article>
