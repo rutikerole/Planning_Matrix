@@ -16,18 +16,20 @@ interface RailFact {
   evidence?: string
 }
 
+const ROMAN = ['I', 'II', 'III', 'IV', 'V', 'VI']
+
 /**
- * Eckdaten — top facts about the project. Pre-seeds with intent + plot
- * derived from the project columns (always visible from turn 0), then
- * appends the most recent extracted facts up to a total of 6 rows.
+ * Phase 3.2 #40 — Eckdaten as architectural-schedule blocks.
  *
- * Each row is the three-row block per Polish Move 3:
- *   • label  (clay 10 tracking-0.18em uppercase)
- *   • value  (Inter 14 medium ink)
- *   • qualifier badge (Inter 9 clay/60 italic uppercase)
+ * Each row is a 24px Roman-numeral column (font-serif italic clay-deep)
+ * separated from the entry body by a vertical hairline. The body is a
+ * three-line block:
+ *   • label    — Inter 10 uppercase tracking-0.18em clay
+ *   • value    — Inter 14 medium ink
+ *   • qualifier — Inter 9 italic clay/60 uppercase
  *
- * New facts fade in with 12px y-rise + opacity over 240ms (reduced-
- * motion: instant). Hover row → tooltip with evidence if set.
+ * Up to 6 rows: derived (intent, plot if any) + most-recent extracted
+ * facts. Reads like the Eckdaten block of a German A1 Bauantrag form.
  */
 export function EckdatenPanel({ project, facts }: Props) {
   const { t } = useTranslation()
@@ -37,7 +39,9 @@ export function EckdatenPanel({ project, facts }: Props) {
     {
       id: 'derived:intent',
       key: t('chat.rail.intentLabel'),
-      value: t(`wizard.q1.options.${project.intent}`),
+      value: t(`wizard.q1.options.${project.intent}`, {
+        defaultValue: t('wizard.q1.options.sonstige'),
+      }),
       qualifier: 'CLIENT · DECIDED',
     },
   ]
@@ -62,30 +66,44 @@ export function EckdatenPanel({ project, facts }: Props) {
 
   return (
     <div className="flex flex-col gap-3 border-t border-border/40 pt-6">
-      <p className="eyebrow text-foreground/60 text-[10px] tracking-[0.18em]">
-        {t('chat.rail.facts')}
-      </p>
-      <ul className="flex flex-col gap-5">
+      <div className="flex items-baseline justify-between">
+        <p className="eyebrow text-foreground/60 text-[10px] tracking-[0.18em]">
+          {t('chat.rail.facts')}
+        </p>
+        <span className="font-serif italic text-[9px] text-clay/60 tabular-figures">
+          {String(all.length).padStart(2, '0')} / 06
+        </span>
+      </div>
+      <ul className="flex flex-col">
         <AnimatePresence initial={false}>
-          {all.map((row) => (
+          {all.map((row, idx) => (
             <m.li
               key={row.id}
               initial={reduced ? false : { opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               exit={reduced ? { opacity: 0 } : { opacity: 0, y: -4 }}
               transition={{ duration: reduced ? 0 : 0.24, ease: [0.16, 1, 0.3, 1] }}
-              className="flex flex-col gap-1"
+              className={`grid grid-cols-[24px_1fr] gap-x-3 py-3 ${
+                idx > 0 ? 'border-t border-border/30' : ''
+              }`}
               title={row.evidence ?? ''}
             >
-              <span className="text-[10px] text-clay/85 uppercase tracking-[0.18em]">
-                {row.key}
+              {/* Roman numeral column with right-edge hairline */}
+              <span className="font-serif italic text-[12px] text-clay-deep tabular-figures leading-none pt-1 border-r border-border/40 pr-2 text-center">
+                {ROMAN[idx] ?? String(idx + 1)}
               </span>
-              <span className="text-[14px] font-medium text-ink leading-snug break-words">
-                {row.value}
-              </span>
-              <span className="text-[9px] text-clay/60 italic uppercase tracking-[0.14em] tabular-nums">
-                {row.qualifier}
-              </span>
+              {/* Body block — label / value / qualifier */}
+              <div className="flex flex-col gap-1">
+                <span className="text-[10px] text-clay/85 uppercase tracking-[0.18em]">
+                  {row.key}
+                </span>
+                <span className="text-[14px] font-medium text-ink leading-snug break-words">
+                  {row.value}
+                </span>
+                <span className="text-[9px] text-clay/60 italic uppercase tracking-[0.14em] tabular-nums">
+                  {row.qualifier}
+                </span>
+              </div>
             </m.li>
           ))}
         </AnimatePresence>

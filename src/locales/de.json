@@ -567,7 +567,8 @@
       "roles": "Fachplaner",
       "rolesEmpty": "Fachplaner erscheinen hier, sobald die Anforderungen klar sind.",
       "openOverview": "Vollständige Übersicht öffnen",
-      "empty": "Empfehlungen erscheinen hier, sobald genug Informationen vorliegen."
+      "empty": "Empfehlungen erscheinen hier, sobald genug Informationen vorliegen.",
+      "cost": "Aufwand"
     },
     "empty": {
       "eyebrow": "Planning Matrix · Atelier",

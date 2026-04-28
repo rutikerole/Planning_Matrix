@@ -9,15 +9,18 @@ interface Props {
 const STAGGER_MS = 80
 
 /**
- * Top 3 next steps. Polish Move 3: serif italic number prefix, larger
- * title, smaller detail, footer line OUTSIDE the card with hairline
- * above (printed-dossier register, not Stripe-card register). Polish
- * Move 8: render only as many cards as exist (no placeholder slots),
- * stagger entries 80ms apart when multiple arrive in the same delta,
- * animate rank changes via Framer Motion `layout`.
+ * Phase 3.2 #40 — TOP-3 cards in dossier register.
  *
- * Reads sorted-by-rank-ascending top-3 from projectState. Empty state
- * is calm copy, not a placeholder grid.
+ *   • Card body: paper, 1px hairline border at ink/12, drafting-blue
+ *     hairline running down the left edge full height (signals where
+ *     to read first).
+ *   • Title: serif italic drop-cap (28px clay-deep, baseline-aligned)
+ *     followed by an Inter title of equivalent visual weight. The
+ *     drop-cap doubles as the visible position indicator (1, 2, 3) —
+ *     not the model rank, which can drift (Phase 3.1 #29).
+ *   • Detail: Inter 12 ink/85 leading 1.55.
+ *   • Footer: hairline rule + Instrument Serif italic margin
+ *     annotation OUTSIDE the card border. Footnote register.
  */
 export function Top3({ recommendations }: Props) {
   const { t, i18n } = useTranslation()
@@ -28,12 +31,17 @@ export function Top3({ recommendations }: Props) {
 
   return (
     <div className="flex flex-col gap-3">
-      <p className="eyebrow text-foreground/60 text-[10px] tracking-[0.18em]">
-        {t('chat.rail.top3')}
-      </p>
+      <div className="flex items-baseline justify-between">
+        <p className="eyebrow text-foreground/60 text-[10px] tracking-[0.18em]">
+          {t('chat.rail.top3')}
+        </p>
+        <span className="font-serif italic text-[9px] text-clay/60 tabular-figures">
+          {String(top.length).padStart(2, '0')} / 03
+        </span>
+      </div>
 
       {top.length === 0 ? (
-        <p className="text-[12px] text-clay/70 italic leading-relaxed">
+        <p className="font-serif italic text-[12px] text-clay/70 leading-relaxed">
           {t('chat.rail.empty')}
         </p>
       ) : (
@@ -58,16 +66,13 @@ export function Top3({ recommendations }: Props) {
                 className="flex flex-col gap-2"
               >
                 <article className="relative flex flex-col gap-2 border border-border-strong/30 rounded-sm bg-paper px-5 py-6">
-                  {/* Phase 3.2 #40 — drafting-blue hairline running down the
-                   * left edge of the card, full height. */}
+                  {/* Drafting-blue hairline running full-height down the
+                   * left edge of the card. */}
                   <span
                     aria-hidden="true"
-                    className="absolute left-0 top-0 bottom-0 w-px bg-drafting-blue/30"
+                    className="absolute left-0 top-0 bottom-0 w-px bg-drafting-blue/35"
                   />
                   <p className="font-display leading-snug text-ink display-tight">
-                    {/* Phase 3.2 #36 — number prefix bumped 16 → 28, clay-deep,
-                     * Instrument Serif italic, baseline-aligned. Visible
-                     * numbering = position, not model rank (Phase 3.1 #29). */}
                     <span className="font-serif italic text-[28px] text-clay-deep tabular-figures mr-2.5 align-baseline">
                       {idx + 1}.
                     </span>
@@ -75,13 +80,12 @@ export function Top3({ recommendations }: Props) {
                       {lang === 'en' ? rec.title_en : rec.title_de}
                     </span>
                   </p>
-                  <p className="text-xs text-ink/85 leading-[1.55]">
+                  <p className="text-[12px] text-ink/85 leading-[1.55]">
                     {lang === 'en' ? rec.detail_en : rec.detail_de}
                   </p>
                 </article>
-                {/* Footer line — OUTSIDE the card border. Hairline above,
-                 * then italic clay margin annotation. Phase 3.2 #36: italic
-                 * Serif, not Inter — different voice signals footnote register. */}
+                {/* Footer — Instrument Serif italic, hairline above, OUTSIDE
+                 * the card border. Margin annotation, not a chip. */}
                 <div className="flex flex-col gap-1.5 px-5">
                   <span aria-hidden="true" className="block h-px w-12 bg-border-strong/40" />
                   <p className="font-serif italic text-[10px] text-ink/55 leading-relaxed">

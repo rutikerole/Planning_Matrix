@@ -1,12 +1,13 @@
 import { useTranslation } from 'react-i18next'
 import { useChatStore } from '@/stores/chatStore'
 import type { Role } from '@/types/projectState'
-import { RailSectionHeader } from './RailSectionHeader'
+import { ScheduleRow, ScheduleSection } from './ScheduleSection'
 
 interface Props {
   roles: Role[]
 }
 
+/** Phase 3.2 #40 — Fachplaner as schedule, numeral III. */
 export function RolesPanel({ roles }: Props) {
   const { t, i18n } = useTranslation()
   const lang = (i18n.resolvedLanguage ?? 'de') as 'de' | 'en'
@@ -18,19 +19,20 @@ export function RolesPanel({ roles }: Props) {
   )
 
   return (
-    <RailSectionHeader
+    <ScheduleSection
+      numeral="III"
       title={t('chat.rail.roles')}
       count={sorted.length}
       active={active}
       emptyCopy={t('chat.rail.rolesEmpty')}
     >
       {sorted.length > 0
-        ? sorted.map((r) => (
-            <div key={r.id} className="flex flex-col gap-1">
-              <div className="flex items-baseline justify-between gap-3">
-                <p className="text-[13px] font-medium text-ink leading-snug">
-                  {lang === 'en' ? r.title_en : r.title_de}
-                </p>
+        ? sorted.map((r, idx) => (
+            <ScheduleRow
+              key={r.id}
+              index={idx + 1}
+              title={lang === 'en' ? r.title_en : r.title_de}
+              meta={
                 <span
                   className={
                     r.needed
@@ -40,16 +42,12 @@ export function RolesPanel({ roles }: Props) {
                 >
                   {r.needed ? t('chat.role.needed') : t('chat.role.notNeeded')}
                 </span>
-              </div>
-              {r.rationale_de && (
-                <p className="text-[11px] text-ink/65 leading-relaxed">{r.rationale_de}</p>
-              )}
-              <p className="text-[10px] text-clay/65 italic uppercase tracking-[0.14em]">
-                {r.qualifier.source} · {r.qualifier.quality}
-              </p>
-            </div>
+              }
+              sub={r.rationale_de || undefined}
+              qualifier={`${r.qualifier.source} · ${r.qualifier.quality}`}
+            />
           ))
         : null}
-    </RailSectionHeader>
+    </ScheduleSection>
   )
 }

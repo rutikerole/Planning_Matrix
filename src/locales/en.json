@@ -567,7 +567,8 @@
       "roles": "Specialists",
       "rolesEmpty": "Specialist roles appear here once the requirements are clear.",
       "openOverview": "Open full overview",
-      "empty": "Recommendations appear here once there's enough information."
+      "empty": "Recommendations appear here once there's enough information.",
+      "cost": "Spend"
     },
     "empty": {
       "eyebrow": "Planning Matrix · Atelier",
