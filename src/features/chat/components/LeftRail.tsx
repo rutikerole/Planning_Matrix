@@ -6,6 +6,7 @@ import type { AreaState } from '@/types/projectState'
 import type { MessageRow, ProjectRow } from '@/types/db'
 import { SpecialistSigil } from './SpecialistSigils'
 import { ProgressMeter } from './ProgressMeter'
+import { VerlaufMap } from './VerlaufMap'
 import { ExportMenu } from './ExportMenu'
 import { useProjectEvents } from '../hooks/useProjectEvents'
 
@@ -62,6 +63,11 @@ export function LeftRail({ project, messages }: Props) {
 
       {/* Phase 3.4 #53 — progress meter */}
       <ProgressMeter />
+
+      <span aria-hidden="true" className="block h-px bg-ink/12" />
+
+      {/* Phase 3.4 #58 — conversation map */}
+      <VerlaufMap messages={messages} />
 
       <span aria-hidden="true" className="block h-px bg-ink/12" />
 

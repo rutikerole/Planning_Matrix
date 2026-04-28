@@ -432,6 +432,13 @@
   "chat": {
     "leaveProject": "Leave project",
     "atTheTable": "At the table",
+    "verlauf": {
+      "eyebrow": "Journey",
+      "here": "Here"
+    },
+    "facts": {
+      "eyebrow": "Did you know?"
+    },
     "progress": {
       "eyebrow": "Progress",
       "percent": "approx. {{n}} % covered",

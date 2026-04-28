@@ -49,6 +49,7 @@ export function MessageAssistant({
     <article
       className="relative flex flex-col gap-5"
       aria-label={`Specialist: ${message.specialist ?? 'unknown'}`}
+      data-message-id={message.id}
     >
       {/* Phase 3.2 #38 — marginalia rule. 1px clay vertical bracket left of
        * the body, 24px to the left, marking "this is one specialist's
