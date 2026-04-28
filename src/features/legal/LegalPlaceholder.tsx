@@ -1,11 +1,13 @@
-import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 import { Container } from '@/components/shared/Container'
 import { Wordmark } from '@/components/shared/Wordmark'
 
 interface Props {
-  /** i18n key for the document title (e.g. legal.imprintTitle). */
+  /** i18n key for the document title (e.g. legal.imprintTitle).
+   * Phase 4.1 #124 — kept for backward compat, but the route's <SEO />
+   * renders the seo.title.legal* key now; this prop is no longer used
+   * for the document.title path. */
   titleKey: string
 }
 
@@ -15,12 +17,8 @@ interface Props {
  * a "Folgt in Kürze" body. These three pages are legally required for
  * a German B2B site and will get real content before public launch.
  */
-export function LegalPlaceholder({ titleKey }: Props) {
-  const { t, i18n } = useTranslation()
-
-  useEffect(() => {
-    document.title = t(titleKey)
-  }, [t, titleKey, i18n.resolvedLanguage])
+export function LegalPlaceholder(_props: Props) {
+  const { t } = useTranslation()
 
   return (
     <div className="min-h-dvh bg-paper flex flex-col">

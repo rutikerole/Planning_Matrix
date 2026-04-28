@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next'
+import { SEO } from '@/components/SEO'
 import { GrainOverlay } from '@/components/shared/GrainOverlay'
 import { SmoothScroll } from '@/components/shared/SmoothScroll'
 import { Nav } from './components/Nav'
@@ -18,6 +19,7 @@ export function LandingPage() {
   const { t } = useTranslation()
   return (
     <>
+      <SEO titleKey="seo.title.landing" descriptionKey="seo.description.landing" />
       <SmoothScroll />
       <a
         href="#main"

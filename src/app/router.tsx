@@ -17,39 +17,83 @@ import { ChatWorkspacePage } from '@/features/chat/pages/ChatWorkspacePage'
 import { OverviewPage } from '@/features/chat/pages/OverviewPage'
 import { ResultPage } from '@/features/result/pages/ResultPage'
 import { SharedResultPage } from '@/features/result/pages/SharedResultPage'
+import { SEO } from '@/components/SEO'
 
 export function AppRouter() {
   const location = useLocation()
   return (
     <AnimatePresence mode="wait" initial={false}>
       <Routes location={location} key={location.pathname}>
+        {/* Public marketing — landing already wires its own SEO with
+          * description; the router doesn't add a duplicate here. */}
         <Route path="/" element={<LandingPage />} />
 
-        {/* Auth — public */}
+        {/* Auth — public. Sign-in already wires its own SEO inside
+          * formBody so it survives both AuthShell + MobileAuthShell. */}
         <Route path="/sign-up" element={<SignUpPage />} />
         <Route path="/sign-in" element={<SignInPage />} />
-        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-        <Route path="/reset-password" element={<ResetPasswordPage />} />
-        <Route path="/check-email" element={<CheckEmailPage />} />
-        <Route path="/verify-email" element={<VerifyEmailPage />} />
+        <Route
+          path="/forgot-password"
+          element={
+            <>
+              <SEO titleKey="seo.title.forgotPassword" />
+              <ForgotPasswordPage />
+            </>
+          }
+        />
+        <Route
+          path="/reset-password"
+          element={
+            <>
+              <SEO titleKey="seo.title.resetPassword" />
+              <ResetPasswordPage />
+            </>
+          }
+        />
+        <Route
+          path="/check-email"
+          element={
+            <>
+              <SEO titleKey="seo.title.checkEmail" />
+              <CheckEmailPage />
+            </>
+          }
+        />
+        <Route
+          path="/verify-email"
+          element={
+            <>
+              <SEO titleKey="seo.title.verifyEmail" />
+              <VerifyEmailPage />
+            </>
+          }
+        />
 
         {/* Protected */}
         <Route
           path="/dashboard"
           element={
-            <ProtectedRoute>
-              <DashboardPage />
-            </ProtectedRoute>
+            <>
+              <SEO titleKey="seo.title.dashboard" />
+              <ProtectedRoute>
+                <DashboardPage />
+              </ProtectedRoute>
+            </>
           }
         />
         <Route
           path="/projects/new"
           element={
-            <ProtectedRoute>
-              <WizardPage />
-            </ProtectedRoute>
+            <>
+              <SEO titleKey="seo.title.wizard" />
+              <ProtectedRoute>
+                <WizardPage />
+              </ProtectedRoute>
+            </>
           }
         />
+        {/* Project routes wire their own SEO from inside the page so
+          * the title can include the live project name (`{{name}}`). */}
         <Route
           path="/projects/:id"
           element={
@@ -81,24 +125,49 @@ export function AppRouter() {
           }
         />
 
-        {/* Phase 3.5 #65 — Public read-only share view. No auth required. */}
+        {/* Phase 3.5 #65 — Public read-only share view. No auth required.
+          * SEO with project name lives inside SharedResultPage. */}
         <Route path="/result/share/:token" element={<SharedResultPage />} />
 
-        {/* Legal placeholders — required for German B2B before public launch */}
+        {/* Legal placeholders — required for German B2B before public launch.
+          * LegalPlaceholder reads its title via the titleKey prop. */}
         <Route
           path="/impressum"
-          element={<LegalPlaceholder titleKey="legal.imprintTitle" />}
+          element={
+            <>
+              <SEO titleKey="seo.title.legalImprint" />
+              <LegalPlaceholder titleKey="legal.imprintTitle" />
+            </>
+          }
         />
         <Route
           path="/datenschutz"
-          element={<LegalPlaceholder titleKey="legal.privacyTitle" />}
+          element={
+            <>
+              <SEO titleKey="seo.title.legalPrivacy" />
+              <LegalPlaceholder titleKey="legal.privacyTitle" />
+            </>
+          }
         />
         <Route
           path="/agb"
-          element={<LegalPlaceholder titleKey="legal.termsTitle" />}
+          element={
+            <>
+              <SEO titleKey="seo.title.legalTerms" />
+              <LegalPlaceholder titleKey="legal.termsTitle" />
+            </>
+          }
         />
 
-        <Route path="*" element={<NotFoundPage />} />
+        <Route
+          path="*"
+          element={
+            <>
+              <SEO titleKey="seo.title.notFound" />
+              <NotFoundPage />
+            </>
+          }
+        />
       </Routes>
     </AnimatePresence>
   )

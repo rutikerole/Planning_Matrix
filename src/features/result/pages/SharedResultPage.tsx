@@ -1,6 +1,5 @@
-import { useEffect } from 'react'
 import { useParams } from 'react-router-dom'
-import { useTranslation } from 'react-i18next'
+import { SEO } from '@/components/SEO'
 import { AuthSkeleton } from '@/components/shared/AuthSkeleton'
 import { ProjectNotFound } from '@/features/chat/pages/ProjectNotFound'
 import { useSharedProject } from '../hooks/useSharedProject'
@@ -17,24 +16,26 @@ import { ResultPageBody } from './ResultPage'
  * behaviour the rest of the product uses.
  */
 export function SharedResultPage() {
-  const { t } = useTranslation()
   const params = useParams<{ token: string }>()
   const token = params.token ?? ''
   const { data, isPending, isError } = useSharedProject(token)
-
-  useEffect(() => {
-    document.title = `${t('result.titlePrefix', { defaultValue: 'Briefing' })} · Planning Matrix`
-  }, [t])
 
   if (isPending) return <AuthSkeleton />
   if (isError || !data) return <ProjectNotFound />
 
   return (
-    <ResultPageBody
-      project={data.project}
-      messages={data.messages}
-      events={data.events}
-      source={{ kind: 'shared', expiresAt: data.expiresAt }}
-    />
+    <>
+      <SEO
+        titleKey="seo.title.share"
+        descriptionKey="seo.description.share"
+        params={{ name: data.project.name }}
+      />
+      <ResultPageBody
+        project={data.project}
+        messages={data.messages}
+        events={data.events}
+        source={{ kind: 'shared', expiresAt: data.expiresAt }}
+      />
+    </>
   )
 }

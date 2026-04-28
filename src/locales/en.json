@@ -783,9 +783,18 @@
       "intro": "Save this briefing as a file or share it with an architect.",
       "download": "Download",
       "busy": "generating …",
-      "pdf": { "title": "Full PDF", "body": "Atelier briefing format" },
-      "md": { "title": "Markdown checklist", "body": "For architects + tools" },
-      "json": { "title": "JSON data export", "body": "For integrations" },
+      "pdf": {
+        "title": "Full PDF",
+        "body": "Atelier briefing format"
+      },
+      "md": {
+        "title": "Markdown checklist",
+        "body": "For architects + tools"
+      },
+      "json": {
+        "title": "JSON data export",
+        "body": "For integrations"
+      },
       "share": {
         "title": "Share link",
         "body": "30 days · Read-only",
@@ -808,5 +817,32 @@
     "imprintTitle": "Imprint · Planning Matrix",
     "privacyTitle": "Privacy · Planning Matrix",
     "termsTitle": "Terms · Planning Matrix"
+  },
+  "seo": {
+    "title": {
+      "landing": "Planning Matrix — Building Permit Decision Support for Germany",
+      "signIn": "Sign in — Planning Matrix",
+      "signUp": "Create account — Planning Matrix",
+      "forgotPassword": "Reset password — Planning Matrix",
+      "resetPassword": "New password — Planning Matrix",
+      "checkEmail": "Check email — Planning Matrix",
+      "verifyEmail": "Verify email — Planning Matrix",
+      "dashboard": "My projects — Planning Matrix",
+      "wizard": "New project — Planning Matrix",
+      "project": "{{name}} — Planning Matrix",
+      "overview": "{{name}} · Cockpit — Planning Matrix",
+      "result": "{{name}} · Briefing — Planning Matrix",
+      "share": "{{name}} · Briefing (shared) — Planning Matrix",
+      "legalImprint": "Imprint — Planning Matrix",
+      "legalPrivacy": "Privacy — Planning Matrix",
+      "legalTerms": "Terms — Planning Matrix",
+      "notFound": "Page not found — Planning Matrix"
+    },
+    "description": {
+      "landing": "From plot to permit roadmap. In two questions. Planning Matrix maps the full approval path for every project — system-recommended, architect-released.",
+      "signIn": "Sign in to Planning Matrix to continue your projects.",
+      "signUp": "Create your Planning Matrix account and map the approval path for your project.",
+      "share": "Briefing for the project \"{{name}}\", shared via Planning Matrix."
+    }
   }
 }

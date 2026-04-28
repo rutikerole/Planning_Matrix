@@ -783,9 +783,18 @@
       "intro": "Dieses Briefing als Datei speichern oder mit einer/m Architekt:in teilen.",
       "download": "Herunterladen",
       "busy": "wird erstellt …",
-      "pdf": { "title": "Vollständiges PDF", "body": "Atelier-Briefing-Format" },
-      "md": { "title": "Markdown-Checkliste", "body": "Für Architekt:innen + Tools" },
-      "json": { "title": "JSON-Datenexport", "body": "Für Integrationen" },
+      "pdf": {
+        "title": "Vollständiges PDF",
+        "body": "Atelier-Briefing-Format"
+      },
+      "md": {
+        "title": "Markdown-Checkliste",
+        "body": "Für Architekt:innen + Tools"
+      },
+      "json": {
+        "title": "JSON-Datenexport",
+        "body": "Für Integrationen"
+      },
       "share": {
         "title": "Link teilen",
         "body": "30 Tage gültig · Nur lesender Zugriff",
@@ -808,5 +817,32 @@
     "imprintTitle": "Impressum · Planning Matrix",
     "privacyTitle": "Datenschutz · Planning Matrix",
     "termsTitle": "AGB · Planning Matrix"
+  },
+  "seo": {
+    "title": {
+      "landing": "Planning Matrix — Baugenehmigungen, klar gedacht.",
+      "signIn": "Anmelden — Planning Matrix",
+      "signUp": "Konto erstellen — Planning Matrix",
+      "forgotPassword": "Passwort zurücksetzen — Planning Matrix",
+      "resetPassword": "Neues Passwort — Planning Matrix",
+      "checkEmail": "E-Mail prüfen — Planning Matrix",
+      "verifyEmail": "E-Mail bestätigen — Planning Matrix",
+      "dashboard": "Meine Projekte — Planning Matrix",
+      "wizard": "Neues Projekt — Planning Matrix",
+      "project": "{{name}} — Planning Matrix",
+      "overview": "{{name}} · Cockpit — Planning Matrix",
+      "result": "{{name}} · Briefing — Planning Matrix",
+      "share": "{{name}} · Briefing (geteilt) — Planning Matrix",
+      "legalImprint": "Impressum — Planning Matrix",
+      "legalPrivacy": "Datenschutz — Planning Matrix",
+      "legalTerms": "AGB — Planning Matrix",
+      "notFound": "Seite nicht gefunden — Planning Matrix"
+    },
+    "description": {
+      "landing": "Vom Grundstück zur Genehmigungs-Roadmap. In zwei Fragen. Planning Matrix kartiert für jedes Vorhaben den vollständigen Genehmigungsweg — empfohlen vom System, freigegeben durch Ihren Architekten.",
+      "signIn": "Melden Sie sich bei Planning Matrix an, um Ihre Bauvorhaben fortzuführen.",
+      "signUp": "Erstellen Sie Ihr Planning-Matrix-Konto und kartieren Sie den Genehmigungsweg für Ihr Vorhaben.",
+      "share": "Briefing zum Bauvorhaben „{{name}}\", geteilt über Planning Matrix."
+    }
   }
 }

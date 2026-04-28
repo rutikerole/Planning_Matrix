@@ -12,6 +12,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useQueryClient } from '@tanstack/react-query'
+import { SEO } from '@/components/SEO'
 import { factLabel, factValueWithUnit } from '@/lib/factLabel'
 import { useProject } from '../hooks/useProject'
 import { useProjectEvents } from '../hooks/useProjectEvents'
@@ -62,16 +63,15 @@ export function OverviewPage() {
 
   const [active, setActive] = useState<TabId>('project')
 
+  // Phase 4.1 #124 — document.title is set by <SEO /> below; this
+  // effect now only owns the Escape-to-back keyboard binding.
   useEffect(() => {
-    if (project?.name) {
-      document.title = `${t('chat.overview.titlePrefix')} — ${project.name} · Planning Matrix`
-    }
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') navigate(`/projects/${projectId}`)
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [project?.name, projectId, t, navigate])
+  }, [projectId, navigate])
 
   if (!project) return null
 
@@ -130,6 +130,7 @@ export function OverviewPage() {
 
   return (
     <div className="min-h-dvh bg-paper" data-mode="operating">
+      <SEO titleKey="seo.title.overview" params={{ name: project.name }} />
       <CockpitHeader
         project={project}
         messages={messages ?? []}

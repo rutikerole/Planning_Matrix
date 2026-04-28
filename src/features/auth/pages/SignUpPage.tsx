@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
+import { SEO } from '@/components/SEO'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useAuth } from '@/hooks/useAuth'
@@ -173,6 +174,7 @@ export function SignUpPage() {
       titleKey="auth.signUp.title"
       captionKey="auth.photoCaption.hero-rooftop"
     >
+      <SEO titleKey="seo.title.signUp" descriptionKey="seo.description.signUp" />
       <AuthCard
         eyebrow={t('auth.signUp.eyebrow')}
         heading={

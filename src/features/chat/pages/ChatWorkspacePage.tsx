@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useReducedMotion } from 'framer-motion'
 import { Drawer } from 'vaul'
+import { SEO } from '@/components/SEO'
 import { ChatWorkspaceLayout } from '../components/ChatWorkspaceLayout'
 import { EmptyState } from '../components/EmptyState'
 import { LeftRail } from '../components/LeftRail'
@@ -48,11 +49,8 @@ export function ChatWorkspacePage() {
   const { data: messages } = useMessages(projectId)
   const { data: events } = useProjectEvents(projectId)
 
-  useEffect(() => {
-    if (project?.name) {
-      document.title = `${project.name} · Planning Matrix`
-    }
-  }, [project?.name])
+  // Phase 4.1 #124 — document.title now lives in <SEO /> below, which
+  // reads the project name via the i18n `seo.title.project` key.
 
   // Phase 3.4 #59 — capture mount time once so the recovery row's
   // "more than an hour stale" check is based on a stable reference.
@@ -255,6 +253,7 @@ export function ChatWorkspacePage() {
 
   return (
     <>
+      <SEO titleKey="seo.title.project" params={{ name: project.name }} />
       <OfflineBanner />
       {isMobile ? (
         <MobileChatWorkspace

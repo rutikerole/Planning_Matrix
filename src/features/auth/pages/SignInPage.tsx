@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
+import { SEO } from '@/components/SEO'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useAuth } from '@/hooks/useAuth'
@@ -109,6 +110,7 @@ export function SignInPage() {
   // duplicating form logic.
   const formBody = (
     <>
+      <SEO titleKey="seo.title.signIn" descriptionKey="seo.description.signIn" />
       {resetSuccess && (
           <div
             role="status"

@@ -1,7 +1,7 @@
-import { useEffect } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { ArrowLeft } from 'lucide-react'
+import { SEO } from '@/components/SEO'
 import { BlueprintSubstrate } from '@/components/shared/BlueprintSubstrate'
 import { useProject } from '@/features/chat/hooks/useProject'
 import { useMessages } from '@/features/chat/hooks/useMessages'
@@ -49,28 +49,24 @@ interface BodyProps {
  * `source.kind === 'shared'` so mutation affordances hide.
  */
 export function ResultPage() {
-  const { t } = useTranslation()
   const params = useParams<{ id: string }>()
   const projectId = params.id ?? ''
   const { data: project } = useProject(projectId)
   const { data: messages } = useMessages(projectId)
   const { data: events } = useProjectEvents(projectId)
 
-  useEffect(() => {
-    if (project?.name) {
-      document.title = `${t('result.titlePrefix', { defaultValue: 'Briefing' })} · ${project.name} · Planning Matrix`
-    }
-  }, [project?.name, t])
-
   if (!project) return null
 
   return (
-    <ResultPageBody
-      project={project}
-      messages={messages ?? []}
-      events={(events ?? []) as ProjectEventRow[]}
-      source={{ kind: 'owned' }}
-    />
+    <>
+      <SEO titleKey="seo.title.result" params={{ name: project.name }} />
+      <ResultPageBody
+        project={project}
+        messages={messages ?? []}
+        events={(events ?? []) as ProjectEventRow[]}
+        source={{ kind: 'owned' }}
+      />
+    </>
   )
 }
 

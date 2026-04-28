@@ -1,7 +1,8 @@
-import type { ReactNode } from 'react'
+import { useEffect, type ReactNode } from 'react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { BrowserRouter } from 'react-router-dom'
 import { LazyMotion, domAnimation } from 'framer-motion'
+import { useTranslation } from 'react-i18next'
 import '@/lib/i18n'
 import { useSession } from '@/hooks/useSession'
 import { MobileFrame } from '@/components/MobileFrame'
@@ -33,9 +34,19 @@ export function Providers({ children }: { children: ReactNode }) {
 /**
  * Mounted once at the app root. Subscribes to Supabase's auth state
  * via useSession and hydrates the zustand auth store. No-ops cleanly
- * if Supabase env vars aren't wired yet.
+ * if Supabase env vars aren't wired yet. Phase 4.1 #124 — also keeps
+ * <html lang> in sync with the resolved i18n language so screen
+ * readers and search engines get the right locale signal after a
+ * client-side switch.
  */
 function SessionGuard({ children }: { children: ReactNode }) {
   useSession()
+  const { i18n } = useTranslation()
+  useEffect(() => {
+    const lang = i18n.resolvedLanguage ?? 'de'
+    if (typeof document !== 'undefined') {
+      document.documentElement.lang = lang
+    }
+  }, [i18n.resolvedLanguage])
   return <>{children}</>
 }
