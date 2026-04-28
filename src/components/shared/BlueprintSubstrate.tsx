@@ -1,25 +1,42 @@
 import { useEffect, useRef, useState } from 'react'
 import { useReducedMotion } from 'framer-motion'
 
+interface Props {
+  /** Cursor lens radius in px. Default 320 (chat workspace + dashboard);
+   *  the wizard uses 220 to keep the headline as the focal point. */
+  lensRadius?: number
+  /** Whether the slow "table breath" opacity loop runs on the ink grid.
+   *  Default true. Set false for the wizard, where the headline animation
+   *  + paper-card shadow already carry the page's life. */
+  breathing?: boolean
+  /** Drift amplitude in px on the x-axis. Default 4. Set 0 to disable
+   *  (the wizard is calmer than the working surfaces). */
+  driftPx?: number
+}
+
 /**
- * Phase 3.2 #35 — the page's living substrate. Two layered blueprint grids
- * fill the chat workspace area:
+ * Phase 3.2 #35 + 3.3 #48 — the page's living substrate. Two layered
+ * blueprint grids fill the viewport:
  *
- *   1. Ink grid (always visible at base opacity) — minor 24px @ 4.5%, major
- *      96px @ 7%.
- *   2. Drafting-blue grid (revealed inside a 320px radial mask following
- *      the cursor) — same geometry, drafting-blue at 8%.
+ *   1. Ink grid (always visible at base opacity) — minor 24px @ 4.5%,
+ *      major 96px @ 7%.
+ *   2. Drafting-blue grid (revealed inside a {lensRadius}px radial mask
+ *      following the cursor) — same geometry, drafting-blue at 8%.
  *
- * Plus a slow ambient drift loop — `sin(t * 0.0001) * 4` translation on x,
- * imperceptible per-frame, registered over time. Establishes the page is
- * alive even when no scroll, no thinking.
+ * Plus an optional ambient drift loop — `sin(t * 0.0001) * driftPx` on
+ * x — and an optional "table breath" opacity loop on the ink grid.
  *
- * Reduced-motion: cursor lensing off, drift off, only the ink grid renders
- * statically.
+ * Reduced-motion: cursor lensing off, drift off, breath off, only the
+ * ink grid renders statically.
  *
- * The overlay sits behind everything (z-index -10) and is pointer-events-none.
+ * The overlay sits behind everything (z-index -10) and is
+ * pointer-events-none, so it's safe to mount on any page.
  */
-export function BlueprintSubstrate() {
+export function BlueprintSubstrate({
+  lensRadius = 320,
+  breathing = true,
+  driftPx = 4,
+}: Props = {}) {
   const reduced = useReducedMotion()
   const [pos, setPos] = useState<{ x: number; y: number } | null>(null)
   const driftRef = useRef<HTMLDivElement>(null)
@@ -46,14 +63,14 @@ export function BlueprintSubstrate() {
 
   // Ambient drift.
   useEffect(() => {
-    if (reduced) return
+    if (reduced || driftPx === 0) return
     let raf = 0
     let cancelled = false
     const start = performance.now()
     const tick = (now: number) => {
       if (cancelled) return
       const t = now - start
-      const dx = Math.sin(t * 0.0001) * 4
+      const dx = Math.sin(t * 0.0001) * driftPx
       if (driftRef.current) {
         driftRef.current.style.transform = `translate3d(${dx.toFixed(2)}px, 0, 0)`
       }
@@ -64,26 +81,23 @@ export function BlueprintSubstrate() {
       cancelled = true
       if (raf) cancelAnimationFrame(raf)
     }
-  }, [reduced])
+  }, [reduced, driftPx])
 
   const lensMask = pos
-    ? `radial-gradient(circle 320px at ${pos.x}px ${pos.y}px, rgba(0,0,0,1), transparent 80%)`
+    ? `radial-gradient(circle ${lensRadius}px at ${pos.x}px ${pos.y}px, rgba(0,0,0,1), transparent 80%)`
     : undefined
+
+  const breathClass = breathing && !reduced ? 'pm-table-breath' : ''
 
   return (
     <div
       ref={driftRef}
       aria-hidden="true"
       className="fixed inset-0 -z-10 pointer-events-none"
-      style={{ willChange: reduced ? 'auto' : 'transform' }}
+      style={{ willChange: reduced || driftPx === 0 ? 'auto' : 'transform' }}
     >
-      {/* Ink grid — always visible at base opacity. Phase 3.2 #46: a
-       * very slow ambient "table breath" loops opacity 0.94 → 1 → 0.94
-       * over 14s; imperceptible per-frame, registered over time.
-       * Reduced-motion: static at 1.0. */}
-      <div
-        className={`absolute inset-0 bg-blueprint-ink ${reduced ? '' : 'pm-table-breath'}`}
-      />
+      {/* Ink grid — always visible at base opacity. */}
+      <div className={`absolute inset-0 bg-blueprint-ink ${breathClass}`} />
       {/* Drafting-blue grid — only inside the cursor lens. */}
       {!reduced && pos && (
         <div

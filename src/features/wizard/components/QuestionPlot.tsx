@@ -5,6 +5,7 @@ import { cn } from '@/lib/utils'
 import { useWizardState } from '../hooks/useWizardState'
 import { isPlotAddressValid } from '../lib/plotValidation'
 import type { Intent } from '../lib/selectTemplate'
+import { WizardTitleBlock } from './WizardTitleBlock'
 
 interface Props {
   /** Submit handler — orchestrates INSERT + first-turn priming + navigate. */
@@ -18,13 +19,14 @@ interface Props {
 }
 
 /**
- * I-02 — "Haben Sie bereits ein Grundstück?". Two-pill toggle (Ja/Nein),
- * a conditional address input that slides in for "Ja", a calm clay
- * notice for "Nein". Primary CTA Projekt anlegen calls onSubmit when
- * valid; insert errors surface inline above the back/submit row. The
- * "submitting" visual state is owned by the wizard root, which swaps to
- * TransitionScreen the moment INSERT begins — QuestionPlot never sees
- * an in-flight state.
+ * Phase 3.3 #48 — Q2 redesigned to live inside the wizard's paper card.
+ *
+ * Title block (eyebrow + Roman II + headline + sub) sits above the
+ * Yes/No paper-tab toggle. Address input keeps its hairline-bottom
+ * vocabulary (already aligned with chat workspace + auth) but the
+ * focus-state border switches from clay → ink (#49 will re-align that
+ * to drafting-blue across the product). Notice copy moves to italic
+ * Serif clay register on the no-plot path.
  */
 export function QuestionPlot({ onSubmit, submitError }: Props) {
   const { t } = useTranslation()
@@ -40,8 +42,6 @@ export function QuestionPlot({ onSubmit, submitError }: Props) {
   const addressInputRef = useRef<HTMLInputElement>(null)
   const [touched, setTouched] = useState(false)
 
-  // Auto-focus the address input when the user first picks Ja and the
-  // field is empty. We don't steal focus on every re-render of step 2.
   useEffect(() => {
     if (hasPlot === true && !plotAddress) {
       addressInputRef.current?.focus()
@@ -67,31 +67,21 @@ export function QuestionPlot({ onSubmit, submitError }: Props) {
     })
   }
 
+  const headline = t('wizard.q2.headline').replace(/[?]\s*$/, '')
+
   return (
     <div className="flex flex-col gap-7">
-      <p className="eyebrow inline-flex items-center text-foreground/65">
-        <span className="accent-dot" aria-hidden="true" />
-        {t('wizard.q2.eyebrow')}
-      </p>
+      <WizardTitleBlock
+        numeral="II"
+        eyebrowKey="wizard.q2.eyebrow"
+        headline={headline}
+        punct="?"
+        sub={t('wizard.q2.sub')}
+        headlineId="q2-headline"
+      />
 
-      <h1
-        id="q2-headline"
-        className="font-display text-display-3 md:text-display-2 text-ink leading-[1.05] -tracking-[0.02em]"
-      >
-        {t('wizard.q2.headline').replace(/[?]\s*$/, '')}
-        <span className="text-clay">?</span>
-      </h1>
-
-      <p className="text-body-lg text-ink/70 leading-relaxed max-w-[28rem]">
-        {t('wizard.q2.sub')}
-      </p>
-
-      {/* Ja / Nein pill toggle */}
-      <div
-        role="group"
-        aria-labelledby="q2-headline"
-        className="flex gap-2"
-      >
+      {/* Ja / Nein paper-tab toggle */}
+      <div role="group" aria-labelledby="q2-headline" className="flex gap-2.5">
         {[true, false].map((value) => {
           const isSelected = hasPlot === value
           return (
@@ -104,14 +94,27 @@ export function QuestionPlot({ onSubmit, submitError }: Props) {
                 if (value === false) setTouched(false)
               }}
               className={cn(
-                'px-6 h-10 rounded-sm border text-[13.5px] font-medium tracking-tight transition-colors duration-soft ease-soft',
-                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink focus-visible:ring-offset-2 focus-visible:ring-offset-background',
+                'group relative inline-flex items-center gap-2 px-6 py-3 rounded-[2px] border text-[14px] font-medium tracking-tight',
+                'transition-[background-color,color,border-color,transform,box-shadow] duration-soft ease-soft',
+                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/35 focus-visible:ring-offset-2 focus-visible:ring-offset-background',
                 isSelected
-                  ? 'border-clay/60 bg-clay/[0.08] text-ink'
-                  : 'border-border-strong/55 bg-paper text-ink/85 hover:border-ink/40 hover:bg-muted/40 hover:text-ink',
+                  ? 'border-drafting-blue/60 bg-drafting-blue/[0.12] text-ink'
+                  : 'border-ink/15 bg-paper text-ink/85 hover:border-ink/30 hover:bg-drafting-blue/[0.05] hover:text-ink motion-safe:hover:-translate-y-px',
               )}
+              style={{
+                boxShadow: isSelected
+                  ? 'inset 0 1px 0 hsl(0 0% 100% / 0.55)'
+                  : 'inset 0 1px 0 hsl(0 0% 100% / 0.6)',
+              }}
             >
-              {t(value ? 'wizard.q2.yes' : 'wizard.q2.no')}
+              <span
+                aria-hidden="true"
+                className={cn(
+                  'block size-1.5 rounded-full shrink-0 transition-colors duration-soft',
+                  isSelected ? 'bg-clay' : 'bg-transparent',
+                )}
+              />
+              <span>{t(value ? 'wizard.q2.yes' : 'wizard.q2.no')}</span>
             </button>
           )
         })}
@@ -129,7 +132,10 @@ export function QuestionPlot({ onSubmit, submitError }: Props) {
             className="overflow-hidden"
           >
             <div className="flex flex-col gap-2">
-              <label htmlFor="plot-address" className="sr-only">
+              <label
+                htmlFor="plot-address"
+                className="text-[10px] font-medium uppercase tracking-[0.20em] text-clay/85"
+              >
                 {t('wizard.q2.addressLabel')}
               </label>
               <input
@@ -151,7 +157,7 @@ export function QuestionPlot({ onSubmit, submitError }: Props) {
                   'focus:outline-none focus:ring-0',
                   showAddressError
                     ? 'border-destructive/70 focus:border-destructive'
-                    : 'border-border-strong/45 focus:border-ink',
+                    : 'border-ink/25 focus:border-drafting-blue/60',
                 )}
               />
               {showAddressError ? (
@@ -165,7 +171,7 @@ export function QuestionPlot({ onSubmit, submitError }: Props) {
               ) : (
                 <p
                   id="plot-address-helper"
-                  className="text-[12px] text-clay/85 italic leading-relaxed"
+                  className="font-serif italic text-[12px] text-clay/85 leading-relaxed"
                 >
                   {t('wizard.q2.addressHelper')}
                 </p>
@@ -186,7 +192,7 @@ export function QuestionPlot({ onSubmit, submitError }: Props) {
             transition={{ duration: reduced ? 0 : 0.3, ease: [0.16, 1, 0.3, 1] }}
             className="overflow-hidden"
           >
-            <p className="text-sm text-clay/85 leading-relaxed border-l-2 border-clay/35 pl-4 py-1 max-w-[34rem]">
+            <p className="font-serif italic text-[13px] text-clay-deep leading-relaxed border-l border-clay/35 pl-4 py-1 max-w-[34rem]">
               {t('wizard.q2.noPlotNotice')}
             </p>
           </m.div>
@@ -208,7 +214,7 @@ export function QuestionPlot({ onSubmit, submitError }: Props) {
         <button
           type="button"
           onClick={goBackToQ1}
-          className="text-[13px] text-ink/60 hover:text-ink underline underline-offset-4 decoration-clay/55 transition-colors duration-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm"
+          className="font-serif italic text-[13px] text-clay/85 hover:text-ink underline underline-offset-4 decoration-clay/55 transition-colors duration-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm"
         >
           ← {t('wizard.back')}
         </button>

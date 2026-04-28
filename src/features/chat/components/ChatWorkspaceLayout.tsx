@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import { BlueprintSubstrate } from './BlueprintSubstrate'
+import { BlueprintSubstrate } from '@/components/shared/BlueprintSubstrate'
 
 interface Props {
   leftRail?: ReactNode

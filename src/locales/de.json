@@ -370,7 +370,7 @@
       "label": "Schritt {{current}} von {{total}}"
     },
     "q1": {
-      "eyebrow": "Planning Matrix · Initialisierung · 1 / 2",
+      "eyebrow": "Planning Matrix · Initialisierung",
       "headline": "Was möchten Sie bauen?",
       "sub": "Wählen Sie die Option, die Ihrem Vorhaben am nächsten kommt.",
       "options": {
@@ -392,7 +392,7 @@
       }
     },
     "q2": {
-      "eyebrow": "Planning Matrix · Initialisierung · 2 / 2",
+      "eyebrow": "Planning Matrix · Initialisierung",
       "headline": "Haben Sie bereits ein Grundstück?",
       "sub": "Wenn ja, geben Sie die Adresse oder die Flurstücksbezeichnung an. Wenn nein, fahren wir mit Annahmen fort.",
       "yes": "Ja",

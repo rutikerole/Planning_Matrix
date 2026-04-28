@@ -370,7 +370,7 @@
       "label": "Step {{current}} of {{total}}"
     },
     "q1": {
-      "eyebrow": "Planning Matrix · Initialization · 1 / 2",
+      "eyebrow": "Planning Matrix · Initialization",
       "headline": "What would you like to build?",
       "sub": "Pick the option closest to your project.",
       "options": {
@@ -392,7 +392,7 @@
       }
     },
     "q2": {
-      "eyebrow": "Planning Matrix · Initialization · 2 / 2",
+      "eyebrow": "Planning Matrix · Initialization",
       "headline": "Do you already have a plot?",
       "sub": "If yes, enter the address or parcel reference. If no, we'll proceed with assumptions.",
       "yes": "Yes",

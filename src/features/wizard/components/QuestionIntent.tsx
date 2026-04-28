@@ -4,17 +4,20 @@ import { m, useReducedMotion } from 'framer-motion'
 import { cn } from '@/lib/utils'
 import { useWizardState } from '../hooks/useWizardState'
 import { INTENT_VALUES, type Intent } from '../lib/selectTemplate'
+import { WizardTitleBlock } from './WizardTitleBlock'
 
 /**
- * I-01 — "Was möchten Sie bauen?" Six chips, single-select. Selecting
- * a chip immediately advances the wizard to step 2 via setIntent.
+ * Phase 3.3 #48 — Q1 redesigned to live inside the wizard's paper card.
  *
- * Keyboard: Tab into the group, Arrow keys cycle focus across chips,
- * Enter or Space activates. aria-pressed reflects the *previously*
- * selected intent so a user returning via Zurück sees their answer.
+ * Title block (eyebrow + Roman I + headline + sub) sits above the chip
+ * grid. Chips are now paper-tab cards: paper bg with hairline border,
+ * inset white-edge highlight, and on selection drafting-blue 12% fill
+ * + drafting-blue 60% border + a flush-left clay dot prefix that
+ * matches the spec-index "ACTIVE" marker (Polish-Move-1 vocabulary).
  *
- * "Ich bin mir nicht sicher" expands an inline list of one-paragraph
- * explanations per option — calm, no marketing tone, restrained.
+ * Selecting a chip immediately advances the wizard to step 2 via
+ * setIntent (unchanged behaviour). Keyboard nav unchanged: Tab into
+ * the group, Arrow keys cycle focus, Enter/Space activates.
  */
 export function QuestionIntent() {
   const { t } = useTranslation()
@@ -43,29 +46,23 @@ export function QuestionIntent() {
     }
   }
 
+  const headline = t('wizard.q1.headline').replace(/[?]\s*$/, '')
+
   return (
     <div className="flex flex-col gap-7">
-      <p className="eyebrow inline-flex items-center text-foreground/65">
-        <span className="accent-dot" aria-hidden="true" />
-        {t('wizard.q1.eyebrow')}
-      </p>
-
-      <h1
-        id="q1-headline"
-        className="font-display text-display-3 md:text-display-2 text-ink leading-[1.05] -tracking-[0.02em]"
-      >
-        {t('wizard.q1.headline').replace(/[?]\s*$/, '')}
-        <span className="text-clay">?</span>
-      </h1>
-
-      <p className="text-body-lg text-ink/70 leading-relaxed max-w-[28rem]">
-        {t('wizard.q1.sub')}
-      </p>
+      <WizardTitleBlock
+        numeral="I"
+        eyebrowKey="wizard.q1.eyebrow"
+        headline={headline}
+        punct="?"
+        sub={t('wizard.q1.sub')}
+        headlineId="q1-headline"
+      />
 
       <div
         role="group"
         aria-labelledby="q1-headline"
-        className="flex flex-wrap gap-2"
+        className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 mt-1"
       >
         {INTENT_VALUES.map((value, idx) => {
           const isSelected = intent === value
@@ -80,14 +77,30 @@ export function QuestionIntent() {
               onKeyDown={(e) => handleKey(e, idx)}
               aria-pressed={isSelected}
               className={cn(
-                'px-4 h-10 rounded-sm border text-[13.5px] font-medium tracking-tight transition-colors duration-soft ease-soft',
-                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink focus-visible:ring-offset-2 focus-visible:ring-offset-background',
+                'group relative flex items-center gap-2 px-5 py-4 rounded-[2px] border text-left text-[14px] font-medium tracking-tight',
+                'transition-[background-color,color,border-color,transform,box-shadow] duration-soft ease-soft',
+                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/35 focus-visible:ring-offset-2 focus-visible:ring-offset-background',
                 isSelected
-                  ? 'border-clay/60 bg-clay/[0.08] text-ink'
-                  : 'border-border-strong/55 bg-paper text-ink/85 hover:border-ink/40 hover:bg-muted/40 hover:text-ink',
+                  ? 'border-drafting-blue/60 bg-drafting-blue/[0.12] text-ink'
+                  : 'border-ink/15 bg-paper text-ink/85 hover:border-ink/30 hover:bg-drafting-blue/[0.05] hover:text-ink motion-safe:hover:-translate-y-px',
               )}
+              style={{
+                boxShadow: isSelected
+                  ? 'inset 0 1px 0 hsl(0 0% 100% / 0.55)'
+                  : 'inset 0 1px 0 hsl(0 0% 100% / 0.6)',
+              }}
             >
-              {t(`wizard.q1.options.${value}`)}
+              {/* Selection dot — clay filled circle, matches the
+               * left-rail spec-index ACTIVE marker. Renders only when
+               * selected so unselected chips stay clean. */}
+              <span
+                aria-hidden="true"
+                className={cn(
+                  'block size-1.5 rounded-full shrink-0 transition-colors duration-soft',
+                  isSelected ? 'bg-clay' : 'bg-transparent',
+                )}
+              />
+              <span>{t(`wizard.q1.options.${value}`)}</span>
             </button>
           )
         })}
@@ -98,7 +111,7 @@ export function QuestionIntent() {
           type="button"
           onClick={() => setUnsureOpen((v) => !v)}
           aria-expanded={unsureOpen}
-          className="text-[13px] text-ink/60 hover:text-ink underline underline-offset-4 decoration-clay/55 transition-colors duration-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm"
+          className="font-serif italic text-[12px] text-clay/85 hover:text-ink underline underline-offset-4 decoration-clay/55 transition-colors duration-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm"
         >
           {t('wizard.q1.unsureLink')}
         </button>
@@ -111,7 +124,7 @@ export function QuestionIntent() {
             transition={{ duration: reduced ? 0 : 0.3, ease: [0.16, 1, 0.3, 1] }}
             className="overflow-hidden mt-4"
           >
-            <ul className="flex flex-col gap-3 text-sm text-ink/75 leading-relaxed border-l-2 border-clay/30 pl-4">
+            <ul className="flex flex-col gap-3 text-[13px] text-ink/75 leading-relaxed border-l border-clay/35 pl-4">
               {INTENT_VALUES.map((value) => (
                 <li key={value}>
                   <span className="font-medium text-ink">

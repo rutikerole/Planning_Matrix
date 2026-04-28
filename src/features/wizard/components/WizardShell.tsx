@@ -4,7 +4,9 @@ import { useNavigate } from 'react-router-dom'
 import { m, useReducedMotion } from 'framer-motion'
 import { LanguageSwitcher } from '@/components/shared/LanguageSwitcher'
 import { Wordmark } from '@/components/shared/Wordmark'
-import { ProgressDots } from './ProgressDots'
+import { BlueprintSubstrate } from '@/components/shared/BlueprintSubstrate'
+import { PaperSheet } from '@/components/shared/PaperSheet'
+import { WizardProgress } from './WizardProgress'
 import { ConfirmDialog } from './ConfirmDialog'
 import { useWizardState } from '../hooks/useWizardState'
 
@@ -15,11 +17,19 @@ interface Props {
 }
 
 /**
- * The shared chrome around the wizard's two questions. Full-bleed paper
- * background (intentionally distinct from the landing page's editorial
- * scroll and the auth split-screen — this is a focused workshop moment).
- * A subtle blueprint hairline grid breathes under the cursor; everything
- * else is restraint.
+ * Phase 3.3 #48 — wizard shell rebuilt around the shared atelier
+ * vocabulary. The full-bleed paper background, the cancel-confirm
+ * choreography, and the cross-fade between steps are unchanged. What
+ * shipped here:
+ *
+ *   • Inline `BlueprintReveal` removed; mounts shared
+ *     `<BlueprintSubstrate lensRadius={220} breathing={false} driftPx={0} />`
+ *     instead. One source of truth across chat workspace + dashboard
+ *     + wizard.
+ *   • Step children now wrap in a `<PaperSheet>` so the wizard reads
+ *     as a sheet of paper sitting on the substrate, not a bare canvas.
+ *   • Footer progress meter is `<WizardProgress>` — Roman numerals on
+ *     a 64px hairline rule, replacing the breath-dot pattern.
  */
 export function WizardShell({ step, totalSteps = 2, children }: Props) {
   const { t, i18n } = useTranslation()
@@ -49,7 +59,9 @@ export function WizardShell({ step, totalSteps = 2, children }: Props) {
       transition={{ duration: reduced ? 0 : 0.25, ease: [0.16, 1, 0.3, 1] }}
       className="min-h-dvh bg-paper relative isolate flex flex-col"
     >
-      <BlueprintReveal />
+      {/* Shared atelier substrate — calmer settings on the wizard so the
+       * headline + paper card stay the focal point. */}
+      <BlueprintSubstrate lensRadius={220} breathing={false} driftPx={0} />
 
       <header className="relative z-10 px-4 sm:px-10 lg:px-14 xl:px-20">
         <div className="flex h-16 md:h-[72px] items-center justify-between gap-3">
@@ -57,7 +69,7 @@ export function WizardShell({ step, totalSteps = 2, children }: Props) {
           <div className="flex items-center gap-3 sm:gap-5">
             <LanguageSwitcher />
             <span
-              className="hidden sm:block h-4 w-px bg-border-strong/55"
+              className="hidden sm:block h-4 w-px bg-ink/20"
               aria-hidden="true"
             />
             <button
@@ -72,11 +84,13 @@ export function WizardShell({ step, totalSteps = 2, children }: Props) {
       </header>
 
       <main className="relative z-10 flex-1 flex items-start sm:items-center justify-center px-6 sm:px-10 pt-10 sm:pt-0 pb-24">
-        <div className="w-full max-w-[36rem]">{children}</div>
+        <PaperSheet padded="md" className="w-full">
+          {children}
+        </PaperSheet>
       </main>
 
       <footer className="relative z-10 pb-10 flex items-center justify-center">
-        <ProgressDots count={totalSteps} active={step} />
+        <WizardProgress count={totalSteps} active={step} />
       </footer>
 
       <ConfirmDialog
@@ -89,36 +103,5 @@ export function WizardShell({ step, totalSteps = 2, children }: Props) {
         onCancel={handleCancelDismiss}
       />
     </m.div>
-  )
-}
-
-/**
- * Subtle blueprint grid (4.5% opacity ink hairlines, defined in
- * globals.css as .bg-blueprint) revealed under the cursor via a
- * radial-gradient mask. The background is otherwise blank paper —
- * the grid only appears as a soft halo around the pointer, fading
- * to nothing 220 px out. Reduced-motion suppresses the mask entirely.
- */
-function BlueprintReveal() {
-  const reduced = useReducedMotion()
-  const [pos, setPos] = useState<{ x: number; y: number } | null>(null)
-
-  useEffect(() => {
-    if (reduced) return
-    const handler = (e: PointerEvent) => setPos({ x: e.clientX, y: e.clientY })
-    window.addEventListener('pointermove', handler, { passive: true })
-    return () => window.removeEventListener('pointermove', handler)
-  }, [reduced])
-
-  if (reduced || !pos) {
-    return null
-  }
-  const mask = `radial-gradient(circle 220px at ${pos.x}px ${pos.y}px, rgba(0,0,0,0.55), transparent 80%)`
-  return (
-    <div
-      aria-hidden="true"
-      className="fixed inset-0 -z-10 bg-blueprint pointer-events-none"
-      style={{ WebkitMaskImage: mask, maskImage: mask }}
-    />
   )
 }
