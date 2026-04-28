@@ -700,6 +700,29 @@
       "eyebrow": "The team",
       "intro": "{{n}} specialists will be needed for your project.",
       "effortLabel": "Estimated effort"
+    },
+    "costTimeline": {
+      "eyebrow": "Cost and timeline",
+      "intro": "Initial estimate — please refine with your architect.",
+      "timelineEyebrow": "Procedure duration",
+      "totalLabel": "Total",
+      "totalDuration": "approx. 4–6 months",
+      "costEyebrow": "Cost range",
+      "costSub": "(HOAI fees · construction not included)",
+      "sumLabel": "Sum (estimated)",
+      "confidenceLine": "Estimate confidence: ±25 %",
+      "caveat": "These figures are orientation values based on typical Bayern fee tables for projects of this class."
+    },
+    "risks": {
+      "eyebrow": "What still to verify",
+      "intro_one": "One point to discuss with your architect.",
+      "intro_other": "{{n}} points to discuss with your architect."
+    },
+    "confidence": {
+      "eyebrow": "Data quality",
+      "totalEyebrow": "In total",
+      "totalLabel": "Datapoints",
+      "assumedLine": "marked as assumption. Assumptions get verified during architect consultation."
     }
   },
   "legal": {

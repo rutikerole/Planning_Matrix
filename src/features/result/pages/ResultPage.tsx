@@ -10,6 +10,9 @@ import { TopThreeHero } from '../components/TopThreeHero'
 import { LegalLandscape } from '../components/LegalLandscape'
 import { DocumentChecklist } from '../components/DocumentChecklist'
 import { SpecialistsRequired } from '../components/SpecialistsRequired'
+import { CostTimelinePanel } from '../components/CostTimelinePanel'
+import { RiskFlags } from '../components/RiskFlags'
+import { ConfidenceDashboard } from '../components/ConfidenceDashboard'
 import type { ProjectState } from '@/types/projectState'
 
 /**
@@ -75,7 +78,16 @@ export function ResultPage() {
       {/* Section VI — Specialists Required */}
       <SpecialistsRequired state={(project.state ?? {}) as Partial<ProjectState>} />
 
-      {/* Sections VII–XII land in commits #63–#64. */}
+      {/* Section VII — Cost & Timeline */}
+      <CostTimelinePanel state={(project.state ?? {}) as Partial<ProjectState>} />
+
+      {/* Section VIII — Risk Flags */}
+      <RiskFlags state={(project.state ?? {}) as Partial<ProjectState>} />
+
+      {/* Section IX — Confidence Dashboard (THE new primitive) */}
+      <ConfidenceDashboard state={(project.state ?? {}) as Partial<ProjectState>} />
+
+      {/* Sections X–XII land in commit #64. */}
     </div>
   )
 }
