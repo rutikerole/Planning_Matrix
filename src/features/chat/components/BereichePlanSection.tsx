@@ -1,4 +1,6 @@
+import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useReducedMotion } from 'framer-motion'
 import type { AreaState, ProjectState } from '@/types/projectState'
 
 interface Props {
@@ -24,6 +26,7 @@ interface Props {
  */
 export function BereichePlanSection({ state }: Props) {
   const { t } = useTranslation()
+  const reduced = useReducedMotion()
   const areas = state.areas ?? {
     A: { state: 'PENDING' as AreaState },
     B: { state: 'PENDING' as AreaState },
@@ -37,6 +40,38 @@ export function BereichePlanSection({ state }: Props) {
     state: areas[key]?.state ?? 'PENDING',
     reason: areas[key]?.reason,
   }))
+
+  // Phase 3.4 #57 — celebrate when a band flips to ACTIVE. Track the
+  // previous state for each band; if the new state is ACTIVE and the
+  // previous wasn't, fire a 1.6s celebration (hatch redraw + checkmark
+  // + brightness pulse).
+  const prevStatesRef = useRef<Partial<Record<'A' | 'B' | 'C', AreaState>>>({})
+  const [celebrating, setCelebrating] = useState<Record<'A' | 'B' | 'C', boolean>>({
+    A: false,
+    B: false,
+    C: false,
+  })
+
+  useEffect(() => {
+    const next: Partial<Record<'A' | 'B' | 'C', AreaState>> = {}
+    let triggered: 'A' | 'B' | 'C' | null = null
+    bands.forEach(({ key, state: bandState }) => {
+      next[key] = bandState
+      const prev = prevStatesRef.current[key]
+      if (prev !== undefined && prev !== 'ACTIVE' && bandState === 'ACTIVE') {
+        triggered = key
+      }
+    })
+    prevStatesRef.current = next
+    if (triggered && !reduced) {
+      setCelebrating((c) => ({ ...c, [triggered as 'A' | 'B' | 'C']: true }))
+      const t1 = setTimeout(() => {
+        setCelebrating((c) => ({ ...c, [triggered as 'A' | 'B' | 'C']: false }))
+      }, 1800)
+      return () => clearTimeout(t1)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [areas.A?.state, areas.B?.state, areas.C?.state, reduced])
 
   return (
     <div className="flex flex-col gap-3 border-t border-border/40 pt-6">
@@ -112,9 +147,10 @@ export function BereichePlanSection({ state }: Props) {
               : band.state === 'PENDING'
                 ? 'url(#pm-hatch-pending)'
                 : 'transparent'
+          const isCelebrating = celebrating[band.key]
 
           return (
-            <g key={band.key}>
+            <g key={band.key} className={isCelebrating ? 'pm-band-celebrate' : ''}>
               {/* Band rectangle */}
               <rect
                 x="0"
@@ -124,6 +160,35 @@ export function BereichePlanSection({ state }: Props) {
                 fill={fill}
                 stroke="none"
               />
+              {/* Phase 3.4 #57 — celebration: hand-drawn checkmark draws
+               * itself in on the band's right edge (over 600 ms via
+               * stroke-dashoffset). Ripple expands outward. Brightness
+               * pulse handled at the parent <g class="pm-band-celebrate">. */}
+              {isCelebrating && (
+                <g>
+                  <path
+                    className="pm-band-checkmark"
+                    d={`M 220 ${top + 16} L 226 ${top + 22} L 234 ${top + 10}`}
+                    fill="none"
+                    stroke="hsl(212 38% 32%)"
+                    strokeWidth="1.6"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeOpacity="0.9"
+                  />
+                  <rect
+                    className="pm-band-ripple"
+                    x="2"
+                    y={top + 2}
+                    width="236"
+                    height="28"
+                    fill="none"
+                    stroke="hsl(220 16% 11%)"
+                    strokeWidth="0.6"
+                    strokeOpacity="0"
+                  />
+                </g>
+              )}
               {/* VOID: dashed outline overlay + diagonal strikethrough */}
               {band.state === 'VOID' && (
                 <>
@@ -183,6 +248,39 @@ export function BereichePlanSection({ state }: Props) {
             </g>
           )
         })}
+        <style>{`
+          @keyframes pmBandPulse {
+            0%   { opacity: 1; }
+            30%  { opacity: 0.55; }
+            100% { opacity: 1; }
+          }
+          @keyframes pmCheckDraw {
+            0%   { stroke-dashoffset: 30; opacity: 0; }
+            20%  { opacity: 1; }
+            100% { stroke-dashoffset: 0; opacity: 1; }
+          }
+          @keyframes pmRipple {
+            0%   { stroke-opacity: 0; transform: scale(1); }
+            20%  { stroke-opacity: 0.4; }
+            100% { stroke-opacity: 0; transform: scale(1.04); }
+          }
+          .pm-band-celebrate { animation: pmBandPulse 1.2s ease-in-out; }
+          .pm-band-checkmark {
+            stroke-dasharray: 30;
+            stroke-dashoffset: 30;
+            animation: pmCheckDraw 600ms ease-out forwards;
+          }
+          .pm-band-ripple {
+            transform-origin: 120px center;
+            animation: pmRipple 800ms ease-out;
+          }
+          @media (prefers-reduced-motion: reduce) {
+            .pm-band-celebrate,
+            .pm-band-checkmark,
+            .pm-band-ripple { animation: none; }
+            .pm-band-checkmark { stroke-dashoffset: 0; }
+          }
+        `}</style>
       </svg>
 
       {/* Band legend — the same three rows, but as text references below */}
