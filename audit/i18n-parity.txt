@@ -1,0 +1,5 @@
+
+> planning-matrix@0.0.0 verify:locales
+> node scripts/verify-locale-parity.mjs
+
+[verify:locales] OK — 617 keys, parity ✓

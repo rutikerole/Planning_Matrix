@@ -1,0 +1,19 @@
+src/features/result/components/CoverHero.tsx:32: * (sessionStorage-scoped):
+src/features/result/components/TopThreeHero.tsx:140: * localStorage scoped to the project id. Survives reloads and stays
+src/features/result/components/TopThreeHero.tsx:151:      setStarted(window.localStorage.getItem(storageKey) === '1')
+src/features/result/components/TopThreeHero.tsx:161:        if (next) window.localStorage.setItem(storageKey, '1')
+src/features/result/components/TopThreeHero.tsx:162:        else window.localStorage.removeItem(storageKey)
+src/features/result/components/DocumentChecklist.tsx:7:// middle column is a localStorage flag (no canonical ItemStatus matches
+src/features/result/components/DocumentChecklist.tsx:53:  // localStorage-backed `in_arbeit` flags. The kanban reads them at
+src/features/result/components/DocumentChecklist.tsx:59:      const raw = window.localStorage.getItem(`pm:docs-progress:${project.id}`)
+src/features/result/components/DocumentChecklist.tsx:70:      window.localStorage.setItem(
+src/features/result/lib/checklistStorage.ts:2: * Phase 3.5 #62 — localStorage persistence for the document checklist.
+src/features/result/lib/checklistStorage.ts:20:    return window.localStorage.getItem(key(projectId, docId)) === '1'
+src/features/result/lib/checklistStorage.ts:33:    if (checked) window.localStorage.setItem(key(projectId, docId), '1')
+src/features/result/lib/checklistStorage.ts:34:    else window.localStorage.removeItem(key(projectId, docId))
+src/features/result/lib/sessionAnimationFlag.ts:2: * Phase 3.5 #60 — sessionStorage flag for the cover-hero one-time
+src/features/result/lib/sessionAnimationFlag.ts:17:    return window.sessionStorage.getItem(STORAGE_PREFIX + scopeKey) !== '1'
+src/features/result/lib/sessionAnimationFlag.ts:26:    window.sessionStorage.setItem(STORAGE_PREFIX + scopeKey, '1')
+src/features/wizard/hooks/useWizardState.ts:29: * Wizard answers persist across refreshes via sessionStorage so a user
+src/features/wizard/hooks/useWizardState.ts:31: * sessionStorage is per-tab and clears on tab close, which is the right
+src/features/wizard/hooks/useWizardState.ts:52:      storage: createJSONStorage(() => sessionStorage),

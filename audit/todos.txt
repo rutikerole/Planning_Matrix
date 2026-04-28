@@ -1,0 +1,7 @@
+src/features/result/lib/documentNumber.ts:4: * Format: `PM-XXXX-XXXX` derived deterministically from the project id.
+src/features/dashboard/lib/dashboardFormat.ts:92:  'XXI', 'XXII', 'XXIII', 'XXIV', 'XXV', 'XXVI', 'XXVII', 'XXVIII', 'XXIX', 'XXX',
+src/features/dashboard/lib/dashboardFormat.ts:93:  'XXXI', 'XXXII', 'XXXIII', 'XXXIV', 'XXXV', 'XXXVI', 'XXXVII', 'XXXVIII', 'XXXIX', 'XL',
+src/lib/cn-feature-flags.ts:11:// TODO(phase-4): replace with role check when admin role lands.
+src/lib/streamingExtractor.ts:12:// marker, mid-string, mid-escape, mid-`\uXXXX`).
+supabase/functions/chat-turn/anthropic.ts:43:// TODO(phase-4): evaluate streaming or Sonnet 4.6 upgrade if
+supabase/functions/chat-turn/toolSchema.ts:22:// TODO(model-upgrade): evaluate claude-sonnet-4-6 in Phase 3.5 — same

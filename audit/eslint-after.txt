@@ -1,0 +1,302 @@
+
+/Users/rutikerole/Planning_Matrix/src/features/chat/components/ChatDropZone.tsx
+  36:7  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/rutikerole/Planning_Matrix/src/features/chat/components/ChatDropZone.tsx:36:7
+  34 |   useEffect(() => {
+  35 |     if (typeof window === 'undefined' || !window.matchMedia) {
+> 36 |       setIsFinePointer(true)
+     |       ^^^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  37 |       return
+  38 |     }
+  39 |     const mq = window.matchMedia('(pointer: fine)')  react-hooks/set-state-in-effect
+
+/Users/rutikerole/Planning_Matrix/src/features/chat/components/ExportMenu.tsx
+  73:9  error  The value assigned to 'outputSize' is not used in subsequent statements  no-useless-assignment
+
+/Users/rutikerole/Planning_Matrix/src/features/chat/components/FactTicker.tsx
+  42:7  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/rutikerole/Planning_Matrix/src/features/chat/components/FactTicker.tsx:42:7
+  40 |   useEffect(() => {
+  41 |     if (isThinking || streaming) {
+> 42 |       setIdle(false)
+     |       ^^^^^^^ Avoid calling setState() directly within an effect
+  43 |       return
+  44 |     }
+  45 |     if (completion !== null && completion !== 'continue') {  react-hooks/set-state-in-effect
+
+/Users/rutikerole/Planning_Matrix/src/features/chat/components/Input/AttachmentChip.tsx
+  88:10  error  Error: Cannot create components during render
+
+Components created during render will reset their state each time they are created. Declare components outside of render.
+
+/Users/rutikerole/Planning_Matrix/src/features/chat/components/Input/AttachmentChip.tsx:88:10
+  86 |         />
+  87 |       ) : (
+> 88 |         <Icon
+     |          ^^^^ This component is created during render
+  89 |           aria-hidden="true"
+  90 |           className={cn(
+  91 |             'size-4 shrink-0',
+
+/Users/rutikerole/Planning_Matrix/src/features/chat/components/Input/AttachmentChip.tsx:62:16
+  60 |   const lang = (i18n.resolvedLanguage ?? 'de') as 'de' | 'en'
+  61 |
+> 62 |   const Icon = pickIcon(attachment.file.type)
+     |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The component is created during render here
+  63 |   const { status, errorMessage } = attachment
+  64 |
+  65 |   const isFailed = status === 'failed'  react-hooks/static-components
+
+/Users/rutikerole/Planning_Matrix/src/features/chat/components/Input/AttachmentPicker.tsx
+  70:3  error  React Hook "useEffect" is called conditionally. React Hooks must be called in the exact same order in every component render  react-hooks/rules-of-hooks
+
+/Users/rutikerole/Planning_Matrix/src/features/chat/components/Input/InputBar.tsx
+  212:6  error  Error: Cannot create components during render
+
+Components created during render will reset their state each time they are created. Declare components outside of render.
+
+/Users/rutikerole/Planning_Matrix/src/features/chat/components/Input/InputBar.tsx:212:6
+  210 |
+  211 |   return (
+> 212 |     <Outer>
+      |      ^^^^^ This component is created during render
+  213 |           {/* Suggestion chips above the bar — never replace it. */}
+  214 |           {showSuggestions && (
+  215 |             <SuggestionChips
+
+/Users/rutikerole/Planning_Matrix/src/features/chat/components/Input/InputBar.tsx:188:7
+  186 |   // + textarea card + helper row.
+  187 |   const Outer = embedded
+> 188 |     ? ({ children }: { children: ReactNode }) => (
+      |       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 189 |         <div className="w-full" data-pm-input-bar="embedded">
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 190 |           <div className="w-full flex flex-col gap-2">{children}</div>
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 191 |         </div>
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 192 |       )
+      | ^^^^^^^^ The component is created during render here
+  193 |     : ({ children }: { children: ReactNode }) => (
+  194 |         <div
+  195 |           className="sticky bottom-0 z-20 bg-paper/95 backdrop-blur-[2px] border-t border-border-strong/25"  react-hooks/static-components
+
+/Users/rutikerole/Planning_Matrix/src/features/chat/components/MessageAttachment.tsx
+  134:8  error  Error: Cannot create components during render
+
+Components created during render will reset their state each time they are created. Declare components outside of render.
+
+/Users/rutikerole/Planning_Matrix/src/features/chat/components/MessageAttachment.tsx:134:8
+  132 |       })}
+  133 |     >
+> 134 |       <Icon aria-hidden="true" className="size-4 shrink-0 text-clay/85 group-hover:text-drafting-blue" />
+      |        ^^^^ This component is created during render
+  135 |       <span className="truncate min-w-0">{truncateMiddle(row.file_name)}</span>
+  136 |       <span className="text-clay/72 italic shrink-0 tabular-nums">
+  137 |         {formatBytes(row.file_size, lang)}
+
+/Users/rutikerole/Planning_Matrix/src/features/chat/components/MessageAttachment.tsx:104:16
+  102 | function AttachmentLink({ row, lang }: { row: ProjectFileRow; lang: 'de' | 'en' }) {
+  103 |   const { t } = useTranslation()
+> 104 |   const Icon = pickIcon(row.file_type)
+      |                ^^^^^^^^^^^^^^^^^^^^^^^ The component is created during render here
+  105 |
+  106 |   const handleClick = async (e: React.MouseEvent) => {
+  107 |     e.preventDefault()  react-hooks/static-components
+
+/Users/rutikerole/Planning_Matrix/src/features/chat/components/MessageContextSheet.tsx
+  32:16  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/rutikerole/Planning_Matrix/src/features/chat/components/MessageContextSheet.tsx:32:16
+  30 |
+  31 |   useEffect(() => {
+> 32 |     if (!open) setCopied(false)
+     |                ^^^^^^^^^ Avoid calling setState() directly within an effect
+  33 |   }, [open])
+  34 |
+  35 |   const handleCopy = async () => {  react-hooks/set-state-in-effect
+
+/Users/rutikerole/Planning_Matrix/src/features/chat/components/ThinkingIndicator.tsx
+  65:7  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/rutikerole/Planning_Matrix/src/features/chat/components/ThinkingIndicator.tsx:65:7
+  63 |   useEffect(() => {
+  64 |     if (!isThinking) {
+> 65 |       setRotationIndex(0)
+     |       ^^^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  66 |       setTickedRotation(false)
+  67 |       return
+  68 |     }  react-hooks/set-state-in-effect
+
+/Users/rutikerole/Planning_Matrix/src/features/chat/components/Thread.tsx
+  48:21  error  Error: Cannot access refs during render
+
+React refs are values that are not needed for rendering. Refs should only be accessed outside of render, such as in event handlers or effects. Accessing a ref value (the `current` property) during render can cause your component not to update as expected (https://react.dev/reference/react/useRef).
+
+/Users/rutikerole/Planning_Matrix/src/features/chat/components/Thread.tsx:48:21
+  46 |   return (
+  47 |     <ol className="flex flex-col gap-8">
+> 48 |       {messages.map((row, idx) => {
+     |                     ^^^^^^^^^^^^^^^
+> 49 |         const isHistory = initialIdsRef.current?.has(row.id) ?? false
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 50 |         const showDivider = idx > 0 && idx % 6 === 0
+     …
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 81 |         )
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 82 |       })}
+     | ^^^^^^^^ Cannot access ref value during render
+  83 |       {/* Phase 3.4 #52 — when streamingMessage is set, render the
+  84 |        * streaming bubble in place of the ThinkingIndicator. The bubble
+  85 |        * keeps the same shape as MessageAssistant so swap-to-persisted  react-hooks/refs
+
+/Users/rutikerole/Planning_Matrix/src/features/chat/components/Typewriter.tsx
+  38:7  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/rutikerole/Planning_Matrix/src/features/chat/components/Typewriter.tsx:38:7
+  36 |     cancelledRef.current = false
+  37 |     if (skipImmediate) {
+> 38 |       setShown(text)
+     |       ^^^^^^^^ Avoid calling setState() directly within an effect
+  39 |       setDone(true)
+  40 |       return
+  41 |     }  react-hooks/set-state-in-effect
+
+/Users/rutikerole/Planning_Matrix/src/features/chat/pages/ChatWorkspacePage.tsx
+   69:27  error  Error: Cannot call impure function during render
+
+`Date.now` is an impure function. Calling an impure function can produce unstable results that update unpredictably when the component happens to re-render. (https://react.dev/reference/rules/components-and-hooks-must-be-pure#components-and-hooks-must-be-idempotent).
+
+/Users/rutikerole/Planning_Matrix/src/features/chat/pages/ChatWorkspacePage.tsx:69:27
+  67 |     if (messages.length > 0) {
+  68 |       const lastTs = new Date(project.updated_at).getTime()
+> 69 |       const hoursSince = (Date.now() - lastTs) / (1000 * 60 * 60)
+     |                           ^^^^^^^^^^ Cannot call impure function
+  70 |       if (hoursSince > 1 && Number.isFinite(hoursSince)) {
+  71 |         const lang = (i18n.resolvedLanguage ?? 'de') as 'de' | 'en'
+  72 |         const formattedDate = new Date(project.updated_at).toLocaleString(                                                                                                                                                                                                                 react-hooks/purity
+  179:22  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/rutikerole/Planning_Matrix/src/features/chat/pages/ChatWorkspacePage.tsx:179:22
+  177 |       const drawerClosed = !rightOpen
+  178 |       if (isMobile && drawerClosed) {
+> 179 |         if (reduced) setRightBadge(true)
+      |                      ^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  180 |         else setPeekVisible(true)
+  181 |       }
+  182 |     }  react-hooks/set-state-in-effect
+  226:24  error  React Hook "useViewport" is called conditionally. React Hooks must be called in the exact same order in every component render                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                react-hooks/rules-of-hooks
+
+/Users/rutikerole/Planning_Matrix/src/features/result/components/Cockpit/EditableCell.tsx
+  37:19  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/rutikerole/Planning_Matrix/src/features/result/components/Cockpit/EditableCell.tsx:37:19
+  35 |   // Re-sync draft when an upstream change overwrites the value.
+  36 |   useEffect(() => {
+> 37 |     if (!editing) setDraft(value)
+     |                   ^^^^^^^^ Avoid calling setState() directly within an effect
+  38 |   }, [value, editing])
+  39 |
+  40 |   const save = async () => {  react-hooks/set-state-in-effect
+
+/Users/rutikerole/Planning_Matrix/src/features/result/components/Cockpit/StatusPill.tsx
+  108:17  error  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+/Users/rutikerole/Planning_Matrix/src/features/result/components/DocumentChecklist.tsx
+  50:9   warning  The 'documents' logical expression could make the dependencies of useMemo Hook (at line 117) change on every render. To fix this, wrap the initialization of 'documents' in its own useMemo() Hook                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             react-hooks/exhaustive-deps
+  62:31  error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/rutikerole/Planning_Matrix/src/features/result/components/DocumentChecklist.tsx:62:31
+  60 |       if (!raw) return
+  61 |       const arr = JSON.parse(raw)
+> 62 |       if (Array.isArray(arr)) setInProgress(new Set(arr))
+     |                               ^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  63 |     } catch {
+  64 |       /* corrupt blob — start fresh */
+  65 |     }  react-hooks/set-state-in-effect
+
+/Users/rutikerole/Planning_Matrix/src/features/result/components/RoleGlyphs.tsx
+  170:17  error  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+/Users/rutikerole/Planning_Matrix/src/features/result/components/TopThreeHero.tsx
+  151:7  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/rutikerole/Planning_Matrix/src/features/result/components/TopThreeHero.tsx:151:7
+  149 |     if (typeof window === 'undefined') return
+  150 |     try {
+> 151 |       setStarted(window.localStorage.getItem(storageKey) === '1')
+      |       ^^^^^^^^^^ Avoid calling setState() directly within an effect
+  152 |     } catch {
+  153 |       // Storage may be blocked (incognito iframe). Ignore.
+  154 |     }  react-hooks/set-state-in-effect
+
+/Users/rutikerole/Planning_Matrix/src/lib/projectStateHelpers.test.ts
+  1:1  error  Do not use "@ts-nocheck" because it alters compilation errors  @typescript-eslint/ban-ts-comment
+
+/Users/rutikerole/Planning_Matrix/src/lib/winAnsiSafe.ts
+  32:5   error  Irregular whitespace not allowed  no-irregular-whitespace
+  33:5   error  Irregular whitespace not allowed  no-irregular-whitespace
+  33:11  error  Irregular whitespace not allowed  no-irregular-whitespace
+
+/Users/rutikerole/Planning_Matrix/supabase/functions/chat-turn/index.ts
+  135:7  error  The value assigned to 'userRow' is not used in subsequent statements  no-useless-assignment
+
+✖ 25 problems (24 errors, 1 warning)
+

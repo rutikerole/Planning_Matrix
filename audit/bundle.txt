@@ -1,0 +1,5 @@
+
+> planning-matrix@0.0.0 verify:bundle
+> node scripts/verify-bundle-size.mjs
+
+[verify:bundle] OK — index-Ch7A71rO.js 527.2 KB raw / 136.4 KB gzipped (ceiling 250 KB)
