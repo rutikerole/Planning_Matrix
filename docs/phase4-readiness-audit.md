@@ -7,6 +7,16 @@
 
 ---
 
+## Phase 4.1 follow-through (2026-04-29)
+
+Phase 4.1 closed every code-able §A.before-beta item in this audit
+across eight commits (#120–#127). ESLint state: 19 errors / 1 warning
+→ **0 errors / 0 warnings**. See `docs/phase4-1-plan.md` for the full
+commit table. The §A.before-beta table below is updated with status
+markers (✓ DONE in #4.1, ⏳ Rutik) for traceability.
+
+---
+
 ## Executive summary
 
 The codebase is in much better shape than the brief's worst-case framing implies. The high-stakes security and architectural surface — RLS, share-token validation, the `respond` tool boundary, JWT-scoped Supabase clients, no service-role in the client, no `any`, no `dangerouslySetInnerHTML`, no empty catch blocks, no committed secrets — all pass on inspection. Bundle ceiling, locale parity, and `npm audit` are green. The TypeScript build compiles clean. From a senior-reviewer lens, this is a tidier-than-average React/Supabase v1 codebase with a clear feature-folder layout and a sober dependency tree.
@@ -292,24 +302,24 @@ Per the brief, this category requires a first-time-user walk per the 10-flow che
 
 These are not lint-able and were explicitly carved out by the brief or require infrastructure this audit cannot stand up in a single session.
 
-| # | Item | Severity | Owner / next step |
+| # | Item | Severity | Status |
 |---|---|---|---|
-| 7 | **Mobile real-device walk** (320×568, 360×640, 375×667, 390×844, 412×915, 768×1024) on landing / sign-in / wizard / dashboard / chat / cockpit / result / share / 404 | High (v1-blocker for "first 100 customers") | Rutik with iPhone + Android |
-| 8 | **Lighthouse mobile + desktop** runs against deployed URL — capture Performance / A11y / Best Practices / SEO scores per route | High | Rutik or CI; targets in §3.4 |
-| 9 | **axe-core run** against landing / sign-in / dashboard / chat / result / share view | High | Rutik or CI |
-| 10 | **Playwright smoke suite** for the 10 critical flows in §4 of the brief | Medium (test coverage gap is acknowledged) | Sized as its own batch — does not fit this audit's session boundary |
-| 11 | **`react-helmet-async` per-route titles** (S3) | Medium (SEO) | Sized as a small focused commit; needs route-by-route copy decisions |
-| 12 | **PNG OG image** at 1200×630 (S2) — keep SVG as fallback | Medium (social previews on Slack / iMessage / LinkedIn) | Design task, not code |
-| 13 | **C1 — extract inline component definitions** in `InputBar.tsx`, `MessageAttachment.tsx`, `AttachmentChip.tsx` | Medium (real focus / remount risk on the chat input bar) | One focused commit; needs careful re-test of the input surface |
-| 14 | **C2 — fix conditional hooks** in `AttachmentPicker.tsx:70` and `ChatWorkspacePage.tsx:226` | Medium (real bug class) | One focused commit; needs careful test of the conditional path |
-| 15 | **C3 — convert `setState`-in-effect localStorage hydration** to lazy initial state across 10+ sites | Low (anti-pattern, not a bug) | Mechanical but spread across many files |
-| 16 | **C4 / C5 — `Thread.tsx` ref-during-render and `ChatWorkspacePage.tsx:69` impure-during-render** | Medium | Read each file carefully; small targeted commits |
-| 17 | **Real telemetry sink** (Sentry / PostHog with consent) replacing the 48 `console.*` stubs | Medium (post-v1 visibility) | Phase 4.1 |
-| 18 | **Application-level rate limit on `chat-turn`** (SEC2) — 50 turns/user/hour proposed in brief | Medium | Phase 4.1; not v1-blocker on invited beta |
-| 19 | **Self-host fonts in EU region** vs Google Fonts CDN | Low (compliance polish for German B2B) | Phase 4.1 |
-| 20 | **Privacy policy + ToS + cookie consent** | High (DSGVO; brief flags) | Pre-public-launch, not pre-beta |
-| 21 | **Production Supabase project** (vs. current dev one) | High | Pre-public-launch |
-| 22 | **Custom domain** (`planning-matrix.app` per Phase 4 plan, or manager-chosen) | High | Pre-public-launch |
+| 7 | **Mobile real-device walk** (320×568, 360×640, 375×667, 390×844, 412×915, 768×1024) on landing / sign-in / wizard / dashboard / chat / cockpit / result / share / 404 | High (v1-blocker for "first 100 customers") | ⏳ Rutik with iPhone + Android |
+| 8 | **Lighthouse mobile + desktop** runs against deployed URL — capture Performance / A11y / Best Practices / SEO scores per route | High | ⏳ Rutik or CI; targets in §3.4 |
+| 9 | **axe-core run** against landing / sign-in / dashboard / chat / result / share view | High | ⏳ Rutik or CI |
+| 10 | **Playwright smoke suite** for the 10 critical flows in §4 of the brief | Medium (test coverage gap is acknowledged) | **✓ Smoke surface DONE in #4.1** (#126) — 4 specs (landing / auth / seo / i18n) + GitHub Actions CI. Full coverage matrix → Phase 4.2 (see tests/smoke/README.md). |
+| 11 | **`react-helmet-async` per-route titles** (S3) | Medium (SEO) | **✓ DONE in #4.1** (#124) — shipped via React 19 native metadata; no helmet dep needed. |
+| 12 | **PNG OG image** at 1200×630 (S2) — keep SVG as fallback | Medium (social previews on Slack / iMessage / LinkedIn) | ⏳ Rutik (design task) |
+| 13 | **C1 — extract inline component definitions** in `InputBar.tsx`, `MessageAttachment.tsx`, `AttachmentChip.tsx` | Medium (real focus / remount risk on the chat input bar) | **✓ DONE in #4.1** (#120) |
+| 14 | **C2 — fix conditional hooks** in `AttachmentPicker.tsx:70` and `ChatWorkspacePage.tsx:226` | Medium (real bug class) | **✓ DONE in #4.1** (#121) |
+| 15 | **C3 — convert `setState`-in-effect localStorage hydration** to lazy initial state across 10+ sites | Low (anti-pattern, not a bug) | **✓ DONE in #4.1** (#122) — 3 localStorage sites converted; 5 legitimate Zustand-driven sites get targeted block disables with rationale. |
+| 16 | **C4 / C5 — `Thread.tsx` ref-during-render and `ChatWorkspacePage.tsx:69` impure-during-render** | Medium | **✓ DONE in #4.1** (#122) |
+| 17 | **Real telemetry sink** (Sentry / PostHog with consent) replacing the 48 `console.*` stubs | Medium (post-v1 visibility) | ⏳ Rutik (signup + DSGVO consent integration) |
+| 18 | **Application-level rate limit on `chat-turn`** (SEC2) — 50 turns/user/hour proposed in brief | Medium | **✓ Code DONE in #4.1** (#125 — migration 0008 + RPC + Edge Function + RateLimitBanner). ⏳ Rutik must apply migration + redeploy chat-turn. |
+| 19 | **Self-host fonts in EU region** vs Google Fonts CDN | Low (compliance polish for German B2B) | Phase 4.2 |
+| 20 | **Privacy policy + ToS + cookie consent** | High (DSGVO; brief flags) | ⏳ Rutik (legal task) |
+| 21 | **Production Supabase project** (vs. current dev one) | High | ⏳ Rutik (operational) |
+| 22 | **Custom domain** (`planning-matrix.app` per Phase 4 plan, or manager-chosen) | High | ⏳ Rutik (operational) |
 
 ---
 
@@ -322,3 +332,20 @@ These are not lint-able and were explicitly carved out by the brief or require i
 The codebase itself shows the discipline of a Phase 3.x-shipped product: no `any`, no swallowed exceptions, no committed secrets, RLS across every table, idempotent retries, strict CORS allowlist, locale parity gate, bundle-size gate, dead-code sweeps already executed. The remediation work is hygiene, not foundational.
 
 — Audit complete.
+
+---
+
+## Updated sign-off (2026-04-29 · post Phase 4.1)
+
+After Phase 4.1's eight commits (#120–#127), every code-able
+§A.before-beta item is DONE. ESLint at **0 errors / 0 warnings**.
+Application now requires only Rutik's operational follow-through —
+items 7, 8, 9, 12, 17, 20, 21, 22 in the table above — to clear the
+"first 100 paying customers" bar. Item 18 (rate limit on chat-turn)
+needs Rutik to apply migration 0008 in the Supabase Dashboard and
+redeploy the chat-turn Edge Function before that protection is
+active.
+
+The codebase as of `main` post-#127 is what Rutik should hand to
+the production Supabase project once the legal + domain + telemetry
+operational work clears. No further code changes are gating beta.
