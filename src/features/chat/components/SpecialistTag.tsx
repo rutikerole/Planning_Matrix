@@ -7,6 +7,9 @@ interface Props {
   className?: string
   /** Polish Move 1 — render the italic German role label below the tag. */
   withRoleLabel?: boolean
+  /** Phase 3.4 #56 — pass through to SpecialistSigil so the sigil's
+   *  micro-animation runs while this specialist is thinking. */
+  isActive?: boolean
 }
 
 const SPECIALIST_LABEL_KEYS: Record<string, string> = {
@@ -30,7 +33,12 @@ const SPECIALIST_LABEL_KEYS: Record<string, string> = {
  * always in German (the specialist's title — like a French menu uses
  * "sommelier" in English; we don't translate the role name).
  */
-export function SpecialistTag({ specialist, className, withRoleLabel = true }: Props) {
+export function SpecialistTag({
+  specialist,
+  className,
+  withRoleLabel = true,
+  isActive,
+}: Props) {
   const { t } = useTranslation()
   const tagLabel = t(SPECIALIST_LABEL_KEYS[specialist] ?? `chat.specialists.${specialist}`)
   const roleLabelDe = SPECIALIST_ROLE_LABELS_DE[specialist] ?? tagLabel
@@ -40,7 +48,7 @@ export function SpecialistTag({ specialist, className, withRoleLabel = true }: P
       <p className="inline-flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.20em] text-clay">
         {/* Phase 3.2 #38 — sigil replaces the simple clay dot.
          * 14×14 architectural drawing glyph in drafting-blue. */}
-        <SpecialistSigil specialist={specialist} />
+        <SpecialistSigil specialist={specialist} isActive={isActive} />
         <span>{tagLabel}</span>
       </p>
       {withRoleLabel && (

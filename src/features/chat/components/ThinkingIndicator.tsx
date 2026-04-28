@@ -100,7 +100,7 @@ export function ThinkingIndicator() {
         }
       />
       <div className={reduced ? '' : 'pm-pause-fade-in'}>
-        <SpecialistTag specialist={specialist} />
+        <SpecialistTag specialist={specialist} isActive />
       </div>
       <p className={`text-[11px] text-clay/85 leading-relaxed italic ${reduced ? '' : 'pm-pause-fade-in pm-pause-delay-160'}`}>
         {label}

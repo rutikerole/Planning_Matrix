@@ -28,7 +28,7 @@ export function StreamingAssistantBubble() {
         aria-hidden="true"
         className="absolute -left-6 top-12 w-px h-16 bg-clay/35"
       />
-      <SpecialistTag specialist={specialist} />
+      <SpecialistTag specialist={specialist} isActive />
       <div className="text-[16px] text-ink leading-[1.65]">
         {stream.contentSoFar}
         <StreamingCursor />

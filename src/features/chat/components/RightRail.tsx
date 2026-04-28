@@ -10,6 +10,7 @@ import { EckdatenPanel } from './EckdatenPanel'
 import { CostTicker } from './CostTicker'
 import { IntentAxonometric } from './IntentAxonometric'
 import { BereichePlanSection } from './BereichePlanSection'
+import { FactTicker } from './FactTicker'
 
 interface Props {
   project: ProjectRow
@@ -65,7 +66,10 @@ export function RightRail({ project, messages }: Props) {
         {t('chat.rail.openOverview')}
       </Link>
 
-      {/* 7. Cost ticker — scale-bar flourish */}
+      {/* 7. Phase 3.4 #56 — Bayern fact ticker, idle-only */}
+      <FactTicker />
+
+      {/* 8. Cost ticker — scale-bar flourish */}
       <CostTicker messages={messages} />
     </div>
   )
