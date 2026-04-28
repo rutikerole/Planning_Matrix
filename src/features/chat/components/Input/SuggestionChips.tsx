@@ -442,6 +442,14 @@ function AddressRow({
 
 // ── Continue prompt (input_type === 'none') ────────────────────────────
 
+/**
+ * Phase 3.7 #75a hotfix — Continue is now ONLY a chip in the chip row
+ * (matches yesno / single_select / multi_select / address visual). The
+ * italic helper note moved into the textarea placeholder so the user
+ * still gets the "you can also type instead" cue without a third
+ * floating element. InputBar reads `input_type === 'none'` to swap the
+ * placeholder copy.
+ */
 function ContinueRow({
   disabled,
   onContinue,
@@ -451,30 +459,19 @@ function ContinueRow({
 }) {
   const { t } = useTranslation()
   return (
-    <div
-      className={cn(
-        'mb-3 flex flex-wrap items-center gap-3',
-        disabled && 'opacity-60 pointer-events-none',
-      )}
-    >
+    <ChipRow disabled={disabled}>
       <button
         type="button"
         onClick={onContinue}
         disabled={disabled}
         className={cn(
-          'inline-flex items-center gap-1.5 h-10 px-5 bg-ink text-paper text-[13px] font-medium transition-colors duration-soft',
+          'inline-flex items-center gap-1.5 h-9 px-4 bg-ink text-paper text-[13px] font-medium transition-colors duration-soft shrink-0',
           'rounded-[var(--pm-radius-pill)] hover:bg-ink/92 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink focus-visible:ring-offset-2 focus-visible:ring-offset-background',
         )}
       >
         {t('chat.input.continue')}
         <ArrowRight aria-hidden="true" className="size-3.5" />
       </button>
-      <p className="text-[12px] italic text-clay/75 leading-relaxed">
-        {t('chat.input.continueOrType', {
-          defaultValue:
-            'Klicken Sie *Weiter*, oder geben Sie unten eine Nachricht ein.',
-        })}
-      </p>
-    </div>
+    </ChipRow>
   )
 }

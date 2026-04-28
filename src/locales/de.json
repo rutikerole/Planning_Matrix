@@ -586,7 +586,7 @@
       },
       "thinkingPlaceholder": "Team antwortet…",
       "freeTextHint": "Sie können auch frei antworten.",
-      "continueOrType": "Klicken Sie *Weiter*, oder geben Sie unten eine Nachricht ein.",
+      "placeholderOrContinue": "Antworten Sie hier, oder klicken Sie *Weiter* →",
       "attachment": {
         "title": "Datei anhängen",
         "comingSoon": "Datei-Upload für Pläne, Fotos und PDFs ist im nächsten Update verfügbar. Sie werden den Bauantrag bald direkt mit Bestandsplänen, B-Plan-PDFs und Grundbuchauszügen anreichern können.",

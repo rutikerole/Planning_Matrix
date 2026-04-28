@@ -568,7 +568,7 @@
       },
       "thinkingPlaceholder": "Team is replying…",
       "freeTextHint": "You can also reply in your own words.",
-      "continueOrType": "Click *Continue*, or type a message below.",
+      "placeholderOrContinue": "Type your reply here, or click *Continue* →",
       "attachment": {
         "title": "Attach a file",
         "comingSoon": "File upload for plans, photos and PDFs lands in the next update. You'll soon be able to attach existing drawings, development plans, and land registry extracts directly to the consultation.",

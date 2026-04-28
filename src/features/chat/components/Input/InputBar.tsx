@@ -312,7 +312,12 @@ export function InputBar({
                   ? t('chat.input.thinkingPlaceholder', {
                       defaultValue: 'Team antwortet…',
                     })
-                  : t('chat.input.text.placeholder')
+                  : inputType === 'none'
+                    ? t('chat.input.placeholderOrContinue', {
+                        defaultValue:
+                          'Antworten Sie hier, oder klicken Sie *Weiter* →',
+                      })
+                    : t('chat.input.text.placeholder')
               }
               aria-label={t('chat.input.text.label')}
               disabled={disabled}
