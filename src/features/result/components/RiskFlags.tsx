@@ -202,7 +202,7 @@ export function RiskFlags({ state }: Props) {
                       void submitResolve()
                     }
                   }}
-                  className="h-10 px-3 bg-paper border border-ink/15 text-[14px] text-ink rounded-[var(--pm-radius-input)] focus:outline-none focus-visible:ring-2 focus-visible:ring-ink/35 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                  className="h-11 sm:h-10 px-3 bg-paper border border-ink/15 text-[16px] sm:text-[14px] text-ink rounded-[var(--pm-radius-input)] focus:outline-none focus-visible:ring-2 focus-visible:ring-ink/35 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                   placeholder={resolving.factCurrentValue ?? ''}
                 />
 

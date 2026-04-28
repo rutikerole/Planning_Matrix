@@ -53,7 +53,7 @@ export function DashboardPage() {
        * substrate here. Lensing + drift active; table breath stays calm. */}
       <BlueprintSubstrate />
 
-      <header className="relative z-10 border-b border-ink/12 bg-paper/85 backdrop-blur-[2px]">
+      <header className="relative z-10 border-b border-ink/12 bg-paper/85 backdrop-blur-[2px] pt-safe">
         <Container className="flex h-16 md:h-[72px] items-center justify-between">
           <Wordmark tone="drafting-blue" />
           <div className="flex items-center gap-5">

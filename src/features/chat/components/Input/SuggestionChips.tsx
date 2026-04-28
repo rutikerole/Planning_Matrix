@@ -405,7 +405,7 @@ function AddressRow({
           disabled={disabled}
           aria-invalid={showError || undefined}
           className={cn(
-            'flex-1 min-w-0 h-10 px-3 bg-paper border text-[14px] text-ink placeholder:text-ink/35 transition-colors duration-soft',
+            'flex-1 min-w-0 h-11 sm:h-10 px-3 bg-paper border text-[16px] sm:text-[14px] text-ink placeholder:text-ink/35 transition-colors duration-soft',
             'rounded-[var(--pm-radius-input)] focus:outline-none focus-visible:ring-2 focus-visible:ring-ink/35 focus-visible:ring-offset-2 focus-visible:ring-offset-background',
             showError ? 'border-destructive/70' : 'border-ink/15 focus:border-ink/35',
           )}

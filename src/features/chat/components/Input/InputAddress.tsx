@@ -50,7 +50,7 @@ export function InputAddress({ disabled, onSubmit }: Props) {
           disabled={disabled}
           aria-invalid={showError || undefined}
           className={cn(
-            'flex-1 bg-transparent border-0 border-b py-2.5 text-[15px] text-ink placeholder:text-ink/35 focus:outline-none transition-colors duration-soft',
+            'flex-1 bg-transparent border-0 border-b py-2.5 text-[16px] sm:text-[15px] text-ink placeholder:text-ink/35 focus:outline-none transition-colors duration-soft',
             showError
               ? 'border-destructive/70 focus:border-destructive'
               : 'border-border-strong/45 focus:border-ink',

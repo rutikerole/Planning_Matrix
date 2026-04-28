@@ -70,7 +70,7 @@ export function InputText({ placeholder, disabled, onSubmit, autoFocus }: Props)
         disabled={disabled}
         maxLength={MAX_LENGTH + 200}
         className={cn(
-          'flex-1 bg-transparent border-0 border-b border-border-strong/45 focus:border-ink py-2.5 text-[15px] text-ink placeholder:text-ink/35 resize-none transition-colors duration-soft focus:outline-none',
+          'flex-1 bg-transparent border-0 border-b border-border-strong/45 focus:border-ink py-2.5 text-[16px] sm:text-[15px] text-ink placeholder:text-ink/35 resize-none transition-colors duration-soft focus:outline-none',
           disabled && 'opacity-60 pointer-events-none',
         )}
         aria-label={t('chat.input.text.label')}

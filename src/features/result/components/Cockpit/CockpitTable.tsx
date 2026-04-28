@@ -86,7 +86,7 @@ export function CockpitTable<TRow>({
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder={searchPlaceholder ?? 'Suche…'}
-          className="self-start w-full max-w-xs h-9 px-3 bg-paper border border-ink/15 text-[13px] text-ink placeholder:text-ink/40 rounded-[var(--pm-radius-input)] focus:outline-none focus-visible:ring-2 focus-visible:ring-ink/35 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+          className="self-start w-full max-w-xs h-11 sm:h-9 px-3 bg-paper border border-ink/15 text-[16px] sm:text-[13px] text-ink placeholder:text-ink/40 rounded-[var(--pm-radius-input)] focus:outline-none focus-visible:ring-2 focus-visible:ring-ink/35 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
         />
       )}
 

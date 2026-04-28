@@ -214,7 +214,7 @@ export function ExportHub({ project, messages, events, source }: Props) {
               readOnly
               value={share.url}
               onFocus={(e) => e.currentTarget.select()}
-              className="w-full bg-paper border border-ink/15 rounded-[2px] px-3 py-2 text-[12px] text-ink/85 font-mono focus:outline-none focus:border-drafting-blue/60"
+              className="w-full bg-paper border border-ink/15 rounded-[2px] px-3 py-2 text-[16px] sm:text-[12px] text-ink/85 font-mono focus:outline-none focus:border-drafting-blue/60"
             />
             <div className="flex items-center gap-4">
               <button

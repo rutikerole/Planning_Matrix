@@ -101,7 +101,7 @@ export function EditableCell({ value, readOnly, onSave, ariaLabel }: Props) {
         }
       }}
       aria-label={ariaLabel}
-      className="w-full max-w-full min-w-0 px-1 -mx-1 h-7 bg-paper border border-ink/35 rounded-[2px] text-[13px] text-ink focus:outline-none focus:border-ink"
+      className="w-full max-w-full min-w-0 px-1 -mx-1 h-9 sm:h-7 bg-paper border border-ink/35 rounded-[2px] text-[16px] sm:text-[13px] text-ink focus:outline-none focus:border-ink"
     />
   )
 }
