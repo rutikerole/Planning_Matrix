@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+Disallow: /projects/
+Disallow: /dashboard
+Disallow: /sign-in
+Disallow: /sign-up
+Disallow: /verify-email
+Disallow: /reset-password
+Disallow: /result/share/
+
+Sitemap: https://planning-matrix.vercel.app/sitemap.xml
