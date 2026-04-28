@@ -38,12 +38,13 @@ export function UnifiedFooter({ project, messages, events, inputBar }: Props) {
   return (
     <footer
       data-pm-unified-footer="true"
-      className={cn(
-        'fixed bottom-0 left-0 right-0 z-30',
-        'bg-[hsl(38_30%_93%)] border-t border-ink/12',
-        // Q7 locked — paper-up subtle shadow
-        'shadow-[0_-2px_8px_hsl(220_15%_11%/0.04)]',
-      )}
+      // Phase 3.7 follow-up — chrome removed: no background tint, no
+      // hairline-top border, no drop shadow. Items sit directly on
+      // the paper grid; only the Briefing primary CTA carries its own
+      // drafting-blue/15 fill (it's an action button, not chrome).
+      // Sticky behaviour preserved via `fixed` so the band stays
+      // anchored as the user scrolls the thread.
+      className="fixed bottom-0 left-0 right-0 z-30"
       style={{
         paddingBottom: 'max(env(safe-area-inset-bottom, 0px), 0.5rem)',
       }}
