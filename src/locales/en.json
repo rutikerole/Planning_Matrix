@@ -442,6 +442,23 @@
       "nearEnd": "Approaching the end.",
       "expand": "Show progress"
     },
+    "export": {
+      "menuLabel": "Export",
+      "eyebrow": "Export",
+      "close": "Close",
+      "pdf": {
+        "title": "PDF brief",
+        "body": "Complete summary as a printable PDF."
+      },
+      "md": {
+        "title": "Markdown checklist",
+        "body": "Structured list for architects / tools."
+      },
+      "json": {
+        "title": "JSON data export",
+        "body": "Complete project state for integrations."
+      }
+    },
     "titleBlock": {
       "eyebrow": "Project",
       "noPlot": "No plot specified",

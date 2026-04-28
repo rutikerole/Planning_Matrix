@@ -132,6 +132,7 @@ export function useChatTurn(projectId: string) {
         input_options: null,
         allow_idk: null,
         thinking_label_de: null,
+        likely_user_replies: null,
         user_answer: input.userAnswer,
         client_request_id: clientRequestId,
         model: null,

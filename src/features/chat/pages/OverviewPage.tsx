@@ -6,9 +6,11 @@ import { LanguageSwitcher } from '@/components/shared/LanguageSwitcher'
 import { Wordmark } from '@/components/shared/Wordmark'
 import { useProject } from '../hooks/useProject'
 import { useProjectEvents } from '../hooks/useProjectEvents'
+import { useMessages } from '../hooks/useMessages'
 import { StatusPill } from '../components/StatusPill'
 import { BinderTabStrip } from '../components/BinderTabStrip'
 import { AuditTimeline } from '../components/AuditTimeline'
+import { ExportMenu } from '../components/ExportMenu'
 import type { ProjectState } from '@/types/projectState'
 
 /**
@@ -29,6 +31,7 @@ export function OverviewPage() {
   const projectId = id ?? ''
   const { data: project } = useProject(projectId)
   const { data: events } = useProjectEvents(projectId)
+  const { data: messages } = useMessages(projectId)
   const lang = (i18n.resolvedLanguage ?? 'de') as 'de' | 'en'
 
   useEffect(() => {
@@ -75,6 +78,13 @@ export function OverviewPage() {
             {t('chat.overview.eyebrow')} · {project.name}
           </p>
           <div className="flex items-center gap-3">
+            {/* Phase 3.4 #55 — Exportieren primary CTA in the binder header */}
+            <ExportMenu
+              project={project}
+              messages={messages ?? []}
+              events={events ?? []}
+              variant="primary"
+            />
             <LanguageSwitcher />
             <Link
               to={`/projects/${projectId}`}

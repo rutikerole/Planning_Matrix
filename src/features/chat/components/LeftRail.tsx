@@ -6,6 +6,8 @@ import type { AreaState } from '@/types/projectState'
 import type { MessageRow, ProjectRow } from '@/types/db'
 import { SpecialistSigil } from './SpecialistSigils'
 import { ProgressMeter } from './ProgressMeter'
+import { ExportMenu } from './ExportMenu'
+import { useProjectEvents } from '../hooks/useProjectEvents'
 
 interface Props {
   project: ProjectRow
@@ -27,6 +29,7 @@ interface Props {
  */
 export function LeftRail({ project, messages }: Props) {
   const { t } = useTranslation()
+  const { data: events } = useProjectEvents(project.id)
 
   return (
     <div className="w-full flex flex-col px-5 py-7 gap-7">
@@ -69,6 +72,14 @@ export function LeftRail({ project, messages }: Props) {
 
       {/* Fountain-pen + inkwell footer signature */}
       <FountainPenFooter />
+
+      {/* Phase 3.4 #55 — Exportieren */}
+      <ExportMenu
+        project={project}
+        messages={messages}
+        events={events ?? []}
+        variant="ghost"
+      />
 
       <Link
         to="/dashboard"

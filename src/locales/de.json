@@ -442,6 +442,23 @@
       "nearEnd": "Wir nähern uns dem Ende.",
       "expand": "Fortschritt anzeigen"
     },
+    "export": {
+      "menuLabel": "Exportieren",
+      "eyebrow": "Exportieren",
+      "close": "Schließen",
+      "pdf": {
+        "title": "PDF-Briefing",
+        "body": "Vollständige Zusammenfassung als druckbares PDF."
+      },
+      "md": {
+        "title": "Markdown-Checkliste",
+        "body": "Strukturierte Liste für Architekten / Tools."
+      },
+      "json": {
+        "title": "JSON-Datenexport",
+        "body": "Vollständiger Projektzustand für Integrationen."
+      }
+    },
     "titleBlock": {
       "eyebrow": "Projekt",
       "noPlot": "Kein Grundstück angegeben",
