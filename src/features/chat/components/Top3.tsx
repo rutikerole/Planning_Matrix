@@ -59,8 +59,10 @@ export function Top3({ recommendations }: Props) {
               >
                 <article className="flex flex-col gap-2 border border-border-strong/30 rounded-sm bg-paper px-5 py-6">
                   <p className="font-display leading-snug text-ink">
+                    {/* Visible numbering = position, not model rank.
+                     * See docs/phase3-1-polish.md commit #29. */}
                     <span className="font-serif italic text-[16px] text-clay tabular-nums mr-2.5">
-                      {rec.rank}.
+                      {idx + 1}.
                     </span>
                     <span className="text-title-lg">
                       {lang === 'en' ? rec.title_en : rec.title_de}

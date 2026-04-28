@@ -139,6 +139,13 @@ export function applyExtractedFacts(
 
 // ── Recommendations ────────────────────────────────────────────────────
 
+/**
+ * Cap recommendations.length at this number after applying any delta.
+ * Twelve gives the visible top-3 plus 9 in the Overview modal without
+ * unbounded growth across long conversations. See Phase 3.1 D14.
+ */
+const RECOMMENDATIONS_CAP = 12
+
 export function applyRecommendationsDelta(
   state: ProjectState,
   deltas: RespondToolInput['recommendations_delta'] | undefined,
@@ -179,8 +186,22 @@ export function applyRecommendationsDelta(
       recs.push(fresh)
     }
   }
-  recs.sort((a, b) => a.rank - b.rank)
-  return { ...state, recommendations: recs }
+  return { ...state, recommendations: normalizeRecommendations(recs) }
+}
+
+/**
+ * Sort by (rank asc, createdAt asc) then renormalise ranks to 1..N so
+ * the persisted state always has sequential ranks regardless of what
+ * the model emitted (Phase 3.1 #29). Caps at RECOMMENDATIONS_CAP — drops
+ * the lowest-ranked entries when the cap is exceeded (Phase 3.1 #30 D14).
+ */
+export function normalizeRecommendations(recs: Recommendation[]): Recommendation[] {
+  const sorted = [...recs].sort((a, b) => {
+    if (a.rank !== b.rank) return a.rank - b.rank
+    return a.createdAt.localeCompare(b.createdAt)
+  })
+  const capped = sorted.slice(0, RECOMMENDATIONS_CAP)
+  return capped.map((r, idx) => ({ ...r, rank: idx + 1 }))
 }
 
 // ── Procedures ─────────────────────────────────────────────────────────
