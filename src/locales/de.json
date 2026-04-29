@@ -394,6 +394,11 @@
       "addressPlaceholder": "z. B. Hauptstraße 12, 91054 Erlangen",
       "addressHelper": "Wir nutzen die Adresse zur Recherche von Bebauungsplan und örtlichen Satzungen.",
       "addressInvalid": "Bitte geben Sie eine vollständige Adresse mit Hausnummer und Postleitzahl an.",
+      "errorOutOfErlangen": {
+        "title": "Diese Adresse liegt außerhalb von Erlangen.",
+        "body": "Wir prüfen Bauvorhaben in der ersten Version ausschließlich in Erlangen mit voller Genauigkeit. Bitte geben Sie eine Adresse mit Postleitzahl 91052, 91054, 91056 oder 91058 ein. Andere bayerische Städte folgen."
+      },
+      "erlangenScopeNotice": "Aktuell prüfen wir Bauvorhaben in Erlangen (PLZ 91052, 91054, 91056, 91058). Weitere Städte folgen.",
       "noPlotNotice": "Hinweis: Ohne Grundstück können wir das Planungsrecht (Bereich A) und sonstige Vorgaben (Bereich C) noch nicht ermitteln. Wir arbeiten zunächst mit Standardannahmen und markieren betroffene Bereiche entsprechend."
     },
     "back": "Zurück",

@@ -394,6 +394,11 @@
       "addressPlaceholder": "e.g. Hauptstraße 12, 91054 Erlangen",
       "addressHelper": "We use the address to research the development plan and local statutes.",
       "addressInvalid": "Please enter a full address with house number and postal code.",
+      "errorOutOfErlangen": {
+        "title": "This address is outside Erlangen.",
+        "body": "In the first version, we review building projects in Erlangen only, with full accuracy. Please enter an address with postcode 91052, 91054, 91056 or 91058. Other Bavarian cities will follow."
+      },
+      "erlangenScopeNotice": "Currently we review building projects in Erlangen (postcodes 91052, 91054, 91056, 91058). More cities will follow.",
       "noPlotNotice": "Note: without a plot we can't yet assess zoning (Area A) or other provisions (Area C). We start with standard assumptions and mark affected areas accordingly."
     },
     "back": "Back",
