@@ -3,8 +3,11 @@
   "retrieved_on": "2026-04-29",
   "id": "erhaltung-burgberg",
   "official_name_de": "Satzung der Stadt Erlangen zur Erhaltung baulicher Anlagen im Bereich des Burgbergs",
-  "in_force_since": "1989-09-01",
+  "_extracted_via": "pdftotext (poppler 26.04.0) against the official PDF on erlangen.de",
+  "in_force_since": "2002-01-01",
+  "issued": "1989-09-01",
   "last_amended": "2001-11-29",
+  "rechtsgrundlage_de": "Art. 23 GO Bayern + § 172 Abs. 1 Satz 1 Nr. 1 BauGB",
   "source_ids": [
     "stadt-erlangen-bauen",
     "stadt-erlangen-bauamt"
@@ -12,48 +15,73 @@
   "official_pdf_url": "https://erlangen.de/uwao-api/faila/files/bypath/Dokumente/Stadtrecht/052.00_erhaltungssatzung_burgberg.pdf",
   "overview_url": "https://erlangen.de/aktuelles/erhaltungssatzung-burgberg",
   "structure_de": [
-    "§ 1 Geltungsbereich (mit Übersichtsplan)",
-    "§ 2 Sachlicher Schutz",
+    "§ 1 Geltungsbereich (mit Lageplan 1:2500)",
+    "§ 2 Gründe der Gebietsfestlegung",
     "§ 3 Erhaltungsgebot, Genehmigung",
     "§ 4 Prägung der Stadtgestalt",
     "§ 5 Prägung des Orts- und Landschaftsbildes",
     "§ 6 Städtebauliche Bedeutung",
     "§ 7 Geschichtliche Bedeutung",
-    "§ 8 Verfahren / Ordnungswidrigkeiten / Inkrafttreten"
+    "§ 8 Verfahren",
+    "§ 9 Ordnungswidrigkeit",
+    "§ 10 Inkrafttreten"
   ],
+  "geltungsbereich_grenzen_de": {
+    "norden": "Bubenreuther Weg, Rudelsweiherstraße, Am Meilwald",
+    "osten": "Atzelsberger Steige (samt südlicher Verlängerung)",
+    "sueden": "Ebrardstraße bis zur Einmündung der Willstraße; danach Flurstücksgrenzen entlang Fl.Nr. 1191/15, 1193/3, 1191/14, 1191/7, 1191/5, 1191/6, 1191/9; westliches Ende der Döderleinstraße; Flurstücksgrenzen 1191, 1191/13, 1190/16; Flurstücke 1189/5, 1189/2, 1184/7, 1184/6, 1184/5, 1184/4, 1184/3; Flurstücke 1182/5, 1182/4, 1182/3, 1182/8, 1182/7, 1182/6, 1182; Flurstücksgrenze zur südwestlichen Ecke des Grundstücks Fl.Nr. 884/3; südliche Seite des Schützenwegs; Flurstücksgrenzen 900, 914/7, 914/2, 914/20, 914/12, 914/14, 914/11, 1337",
+    "westen": "Bayreuther Straße"
+  },
   "key_values": [
     {
-      "topic_de": "Geltungsbereich",
-      "topic_en": "Geographic scope",
-      "value": "Bereich des Burgbergs in Erlangen (gemäß Übersichtsplan zur Satzung)",
-      "section_reference_de": "§ 1",
-      "_pending": "Exakte Straßennamen, die den Geltungsbereich begrenzen, nur aus dem PDF / Übersichtsplan extrahierbar — im Audit-Setup keine PDF-Textextraktion verfügbar."
+      "topic_de": "Genehmigungspflichtige Maßnahmen",
+      "topic_en": "Approval-required actions",
+      "value": "Abbruch, Änderung, Nutzungsänderung sowie Errichtung baulicher Anlagen",
+      "section_reference_de": "§ 3 Abs. 1",
+      "notes_de": "Genehmigungspflicht beruht auf § 172 Abs. 1 Sätze 1 und 2 BauGB. Genehmigung darf nach §§ 4–6 nur versagt werden, wenn es sich um erhaltungswürdige Anlagen i.S. § 2 Nr. 1 handelt."
     },
     {
-      "topic_de": "Genehmigungspflicht",
-      "topic_en": "Approval requirement",
-      "value": "Erhaltungsgebot — bauliche Anlagen dürfen nur mit Genehmigung errichtet, geändert oder beseitigt werden, soweit sie nach §§ 4–7 stadtbild- oder geschichtsprägend sind",
-      "section_reference_de": "§ 3",
-      "notes_de": "Schutzgüter sind Stadtgestalt (§ 4), Orts- und Landschaftsbild (§ 5), städtebauliche Bedeutung (§ 6), geschichtliche Bedeutung (§ 7)."
+      "topic_de": "Schutzgut: Prägung der Stadtgestalt",
+      "topic_en": "Protected attribute: city character",
+      "value": "Bauliche Anlagen, die alleine oder im Zusammenhang den Typus eines Villenviertels des ausgehenden 19. und des 1. Drittels des 20. Jahrhunderts verkörpern (einzelstehende Gebäude in großflächigen Gärten mit wertvollem Baumbestand)",
+      "section_reference_de": "§ 4"
     },
     {
-      "topic_de": "Schutzgüter (städtebaulich bedeutsame Merkmale)",
-      "topic_en": "Protected attributes",
-      "value": "Geschosshöhe, Fassaden- und Fensterteilung, Dachform, sowie historisch bedeutsame Bauten",
-      "section_reference_de": "§§ 4 + 6"
+      "topic_de": "Schutzgut: Orts- und Landschaftsbild",
+      "topic_en": "Protected attribute: local & landscape character",
+      "value": "Bauliche Anlagen, die typisch für die in eine großzügige Bepflanzung eingestreute Bauweise des Erlanger Burgbergs sind",
+      "section_reference_de": "§ 5"
     },
     {
-      "topic_de": "Schutzgüter (historisch bedeutsame Anlagen)",
-      "topic_en": "Historically significant features",
-      "value": "historische Kelleranlagen mit Sandsteinwänden, Pavillons und terrassierte Biergärten, Tunnel-Portale, Jüdischer Friedhof mit Grabsteinen",
+      "topic_de": "Schutzgut: städtebauliche Bedeutung",
+      "topic_en": "Protected attribute: urban-planning significance",
+      "value": "Bauliche Anlagen mit Besonderheiten in Geschossigkeit, Fassaden- und Fenstergliederung oder Dachform; auch künstlerisch bedeutsame Anlagen",
+      "section_reference_de": "§ 6"
+    },
+    {
+      "topic_de": "Schutzgut: geschichtliche Bedeutung — Beispiele",
+      "topic_en": "Protected attribute: historical significance — examples",
+      "value": "Bauten der Gründerzeit / des Jugendstils / der Zwischenkriegszeit; historische Kelleranlagen mit Sandsteinmauern und -pavillons; terrassierte Biergärten; Tunnelportale als technische Bauwerke; Israelitischer Friedhof mit seinen Grabmälern",
       "section_reference_de": "§ 7"
+    },
+    {
+      "topic_de": "Verhältnis zum Denkmalschutz",
+      "topic_en": "Relation to heritage protection",
+      "value": "Vorschriften des Bayerischen Denkmalschutzes bleiben unberührt — Erhaltungs-Genehmigung tritt NEBEN denkmalrechtliche Erlaubnis (BayDSchG)",
+      "section_reference_de": "§ 1 Abs. 3 + § 8 Abs. 1"
+    },
+    {
+      "topic_de": "Verhältnis zur baurechtlichen Genehmigung",
+      "topic_en": "Relation to building permit",
+      "value": "Antrag nach § 172 Abs. 1 BauGB ist gemeinsam mit dem Bauantrag bzw. denkmalrechtlichen Antrag zu stellen",
+      "section_reference_de": "§ 8 Abs. 1"
     }
   ],
   "applies_to_postcodes": [
     "91054"
   ],
-  "geographic_scope_de": "Burgberg-Quartier in Erlangen, am nördlichen Rand der historischen Altstadt. Genaue Grenzen folgen dem Übersichtsplan zur Satzung.",
-  "summary_de": "Die Burgberg-Erhaltungssatzung unterstellt bauliche Maßnahmen im Burgberg-Bereich (Errichtung, Änderung, Beseitigung) einer eigenständigen Genehmigungspflicht. Schutzziel ist die Bewahrung des städtebaulichen und geschichtlichen Charakters des Burgbergs — geprägt durch Geschosshöhe, Fassaden- und Fensterteilung, Dachform sowie historisch bedeutsame Bauten wie die Kelleranlagen, Tunnelportale und der Jüdische Friedhof. Die Genehmigung der Erhaltungssatzung tritt neben mögliche Genehmigungen nach BayBO und BayDSchG.",
-  "summary_en": "The Burgberg preservation ordinance subjects building work in the Burgberg area (erection, alteration, demolition) to a separate approval requirement. The protection goal is the urbanistic and historical character of the Burgberg — story height, facade and window divisions, roof form, plus historically significant features such as the cellar systems, tunnel portals and the Jewish cemetery. This approval is additional to any BayBO and BayDSchG approvals.",
-  "_pending_block": "Genaue Straßengrenzen des Geltungsbereichs nur aus dem PDF-Übersichtsplan extrahierbar."
+  "geographic_scope_de": "Burgberg-Quartier am nördlichen Rand der historischen Altstadt Erlangens; westliche Grenze: Bayreuther Straße. Der genaue Geltungsbereich folgt dem Lageplan im Maßstab 1:2500 (beim Planungsamt der Stadt Erlangen archivmäßig verwahrt).",
+  "supersedes": "Satzung der Stadt Erlangen zur Erhaltung baulicher Anlagen im Gebiet Rathsberger Straße vom 14.08.1979 (außer Kraft mit Inkrafttreten dieser Satzung).",
+  "summary_de": "Die Burgberg-Erhaltungssatzung (in Kraft seit 01.01.2002, ursprünglich 1989) unterstellt Abbruch, Änderung, Nutzungsänderung sowie Errichtung baulicher Anlagen im Burgberg-Bereich einer eigenständigen Genehmigungspflicht nach § 172 Abs. 1 BauGB. Schutzziel ist die Bewahrung des städtebaulichen und geschichtlichen Charakters des Burgbergs — Geschossigkeit, Fassaden-/Fenstergliederung, Dachform sowie historisch bedeutsame Bauten wie die Kelleranlagen, Tunnelportale und der Israelitische Friedhof. Der Geltungsbereich wird im Norden vom Bubenreuther Weg/Rudelsweiherstraße/Am Meilwald, im Osten von der Atzelsberger Steige, im Westen von der Bayreuther Straße und im Süden über die Ebrardstraße/Willstraße sowie zahlreiche Flurstücksgrenzen begrenzt. Die Erhaltungs-Genehmigung tritt NEBEN baurechtliche und denkmalrechtliche Genehmigungen.",
+  "summary_en": "The Burgberg preservation ordinance (in force since 2002-01-01; originally 1989) subjects demolition, alteration, change of use and construction in the Burgberg area to a separate § 172 BauGB approval. Protection covers urbanistic and historical character — story height, facade/window divisions, roof form, plus the historic cellar systems, tunnel portals and the Jewish cemetery. The scope is bounded north by Bubenreuther Weg / Rudelsweiherstraße / Am Meilwald, east by Atzelsberger Steige, west by Bayreuther Straße, and south by Ebrardstraße/Willstraße and numerous parcel lines. This approval is in addition to any building or heritage permit."
 }

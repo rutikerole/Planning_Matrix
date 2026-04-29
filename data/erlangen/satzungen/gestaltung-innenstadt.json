@@ -2,38 +2,79 @@
   "_schemaVersion": 1,
   "retrieved_on": "2026-04-29",
   "id": "gestaltung-innenstadt",
-  "official_name_de": "Werbeanlagensatzung der Stadt Erlangen (Neufassung) — funktionale Nachfolgerin der ehemaligen 'Gestaltungssatzung für Werbeanlagen in der historischen Innenstadt'",
-  "in_force_since": {
-    "_pending": "Inkrafttretens-Datum der Neufassung der Werbeanlagensatzung nur aus dem PDF / der amtlichen Bekanntmachung extrahierbar — im Audit-Setup nicht durchführbar."
-  },
-  "last_amended": {
-    "_pending": "Letztes Änderungsdatum aus PDF / Ratsinformationssystem extrahierbar (siehe ratsinfo.erlangen.de Vorlage 2125963 für die ursprüngliche Aufhebung der historischen Werbeanlagen-Gestaltungssatzung)."
-  },
+  "official_name_de": "Satzung über Werbeanlagen und Automaten in der Stadt Erlangen (Werbeanlagensatzung — WaS)",
+  "_extracted_via": "pdftotext (poppler 26.04.0) against the official PDF on erlangen.de",
+  "_note_de": "Erlangen hat KEIN einzelnes Dokument 'Gestaltungssatzung Innenstadt'. Die historische 'Gestaltungssatzung für Werbeanlagen in der historischen Innenstadt' wurde aufgehoben und durch diese konsolidierte Werbeanlagensatzung ersetzt, die für alle Baugebietstypen Erlangens gilt — mit gestuften Festsetzungen für Denkmalensembles + Einzeldenkmäler (§ 3), Wohngebiete (§ 4), Kern- und Mischgebiete (§ 5), Gewerbe-/Industriegebiete (§ 6).",
+  "in_force_since": "2015-03-13",
+  "issued": "2014-04-10",
+  "last_amended": "2015-02-26",
+  "rechtsgrundlage_de": "Art. 81 Abs. 1 Nr. 1 + 2 BayBO",
   "source_ids": [
     "stadt-erlangen-bauen",
     "stadt-erlangen-bauamt"
   ],
   "official_pdf_url": "https://erlangen.de/uwao-api/faila/files/bypath/Dokumente/Stadtrecht/270.00_werbeanlagensatzung.pdf",
+  "structure_de": [
+    "Präambel — Bewahrung des Stadtbildes",
+    "§ 1 Geltungsbereich (gesamtes Stadtgebiet)",
+    "§ 2 Allgemeine Gestaltungsgrundsätze",
+    "§ 3 Werbeanlagen in Denkmalensembles und an Einzeldenkmälern",
+    "§ 4 Werbeanlagen in überwiegend durch Wohnen geprägten Gebieten und Dorfgebieten",
+    "§ 5 Werbeanlagen in Kern- und Mischgebieten",
+    "§ 6 Werbeanlagen in gewerblich oder industriell geprägten Gebieten",
+    "§ 7 Besondere Verbote für Werbeanlagen an Ortseingängen, Brücken und Unterführungen",
+    "§ 8 Unterhalts- und Beseitigungspflicht",
+    "§ 9 Abweichungen",
+    "§ 10 Ordnungswidrigkeiten",
+    "§ 11 Bestehende Werbeanlagen und Automaten",
+    "§ 12 Inkrafttreten",
+    "Anlage — Lageplan 1:5000 (Umgriffe der Denkmalensembles)"
+  ],
   "key_values": [
     {
       "topic_de": "Geltungsbereich",
       "topic_en": "Geographic scope",
-      "value": "historische Innenstadt der Stadt Erlangen (Werbeanlagen-Regelung) sowie weitere Bereiche je nach Festsetzung",
-      "_pending": "Exakte Straßenliste/Plangrenze nur aus dem PDF / Übersichtsplan extrahierbar."
+      "value": "gesamtes Stadtgebiet Erlangen mit gestuften Festsetzungen für 4 Gebietstypen (§§ 3–6)",
+      "section_reference_de": "§ 1 Abs. 2"
     },
     {
-      "topic_de": "Genehmigungspflicht",
-      "topic_en": "Approval requirement",
-      "value": "Werbeanlagen, Automaten und Schaufensterbeschriftungen unterliegen der Anzeige-/Genehmigungspflicht der Satzung",
-      "_pending": "Genaue Auslöse-Tatbestände (Anbringen, Ändern, Beseitigen) nur aus dem PDF extrahierbar."
+      "topic_de": "Allgemeine Gestaltungsgrundsätze (für ALLE Gebiete)",
+      "topic_en": "General design principles (applies everywhere)",
+      "value": "Werbeanlagen dürfen nach Anzahl, Form, Maßstab, Werkstoff, Farbe, Lichtwirkung und Gliederung das Erscheinungsbild von Grundstück, Gebäude und Umgebung sowie das Orts-, Straßen- und Landschaftsbild nicht erheblich stören; nicht in die freie Landschaft wirken; Beleuchtung blendfrei, Lichtquelle vom öffentlichen Verkehrsraum aus nicht sichtbar; Blink-/Wechsel-/Reflexbeleuchtung sowie Lichtprojektionen verboten (außerhalb Gewerbe-/Industriegebiete auch Leuchtketten/-bänder/-konturen, mit Ausnahme 1.11.–15.1.)",
+      "section_reference_de": "§ 2"
+    },
+    {
+      "topic_de": "Denkmalensembles + Einzeldenkmäler — Sonderregeln",
+      "topic_en": "Heritage ensembles + listed monuments — special rules",
+      "value": "Werbeanlagen nur an der Stätte der Leistung; Leuchtkästen/Leuchttransparente unzulässig; in Vorgärten, auf Grünflächen, an Einfriedungen, auf Giebelflächen, Erkern, Gesimsen, Verzierungen, Lisenen, Pilastern, Risaliten, Dächern, Kaminen, Fenster-/Torrahmungen, Fensterläden, Säulen und Pfeilern UNZULÄSSIG; oberhalb des Brüstungsfeldes des 1. OG unzulässig; je Gebäudefront nur EINE Werbeanlage zulässig (zusätzlich dezente Schaufenster-Werbung möglich)",
+      "section_reference_de": "§ 3"
+    },
+    {
+      "topic_de": "Verhältnis zur Denkmalliste",
+      "topic_en": "Relation to the heritage list",
+      "value": "Die geschützten Bereiche (Baudenkmäler + Denkmalensembles) sind der Denkmalliste des BLfD zu entnehmen; die Umgriffe der Denkmalensembles sind im Lageplan 1:5000 zur Satzung dargestellt; einsehbar im Bauaufsichtsamt",
+      "section_reference_de": "§ 3 Abs. 1"
+    },
+    {
+      "topic_de": "Verhältnis zum Denkmalschutz",
+      "topic_en": "Relation to heritage protection",
+      "value": "Anforderungen aus dem Denkmalschutzgesetz (BayDSchG) bleiben unberührt — Werbeanlagengenehmigung tritt NEBEN denkmalrechtliche Erlaubnis",
+      "section_reference_de": "§ 1 Abs. 3 (letzter Satz)"
+    },
+    {
+      "topic_de": "Verbot an Ortseingängen, Brücken, Unterführungen",
+      "topic_en": "Prohibition at city entrances, bridges, underpasses",
+      "value": "Werbeanlagen an diesen Stellen besonders geregelt — überwiegend unzulässig",
+      "section_reference_de": "§ 7"
     }
   ],
   "applies_to_postcodes": [
     "91052",
-    "91054"
+    "91054",
+    "91056",
+    "91058"
   ],
-  "geographic_scope_de": "Historische Innenstadt der Stadt Erlangen (Schwerpunkt: Altstadt + Markgräfliche Neustadt) sowie ggf. erweiterte Bereiche.",
-  "summary_de": "Eine eigenständige 'Gestaltungssatzung Innenstadt' existiert in Erlangen nicht als ein einziges Dokument. Die historisch bestehende 'Gestaltungssatzung für Werbeanlagen in der historischen Innenstadt' wurde aufgehoben (Ratsinformationssystem-Vorlage 2125963) und durch eine Neufassung der Werbeanlagensatzung abgelöst, die die zuvor zwei getrennten Werberegelungen zusammenführt. Daneben gilt seit 2024 in Erlangen eine eigenständige 'Freiflächengestaltungssatzung (FGS)' für unbebaute Flächen bebauter Grundstücke. Die Regulierung der Bauformen, Fassaden und Dachgestaltungen in der Altstadt erfolgt zudem über die Erhaltungssatzung Burgberg (siehe ./erhaltung-burgberg.json) und über das BayDSchG (Denkmalschutz).",
-  "summary_en": "Erlangen does not have a single standalone 'Innenstadt Design Ordinance'. The historical 'Design Ordinance for Advertising Installations in the Historic Inner City' was repealed and replaced by a new Advertising Installation Ordinance (Werbeanlagensatzung) that merged the two prior advertising rules. Erlangen also has a separate 'Open-Space Design Ordinance' (Freiflächengestaltungssatzung) for undeveloped portions of built lots. Form, facade and roof regulation in the historic core is handled via the Burgberg Preservation Ordinance and the Bavarian Heritage Protection Act (BayDSchG).",
-  "_pending_block": "Erlangen hat KEIN einzelnes Dokument 'Gestaltungssatzung Innenstadt'. Diese Datei dokumentiert die funktional nächstgelegene Realität (Werbeanlagensatzung + Freiflächengestaltungssatzung + Erhaltungssatzung Burgberg + Denkmalschutz). Die Phase-3 System-Prompt-Composition sollte den Bauherren entsprechend ehrlich aufklären, statt eine Einheitssatzung zu erfinden."
+  "geographic_scope_de": "Gesamtes Stadtgebiet Erlangen; abgestufte Festsetzungen für vier Gebietstypen (Denkmalensembles + Einzeldenkmäler / Wohngebiete + Dorfgebiete / Kern- + Mischgebiete / Gewerbe- + Industriegebiete).",
+  "summary_de": "Die Erlanger Werbeanlagensatzung (WaS, in Kraft seit 13.03.2015) regelt Anforderungen an Werbeanlagen für das gesamte Stadtgebiet — mit gestuften Festsetzungen je Gebietstyp. In Denkmalensembles und an Einzeldenkmälern (§ 3) sind die Regeln am strengsten: Werbeanlagen nur an der Stätte der Leistung, keine Leuchtkästen, Verbot bestimmter Anbringungsorte (Vorgärten, Giebel, Dach, Fenster-/Torrahmungen, Säulen), oberhalb des Brüstungsfelds des 1. OG unzulässig, je Gebäudefront maximal eine Werbeanlage. Im Wohn-, Kern-/Misch- und Gewerbe-/Industriegebiet gelten weniger strenge Regeln. Die Geltungsbereiche der Denkmalensembles sind im Anlagen-Lageplan 1:5000 der Satzung dargestellt; die Liste der Baudenkmäler beim BLfD ist verbindlich. Die WaS hat die historische 'Gestaltungssatzung für Werbeanlagen in der historischen Innenstadt' abgelöst.",
+  "summary_en": "The Erlangen Advertising Installations Ordinance (WaS, in force since 2015-03-13) regulates advertising installations across the entire city, with graduated rules by area type. In heritage ensembles and at listed monuments (§ 3) the rules are strictest: only at the place of business, no light boxes, prohibition of certain mounting locations (front yards, gables, roofs, window/door frames, columns), nothing above the parapet of the first upper floor, max one installation per building front. Less strict rules apply in residential, mixed-use and commercial areas. The geographic boundaries of the heritage ensembles are drawn in the 1:5000 plan annexed to the ordinance; the BLfD heritage list is binding. The WaS replaced the historical 'Design Ordinance for Advertising Installations in the Historic Inner City'."
 }

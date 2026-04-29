@@ -3,8 +3,11 @@
   "retrieved_on": "2026-04-29",
   "id": "stellplatz",
   "official_name_de": "Satzung über die Herstellung von Kraftfahrzeugstellplätzen und Fahrradabstellplätzen (Stellplatzsatzung, StS)",
-  "in_force_since": "2024-01-12",
+  "_extracted_via": "pdftotext (poppler 26.04.0) against the official PDF on erlangen.de",
+  "in_force_since": "2025-07-18",
+  "issued": "2023-12-14",
   "last_amended": "2025-06-26",
+  "rechtsgrundlage_de": "Art. 81 Abs. 1 Nr. 4 BayBO",
   "source_ids": [
     "stadt-erlangen-bauen"
   ],
@@ -12,46 +15,142 @@
   "overview_url": "https://erlangen.de/aktuelles/stellplatzsatzung",
   "structure_de": [
     "§ 1 Geltungsbereich",
-    "§ 2 Anzahl der Stellplätze (Verweis auf Anlage 1 Richtzahlentabelle)",
+    "§ 2 Anzahl der notwendigen Stellplätze",
     "§ 3 Ablösung",
-    "§ 4 Fahrradabstellplätze",
-    "§ 5 Abweichungen (insb. Mobilitätskonzept-Reduktion bei ≥ 10 WE Wohnnutzung)",
-    "§ 6 Inkrafttreten",
-    "§ 7 Übergangsregelungen",
-    "Anlage 1 — Richtzahlentabelle",
-    "Anlage 2 — Ablöse-Zonenplan"
+    "§ 4 Gestaltung der Stellplätze und Fahrradabstellplätze",
+    "§ 5 Abweichungen",
+    "§ 6 Ordnungswidrigkeiten",
+    "§ 7 Inkrafttreten, Außerkrafttreten",
+    "Anlage 1 — Richtzahlentabelle (10 Nutzungs-Hauptkategorien)",
+    "Anlage 2 — Lageplan 1:10.000 mit Ablöse-Zonen 1–3"
   ],
   "key_values": [
     {
-      "topic_de": "Wohngebäude / Wohnnutzung — KFZ-Stellplätze pro Wohneinheit",
-      "topic_en": "Residential — motor-vehicle parking spaces per dwelling unit",
-      "value": null,
+      "topic_de": "Wohngebäude — Gebäude mit Wohnungen — KFZ-Stellplätze pro Wohneinheit",
+      "topic_en": "Residential — buildings with dwelling units — motor-vehicle parking spaces per dwelling",
+      "value": "1 Stellplatz je Wohnung",
       "unit": "Stp/WE",
-      "section_reference_de": "§ 2 i.V.m. Anlage 1 (Richtzahlentabelle)",
-      "_pending": "Konkreter Stp/WE-Wert nur aus dem Satzungs-PDF extrahierbar; Live-Verifikation über pdftotext / poppler-utils war im Audit-Setup nicht möglich. Aufgabe für Quartalsrefresh: Wert aus Anlage 1 (Richtzahlentabelle) verbatim extrahieren.",
-      "notes_de": "Die Berechnung erfolgt rechnerisch aus der Richtzahl (zwei Nachkommastellen) mit anschließender Rundung auf die nächste ganze Zahl."
+      "section_reference_de": "Anlage 1 (Richtzahlentabelle), Nr. 1.1",
+      "notes_de": "Bei Mietwohnungen mit Bindung nach dem Bayerischen Wohnraumförderungsgesetz (BayWoFG): 0,25 Stellplätze je Wohnung."
     },
     {
-      "topic_de": "Wohngebäude / Wohnnutzung — Fahrradabstellplätze pro Wohneinheit",
-      "topic_en": "Residential — bicycle parking spaces per dwelling unit",
-      "value": null,
+      "topic_de": "Wohngebäude — Gebäude mit Wohnungen — Fahrradabstellplätze pro Wohneinheit",
+      "topic_en": "Residential — bicycle parking spaces per dwelling",
+      "value": "2 Fahrradabstellplätze je Wohnung",
+      "unit": "Fahrrad-Stp/WE",
+      "section_reference_de": "Anlage 1, Nr. 1.1"
+    },
+    {
+      "topic_de": "Studentenwohnungen — KFZ-Stellplätze",
+      "topic_en": "Student apartments — motor-vehicle parking",
+      "value": "0,25 Stellplätze je Wohnung",
       "unit": "Stp/WE",
-      "section_reference_de": "§ 4 i.V.m. Anlage 1",
-      "_pending": "Konkreter Wert nur aus dem Satzungs-PDF extrahierbar; siehe oben."
+      "section_reference_de": "Anlage 1, Nr. 1.3",
+      "notes_de": "Studentenwohnheime: 1 Stellplatz je 5 Betten."
+    },
+    {
+      "topic_de": "Altenwohnungen — KFZ-Stellplätze",
+      "topic_en": "Senior apartments — motor-vehicle parking",
+      "value": "0,5 Stellplätze je Wohnung",
+      "unit": "Stp/WE",
+      "section_reference_de": "Anlage 1, Nr. 1.5",
+      "notes_de": "Altenheime / Pflegeheime: 1 Stellplatz je 15 Betten/Pflegeplätze, mind. 2 Stellplätze."
+    },
+    {
+      "topic_de": "Versammlungsstätten von überörtlicher Bedeutung — KFZ-Stellplätze",
+      "topic_en": "Assembly venues of supra-local importance — motor-vehicle parking",
+      "value": "1 Stellplatz je 10 Sitzplätze",
+      "unit": "Stp/Sitzplatz",
+      "section_reference_de": "Anlage 1, Nr. 4.1",
+      "notes_de": "Theater, Konzerthäuser, Mehrzweckhallen. Auch 1 Fahrradabstellplatz je 10 Sitzplätze."
+    },
+    {
+      "topic_de": "Hochschulen — KFZ-Stellplätze",
+      "topic_en": "Universities — motor-vehicle parking",
+      "value": "1 Stellplatz je 10 Studierende",
+      "unit": "Stp/Studierende",
+      "section_reference_de": "Anlage 1, Nr. 8.2"
+    },
+    {
+      "topic_de": "Büro- und Verwaltungsräume allgemein — KFZ-Stellplätze",
+      "topic_en": "Office space — motor-vehicle parking",
+      "value": "1 Stellplatz je 70 m² Nutzungsfläche (DIN 277)",
+      "unit": "Stp/m² NUF",
+      "section_reference_de": "Anlage 1, Nr. 2.1"
+    },
+    {
+      "topic_de": "Handwerks- und Industriebetriebe — KFZ-Stellplätze",
+      "topic_en": "Trade & industry — motor-vehicle parking",
+      "value": "1 Stellplatz je 120 m² Nutzungsfläche",
+      "unit": "Stp/m² NUF",
+      "section_reference_de": "Anlage 1, Nr. 9.1"
+    },
+    {
+      "topic_de": "Berechnungsregel und Rundung",
+      "topic_en": "Calculation rule and rounding",
+      "value": "Richtzahl auf 2 Nachkommastellen rechnerisch ermitteln; aufrunden bei nachfolgender Dezimalstelle ≥ 5, sonst abrunden (kaufmännisch)",
+      "section_reference_de": "§ 2 Abs. 1 Sätze 2–4"
+    },
+    {
+      "topic_de": "Ablösebetrag — Zone 1",
+      "topic_en": "Abatement payment — Zone 1",
+      "value": 15000,
+      "unit": "EUR pro Stellplatz",
+      "section_reference_de": "§ 3 Abs. 2",
+      "notes_de": "Zonenplan: Anlage 2 (Maßstab 1:10.000), einsehbar im Bauaufsichtsamt."
+    },
+    {
+      "topic_de": "Ablösebetrag — Zone 2",
+      "topic_en": "Abatement payment — Zone 2",
+      "value": 11500,
+      "unit": "EUR pro Stellplatz",
+      "section_reference_de": "§ 3 Abs. 2"
+    },
+    {
+      "topic_de": "Ablösebetrag — Zone 3",
+      "topic_en": "Abatement payment — Zone 3",
+      "value": 8000,
+      "unit": "EUR pro Stellplatz",
+      "section_reference_de": "§ 3 Abs. 2",
+      "notes_de": "Übriges Stadtgebiet, soweit nicht in Zonen 1 oder 2."
+    },
+    {
+      "topic_de": "Ablösebetrag — Fahrradabstellplatz",
+      "topic_en": "Abatement payment — bicycle parking space",
+      "value": 750,
+      "unit": "EUR pro Fahrradabstellplatz",
+      "section_reference_de": "§ 3 Abs. 3",
+      "notes_de": "Nur in begründeten Ausnahmefällen, insbesondere bei mangelnder Flächenverfügbarkeit. Beträge sind zweckgebunden für Herstellung/Instandsetzung öffentlicher Fahrradabstellanlagen."
     },
     {
       "topic_de": "Reduktion der KFZ-Stellplatzpflicht durch Mobilitätskonzept",
-      "topic_en": "Reduction of motor-vehicle parking obligation via mobility concept",
-      "value": "möglich bei Wohnungsbauvorhaben mit mindestens 10 Wohneinheiten",
-      "section_reference_de": "§ 5",
-      "notes_de": "Die Verwaltung kann nach unten von der Richtzahlenliste abweichen, wenn der Antragsteller darlegt, dass aufgrund objektiver Umstände weniger Stellplätze benötigt werden. Aktuell auf Wohnungsbauvorhaben mit ≥ 10 WE beschränkt."
+      "topic_en": "Reduction via mobility concept",
+      "value": "Abweichung möglich nach Art. 63 BayBO; Ermäßigung kommt insbesondere in Betracht, wenn ein Mobilitätskonzept die Stellplatznachfrage zu reduzieren geeignet ist",
+      "section_reference_de": "§ 5"
     },
     {
-      "topic_de": "Ablösung (Stellplatzpflicht durch Geldzahlung)",
-      "topic_en": "Abatement payment (in lieu of building parking)",
-      "value": "möglich nach Maßgabe der Ablöse-Zonen (Anlage 2)",
-      "section_reference_de": "§ 3",
-      "_pending": "Konkrete Ablösebeträge je Zone nur aus dem Satzungs-PDF extrahierbar."
+      "topic_de": "Versickerungspflichtige Stellplatzflächen",
+      "topic_en": "Permeable surface requirement for parking",
+      "value": "Stellplätze müssen versickerungsfähige Befestigungsarten verwenden (Schotter- oder Pflasterrasen)",
+      "section_reference_de": "§ 4 Abs. 1"
+    },
+    {
+      "topic_de": "Begrünungspflicht für Stellplatzanlagen",
+      "topic_en": "Greening requirement for parking facilities",
+      "value": "Sträucher-Eingrünung; je 5 Stellplätze ≥ 1 standortgerechter Baum (Baumscheibe ≥ Fläche eines Stellplatzes); ab 20 Stellplätzen Innenraum durchgrünen",
+      "section_reference_de": "§ 4 Abs. 2"
+    },
+    {
+      "topic_de": "Fahrradabstellplatz — Mindestabmessungen + Anschließbarkeit",
+      "topic_en": "Bicycle parking — minimum dimensions",
+      "value": "Mindestabmessung 70 cm × 200 cm; mit Fahrradständer (Rahmen anschließbar); für Mehrfamilienhäuser überdacht; jeder zehnte für Anhänger/Lastenräder geeignet",
+      "section_reference_de": "§ 4 Abs. 3"
+    },
+    {
+      "topic_de": "Dachgeschoss-Umnutzung zu Wohnzwecken",
+      "topic_en": "Loft conversion to residential",
+      "value": "kein zusätzlicher Stellplatzbedarf",
+      "section_reference_de": "§ 2 Abs. 6"
     }
   ],
   "applies_to_postcodes": [
@@ -60,8 +159,8 @@
     "91056",
     "91058"
   ],
-  "geographic_scope_de": "Gesamtes Stadtgebiet der Stadt Erlangen",
-  "summary_de": "Die Stellplatzsatzung der Stadt Erlangen regelt die Anzahl notwendiger Kraftfahrzeug- und Fahrradabstellplätze bei Errichtung baulicher Anlagen. Die genaue Anzahl folgt aus einer nutzungsabhängigen Richtzahlentabelle (Anlage 1) und wird auf zwei Nachkommastellen berechnet, dann auf eine ganze Zahl gerundet. Bei Wohnungsbauvorhaben mit mindestens zehn Wohneinheiten ist nach § 5 eine Reduzierung möglich, wenn ein Mobilitätskonzept vorgelegt wird. Eine Ablösung der Stellplatzpflicht ist nach § 3 nach Ablöse-Zonen (Anlage 2) möglich.",
-  "summary_en": "The Erlangen parking ordinance sets the number of required motor-vehicle and bicycle parking spaces when buildings are erected. The exact count follows a use-dependent reference table (Annex 1), is calculated to two decimal places, then rounded to a whole number. For residential developments with at least ten dwelling units, § 5 permits a reduction when a mobility concept is submitted. § 3 allows the parking obligation to be discharged via abatement payment, structured by zones in Annex 2.",
-  "_pending_block": "Drei Werte sind nur aus dem PDF (Anlage 1, Anlage 2) zuverlässig extrahierbar: KFZ-Stp/WE, Fahrrad-Stp/WE, Ablösebeträge je Zone. Im Audit-Setup war keine PDF-Text-Extraktion verfügbar (pdftotext/pypdf/pdfplumber jeweils absent). Quartalsrefresh-Aufgabe: pdftotext oder poppler-utils lokal nachziehen, Werte aus Anlage 1+2 verbatim eintragen, value-Felder ausfüllen, _pending entfernen."
+  "geographic_scope_de": "Gesamtes Stadtgebiet der Stadt Erlangen.",
+  "supersedes": "Satzung über die Herstellung von Kraftfahrzeugstellplätzen vom 31.05.2010 i. d. F. vom 07.10.2016 (außer Kraft mit Inkrafttreten dieser StS).",
+  "summary_de": "Die Erlanger Stellplatzsatzung (StS, in Kraft seit 18.07.2025) regelt die Anzahl notwendiger KFZ- und Fahrradabstellplätze bei Errichtung und Änderung baulicher Anlagen. Für Wohngebäude gilt grundsätzlich 1 Stellplatz je Wohnung und 2 Fahrradabstellplätze je Wohnung; für geförderten Wohnraum (BayWoFG) reduziert sich der KFZ-Anteil auf 0,25 Stp/WE. Die Berechnung erfolgt rechnerisch auf zwei Nachkommastellen und wird kaufmännisch auf eine ganze Zahl gerundet. Die Stellplatzpflicht kann nach § 3 durch Ablösung erfüllt werden — pauschalierte Beträge je nach Zone (1: 15.000 €, 2: 11.500 €, 3: 8.000 €). Eine Reduktion durch Mobilitätskonzept ist nach § 5 (i. V. m. Art. 63 BayBO) möglich. Stellplätze sind versickerungsfähig zu befestigen und zu begrünen.",
+  "summary_en": "The Erlangen parking ordinance (StS, in force since 2025-07-18) sets the number of motor-vehicle and bicycle parking spaces required for construction and conversion. For residential buildings the rule is 1 motor-vehicle space and 2 bicycle spaces per dwelling; subsidised residential per the Bavarian Housing Promotion Act drops the motor-vehicle requirement to 0.25 per dwelling. Calculation is done to 2 decimal places then rounded commercially. § 3 allows the parking obligation to be discharged via abatement payment by zone (1: 15,000 EUR; 2: 11,500 EUR; 3: 8,000 EUR per space). § 5 allows reductions when a mobility concept reduces demand. Parking surfaces must be permeable and the facility must be greened."
 }

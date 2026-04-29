@@ -3,8 +3,11 @@
   "retrieved_on": "2026-04-29",
   "id": "niederschlagswasser",
   "official_name_de": "Satzung für die öffentliche Entwässerungsanlage der Stadt Erlangen (Entwässerungssatzung — EWS)",
-  "in_force_since": "2014-11-03",
+  "_extracted_via": "pdftotext (poppler 26.04.0) against the official PDF on erlangen.de",
+  "in_force_since": "2022-10-21",
+  "issued": "2014-11-03",
   "last_amended": "2022-09-29",
+  "rechtsgrundlage_de": "Art. 23, Art. 24 Abs. 1 Nrn. 1+2, Abs. 2+3 GO Bayern + Art. 34 Abs. 2 Satz 1 BayWG",
   "source_ids": [
     "stadt-erlangen-bauen",
     "stadt-erlangen-bauamt"
@@ -13,43 +16,92 @@
   "overview_url": "https://erlangen.de/aktuelles/entwaesserungssatzung",
   "companion_ordinances": [
     {
-      "label_de": "Beitrags- und Gebührensatzung zur Entwässerungssatzung",
+      "label_de": "Beitrags- und Gebührensatzung zur Entwässerungssatzung (BGS/EWS)",
       "in_force_since": "2023-02-16",
       "last_amended": "2024-11-28",
       "url": "https://erlangen.de/uwao-api/faila/files/bypath/Dokumente/Stadtrecht/051_10_entwaesserungsgebuehren.pdf"
     },
     {
       "label_de": "Gebietsabflussbeiwertkarte",
-      "in_force_since": "2014-12-10",
-      "url": null,
-      "_pending": "Direkt-URL zur Gebietsabflussbeiwertkarte nicht aus dem Suchergebnis verifiziert; im Quartalsrefresh nachziehen."
+      "in_force_since": "2014-12-10"
     }
+  ],
+  "structure_de": [
+    "§ 1 Öffentliche Einrichtung",
+    "§ 2 Grundstücksbegriff, Verpflichtete",
+    "§ 3 Begriffsbestimmungen",
+    "§ 4 Anschluss- und Benutzungsrecht",
+    "§ 5 Anschluss- und Benutzungszwang",
+    "§ 6 Befreiung von Anschluss- oder Benutzungszwang",
+    "§ 7 Sondervereinbarungen",
+    "§ 8 Grundstücksanschluss",
+    "§ 9 Grundstücksentwässerungsanlage",
+    "§ 10 Zulassung der Grundstücksentwässerungsanlage",
+    "§ 11 Herstellung und Prüfung der Grundstücksentwässerungsanlage",
+    "§§ 12–17 Überwachung / Stilllegung / Einleiten / Verbote / Abscheider / Untersuchung",
+    "§§ 18–24 Haftung / Grundstücksbenutzung / Betretungsrecht / Ordnungswidrigkeit / Anordnung / Abweichungen / Inkrafttreten"
   ],
   "key_values": [
     {
-      "topic_de": "Anschluss- und Benutzungszwang an die öffentliche Entwässerungsanlage",
-      "topic_en": "Connection and use obligation to the public drainage system",
-      "value": "ja, gemäß § 5 Anschluss- und Benutzungszwang",
-      "section_reference_de": "§ 5",
-      "_pending": "Die exakten Tatbestände + Ausnahmen (z. B. dezentrale Niederschlagswasserbeseitigung) nur aus dem PDF zuverlässig extrahierbar."
+      "topic_de": "Anschluss- und Benutzungsrecht (Grundstückseigentümer)",
+      "topic_en": "Right to connect and use",
+      "value": "Jeder Grundstückseigentümer kann den Anschluss seines Grundstücks an die Entwässerungseinrichtung verlangen — soweit das Grundstück durch einen Kanal erschlossen ist",
+      "section_reference_de": "§ 4 Abs. 1+2"
     },
     {
-      "topic_de": "Niederschlagswasser — Versickerung vor Ort",
-      "topic_en": "Rainwater on-site infiltration",
-      "value": "Zielsetzung der Stadt: gering belastetes Niederschlagswasser (z. B. von Dach- und Hofflächen) soll vor Ort versickert, gesammelt und genutzt (Gartenbewässerung, WC-Spülung), oder zumindest dezentral zurückgehalten und dosiert in Gewässer eingeleitet werden.",
-      "_pending": "Der konkrete § / Absatz, der die Versickerungsregel als verbindlich setzt, ist nur aus dem PDF auslesbar; die Ziel-Aussage stammt aus den Erläuterungen der Stadt Erlangen (overview_url)."
+      "topic_de": "Kein Benutzungsrecht für Niederschlagswasser bei möglicher Versickerung",
+      "topic_en": "No right of use for stormwater when on-site infiltration is possible",
+      "value": "Ein Benutzungsrecht für Niederschlagswasser besteht NICHT, soweit eine Versickerung oder anderweitige Beseitigung ordnungsgemäß möglich ist (Stadt kann Ausnahmen zulassen)",
+      "section_reference_de": "§ 4 Abs. 5"
     },
     {
-      "topic_de": "Erlaubnisfreie Versickerung — Hinweise",
-      "topic_en": "Permit-exempt infiltration — guidance",
-      "value": "verfügbar; siehe https://erlangen.de/service/3372",
-      "notes_de": "Die Stadt Erlangen veröffentlicht ein Merkblatt zur erlaubnisfreien Versickerung (Versickerung Erlangen-West)."
+      "topic_de": "Anschlusszwang für bebaute Grundstücke",
+      "topic_en": "Connection obligation for built-up properties",
+      "value": "Bebaute Grundstücke sind verpflichtend an die Entwässerungseinrichtung anzuschließen (Anschlusszwang); Ausnahme nur bei rechtlicher oder tatsächlicher Unmöglichkeit",
+      "section_reference_de": "§ 5 Abs. 1"
     },
     {
-      "topic_de": "Einleitung in oberirdische Gewässer",
-      "topic_en": "Discharge into surface waters",
-      "value": "regelt sich nach § ... der EWS i.V.m. dem Wasserhaushaltsgesetz (WHG); Hinweise unter https://erlangen.de/aktuelles/einleitung-niederschlagswasser-in-gewaesser",
-      "_pending": "Konkreter § der EWS für Einleitungsregelung nur aus dem PDF entnehmbar."
+      "topic_de": "Benutzungszwang für angeschlossene Grundstücke",
+      "topic_en": "Use obligation for connected properties",
+      "value": "Auf angeschlossenen Grundstücken ist alles Abwasser im Umfang des Benutzungsrechts in die Entwässerungseinrichtung einzuleiten",
+      "section_reference_de": "§ 5 Abs. 5"
+    },
+    {
+      "topic_de": "Niederschlagswasser — Befreiung vom Anschluss-/Benutzungszwang bei On-Site-Versickerung",
+      "topic_en": "Rainwater — exemption from connection/use obligation when on-site infiltration is possible",
+      "value": "Der Anschluss- und Benutzungszwang gilt NICHT für Niederschlagswasser, sofern auf dem Grundstück selbst dessen Versickerung oder anderweitige Beseitigung ordnungsgemäß möglich ist",
+      "section_reference_de": "§ 5 Abs. 6",
+      "notes_de": "Das ist die Schlüsselregel für Neubauvorhaben: Niederschlagswasser von Dach- und Hofflächen ist primär dezentral zu bewirtschaften (Versickerung, Sammlung/Nutzung, gedrosselte Ableitung). Der Versickerungsnachweis wird mit dem Antrag zur Zulassung der Grundstücksentwässerungsanlage eingereicht (§ 10 Abs. 1 Nr. 4)."
+    },
+    {
+      "topic_de": "Versickerungsnachweis als Antragsbestandteil",
+      "topic_en": "Infiltration certification as part of the submission",
+      "value": "Bodengutachten inklusive Versickerungsnachweis sowie Nachweise über eine schadlose Versickerung von Niederschlagswasser sind nötigenfalls Bestandteil des Zulassungsantrags",
+      "section_reference_de": "§ 10 Abs. 1 (letzter Absatz)"
+    },
+    {
+      "topic_de": "Befreiungsmöglichkeit auf Antrag",
+      "topic_en": "Exemption on request",
+      "value": "Ganze oder teilweise Befreiung möglich, wenn Anschluss/Benutzung aus besonderen Gründen unzumutbar ist (auch unter Berücksichtigung des Gemeinwohls); schriftlicher Antrag, kann befristet/unter Bedingungen/Auflagen erteilt werden",
+      "section_reference_de": "§ 6 Abs. 1+2"
+    },
+    {
+      "topic_de": "Modifiziertes Mischsystem (Definition)",
+      "topic_en": "Modified mixed system (definition)",
+      "value": "Entwässerungssystem, in dem Schmutz- und Niederschlagswasser getrennt geführt werden; weitgehend unverschmutztes Niederschlagswasser von Dach- und untergeordneten Wegeflächen wird vorwiegend in Mulden/Gräben versickert oder dosiert in Gewässer abgeleitet — NICHT zur städtischen Kläranlage",
+      "section_reference_de": "§ 3 Nr. 15"
+    },
+    {
+      "topic_de": "Bemessungshochwasser für Überschwemmungsgebiete",
+      "topic_en": "Design flood for flood zones",
+      "value": "100-jährliches Hochwasser (HQ 100); die Stadt kann die Herstellung von Abläufen unter dem Bemessungshochwasserstand verbieten",
+      "section_reference_de": "§ 9 Abs. 7"
+    },
+    {
+      "topic_de": "Räumlicher Geltungsbereich (Sondergebiete außerhalb Stadtgebiet)",
+      "topic_en": "Geographic scope (special areas outside city)",
+      "value": "Stadtgebiet Erlangen + Siedlungen in Bubenreuth (nördlich Rudelsweiherstraße) + Buckenhof (südlich Leimberger Straße, gemäß Anlagenkarte)",
+      "section_reference_de": "§ 1 Abs. 1"
     }
   ],
   "applies_to_postcodes": [
@@ -58,8 +110,7 @@
     "91056",
     "91058"
   ],
-  "geographic_scope_de": "Gesamtes Stadtgebiet der Stadt Erlangen.",
-  "summary_de": "Die Entwässerungssatzung der Stadt Erlangen regelt den Betrieb der öffentlichen Entwässerungsanlage und den Anschluss- und Benutzungszwang. Für Niederschlagswasser gilt das städtische Leitbild der dezentralen Bewirtschaftung — Versickerung, Sammlung/Nutzung, gedrosselte Ableitung. Bei Neubauvorhaben sind die konkreten Anschlussbedingungen, Ablaufmengen und Beiträge der Beitrags- und Gebührensatzung sowie der Gebietsabflussbeiwertkarte zu entnehmen. Die Stadt Erlangen veröffentlicht ein Merkblatt zur erlaubnisfreien Versickerung.",
-  "summary_en": "The Erlangen drainage ordinance governs the public drainage system, including the obligation to connect and use it. For stormwater, Erlangen's policy promotes decentralised management — infiltration, collection and use, throttled discharge. New construction must consult the connection conditions, runoff coefficients and fees in the contribution-and-fee companion ordinance and the runoff-coefficient map. The city publishes guidance for permit-exempt infiltration.",
-  "_pending_block": "Drei §-spezifische Aussagen (Anschluss-/Benutzungszwang Tatbestände, Versickerungspflicht-§, Einleitungsregel-§) sind nur aus dem PDF zuverlässig zu zitieren — im Audit-Setup keine PDF-Text-Extraktion möglich. Quartalsrefresh: PDF-Auszug nachreichen."
+  "geographic_scope_de": "Stadtgebiet Erlangen sowie zwei umgebende Sondergebiete (Bubenreuth nördlich Rudelsweiherstraße; Buckenhof südlich Leimberger Straße — gemäß Anlagen-Lageplan).",
+  "summary_de": "Die Erlanger Entwässerungssatzung (EWS, in Kraft seit 21.10.2022) regelt Betrieb und Benutzung der öffentlichen Entwässerungseinrichtung. Bebaute Grundstücke unterliegen dem Anschluss- und Benutzungszwang (§ 5 Abs. 1 + 5). Der entscheidende Punkt für Neubauten: Niederschlagswasser ist von diesem Zwang ausdrücklich AUSGENOMMEN, sofern auf dem Grundstück selbst eine ordnungsgemäße Versickerung oder anderweitige Beseitigung möglich ist (§ 5 Abs. 6 + § 4 Abs. 5). Bauantragsteller müssen — soweit nötig — einen Bodengutachten-/Versickerungsnachweis der Stadt vorlegen (§ 10 Abs. 1). Die zugehörigen Beiträge und Gebühren regelt die separate BGS/EWS in der Fassung vom 28.11.2024.",
+  "summary_en": "The Erlangen drainage ordinance (EWS, in force since 2022-10-21) governs the public drainage system. Built-up properties are subject to the connection and use obligation (§ 5 (1) + (5)). The key rule for new construction: rainwater is explicitly EXEMPTED from this obligation when on-site infiltration or other proper disposal is possible (§ 5 (6) + § 4 (5)). Applicants must, where necessary, submit a soil/infiltration certificate (§ 10 (1)). Fees and contributions are regulated by the separate companion BGS/EWS ordinance (current version 2024-11-28)."
 }
