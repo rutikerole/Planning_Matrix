@@ -23,10 +23,29 @@ import {
   type ProgressSegment,
 } from '../../lib/progressEstimate'
 import type { Specialist } from '@/types/projectState'
+import type { MessageRow } from '@/types/db'
 
 interface Props {
   /** When true (mobile drawer), drops the labels and shrinks the bar. */
   compact?: boolean
+  /**
+   * Phase 2.5 fix — durable progress derivation.
+   *
+   * The chatStore's `turnCount` and `currentSpecialist` are session-
+   * scoped: a `useEffect(() => () => reset(), [projectId])` in
+   * ChatWorkspacePage clears them on every project (re)mount. Refresh
+   * a project that already has 8 messages and the bar reads 5%
+   * (specialist anchor for `null` specialist + 0/18 turn ratio).
+   *
+   * When `messages` is provided, the bar derives both signals from
+   * the message list directly (count of assistant messages,
+   * specialist of the most recent assistant message). This makes
+   * the bar honest across reloads + tab switches + cold mounts.
+   *
+   * Falls back to chatStore values when the prop is absent so
+   * legacy callers (and the in-stream "live" path) still work.
+   */
+  messages?: MessageRow[]
 }
 
 const SEGMENT_LABEL_DE: Record<Specialist, string> = {
@@ -49,14 +68,31 @@ const SEGMENT_LABEL_EN: Record<Specialist, string> = {
   synthesizer: 'Synth.',
 }
 
-export function ChatProgressBar({ compact = false }: Props) {
+export function ChatProgressBar({ compact = false, messages }: Props) {
   const { t, i18n } = useTranslation()
   const lang = (i18n.resolvedLanguage ?? 'de') as 'de' | 'en'
   const reduced = useReducedMotion()
 
-  const turnCount = useChatStore((s) => s.turnCount)
-  const currentSpecialist = useChatStore((s) => s.currentSpecialist)
+  const turnCountFromStore = useChatStore((s) => s.turnCount)
+  const currentSpecialistFromStore = useChatStore((s) => s.currentSpecialist)
   const completionSignal = useChatStore((s) => s.lastCompletionSignal)
+
+  // Phase 2.5 — durable derivation from the persisted messages list.
+  // chatStore values reset on project remount (see Props doc); without
+  // this fallback the bar shows 5% on every reload of a long
+  // conversation. Use Math.max() so an in-flight specialist promotion
+  // (chatStore wins because it's the freshest signal) still reflects
+  // even when messages haven't yet caught up to the streaming turn.
+  let turnCount = turnCountFromStore
+  let currentSpecialist = currentSpecialistFromStore
+  if (messages && messages.length > 0) {
+    const assistants = messages.filter((m) => m.role === 'assistant')
+    turnCount = Math.max(turnCountFromStore, assistants.length)
+    if (currentSpecialist === null && assistants.length > 0) {
+      const latest = assistants[assistants.length - 1]
+      currentSpecialist = (latest.specialist ?? null) as Specialist | null
+    }
+  }
 
   const isReadyForReview = completionSignal === 'ready_for_review'
   const { segments, percent, currentIdx } = computeSegmentProgress(

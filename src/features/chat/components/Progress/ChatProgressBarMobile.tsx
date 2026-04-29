@@ -7,7 +7,12 @@
 // ───────────────────────────────────────────────────────────────────────
 
 import { ChatProgressBar } from './ChatProgressBar'
+import type { MessageRow } from '@/types/db'
 
-export function ChatProgressBarMobile() {
-  return <ChatProgressBar compact />
+interface Props {
+  messages?: MessageRow[]
+}
+
+export function ChatProgressBarMobile({ messages }: Props) {
+  return <ChatProgressBar compact messages={messages} />
 }
