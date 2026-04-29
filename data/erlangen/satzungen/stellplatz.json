@@ -1,0 +1,67 @@
+{
+  "_schemaVersion": 1,
+  "retrieved_on": "2026-04-29",
+  "id": "stellplatz",
+  "official_name_de": "Satzung über die Herstellung von Kraftfahrzeugstellplätzen und Fahrradabstellplätzen (Stellplatzsatzung, StS)",
+  "in_force_since": "2024-01-12",
+  "last_amended": "2025-06-26",
+  "source_ids": [
+    "stadt-erlangen-bauen"
+  ],
+  "official_pdf_url": "https://erlangen.de/uwao-api/faila/files/bypath/Dokumente/Stadtrecht/206_00_stellplatzsatzung.pdf",
+  "overview_url": "https://erlangen.de/aktuelles/stellplatzsatzung",
+  "structure_de": [
+    "§ 1 Geltungsbereich",
+    "§ 2 Anzahl der Stellplätze (Verweis auf Anlage 1 Richtzahlentabelle)",
+    "§ 3 Ablösung",
+    "§ 4 Fahrradabstellplätze",
+    "§ 5 Abweichungen (insb. Mobilitätskonzept-Reduktion bei ≥ 10 WE Wohnnutzung)",
+    "§ 6 Inkrafttreten",
+    "§ 7 Übergangsregelungen",
+    "Anlage 1 — Richtzahlentabelle",
+    "Anlage 2 — Ablöse-Zonenplan"
+  ],
+  "key_values": [
+    {
+      "topic_de": "Wohngebäude / Wohnnutzung — KFZ-Stellplätze pro Wohneinheit",
+      "topic_en": "Residential — motor-vehicle parking spaces per dwelling unit",
+      "value": null,
+      "unit": "Stp/WE",
+      "section_reference_de": "§ 2 i.V.m. Anlage 1 (Richtzahlentabelle)",
+      "_pending": "Konkreter Stp/WE-Wert nur aus dem Satzungs-PDF extrahierbar; Live-Verifikation über pdftotext / poppler-utils war im Audit-Setup nicht möglich. Aufgabe für Quartalsrefresh: Wert aus Anlage 1 (Richtzahlentabelle) verbatim extrahieren.",
+      "notes_de": "Die Berechnung erfolgt rechnerisch aus der Richtzahl (zwei Nachkommastellen) mit anschließender Rundung auf die nächste ganze Zahl."
+    },
+    {
+      "topic_de": "Wohngebäude / Wohnnutzung — Fahrradabstellplätze pro Wohneinheit",
+      "topic_en": "Residential — bicycle parking spaces per dwelling unit",
+      "value": null,
+      "unit": "Stp/WE",
+      "section_reference_de": "§ 4 i.V.m. Anlage 1",
+      "_pending": "Konkreter Wert nur aus dem Satzungs-PDF extrahierbar; siehe oben."
+    },
+    {
+      "topic_de": "Reduktion der KFZ-Stellplatzpflicht durch Mobilitätskonzept",
+      "topic_en": "Reduction of motor-vehicle parking obligation via mobility concept",
+      "value": "möglich bei Wohnungsbauvorhaben mit mindestens 10 Wohneinheiten",
+      "section_reference_de": "§ 5",
+      "notes_de": "Die Verwaltung kann nach unten von der Richtzahlenliste abweichen, wenn der Antragsteller darlegt, dass aufgrund objektiver Umstände weniger Stellplätze benötigt werden. Aktuell auf Wohnungsbauvorhaben mit ≥ 10 WE beschränkt."
+    },
+    {
+      "topic_de": "Ablösung (Stellplatzpflicht durch Geldzahlung)",
+      "topic_en": "Abatement payment (in lieu of building parking)",
+      "value": "möglich nach Maßgabe der Ablöse-Zonen (Anlage 2)",
+      "section_reference_de": "§ 3",
+      "_pending": "Konkrete Ablösebeträge je Zone nur aus dem Satzungs-PDF extrahierbar."
+    }
+  ],
+  "applies_to_postcodes": [
+    "91052",
+    "91054",
+    "91056",
+    "91058"
+  ],
+  "geographic_scope_de": "Gesamtes Stadtgebiet der Stadt Erlangen",
+  "summary_de": "Die Stellplatzsatzung der Stadt Erlangen regelt die Anzahl notwendiger Kraftfahrzeug- und Fahrradabstellplätze bei Errichtung baulicher Anlagen. Die genaue Anzahl folgt aus einer nutzungsabhängigen Richtzahlentabelle (Anlage 1) und wird auf zwei Nachkommastellen berechnet, dann auf eine ganze Zahl gerundet. Bei Wohnungsbauvorhaben mit mindestens zehn Wohneinheiten ist nach § 5 eine Reduzierung möglich, wenn ein Mobilitätskonzept vorgelegt wird. Eine Ablösung der Stellplatzpflicht ist nach § 3 nach Ablöse-Zonen (Anlage 2) möglich.",
+  "summary_en": "The Erlangen parking ordinance sets the number of required motor-vehicle and bicycle parking spaces when buildings are erected. The exact count follows a use-dependent reference table (Annex 1), is calculated to two decimal places, then rounded to a whole number. For residential developments with at least ten dwelling units, § 5 permits a reduction when a mobility concept is submitted. § 3 allows the parking obligation to be discharged via abatement payment, structured by zones in Annex 2.",
+  "_pending_block": "Drei Werte sind nur aus dem PDF (Anlage 1, Anlage 2) zuverlässig extrahierbar: KFZ-Stp/WE, Fahrrad-Stp/WE, Ablösebeträge je Zone. Im Audit-Setup war keine PDF-Text-Extraktion verfügbar (pdftotext/pypdf/pdfplumber jeweils absent). Quartalsrefresh-Aufgabe: pdftotext oder poppler-utils lokal nachziehen, Werte aus Anlage 1+2 verbatim eintragen, value-Felder ausfüllen, _pending entfernen."
+}

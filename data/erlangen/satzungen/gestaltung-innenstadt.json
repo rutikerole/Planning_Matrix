@@ -1,0 +1,39 @@
+{
+  "_schemaVersion": 1,
+  "retrieved_on": "2026-04-29",
+  "id": "gestaltung-innenstadt",
+  "official_name_de": "Werbeanlagensatzung der Stadt Erlangen (Neufassung) — funktionale Nachfolgerin der ehemaligen 'Gestaltungssatzung für Werbeanlagen in der historischen Innenstadt'",
+  "in_force_since": {
+    "_pending": "Inkrafttretens-Datum der Neufassung der Werbeanlagensatzung nur aus dem PDF / der amtlichen Bekanntmachung extrahierbar — im Audit-Setup nicht durchführbar."
+  },
+  "last_amended": {
+    "_pending": "Letztes Änderungsdatum aus PDF / Ratsinformationssystem extrahierbar (siehe ratsinfo.erlangen.de Vorlage 2125963 für die ursprüngliche Aufhebung der historischen Werbeanlagen-Gestaltungssatzung)."
+  },
+  "source_ids": [
+    "stadt-erlangen-bauen",
+    "stadt-erlangen-bauamt"
+  ],
+  "official_pdf_url": "https://erlangen.de/uwao-api/faila/files/bypath/Dokumente/Stadtrecht/270.00_werbeanlagensatzung.pdf",
+  "key_values": [
+    {
+      "topic_de": "Geltungsbereich",
+      "topic_en": "Geographic scope",
+      "value": "historische Innenstadt der Stadt Erlangen (Werbeanlagen-Regelung) sowie weitere Bereiche je nach Festsetzung",
+      "_pending": "Exakte Straßenliste/Plangrenze nur aus dem PDF / Übersichtsplan extrahierbar."
+    },
+    {
+      "topic_de": "Genehmigungspflicht",
+      "topic_en": "Approval requirement",
+      "value": "Werbeanlagen, Automaten und Schaufensterbeschriftungen unterliegen der Anzeige-/Genehmigungspflicht der Satzung",
+      "_pending": "Genaue Auslöse-Tatbestände (Anbringen, Ändern, Beseitigen) nur aus dem PDF extrahierbar."
+    }
+  ],
+  "applies_to_postcodes": [
+    "91052",
+    "91054"
+  ],
+  "geographic_scope_de": "Historische Innenstadt der Stadt Erlangen (Schwerpunkt: Altstadt + Markgräfliche Neustadt) sowie ggf. erweiterte Bereiche.",
+  "summary_de": "Eine eigenständige 'Gestaltungssatzung Innenstadt' existiert in Erlangen nicht als ein einziges Dokument. Die historisch bestehende 'Gestaltungssatzung für Werbeanlagen in der historischen Innenstadt' wurde aufgehoben (Ratsinformationssystem-Vorlage 2125963) und durch eine Neufassung der Werbeanlagensatzung abgelöst, die die zuvor zwei getrennten Werberegelungen zusammenführt. Daneben gilt seit 2024 in Erlangen eine eigenständige 'Freiflächengestaltungssatzung (FGS)' für unbebaute Flächen bebauter Grundstücke. Die Regulierung der Bauformen, Fassaden und Dachgestaltungen in der Altstadt erfolgt zudem über die Erhaltungssatzung Burgberg (siehe ./erhaltung-burgberg.json) und über das BayDSchG (Denkmalschutz).",
+  "summary_en": "Erlangen does not have a single standalone 'Innenstadt Design Ordinance'. The historical 'Design Ordinance for Advertising Installations in the Historic Inner City' was repealed and replaced by a new Advertising Installation Ordinance (Werbeanlagensatzung) that merged the two prior advertising rules. Erlangen also has a separate 'Open-Space Design Ordinance' (Freiflächengestaltungssatzung) for undeveloped portions of built lots. Form, facade and roof regulation in the historic core is handled via the Burgberg Preservation Ordinance and the Bavarian Heritage Protection Act (BayDSchG).",
+  "_pending_block": "Erlangen hat KEIN einzelnes Dokument 'Gestaltungssatzung Innenstadt'. Diese Datei dokumentiert die funktional nächstgelegene Realität (Werbeanlagensatzung + Freiflächengestaltungssatzung + Erhaltungssatzung Burgberg + Denkmalschutz). Die Phase-3 System-Prompt-Composition sollte den Bauherren entsprechend ehrlich aufklären, statt eine Einheitssatzung zu erfinden."
+}

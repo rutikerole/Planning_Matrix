@@ -1,0 +1,59 @@
+{
+  "_schemaVersion": 1,
+  "retrieved_on": "2026-04-29",
+  "id": "erhaltung-burgberg",
+  "official_name_de": "Satzung der Stadt Erlangen zur Erhaltung baulicher Anlagen im Bereich des Burgbergs",
+  "in_force_since": "1989-09-01",
+  "last_amended": "2001-11-29",
+  "source_ids": [
+    "stadt-erlangen-bauen",
+    "stadt-erlangen-bauamt"
+  ],
+  "official_pdf_url": "https://erlangen.de/uwao-api/faila/files/bypath/Dokumente/Stadtrecht/052.00_erhaltungssatzung_burgberg.pdf",
+  "overview_url": "https://erlangen.de/aktuelles/erhaltungssatzung-burgberg",
+  "structure_de": [
+    "§ 1 Geltungsbereich (mit Übersichtsplan)",
+    "§ 2 Sachlicher Schutz",
+    "§ 3 Erhaltungsgebot, Genehmigung",
+    "§ 4 Prägung der Stadtgestalt",
+    "§ 5 Prägung des Orts- und Landschaftsbildes",
+    "§ 6 Städtebauliche Bedeutung",
+    "§ 7 Geschichtliche Bedeutung",
+    "§ 8 Verfahren / Ordnungswidrigkeiten / Inkrafttreten"
+  ],
+  "key_values": [
+    {
+      "topic_de": "Geltungsbereich",
+      "topic_en": "Geographic scope",
+      "value": "Bereich des Burgbergs in Erlangen (gemäß Übersichtsplan zur Satzung)",
+      "section_reference_de": "§ 1",
+      "_pending": "Exakte Straßennamen, die den Geltungsbereich begrenzen, nur aus dem PDF / Übersichtsplan extrahierbar — im Audit-Setup keine PDF-Textextraktion verfügbar."
+    },
+    {
+      "topic_de": "Genehmigungspflicht",
+      "topic_en": "Approval requirement",
+      "value": "Erhaltungsgebot — bauliche Anlagen dürfen nur mit Genehmigung errichtet, geändert oder beseitigt werden, soweit sie nach §§ 4–7 stadtbild- oder geschichtsprägend sind",
+      "section_reference_de": "§ 3",
+      "notes_de": "Schutzgüter sind Stadtgestalt (§ 4), Orts- und Landschaftsbild (§ 5), städtebauliche Bedeutung (§ 6), geschichtliche Bedeutung (§ 7)."
+    },
+    {
+      "topic_de": "Schutzgüter (städtebaulich bedeutsame Merkmale)",
+      "topic_en": "Protected attributes",
+      "value": "Geschosshöhe, Fassaden- und Fensterteilung, Dachform, sowie historisch bedeutsame Bauten",
+      "section_reference_de": "§§ 4 + 6"
+    },
+    {
+      "topic_de": "Schutzgüter (historisch bedeutsame Anlagen)",
+      "topic_en": "Historically significant features",
+      "value": "historische Kelleranlagen mit Sandsteinwänden, Pavillons und terrassierte Biergärten, Tunnel-Portale, Jüdischer Friedhof mit Grabsteinen",
+      "section_reference_de": "§ 7"
+    }
+  ],
+  "applies_to_postcodes": [
+    "91054"
+  ],
+  "geographic_scope_de": "Burgberg-Quartier in Erlangen, am nördlichen Rand der historischen Altstadt. Genaue Grenzen folgen dem Übersichtsplan zur Satzung.",
+  "summary_de": "Die Burgberg-Erhaltungssatzung unterstellt bauliche Maßnahmen im Burgberg-Bereich (Errichtung, Änderung, Beseitigung) einer eigenständigen Genehmigungspflicht. Schutzziel ist die Bewahrung des städtebaulichen und geschichtlichen Charakters des Burgbergs — geprägt durch Geschosshöhe, Fassaden- und Fensterteilung, Dachform sowie historisch bedeutsame Bauten wie die Kelleranlagen, Tunnelportale und der Jüdische Friedhof. Die Genehmigung der Erhaltungssatzung tritt neben mögliche Genehmigungen nach BayBO und BayDSchG.",
+  "summary_en": "The Burgberg preservation ordinance subjects building work in the Burgberg area (erection, alteration, demolition) to a separate approval requirement. The protection goal is the urbanistic and historical character of the Burgberg — story height, facade and window divisions, roof form, plus historically significant features such as the cellar systems, tunnel portals and the Jewish cemetery. This approval is additional to any BayBO and BayDSchG approvals.",
+  "_pending_block": "Genaue Straßengrenzen des Geltungsbereichs nur aus dem PDF-Übersichtsplan extrahierbar."
+}

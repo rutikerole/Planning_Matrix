@@ -1,0 +1,91 @@
+{
+  "_schemaVersion": 1,
+  "retrieved_on": "2026-04-29",
+  "id": "denkmalliste",
+  "official_name_de": "Bayerische Denkmalliste — kreisfreie Stadt Erlangen (Auszug Baudenkmäler)",
+  "_note_de": "Die Denkmalliste ist KEINE Satzung der Stadt Erlangen, sondern wird vom Bayerischen Landesamt für Denkmalpflege (BLfD) auf Grundlage des BayDSchG vom 1. Oktober 1973 geführt. Sie liegt in dieser Datei nur strukturell als 'satzungsähnliche' Quelle vor, weil sie für jedes Erlanger Bauvorhaben am Bestand denkmalrechtlich gleichermaßen verbindlich ist wie eine kommunale Satzung.",
+  "in_force_since": "1973-10-01",
+  "source_ids": [
+    "stadt-erlangen-bauamt"
+  ],
+  "official_html_url": "https://geodaten.bayern.de/denkmal_static_data/externe_denkmalliste/html/562_lk.html",
+  "official_pdf_url": "https://geodaten.bayern.de/denkmal_static_data/externe_denkmalliste/pdf/denkmalliste_merge_562000.pdf",
+  "denkmal_atlas_url": "https://www.blfd.bayern.de/",
+  "key_values": [
+    {
+      "topic_de": "Anzahl der Baudenkmäler in Erlangen Stadt",
+      "topic_en": "Number of architectural monuments in Erlangen city",
+      "value": null,
+      "_pending": "Anzahl nur aus der vollständigen BLfD-PDF (denkmalliste_merge_562000.pdf) zuverlässig extrahierbar; Wikipedia 'Liste der Baudenkmäler in Erlangen' gibt einen Anhaltspunkt, ist aber sekundär.",
+      "section_reference_de": "BayDSchG Art. 2"
+    },
+    {
+      "topic_de": "Genehmigungspflicht bei Veränderung an Baudenkmal",
+      "topic_en": "Approval requirement for changes to a listed monument",
+      "value": "Veränderungen, Beseitigungen und der bauliche Eingriff in die unmittelbare Umgebung eines Baudenkmals bedürfen einer denkmalrechtlichen Erlaubnis",
+      "section_reference_de": "BayDSchG Art. 6 Abs. 1, Abs. 2",
+      "notes_de": "Untere Denkmalschutzbehörde ist die Stadt Erlangen — Bauaufsichtsamt; Kontakt: denkmalschutz@stadt.erlangen.de, 09131 86-1007."
+    }
+  ],
+  "applies_to_postcodes": [
+    "91052",
+    "91054",
+    "91056",
+    "91058"
+  ],
+  "named_examples": [
+    {
+      "name": "Markgräfliches Schloss",
+      "address": "Schlossplatz, 91054 Erlangen",
+      "note_de": "1700–1704 errichteter Barockbau, zentral für die Schlossplatz-Anlage der Markgräflichen Neustadt."
+    },
+    {
+      "name": "Markgrafentheater",
+      "address": "Theaterplatz, 91054 Erlangen",
+      "note_de": "Ältestes durchgehend bespieltes Barocktheater Süddeutschlands; im Bayerischen Denkmal-Atlas geführt."
+    },
+    {
+      "name": "Hugenottenkirche",
+      "address": "Hugenottenplatz, 91054 Erlangen",
+      "note_de": "Französisch-reformierte Gemeindekirche der Neustadt."
+    },
+    {
+      "name": "Altstädter Pfarrkirche",
+      "address": "Altstadtbereich, 91054 Erlangen",
+      "note_de": "1711 erneuert, in erhöhter Lage über den Flussläufen."
+    },
+    {
+      "name": "Neustädter Kirche",
+      "address": "Friedrichstraße, 91054 Erlangen",
+      "note_de": "Lutherische Pfarrkirche der Neustadt."
+    },
+    {
+      "name": "Sophienkirche",
+      "address": "Universitätsviertel, 91054 Erlangen",
+      "note_de": "Zur Ritterakademie gehörende Kapelle, reformierte Gemeinde."
+    },
+    {
+      "name": "Burgbergkapelle",
+      "address": "Bayreuther Straße 38, 91054 Erlangen",
+      "note_de": "Im 15. Jahrhundert entstandene mittelalterliche Kapelle auf dem Burgberg."
+    },
+    {
+      "name": "Palais Stutterheim",
+      "address": "Marktplatz, 91054 Erlangen",
+      "note_de": "Zwischen 1728 und 1730 errichtetes adliges Palais."
+    },
+    {
+      "name": "Corps Baruthia (Verbindungshaus)",
+      "address": "Rathsberger Straße 20, 91054 Erlangen",
+      "note_de": "1903 errichteter Neorenaissance-Bau (Architekt Hans Erlwein)."
+    },
+    {
+      "name": "Stadtbefestigung (Reste)",
+      "address": "verschiedene Punkte im Altstadtbereich, 91054 Erlangen",
+      "note_de": "Mittelalterliche Stadtbefestigung mit Buckelquadermauer."
+    }
+  ],
+  "summary_de": "Die Denkmalliste der Stadt Erlangen wird vom Bayerischen Landesamt für Denkmalpflege (BLfD) geführt und ist über den Bayerischen Denkmal-Atlas öffentlich abrufbar. Eintragungen umfassen Baudenkmäler, Bodendenkmäler und Ensembles. Eine geplante Maßnahme an einem eingetragenen Baudenkmal — sowie ein baulicher Eingriff in dessen unmittelbare Umgebung — bedarf nach Art. 6 BayDSchG zusätzlich zur baurechtlichen Genehmigung einer denkmalrechtlichen Erlaubnis. Untere Denkmalschutzbehörde in Erlangen ist das Bauaufsichtsamt der Stadt Erlangen.",
+  "summary_en": "The Erlangen heritage list is maintained by the Bavarian Heritage Office (BLfD) under the Bavarian Heritage Protection Act (BayDSchG, in force since 1 October 1973) and is publicly accessible via the Bavarian Heritage Atlas. Entries cover architectural monuments, archaeological monuments and ensembles. A planned change to a listed monument — and any structural impact on its immediate surroundings — requires a heritage-law permit under BayDSchG Art. 6 in addition to any building permit. The local heritage authority is the Erlangen Building Authority.",
+  "_pending_block": "Eine vollständige Erlanger Baudenkmal-Liste mit Adressen + Eintragungsdaten ist nur aus der BLfD-PDF (denkmalliste_merge_562000.pdf) zuverlässig zu beziehen. Die named_examples-Liste hier ist eine repräsentative Stichprobe (10 prominente Baudenkmäler) — keine vollständige Liste."
+}
