@@ -20,9 +20,15 @@ interface Props {
  *   • <lg : center column only; rails open as drawers (commit #14)
  *
  * Background is the existing `.bg-blueprint` class on the wrapper —
- * 4.5% opacity ink hairlines, defined in globals.css. Center column
- * is constrained to max-w-2xl + generous vertical padding so messages
- * read like a focused document, not a chat-app stream.
+ * 4.5% opacity ink hairlines, defined in globals.css. Phase 4.1.10 —
+ * center column widened from `max-w-2xl` (672 px / ~75 char) to
+ * `max-w-3xl` (768 px / ~85 char) so it matches the InputBar's
+ * EmbeddedShell exactly. German legal references
+ * ("Bauordnungsrecht", "Bauvorlageberechtigung", "§ 34 BauGB") wrap
+ * cleaner at 85 char, and the message column / input column now
+ * share a single reading width — the Continue chip / FAB / send
+ * button align across the two zones because they're anchored to the
+ * same column geometry.
  */
 export function ChatWorkspaceLayout({
   leftRail,
@@ -56,7 +62,7 @@ export function ChatWorkspaceLayout({
 
         <main className="relative min-h-dvh flex flex-col">
           <div className="flex-1 flex justify-center px-6 sm:px-10 lg:px-14">
-            <div className="w-full max-w-2xl py-16 lg:py-20">{children}</div>
+            <div className="w-full max-w-3xl py-16 lg:py-20">{children}</div>
           </div>
         </main>
 
