@@ -6,20 +6,25 @@
 // + size + click-through opens a freshly-minted signed URL in a new
 // tab.
 //
-// Loaded via TanStack Query keyed on the message id so list ordering
-// is stable and we get free deduping when MessageUser re-renders.
+// Phase 4.1.9 — pulls from a project-level batched TanStack query
+// (`useProjectAttachments`) and filters client-side by message_id.
+// All MessageAttachment instances in the thread share ONE network
+// request instead of firing one per user message (the prior shape
+// produced 30+ 404s per chat-workspace mount).
+//
+// Loading + error states render nothing. The attachment surface is
+// purely additive to the user message bubble; a missing-attachments
+// state shouldn't add visual noise to every message in the thread,
+// and a single batched failure shouldn't render the same error 30
+// times.
 // ───────────────────────────────────────────────────────────────────────
 
-import { useQuery } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
-import {
-  AlertTriangle,
-  FileText,
-  Image as ImageIcon,
-  Loader2,
-} from 'lucide-react'
+import { useParams } from 'react-router-dom'
+import { FileText, Image as ImageIcon } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { fetchMessageAttachments, fetchSignedFileUrl } from '@/lib/uploadApi'
+import { fetchSignedFileUrl } from '@/lib/uploadApi'
+import { useProjectAttachments } from '../hooks/useProjectAttachments'
 import type { ProjectFileRow } from '@/types/projectFile'
 
 interface Props {
@@ -43,38 +48,18 @@ function truncateMiddle(name: string, max = 40, tail = 12): string {
 export function MessageAttachment({ messageId }: Props) {
   const { t, i18n } = useTranslation()
   const lang = (i18n.resolvedLanguage ?? 'de') as 'de' | 'en'
+  const { id: projectId } = useParams<{ id: string }>()
 
-  const query = useQuery({
-    queryKey: ['messageAttachments', messageId],
-    queryFn: () => fetchMessageAttachments(messageId),
-    // Attachments don't change after the user message lands, so we
-    // can cache aggressively. Two-minute staleTime is plenty.
-    staleTime: 120_000,
-  })
+  // Project-level batched query. All MessageAttachment instances in the
+  // thread share this single fetch via TanStack's cache key.
+  const { data } = useProjectAttachments(projectId)
 
-  if (query.isLoading) {
-    return (
-      <div className="mt-2 inline-flex items-center gap-1.5 text-[11px] italic text-clay/72">
-        <Loader2 aria-hidden="true" className="size-3 animate-spin" />
-        {t('chat.input.attachment.uploading', {
-          defaultValue: 'Wird hochgeladen…',
-        })}
-      </div>
-    )
-  }
+  const attachments = (data ?? []).filter(
+    (row) => row.message_id === messageId,
+  )
 
-  if (query.isError) {
-    return (
-      <div className="mt-2 inline-flex items-center gap-1.5 text-[11px] text-destructive italic">
-        <AlertTriangle aria-hidden="true" className="size-3" />
-        {t('chat.attachment.loadFailed', {
-          defaultValue: 'Anhänge konnten nicht geladen werden.',
-        })}
-      </div>
-    )
-  }
-
-  const attachments = query.data ?? []
+  // Render nothing on loading / error / empty. The chat thread is
+  // functional without the attachment surface.
   if (attachments.length === 0) return null
 
   return (

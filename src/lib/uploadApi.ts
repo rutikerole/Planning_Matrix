@@ -269,21 +269,29 @@ export async function fetchPersistedUserMessageId(args: {
 }
 
 /**
- * List the project_files rows attached to a given user message. Used
- * by MessageAttachment to render inline below the bubble.
+ * Phase 4.1.9 — batched: list ALL project_files rows for a project in
+ * a single REST call. Replaces the prior per-message fetch which was
+ * firing N+1 queries (one per user message) and storming Supabase
+ * with 30+ requests on every chat workspace mount. Filtering by
+ * project_id matches the RLS policy's gate exactly (`projects.owner_id
+ * = auth.uid()`), eliminating the cross-project filter scan that the
+ * per-message variant required. MessageAttachment consumes this via
+ * `useProjectAttachments` and filters client-side by message_id,
+ * sharing the TanStack cache across all message instances.
  */
-export async function fetchMessageAttachments(
-  messageId: string,
+export async function fetchProjectAttachments(
+  projectId: string,
 ): Promise<ProjectFileRow[]> {
+  if (!projectId) return []
   const { data, error } = await supabase
     .from('project_files')
     .select('*')
-    .eq('message_id', messageId)
+    .eq('project_id', projectId)
     .neq('status', 'deleted')
     .order('created_at', { ascending: true })
   if (error) {
     if (import.meta.env.DEV) {
-      console.warn('[uploadApi] fetchMessageAttachments failed:', error.message)
+      console.warn('[uploadApi] fetchProjectAttachments failed:', error.message)
     }
     return []
   }

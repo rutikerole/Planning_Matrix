@@ -232,10 +232,13 @@ export function useChatTurn(projectId: string) {
             fileIds: attachmentIds,
             messageId: userMsgId,
           })
-          // Invalidate the messages cache so MessageAttachment refetches
-          // with the now-linked rows.
+          // Invalidate the project-level attachments cache so every
+          // MessageAttachment in the thread sees the now-linked rows.
+          // Phase 4.1.9 — was previously keyed `['messageAttachments',
+          // userMsgId]` to match the per-message fetch; that fetch is
+          // gone (batched into useProjectAttachments).
           queryClient.invalidateQueries({
-            queryKey: ['messageAttachments', userMsgId],
+            queryKey: ['projectAttachments', projectId],
           })
         })()
       }
