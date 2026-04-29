@@ -58,14 +58,15 @@ export function UnifiedFooter({ project, messages, events, inputBar }: Props) {
               events={events}
             />
           </div>
-          {/* Phase 4.1.12 — 8 px each side so the InputBar's right edge
-            * aligns with the message column above. The footer grid carries
-            * `gap-x-4` + `lg:px-8` while the body grid has neither, which
-            * makes the footer's center column 16 px wider than the body's
-            * center column inner area (688 px after `lg:px-14`). Without
-            * this padding the input bar overhangs the message text by 8 px
-            * on each side. */}
-          <div className="min-w-0 flex flex-col justify-end lg:px-2">
+          {/* Phase 4.1.13 — 16 px each side. Phase 4.1.12 used `lg:px-2`
+            * (8 px) which aligned InputBar exactly with the message column
+            * inner edges; this tightens to `lg:px-4` so the bar sits 8 px
+            * inside each edge of the message column for visual rhythm.
+            * Footer grid carries `gap-x-4 + lg:px-8`, body grid has
+            * neither, so the footer center column is 16 px wider than the
+            * body's `lg:px-14` inner area (688 px). After this padding,
+            * InputBar = 672 px. */}
+          <div className="min-w-0 flex flex-col justify-end lg:px-4">
             {inputBar}
           </div>
           <div className="min-w-0">
