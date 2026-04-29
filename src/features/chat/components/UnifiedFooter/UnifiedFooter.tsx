@@ -58,15 +58,14 @@ export function UnifiedFooter({ project, messages, events, inputBar }: Props) {
               events={events}
             />
           </div>
-          {/* Phase 4.1.13 — 16 px each side. Phase 4.1.12 used `lg:px-2`
-            * (8 px) which aligned InputBar exactly with the message column
-            * inner edges; this tightens to `lg:px-4` so the bar sits 8 px
-            * inside each edge of the message column for visual rhythm.
-            * Footer grid carries `gap-x-4 + lg:px-8`, body grid has
-            * neither, so the footer center column is 16 px wider than the
-            * body's `lg:px-14` inner area (688 px). After this padding,
-            * InputBar = 672 px. */}
-          <div className="min-w-0 flex flex-col justify-end lg:px-4">
+          {/* Phase 4.1.14 — 22 px each side targets a 660 px InputBar at
+            * max viewport. Footer center column = 704 px (1440 outer −
+            * 64 px-8 − 32 gaps − 640 fixed cols), so 704 − 44 = 660.
+            * Using arbitrary `lg:px-[22px]` because Tailwind's standard
+            * scale doesn't include 22 px (px-5=20 → 664, px-6=24 → 656).
+            * The bar now sits 14 px inside each edge of the message
+            * column (which is 688 px after `lg:px-14` on body grid). */}
+          <div className="min-w-0 flex flex-col justify-end lg:px-[22px]">
             {inputBar}
           </div>
           <div className="min-w-0">
