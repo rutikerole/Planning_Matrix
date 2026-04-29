@@ -114,16 +114,25 @@ export function Hero() {
             {t('hero.subheadline')}
           </p>
 
+          {/* Phase 4.1.5 — early-access is now the primary action in
+            * the body (the header demoted it to a text link). Supporting
+            * microcopy sits directly under the button so first-time
+            * visitors still see the offer twice on the page. */}
           <div
-            className="flex flex-wrap items-center gap-x-6 gap-y-4 animate-fade-rise"
+            className="flex flex-col gap-3 animate-fade-rise"
             style={{ animationDelay: '0.65s' }}
           >
-            <CtaButton href={MAILTO} variant="primary">
-              {t('common.ctaPrimary')}
-            </CtaButton>
-            <CtaButton href="#product" variant="ghost">
-              {t('common.ctaSecondary')}
-            </CtaButton>
+            <div className="flex flex-wrap items-center gap-x-6 gap-y-4">
+              <CtaButton href={MAILTO} variant="primary">
+                {t('common.ctaPrimary')}
+              </CtaButton>
+              <CtaButton href="#product" variant="ghost">
+                {t('common.ctaSecondary')}
+              </CtaButton>
+            </div>
+            <p className="text-[13px] italic text-ink/70 leading-relaxed max-w-[28rem]">
+              {t('hero.earlyAccessSupport')}
+            </p>
           </div>
 
           <p

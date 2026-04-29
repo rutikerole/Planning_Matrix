@@ -1,13 +1,12 @@
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
-import { Menu } from 'lucide-react'
+import { ArrowRight, Menu } from 'lucide-react'
 import { Drawer } from 'vaul'
 import { cn } from '@/lib/utils'
 import { Container } from '@/components/shared/Container'
 import { Wordmark } from '@/components/shared/Wordmark'
 import { LanguageSwitcher } from '@/components/shared/LanguageSwitcher'
-import { CtaButton } from '@/components/shared/CtaButton'
 
 const MAILTO =
   'mailto:vibecoders786@gmail.com?subject=Planning%20Matrix%20%E2%80%94%20Fr%C3%BChzugang'
@@ -73,21 +72,33 @@ export function Nav() {
           ))}
         </nav>
 
+        {/* Phase 4.1.5 — CTA hierarchy flip. Returning users are the
+          * highest-frequency visitor type; Log in is now the primary
+          * filled action in the top-right corner. Early access stays
+          * accessible as a quiet text link beside it (still appears
+          * twice for first-time visitors: here + the hero body CTA). */}
         <div className="hidden lg:flex items-center gap-5">
           <LanguageSwitcher />
           <span
             className="h-4 w-px bg-border-strong/55"
             aria-hidden="true"
           />
+          <a
+            href={MAILTO}
+            className="text-[14px] font-medium text-ink/85 hover:text-ink transition-colors duration-soft px-2 py-1.5 rounded-sm hover:bg-muted/45 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/35 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+          >
+            {t('common.ctaPrimary')}
+          </a>
           <Link
             to="/sign-in"
-            className="text-[13.5px] font-medium text-ink/80 hover:text-ink transition-colors duration-soft px-2 py-1.5 rounded-sm hover:bg-muted/45 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/35 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+            className="group inline-flex items-center gap-2 text-[14px] font-medium tracking-tight transition-[background-color,color,box-shadow,transform] duration-soft ease-soft h-11 rounded-[5px] bg-ink px-5 text-paper hover:bg-ink/92 shadow-[0_1px_0_hsl(var(--paper)/0.05)_inset,0_2px_4px_-1px_hsl(220_15%_11%/0.18)] hover:shadow-[0_1px_0_hsl(var(--paper)/0.05)_inset,0_8px_18px_-6px_hsl(220_15%_11%/0.32)] motion-safe:hover:-translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink focus-visible:ring-offset-2 focus-visible:ring-offset-background"
           >
-            {t('common.ctaLogin')}
+            <span>{t('common.ctaLogin')}</span>
+            <ArrowRight
+              aria-hidden="true"
+              className="shrink-0 size-4 -mr-1 transition-transform duration-soft ease-soft group-hover:translate-x-0.5"
+            />
           </Link>
-          <CtaButton href={MAILTO} variant="primary">
-            {t('common.ctaPrimary')}
-          </CtaButton>
         </div>
 
         {/* Mobile: hamburger trigger */}
@@ -127,22 +138,29 @@ export function Nav() {
                       </a>
                     </Drawer.Close>
                   ))}
+                  {/* Phase 4.1.5 — CTA hierarchy flip mirrored on
+                    * mobile. Early access stays as a quiet text link;
+                    * Log in becomes the primary filled action at the
+                    * thumb-stack bottom (most-tappable position). */}
+                  <Drawer.Close asChild>
+                    <a
+                      href={MAILTO}
+                      className="text-[15px] text-muted-foreground hover:text-ink py-3 mt-2"
+                    >
+                      {t('common.ctaPrimary')}
+                    </a>
+                  </Drawer.Close>
                   <Drawer.Close asChild>
                     <Link
                       to="/sign-in"
-                      className="text-[15px] text-muted-foreground hover:text-ink py-3 mt-2"
+                      className="group inline-flex items-center gap-2 mt-4 self-start text-[14px] font-medium tracking-tight h-11 rounded-[5px] bg-ink px-5 text-paper hover:bg-ink/92 shadow-[0_1px_0_hsl(var(--paper)/0.05)_inset,0_2px_4px_-1px_hsl(220_15%_11%/0.18)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink focus-visible:ring-offset-2 focus-visible:ring-offset-background transition-[background-color,box-shadow] duration-soft ease-soft"
                     >
-                      {t('common.ctaLogin')}
+                      <span>{t('common.ctaLogin')}</span>
+                      <ArrowRight
+                        aria-hidden="true"
+                        className="shrink-0 size-4 -mr-1 transition-transform duration-soft ease-soft group-hover:translate-x-0.5"
+                      />
                     </Link>
-                  </Drawer.Close>
-                  <Drawer.Close asChild>
-                    <CtaButton
-                      href={MAILTO}
-                      variant="primary"
-                      className="mt-4 self-start"
-                    >
-                      {t('common.ctaPrimary')}
-                    </CtaButton>
                   </Drawer.Close>
                 </div>
               </Drawer.Content>
