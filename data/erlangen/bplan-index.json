@@ -1,0 +1,295 @@
+{
+  "_schemaVersion": 1,
+  "retrieved_on": "2026-04-29",
+  "source_ids": [
+    "stadt-erlangen-bplaene-rechtsgueltig",
+    "stadt-erlangen-bplaene-im-verfahren",
+    "bayern-bauleitplanungsportal"
+  ],
+  "coverage_note_de": "Diese Datei ist eine repräsentative Stichprobe aus den von der Stadt Erlangen am 19.02.2026 veröffentlichten rechtsgültigen Bebauungsplänen sowie aus den im Verfahren befindlichen Plänen — KEINE vollständige Inventur. Die Stadt Erlangen veröffentlicht keinen strukturierten CSV/GeoJSON-Download des B-Plan-Bestands; das Bayerische Bauleitplanungsportal (geoportal.bayern.de/bauleitplanungsportal/) wird zum 31.10.2026 durch das DiPlan-Portal abgelöst. Eine vollständige Inventur ist Aufgabe des Quartalsrefresh — entweder durch automatisierte Scrape-Routine gegen die Stadt-Erlangen-Liste oder durch direkten Abruf des BLfD/Bauleitplanungsportals nach DiPlan-Migration.",
+  "coverage_note_en": "Representative subset only. Stadt Erlangen does not publish a structured CSV/GeoJSON download; the Bavarian Bauleitplanungsportal will transition to the new DiPlan portal on 2026-10-31. A full inventory is a quarterly-refresh task.",
+  "stadtteile_covered": [
+    "Innenstadt",
+    "Bruck",
+    "Tennenlohe",
+    "Eltersdorf",
+    "Frauenaurach",
+    "Anger"
+  ],
+  "_stadtteil_inference_note_de": "Das Stadtteil-Feld jedes Eintrags ist heuristisch aus dem Plan-Namen abgeleitet (z. B. 'Häusling*' → Eltersdorf-Umgebung, 'Frauenauracher*' → Frauenaurach, T-Präfix → Tennenlohe-Umgebung, F-Präfix → Frauenaurach, E-Präfix → Eltersdorf). Eine verbindliche Stadtteil-Zuordnung erfordert den Abgleich mit dem Geoportal — derzeit als _pending markiert, wo Unsicherheit besteht.",
+  "entries": [
+    {
+      "plan_number": "181-7D",
+      "name_de": "Stubenloh-Süd (7. Deckblatt zum BPlan 181)",
+      "stadtteil": "Innenstadt",
+      "in_force_since": "2026-02-19",
+      "boundary_summary_de": "Bereich Stubenloh am Südrand der Markgräflichen Neustadt.",
+      "use_class": null,
+      "source_url_specific": "https://erlangen.de/aktuelles/bplaene_rechtsgueltig"
+    },
+    {
+      "plan_number": "181-6D",
+      "name_de": "Mozartstraße (6. Deckblatt zum BPlan 181)",
+      "stadtteil": "Innenstadt",
+      "in_force_since": {
+        "_pending": "Genaues Inkrafttretens-Datum nur über das Original-Deckblatt-PDF im Stadtrecht-Repository extrahierbar."
+      },
+      "boundary_summary_de": "Bereich Mozartstraße in der Stubenloh / Innenstadt.",
+      "use_class": null,
+      "source_url_specific": "https://erlangen.de/aktuelles/bplaene_rechtsgueltig"
+    },
+    {
+      "plan_number": "467",
+      "name_de": "Erweiterung Uni-Südgelände Ost",
+      "stadtteil": "Innenstadt",
+      "in_force_since": {
+        "_pending": "Genaues Inkrafttretens-Datum aus dem Plan-PDF zu entnehmen."
+      },
+      "boundary_summary_de": "Erweiterung des Universitäts-Südgeländes östlich der Friedrich-Alexander-Universität.",
+      "use_class": "SO (Sondergebiet — Universität)",
+      "source_url_specific": "https://erlangen.de/aktuelles/bplaene_rechtsgueltig"
+    },
+    {
+      "plan_number": "402-5D",
+      "name_de": "Nahversorgungszentrum Odenwaldallee (5. Deckblatt)",
+      "stadtteil": "Anger",
+      "in_force_since": {
+        "_pending": "Inkrafttretens-Datum des 5. Deckblatts aus dem PDF."
+      },
+      "boundary_summary_de": "Bereich Odenwaldallee — Nahversorgungszentrum.",
+      "use_class": "MK / SO (Nahversorgung)",
+      "source_url_specific": "https://erlangen.de/aktuelles/bplaene_rechtsgueltig"
+    },
+    {
+      "plan_number": "383-1D",
+      "name_de": "Kerngebiet Nürnberger Straße (1. Deckblatt zum BPlan 383, vorhabenbezogen)",
+      "stadtteil": "Anger",
+      "in_force_since": {
+        "_pending": "Aus PDF zu entnehmen."
+      },
+      "boundary_summary_de": "Bereich Nürnberger Straße / Erlangen Arcaden.",
+      "use_class": "MK (Kerngebiet)",
+      "source_url_specific": "https://erlangen.de/aktuelles/bplaene_rechtsgueltig"
+    },
+    {
+      "plan_number": "317-4D",
+      "name_de": "Kerngebiet Nürnberger Straße (4. Deckblatt zum BPlan 317)",
+      "stadtteil": "Anger",
+      "in_force_since": {
+        "_pending": "Aus PDF zu entnehmen."
+      },
+      "boundary_summary_de": "Bereich Nürnberger Straße — angrenzend an BPlan 383.",
+      "use_class": "MK (Kerngebiet)",
+      "source_url_specific": "https://erlangen.de/aktuelles/bplaene_rechtsgueltig"
+    },
+    {
+      "plan_number": "472",
+      "name_de": "Geh- und Radweg Haundorf-Häusling",
+      "stadtteil": "Eltersdorf",
+      "in_force_since": {
+        "_pending": "Aus PDF zu entnehmen."
+      },
+      "boundary_summary_de": "Geh- und Radwegtrasse zwischen Haundorf und Häusling im Süden Erlangens.",
+      "use_class": "Verkehrsanlage",
+      "source_url_specific": "https://erlangen.de/aktuelles/bplaene_rechtsgueltig"
+    },
+    {
+      "plan_number": "438",
+      "name_de": "Siemens Campus Modul 8",
+      "stadtteil": "Tennenlohe",
+      "in_force_since": {
+        "_pending": "Aus PDF zu entnehmen."
+      },
+      "boundary_summary_de": "Modul 8 des Siemens Campus, südliches Tennenlohe.",
+      "use_class": "GE / SO (Gewerbe / Forschung)",
+      "source_url_specific": "https://erlangen.de/aktuelles/bplaene_rechtsgueltig"
+    },
+    {
+      "plan_number": "412-1D",
+      "name_de": "Häuslinger Wegäcker West (1. Deckblatt zum BPlan 412)",
+      "stadtteil": "Eltersdorf",
+      "in_force_since": {
+        "_pending": "Aus PDF zu entnehmen."
+      },
+      "boundary_summary_de": "Häuslinger Wegäcker West, südliches Stadtgebiet bei Häusling.",
+      "use_class": "WA (allgemeines Wohngebiet)",
+      "source_url_specific": "https://erlangen.de/aktuelles/bplaene_rechtsgueltig"
+    },
+    {
+      "plan_number": "310-4D",
+      "name_de": "Jahn-Haagstraße (4. Deckblatt zum BPlan 310)",
+      "stadtteil": {
+        "_pending": "Stadtteil-Zuordnung Jahn-Haagstraße nicht eindeutig aus Plan-Namen ableitbar — Geoportal-Abgleich erforderlich."
+      },
+      "in_force_since": {
+        "_pending": "Aus PDF zu entnehmen."
+      },
+      "boundary_summary_de": "Bereich Jahn-Haagstraße.",
+      "use_class": null,
+      "source_url_specific": "https://erlangen.de/aktuelles/bplaene_rechtsgueltig"
+    },
+    {
+      "plan_number": "469",
+      "name_de": "Häusling Nord",
+      "stadtteil": "Eltersdorf",
+      "in_force_since": {
+        "_pending": "Aus PDF zu entnehmen."
+      },
+      "boundary_summary_de": "Häusling Nord, südliches Stadtgebiet bei Häusling.",
+      "use_class": "WA / WR",
+      "source_url_specific": "https://erlangen.de/aktuelles/bplaene_rechtsgueltig"
+    },
+    {
+      "plan_number": "464",
+      "name_de": "Am Klosterholz West",
+      "stadtteil": {
+        "_pending": "Stadtteil-Zuordnung Klosterholz nicht eindeutig — Geoportal-Abgleich erforderlich (vermutlich Bruck oder Eltersdorf-Umgebung)."
+      },
+      "in_force_since": {
+        "_pending": "Aus PDF zu entnehmen."
+      },
+      "boundary_summary_de": "Bereich Klosterholz West.",
+      "use_class": null,
+      "source_url_specific": "https://erlangen.de/aktuelles/bplaene_rechtsgueltig"
+    },
+    {
+      "plan_number": "440",
+      "name_de": "Siemens Stadtquartier Süd",
+      "stadtteil": "Tennenlohe",
+      "in_force_since": null,
+      "boundary_summary_de": "Großes Stadtquartier-Vorhaben südlich des Siemens Campus.",
+      "use_class": "MI / SO (Mischgebiet / Sondergebiet — gemischt)",
+      "source_url_specific": "https://erlangen.de/aktuelles/bebauungsplaene_im_verfahren",
+      "_note": "im Verfahren — frühe Öffentlichkeitsbeteiligung 23.02.2026 – 27.03.2026."
+    },
+    {
+      "plan_number": "383-2D",
+      "name_de": "Erlangen Arcaden (2. Deckblatt zum BPlan 383)",
+      "stadtteil": "Anger",
+      "in_force_since": null,
+      "boundary_summary_de": "Erweiterungs-/Anpassungsdeckblatt zum Erlangen-Arcaden-Plan.",
+      "use_class": "MK (Kerngebiet)",
+      "source_url_specific": "https://erlangen.de/aktuelles/bebauungsplaene_im_verfahren",
+      "_note": "im Verfahren."
+    },
+    {
+      "plan_number": "199-4D",
+      "name_de": "Odenwaldallee (4. Deckblatt zum BPlan 199)",
+      "stadtteil": "Anger",
+      "in_force_since": null,
+      "boundary_summary_de": "Bereich Odenwaldallee, Anpassungsdeckblatt.",
+      "use_class": null,
+      "source_url_specific": "https://erlangen.de/aktuelles/bebauungsplaene_im_verfahren",
+      "_note": "im Verfahren."
+    },
+    {
+      "plan_number": "341-1D",
+      "name_de": "Hofmannstraße (1. Deckblatt zum BPlan 341)",
+      "stadtteil": {
+        "_pending": "Stadtteil-Zuordnung Hofmannstraße — Geoportal-Abgleich erforderlich."
+      },
+      "in_force_since": null,
+      "boundary_summary_de": "Bereich Hofmannstraße.",
+      "use_class": null,
+      "source_url_specific": "https://erlangen.de/aktuelles/bebauungsplaene_im_verfahren",
+      "_note": "im Verfahren."
+    },
+    {
+      "plan_number": "E 229-B",
+      "name_de": "Nahversorgungszentrum am S-Bahnhaltepunkt Eltersdorf",
+      "stadtteil": "Eltersdorf",
+      "in_force_since": null,
+      "boundary_summary_de": "Bereich um den S-Bahnhaltepunkt Eltersdorf.",
+      "use_class": "MK / SO (Nahversorgung)",
+      "source_url_specific": "https://erlangen.de/aktuelles/bebauungsplaene_im_verfahren",
+      "_note": "im Verfahren — E-Präfix steht für Eltersdorf-Bezug."
+    },
+    {
+      "plan_number": "328-2D",
+      "name_de": "Ehemalige Bahnflächen südlich der Hilpertstraße (2. Deckblatt)",
+      "stadtteil": {
+        "_pending": "Stadtteil-Zuordnung Hilpertstraße — Geoportal-Abgleich erforderlich."
+      },
+      "in_force_since": null,
+      "boundary_summary_de": "Bereich südlich der Hilpertstraße auf ehemaligen Bahnflächen.",
+      "use_class": null,
+      "source_url_specific": "https://erlangen.de/aktuelles/bebauungsplaene_im_verfahren",
+      "_note": "im Verfahren."
+    },
+    {
+      "plan_number": "F 465",
+      "name_de": "Gewerbegebiet Frauenauracher Straße Ost",
+      "stadtteil": "Frauenaurach",
+      "in_force_since": null,
+      "boundary_summary_de": "Gewerbegebiet östlich der Frauenauracher Straße.",
+      "use_class": "GE (Gewerbegebiet)",
+      "source_url_specific": "https://erlangen.de/aktuelles/bebauungsplaene_im_verfahren",
+      "_note": "im Verfahren — F-Präfix steht für Frauenaurach-Bezug."
+    },
+    {
+      "plan_number": "F 450",
+      "name_de": "Gewerbegebiet Geisberg",
+      "stadtteil": "Frauenaurach",
+      "in_force_since": null,
+      "boundary_summary_de": "Gewerbegebiet Geisberg im Westteil bei Frauenaurach.",
+      "use_class": "GE",
+      "source_url_specific": "https://erlangen.de/aktuelles/bebauungsplaene_im_verfahren",
+      "_note": "im Verfahren."
+    },
+    {
+      "plan_number": "179-5D",
+      "name_de": "Südlich des Bachfeldgrabens (5. Deckblatt zum BPlan 179)",
+      "stadtteil": {
+        "_pending": "Stadtteil-Zuordnung Bachfeldgraben — Geoportal-Abgleich erforderlich."
+      },
+      "in_force_since": null,
+      "boundary_summary_de": "Bereich südlich des Bachfeldgrabens.",
+      "use_class": null,
+      "source_url_specific": "https://erlangen.de/aktuelles/bebauungsplaene_im_verfahren",
+      "_note": "im Verfahren."
+    },
+    {
+      "plan_number": "T248-2D / T249-9D",
+      "name_de": "Trassenkorridore östliches Wetterkreuzfeld (Sammeldeckblätter)",
+      "stadtteil": "Tennenlohe",
+      "in_force_since": null,
+      "boundary_summary_de": "Trassenkorridore am östlichen Wetterkreuzfeld.",
+      "use_class": "Verkehrsanlage / Infrastruktur",
+      "source_url_specific": "https://erlangen.de/aktuelles/bebauungsplaene_im_verfahren",
+      "_note": "im Verfahren — T-Präfix steht für Tennenlohe-Bezug."
+    },
+    {
+      "plan_number": "156-2D",
+      "name_de": "Fichtestraße (2. Deckblatt zum BPlan 156)",
+      "stadtteil": {
+        "_pending": "Stadtteil-Zuordnung Fichtestraße — Geoportal-Abgleich erforderlich (vermutlich Innenstadt / Stubenloh-Umgebung)."
+      },
+      "in_force_since": null,
+      "boundary_summary_de": "Bereich Fichtestraße.",
+      "use_class": null,
+      "source_url_specific": "https://erlangen.de/aktuelles/bebauungsplaene_im_verfahren",
+      "_note": "im Verfahren."
+    },
+    {
+      "plan_number": "252",
+      "name_de": "Universität Nordgelände",
+      "stadtteil": "Innenstadt",
+      "in_force_since": null,
+      "boundary_summary_de": "Universitäts-Nordgelände, Bereich nördlich der Schuhstraße / Henkestraße.",
+      "use_class": "SO (Sondergebiet — Universität)",
+      "source_url_specific": "https://erlangen.de/aktuelles/bebauungsplaene_im_verfahren",
+      "_note": "im Verfahren."
+    },
+    {
+      "plan_number": "315-1D",
+      "name_de": "Rathenau Süd (1. Deckblatt zum BPlan 315)",
+      "stadtteil": "Anger",
+      "in_force_since": null,
+      "boundary_summary_de": "Bereich Rathenau Süd.",
+      "use_class": null,
+      "source_url_specific": "https://erlangen.de/aktuelles/bebauungsplaene_im_verfahren",
+      "_note": "im Verfahren."
+    }
+  ],
+  "_pending_block": "(1) Eine vollständige Inventur aller rechtsgültigen Bebauungspläne (vermutlich >100 Pläne) ist hier NICHT abgebildet — diese Datei enthält 25 Einträge, die im Audit-Setup direkt aus den Stadt-Erlangen-Listen extrahierbar waren. Quartalsrefresh-Aufgabe: Geoportal-Bayern-Bauleitplanungsportal-Abruf (oder DiPlan ab 31.10.2026) auf alle Erlanger Pläne. (2) Stadtteil-Zuordnungen mit `_pending` benötigen Geoportal-Abgleich — Plan-Name allein reicht nicht. (3) Inkrafttretens-Daten fehlen weitgehend; Quelle ist das jeweilige Plan-PDF im Stadt-Erlangen-Repository unter /uwao-api/faila/files/bypath/Dokumente/Bauen%20%26%20Planen/Bebauungsplanung/."
+}
