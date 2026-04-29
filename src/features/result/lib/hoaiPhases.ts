@@ -47,7 +47,7 @@ const RULES: Array<{ pattern: RegExp; phase: HoaiPhase }> = [
   { pattern: /m(ä|a)ngel|gew(ä|a)hrleistung|nachbetreuung/i, phase: 'LP 9' },
 ]
 
-export function classifyDocument(title: string): HoaiPhase {
+function classifyDocument(title: string): HoaiPhase {
   for (const { pattern, phase } of RULES) {
     if (pattern.test(title)) return phase
   }

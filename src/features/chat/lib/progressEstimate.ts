@@ -16,7 +16,7 @@ import type { Specialist } from '@/types/projectState'
  * is roughly through when this voice is active. Calibrated against
  * Phase 3 conversation transcripts.
  */
-export const SPECIALIST_PROGRESS: Record<Specialist, number> = {
+const SPECIALIST_PROGRESS: Record<Specialist, number> = {
   moderator: 0.05,
   planungsrecht: 0.25,
   bauordnungsrecht: 0.5,

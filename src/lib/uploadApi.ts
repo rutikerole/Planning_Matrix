@@ -58,7 +58,7 @@ export class UploadError extends Error {
  * Validate a file against the bucket's policy mirror. Catching here
  * avoids a round-trip to Storage for predictable rejections.
  */
-export function validateFile(file: File): void {
+function validateFile(file: File): void {
   if (file.size > MAX_FILE_SIZE) {
     throw new UploadError(
       'too_large',

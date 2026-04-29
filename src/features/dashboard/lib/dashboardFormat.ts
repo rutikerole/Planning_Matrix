@@ -22,7 +22,7 @@ const NUMBER_WORDS_DE: Record<number, string> = {
  * 1..12 → German number word with capitalised first letter
  * 13+    → numeric digit string
  */
-export function germanNumberWord(n: number): string {
+function germanNumberWord(n: number): string {
   if (n in NUMBER_WORDS_DE) return NUMBER_WORDS_DE[n]
   return String(n)
 }

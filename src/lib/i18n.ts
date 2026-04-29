@@ -13,5 +13,3 @@ i18n
     supportedLngs: ['de', 'en'],
     interpolation: { escapeValue: false },
   })
-
-export default i18n

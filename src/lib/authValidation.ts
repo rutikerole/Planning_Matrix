@@ -2,14 +2,14 @@ import { z } from 'zod'
 
 /* ── Field schemas ───────────────────────────────────────────────────── */
 
-export const emailSchema = z
+const emailSchema = z
   .string()
   .min(1, 'auth.errors.emailRequired')
   .email('auth.errors.emailInvalid')
   .max(254, 'auth.errors.emailTooLong')
   .transform((v) => v.trim().toLowerCase())
 
-export const passwordSchema = z
+const passwordSchema = z
   .string()
   .min(10, 'auth.errors.passwordTooShort')
   .max(128, 'auth.errors.passwordTooLong')
@@ -17,7 +17,7 @@ export const passwordSchema = z
 /** Same as password, with a soft strength signal — never blocks, just
  *  warns. We never enforce complex rules (frustrates users, doesn't
  *  meaningfully improve security per OWASP's modern guidance). */
-export const newPasswordSchema = passwordSchema.refine(
+const newPasswordSchema = passwordSchema.refine(
   (v) => /[a-zA-Z]/.test(v) && /[0-9\W]/.test(v),
   { message: 'auth.errors.passwordWeak' },
 )

@@ -61,33 +61,6 @@ const DEFAULT_LABELS_DE: Record<CockpitStatusKind, string> = {
   not_needed: 'Nicht erforderlich',
 }
 
-const DEFAULT_LABELS_EN: Record<CockpitStatusKind, string> = {
-  ok: 'OK',
-  pending: 'Pending',
-  attention: 'Attention',
-  verified: 'Verified',
-  assumption: 'Assumption',
-  void: 'Not determinable',
-  active: 'Active',
-  erforderlich: 'Required',
-  liegt_vor: 'On file',
-  in_bearbeitung: 'In progress',
-  nicht_erforderlich: 'Not required',
-  eingereicht: 'Submitted',
-  genehmigt: 'Approved',
-  freigegeben: 'Released',
-  needed: 'Needed',
-  not_needed: 'Not needed',
-}
-
-/** Pick a label from the right locale table for callers that don't override. */
-export function defaultStatusLabel(
-  kind: CockpitStatusKind,
-  lang: 'de' | 'en',
-): string {
-  return lang === 'en' ? DEFAULT_LABELS_EN[kind] : DEFAULT_LABELS_DE[kind]
-}
-
 export function defaultStatusLabelDe(kind: CockpitStatusKind): string {
   return DEFAULT_LABELS_DE[kind]
 }

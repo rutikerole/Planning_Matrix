@@ -9,7 +9,7 @@
 // ───────────────────────────────────────────────────────────────────────
 
 // TODO(phase-4): replace with role check when admin role lands.
-export const ADMIN_EMAILS: readonly string[] = [
+const ADMIN_EMAILS: readonly string[] = [
   'erolerutik9@gmail.com', // Rutik — active dashboard account
   'vibecoders786@gmail.com', // Rutik — secondary working account
 ] as const
