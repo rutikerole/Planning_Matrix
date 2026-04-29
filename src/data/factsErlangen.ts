@@ -12,7 +12,7 @@
  * context. Same flagging pattern as Phase 3.3 photo captions.
  */
 
-export interface BayernFact {
+export interface ErlangenFact {
   /** Permanent id so we can rotate stable per-session. */
   id: string
   de: string
@@ -23,7 +23,7 @@ export interface BayernFact {
   verifyBeforePublicLaunch: true
 }
 
-export const FACTS_BAYERN: BayernFact[] = [
+export const FACTS_ERLANGEN: ErlangenFact[] = [
   {
     id: 'pv-pflicht-2025',
     de: 'Bayern hat 2025 die PV-Pflicht für Wohnneubauten eingeführt.',

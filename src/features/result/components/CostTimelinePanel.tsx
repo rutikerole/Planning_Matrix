@@ -6,7 +6,7 @@ import {
   detectProcedure,
   formatEurRange,
   type CostBreakdown,
-} from '../lib/costNormsBayern'
+} from '../lib/costNormsErlangen'
 
 interface Props {
   state: Partial<ProjectState>
@@ -91,7 +91,7 @@ const COST_LINES: Array<{ key: keyof CostBreakdown; labelDe: string; labelEn: st
  * orientation values with a ±25 % confidence interval — never as
  * binding quotes.
  *
- * Cost ranges come from costNormsBayern.ts, scaled by detected
+ * Cost ranges come from costNormsErlangen.ts, scaled by detected
  * procedure type + Gebäudeklasse from project state. Timeline phase
  * weights and ranges are static (procedural latency in Bayern is more
  * institutional than project-dependent at this scale).

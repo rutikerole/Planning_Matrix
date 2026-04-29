@@ -1,9 +1,9 @@
 import type { ProjectRow } from '@/types/db'
 import type { ProjectState } from '@/types/projectState'
 import {
-  SMART_SUGGESTIONS_BAYERN,
+  SMART_SUGGESTIONS_ERLANGEN,
   type SmartSuggestion,
-} from '@/data/smartSuggestionsBayern'
+} from '@/data/smartSuggestionsErlangen'
 
 interface MatchArgs {
   project: ProjectRow
@@ -42,7 +42,7 @@ export function pickSmartSuggestions({
   )
 
   const out: SmartSuggestion[] = []
-  for (const s of SMART_SUGGESTIONS_BAYERN) {
+  for (const s of SMART_SUGGESTIONS_ERLANGEN) {
     if (existingRecIds.has(`smart-${s.id}`)) continue
     if (s.intents && !s.intents.includes(project.intent)) continue
     if (s.bundeslaender && !s.bundeslaender.includes(project.bundesland))

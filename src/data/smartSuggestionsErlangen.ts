@@ -30,7 +30,7 @@ export interface SmartSuggestion {
   verifyBeforePublicLaunch: true
 }
 
-export const SMART_SUGGESTIONS_BAYERN: SmartSuggestion[] = [
+export const SMART_SUGGESTIONS_ERLANGEN: SmartSuggestion[] = [
   {
     id: 'pv-pflicht',
     titleDe: 'Photovoltaikanlage einplanen',
