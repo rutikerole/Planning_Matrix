@@ -254,6 +254,90 @@ export async function postChatTurnStreaming(
     return
   }
 
+  // Hot-fix (post-Phase-1) — guarantee exactly one of onComplete /
+  // onError fires, no matter how the response arrives. Prior shape
+  // hung the bubble forever when (a) the response was non-SSE
+  // (proxy stripped Accept, function took the JSON branch), or
+  // (b) the SSE stream closed without ever delivering a `complete`
+  // or `error` frame. The Promise wrapper in useChatTurn.ts:88
+  // had no settle path in those cases — the streaming bubble stayed
+  // open, the persisted assistant message never landed in the
+  // messages cache, and only a page refresh (which re-fetches via
+  // useMessages) revealed the answer.
+  //
+  // Two guards:
+  //   1. wrap the caller's onComplete / onError so the local
+  //      `settled` flag flips on either path.
+  //   2. after the read loop returns done:true, if !settled, treat
+  //      the buffered text as a non-streaming JSON envelope and
+  //      synthesize the matching settle call. Same handling for
+  //      a non-SSE Content-Type at the start.
+  let settled = false
+  const wrappedHandlers: StreamingHandlers = {
+    onTextDelta: handlers.onTextDelta,
+    onComplete: (env) => {
+      if (settled) return
+      settled = true
+      handlers.onComplete(env)
+    },
+    onError: (err) => {
+      if (settled) return
+      settled = true
+      handlers.onError(err)
+    },
+  }
+
+  const settleFromJsonBody = (raw: string, status: number) => {
+    const trimmed = raw.trim()
+    if (!trimmed) {
+      wrappedHandlers.onError(
+        new ChatTurnError(
+          'streaming_failed',
+          null,
+          null,
+          status,
+          'Stream ended without a complete or error frame and the response body was empty.',
+        ),
+      )
+      return
+    }
+    let body: ChatTurnResponse
+    try {
+      body = JSON.parse(trimmed) as ChatTurnResponse
+    } catch {
+      wrappedHandlers.onError(
+        new ChatTurnError(
+          'malformed_response',
+          null,
+          null,
+          status,
+          'Stream ended without a complete frame and the body was not parsable JSON.',
+        ),
+      )
+      return
+    }
+    if (body.ok) {
+      wrappedHandlers.onComplete({
+        ok: true,
+        assistantMessage: body.assistantMessage,
+        projectState: body.projectState,
+        completionSignal: body.completionSignal,
+        costInfo: body.costInfo,
+      })
+    } else {
+      wrappedHandlers.onError(
+        new ChatTurnError(
+          body.error.code,
+          body.error.retryAfterMs ?? null,
+          body.error.requestId ?? null,
+          status,
+          body.error.message,
+          body.error.rateLimit ?? null,
+        ),
+      )
+    }
+  }
+
   if (!response.ok || !response.body) {
     // Phase 4.1 #125 — when the function rejected the request before
     // reaching the SSE phase (rate-limit, auth, validation), it sent a
@@ -275,7 +359,7 @@ export async function postChatTurnStreaming(
     } catch {
       /* fall through to the generic streaming_failed envelope below */
     }
-    handlers.onError(
+    wrappedHandlers.onError(
       parsedError ??
         new ChatTurnError(
           'streaming_failed',
@@ -285,6 +369,22 @@ export async function postChatTurnStreaming(
           `Streaming endpoint returned HTTP ${response.status}`,
         ),
     )
+    return
+  }
+
+  // Hot-fix guard #1 — Content-Type check. If a proxy stripped the
+  // Accept header (or the function took the non-streaming branch
+  // for any other reason), the response will be application/json.
+  // Read the body as a single envelope and settle deterministically.
+  const contentType = response.headers.get('content-type') ?? ''
+  if (!contentType.includes('text/event-stream')) {
+    if (import.meta.env.DEV) {
+      console.warn(
+        `[chat-turn] streaming endpoint returned non-SSE content-type "${contentType}"; reading as JSON envelope.`,
+      )
+    }
+    const raw = await response.text()
+    settleFromJsonBody(raw, response.status)
     return
   }
 
@@ -321,7 +421,7 @@ export async function postChatTurnStreaming(
       }
     }
   } catch (err) {
-    handlers.onError(
+    wrappedHandlers.onError(
       new ChatTurnError(
         'streaming_failed',
         null,
@@ -331,6 +431,22 @@ export async function postChatTurnStreaming(
       ),
     )
     return
+  }
+
+  // Hot-fix guard #2 — read loop exited cleanly (done:true). If we
+  // reached this point without onComplete / onError firing, no
+  // recognised SSE frame was ever delivered. The body might still
+  // contain a non-streaming JSON envelope (some CDNs buffer SSE and
+  // flush at close, with the raw buffered bytes resembling a JSON
+  // body); try to parse it. Otherwise surface streaming_failed so
+  // useChatTurn's fallback path takes over.
+  if (!settled) {
+    if (import.meta.env.DEV) {
+      console.warn(
+        '[chat-turn] streaming response closed without a complete/error frame — attempting JSON-envelope fallback.',
+      )
+    }
+    settleFromJsonBody(sseBuffer, response.status)
   }
 
   function handleFrame(frame: StreamFrame) {
@@ -347,7 +463,7 @@ export async function postChatTurnStreaming(
         console.info('latencyMs', frame.costInfo.latencyMs)
         console.groupEnd()
       }
-      handlers.onComplete({
+      wrappedHandlers.onComplete({
         ok: true,
         assistantMessage: frame.assistantMessage,
         projectState: frame.projectState,
@@ -355,7 +471,7 @@ export async function postChatTurnStreaming(
         costInfo: frame.costInfo,
       })
     } else if (frame.type === 'error') {
-      handlers.onError(
+      wrappedHandlers.onError(
         new ChatTurnError(
           // Cast — server emits a known set of codes, fall back to internal.
           (frame.code as ChatApiErrorCode) ?? 'streaming_failed',
