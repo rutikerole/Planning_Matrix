@@ -1,0 +1,386 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://planning-matrix/data/erlangen/_meta/schema.json",
+  "title": "Planning Matrix — Erlangen city-truth slice schema",
+  "description": "Shape contract for every JSON file in data/erlangen/. Phase 3 (system-prompt grounding) and Phase 4 (eval harness) both validate against this. Every file is dated; every fact carries a source_id pointer to data/erlangen/_meta/sources.json.",
+  "type": "object",
+  "$defs": {
+    "schemaVersion": {
+      "type": "integer",
+      "const": 1,
+      "description": "Bumped on a breaking shape change. Migration helpers branch on this."
+    },
+    "isoDate": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+      "description": "ISO-8601 date (YYYY-MM-DD)."
+    },
+    "sourceId": {
+      "type": "string",
+      "description": "Key into data/erlangen/_meta/sources.json#/sources.",
+      "minLength": 1
+    },
+    "pendingFlag": {
+      "type": "string",
+      "minLength": 5,
+      "description": "Honest 'we don't yet know' marker. Carries a short reason and the source to consult."
+    },
+    "Bauamt": {
+      "type": "object",
+      "required": [
+        "_schemaVersion",
+        "retrieved_on",
+        "official_name_de",
+        "address",
+        "contact",
+        "opening_hours",
+        "responsibilities_de",
+        "source_ids"
+      ],
+      "properties": {
+        "_schemaVersion": { "$ref": "#/$defs/schemaVersion" },
+        "retrieved_on": { "$ref": "#/$defs/isoDate" },
+        "official_name_de": { "type": "string", "minLength": 1 },
+        "parent_office_de": { "type": "string" },
+        "address": {
+          "type": "object",
+          "required": ["street", "postcode", "city"],
+          "properties": {
+            "street": { "type": "string" },
+            "postcode": { "type": "string", "pattern": "^\\d{5}$" },
+            "city": { "type": "string" }
+          }
+        },
+        "contact": {
+          "type": "object",
+          "properties": {
+            "phone_general": { "type": "string" },
+            "phone_alternate": { "type": "string" },
+            "fax": { "type": "string" },
+            "email_general": { "type": "string" },
+            "online_form_url": { "type": "string" }
+          }
+        },
+        "opening_hours": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["weekday", "open", "close"],
+            "properties": {
+              "weekday": { "type": "string", "enum": ["mon","tue","wed","thu","fri","sat","sun"] },
+              "open": { "type": "string" },
+              "close": { "type": "string" },
+              "notes_de": { "type": "string" }
+            }
+          }
+        },
+        "responsibilities_de": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "specialty_contacts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["topic_de", "email"],
+            "properties": {
+              "topic_de": { "type": "string" },
+              "email": { "type": "string" },
+              "phone": { "type": "string" }
+            }
+          }
+        },
+        "online_services": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["label_de", "url", "retrieved_on"],
+            "properties": {
+              "label_de": { "type": "string" },
+              "url": { "type": "string" },
+              "retrieved_on": { "$ref": "#/$defs/isoDate" }
+            }
+          }
+        },
+        "source_ids": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/sourceId" },
+          "minItems": 1
+        }
+      }
+    },
+    "Satzung": {
+      "type": "object",
+      "required": [
+        "_schemaVersion",
+        "retrieved_on",
+        "id",
+        "official_name_de",
+        "source_ids",
+        "summary_de"
+      ],
+      "properties": {
+        "_schemaVersion": { "$ref": "#/$defs/schemaVersion" },
+        "retrieved_on": { "$ref": "#/$defs/isoDate" },
+        "id": { "type": "string" },
+        "official_name_de": { "type": "string" },
+        "in_force_since": {
+          "oneOf": [
+            { "$ref": "#/$defs/isoDate" },
+            { "type": "object", "required": ["_pending"], "properties": { "_pending": { "$ref": "#/$defs/pendingFlag" } } }
+          ]
+        },
+        "last_amended": {
+          "oneOf": [
+            { "$ref": "#/$defs/isoDate" },
+            { "type": "object", "required": ["_pending"], "properties": { "_pending": { "$ref": "#/$defs/pendingFlag" } } }
+          ]
+        },
+        "source_ids": { "type": "array", "items": { "$ref": "#/$defs/sourceId" }, "minItems": 1 },
+        "key_values": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["topic_de", "value"],
+            "properties": {
+              "topic_de": { "type": "string" },
+              "topic_en": { "type": "string" },
+              "value": { "type": ["string", "number", "boolean"] },
+              "unit": { "type": "string" },
+              "rounding": { "type": "string" },
+              "section_reference_de": { "type": "string" },
+              "notes_de": { "type": "string" },
+              "_pending": { "$ref": "#/$defs/pendingFlag" }
+            }
+          }
+        },
+        "applies_to_postcodes": {
+          "type": "array",
+          "items": { "type": "string", "pattern": "^\\d{5}$" }
+        },
+        "geographic_scope_de": { "type": "string" },
+        "summary_de": { "type": "string" },
+        "summary_en": { "type": "string" },
+        "_pending_block": { "$ref": "#/$defs/pendingFlag" }
+      }
+    },
+    "BPlanEntry": {
+      "type": "object",
+      "required": ["plan_number", "name_de"],
+      "properties": {
+        "plan_number": { "type": "string" },
+        "name_de": { "type": "string" },
+        "stadtteil": { "type": "string" },
+        "in_force_since": {
+          "oneOf": [
+            { "$ref": "#/$defs/isoDate" },
+            { "type": "object", "required": ["_pending"], "properties": { "_pending": { "$ref": "#/$defs/pendingFlag" } } }
+          ]
+        },
+        "boundary_summary_de": { "type": "string" },
+        "use_class": { "type": "string" },
+        "source_url_specific": { "type": "string" },
+        "_pending": { "$ref": "#/$defs/pendingFlag" }
+      }
+    },
+    "BPlanIndex": {
+      "type": "object",
+      "required": ["_schemaVersion", "retrieved_on", "source_ids", "coverage_note_de", "entries"],
+      "properties": {
+        "_schemaVersion": { "$ref": "#/$defs/schemaVersion" },
+        "retrieved_on": { "$ref": "#/$defs/isoDate" },
+        "source_ids": { "type": "array", "items": { "$ref": "#/$defs/sourceId" } },
+        "coverage_note_de": { "type": "string" },
+        "stadtteile_covered": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "entries": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/BPlanEntry" }
+        }
+      }
+    },
+    "FachplanerEntry": {
+      "type": "object",
+      "required": ["name_or_office"],
+      "properties": {
+        "name_or_office": { "type": "string" },
+        "specialization_de": { "type": "string" },
+        "city": { "type": "string" },
+        "postcode": { "type": "string", "pattern": "^\\d{5}$" },
+        "source_url_specific": { "type": "string" },
+        "_note": { "type": "string" },
+        "_pending": { "$ref": "#/$defs/pendingFlag" }
+      }
+    },
+    "FachplanerDirectory": {
+      "type": "object",
+      "required": ["_schemaVersion", "retrieved_on", "discipline_de", "source_ids", "scope_note_de", "entries"],
+      "properties": {
+        "_schemaVersion": { "$ref": "#/$defs/schemaVersion" },
+        "retrieved_on": { "$ref": "#/$defs/isoDate" },
+        "discipline_de": { "type": "string" },
+        "discipline_en": { "type": "string" },
+        "source_ids": { "type": "array", "items": { "$ref": "#/$defs/sourceId" }, "minItems": 1 },
+        "scope_note_de": { "type": "string" },
+        "entries": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/FachplanerEntry" }
+        },
+        "_pending_block": { "$ref": "#/$defs/pendingFlag" }
+      }
+    },
+    "TestProject": {
+      "type": "object",
+      "required": [
+        "_schemaVersion",
+        "retrieved_on",
+        "id",
+        "narrative",
+        "input",
+        "expected_output"
+      ],
+      "properties": {
+        "_schemaVersion": { "$ref": "#/$defs/schemaVersion" },
+        "retrieved_on": { "$ref": "#/$defs/isoDate" },
+        "id": { "type": "string" },
+        "narrative": {
+          "type": "object",
+          "required": ["title_de", "summary_de"],
+          "properties": {
+            "title_de": { "type": "string" },
+            "title_en": { "type": "string" },
+            "summary_de": { "type": "string" },
+            "summary_en": { "type": "string" }
+          }
+        },
+        "input": {
+          "type": "object",
+          "required": ["intent", "has_plot", "city", "bundesland", "template_id"],
+          "properties": {
+            "intent": {
+              "type": "string",
+              "enum": [
+                "neubau_einfamilienhaus",
+                "neubau_mehrfamilienhaus",
+                "sanierung",
+                "umnutzung",
+                "abbruch",
+                "sonstige"
+              ]
+            },
+            "has_plot": { "type": "boolean" },
+            "plot_address": { "type": "string" },
+            "city": { "type": "string", "const": "erlangen" },
+            "bundesland": { "type": "string" },
+            "template_id": {
+              "type": "string",
+              "enum": ["T-01", "T-02", "T-03", "T-04", "T-05"]
+            }
+          }
+        },
+        "expected_output": {
+          "type": "object",
+          "properties": {
+            "areas": {
+              "type": "object",
+              "properties": {
+                "A": { "$ref": "#/$defs/AreaExpectation" },
+                "B": { "$ref": "#/$defs/AreaExpectation" },
+                "C": { "$ref": "#/$defs/AreaExpectation" }
+              }
+            },
+            "must_contain_facts": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["key", "value", "source", "quality"],
+                "properties": {
+                  "key": { "type": "string" },
+                  "value": {},
+                  "source": { "type": "string", "enum": ["LEGAL","CLIENT","DESIGNER","AUTHORITY"] },
+                  "quality": { "type": "string", "enum": ["CALCULATED","VERIFIED","ASSUMED","DECIDED"] }
+                }
+              }
+            },
+            "must_contain_procedures": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["id"],
+                "properties": {
+                  "id": { "type": "string" },
+                  "min_status": {
+                    "type": "string",
+                    "enum": ["nicht_erforderlich","erforderlich","liegt_vor","freigegeben","eingereicht","genehmigt"]
+                  }
+                }
+              }
+            },
+            "must_contain_documents": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["id"],
+                "properties": {
+                  "id": { "type": "string" },
+                  "produced_by_role": { "type": "string" },
+                  "min_status": {
+                    "type": "string",
+                    "enum": ["nicht_erforderlich","erforderlich","liegt_vor","freigegeben","eingereicht","genehmigt"]
+                  }
+                }
+              }
+            },
+            "must_contain_roles": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["id", "needed"],
+                "properties": {
+                  "id": { "type": "string" },
+                  "needed": { "type": "boolean" }
+                }
+              }
+            },
+            "must_contain_recommendations_anchors": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "must_not_contain": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "completion_signal": {
+              "type": "string",
+              "enum": ["continue","needs_designer","ready_for_review","blocked"]
+            }
+          }
+        },
+        "expected_specialist_voices_at_least": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "moderator","planungsrecht","bauordnungsrecht","sonstige_vorgaben",
+              "verfahren","beteiligte","synthesizer"
+            ]
+          }
+        },
+        "notes_for_eval_harness": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "AreaExpectation": {
+      "type": "object",
+      "required": ["state"],
+      "properties": {
+        "state": { "type": "string", "enum": ["ACTIVE","PENDING","VOID"] },
+        "reason": { "type": "string" }
+      }
+    }
+  }
+}

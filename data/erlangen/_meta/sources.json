@@ -1,0 +1,169 @@
+{
+  "_schemaVersion": 1,
+  "_description": "Canonical source URL registry for the Erlangen city-truth slice. Every fact in data/erlangen/ cites one or more of these by `source_ids`. URLs verified live via web fetch on the dates noted; refresh quarterly per data/erlangen/README.md.",
+  "_retrieved_on": "2026-04-29",
+  "sources": {
+    "stadt-erlangen-portal": {
+      "label_de": "Stadt Erlangen — offizielles Portal",
+      "label_en": "City of Erlangen — official portal",
+      "url": "https://www.erlangen.de/",
+      "retrieved_on": "2026-04-29",
+      "type": "official-portal",
+      "verified": true
+    },
+    "stadt-erlangen-bauamt": {
+      "label_de": "Stadt Erlangen — Bauaufsichtsamt",
+      "label_en": "City of Erlangen — Building Authority",
+      "url": "https://erlangen.de/amt/37761",
+      "retrieved_on": "2026-04-29",
+      "type": "official-portal",
+      "verified": true
+    },
+    "stadt-erlangen-bauamt-ansprechpartner": {
+      "label_de": "Bauaufsichtsamt — Ihre Ansprechpartner",
+      "label_en": "Building Authority — Your contacts",
+      "url": "https://www.erlangen.de/desktopdefault.aspx/start-b/tabid-262/153_read-7451",
+      "retrieved_on": "2026-04-29",
+      "type": "official-portal",
+      "verified": true
+    },
+    "stadt-erlangen-bauen": {
+      "label_de": "Stadt Erlangen — Themenseite Bauen",
+      "label_en": "City of Erlangen — Building topic page",
+      "url": "https://erlangen.de/themenseite/aktiv/bauen",
+      "retrieved_on": "2026-04-29",
+      "type": "official-portal",
+      "verified": true
+    },
+    "stadt-erlangen-bplaene-rechtsgueltig": {
+      "label_de": "Stadt Erlangen — Verbindliche (rechtsgültige) Bebauungspläne",
+      "label_en": "City of Erlangen — Legally binding development plans",
+      "url": "https://erlangen.de/aktuelles/bplaene_rechtsgueltig",
+      "retrieved_on": "2026-04-29",
+      "type": "official-portal",
+      "verified": true,
+      "note_de": "Stand 19.02.2026 ausweislich der Seite. Liste enthält Bebauungspläne, die bis zum 01.03.2024 in Kraft getreten sind."
+    },
+    "stadt-erlangen-bplaene-im-verfahren": {
+      "label_de": "Stadt Erlangen — Bebauungspläne im Verfahren",
+      "label_en": "City of Erlangen — Development plans in procedure",
+      "url": "https://erlangen.de/aktuelles/bebauungsplaene_im_verfahren",
+      "retrieved_on": "2026-04-29",
+      "type": "official-portal",
+      "verified": true
+    },
+    "stadt-erlangen-zentrale-planannahme": {
+      "label_de": "Bauaufsichtsamt — Zentrale Planannahme",
+      "label_en": "Building Authority — Central plan intake",
+      "url": "https://erlangen.de/aktuelles/zentrale-planannahme",
+      "retrieved_on": "2026-04-29",
+      "type": "official-portal",
+      "verified": true
+    },
+    "bayern-bauleitplanungsportal": {
+      "label_de": "Zentrales Landesportal Bauleitplanung Bayern",
+      "label_en": "Central Bavarian portal for development planning",
+      "url": "https://geoportal.bayern.de/bauleitplanungsportal/",
+      "retrieved_on": "2026-04-29",
+      "type": "geoportal",
+      "verified": true,
+      "note_de": "Wird zum 31.10.2026 durch das DiPlan-Portal als offizielles Zentralportal abgelöst."
+    },
+    "bayern-atlas": {
+      "label_de": "BayernAtlas — Geoportal des Freistaats Bayern",
+      "label_en": "BayernAtlas — Geo portal of the Free State of Bavaria",
+      "url": "https://atlas.bayern.de/",
+      "retrieved_on": "2026-04-29",
+      "type": "geoportal",
+      "verified": false,
+      "_pending": "URL was referenced in AUDIT_REPORT.md §6 but not directly web-fetched in this batch — verify before quarterly refresh."
+    },
+    "adbv-erlangen": {
+      "label_de": "Amt für Digitalisierung, Breitband und Vermessung Erlangen (ADBV) — Liegenschaftskataster",
+      "label_en": "Land surveying authority Erlangen — cadastre",
+      "url": "https://www.adbv-erlangen.de/",
+      "retrieved_on": "2026-04-29",
+      "type": "official-portal",
+      "verified": true,
+      "note_de": "Relevant für amtliche Lagepläne (ÖbVI) und Flurstücksbezeichnungen."
+    },
+    "gesetze-bayern-baybo": {
+      "label_de": "BayBO — Bayerische Bauordnung (Gesetze Bayern)",
+      "label_en": "BayBO — Bavarian Building Code",
+      "url": "https://www.gesetze-bayern.de/Content/Document/BayBO",
+      "retrieved_on": "2026-04-29",
+      "type": "statute",
+      "verified": true,
+      "note_de": "Stand: zuletzt geändert durch § 6 des Gesetzes vom 26. März 2026 (GVBl. S. 75)."
+    },
+    "gesetze-bund-baugb": {
+      "label_de": "Baugesetzbuch (BauGB) — gesetze-im-internet.de",
+      "label_en": "Federal Building Code — official online text",
+      "url": "https://www.gesetze-im-internet.de/baugb/",
+      "retrieved_on": "2026-04-29",
+      "type": "statute",
+      "verified": false,
+      "_pending": "Bundesweit etablierte URL — als kanonisch geführt; eine direkte Live-Verifikation steht aus."
+    },
+    "gesetze-bund-baugb-246e": {
+      "label_de": "BauGB § 246e — Sonderregelungen Wohnungsbau (Bauturbo)",
+      "label_en": "BauGB § 246e — special rules for residential construction (Bauturbo)",
+      "url": "https://www.gesetze-im-internet.de/baugb/__246e.html",
+      "retrieved_on": "2026-04-29",
+      "type": "statute",
+      "verified": false,
+      "_pending": "Direkte Live-Verifikation steht aus; URL gemäß AUDIT_REPORT.md §6 geführt."
+    },
+    "gesetze-bund-geg": {
+      "label_de": "Gebäudeenergiegesetz (GEG) — gesetze-im-internet.de",
+      "label_en": "Federal Buildings Energy Act",
+      "url": "https://www.gesetze-im-internet.de/geg/",
+      "retrieved_on": "2026-04-29",
+      "type": "statute",
+      "verified": false,
+      "_pending": "Direkte Live-Verifikation steht aus; URL gemäß AUDIT_REPORT.md §6 geführt."
+    },
+    "byak": {
+      "label_de": "Bayerische Architektenkammer (BAYAK)",
+      "label_en": "Bavarian Chamber of Architects",
+      "url": "https://www.byak.de/",
+      "retrieved_on": "2026-04-29",
+      "type": "registry",
+      "verified": true
+    },
+    "byak-architektensuche": {
+      "label_de": "BAYAK — Architektensuche (öffentliches Verzeichnis)",
+      "label_en": "BAYAK — public architect search",
+      "url": "https://www.byak.de/planen-und-bauen/architektensuche.html",
+      "retrieved_on": "2026-04-29",
+      "type": "registry",
+      "verified": true,
+      "note_de": "Filterung nach Stadt/Ortsteil aus dem Eintragsformular heraus möglich; die Funktion 'bauvorlageberechtigt' wird nicht zwingend offen ausgewiesen — die Eintragung als Architekt:in i.d. Architektenliste impliziert die Bauvorlageberechtigung nach Art. 61 BayBO im Regelfall."
+    },
+    "bayika": {
+      "label_de": "Bayerische Ingenieurekammer-Bau (BAYIKA)",
+      "label_en": "Bavarian Chamber of Civil Engineers",
+      "url": "https://www.bayika.de/",
+      "retrieved_on": "2026-04-29",
+      "type": "registry",
+      "verified": true
+    },
+    "bayika-ingenieursuche": {
+      "label_de": "BAYIKA — Planer- und Ingenieursuche",
+      "label_en": "BAYIKA — engineer & planner search",
+      "url": "https://www.bayika.de/de/ingenieursuche/",
+      "retrieved_on": "2026-04-29",
+      "type": "registry",
+      "verified": true
+    },
+    "bafa-energieeffizienz-experten": {
+      "label_de": "Energieeffizienz-Experten — offizielle Liste (BAFA / dena / KfW)",
+      "label_en": "Energy efficiency experts — official BAFA/dena/KfW registry",
+      "url": "https://www.energie-effizienz-experten.de/",
+      "retrieved_on": "2026-04-29",
+      "type": "registry",
+      "verified": true,
+      "note_de": "Suche nach Postleitzahl + Umkreis (5/10/20/50/100/250 km). Über 22.800 Einträge, davon ca. 20.600 öffentlich auffindbar."
+    }
+  }
+}
