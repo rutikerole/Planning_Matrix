@@ -78,6 +78,19 @@ interface ChatState {
     resetAt: string
   } | null
 
+  /**
+   * Phase 3 — populated when the most recent chat-turn failed with
+   * a non-rate-limit error (streaming_failed / model_response_invalid
+   * / upstream_overloaded / upstream_timeout / persistence_failed /
+   * idempotency_replay / validation / unauthenticated / not_found /
+   * internal). The ErrorBanner reads this and looks up
+   * chat.errors.<code>.title / .body. Cleared on the next successful
+   * turn or on dismiss.
+   */
+  lastError: {
+    code: string
+  } | null
+
   setThinking: (
     thinking: boolean,
     specialist?: Specialist | null,
@@ -113,6 +126,8 @@ interface ChatState {
   abortStreaming: () => void
   /** Phase 4.1 #125 — set / clear the last rate-limit envelope. */
   setRateLimit: (info: ChatState['lastRateLimit']) => void
+  /** Phase 3 — set / clear the last non-rate-limit error envelope. */
+  setLastError: (info: ChatState['lastError']) => void
   reset: () => void
 }
 
@@ -130,6 +145,7 @@ export const useChatStore = create<ChatState>((set) => ({
   pendingAttachments: [],
   currentAbortController: null,
   lastRateLimit: null,
+  lastError: null,
 
   setThinking: (thinking, specialist, label, activitySection) =>
     set((s) => ({
@@ -234,6 +250,7 @@ export const useChatStore = create<ChatState>((set) => ({
   },
 
   setRateLimit: (info) => set({ lastRateLimit: info }),
+  setLastError: (info) => set({ lastError: info }),
 
   reset: () =>
     set((s) => {
@@ -270,6 +287,7 @@ export const useChatStore = create<ChatState>((set) => ({
         pendingAttachments: [],
         currentAbortController: null,
         lastRateLimit: null,
+        lastError: null,
       }
     }),
 }))

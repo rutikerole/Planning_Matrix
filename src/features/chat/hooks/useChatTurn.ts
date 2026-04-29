@@ -52,6 +52,7 @@ export function useChatTurn(projectId: string) {
   const noteSuccessfulTurn = useChatStore((s) => s.noteSuccessfulTurn)
   const setAbortController = useChatStore((s) => s.setAbortController)
   const setRateLimit = useChatStore((s) => s.setRateLimit)
+  const setLastError = useChatStore((s) => s.setLastError)
 
   return useMutation({
     mutationKey: ['chat-turn', projectId],
@@ -208,6 +209,8 @@ export function useChatTurn(projectId: string) {
       // Phase 4.1 #125 — clear any prior rate-limit banner once a turn
       // succeeds (either the bucket rolled over or the user waited).
       setRateLimit(null)
+      // Phase 3 — clear any prior error banner on success.
+      setLastError(null)
 
       const signal = response.completionSignal
       if (signal && signal !== 'continue') {
@@ -258,6 +261,12 @@ export function useChatTurn(projectId: string) {
         err.rateLimit
       ) {
         setRateLimit(err.rateLimit)
+      } else if (err instanceof ChatTurnError) {
+        // Phase 3 — every other ChatTurnError code routes to the new
+        // ErrorBanner via chatStore.lastError. The banner looks up
+        // chat.errors.<code>.title / .body i18n keys; unknown codes
+        // fall through to a generic copy inside the banner itself.
+        setLastError({ code: err.code })
       }
 
       if (import.meta.env.DEV) {

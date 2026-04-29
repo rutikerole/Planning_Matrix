@@ -500,7 +500,50 @@
     "banner": {
       "offline": "Offline — Eingaben werden bei erneuter Verbindung gesendet.",
       "rateLimit": "Sie haben in dieser Stunde sehr viele Nachrichten gesendet ({{count}} von {{max}}). Bitte warten Sie bis {{time}}.",
-      "rateLimitDismiss": "Hinweis ausblenden"
+      "rateLimitDismiss": "Hinweis ausblenden",
+      "errorDismiss": "Schließen"
+    },
+    "errors": {
+      "streaming_failed": {
+        "title": "Verbindung unterbrochen.",
+        "body": "Die Antwort konnte nicht vollständig empfangen werden. Bitte senden Sie die Nachricht erneut."
+      },
+      "model_response_invalid": {
+        "title": "Antwort nicht verarbeitbar.",
+        "body": "Das Planungsteam hat eine ungültige Antwort erzeugt. Bitte senden Sie Ihre Nachricht erneut."
+      },
+      "upstream_overloaded": {
+        "title": "Dienst überlastet.",
+        "body": "Der Dienst ist im Moment überlastet. Bitte versuchen Sie es in wenigen Sekunden erneut."
+      },
+      "upstream_timeout": {
+        "title": "Zeitüberschreitung.",
+        "body": "Die Antwort hat zu lange gedauert. Bitte senden Sie Ihre Nachricht erneut."
+      },
+      "persistence_failed": {
+        "title": "Speicherfehler.",
+        "body": "Ihr Beitrag wurde noch nicht dauerhaft gespeichert. Bitte versuchen Sie es erneut."
+      },
+      "idempotency_replay": {
+        "title": "Wiederholung erkannt.",
+        "body": "Diese Nachricht wurde bereits gesendet. Wir zeigen die vorhandene Antwort an."
+      },
+      "validation": {
+        "title": "Eingabe nicht akzeptiert.",
+        "body": "Die Anfrage entspricht nicht dem erwarteten Format. Bitte prüfen Sie Ihre Eingabe."
+      },
+      "unauthenticated": {
+        "title": "Sitzung abgelaufen.",
+        "body": "Bitte melden Sie sich erneut an, um fortzufahren."
+      },
+      "not_found": {
+        "title": "Projekt nicht gefunden.",
+        "body": "Das Projekt ist nicht mehr verfügbar oder wurde entfernt."
+      },
+      "internal": {
+        "title": "Interner Fehler.",
+        "body": "Im Hintergrund ist ein unerwarteter Fehler aufgetreten. Bitte versuchen Sie es erneut."
+      }
     },
     "overview": {
       "close": "Schließen",

@@ -12,6 +12,7 @@ import { Thread } from '../components/Thread'
 import { InputBar } from '../components/Input'
 import { IdkPopover } from '../components/Input/IdkPopover'
 import { OfflineBanner } from '../components/Banners'
+import { ErrorBanner } from '../components/ErrorBanner'
 import { MobileTopBar } from '../components/MobileTopBar'
 import { MobileRailDrawer } from '../components/MobileRailDrawer'
 import { MobileRightRailPeek } from '../components/MobileRightRailPeek'
@@ -257,6 +258,7 @@ export function ChatWorkspacePage() {
       <SEO titleKey="seo.title.project" params={{ name: project.name }} />
       <OfflineBanner />
       <RateLimitBanner />
+      <ErrorBanner />
       {isMobile ? (
         <MobileChatWorkspace
           project={project}

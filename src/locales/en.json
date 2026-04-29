@@ -500,7 +500,50 @@
     "banner": {
       "offline": "Offline — your input will send once the connection returns.",
       "rateLimit": "You have sent a lot of messages this hour ({{count}} of {{max}}). Please wait until {{time}}.",
-      "rateLimitDismiss": "Dismiss"
+      "rateLimitDismiss": "Dismiss",
+      "errorDismiss": "Close"
+    },
+    "errors": {
+      "streaming_failed": {
+        "title": "Connection interrupted.",
+        "body": "The response could not be received in full. Please send your message again."
+      },
+      "model_response_invalid": {
+        "title": "Response not processable.",
+        "body": "The planning team produced an invalid response. Please send your message again."
+      },
+      "upstream_overloaded": {
+        "title": "Service overloaded.",
+        "body": "The service is overloaded right now. Please try again in a few seconds."
+      },
+      "upstream_timeout": {
+        "title": "Timed out.",
+        "body": "The response took too long. Please send your message again."
+      },
+      "persistence_failed": {
+        "title": "Storage error.",
+        "body": "Your input has not yet been saved permanently. Please try again."
+      },
+      "idempotency_replay": {
+        "title": "Duplicate detected.",
+        "body": "This message was already sent. We are showing the existing response."
+      },
+      "validation": {
+        "title": "Input not accepted.",
+        "body": "The request does not match the expected format. Please check your input."
+      },
+      "unauthenticated": {
+        "title": "Session expired.",
+        "body": "Please sign in again to continue."
+      },
+      "not_found": {
+        "title": "Project not found.",
+        "body": "The project is no longer available or has been removed."
+      },
+      "internal": {
+        "title": "Internal error.",
+        "body": "An unexpected error occurred. Please try again."
+      }
     },
     "completion": {
       "label": "Team note",
