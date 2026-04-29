@@ -9,8 +9,7 @@
     "languageGerman": "Deutsch",
     "languageEnglish": "Englisch",
     "skipToContent": "Zum Hauptinhalt springen",
-    "openMenu": "Menü öffnen",
-    "closeMenu": "Menü schließen"
+    "openMenu": "Menü öffnen"
   },
   "nav": {
     "product": "Produkt",
@@ -72,26 +71,14 @@
     "tabAtitle": "Planungsrecht",
     "tabAquestion": "Was darf an diesem Ort gebaut werden?",
     "tabAbody": "Bebauungsplan, Flächennutzungsplan, § 34 BauGB. Welche Nutzung, welches Maß, welche Höhe — und wer auf kommunaler Ebene darüber entscheidet.",
-    "tabAchipOne": "Bebauungsplan",
-    "tabAchipTwo": "§ 34 BauGB",
-    "tabAchipThree": "Maß der Nutzung",
-    "tabAchipFour": "Bauliche Höhe",
     "tabBlabel": "B · Bauordnungsrecht",
     "tabBtitle": "Bauordnungsrecht",
     "tabBquestion": "Wie muss es gebaut werden?",
     "tabBbody": "Landesbauordnung, Abstandsflächen, Brandschutz, Stellplätze. Welche Auflagen für die Ausführung gelten — und welche Nachweise mit dem Bauantrag eingereicht werden müssen.",
-    "tabBchipOne": "Landesbauordnung",
-    "tabBchipTwo": "Abstandsflächen",
-    "tabBchipThree": "Brandschutz",
-    "tabBchipFour": "Stellplatznachweis",
     "tabClabel": "C · Sonstige Vorgaben",
     "tabCtitle": "Sonstige Vorgaben",
     "tabCquestion": "Was kommt von außen dazu?",
-    "tabCbody": "Denkmalschutz, Naturschutz, Wasserrecht, Immissionsschutz, Energie. Welche Fachbehörden parallel beteiligt werden müssen — und an welcher Stelle des Prozesses.",
-    "tabCchipOne": "Denkmalschutz",
-    "tabCchipTwo": "Immissionsschutz",
-    "tabCchipThree": "Naturschutz",
-    "tabCchipFour": "GEG / Energie"
+    "tabCbody": "Denkmalschutz, Naturschutz, Wasserrecht, Immissionsschutz, Energie. Welche Fachbehörden parallel beteiligt werden müssen — und an welcher Stelle des Prozesses."
   },
   "demo": {
     "eyebrow": "Vorschau",
@@ -198,12 +185,10 @@
     "phraseSignIn": "Willkommen zurück.",
     "phraseForgot": "Ein neuer Anfang.",
     "phraseReset": "Frisch gesetzt.",
-    "phraseRecover": "Empfehlen heißt nicht entscheiden.",
     "phraseVerify": "Bauen Sie planbarer.",
     "showPassword": "Passwort anzeigen",
     "hidePassword": "Passwort verbergen",
     "capsLock": "Hinweis: Feststelltaste ist aktiv.",
-    "_photoCaptionsNote": "FICTIONAL_PLACEHOLDER — replace with real attribution when available.",
     "photoCaption": {
       "domain-b-facade": "Atelier · Berlin · 2024",
       "hero-rooftop": "Atelier · München · 2025",
@@ -241,7 +226,6 @@
       "emailLabel": "E-Mail-Adresse",
       "emailPlaceholder": "name@beispiel.de",
       "passwordLabel": "Passwort",
-      "rememberMe": "Angemeldet bleiben",
       "forgotPassword": "Passwort vergessen?",
       "submit": "Anmelden",
       "submitLoading": "Anmeldung läuft …",
@@ -279,7 +263,6 @@
       "linkInvalidTitle": "Link ungültig.",
       "linkInvalidBody": "Dieser Link ist ungültig oder abgelaufen.",
       "requestNew": "Neuen Link anfordern",
-      "sessionExpiredTitle": "Sitzung abgelaufen.",
       "sessionExpiredBody": "Bitte fordern Sie einen neuen Link an."
     },
     "checkEmail": {
@@ -326,21 +309,16 @@
       "termsRequired": "Bitte stimmen Sie den Bedingungen zu.",
       "invalidCredentials": "E-Mail-Adresse oder Passwort ist nicht korrekt.",
       "emailAlreadyRegistered": "Diese E-Mail-Adresse ist bereits registriert.",
-      "emailNotConfirmed": "Ihre E-Mail-Adresse ist noch nicht bestätigt.",
-      "linkExpired": "Dieser Link ist ungültig oder abgelaufen.",
       "rateLimit": "Zu viele Versuche. Bitte versuchen Sie es in ein paar Minuten erneut.",
       "network": "Verbindung fehlgeschlagen. Bitte prüfen Sie Ihre Internetverbindung.",
-      "unexpected": "Ein unerwarteter Fehler ist aufgetreten. Bitte versuchen Sie es erneut.",
-      "sessionExpired": "Ihre Sitzung ist abgelaufen. Bitte melden Sie sich erneut an.",
-      "tryAgain": "Erneut versuchen"
+      "unexpected": "Ein unerwarteter Fehler ist aufgetreten. Bitte versuchen Sie es erneut."
     },
     "passwordStrength": {
       "label": "Passwortstärke",
       "weak": "schwach",
       "fair": "ausreichend",
       "strong": "stark"
-    },
-    "signOut": "Abmelden"
+    }
   },
   "dashboard": {
     "atelier": {
@@ -375,7 +353,6 @@
   "wizard": {
     "title": "Neues Projekt · Planning Matrix",
     "cancel": "Abbrechen",
-    "cancelConfirm": "Eingaben werden verworfen. Fortfahren?",
     "cancelDialog": {
       "title": "Eingaben verwerfen?",
       "body": "Ihre bisherigen Antworten werden verworfen und Sie kehren zum Dashboard zurück.",
@@ -421,23 +398,16 @@
     },
     "back": "Zurück",
     "submit": "Projekt anlegen",
-    "submitLoading": "Projekt wird angelegt …",
     "transition": {
       "eyebrow": "Planning Matrix · Vorbereitung",
       "headline": "Der Tisch wird gedeckt.",
       "body": "Wir richten Ihren Zeichentisch ein — einen Moment, bitte."
     },
     "errors": {
-      "insertFailed": "Projekt konnte nicht angelegt werden. Bitte versuchen Sie es erneut.",
-      "primingFailed": "Wir konnten das Team nicht erreichen. Bitte versuchen Sie es erneut."
-    },
-    "placeholder": {
-      "q1": "Optionen erscheinen mit Commit #9.",
-      "q2": "Adressfeld erscheint mit Commit #10."
+      "insertFailed": "Projekt konnte nicht angelegt werden. Bitte versuchen Sie es erneut."
     }
   },
   "chat": {
-    "leaveProject": "Projekt verlassen",
     "jumpToLatest": "Zum neuesten Beitrag",
     "contextSheet": {
       "title": "Nachrichtenoptionen",
@@ -451,7 +421,6 @@
       "briefingPrimary": "Briefing ansehen",
       "briefingSubtitle": "Das ausführliche Dokument",
       "cockpitSecondary": "Cockpit öffnen",
-      "exportSecondary": "Exportieren",
       "leaveSecondary": "← Projekt verlassen",
       "overflowLabel": "Weitere Aktionen",
       "overflowEyebrow": "Aktionen & Übersicht"
@@ -500,7 +469,6 @@
       "eyebrow": "Projekt",
       "openLeftRail": "Linke Seitenleiste öffnen",
       "openRightRail": "Rechte Seitenleiste öffnen",
-      "expandRail": "Seitenleiste erweitern",
       "peekLabel": "Notiz",
       "peekTap": "Aktualisierung anzeigen"
     },
@@ -516,7 +484,6 @@
     "thinking": {
       "staticLabel": "denkt nach…"
     },
-    "newMessagePill": "Neue Nachricht",
     "cost": {
       "breakdown": "Aufschlüsselung",
       "input": "Eingabe",
@@ -531,22 +498,10 @@
       "rateLimitDismiss": "Hinweis ausblenden"
     },
     "overview": {
-      "titlePrefix": "Übersicht",
-      "eyebrow": "Vollständige Übersicht",
       "close": "Schließen",
-      "facts": "Eckdaten",
       "factsEmpty": "Noch keine Fakten extrahiert.",
       "areas": "Bereiche",
-      "procedures": "Verfahren",
-      "documents": "Dokumente",
-      "requiredFor": "Erforderlich für",
-      "roles": "Fachplaner",
-      "recommendations": "Empfehlungen",
-      "audit": "Auditspur",
-      "auditEmpty": "Noch keine Ereignisse protokolliert.",
-      "tabs": {
-        "intent": "Vorhaben"
-      }
+      "auditEmpty": "Noch keine Ereignisse protokolliert."
     },
     "status": {
       "nicht_erforderlich": "nicht erforderlich",
@@ -594,7 +549,6 @@
         "no": "Nein"
       },
       "multi": {
-        "submit": "Weiter",
         "minHint": "Mindestens eine Option wählen.",
         "countSelected": "{{n}} ausgewählt",
         "confirmIntoText": "Übernehmen"
@@ -604,8 +558,6 @@
       "placeholderOrContinue": "Antworten Sie hier, oder klicken Sie *Weiter* →",
       "attachment": {
         "title": "Datei anhängen",
-        "comingSoon": "Datei-Upload für Pläne, Fotos und PDFs ist im nächsten Update verfügbar. Sie werden den Bauantrag bald direkt mit Bestandsplänen, B-Plan-PDFs und Grundbuchauszügen anreichern können.",
-        "understood": "Verstanden",
         "close": "Schließen",
         "remove": "Anhang entfernen",
         "uploading": "Wird hochgeladen…",
@@ -625,13 +577,11 @@
         "assumeExplain": "Wir gehen vorerst von einer typischen Konstellation aus und können später korrigieren.",
         "skip": "Zurückstellen",
         "skipExplain": "Diese Frage parken wir; sie blockiert nichts Wesentliches."
-      },
-      "cooldownPrefix": "Zu viele Anfragen — neuer Versuch in"
+      }
     },
     "atTheTableEmpty": "Noch keine Fachperson aktiv.",
     "preliminaryFooter": "Vorläufig — bestätigt durch eine/n bauvorlageberechtigte/n Architekt/in.",
     "gates": {
-      "00": "Übersicht",
       "10": "Projekt",
       "20": "Grundstück",
       "30": "Beteiligte",
@@ -642,7 +592,8 @@
       "44": "Verfahren",
       "45": "Dokumente",
       "50": "Planung",
-      "60": "Dokumente"
+      "60": "Dokumente",
+      "00": "Übersicht"
     },
     "specialists": {
       "moderator": "Moderator",
@@ -675,12 +626,8 @@
       "documentsEmpty": "Dokumente erscheinen hier, sobald sich das Verfahren konkretisiert.",
       "roles": "Fachplaner",
       "rolesEmpty": "Fachplaner erscheinen hier, sobald die Anforderungen klar sind.",
-      "openOverview": "Vollständige Übersicht öffnen",
       "empty": "Empfehlungen erscheinen hier, sobald genug Informationen vorliegen.",
       "cost": "Aufwand"
-    },
-    "user": {
-      "bauherrTag": "Bauherr"
     },
     "empty": {
       "eyebrow": "Planning Matrix · Atelier",
@@ -697,7 +644,6 @@
     }
   },
   "result": {
-    "titlePrefix": "Briefing",
     "backToChat": "Zurück zum Gespräch",
     "cover": {
       "docNoLabel": "Atelier-Briefing No.",
@@ -734,9 +680,7 @@
     },
     "checklist": {
       "eyebrow": "Erforderliche Unterlagen",
-      "intro": "{{n}} Dokumente sind für die Antragstellung vorzubereiten.",
       "producerLabel": "Wer erstellt?",
-      "statusLabel": "Status",
       "pdfCta": "Checkliste als PDF herunterladen",
       "pdfBusy": "PDF wird erstellt …"
     },

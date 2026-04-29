@@ -9,8 +9,7 @@
     "languageGerman": "German",
     "languageEnglish": "English",
     "skipToContent": "Skip to main content",
-    "openMenu": "Open menu",
-    "closeMenu": "Close menu"
+    "openMenu": "Open menu"
   },
   "nav": {
     "product": "Product",
@@ -72,26 +71,14 @@
     "tabAtitle": "Planungsrecht",
     "tabAquestion": "What may be built at this site?",
     "tabAbody": "Bebauungsplan, Flächennutzungsplan, § 34 BauGB. Which use, which scale, which height — and who decides at the municipal level.",
-    "tabAchipOne": "Land-use plan",
-    "tabAchipTwo": "§ 34 BauGB",
-    "tabAchipThree": "Building scale",
-    "tabAchipFour": "Building height",
     "tabBlabel": "B · Building code",
     "tabBtitle": "Bauordnungsrecht",
     "tabBquestion": "How must it be built?",
     "tabBbody": "Landesbauordnung, setbacks, fire safety, parking. Which construction requirements apply — and which evidence must be filed with the application.",
-    "tabBchipOne": "State building code",
-    "tabBchipTwo": "Setbacks",
-    "tabBchipThree": "Fire safety",
-    "tabBchipFour": "Parking proof",
     "tabClabel": "C · Adjacent rules",
     "tabCtitle": "Sonstige Vorgaben",
     "tabCquestion": "What other rules apply?",
-    "tabCbody": "Heritage protection, environment, water, emissions, energy. Which specialist authorities are involved in parallel — and at which point in the process.",
-    "tabCchipOne": "Heritage",
-    "tabCchipTwo": "Emissions",
-    "tabCchipThree": "Environment",
-    "tabCchipFour": "Energy / GEG"
+    "tabCbody": "Heritage protection, environment, water, emissions, energy. Which specialist authorities are involved in parallel — and at which point in the process."
   },
   "demo": {
     "eyebrow": "Preview",
@@ -198,12 +185,10 @@
     "phraseSignIn": "Welcome back.",
     "phraseForgot": "A fresh start.",
     "phraseReset": "Newly set.",
-    "phraseRecover": "Recommendation is not decision.",
     "phraseVerify": "Build with foresight.",
     "showPassword": "Show password",
     "hidePassword": "Hide password",
     "capsLock": "Caps Lock is on.",
-    "_photoCaptionsNote": "FICTIONAL_PLACEHOLDER — replace with real attribution when available.",
     "photoCaption": {
       "domain-b-facade": "Atelier · Berlin · 2024",
       "hero-rooftop": "Atelier · Munich · 2025",
@@ -241,7 +226,6 @@
       "emailLabel": "Email address",
       "emailPlaceholder": "name@example.com",
       "passwordLabel": "Password",
-      "rememberMe": "Stay signed in",
       "forgotPassword": "Forgot password?",
       "submit": "Sign in",
       "submitLoading": "Signing in …",
@@ -279,7 +263,6 @@
       "linkInvalidTitle": "Invalid link.",
       "linkInvalidBody": "This link is invalid or has expired.",
       "requestNew": "Request a new link",
-      "sessionExpiredTitle": "Session expired.",
       "sessionExpiredBody": "Please request a new link."
     },
     "checkEmail": {
@@ -326,21 +309,16 @@
       "termsRequired": "Please accept the terms.",
       "invalidCredentials": "Email or password is incorrect.",
       "emailAlreadyRegistered": "This email address is already registered.",
-      "emailNotConfirmed": "Your email address is not yet confirmed.",
-      "linkExpired": "This link is invalid or has expired.",
       "rateLimit": "Too many attempts. Please try again in a few minutes.",
       "network": "Connection failed. Please check your internet connection.",
-      "unexpected": "An unexpected error occurred. Please try again.",
-      "sessionExpired": "Your session has expired. Please sign in again.",
-      "tryAgain": "Try again"
+      "unexpected": "An unexpected error occurred. Please try again."
     },
     "passwordStrength": {
       "label": "Password strength",
       "weak": "weak",
       "fair": "fair",
       "strong": "strong"
-    },
-    "signOut": "Sign out"
+    }
   },
   "dashboard": {
     "atelier": {
@@ -375,7 +353,6 @@
   "wizard": {
     "title": "New project · Planning Matrix",
     "cancel": "Cancel",
-    "cancelConfirm": "Your answers will be discarded. Continue?",
     "cancelDialog": {
       "title": "Discard your answers?",
       "body": "Your answers so far will be discarded and you'll return to the dashboard.",
@@ -421,23 +398,16 @@
     },
     "back": "Back",
     "submit": "Create project",
-    "submitLoading": "Creating project …",
     "transition": {
       "eyebrow": "Planning Matrix · Preparing",
       "headline": "Setting the table.",
       "body": "We're laying out your drafting board — one moment."
     },
     "errors": {
-      "insertFailed": "Project couldn't be created. Please try again.",
-      "primingFailed": "We couldn't reach the team. Please try again."
-    },
-    "placeholder": {
-      "q1": "Options arrive in commit #9.",
-      "q2": "Address field arrives in commit #10."
+      "insertFailed": "Project couldn't be created. Please try again."
     }
   },
   "chat": {
-    "leaveProject": "Leave project",
     "jumpToLatest": "Jump to latest",
     "contextSheet": {
       "title": "Message options",
@@ -451,7 +421,6 @@
       "briefingPrimary": "View briefing",
       "briefingSubtitle": "The full document",
       "cockpitSecondary": "Open cockpit",
-      "exportSecondary": "Export",
       "leaveSecondary": "← Leave project",
       "overflowLabel": "More actions",
       "overflowEyebrow": "Actions & overview"
@@ -500,7 +469,6 @@
       "eyebrow": "Project",
       "openLeftRail": "Open left sidebar",
       "openRightRail": "Open right sidebar",
-      "expandRail": "Expand sidebar",
       "peekLabel": "Note",
       "peekTap": "Show update"
     },
@@ -516,7 +484,6 @@
     "thinking": {
       "staticLabel": "thinking…"
     },
-    "newMessagePill": "New message",
     "cost": {
       "breakdown": "Breakdown",
       "input": "Input",
@@ -576,7 +543,6 @@
         "no": "No"
       },
       "multi": {
-        "submit": "Continue",
         "minHint": "Select at least one option.",
         "countSelected": "{{n}} selected",
         "confirmIntoText": "Apply"
@@ -586,8 +552,6 @@
       "placeholderOrContinue": "Type your reply here, or click *Continue* →",
       "attachment": {
         "title": "Attach a file",
-        "comingSoon": "File upload for plans, photos and PDFs lands in the next update. You'll soon be able to attach existing drawings, development plans, and land registry extracts directly to the consultation.",
-        "understood": "Got it",
         "close": "Close",
         "remove": "Remove attachment",
         "uploading": "Uploading…",
@@ -607,13 +571,11 @@
         "assumeExplain": "We start with a typical case and can correct it later.",
         "skip": "Set aside",
         "skipExplain": "We park this question; it doesn't block anything essential."
-      },
-      "cooldownPrefix": "Too many requests — retrying in"
+      }
     },
     "atTheTableEmpty": "No specialist active yet.",
     "preliminaryFooter": "Preliminary — confirmed by a certified architect.",
     "gates": {
-      "00": "Overview",
       "10": "Project",
       "20": "Plot",
       "30": "Parties",
@@ -624,7 +586,8 @@
       "44": "Procedure",
       "45": "Documents",
       "50": "Planning",
-      "60": "Documents"
+      "60": "Documents",
+      "00": "Overview"
     },
     "specialists": {
       "moderator": "Moderator",
@@ -646,22 +609,10 @@
       }
     },
     "overview": {
-      "titlePrefix": "Overview",
-      "eyebrow": "Full overview",
       "close": "Close",
-      "facts": "Key data",
       "factsEmpty": "No facts extracted yet.",
       "areas": "Areas",
-      "procedures": "Procedures",
-      "documents": "Documents",
-      "requiredFor": "Required for",
-      "roles": "Specialists",
-      "recommendations": "Recommendations",
-      "audit": "Audit log",
-      "auditEmpty": "No events recorded yet.",
-      "tabs": {
-        "intent": "Project"
-      }
+      "auditEmpty": "No events recorded yet."
     },
     "rail": {
       "top3": "Top 3 next steps",
@@ -675,12 +626,8 @@
       "documentsEmpty": "Documents appear here once the procedure is clear.",
       "roles": "Specialists",
       "rolesEmpty": "Specialist roles appear here once the requirements are clear.",
-      "openOverview": "Open full overview",
       "empty": "Recommendations appear here once there's enough information.",
       "cost": "Spend"
-    },
-    "user": {
-      "bauherrTag": "Bauherr"
     },
     "empty": {
       "eyebrow": "Planning Matrix · Atelier",
@@ -697,7 +644,6 @@
     }
   },
   "result": {
-    "titlePrefix": "Briefing",
     "backToChat": "Back to conversation",
     "cover": {
       "docNoLabel": "Atelier briefing No.",
@@ -734,9 +680,7 @@
     },
     "checklist": {
       "eyebrow": "Documents required",
-      "intro": "{{n}} documents to prepare for the application.",
       "producerLabel": "Produced by",
-      "statusLabel": "Status",
       "pdfCta": "Download checklist as PDF",
       "pdfBusy": "Generating PDF …"
     },
