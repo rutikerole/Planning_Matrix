@@ -72,16 +72,20 @@ export function useCreateProject() {
         has_plot: input.hasPlot,
         plot_address: input.hasPlot ? input.plotAddress : null,
         bundesland: 'bayern',
-        // Phase 1 (post-audit) — v1 scope locks to Erlangen. The
-        // wizard's address gate guarantees the postcode is in the
-        // Erlangen Stadtgebiet (91052/91054/91056/91058) by the time
-        // we reach this insert. Migration 0009 must be applied to
-        // the linked Supabase project BEFORE this code reaches
-        // production — otherwise the INSERT fails with
-        // `column "city" of relation "projects" does not exist`.
-        // See AUDIT_REPORT.md §6 / Phase-1 report for the apply
-        // order.
-        city: 'erlangen',
+        // Phase 1 (post-audit) — v1 scope locks to Erlangen via the
+        // wizard's postcode gate (91052/91054/91056/91058). The
+        // `city` column installed by migration 0009 carries
+        // `default 'erlangen'` + a CHECK constraint, so newly-
+        // inserted rows pick up the right value automatically once
+        // the migration is applied. We deliberately do NOT pass
+        // `city` from the SPA: that would couple the deploy ordering
+        // (SPA-deploy-before-migration would 23502 / 42703 every
+        // INSERT, hard-blocking new project creation on prod). With
+        // the field omitted, the insert succeeds even before 0009
+        // is applied — the column simply does not exist and is
+        // ignored — and after 0009 lands, the default fills it in.
+        // The migration's CHECK enforces value validity at the DB
+        // boundary regardless of the SPA.
         template_id: templateId,
         name: deriveName(input.intent, input.hasPlot ? input.plotAddress : null),
       })
