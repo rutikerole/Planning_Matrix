@@ -346,7 +346,24 @@ export async function logTurnEvent(
     reason: args.reason,
   })
   if (error) {
-    console.warn(`[chat-turn] project_events insert failed (non-fatal): ${error.message}`)
+    // Phase 2.5 — promote from a casual `console.warn` to a structured
+    // line that platform log filters can pick up. The audit (Tier-2)
+    // flagged that a silently-dropped audit-event row leaves no trail
+    // for future investigation. We still do NOT abort the turn — a
+    // missing audit row is an audit gap, not a correctness regression
+    // — but failures are now greppable via the `event=audit_drop` tag.
+    console.error(
+      JSON.stringify({
+        component: 'chat-turn',
+        event: 'audit_drop',
+        severity: 'warn',
+        project_id: args.projectId,
+        reason: args.reason,
+        sql_error_code: error.code ?? null,
+        sql_error_message: error.message,
+        hint: 'project_events insert failed — turn proceeded but the audit row was lost.',
+      }),
+    )
   }
 }
 
