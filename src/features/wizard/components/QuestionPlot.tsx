@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { AnimatePresence, m, useReducedMotion } from 'framer-motion'
 import { cn } from '@/lib/utils'
 import { useWizardState } from '../hooks/useWizardState'
-import { isPlotAddressValid } from '../lib/plotValidation'
+import { isErlangenAddress, isPlotAddressValid } from '../lib/plotValidation'
 import type { Intent } from '../lib/selectTemplate'
 import { WizardTitleBlock } from './WizardTitleBlock'
 
@@ -49,10 +49,21 @@ export function QuestionPlot({ onSubmit, submitError }: Props) {
   }, [hasPlot, plotAddress])
 
   const addressValid = isPlotAddressValid(plotAddress)
+  // Phase 1 (post-audit) — v1 scope locked to Erlangen postcodes
+  // (91052 / 91054 / 91056 / 91058). The format check is the first
+  // floor; the Erlangen check is layered on top so the user sees a
+  // helpful, calm out-of-scope notice rather than a generic
+  // "Adresse ungültig". `addressInErlangen` is only consulted when
+  // the format-floor passes — otherwise the existing format error
+  // takes precedence.
+  const addressInErlangen = isErlangenAddress(plotAddress)
   const showAddressError = touched && hasPlot === true && !addressValid
+  const showOutOfErlangenError =
+    touched && hasPlot === true && addressValid && !addressInErlangen
   const canSubmit =
     intent !== null &&
-    (hasPlot === false || (hasPlot === true && addressValid))
+    (hasPlot === false ||
+      (hasPlot === true && addressValid && addressInErlangen))
 
   const handleSubmit = () => {
     if (!intent) return
@@ -148,9 +159,11 @@ export function QuestionPlot({ onSubmit, submitError }: Props) {
                 value={plotAddress}
                 onChange={(e) => setPlotAddress(e.target.value)}
                 onBlur={() => setTouched(true)}
-                aria-invalid={showAddressError || undefined}
+                aria-invalid={showAddressError || showOutOfErlangenError || undefined}
                 aria-describedby={
-                  showAddressError ? 'plot-address-error' : 'plot-address-helper'
+                  showAddressError || showOutOfErlangenError
+                    ? 'plot-address-error'
+                    : 'plot-address-helper'
                 }
                 className={cn(
                   'w-full bg-transparent border-0 border-b py-2.5 text-[16px] text-ink placeholder:text-ink/35 transition-colors duration-soft',
@@ -168,6 +181,19 @@ export function QuestionPlot({ onSubmit, submitError }: Props) {
                 >
                   {t('wizard.q2.addressInvalid')}
                 </p>
+              ) : showOutOfErlangenError ? (
+                <div
+                  id="plot-address-error"
+                  role="alert"
+                  className="flex flex-col gap-1.5 text-[12px] leading-relaxed border-l-2 border-destructive/40 pl-4 py-1"
+                >
+                  <p className="text-destructive font-medium">
+                    {t('wizard.q2.errorOutOfErlangen.title')}
+                  </p>
+                  <p className="text-destructive/85">
+                    {t('wizard.q2.errorOutOfErlangen.body')}
+                  </p>
+                </div>
               ) : (
                 <p
                   id="plot-address-helper"
@@ -176,6 +202,16 @@ export function QuestionPlot({ onSubmit, submitError }: Props) {
                   {t('wizard.q2.addressHelper')}
                 </p>
               )}
+              {/* Phase 1 — always-on scope hint sits below the helper /
+                * error so users know the v1 city scope before they ever
+                * get an out-of-scope error. Calm clay register, mirrors
+                * the existing italic Serif vocabulary. */}
+              <p
+                className="font-serif italic text-[11px] text-clay/72 leading-relaxed"
+                aria-live="off"
+              >
+                {t('wizard.q2.erlangenScopeNotice')}
+              </p>
             </div>
           </m.div>
         )}

@@ -72,6 +72,16 @@ export function useCreateProject() {
         has_plot: input.hasPlot,
         plot_address: input.hasPlot ? input.plotAddress : null,
         bundesland: 'bayern',
+        // Phase 1 (post-audit) — v1 scope locks to Erlangen. The
+        // wizard's address gate guarantees the postcode is in the
+        // Erlangen Stadtgebiet (91052/91054/91056/91058) by the time
+        // we reach this insert. Migration 0009 must be applied to
+        // the linked Supabase project BEFORE this code reaches
+        // production — otherwise the INSERT fails with
+        // `column "city" of relation "projects" does not exist`.
+        // See AUDIT_REPORT.md §6 / Phase-1 report for the apply
+        // order.
+        city: 'erlangen',
         template_id: templateId,
         name: deriveName(input.intent, input.hasPlot ? input.plotAddress : null),
       })
