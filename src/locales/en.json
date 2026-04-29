@@ -425,7 +425,7 @@
     "footer": {
       "briefingPrimary": "View briefing",
       "briefingSubtitle": "The full document",
-      "cockpitSecondary": "Open cockpit",
+      "cockpitSecondary": "Open checklist",
       "leaveSecondary": "← Leave project",
       "overflowLabel": "More actions",
       "overflowEyebrow": "Actions & overview"

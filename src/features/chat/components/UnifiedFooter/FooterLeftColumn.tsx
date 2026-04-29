@@ -61,17 +61,22 @@ export function FooterLeftColumn({ project, messages, events }: Props) {
         />
       </Link>
 
-      {/* Secondary row — Cockpit · Export · Leave, separated by hairline
-        * dots. Each item keeps its own affordance + tone (Cockpit + Export
-        * read as ink/75 secondary actions; Leave gets the calm clay tone
-        * that signals destructive without shouting). */}
+      {/* Secondary row — [Checkliste öffnen]  ·  Export  ·  ← verlassen.
+        * Post-Phase-3 hot-fix: "Cockpit öffnen" → "Checkliste öffnen"
+        * (mental-model rename) AND the Checkliste affordance is now an
+        * outline button instead of an inline text-link, so it reads as
+        * a real CTA. Export keeps its ghost-link tone (it lives inside
+        * its own dropdown trigger anyway); Leave keeps its calm clay
+        * register because it is intentionally a destructive-feeling
+        * navigation, not a primary action. */}
       <div className="flex items-center gap-2.5 text-[13px] text-ink/75 leading-none flex-wrap">
         <Link
           to={`/projects/${project.id}/overview`}
-          className="hover:text-ink transition-colors duration-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/35 focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm"
+          className="group inline-flex items-center gap-1.5 px-2.5 py-1 rounded-[var(--pm-radius-button,0.5rem)] border border-ink/20 bg-paper hover:bg-drafting-blue/[0.06] hover:border-drafting-blue/45 motion-safe:hover:-translate-y-px transition-[background-color,border-color,color,transform] duration-soft text-[12px] font-medium text-ink/85 hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/35 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+          style={{ boxShadow: 'inset 0 1px 0 hsl(0 0% 100% / 0.55)' }}
         >
           {t('chat.footer.cockpitSecondary', {
-            defaultValue: 'Cockpit öffnen',
+            defaultValue: 'Checkliste öffnen',
           })}
         </Link>
         <span aria-hidden="true" className="text-clay/45">·</span>

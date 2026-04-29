@@ -3,15 +3,17 @@
 //
 // Right-side cluster of the unified footer band:
 //
-//   Cockpit öffnen ↗
+//   [ Checkliste öffnen ↗ ]   ← outline button (post-Phase-3 hot-fix)
 //   M 1:100 ├──■──┤
 //   ≈ 313K Tokens · 1,17 USD
 //
-// The Open-cockpit link is a quick route to /overview (mirrors the
-// left column's secondary entry; the data-side of the workspace has its
-// own affordance for users who naturally look right). Scale bar +
-// cost ticker live here permanently — they were idle decoration in
-// the right rail body and now anchor the band.
+// The "Checkliste öffnen" CTA routes to /overview (the operating-mode
+// cockpit). Renamed from "Cockpit öffnen" → "Checkliste öffnen" because
+// "cockpit" was opaque to users; "checklist" is the actual mental model.
+// Restyled from inline text-link to outline button so it reads as a
+// proper affordance, not as decoration alongside the scale bar.
+// Scale bar + cost ticker live here permanently — they were idle
+// decoration in the right rail body and now anchor the band.
 // ───────────────────────────────────────────────────────────────────────
 
 import { Link } from 'react-router-dom'
@@ -31,14 +33,18 @@ export function FooterRightColumn({ project, messages }: Props) {
     <div className="flex flex-col items-end gap-2 min-w-0 text-right">
       <Link
         to={`/projects/${project.id}/overview`}
-        className="inline-flex items-center gap-1 text-[13px] text-ink/75 hover:text-ink transition-colors duration-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/35 focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm"
+        className="group inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[var(--pm-radius-button,0.5rem)] border border-ink/20 bg-paper hover:bg-drafting-blue/[0.06] hover:border-drafting-blue/45 motion-safe:hover:-translate-y-px transition-[background-color,border-color,color,transform] duration-soft text-[13px] font-medium text-ink/85 hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/35 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+        style={{ boxShadow: 'inset 0 1px 0 hsl(0 0% 100% / 0.55)' }}
       >
         <span>
           {t('chat.footer.cockpitSecondary', {
-            defaultValue: 'Cockpit öffnen',
+            defaultValue: 'Checkliste öffnen',
           })}
         </span>
-        <ArrowUpRight aria-hidden="true" className="size-3.5" />
+        <ArrowUpRight
+          aria-hidden="true"
+          className="size-3.5 motion-safe:group-hover:translate-x-0.5 transition-transform duration-soft"
+        />
       </Link>
 
       <FooterScaleBar />
