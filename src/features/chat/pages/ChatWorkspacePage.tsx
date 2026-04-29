@@ -260,6 +260,8 @@ export function ChatWorkspacePage() {
       {isMobile ? (
         <MobileChatWorkspace
           project={project}
+          messages={messages ?? []}
+          events={events ?? []}
           leftRail={<LeftRail project={project} messages={messages ?? []} />}
           rightRail={<RightRail project={project} messages={messages ?? []} />}
           inputBar={inputBarNode}
@@ -315,9 +317,10 @@ export function ChatWorkspacePage() {
               <ChatDropZone disabled={isThinking}>
                 {/* Phase 3.6 #69 — loud progress indicator at the top of the
                   * thread. Sticky to the message column; the left-rail
-                  * ProgressMeter stays mounted as a secondary indicator. */}
+                  * ProgressMeter stays mounted as a secondary indicator.
+                  * Phase 2.5 — pass messages for durable derivation. */}
                 <div className="hidden lg:block -mt-12 mb-6 lg:-mt-16">
-                  <ChatProgressBar />
+                  <ChatProgressBar messages={messages ?? []} />
                 </div>
                 <PaperCard project={project}>
                   <Thread messages={augmentedMessages} />
@@ -375,8 +378,8 @@ export function ChatWorkspacePage() {
             <div className="absolute top-2 left-1/2 -translate-x-1/2 h-1 w-10 rounded-full bg-clay/40" />
             {/* Phase 3.6 #69 — full progress bar with labels in the
               * mobile top drawer. Tapping the condensed bar in the top
-              * bar opens this drawer. */}
-            <ChatProgressBar />
+              * bar opens this drawer. Phase 2.5 — pass messages. */}
+            <ChatProgressBar messages={messages ?? []} />
           </Drawer.Content>
         </Drawer.Portal>
       </Drawer.Root>

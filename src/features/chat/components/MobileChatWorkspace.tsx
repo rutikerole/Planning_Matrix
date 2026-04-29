@@ -19,12 +19,19 @@ import { useTranslation } from 'react-i18next'
 import { Drawer } from 'vaul'
 import { BlueprintSubstrate } from '@/components/shared/BlueprintSubstrate'
 import { useKeyboardHeight } from '@/lib/useKeyboardHeight'
-import type { ProjectRow } from '@/types/db'
+import type { MessageRow, ProjectRow } from '@/types/db'
+import type { ProjectEventRow } from '../hooks/useProjectEvents'
 import { MobileTopHeader } from './MobileTopHeader'
 import { ChatProgressBar } from './Progress/ChatProgressBar'
+import { FooterLeftColumn } from './UnifiedFooter/FooterLeftColumn'
 
 interface Props {
   project: ProjectRow
+  /** Phase 2.5 — needed for ChatProgressBar's durable derivation +
+   * for the FooterLeftColumn 'Briefing ansehen' CTA inside the left
+   * drawer (was previously absent on mobile, founder-reported bug). */
+  messages: MessageRow[]
+  events: ProjectEventRow[]
   leftRail: ReactNode
   rightRail: ReactNode
   inputBar: ReactNode
@@ -41,6 +48,8 @@ interface Props {
 
 export function MobileChatWorkspace({
   project,
+  messages,
+  events,
   leftRail,
   rightRail,
   inputBar,
@@ -74,9 +83,14 @@ export function MobileChatWorkspace({
 
       {/* Phase 3.8 #84 — sticky compact progress band below the
         * collapsing header. ChatProgressBar's compact mode (Phase 3.6
-        * #69) drops labels but keeps segments + percent. */}
+        * #69) drops labels but keeps segments + percent.
+        *
+        * Phase 2.5 — pass `messages` so the bar derives turn-count
+        * and current-specialist durably from the persisted message
+        * list, not from the session-scoped chatStore that resets on
+        * every project remount. */}
       <div className="sticky top-[44px] z-20 bg-paper/95 backdrop-blur-[2px] border-b border-ink/10 px-3 py-1.5">
-        <ChatProgressBar compact />
+        <ChatProgressBar compact messages={messages} />
       </div>
 
       {/* Thread surface — bottom padding accounts for the fixed input
@@ -135,6 +149,22 @@ export function MobileChatWorkspace({
               })}
             </Drawer.Title>
             <div className="px-1">{leftRail}</div>
+            {/* Phase 2.5 (founder-reported bug) — the 'Briefing
+              * ansehen' primary CTA had NO surface on mobile: desktop
+              * has it in UnifiedFooter, tablet has it in the
+              * lg:hidden overflow drawer, but MobileChatWorkspace
+              * (<640 px) showed neither. The result: users on phones
+              * had no way to navigate to /projects/:id/result. We
+              * append FooterLeftColumn to the left drawer so the
+              * Briefing button + Cockpit / Export / Leave row are
+              * reachable via the existing left-hamburger affordance. */}
+            <div className="px-4 pt-4 pb-6 border-t border-ink/12">
+              <FooterLeftColumn
+                project={project}
+                messages={messages}
+                events={events}
+              />
+            </div>
           </Drawer.Content>
         </Drawer.Portal>
       </Drawer.Root>
