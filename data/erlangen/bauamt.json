@@ -1,0 +1,107 @@
+{
+  "_schemaVersion": 1,
+  "retrieved_on": "2026-04-29",
+  "official_name_de": "Bauaufsichtsamt",
+  "parent_office_de": "Stadt Erlangen",
+  "address": {
+    "street": "Gebbertstraße 1",
+    "postcode": "91052",
+    "city": "Erlangen"
+  },
+  "contact": {
+    "phone_general": "09131 86-1002",
+    "phone_alternate": "09131 86-1004",
+    "fax": "09131 86-1011",
+    "email_general": "bauaufsichtsamt@stadt.erlangen.de"
+  },
+  "opening_hours": [
+    { "weekday": "mon", "open": "09:30", "close": "15:00", "notes_de": "Persönliche Termine nur nach vorheriger Vereinbarung." },
+    { "weekday": "tue", "open": "09:30", "close": "15:00", "notes_de": "Persönliche Termine nur nach vorheriger Vereinbarung." },
+    { "weekday": "wed", "open": "09:30", "close": "15:00", "notes_de": "Persönliche Termine nur nach vorheriger Vereinbarung." },
+    { "weekday": "thu", "open": "09:30", "close": "15:00", "notes_de": "Persönliche Termine nur nach vorheriger Vereinbarung." },
+    { "weekday": "fri", "open": "09:30", "close": "12:00", "notes_de": "Persönliche Termine nur nach vorheriger Vereinbarung." }
+  ],
+  "responsibilities_de": [
+    "Bearbeitung von Bauanträgen nach BayBO Art. 64 (vereinfachtes Verfahren Art. 58, Baugenehmigungsverfahren Art. 60)",
+    "Prüfung der Genehmigungsfreistellung (BayBO Art. 57)",
+    "Abnahme von Bauvorlagen und Aktenführung (Zentrale Planannahme)",
+    "Überwachung der Bauausführung (Baukontrolle / Bauüberwachung)",
+    "Erteilung von Abweichungs-, Ausnahme- und Befreiungsbescheiden",
+    "Werbeanlagengenehmigungen",
+    "Mitwirkung bei Denkmalschutzfragen (untere Denkmalschutzbehörde)"
+  ],
+  "specialty_contacts": [
+    {
+      "topic_de": "Zentrale Planannahme (Eingangsbearbeitung von Bauanträgen)",
+      "email": "planannahme@stadt.erlangen.de",
+      "phone": "09131 86-1068"
+    },
+    {
+      "topic_de": "Grundstücksentwässerung",
+      "email": "grundstuecksentwaesserung@stadt.erlangen.de",
+      "phone": "09131 86-1041"
+    },
+    {
+      "topic_de": "Grundstücksentwässerung — alternative Leitung",
+      "email": "grundstuecksentwaesserung@stadt.erlangen.de",
+      "phone": "09131 86-1087"
+    },
+    {
+      "topic_de": "Denkmalschutz (untere Denkmalschutzbehörde)",
+      "email": "denkmalschutz@stadt.erlangen.de",
+      "phone": "09131 86-1007"
+    },
+    {
+      "topic_de": "Baureferat (übergeordnete Stelle)",
+      "email": "baureferat@stadt.erlangen.de",
+      "phone": "09131 86-1370"
+    }
+  ],
+  "online_services": [
+    {
+      "label_de": "Bauantrag online — BayernPortal-Assistent (offizielle e-Government-Strecke des Freistaats für die Bauantragstellung)",
+      "url": "https://formularserver-bp.bayern.de/intelliform/forms/bayernportal/bayernportal/Ministerien/stmb/bauantrag_hauptassistent/index",
+      "retrieved_on": "2026-04-29"
+    },
+    {
+      "label_de": "Bauaufsichtsamt — Übersichtsseite",
+      "url": "https://erlangen.de/amt/37761",
+      "retrieved_on": "2026-04-29"
+    },
+    {
+      "label_de": "Zentrale Planannahme — Hinweise zur Einreichung",
+      "url": "https://erlangen.de/aktuelles/zentrale-planannahme",
+      "retrieved_on": "2026-04-29"
+    },
+    {
+      "label_de": "Bauvorhaben; Beantragung einer Baugenehmigung — Verfahrensseite",
+      "url": "https://erlangen.de/service/1839",
+      "retrieved_on": "2026-04-29"
+    },
+    {
+      "label_de": "Bauaufsichtsamt — Aktuelle Informationen",
+      "url": "https://erlangen.de/aktuelles/bauaufsicht-informationen",
+      "retrieved_on": "2026-04-29"
+    },
+    {
+      "label_de": "Sachgebiet Bauaufsicht",
+      "url": "https://erlangen.de/amt/304453",
+      "retrieved_on": "2026-04-29"
+    }
+  ],
+  "submission_methods_de": [
+    "Postalische Einreichung der Bauantragsunterlagen in zweifacher Ausführung an die Zentrale Planannahme.",
+    "Einwurf in die Briefkästen am rückwärtigen Innenhof neben dem Aufzug oder am Rathaus (Rathausplatz 1).",
+    "Online-Antragstellung über den BayernPortal-Assistenten (siehe online_services)."
+  ],
+  "intake_notes_de": [
+    "Aktuell wird die postalische Einreichung empfohlen; die Online-Strecke über das BayernPortal ist verfügbar, ersetzt aber die formelle Bauvorlage nur, soweit das BayernPortal die Strecke vorsieht.",
+    "Persönliche Termine werden nur nach vorheriger Vereinbarung gewährt — gilt für Beratung wie für Plan-Übergabe gleichermaßen."
+  ],
+  "source_ids": [
+    "stadt-erlangen-bauamt",
+    "stadt-erlangen-bauamt-ansprechpartner",
+    "stadt-erlangen-zentrale-planannahme",
+    "stadt-erlangen-portal"
+  ]
+}
