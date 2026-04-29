@@ -104,7 +104,14 @@ export function MobileChatWorkspace({
           transition: 'padding-bottom 120ms ease-out',
         }}
       >
-        <div className="px-3 pt-2 pb-2">{inputBar}</div>
+        {/* Phase 4.1.15 — `px-[26px]` = msg-col padding (`<main px-3>`,
+          * 12 px) + 14 px visual inset, matching the same 14 px each
+          * side that UnifiedFooter's `lg:px-[22px]` gives on desktop
+          * and the new `px-[14px]` gives on tablet. Bar lands at
+          * (26, W−26); msg col is (12, W−12); bar 14 px inside on each
+          * side. Continue / FAB / Send anchor to InputBar's
+          * `EmbeddedShell.max-w-3xl mx-auto` so they follow. */}
+        <div className="px-[26px] pt-2 pb-2">{inputBar}</div>
       </div>
 
       {/* Left + right vaul drawers carry the secondary actions that

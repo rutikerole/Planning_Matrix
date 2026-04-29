@@ -74,9 +74,23 @@ export function UnifiedFooter({ project, messages, events, inputBar }: Props) {
         </div>
       </div>
 
-      {/* Mobile band — input + overflow trigger. */}
-      <div className="lg:hidden px-3 pt-2.5 pb-1.5">
-        <div className="flex items-end gap-2">
+      {/* Mobile band — input + overflow trigger.
+        *
+        * Phase 4.1.15 — tablet alignment (640–1023 px). UnifiedFooter
+        * only renders ≥ 640 (`isMobile` < 640 routes to
+        * `MobileChatWorkspace`), so this block covers the tablet zone.
+        * Outer padding mirrors body's `<main>` (`px-6 sm:px-10`) and
+        * the inner wrapper mirrors body's `max-w-3xl mx-auto` center.
+        * `px-[14px]` then adds the same 14 px visual inset that desktop
+        * achieves via `lg:px-[22px]`. Net at any tablet width: bar's
+        * left = msg-col-left + 14 px; overflow-button's right = msg-col-
+        * right − 14 px. Bar's right edge sits ~62 px inside msg col
+        * because the 40 px overflow trigger + 8 px gap consume that
+        * space — structural cost of the trigger, can't kill without
+        * removing the affordance. Continue / FAB / Send anchor to
+        * `EmbeddedShell.max-w-3xl mx-auto` so they follow the bar. */}
+      <div className="lg:hidden px-6 sm:px-10 pt-2.5 pb-1.5">
+        <div className="mx-auto w-full max-w-3xl flex items-end gap-2 px-[14px]">
           <div className="flex-1 min-w-0">{inputBar}</div>
           <button
             type="button"
