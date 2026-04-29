@@ -1,18 +1,17 @@
 // ───────────────────────────────────────────────────────────────────────
 // Phase 3.7 #75 / #77 — Footer left column
+// Phase 4.1.11 — collapsed the secondary stack into a single horizontal
+// row so total column height (≈ 70 px) is shorter than the InputBar's
+// natural height (≈ 120 px). Was previously 4 stacked items totaling
+// ≈ 136 px, which inflated the grid row and left empty space above
+// InputBar's chip slot — visually orphaning the Continue / suggestion
+// chips. Same actions, same link targets, same primary-vs-secondary
+// hierarchy. Just packed horizontally.
 //
-// Pulls the four bottom-of-left-rail items into the unified footer:
+//   ▎ Briefing ansehen →                              ← primary CTA
+//     Das ausführliche Dokument                          (Q8 locked)
 //
-//   ▎ Briefing ansehen →           ← primary CTA (Q8 locked: drafting-blue/15)
-//     Das ausführliche Dokument
-//
-//   Cockpit öffnen                  ← secondary
-//   Exportieren                     ← secondary
-//   Projekt verlassen               ← destructive
-//
-// Visual hierarchy: primary stands out as a real action band; secondary
-// links are calm Inter 13 ink/75; the leave-project link gets a separator
-// and a clay/68 tone (destructive but restrained).
+//   Cockpit · Exportieren · Projekt verlassen        ← secondary row
 // ───────────────────────────────────────────────────────────────────────
 
 import { Link } from 'react-router-dom'
@@ -32,7 +31,7 @@ interface Props {
 export function FooterLeftColumn({ project, messages, events }: Props) {
   const { t } = useTranslation()
   return (
-    <div className="flex flex-col gap-2.5 min-w-0">
+    <div className="flex flex-col gap-2 min-w-0">
       {/* Primary CTA — Briefing ansehen → */}
       <Link
         to={`/projects/${project.id}/result`}
@@ -62,35 +61,36 @@ export function FooterLeftColumn({ project, messages, events }: Props) {
         />
       </Link>
 
-      {/* Secondary cluster */}
-      <div className="flex flex-col gap-1.5">
+      {/* Secondary row — Cockpit · Export · Leave, separated by hairline
+        * dots. Each item keeps its own affordance + tone (Cockpit + Export
+        * read as ink/75 secondary actions; Leave gets the calm clay tone
+        * that signals destructive without shouting). */}
+      <div className="flex items-center gap-2.5 text-[13px] text-ink/75 leading-none flex-wrap">
         <Link
           to={`/projects/${project.id}/overview`}
-          className="text-[13px] text-ink/75 hover:text-ink transition-colors duration-soft self-start focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/35 focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm"
+          className="hover:text-ink transition-colors duration-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/35 focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm"
         >
           {t('chat.footer.cockpitSecondary', {
             defaultValue: 'Cockpit öffnen',
           })}
         </Link>
-
+        <span aria-hidden="true" className="text-clay/45">·</span>
         <ExportMenu
           project={project}
           messages={messages}
           events={events}
           variant="ghost"
         />
+        <span aria-hidden="true" className="text-clay/45">·</span>
+        <Link
+          to="/dashboard"
+          className="text-clay/75 hover:text-clay-deep transition-colors duration-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/35 focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm"
+        >
+          {t('chat.footer.leaveSecondary', {
+            defaultValue: '← Projekt verlassen',
+          })}
+        </Link>
       </div>
-
-      <span aria-hidden="true" className="block h-px bg-ink/10 mt-1" />
-
-      <Link
-        to="/dashboard"
-        className="text-[12.5px] text-clay/75 hover:text-clay-deep transition-colors duration-soft self-start focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/35 focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm"
-      >
-        {t('chat.footer.leaveSecondary', {
-          defaultValue: '← Projekt verlassen',
-        })}
-      </Link>
     </div>
   )
 }

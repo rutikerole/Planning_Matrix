@@ -36,9 +36,9 @@ interface Props {
   /** True while the assistant is composing — chips are inert. */
   disabled: boolean
   onPick: (s: SuggestionId) => void
-  /** Latest completion_signal — InputBar reads this directly to decide
-   * whether to render the Continue chip absolutely above the input
-   * card; we no longer render a Continue chip from this surface. */
+  /** Continue handler for `input_type: 'none'` — sends "Weiter." now. */
+  onContinue: () => void
+  /** Latest completion_signal — drives the soft Continue prompt. */
   completionSignal:
     | 'continue'
     | 'needs_designer'
@@ -52,21 +52,34 @@ interface Props {
  * Returns null when there's nothing structured to show — the input bar
  * still renders the textarea + paperclip + send.
  *
- * Phase 4.1.8 — input_type='none' / completion='continue' / completion=
- * 'ready_for_review' no longer render here. Those cases now render a
- * Continue chip absolute-positioned by InputBar, anchored 4 px above
- * the input card so the chip's vertical position is independent of
- * the surrounding flex slot's height.
+ * Phase 4.1.11 — Continue chip restored to render here as a chip in
+ * the chip row (the original Phase 3.7 #75a shape). Phase 4.1.8's
+ * absolute-positioned chip was a regression that created a 40 px
+ * floating band; the actual root cause (FooterLeftColumn inflating
+ * the grid row above InputBar) is fixed at the source by collapsing
+ * FooterLeftColumn's vertical secondary stack into a horizontal row
+ * — see FooterLeftColumn.tsx.
  */
 export function SuggestionChips({
   lastAssistant,
   disabled,
   onPick,
-  completionSignal: _completionSignal,
+  onContinue,
+  completionSignal,
 }: Props) {
   const inputType = lastAssistant?.input_type ?? 'text'
   const options = (lastAssistant?.input_options as SelectOption[] | null) ?? []
   const replies = lastAssistant?.likely_user_replies ?? []
+
+  // input_type: 'none' — show a Weiter button + companion note,
+  // never replace the textarea.
+  if (
+    inputType === 'none' ||
+    completionSignal === 'continue' ||
+    completionSignal === 'ready_for_review'
+  ) {
+    return <ContinueRow disabled={disabled} onContinue={onContinue} />
+  }
 
   if (inputType === 'yesno') {
     return (
@@ -440,7 +453,37 @@ function AddressRow({
   )
 }
 
-// Phase 4.1.8 — ContinueRow component removed. Continue is now rendered
-// directly by InputBar.tsx as an absolute-positioned chip anchored to
-// the input card itself (eliminating the flex-slot height variable).
-// See InputBar.tsx for the new render path.
+// ── Continue prompt (input_type === 'none') ────────────────────────────
+
+/**
+ * Continue chip — same render path as yesno / single_select / multi_select
+ * / address chips. Renders inside the EmbeddedShell's flex column at the
+ * top of the chip slot, 8 px above the input card via flex `gap-2`. The
+ * "you can also type instead" cue lives in the textarea placeholder so
+ * we don't need a third floating helper element.
+ */
+function ContinueRow({
+  disabled,
+  onContinue,
+}: {
+  disabled: boolean
+  onContinue: () => void
+}) {
+  const { t } = useTranslation()
+  return (
+    <ChipRow disabled={disabled}>
+      <button
+        type="button"
+        onClick={onContinue}
+        disabled={disabled}
+        className={cn(
+          'inline-flex items-center gap-1.5 h-9 px-4 bg-ink text-paper text-[13px] font-medium transition-colors duration-soft shrink-0',
+          'rounded-[var(--pm-radius-pill)] hover:bg-ink/92 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink focus-visible:ring-offset-2 focus-visible:ring-offset-background',
+        )}
+      >
+        {t('chat.input.continue')}
+        <ArrowRight aria-hidden="true" className="size-3.5" />
+      </button>
+    </ChipRow>
+  )
+}

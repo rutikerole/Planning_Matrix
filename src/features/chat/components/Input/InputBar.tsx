@@ -24,7 +24,7 @@ import {
   type ReactNode,
 } from 'react'
 import { useTranslation } from 'react-i18next'
-import { ArrowRight, Paperclip } from 'lucide-react'
+import { Paperclip } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useChatStore } from '@/stores/chatStore'
 import type { MessageRow } from '@/types/db'
@@ -226,28 +226,17 @@ export function InputBar({
     showSuggestions &&
     (inputType === 'yesno' || inputType === 'single_select' || inputType === 'multi_select')
 
-  // Phase 4.1.8 — Continue is rendered as an absolute-positioned chip
-  // anchored DIRECTLY ABOVE the input card (4 px gap). Bypasses the
-  // EmbeddedShell's flex flow, which was inheriting empty space from
-  // UnifiedFooter's `justify-end` slot (the slot is sized to
-  // FooterLeftColumn's ~190 px stack of CTAs, while InputBar is only
-  // ~120 px tall — the leftover ~70 px above InputBar's chip row
-  // visually read as a gap). Anchoring to the input card itself makes
-  // the chip's vertical position independent of the footer slot height.
-  const showContinueChip =
-    inputType === 'none' ||
-    completionSignal === 'continue' ||
-    completionSignal === 'ready_for_review'
-
-  const handleContinue = () => {
-    if (disabled) return
-    const msg = continueText(lang)
-    onSubmit({
-      userMessage: msg,
-      userAnswer: { kind: 'text', text: msg },
-      attachmentIds: [],
-    })
-  }
+  // Phase 4.1.11 — Continue is back inside SuggestionChips → ContinueRow
+  // (a chip in the chip row, same render path as yesno / single_select /
+  // multi_select / address). Phase 4.1.8's absolute -top-10 positioning
+  // was a regression — it created a visible 40 px floating band ABOVE
+  // the input card. The actual root cause (FooterLeftColumn inflating
+  // the grid row, leaving empty space above InputBar's chip slot) is
+  // fixed at the source by collapsing FooterLeftColumn's secondary stack
+  // into a single horizontal row — see FooterLeftColumn.tsx for that
+  // change. With FooterLeftColumn shorter than InputBar, the grid row
+  // height = InputBar height, and the chip row sits at row top with no
+  // empty space above it.
 
   // Phase 3.7 #75 — when embedded in UnifiedFooter, the band chrome
   // (sticky position, border-top, background, safe-area inset) lives
@@ -258,16 +247,23 @@ export function InputBar({
   return (
     <Shell>
           {/* Suggestion chips above the bar — yesno / select / multi /
-            * address / reply variants. Continue (input_type='none' or
-            * completion signal == continue/ready_for_review) is rendered
-            * as an absolute-positioned chip anchored to the input card
-            * below, NOT here, so its vertical gap to the card is fixed
-            * regardless of UnifiedFooter slot height. */}
-          {showSuggestions && !showContinueChip && (
+            * address / reply / Continue variants. The Continue case is
+            * handled by SuggestionChips → ContinueRow (see Phase 4.1.11
+            * note above). */}
+          {showSuggestions && (
             <SuggestionChips
               lastAssistant={lastAssistant}
               disabled={disabled}
               onPick={applySuggestion}
+              onContinue={() => {
+                if (disabled) return
+                const msg = continueText(lang)
+                onSubmit({
+                  userMessage: msg,
+                  userAnswer: { kind: 'text', text: msg },
+                  attachmentIds: [],
+                })
+              }}
               completionSignal={completionSignal}
             />
           )}
@@ -293,28 +289,8 @@ export function InputBar({
             </ul>
           )}
 
-          {/* The textarea card — always visible. The relative wrapper
-            * anchors the absolute-positioned Continue chip 4 px above
-            * the card's top edge, left-aligned with the paperclip's x. */}
-          <div className="relative">
-            {showContinueChip && (
-              <button
-                type="button"
-                onClick={handleContinue}
-                disabled={disabled}
-                aria-label={t('chat.input.continue')}
-                className={cn(
-                  'absolute -top-10 left-3 z-10 inline-flex items-center gap-1.5 h-9 px-4 bg-ink text-paper text-[13px] font-medium shrink-0',
-                  'rounded-[var(--pm-radius-pill)] transition-colors duration-soft',
-                  'hover:bg-ink/92 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink focus-visible:ring-offset-2 focus-visible:ring-offset-background',
-                  disabled && 'opacity-60 pointer-events-none',
-                )}
-              >
-                {t('chat.input.continue')}
-                <ArrowRight aria-hidden="true" className="size-3.5" />
-              </button>
-            )}
-            <div
+          {/* The textarea card — always visible. */}
+          <div
             className={cn(
               'pm-input-card flex items-end gap-2 bg-paper border border-ink/15 px-3 py-2',
               'rounded-[var(--pm-radius-input)] transition-colors duration-soft',
@@ -392,7 +368,6 @@ export function InputBar({
               * affordance backed by chatStore's AbortController, hover
               * scale, and a sharper disabled style. */}
             <SendButton isEmpty={isEmpty} disabled={disabled} onSend={handleSubmit} />
-          </div>
           </div>
 
           {/* Bottom row — IDK link + tiny helper hint. */}
