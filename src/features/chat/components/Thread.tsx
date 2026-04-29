@@ -1,8 +1,5 @@
 import { useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { useTranslation } from 'react-i18next'
-import { m, AnimatePresence, useReducedMotion } from 'framer-motion'
-import { ArrowDown } from 'lucide-react'
 import { MessageUser } from './MessageUser'
 import { MessageAssistant } from './MessageAssistant'
 import { MessageSystem } from './MessageSystem'
@@ -28,8 +25,6 @@ interface Props {
  * up + new-messages pill ship in batch 4.
  */
 export function Thread({ messages }: Props) {
-  const { t } = useTranslation()
-  const reduced = useReducedMotion()
   const isThinking = useChatStore((s) => s.isAssistantThinking)
   const isStreaming = useChatStore((s) => s.streamingMessage !== null)
   const { id } = useParams<{ id: string }>()
@@ -40,8 +35,10 @@ export function Thread({ messages }: Props) {
   // during-render pattern that the React 19 Hooks plugin flags.
   const [initialIds] = useState<Set<string>>(() => new Set(messages.map((m) => m.id)))
 
-  // Auto-scroll: drives the new-message pill via the paused flag.
-  const { paused, resume } = useAutoScroll([messages.length, isThinking])
+  // Auto-scroll on new messages — Phase 4.1.6: <JumpToLatestFab /> now
+  // owns its own scrolled-away detection (rendered inside InputBar) so
+  // we just call this for the side-effect, no return values consumed.
+  useAutoScroll([messages.length, isThinking])
 
   return (
     <ol className="flex flex-col gap-8">
@@ -100,37 +97,10 @@ export function Thread({ messages }: Props) {
         </li>
       )}
 
-      {/* Phase 3.7 #76 (Patch A) — "Jump to latest" floating-action
-        * button. Used to be a paper-tab pill in atelier register that
-        * read as a label, not an action. Now a circular FAB:
-        * paper bg + ink/85 border + ink ArrowDown + drop shadow.
-        * Anchored bottom-right of the message column above the
-        * unified footer. Aria-label localized. */}
-      <AnimatePresence>
-        {paused && (
-          <m.li
-            initial={reduced ? false : { opacity: 0, y: 8, scale: 0.92 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={reduced ? { opacity: 0 } : { opacity: 0, y: 4, scale: 0.92 }}
-            transition={{ duration: reduced ? 0 : 0.2, ease: [0.16, 1, 0.3, 1] }}
-            className="fixed right-6 bottom-[calc(180px+1rem)] sm:right-10 lg:right-[calc(360px+1rem)] z-30"
-          >
-            <button
-              type="button"
-              onClick={resume}
-              aria-label={t('chat.jumpToLatest', {
-                defaultValue: 'Zum neuesten Beitrag',
-              })}
-              title={t('chat.jumpToLatest', {
-                defaultValue: 'Zum neuesten Beitrag',
-              })}
-              className="inline-flex items-center justify-center size-10 bg-paper border border-ink/85 rounded-full text-ink/85 shadow-[0_4px_16px_-4px_hsl(220_15%_11%/0.22)] hover:bg-ink hover:text-paper motion-safe:hover:scale-[1.05] transition-[background-color,color,transform] duration-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-            >
-              <ArrowDown aria-hidden="true" className="size-[16px]" />
-            </button>
-          </m.li>
-        )}
-      </AnimatePresence>
+      {/* Phase 4.1.6 — the jump-to-latest FAB used to live here (Phase
+        * 3.7 #76 Patch A). Moved into <InputBar /> so it sits within
+        * the same ~120 px footer zone as the Continue chip + send
+        * button. See JumpToLatestFab.tsx. */}
     </ol>
   )
 }

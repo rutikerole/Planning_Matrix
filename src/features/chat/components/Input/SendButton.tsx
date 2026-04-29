@@ -62,6 +62,12 @@ export function SendButton({ isEmpty, disabled, onSend }: Props) {
   }
 
   const inert = disabled || isEmpty
+  // Phase 4.1.6 — single ink-filled visual at idle and inert. The old
+  // ink/30 inert state read as "broken" next to the Continue chip's
+  // full ink fill; now the send button matches Continue's weight, with
+  // the inert state expressed by removing the hover/active motion and
+  // softening the cursor. The `disabled` prop still blocks the click
+  // so an empty submit can't fire.
   return (
     <button
       type="button"
@@ -69,13 +75,13 @@ export function SendButton({ isEmpty, disabled, onSend }: Props) {
       disabled={inert}
       aria-label={t('chat.input.send')}
       className={cn(
-        'shrink-0 self-end inline-flex items-center justify-center mb-1 rounded-full transition-[background-color,opacity,transform] duration-soft ease-soft',
+        'shrink-0 self-end inline-flex items-center justify-center mb-1 rounded-full bg-ink text-paper transition-[background-color,transform] duration-soft ease-soft',
         visualSize,
         hitArea,
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink focus-visible:ring-offset-2 focus-visible:ring-offset-background',
         inert
-          ? 'bg-ink/30 text-paper/85 cursor-not-allowed'
-          : 'bg-ink text-paper hover:bg-ink/92 motion-safe:hover:scale-[1.05] motion-safe:active:scale-[0.96]',
+          ? 'cursor-not-allowed'
+          : 'hover:bg-ink/92 motion-safe:hover:scale-[1.05] motion-safe:active:scale-[0.96]',
       )}
     >
       <ArrowUp aria-hidden="true" className="size-[18px]" />

@@ -35,6 +35,7 @@ import { SuggestionChips } from './SuggestionChips'
 import { AttachmentChip } from './AttachmentChip'
 import { AttachmentPicker } from './AttachmentPicker'
 import { SendButton } from './SendButton'
+import { JumpToLatestFab } from '../JumpToLatestFab'
 
 /** Resolve the send-now text for the Continue button. */
 function continueText(lang: 'de' | 'en'): string {
@@ -47,10 +48,20 @@ function continueText(lang: 'de' | 'en'): string {
 // sticky / safe-area inset chrome. Defining them at module level keeps
 // the children stable across renders — previously they were defined
 // inside InputBar's body, which forced focus-loss on every keystroke.
+//
+// Phase 4.1.6 — both shells are now `relative` and constrain their
+// inner content to `max-w-3xl mx-auto` so the chip row, the textarea
+// card, and the absolutely-positioned <JumpToLatestFab /> all align
+// to the same focused 768 px column. Mobile (<768 px) still fills the
+// available width via min(w-full, max-w-3xl).
 function EmbeddedShell({ children }: { children: ReactNode }) {
   return (
-    <div className="w-full" data-pm-input-bar="embedded">
+    <div
+      className="relative w-full max-w-3xl mx-auto"
+      data-pm-input-bar="embedded"
+    >
       <div className="w-full flex flex-col gap-2">{children}</div>
+      <JumpToLatestFab />
     </div>
   )
 }
@@ -63,12 +74,13 @@ function StandaloneShell({ children }: { children: ReactNode }) {
     >
       <div className="flex justify-center px-4 sm:px-6 lg:px-8">
         <div
-          className="w-full max-w-3xl py-3 sm:py-4 flex flex-col gap-2"
+          className="relative w-full max-w-3xl py-3 sm:py-4 flex flex-col gap-2"
           style={{
             paddingBottom: 'max(env(safe-area-inset-bottom, 0px), 0.75rem)',
           }}
         >
           {children}
+          <JumpToLatestFab />
         </div>
       </div>
     </div>
