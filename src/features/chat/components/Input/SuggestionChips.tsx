@@ -137,10 +137,16 @@ function ChipRow({
   disabled?: boolean
   variant?: 'reply'
 }) {
+  // Phase 4.1.7 — `mb-3` removed so the chip is visually contiguous
+  // with the textarea card below (parent EmbeddedShell uses `gap-2` →
+  // 8 px total gap, the user's max-acceptable threshold). `pl-3` aligns
+  // the leftmost chip with the paperclip's x position inside the input
+  // card (which has `px-3` internal padding) — same vertical column,
+  // not floating leftward at the EmbeddedShell edge.
   return (
     <div
       className={cn(
-        'mb-3 flex items-center gap-2 overflow-x-auto pm-chip-row',
+        'flex items-center gap-2 overflow-x-auto pm-chip-row pl-3',
         variant === 'reply' && 'opacity-95',
         disabled && 'opacity-60 pointer-events-none',
       )}
@@ -302,7 +308,7 @@ function MultiSelectRow({
   }
 
   return (
-    <div className={cn('mb-3 flex flex-col gap-2', disabled && 'opacity-60 pointer-events-none')}>
+    <div className={cn('flex flex-col gap-2 pl-3', disabled && 'opacity-60 pointer-events-none')}>
       <div
         className="flex items-center gap-2 overflow-x-auto pm-chip-row"
         role="group"
@@ -386,7 +392,7 @@ function AddressRow({
   }
 
   return (
-    <div className={cn('mb-3 flex flex-col gap-1.5', disabled && 'opacity-60 pointer-events-none')}>
+    <div className={cn('flex flex-col gap-1.5 pl-3 pr-3', disabled && 'opacity-60 pointer-events-none')}>
       <div className="flex items-center gap-2">
         <input
           type="text"
