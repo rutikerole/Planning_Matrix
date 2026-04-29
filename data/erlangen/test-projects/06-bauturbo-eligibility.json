@@ -1,0 +1,59 @@
+{
+  "_schemaVersion": 1,
+  "retrieved_on": "2026-04-29",
+  "id": "06-bauturbo-eligibility",
+  "narrative": {
+    "title_de": "Wohnungsbau-Nachverdichtung im Innenbereich — § 246e BauGB Eignungsprüfung",
+    "title_en": "Residential infill development — § 246e BauGB eligibility check",
+    "summary_de": "§ 246e BauGB ('Bauturbo', seit 2024) erlaubt unter engen Voraussetzungen befristete Befreiungen für Wohnungsbau im Innenbereich. Erwartetes Verhalten: das Modell darf § 246e nur dann als anwendbar darstellen, wenn (i) eine gemeindliche Festsetzung nach § 246e Abs. 1 vorliegt UND (ii) das Vorhaben den Schwellenwerten entspricht. Sonst ist § 246e nur als 'zu prüfende Möglichkeit' zu nennen — niemals als gegeben anzunehmen.",
+    "summary_en": "§ 246e BauGB ('Bauturbo', since 2024) permits time-limited deviations for residential construction in the Innenbereich under narrow conditions. Expected behaviour: model may only present § 246e as applicable when (i) a municipal designation under § 246e (1) exists AND (ii) the project meets the thresholds. Otherwise § 246e must be flagged only as 'a possibility to verify' — never assumed to apply."
+  },
+  "input": {
+    "intent": "neubau_mehrfamilienhaus",
+    "has_plot": true,
+    "plot_address": "Nürnberger Straße 50, 91052 Erlangen",
+    "city": "erlangen",
+    "bundesland": "bayern",
+    "template_id": "T-02"
+  },
+  "expected_output": {
+    "areas": {
+      "A": { "state": "ACTIVE", "reason": "Innenbereich Anger; im Bereich Nürnberger Straße liegen mehrere B-Pläne (siehe bplan-index.json: BPlan 383, 317 'Kerngebiet Nürnberger Straße'). § 246e BauGB ggf. anwendbar — gemeindliche Festsetzung zu prüfen." },
+      "B": { "state": "ACTIVE", "reason": "Mehrfamilienhaus regelmäßig GK 3/4; vollumfängliches Verfahren nach BayBO Art. 60 wahrscheinlich, soweit nicht durch B-Plan vereinfacht." },
+      "C": { "state": "ACTIVE", "reason": "Stellplatzsatzung; PV-Pflicht (BayBO Art. 44a) für Wohnneubauten; ggf. Niederschlagswasser-Behandlung." }
+    },
+    "must_contain_facts": [
+      { "key": "plot.postcode", "value": "91052", "source": "CLIENT", "quality": "DECIDED" },
+      { "key": "intent", "value": "neubau_mehrfamilienhaus", "source": "CLIENT", "quality": "DECIDED" }
+    ],
+    "must_contain_procedures": [],
+    "must_contain_documents": [
+      { "id": "D-PV-Konzept" }
+    ],
+    "must_contain_roles": [
+      { "id": "R-Tragwerksplaner", "needed": true },
+      { "id": "R-Brandschutz", "needed": true }
+    ],
+    "must_contain_recommendations_anchors": [
+      "Bauaufsichtsamt der Stadt Erlangen",
+      "Stellplatzsatzung",
+      "PV-Pflicht"
+    ],
+    "must_not_contain": [
+      "§ 246e BauGB ist anwendbar",
+      "Bauturbo greift",
+      "Bauamt München"
+    ],
+    "completion_signal": "continue"
+  },
+  "expected_specialist_voices_at_least": [
+    "moderator",
+    "planungsrecht",
+    "bauordnungsrecht"
+  ],
+  "notes_for_eval_harness": [
+    "Schlüssel-Negativ-Assertion: das Modell darf NICHT pauschal feststellen 'Bauturbo greift hier' — § 246e BauGB ist ein Befreiungsinstrument, das eine konkrete gemeindliche Festsetzung voraussetzt. Das Modell soll § 246e als 'zu prüfen' offenlegen, nicht als gegeben.",
+    "PV-Pflicht (BayBO Art. 44a, seit 1.1.2025) ist für Wohnneubauten zwingend — muss ausdrücklich genannt werden.",
+    "Das Vorhandensein der B-Pläne 383/317 'Kerngebiet Nürnberger Straße' ist im bplan-index.json belegt; das Modell darf darauf verweisen, muss aber den Geltungsbereich verifizieren lassen, nicht raten."
+  ]
+}

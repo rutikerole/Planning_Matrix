@@ -1,0 +1,72 @@
+{
+  "_schemaVersion": 1,
+  "retrieved_on": "2026-04-29",
+  "id": "01-hauptstrasse-innenstadt",
+  "narrative": {
+    "title_de": "Neubau Einfamilienhaus — Hauptstraße 12, Erlangen-Innenstadt",
+    "title_en": "New single-family home — Hauptstraße 12, Erlangen-Innenstadt",
+    "summary_de": "Klassisches T-01-Vorhaben in der Erlanger Innenstadt. Hauptstraße ist eine zentrale Innenstadt-Straße in der historischen Altstadt — Innenbereich nach § 34 BauGB, plausibel von einem qualifizierten oder einfachen Bebauungsplan überlagert. Erwartete Verfahrensart: vereinfachtes Verfahren nach BayBO Art. 58. Stellplatzsatzung, Abstandsflächen (BayBO Art. 6), PV-Pflicht (Art. 44a) sind regelmäßig anwendbar. Diese Adresse wird im Manual-Test-Plan (docs/phase3-test-plan.md Schritt 4) bereits als Standardbeispiel geführt.",
+    "summary_en": "Classic T-01 case in Erlangen's historic inner city. Hauptstraße is a central downtown street — Innenbereich under § 34 BauGB, plausibly overlaid by a qualified or simple development plan. Expected procedure: simplified permit (BayBO Art. 58). Parking ordinance, setbacks (Art. 6), photovoltaic obligation (Art. 44a) regularly apply. This address is already used as the canonical sample in docs/phase3-test-plan.md step 4."
+  },
+  "input": {
+    "intent": "neubau_einfamilienhaus",
+    "has_plot": true,
+    "plot_address": "Hauptstraße 12, 91054 Erlangen",
+    "city": "erlangen",
+    "bundesland": "bayern",
+    "template_id": "T-01"
+  },
+  "expected_output": {
+    "areas": {
+      "A": { "state": "ACTIVE", "reason": "Innenbereich nach § 34 BauGB; ggf. qualifizierter B-Plan vorhanden — Adresse in der Innenstadt." },
+      "B": { "state": "ACTIVE", "reason": "BayBO anwendbar, GK 1 wahrscheinlich (freistehend, ≤ 7 m, ≤ 2 NE)." },
+      "C": { "state": "ACTIVE", "reason": "Stellplatzsatzung Erlangen + Erhaltungssatzung Burgberg ggf. zu prüfen + Denkmalumgebung in der historischen Altstadt." }
+    },
+    "must_contain_facts": [
+      { "key": "plot.postcode", "value": "91054", "source": "CLIENT", "quality": "DECIDED" },
+      { "key": "plot.city", "value": "Erlangen", "source": "CLIENT", "quality": "DECIDED" },
+      { "key": "plot.street", "value": "Hauptstraße", "source": "CLIENT", "quality": "DECIDED" },
+      { "key": "intent", "value": "neubau_einfamilienhaus", "source": "CLIENT", "quality": "DECIDED" }
+    ],
+    "must_contain_procedures": [
+      { "id": "P-art58-vereinfachtes-verfahren", "min_status": "erforderlich" }
+    ],
+    "must_contain_documents": [
+      { "id": "D-Lageplan" },
+      { "id": "D-Bauzeichnungen" },
+      { "id": "D-Baubeschreibung" },
+      { "id": "D-Standsicherheitsnachweis" },
+      { "id": "D-GEG-Nachweis" },
+      { "id": "D-Stellplatznachweis" }
+    ],
+    "must_contain_roles": [
+      { "id": "R-Tragwerksplaner", "needed": true },
+      { "id": "R-Vermessungsingenieur", "needed": true },
+      { "id": "R-Bauvorlageberechtigter", "needed": true }
+    ],
+    "must_contain_recommendations_anchors": [
+      "Bauaufsichtsamt der Stadt Erlangen",
+      "Hauptstraße 12",
+      "Stellplatzsatzung",
+      "BayBO"
+    ],
+    "must_not_contain": [
+      "Bauamt München",
+      "Bauamt der Gemeinde",
+      "ÖbVI"
+    ],
+    "completion_signal": "continue"
+  },
+  "expected_specialist_voices_at_least": [
+    "moderator",
+    "planungsrecht",
+    "bauordnungsrecht"
+  ],
+  "notes_for_eval_harness": [
+    "must_contain_facts: exact match on key+value+source+quality.",
+    "must_contain_procedures / documents / roles: id-prefix match (the actual model-emitted id may be longer, e.g. 'P-01-art58-vereinfacht' is acceptable for 'P-art58-vereinfachtes-verfahren').",
+    "must_contain_recommendations_anchors: substring match anywhere in any recommendation_de or detail_de.",
+    "must_not_contain: substring match across the entire ProjectState serialised JSON. 'ÖbVI' is included because Bayern does not use that designation (see data/erlangen/fachplaner/oebvi.json).",
+    "completion_signal=continue — this is an opening-conversation case, not a ready_for_review case."
+  ]
+}

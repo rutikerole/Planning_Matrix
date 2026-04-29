@@ -1,0 +1,66 @@
+{
+  "_schemaVersion": 1,
+  "retrieved_on": "2026-04-29",
+  "id": "04-eltersdorf-umnutzung",
+  "narrative": {
+    "title_de": "Umnutzung Gewerbe → Wohnen — Eltersdorf (Erlangen-Süd, PLZ 91058)",
+    "title_en": "Change of use commercial → residential — Eltersdorf",
+    "summary_de": "Eltersdorf ist ein historisch gewachsener Stadtteil im Süden Erlangens mit gemischter Nutzung. Eine Umnutzung von Gewerbe zu Wohnen löst regelmäßig eine § 34/35-BauGB-Neuprüfung der Nutzung aus, eine BauNVO-Konformitätsprüfung (Wohnen in MI/MK/GE) und eine Stellplatz-Neuberechnung nach Erlanger Stellplatzsatzung. Brandschutz ist neu zu konzipieren (BayBO Art. 24 ff.). Schwellen-Klassiker für 'Aufwand wird unterschätzt'.",
+    "summary_en": "Eltersdorf is a historic district in southern Erlangen with mixed-use character. A change of use commercial → residential triggers a fresh § 34/35 BauGB use review, a BauNVO conformity check (residential in MI/MK/GE), a fresh parking calculation under the Erlangen parking ordinance, and a fresh fire-protection concept (BayBO Art. 24 ff.). A classic case where applicants underestimate scope."
+  },
+  "input": {
+    "intent": "umnutzung",
+    "has_plot": true,
+    "plot_address": "Industriestraße 5, 91058 Erlangen-Eltersdorf",
+    "city": "erlangen",
+    "bundesland": "bayern",
+    "template_id": "T-04"
+  },
+  "expected_output": {
+    "areas": {
+      "A": { "state": "ACTIVE", "reason": "Neuprüfung der Nutzung nach § 34 BauGB / BauNVO — die zulässige Nutzungsart ist gegen die geplante neue Nutzung abzugleichen." },
+      "B": { "state": "ACTIVE", "reason": "Umnutzung ist baugenehmigungspflichtig — Verfahren regelmäßig nach BayBO Art. 60." },
+      "C": { "state": "ACTIVE", "reason": "Stellplatz-Neuberechnung nach Erlanger Stellplatzsatzung; Niederschlagswasser bei baulicher Veränderung." }
+    },
+    "must_contain_facts": [
+      { "key": "plot.postcode", "value": "91058", "source": "CLIENT", "quality": "DECIDED" },
+      { "key": "plot.stadtteil", "value": "Eltersdorf", "source": "LEGAL", "quality": "CALCULATED" },
+      { "key": "intent", "value": "umnutzung", "source": "CLIENT", "quality": "DECIDED" }
+    ],
+    "must_contain_procedures": [
+      { "id": "P-art60-baugenehmigung", "min_status": "erforderlich" }
+    ],
+    "must_contain_documents": [
+      { "id": "D-Bauzeichnungen" },
+      { "id": "D-Brandschutznachweis" },
+      { "id": "D-Stellplatznachweis" },
+      { "id": "D-Nutzungskonzept" }
+    ],
+    "must_contain_roles": [
+      { "id": "R-Bauvorlageberechtigter", "needed": true },
+      { "id": "R-Brandschutz", "needed": true }
+    ],
+    "must_contain_recommendations_anchors": [
+      "BauNVO",
+      "Stellplatzsatzung",
+      "Brandschutz",
+      "Bauaufsichtsamt der Stadt Erlangen"
+    ],
+    "must_not_contain": [
+      "Bauamt München",
+      "ÖbVI"
+    ],
+    "completion_signal": "continue"
+  },
+  "expected_specialist_voices_at_least": [
+    "moderator",
+    "planungsrecht",
+    "bauordnungsrecht",
+    "sonstige_vorgaben"
+  ],
+  "notes_for_eval_harness": [
+    "Schwellen-Test: das Modell muss die Stellplatz-Neuberechnung als eigenständige Pflicht erkennen, nicht als optionalen Hinweis.",
+    "BauNVO-Konformität (Wohnen in MI/MK/GE) ist nicht trivial — das Modell darf nicht stillschweigend annehmen, Wohnen sei automatisch zulässig.",
+    "Brandschutz als 'neu zu konzipieren' (nicht 'Bestand übernehmen') zu kennzeichnen ist ein Kernpunkt."
+  ]
+}

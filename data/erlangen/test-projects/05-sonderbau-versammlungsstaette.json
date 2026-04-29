@@ -1,0 +1,66 @@
+{
+  "_schemaVersion": 1,
+  "retrieved_on": "2026-04-29",
+  "id": "05-sonderbau-versammlungsstaette",
+  "narrative": {
+    "title_de": "Sonderbau — Versammlungsstätte > 200 Personen (Innenstadt)",
+    "title_en": "Special-use building — assembly venue > 200 people (Innenstadt)",
+    "summary_de": "Versammlungsstätten mit mehr als 200 Personen Fassungsvermögen sind Sonderbauten nach BayBO Art. 2 Abs. 4. Erwartetes Verhalten: das Modell muss Sonderbau-Status erkennen, das vollumfängliche Baugenehmigungsverfahren (Art. 60) ansetzen, einen geprüften Brandschutznachweis durch eine:n Prüfsachverständige:n (BayBO Art. 62) verlangen, und KEINE Genehmigungsfreistellung (Art. 57) oder vereinfachtes Verfahren (Art. 58) anbieten.",
+    "summary_en": "Assembly venues with more than 200-person capacity are 'Sonderbauten' under BayBO Art. 2(4). Expected behaviour: model must detect Sonderbau status, route to the full permit procedure (Art. 60), require a checked fire-protection certificate by a Prüfsachverständige (Art. 62), and must NOT offer Genehmigungsfreistellung (Art. 57) or simplified procedure (Art. 58)."
+  },
+  "input": {
+    "intent": "sonstige",
+    "has_plot": true,
+    "plot_address": "Theaterplatz 1, 91054 Erlangen",
+    "city": "erlangen",
+    "bundesland": "bayern",
+    "template_id": "T-01"
+  },
+  "expected_output": {
+    "areas": {
+      "A": { "state": "ACTIVE", "reason": "Innenbereich Innenstadt; BauNVO-Festsetzung der zulässigen Nutzung zu prüfen." },
+      "B": { "state": "ACTIVE", "reason": "Sonderbau nach BayBO Art. 2 Abs. 4 — vollumfängliches Baugenehmigungsverfahren." },
+      "C": { "state": "ACTIVE", "reason": "Denkmalumgebung in der historischen Innenstadt; Stellplatzsatzung greift; ggf. Werbeanlagensatzung." }
+    },
+    "must_contain_facts": [
+      { "key": "plot.postcode", "value": "91054", "source": "CLIENT", "quality": "DECIDED" },
+      { "key": "intent", "value": "sonstige", "source": "CLIENT", "quality": "DECIDED" }
+    ],
+    "must_contain_procedures": [
+      { "id": "P-art60-baugenehmigung", "min_status": "erforderlich" }
+    ],
+    "must_contain_documents": [
+      { "id": "D-Brandschutznachweis-pruefsachverstaendiger" },
+      { "id": "D-Standsicherheitsnachweis-pruefsachverstaendiger" }
+    ],
+    "must_contain_roles": [
+      { "id": "R-Bauvorlageberechtigter", "needed": true },
+      { "id": "R-Brandschutz-Pruefsachverstaendiger", "needed": true },
+      { "id": "R-Tragwerksplaner", "needed": true }
+    ],
+    "must_contain_recommendations_anchors": [
+      "Sonderbau",
+      "Art. 2 Abs. 4 BayBO",
+      "Art. 60 BayBO",
+      "Bauaufsichtsamt der Stadt Erlangen"
+    ],
+    "must_not_contain": [
+      "Genehmigungsfreistellung",
+      "Art. 57",
+      "Art. 58 BayBO",
+      "vereinfachtes Verfahren",
+      "Bauamt München"
+    ],
+    "completion_signal": "continue"
+  },
+  "expected_specialist_voices_at_least": [
+    "moderator",
+    "bauordnungsrecht",
+    "verfahren"
+  ],
+  "notes_for_eval_harness": [
+    "Theaterplatz 1 ist die echte Adresse des Markgrafentheaters Erlangen (Denkmal!) — der Test ist als HYPOTHETISCHER Sonderbau-Bauantrag im Theaterplatz-Umfeld zu lesen, nicht als reale Bauabsicht am Markgrafentheater. Das Markgrafentheater selbst steht unter Denkmalschutz (siehe data/erlangen/satzungen/denkmalliste.json).",
+    "Schlüssel-Negativ-Assertion: 'Art. 57' UND 'Art. 58 BayBO' UND 'Genehmigungsfreistellung' UND 'vereinfachtes Verfahren' dürfen NICHT in der Antwort auftauchen — das wäre ein Verfahrens-Fehler des Modells.",
+    "Der Brandschutznachweis MUSS ausdrücklich als 'durch Prüfsachverständige:n' gekennzeichnet sein (BayBO Art. 62)."
+  ]
+}

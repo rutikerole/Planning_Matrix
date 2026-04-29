@@ -1,0 +1,60 @@
+{
+  "_schemaVersion": 1,
+  "retrieved_on": "2026-04-29",
+  "id": "03-bruck-sanierung",
+  "narrative": {
+    "title_de": "Sanierung Wohngebäude — Bruck (Erlangen-Süd, PLZ 91056)",
+    "title_en": "Residential renovation — Bruck district",
+    "summary_de": "Bruck ist ein dichter Wohn- und Mischgebiets-Stadtteil im Süden Erlangens. Eine Sanierung am Bestand ist regelmäßig anzeigepflichtig, oft genehmigungsfrei nach BayBO Art. 57 — sofern keine tragenden Bauteile geändert werden und kein B-Plan-Konflikt besteht. Aktiv werden GEG-Sanierungspflichten (BayBO §§ 47/72 GEG) für Heizung, Dach, Fassade. Stellplatzsatzung greift bei Erweiterungen, nicht regelmäßig bei reinen Modernisierungen.",
+    "summary_en": "Bruck is a dense residential / mixed-use district in southern Erlangen. A renovation is typically just notification-required, often permit-exempt under BayBO Art. 57 if no load-bearing changes and no development-plan conflict. GEG renovation duties (heating, roof, facade) routinely apply."
+  },
+  "input": {
+    "intent": "sanierung",
+    "has_plot": true,
+    "plot_address": "Fuchsenwiese 12, 91056 Erlangen-Bruck",
+    "city": "erlangen",
+    "bundesland": "bayern",
+    "template_id": "T-03"
+  },
+  "expected_output": {
+    "areas": {
+      "A": { "state": "ACTIVE", "reason": "Innenbereich nach § 34 BauGB; B-Plan-Lage zu prüfen." },
+      "B": { "state": "ACTIVE", "reason": "Sanierung an einer baulichen Anlage; Genehmigungs-/Anzeigepflicht nach BayBO Art. 57 ff. zu klären." },
+      "C": { "state": "ACTIVE", "reason": "GEG-Sanierungspflichten anwendbar; Niederschlagswasser bei Eingriff in Dach/Versiegelung zu beachten." }
+    },
+    "must_contain_facts": [
+      { "key": "plot.postcode", "value": "91056", "source": "CLIENT", "quality": "DECIDED" },
+      { "key": "plot.stadtteil", "value": "Bruck", "source": "LEGAL", "quality": "CALCULATED" },
+      { "key": "intent", "value": "sanierung", "source": "CLIENT", "quality": "DECIDED" }
+    ],
+    "must_contain_procedures": [
+      { "id": "P-art57-anzeige-oder-freistellung" }
+    ],
+    "must_contain_documents": [
+      { "id": "D-Bauzeichnungen" },
+      { "id": "D-GEG-Sanierungsnachweis" }
+    ],
+    "must_contain_roles": [
+      { "id": "R-Energieberater", "needed": true }
+    ],
+    "must_contain_recommendations_anchors": [
+      "BayBO Art. 57",
+      "GEG",
+      "Bauaufsichtsamt der Stadt Erlangen"
+    ],
+    "must_not_contain": [
+      "Bauamt München",
+      "ÖbVI"
+    ],
+    "completion_signal": "continue"
+  },
+  "expected_specialist_voices_at_least": [
+    "moderator",
+    "bauordnungsrecht"
+  ],
+  "notes_for_eval_harness": [
+    "Adresse 'Fuchsenwiese' ist eine reale Straße in Erlangen-Bruck (Wohn-/Mischgebiet).",
+    "Das Modell muss zwischen 'genehmigungspflichtig' und 'anzeigepflichtig' nach BayBO Art. 57 sauber unterscheiden — Sanierungen ohne Eingriff in tragende Bauteile sind in Bayern oft anzeigepflichtig statt genehmigungspflichtig.",
+    "GEG-Bezug ist Pflicht: Sanierung löst Modernisierungspflichten an Heizung/Dach/Fassade aus."
+  ]
+}

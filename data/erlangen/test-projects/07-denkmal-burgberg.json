@@ -1,0 +1,64 @@
+{
+  "_schemaVersion": 1,
+  "retrieved_on": "2026-04-29",
+  "id": "07-denkmal-burgberg",
+  "narrative": {
+    "title_de": "Sanierung im Denkmal-/Erhaltungssatzungsbereich — Burgberg",
+    "title_en": "Renovation in heritage / preservation-ordinance area — Burgberg",
+    "summary_de": "Der Burgberg in Erlangen liegt vollständig im Geltungsbereich der Erhaltungssatzung Burgberg (siehe data/erlangen/satzungen/erhaltung-burgberg.json) und enthält einzeln eingetragene Baudenkmäler (z. B. Burgbergkapelle, Bayreuther Straße 38). Eine Sanierung am Bestand erfordert dort eine doppelte Genehmigung: erhaltungsrechtlich nach der Burgberg-Satzung UND denkmalrechtlich nach BayDSchG Art. 6, beides ZUSÄTZLICH zu BayBO. Klassischer Fehlerfall: Bauherr unterschätzt den denkmalschutzrechtlichen Erlaubnisbedarf.",
+    "summary_en": "The Burgberg in Erlangen lies entirely within the scope of the Burgberg Erhaltungssatzung and contains individually-listed Baudenkmäler. Renovation requires dual approval: under the Burgberg ordinance AND under BayDSchG Art. 6, in addition to BayBO. A classic underestimated case."
+  },
+  "input": {
+    "intent": "sanierung",
+    "has_plot": true,
+    "plot_address": "Bayreuther Straße 38, 91054 Erlangen",
+    "city": "erlangen",
+    "bundesland": "bayern",
+    "template_id": "T-03"
+  },
+  "expected_output": {
+    "areas": {
+      "A": { "state": "ACTIVE", "reason": "Innenbereich, ggf. B-Plan; Stadtbild-Schutz im Burgberg-Kontext." },
+      "B": { "state": "ACTIVE", "reason": "Sanierung in BayBO Art. 57 ff.; ggf. zusätzliche Genehmigungspflichten durch Erhaltungs-/Denkmalrecht." },
+      "C": { "state": "ACTIVE", "reason": "Erhaltungssatzung Burgberg + BayDSchG Art. 6 (Denkmalliste-Eintrag Burgbergkapelle) — DOPPELTE Erlaubnis erforderlich." }
+    },
+    "must_contain_facts": [
+      { "key": "plot.postcode", "value": "91054", "source": "CLIENT", "quality": "DECIDED" },
+      { "key": "plot.stadtteil", "value": "Burgberg", "source": "LEGAL", "quality": "CALCULATED" },
+      { "key": "intent", "value": "sanierung", "source": "CLIENT", "quality": "DECIDED" }
+    ],
+    "must_contain_procedures": [
+      { "id": "P-erhaltungssatzung-burgberg-genehmigung", "min_status": "erforderlich" },
+      { "id": "P-denkmalrechtliche-erlaubnis", "min_status": "erforderlich" }
+    ],
+    "must_contain_documents": [
+      { "id": "D-Bauzeichnungen" },
+      { "id": "D-Denkmalpflegerische-Stellungnahme" }
+    ],
+    "must_contain_roles": [
+      { "id": "R-Bauvorlageberechtigter", "needed": true },
+      { "id": "R-Denkmalpflege", "needed": true }
+    ],
+    "must_contain_recommendations_anchors": [
+      "Erhaltungssatzung Burgberg",
+      "BayDSchG",
+      "denkmalschutz@stadt.erlangen.de",
+      "Bauaufsichtsamt der Stadt Erlangen"
+    ],
+    "must_not_contain": [
+      "ohne weitere Genehmigung",
+      "Bauamt München"
+    ],
+    "completion_signal": "continue"
+  },
+  "expected_specialist_voices_at_least": [
+    "moderator",
+    "bauordnungsrecht",
+    "sonstige_vorgaben"
+  ],
+  "notes_for_eval_harness": [
+    "Bayreuther Straße 38 ist die Adresse der Burgbergkapelle, einem im Bayerischen Denkmal-Atlas geführten Baudenkmal (siehe data/erlangen/satzungen/denkmalliste.json). Eine reale Sanierung daran wäre denkmalrechtlich extrem reguliert — der Test simuliert genau diesen Fall.",
+    "Schlüssel-Doppel-Assertion: 'Erhaltungssatzung Burgberg' UND 'BayDSchG' MÜSSEN beide vorkommen — ein Modell, das nur eine der zwei Schichten nennt, ist falsch.",
+    "Das Modell soll an den Erlanger Denkmalschutz-Kontakt verweisen (denkmalschutz@stadt.erlangen.de, 09131 86-1007 — siehe bauamt.json specialty_contacts)."
+  ]
+}
