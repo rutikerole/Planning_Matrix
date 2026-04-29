@@ -1,0 +1,32 @@
+{
+  "_schemaVersion": 1,
+  "retrieved_on": "2026-04-29",
+  "discipline_de": "Vermessungsingenieur:innen / Lageplan-Ersteller:innen",
+  "discipline_en": "Surveying engineers (cadastral / building site plans)",
+  "source_ids": [
+    "adbv-erlangen",
+    "stadt-erlangen-bauamt"
+  ],
+  "scope_note_de": "WICHTIG: Bayern verwendet die Bezeichnung 'Öffentlich bestellte:r Vermessungsingenieur:in (ÖbVI)' NICHT in der gleichen Form wie z. B. Baden-Württemberg, Nordrhein-Westfalen oder Brandenburg. In Bayern wird das Liegenschaftskataster vom 'Amt für Digitalisierung, Breitband und Vermessung' (ADBV) geführt — für Erlangen ist das ADBV Erlangen zuständig. Amtliche Lagepläne (BayBO Art. 64 Abs. 3) werden in Bayern wahlweise vom ADBV oder von zugelassenen Vermessungsstellen erstellt. Diese Datei beschreibt daher die Bayern-spezifische Realität, NICHT die ÖbVI-Liste anderer Bundesländer.",
+  "registry_urls": [
+    {
+      "label_de": "ADBV Erlangen — Hauptseite",
+      "url": "https://www.adbv-erlangen.de/"
+    },
+    {
+      "label_de": "BDVI ÖbVI-Suche (für Bundesländer mit ÖbVI-System; Bayern-Treffer entsprechend selten)",
+      "url": "https://www.bdvi.de/de/vermessungsingenieur-suche"
+    }
+  ],
+  "entries": [
+    {
+      "name_or_office": "Amt für Digitalisierung, Breitband und Vermessung Erlangen (ADBV Erlangen)",
+      "specialization_de": "Liegenschaftskataster, amtliche Lagepläne, Vermessungsleistungen für die kreisfreie Stadt Erlangen und den Landkreis Erlangen-Höchstadt",
+      "city": "Erlangen",
+      "postcode": null,
+      "source_url_specific": "https://www.adbv-erlangen.de/",
+      "_note": "Behörde, kein privates Vermessungsbüro. Erste Anlaufstelle für amtliche Lagepläne (Bauantrag) im Erlanger Stadtgebiet."
+    }
+  ],
+  "_pending_block": "(1) Die in Bayern für Bauantragsvermessung anerkannten privaten Vermessungsstellen sind nicht zentral öffentlich gelistet wie ÖbVI in BW/NRW/BR. Quartalsrefresh-Aufgabe: ADBV Erlangen kontaktieren für eine Liste der zugelassenen Vermessungsbüros, die im Stadtgebiet tätig sind. (2) Die system-prompt-Komposition der Phase 3 sollte die Bayern-Realität ehrlich abbilden — nicht generisch 'ÖbVI' anbieten, sondern 'Vermessungsingenieur (über ADBV oder zugelassene Vermessungsstelle)' formulieren."
+}

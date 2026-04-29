@@ -1,0 +1,36 @@
+{
+  "_schemaVersion": 1,
+  "retrieved_on": "2026-04-29",
+  "discipline_de": "Prüfsachverständige für Brandschutz (BayBO Art. 62)",
+  "discipline_en": "Certified fire-protection experts (BayBO Art. 62)",
+  "source_ids": [
+    "byak",
+    "byak-architektensuche"
+  ],
+  "scope_note_de": "Die Liste der Prüfsachverständigen für Brandschutz in Bayern wird gemäß PrüfVBau bei der Bayerischen Architektenkammer (BAYAK) geführt — NICHT bei der BAYIKA. Brandschutznachweise nach BayBO Art. 62 sind bei Sonderbauten und höheren Gebäudeklassen pflichtig; die Person muss eingetragen sein, sonst gilt der Nachweis als nicht erbracht. Diese Datei beschreibt die Eintragungs-/Suchwege; konkrete Erlanger Einträge sind über die BAYAK-Suche zu ermitteln.",
+  "registry_urls": [
+    {
+      "label_de": "BAYAK — Brandschutzpruefer (Eintragungsantrag und Listeninfos via BAYAK-Hauptseite)",
+      "url": "https://www.byak.de/"
+    },
+    {
+      "label_de": "BAYAK Architektensuche (auch Brandschutz-Prüfsachverständige durchsuchbar)",
+      "url": "https://www.byak.de/planen-und-bauen/architektensuche.html"
+    },
+    {
+      "label_de": "BayernPortal — Anerkennung als Prüfsachverständige/-r Brandschutz beantragen",
+      "url": "https://www.bayernportal.de/dokumente/leistung/838645396458"
+    },
+    {
+      "label_de": "Bayerisches Staatsministerium für Wohnen, Bau und Verkehr — Prüfsachverständige im Baurecht",
+      "url": "https://www.stmb.bayern.de/buw/baurechtundtechnik/bautechnik/pruefsachverstaendige/index.php"
+    }
+  ],
+  "contact_for_list_inquiries": {
+    "office": "Bayerische Architektenkammer — Eintragungsausschuss",
+    "email": "info@byak.de",
+    "phone": "089 139880-0"
+  },
+  "entries": [],
+  "_pending_block": "Konkrete Erlanger Prüfsachverständige Brandschutz wurden im Audit-Setup nicht namentlich verifiziert. Die BAYAK-Suchoberfläche stellt keine öffentlich-zugängliche URL-Parameter-Filterung bereit. Quartalsrefresh-Aufgabe: BAYAK kontaktieren (089 139880-0, info@byak.de) für einen Erlanger Auszug, oder einen manuellen Lauf der BAYAK-Suche dokumentieren."
+}

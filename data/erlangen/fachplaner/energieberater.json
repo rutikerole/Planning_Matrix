@@ -1,0 +1,43 @@
+{
+  "_schemaVersion": 1,
+  "retrieved_on": "2026-04-29",
+  "discipline_de": "Energieeffizienz-Expert:innen (GEG-Nachweis, BAFA/dena/KfW)",
+  "discipline_en": "Energy efficiency experts (Buildings Energy Act compliance — BAFA/dena/KfW)",
+  "source_ids": [
+    "bafa-energieeffizienz-experten"
+  ],
+  "scope_note_de": "Auszug aus der offiziellen Energieeffizienz-Expertenliste (gepflegt von der dena im Auftrag von BAFA/KfW). Seit 1. Juli 2023 ist die Eintragung in dieser Liste Voraussetzung für die geförderte Beratung; eine vorherige BAFA-Liste wurde abgelöst. Suche nach PLZ + Umkreis (5/10/20/50/100/250 km). Diese Datei nennt die Such-URL und einige Erlanger Anbieter, die in Suchergebnissen wiederholt erscheinen — die kanonische Quelle ist die offizielle Expertenliste.",
+  "registry_urls": [
+    {
+      "label_de": "Energieeffizienz-Experten-Liste (offizielle Suche, PLZ + Umkreis)",
+      "url": "https://www.energie-effizienz-experten.de/"
+    },
+    {
+      "label_de": "BAFA — Energieberatung Wohngebäude (Förderübersicht)",
+      "url": "https://www.bafa.de/DE/Energie/Energieberatung/Energieberatung_Wohngebaeude/energieberatung_wohngebaeude_node.html"
+    },
+    {
+      "label_de": "BAFA — Energieberatung & Energieaudit (Übersicht)",
+      "url": "https://www.bafa.de/DE/Energie/Energieberatung/energieberatung_node.html"
+    }
+  ],
+  "entries": [
+    {
+      "name_or_office": "FS Energieberater",
+      "specialization_de": "Energieberatung Wohngebäude (DIN V 18599, GEG-Nachweis), Förderberatung",
+      "city": "Erlangen",
+      "postcode": null,
+      "source_url_specific": "https://www.fs-energieberater.de/erlangen",
+      "_note": "Anbieter mit Erlangen-Standortseite; offizielle Listeneintragung via energie-effizienz-experten.de zu verifizieren."
+    },
+    {
+      "name_or_office": "Energieberater Franken",
+      "specialization_de": "Energieberatung Wohn- und Gewerbebauten in Erlangen und Umgebung",
+      "city": "Erlangen",
+      "postcode": null,
+      "source_url_specific": "https://energieberater-franken.de/energieberater-erlangen/",
+      "_note": "Regionaler Anbieter; offizielle Listeneintragung via energie-effizienz-experten.de zu verifizieren."
+    }
+  ],
+  "_pending_block": "Eine offizielle, voll-strukturierte Liste der Erlanger Energieeffizienz-Expert:innen ist nur über die energie-effizienz-experten.de-Suche extrahierbar (PLZ + Umkreis). Quartalsrefresh-Aufgabe: Suchabruf für PLZ 91054 + 5 km + Kategorie Wohngebäude / Nichtwohngebäude exportieren; jede Eintragsperson hat eine eindeutige Profil-URL, die als source_url_specific verbindlich verlinkt werden sollte."
+}

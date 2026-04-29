@@ -1,0 +1,36 @@
+{
+  "_schemaVersion": 1,
+  "retrieved_on": "2026-04-29",
+  "discipline_de": "Tragwerksplaner:innen (Baustatik)",
+  "discipline_en": "Structural engineers / load-bearing planning",
+  "source_ids": [
+    "bayika",
+    "bayika-ingenieursuche"
+  ],
+  "scope_note_de": "Auszug aus der öffentlichen Planer- und Ingenieursuche der Bayerischen Ingenieurekammer-Bau (BAYIKA), gefiltert auf Geschäftssitz Erlangen. Tragwerksplaner:innen müssen für die Bauvorlageberechtigung in Bayern in der 'Liste der bauvorlageberechtigten Ingenieure' eingetragen sein (Art. 61 Abs. 7 BayBO). Diese Datei ist eine Stichprobe — die kanonische Quelle ist die BAYIKA-Ingenieursuche.",
+  "registry_urls": [
+    {
+      "label_de": "BAYIKA Planer- und Ingenieursuche",
+      "url": "https://www.bayika.de/de/ingenieursuche/"
+    },
+    {
+      "label_de": "BAYIKA Listeneintragung (Übersicht)",
+      "url": "https://www.bayika.de/de/mitgliedschaft-und-listen/listeneintragung/"
+    },
+    {
+      "label_de": "BayernPortal — Liste der bauvorlageberechtigten Ingenieure",
+      "url": "https://www.bayernportal.de/dokumente/leistung/805089842458"
+    }
+  ],
+  "entries": [
+    {
+      "name_or_office": "Georgisis Ingenieurbüro für Baustatik",
+      "specialization_de": "Tragwerksplanung, Baustatik, Standsicherheitsnachweis (BayBO Art. 62)",
+      "city": "Erlangen",
+      "postcode": "91052",
+      "source_url_specific": "https://www.ib-georgisis.de/",
+      "_note": "Geschäftsadresse Werner-von-Siemens-Str. 23a, 91052 Erlangen. Verifiziert via Suchmaschine; Bayika-Eintragsdetails sind über die offizielle Ingenieursuche zu bestätigen."
+    }
+  ],
+  "_pending_block": "Vollständige Erlanger Tragwerksplaner-Liste nur via BAYIKA-Ingenieursuche extrahierbar. Quartalsrefresh-Aufgabe: BAYIKA-Suchergebnis für 'PLZ 91052/91054/91056/91058' und Fachgebiet 'Tragwerksplanung' exportieren / scrapen."
+}

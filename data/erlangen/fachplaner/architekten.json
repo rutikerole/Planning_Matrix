@@ -1,0 +1,36 @@
+{
+  "_schemaVersion": 1,
+  "retrieved_on": "2026-04-29",
+  "discipline_de": "Bauvorlageberechtigte Architekt:innen",
+  "discipline_en": "Filing-authorised architects (bauvorlageberechtigt)",
+  "source_ids": [
+    "byak",
+    "byak-architektensuche"
+  ],
+  "scope_note_de": "Auszug aus der öffentlichen Architektenliste der Bayerischen Architektenkammer (BAYAK), gefiltert auf Geschäftssitz Erlangen (PLZ 91052/91054/91056/91058). In Bayern ist die Eintragung in die Architektenliste die Voraussetzung für die Berufsbezeichnung 'Architekt:in', die nach Art. 61 BayBO im Regelfall die Bauvorlageberechtigung impliziert. Diese Datei ist eine Stichprobe — die kanonische Quelle ist die Architektensuche der BAYAK.",
+  "registry_urls": [
+    {
+      "label_de": "BAYAK Architektensuche (Hauptseite)",
+      "url": "https://www.byak.de/planen-und-bauen/architektensuche.html"
+    },
+    {
+      "label_de": "BAYAK Architekten-/Innenarchitekten-/Stadtplaner-Suche (gemeinsamer Filter)",
+      "url": "https://www.byak.de/planen-und-bauen/architektensuche/architekten-innen-und-landschaftsarchitekten-sowie-stadtplaner.html"
+    },
+    {
+      "label_de": "BAYAK Hauptseite",
+      "url": "https://www.byak.de/"
+    }
+  ],
+  "entries": [
+    {
+      "name_or_office": "djb Architektengesellschaft",
+      "specialization_de": "Architekturbüro",
+      "city": "Erlangen",
+      "postcode": "91054",
+      "source_url_specific": "https://www.byak.de/planen-und-bauen/architektensuche.html",
+      "_note": "Geschäftsadresse Am Meilwald 21, 91054 Erlangen — verifiziert via BAYAK Architektensuche. Konkrete Bauvorlageberechtigung der einzelnen Mitarbeitenden ist über die Detailansicht in der BAYAK-Suche pro Person nachzuweisen."
+    }
+  ],
+  "_pending_block": "Eine vollständige, dauerhafte Liste der in Erlangen ansässigen bauvorlageberechtigten Architekt:innen ist nur über eine programmatische Abfrage der BAYAK-Suche extrahierbar — die öffentliche Suchoberfläche stellt aktuell keine URL-Parameter-API bereit, und die Inhalte werden dynamisch geladen. Quartalsrefresh-Aufgabe: BAYAK kontaktieren (info@byak.de, 089 139880-0) für einen exportierbaren Datenauszug der Erlanger Mitglieder, oder eine Selenium/Puppeteer-Routine gegen die Suche schreiben."
+}
