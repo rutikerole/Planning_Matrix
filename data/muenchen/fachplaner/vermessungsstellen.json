@@ -1,0 +1,33 @@
+{
+  "_schemaVersion": 1,
+  "retrieved_on": "2026-04-30",
+  "discipline_de": "Vermessungsstellen / Lageplan-Ersteller:innen",
+  "discipline_en": "Surveying offices (cadastral / building site plans)",
+  "source_ids": ["adbv-muenchen"],
+  "scope_note_de": "WICHTIG (Phase-2.5-Befund, übernommen): Bayern verwendet die Bezeichnung 'Öffentlich bestellte:r Vermessungsingenieur:in (ÖbVI)' NICHT in der Form anderer Bundesländer. In Bayern wird das Liegenschaftskataster vom 'Amt für Digitalisierung, Breitband und Vermessung' (ADBV) geführt — für München ist das ADBV München zuständig. Amtliche Lagepläne nach BayBO Art. 64 Abs. 3 erstellen wahlweise das ADBV oder zugelassene Vermessungsstellen.",
+  "registry_urls": [
+    {
+      "label_de": "ADBV München — Hauptseite",
+      "url": "https://www.adbv-muenchen.de/"
+    },
+    {
+      "label_de": "BayernPortal-Eintrag ADBV München",
+      "url": "https://www.bayernportal.de/dokumente/behoerde/85554490229"
+    }
+  ],
+  "entries": [
+    {
+      "name_or_office": "Amt für Digitalisierung, Breitband und Vermessung München (ADBV München)",
+      "specialization_de": "Liegenschaftskataster, amtliche Lagepläne, Vermessungsleistungen für die Landeshauptstadt München",
+      "city": "München",
+      "postcode": "80538",
+      "address_street": "Prinzregentenstraße 5",
+      "phone": "089 2129-1111",
+      "fax": "089 2129-1113",
+      "email": "service@geodaten.bayern.de",
+      "source_url_specific": "https://www.adbv-muenchen.de/",
+      "_note": "Behörde, kein privates Vermessungsbüro. Erste Anlaufstelle für amtliche Lagepläne (Bauantrag) im Münchner Stadtgebiet. Größenordnung: München ist der bei Weitem größte Liegenschaftskataster-Bezirk Bayerns."
+    }
+  ],
+  "_pending_block": "Die in Bayern für Bauantragsvermessung anerkannten privaten Vermessungsstellen sind nicht zentral öffentlich gelistet wie ÖbVI in BW/NRW/BR. Quartalsrefresh-Aufgabe: ADBV München kontaktieren für eine Liste der zugelassenen Vermessungsbüros, die im Stadtgebiet tätig sind — München hat eine signifikante private Vermessungsbüro-Dichte, die im Phase-7-Eval-Harness als ≥ 5 Beispiele auftauchen sollte."
+}

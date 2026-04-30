@@ -1,0 +1,20 @@
+{
+  "_schemaVersion": 1,
+  "retrieved_on": "2026-04-30",
+  "discipline_de": "Bauvorlageberechtigte Architekt:innen",
+  "discipline_en": "Filing-authorised architects (bauvorlageberechtigt)",
+  "source_ids": ["byak", "byak-architektensuche"],
+  "scope_note_de": "Auszug aus der öffentlichen Architektenliste der Bayerischen Architektenkammer (BAYAK), gefiltert auf Geschäftssitz München (PLZ 80xxx-81xxx). In Bayern impliziert die Eintragung als 'Architekt:in' nach Art. 61 BayBO im Regelfall die Bauvorlageberechtigung. Diese Datei ist eine Stichprobe — die kanonische Quelle ist die Architektensuche der BAYAK.",
+  "registry_urls": [
+    {
+      "label_de": "BAYAK Architektensuche (Hauptseite)",
+      "url": "https://www.byak.de/planen-und-bauen/architektensuche.html"
+    },
+    {
+      "label_de": "BAYAK Architektensuche — Filter Architekten / Innen- / Landschaftsarchitekten / Stadtplaner",
+      "url": "https://www.byak.de/planen-und-bauen/architektensuche/architekten-innen-und-landschaftsarchitekten-sowie-stadtplaner.html"
+    }
+  ],
+  "entries": [],
+  "_pending_block": "BAYAK-Architektensuche stellt keine URL-Parameter-Filter bereit; eine programmatische Vollständigkeits-Inventur der Münchner Architekt:innen ist im Audit-Setup nicht durchgeführt. Quartalsrefresh-Aufgaben: (a) BAYAK kontaktieren (info@byak.de, 089 139880-0) für einen München-Auszug, oder (b) Selenium/Puppeteer-Routine gegen die Suche schreiben. München ist mit Abstand der größte Architekten-Standort Bayerns — eine sinnvolle Phase-7-Eval-Harness braucht hier eine signifikant größere Stichprobe."
+}

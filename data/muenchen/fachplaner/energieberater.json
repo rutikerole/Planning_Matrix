@@ -1,0 +1,24 @@
+{
+  "_schemaVersion": 1,
+  "retrieved_on": "2026-04-30",
+  "discipline_de": "Energieeffizienz-Expert:innen (GEG-Nachweis, BAFA/dena/KfW)",
+  "discipline_en": "Energy efficiency experts (Buildings Energy Act compliance — BAFA/dena/KfW)",
+  "source_ids": ["bafa-energieeffizienz-experten"],
+  "scope_note_de": "Auszug aus der offiziellen Energieeffizienz-Expertenliste (gepflegt von der dena im Auftrag von BAFA/KfW). Seit 1. Juli 2023 ist die Eintragung in dieser Liste Voraussetzung für die geförderte Beratung. Such-Interface: PLZ + Umkreis (5/10/20/50/100/250 km). Diese Datei nennt die Such-URL; spezifische Münchner Anbieter sind via Such-Interface auffindbar (München-PLZ-Bereiche 80xxx-81xxx).",
+  "registry_urls": [
+    {
+      "label_de": "Energieeffizienz-Experten-Liste (offizielle Suche, PLZ + Umkreis)",
+      "url": "https://www.energie-effizienz-experten.de/"
+    },
+    {
+      "label_de": "BAFA — Energieberatung Wohngebäude (Förderübersicht)",
+      "url": "https://www.bafa.de/DE/Energie/Energieberatung/Energieberatung_Wohngebaeude/energieberatung_wohngebaeude_node.html"
+    },
+    {
+      "label_de": "BAFA — Energieberatung & Energieaudit (Übersicht)",
+      "url": "https://www.bafa.de/DE/Energie/Energieberatung/energieberatung_node.html"
+    }
+  ],
+  "entries": [],
+  "_pending_block": "Eine offizielle, voll-strukturierte Liste der Münchner Energieeffizienz-Expert:innen ist nur über die energie-effizienz-experten.de-Suche extrahierbar (PLZ + Umkreis). Quartalsrefresh-Aufgabe: Suchabruf für PLZ 80331 + 5 km + Kategorie Wohngebäude / Nichtwohngebäude exportieren; jede Eintragsperson hat eine eindeutige Profil-URL, die als source_url_specific verbindlich verlinkt werden sollte. München hat aufgrund der hohen Bauaktivität in den Stadtbezirken die größte Anbieter-Dichte Bayerns."
+}
