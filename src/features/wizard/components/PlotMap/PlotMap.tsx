@@ -17,6 +17,9 @@ import { MapContainer, Marker, useMap } from 'react-leaflet'
 import L from 'leaflet'
 import { MapTileLayer } from './tileLayer'
 import { geocodeAddress, type GeocodeResult } from './geocode'
+import { BplanResultCard } from './BplanResultCard'
+import { useBplanLookup } from '../../hooks/useBplanLookup'
+import type { BplanLookupResult } from '@/types/bplan'
 import './styles.css'
 
 const MUENCHEN_CENTER: [number, number] = [48.1374, 11.5755]
@@ -27,6 +30,7 @@ const GEOCODE_DEBOUNCE_MS = 250
 interface Props {
   address: string
   onCoordinatesResolved?: (coords: GeocodeResult | null) => void
+  onBplanResolved?: (result: BplanLookupResult | null) => void
 }
 
 // Custom DivIcon — we don't ship Leaflet's marker images (they're
@@ -54,7 +58,7 @@ function FlyToOnCoords({ coords }: { coords: GeocodeResult | null }) {
   return null
 }
 
-export function PlotMap({ address, onCoordinatesResolved }: Props) {
+export function PlotMap({ address, onCoordinatesResolved, onBplanResolved }: Props) {
   const [coords, setCoords] = useState<GeocodeResult | null>(null)
   const [isGeocoding, setIsGeocoding] = useState(false)
   const [errored, setErrored] = useState(false)
@@ -101,6 +105,20 @@ export function PlotMap({ address, onCoordinatesResolved }: Props) {
     onCoordinatesResolved?.(coords)
   }, [coords, onCoordinatesResolved])
 
+  // Phase 6a — once coordinates resolve, fire the B-Plan lookup
+  // through the Edge Function. The hook handles its own
+  // AbortController, so a fast typer doesn't queue stale calls.
+  const { data: bplanResult, isLoading: bplanLoading } = useBplanLookup({
+    lat: coords?.lat ?? null,
+    lng: coords?.lng ?? null,
+  })
+
+  // Bubble the B-Plan result up to QuestionPlot so it can pass it
+  // through to useCreateProject (Commit 6 will land that path).
+  useEffect(() => {
+    onBplanResolved?.(bplanResult)
+  }, [bplanResult, onBplanResolved])
+
   const initialCenter = useMemo<[number, number]>(
     () => (coords ? [coords.lat, coords.lng] : MUENCHEN_CENTER),
     // Only set the initial center once; FlyToOnCoords handles
@@ -111,27 +129,30 @@ export function PlotMap({ address, onCoordinatesResolved }: Props) {
   const initialZoom = coords ? RESOLVED_ZOOM : DEFAULT_ZOOM
 
   return (
-    <div className="pm-plotmap-container relative" style={{ height: 280 }}>
-      {isGeocoding ? <div className="pm-plotmap-progress" aria-hidden="true" /> : null}
-      <MapContainer
-        center={initialCenter}
-        zoom={initialZoom}
-        scrollWheelZoom={false}
-        style={{ height: '100%', width: '100%' }}
-        attributionControl={true}
-      >
-        <MapTileLayer />
-        {coords ? <Marker position={[coords.lat, coords.lng]} icon={pin} /> : null}
-        <FlyToOnCoords coords={coords} />
-      </MapContainer>
-      {errored ? (
-        <div
-          role="alert"
-          className="absolute bottom-2 left-2 right-2 text-[12px] px-3 py-1.5 bg-paper/95 border-l-2 border-destructive/50 italic font-serif text-destructive/85 leading-relaxed"
+    <div className="flex flex-col">
+      <div className="pm-plotmap-container relative" style={{ height: 280 }}>
+        {isGeocoding ? <div className="pm-plotmap-progress" aria-hidden="true" /> : null}
+        <MapContainer
+          center={initialCenter}
+          zoom={initialZoom}
+          scrollWheelZoom={false}
+          style={{ height: '100%', width: '100%' }}
+          attributionControl={true}
         >
-          Adresse konnte nicht aufgelöst werden — überprüfen Sie die Schreibweise.
-        </div>
-      ) : null}
+          <MapTileLayer />
+          {coords ? <Marker position={[coords.lat, coords.lng]} icon={pin} /> : null}
+          <FlyToOnCoords coords={coords} />
+        </MapContainer>
+        {errored ? (
+          <div
+            role="alert"
+            className="absolute bottom-2 left-2 right-2 text-[12px] px-3 py-1.5 bg-paper/95 border-l-2 border-destructive/50 italic font-serif text-destructive/85 leading-relaxed"
+          >
+            Adresse konnte nicht aufgelöst werden — überprüfen Sie die Schreibweise.
+          </div>
+        ) : null}
+      </div>
+      {coords ? <BplanResultCard result={bplanResult} isLoading={bplanLoading} /> : null}
     </div>
   )
 }

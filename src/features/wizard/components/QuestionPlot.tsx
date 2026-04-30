@@ -9,6 +9,8 @@ import { isMuenchenAddress, isPlotAddressValid } from '../lib/plotValidation'
 import type { Intent } from '../lib/selectTemplate'
 import { WizardTitleBlock } from './WizardTitleBlock'
 
+import type { BplanLookupResult } from '@/types/bplan'
+
 // Phase 6a — lazy-loaded map. Non-admin users never download the
 // Leaflet bundle; the import only fires when isMapPreviewEnabled is
 // true and the wrapper actually renders.
@@ -56,6 +58,11 @@ export function QuestionPlot({ onSubmit, submitError }: Props) {
 
   const addressInputRef = useRef<HTMLInputElement>(null)
   const [touched, setTouched] = useState(false)
+  // Phase 6a — held in QuestionPlot so it survives across re-renders
+  // and can be passed to useCreateProject in Commit 6 (this commit
+  // only stores + reads it via the data-attribute below for debug
+  // visibility; injection into projectState lands in C6).
+  const [bplanResult, setBplanResult] = useState<BplanLookupResult | null>(null)
 
   useEffect(() => {
     if (hasPlot === true && !plotAddress) {
@@ -98,6 +105,7 @@ export function QuestionPlot({ onSubmit, submitError }: Props) {
     <div
       className="flex flex-col gap-7"
       data-map-preview={mapPreviewEnabled ? 'on' : 'off'}
+      data-bplan-status={bplanResult?.status ?? 'pending'}
     >
       <WizardTitleBlock
         numeral="II"
@@ -242,7 +250,10 @@ export function QuestionPlot({ onSubmit, submitError }: Props) {
                     <div className="pm-plotmap-empty">Karte wird geladen…</div>
                   }
                 >
-                  <PlotMap address={plotAddress} />
+                  <PlotMap
+                    address={plotAddress}
+                    onBplanResolved={setBplanResult}
+                  />
                 </Suspense>
               ) : null}
             </div>
