@@ -14,13 +14,21 @@ function restHeaders(config, accessToken) {
 }
 
 // ─── Insert a project, return the new row ────────────────────────────────
+//
+// `ownerId` is REQUIRED — projects.owner_id is `not null` with no default,
+// and the RLS insert policy is `with check (auth.uid() = owner_id)`
+// (migration 0003). The wizard's useCreateProject.ts sets owner_id
+// from the authenticated user's id; the harness mirrors that. Omitting
+// owner_id (or passing one that doesn't match auth.uid()) yields HTTP
+// 403 with PG error 42501.
 
-export async function createProject(config, accessToken, payload) {
+export async function createProject(config, accessToken, ownerId, payload) {
+  if (!ownerId) throw new Error('createProject: ownerId is required')
   const url = `${config.SUPABASE_URL}/rest/v1/projects`
   const res = await fetch(url, {
     method: 'POST',
     headers: restHeaders(config, accessToken),
-    body: JSON.stringify(payload),
+    body: JSON.stringify({ owner_id: ownerId, ...payload }),
   })
   if (!res.ok) {
     throw new Error(`createProject failed: HTTP ${res.status} ${await res.text()}`)

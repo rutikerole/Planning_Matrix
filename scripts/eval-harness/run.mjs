@@ -47,7 +47,7 @@ function loadTestProjects() {
   return out
 }
 
-async function runOne(config, accessToken, project) {
+async function runOne(config, accessToken, ownerId, project) {
   const { id, input, eval_conversation_script: script } = project
   if (!Array.isArray(script) || script.length === 0) {
     console.log(`[eval] ${id}: SKIPPED — no eval_conversation_script`)
@@ -55,7 +55,7 @@ async function runOne(config, accessToken, project) {
   }
 
   console.log(`\n[eval] === ${id} ===`)
-  const row = await createProject(config, accessToken, {
+  const row = await createProject(config, accessToken, ownerId, {
     intent: input.intent,
     has_plot: input.has_plot,
     plot_address: input.plot_address ?? null,
@@ -125,7 +125,7 @@ async function main() {
   if (cleared > 0) console.log(`[eval] deleted ${cleared} stale project(s)`)
 
   if (dryRun) {
-    const row = await createProject(config, accessToken, {
+    const row = await createProject(config, accessToken, userId, {
       intent: 'sonstige',
       has_plot: false,
       plot_address: null,
@@ -152,7 +152,7 @@ async function main() {
 
   const results = []
   for (const test of tests) {
-    results.push(await runOne(config, accessToken, test.data))
+    results.push(await runOne(config, accessToken, userId, test.data))
   }
 
   // ─── Summary + exit code ───────────────────────────────────────────────
