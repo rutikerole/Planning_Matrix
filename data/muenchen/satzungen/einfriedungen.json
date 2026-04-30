@@ -1,0 +1,38 @@
+{
+  "_schemaVersion": 1,
+  "retrieved_on": "2026-04-30",
+  "id": "einfriedungen",
+  "official_name_de": "Einfriedungssatzung der Landeshauptstadt München",
+  "_short_name": "Einfriedungssatzung (existiert nicht als eigenständige Satzung — siehe _note_de)",
+  "_note_de": "ACHTUNG: München führt KEINE eigenständige Einfriedungssatzung als separates Dokument im Stadtrecht-Verzeichnis. Anforderungen an Einfriedungen (Zäune, Mauern, Hecken) sind in München typischerweise in den jeweiligen Bebauungsplänen festgesetzt — sie variieren stark zwischen den Stadtbezirken und Gebietstypen. Diese Datei dokumentiert die Realität, ohne ein nicht-existierendes Dokument zu erfinden.",
+  "in_force_since": null,
+  "rechtsgrundlage_de": "Soweit Einfriedungs-Anforderungen bestehen, folgen sie aus: (a) den einzelnen Bebauungsplänen (BauGB § 9), (b) BayBO Art. 6 (Abstandsflächen, soweit Einfriedungen Abstandsflächen-relevant sind), (c) der Gestaltungs- und Begrünungssatzung 924 (für unbebaute Flächen), und (d) ggf. lokalen Erhaltungssatzungen.",
+  "source_ids": ["stadt-muenchen-recht", "gesetze-bayern-baybo"],
+  "official_pdf_url": null,
+  "overview_url": "https://stadt.muenchen.de/rathaus/stadtrecht/alphabetisch.html",
+  "key_values": [
+    {
+      "topic_de": "Existenz einer eigenständigen Einfriedungssatzung",
+      "topic_en": "Existence of standalone Einfriedungssatzung",
+      "value": "NEIN — keine eigenständige Einfriedungssatzung im Münchner Stadtrecht. Relevante Anforderungen sind im Bebauungsplan, in BayBO Art. 6 oder in der Gestaltungs- und Begrünungssatzung 924 zu suchen.",
+      "section_reference_de": "Abwesenheits-Befund"
+    },
+    {
+      "topic_de": "Einfriedungen in Bebauungsplänen",
+      "topic_en": "Fencing in B-Plans",
+      "value": "Bei Bauvorhaben mit qualifiziertem B-Plan: Einfriedungs-Anforderungen aus dem B-Plan (Material, Höhe, Anordnung) primär maßgeblich",
+      "section_reference_de": "BauGB § 9 Abs. 1 Nr. 22"
+    },
+    {
+      "topic_de": "Einfriedungen in Erhaltungs-/Denkmalbereichen",
+      "topic_en": "Fencing in preservation / heritage areas",
+      "value": "In Erhaltungssatzungs-Geltungsbereichen (z. B. Altstadt-Lehel) und an Baudenkmälern: zusätzliche denkmalrechtliche/erhaltungsrechtliche Erlaubnispflicht",
+      "section_reference_de": "BayDSchG Art. 6 + BauGB § 172"
+    }
+  ],
+  "applies_to_postcodes_pattern": "n/a (kein eigenständiges Dokument)",
+  "geographic_scope_de": "Keine eigenständige Satzung; Anforderungen sind je B-Plan / Stadtbezirk / Erhaltungs- oder Denkmalstatus zu prüfen.",
+  "summary_de": "München hat KEINE eigenständige Einfriedungssatzung im Stadtrecht-Verzeichnis. Anforderungen an Zäune, Mauern, Hecken etc. ergeben sich primär aus dem jeweiligen Bebauungsplan (BauGB § 9 Abs. 1 Nr. 22), aus BayBO Art. 6 (soweit Einfriedungen Abstandsflächen-relevant sind), aus der Gestaltungs- und Begrünungssatzung 924 (für unbebaute Flächen, mit der oben dokumentierten § 3-Suspendierung seit Oktober 2025), und in Schutzbereichen aus erhaltungs- oder denkmalrechtlichen Erlaubnissen. Bei einem Münchner Bauvorhaben empfehlen Sie dem Bauherren, die Einfriedungs-Festsetzungen seines konkreten B-Plans beim Bauaufsichtsamt zu erfragen.",
+  "summary_en": "Munich has NO standalone fencing ordinance. Requirements arise primarily from the project's B-Plan (BauGB § 9 (1) 22), from BayBO Art. 6 setbacks, from the city-wide Design and Greening Ordinance, and from preservation / heritage permits in protected areas.",
+  "_pending_block": "Stand 2026-04-30: keine eigenständige Münchner Einfriedungssatzung auffindbar. Wenn künftig eine eingeführt wird, ist diese Datei zu überarbeiten. Quartalsrefresh: stadt.muenchen.de/rathaus/stadtrecht/alphabetisch.html unter 'E' prüfen."
+}

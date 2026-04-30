@@ -1,0 +1,115 @@
+{
+  "_schemaVersion": 1,
+  "retrieved_on": "2026-04-30",
+  "id": "stellplatz",
+  "official_name_de": "Satzung der Landeshauptstadt München zur Einführung einer Pflicht zum Nachweis von notwendigen Stellplätzen für Kraftfahrzeuge (Stellplatzsatzung — StPlS)",
+  "_short_name": "StPlS 926",
+  "_extracted_via": "pdftotext (poppler 26.04.0) against the official PDF at stadt.muenchen.de/rathaus/stadtrecht/vorschrift/926.pdf",
+  "in_force_since": "2025-10-03",
+  "issued": "2025-10-01",
+  "stadtratsbeschluss": "2025-09-17",
+  "bekanntmachung": "2025-10-02",
+  "rechtsgrundlage_de": "Art. 23 GO Bayern + Art. 81 Abs. 1 Nr. 4 BayBO",
+  "supersedes": "Stellplatzsatzung vom 19.12.2007 (MüABl. 2008, Sondernummer 1, S. 1) — außer Kraft mit Ablauf des 30.09.2025.",
+  "source_ids": ["stadt-muenchen-recht", "gesetze-bayern-baybo"],
+  "official_pdf_url": "https://stadt.muenchen.de/rathaus/stadtrecht/vorschrift/926.pdf",
+  "overview_url": "https://stadt.muenchen.de/rathaus/stadtrecht/vorschrift/926/version1/0.html",
+  "structure_de": [
+    "§ 1 Anwendungsbereich",
+    "§ 2 Pflicht zur Herstellung von Stellplätzen für Kraftfahrzeuge",
+    "§ 3 Zahl der notwendigen Stellplätze für Kraftfahrzeuge (verweist auf Anlage 1)",
+    "§ 4 Erfüllung der Stellplatzpflicht durch Herstellung und Ablöse",
+    "§ 5 Anforderungen an die Herstellung von Stellplätzen für Kraftfahrzeuge",
+    "§ 6 Abweichungen (Art. 63 BayBO)",
+    "§ 7 Inkrafttreten",
+    "Anlage 1 — Richtzahlentabelle (ausgefertigt 01.10.2025)",
+    "Anlage 2 — Übersichtskarte 1:40.000 (Zone I + Zone II)",
+    "Anlagen 3-7 — Detailkarten 1:10.000"
+  ],
+  "key_values": [
+    {
+      "topic_de": "Wohnung — KFZ-Stellplätze (Standardfall)",
+      "topic_en": "Residential dwelling — motor-vehicle parking",
+      "value": "1 Stellplatz je 1 Wohnung",
+      "section_reference_de": "Anlage 1 Nr. 1.1 (a)"
+    },
+    {
+      "topic_de": "Mietwohnung mit BayWoFG-Bindung — KFZ-Stellplätze",
+      "topic_en": "Subsidised rental (BayWoFG) — motor-vehicle parking",
+      "value": "0,5 Stellplätze je 1 Mietwohnung",
+      "section_reference_de": "Anlage 1 Nr. 1.1 (b)"
+    },
+    {
+      "topic_de": "Mietwohnung mit Mietpreis-/Belegungsbindung außerhalb BayWoFG — KFZ-Stellplätze",
+      "topic_en": "Other restricted rental — motor-vehicle parking",
+      "value": "0,8 Stellplätze je 1 Mietwohnung",
+      "section_reference_de": "Anlage 1 Nr. 1.1 (c)"
+    },
+    {
+      "topic_de": "Studentenwohnheim — KFZ-Stellplätze",
+      "topic_en": "Student dorm",
+      "value": "1 Stellplatz je 5 Betten",
+      "section_reference_de": "Anlage 1 Nr. 1.3"
+    },
+    {
+      "topic_de": "Altenwohnheim/Pflegeheim — KFZ-Stellplätze",
+      "topic_en": "Senior / care home",
+      "value": "1 Stellplatz je 15 Betten/Pflegeplätze, mindestens 1 Stp",
+      "section_reference_de": "Anlage 1 Nr. 1.5"
+    },
+    {
+      "topic_de": "Reduktion Zone I — Nichtwohnnutzungen",
+      "topic_en": "Zone I reduction — non-residential",
+      "value": "mindestens 50 % der Anlage-1-Werte",
+      "section_reference_de": "§ 4 Abs. 3 (a)",
+      "notes_de": "Zonenkarten in Anlagen 2 + 3-7."
+    },
+    {
+      "topic_de": "Reduktion Zone II — Nichtwohnnutzungen",
+      "topic_en": "Zone II reduction — non-residential",
+      "value": "mindestens 75 % der Anlage-1-Werte",
+      "section_reference_de": "§ 4 Abs. 3 (b)"
+    },
+    {
+      "topic_de": "Reduktion ÖPNV-nahe Lage außerhalb der Zonen",
+      "topic_en": "Reduction near transit (outside zones)",
+      "value": "mindestens 75 % wenn ≤ 600 m radial zu U-/S-Bahn-Haltepunkt oder ≤ 400 m zu Tram-Haltepunkt (jeweils vom Bahnsteig-Mittelpunkt gemessen)",
+      "section_reference_de": "§ 4 Abs. 3 (c)"
+    },
+    {
+      "topic_de": "Mobilitätskonzept — Reduktion bei Wohnnutzung",
+      "topic_en": "Mobility concept reduction (residential)",
+      "value": "Bei Vorlage eines qualifizierten Mobilitätskonzepts ist von einem reduzierten Stellplatzbedarf auszugehen",
+      "section_reference_de": "§ 3 Abs. 2"
+    },
+    {
+      "topic_de": "Einzelfallbezogene Ablöse — Reduktion bis 75 %",
+      "topic_en": "Case-specific abatement",
+      "value": "Bis zu 75 % der notwendigen Stellplätze können bei Nichtwohnnutzungen außerhalb von § 4 Abs. 3 abgelöst werden",
+      "section_reference_de": "§ 4 Abs. 4"
+    },
+    {
+      "topic_de": "Lagebedingte Ablöse — Höhe",
+      "topic_en": "Location-based abatement amount",
+      "value": "in angemessener Höhe (Ablösevertrag, ohne festen Tarif)",
+      "section_reference_de": "§ 4 Abs. 3 letzter Satz",
+      "notes_de": "Im Gegensatz zu Erlangen mit pauschalierten Zonenbeträgen (15.000/11.500/8.000 €) gibt München KEINE festen Ablösebeträge vor — Höhe wird einzelvertraglich verhandelt."
+    },
+    {
+      "topic_de": "Berechnungsregel und Rundung",
+      "topic_en": "Calculation and rounding",
+      "value": "Bei Bruchteilen kaufmännische Rundung auf eine ganze Zahl bei jedem Berechnungsschritt",
+      "section_reference_de": "§ 3 Abs. 4"
+    },
+    {
+      "topic_de": "Vorrang von Bebauungsplan-Festsetzungen",
+      "topic_en": "Override by B-Plan provisions",
+      "value": "Regelungen in Bebauungsplänen, die abweichen, haben Vorrang",
+      "section_reference_de": "§ 1 Abs. 2"
+    }
+  ],
+  "applies_to_postcodes_pattern": "80xxx (gesamtes Stadtgebiet München)",
+  "geographic_scope_de": "Gesamtes Stadtgebiet der Landeshauptstadt München.",
+  "summary_de": "Die neue Münchner Stellplatzsatzung (StPlS, in Kraft seit 03.10.2025) ersetzt die Fassung vom 19.12.2007. Wohnungen erfordern grundsätzlich 1 KFZ-Stellplatz je Wohnung; geförderte Mietwohnungen 0,5 Stp/WE; sonstige preis-/belegungsgebundene Mietwohnungen 0,8 Stp/WE. Anlage 1 enthält die Richtzahlen für 7+ Wohn-Kategorien plus Nicht-Wohn-Nutzungen mit Ausgangsrichtwert + Zone-I-/Zone-II-Reduktionen. Für Nichtwohnnutzungen gilt: Zone I mindestens 50 %, Zone II mindestens 75 %, ÖPNV-nahe Lage (600 m U/S-Bahn / 400 m Tram) mindestens 75 % der Anlage-1-Werte. Wohnnutzungen mit qualifiziertem Mobilitätskonzept reduzieren entsprechend. Lagebedingte Ablöse erfolgt einzelvertraglich (keine pauschalierten Beträge wie in Erlangen). Berechnung und kaufmännische Rundung nach § 3 Abs. 4. B-Plan-Festsetzungen haben Vorrang.",
+  "summary_en": "The new Munich parking ordinance (StPlS, in force since 2025-10-03) replaces the 2007 version. Residential default: 1 motor-vehicle space per dwelling; subsidised rentals (BayWoFG) 0.5 per dwelling; other restricted rentals 0.8 per dwelling. Annex 1 sets the reference values for 7+ residential categories plus non-residential uses with base value + Zone-I/Zone-II reductions. For non-residential uses: Zone I requires at least 50 %, Zone II at least 75 %, transit-proximity (600 m U/S-Bahn or 400 m tram) at least 75 % of Annex-1 values. Residential uses with a qualified mobility concept reduce accordingly. Abatement amounts are individually negotiated (Munich has no fixed per-zone tariff like Erlangen). § 3 (4) prescribes commercial rounding. B-Plan provisions override."
+}

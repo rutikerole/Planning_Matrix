@@ -1,0 +1,70 @@
+{
+  "_schemaVersion": 1,
+  "retrieved_on": "2026-04-30",
+  "id": "freiflaechengestaltung",
+  "official_name_de": "Satzung der Landeshauptstadt München über die Gestaltung und Ausstattung der unbebauten Flächen der bebauten Grundstücke und über die Begrünung baulicher Anlagen (Gestaltungs- und Begrünungssatzung)",
+  "_short_name": "GBS 924 (Freiflächengestaltung im Bauantrag)",
+  "_extracted_via": "pdftotext against stadt.muenchen.de/rathaus/stadtrecht/vorschrift/924.pdf",
+  "in_force_since": "1996-06-11",
+  "issued": "1996-05-08",
+  "stadtratsbeschluss": "1996-04-23",
+  "bekanntmachung": "1996-06-10",
+  "last_amended": "2025-02-18",
+  "rechtsgrundlage_de": "Art. 23 GO Bayern + Art. 98 Abs. 1 Nrn. 1+3, Art. 98 Abs. 2 Nr. 3 BayBO",
+  "_special_status_de": "ACHTUNG: § 3 dieser Satzung (Begrünung der unbebauten Flächen) wird seit 01.10.2025 NICHT MEHR ANGEWENDET. Eine neu konzipierte Gestaltungssatzung für Begrünung und Landschaft ist in Vorbereitung und soll dem Stadtrat zur Kenntnis vorgelegt werden. Bis zum Inkrafttreten der Neuregelung gilt rechtlich die Satzung weiter, in der Praxis greift die Lokalbaukommission auf alternative Steuerungsinstrumente zurück.",
+  "source_ids": ["stadt-muenchen-recht"],
+  "official_pdf_url": "https://stadt.muenchen.de/rathaus/stadtrecht/vorschrift/924.pdf",
+  "overview_url": "https://stadt.muenchen.de/infos/freiflaechengestaltung-in-muenchen.html",
+  "structure_de": [
+    "§ 1 Geltungs- und Anwendungsbereich (gesamtes Stadtgebiet)",
+    "§ 2 Ziel der Satzung (Durchgrünung + Gestaltung)",
+    "§ 3 Gestaltung der unbebauten Flächen — derzeit nicht angewendet (siehe _special_status_de)",
+    "§ 4 Gestaltung von Flachdächern und Außenwänden",
+    "§ 5 Erfordernis Freiflächengestaltungsplan",
+    "..."
+  ],
+  "key_values": [
+    {
+      "topic_de": "Geltungsbereich",
+      "topic_en": "Geographic scope",
+      "value": "Gesamtes Stadtgebiet München, für unbebaute Flächen bebauter Grundstücke + äußere Gestaltung baulicher Anlagen",
+      "section_reference_de": "§ 1"
+    },
+    {
+      "topic_de": "Anwendung",
+      "topic_en": "Application trigger",
+      "value": "Auf Vorhaben anzuwenden, für die nach Inkrafttreten ein Bauantrag oder Genehmigungsfreistellungsantrag gestellt wird; Zustand ist auf Dauer zu erhalten",
+      "section_reference_de": "§ 1"
+    },
+    {
+      "topic_de": "Ziel",
+      "topic_en": "Purpose",
+      "value": "Sicherstellung und Förderung einer angemessenen Durchgrünung + Gestaltung der Baugrundstücke und Kinderspielplätze",
+      "section_reference_de": "§ 2"
+    },
+    {
+      "topic_de": "Anforderungen Außengestaltung Flachdach + Außenwände",
+      "topic_en": "Roof + facade greening requirements",
+      "value": "Begrünungspflichten für Flachdächer und Außenwände bestimmter Bauten; konkrete Schwellenwerte in § 4",
+      "section_reference_de": "§ 4",
+      "_pending": "Konkrete Schwellenwerte (Mindest-Begrünungsanteile, Auslöser) aus § 4 zu transkribieren — Quartalsrefresh."
+    },
+    {
+      "topic_de": "Freiflächengestaltungsplan im Bauantrag",
+      "topic_en": "Open-space design plan in permit application",
+      "value": "Ein qualifizierter Freiflächengestaltungsplan ist regelmäßig Bestandteil des Bauantrags; Erstellung durch eine/n Landschaftsarchitekt:in dringend empfohlen, um Verzögerungen zu vermeiden",
+      "section_reference_de": "Verwaltungspraxis Lokalbaukommission",
+      "notes_de": "Quelle: stadt.muenchen.de/infos/freiflaechengestaltung-in-muenchen.html sowie LBK-Hinweise."
+    },
+    {
+      "topic_de": "Status § 3 seit Oktober 2025",
+      "topic_en": "Status of § 3 since October 2025",
+      "value": "§ 3 (Begrünung der unbebauten Flächen) wird derzeit NICHT angewendet; Nachfolgesatzung wird vorbereitet",
+      "section_reference_de": "Verwaltungspraxis seit 01.10.2025"
+    }
+  ],
+  "applies_to_postcodes_pattern": "80xxx (gesamtes Stadtgebiet)",
+  "geographic_scope_de": "Gesamtes Stadtgebiet München.",
+  "summary_de": "Die Münchner Gestaltungs- und Begrünungssatzung (GBS, vom 8. Mai 1996, zuletzt geändert 18.02.2025) regelt für das gesamte Stadtgebiet die Begrünung unbebauter Grundstücksflächen und die äußere Gestaltung baulicher Anlagen. WICHTIG: § 3 (Begrünung unbebauter Flächen) wird seit 01.10.2025 verwaltungsmäßig NICHT MEHR ANGEWENDET — eine novellierte Nachfolgesatzung ist in Vorbereitung und steht voraussichtlich Ende 2025 zur Stadtratsbefassung an. Bis zum Inkrafttreten der Neufassung steuert die Lokalbaukommission die Begrünung über alternative Wege (typischerweise via Freiflächengestaltungsplan im Bauantrag). § 4 (Flachdächer + Außenwände) bleibt anwendbar; konkrete Schwellenwerte sind aus dem PDF zu transkribieren. Empfehlung: bei Münchner Bauvorhaben einen qualifizierten Freiflächengestaltungsplan durch eine/n Landschaftsarchitekt:in erstellen lassen.",
+  "summary_en": "Munich's Design and Greening Ordinance (GBS, from 1996-05-08, last amended 2025-02-18) regulates the greening of undeveloped lot areas and the external appearance of buildings city-wide. NOTE: § 3 (greening of undeveloped areas) has been suspended in administrative practice since 2025-10-01 — a successor ordinance is in preparation. Until then, the Lokalbaukommission steers greening through alternative routes (typically the Freiflächengestaltungsplan in the permit application). A qualified landscape architect is strongly recommended."
+}

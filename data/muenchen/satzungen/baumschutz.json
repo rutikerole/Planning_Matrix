@@ -1,0 +1,85 @@
+{
+  "_schemaVersion": 1,
+  "retrieved_on": "2026-04-30",
+  "id": "baumschutz",
+  "official_name_de": "Baumschutzverordnung der Landeshauptstadt München (BaumschutzV)",
+  "_short_name": "BaumschutzV 901",
+  "_extracted_via": "pdftotext (poppler 26.04.0) against the official PDF at stadt.muenchen.de/rathaus/stadtrecht/vorschrift/901.pdf",
+  "in_force_since": "2025-12-31",
+  "issued": "2025-12-08",
+  "stadtratsbeschluss": "2025-11-26",
+  "bekanntmachung": "2025-12-30",
+  "rechtsgrundlage_de": "§ 20 Abs. 2 Nr. 7, § 22 Abs. 1+2, § 29 Abs. 1 Satz 2 BNatSchG i.V.m. Art. 12 Abs. 1, Art. 51 Abs. 1 Nr. 5a BayNatSchG",
+  "supersedes": "Frühere Fassung (München hat seit 1976 eine Baumschutzverordnung; aktuelle Novellierung verschärft die Schutzschwelle deutlich).",
+  "source_ids": ["stadt-muenchen-recht"],
+  "official_pdf_url": "https://stadt.muenchen.de/rathaus/stadtrecht/vorschrift/901.pdf",
+  "overview_url": "https://stadt.muenchen.de/infos/baumschutzverordnung.html",
+  "structure_de": [
+    "§ 1 Schutzgegenstand und Geltungsbereich",
+    "§ 2 Schutzzweck",
+    "§ 3 Verbote",
+    "§ 4 Erlaubte Maßnahmen / Pflegeschnitt",
+    "§ 5 Genehmigungsverfahren",
+    "§ 6 Ersatzpflanzungen / Ausgleichsabgabe",
+    "§ 7 Ordnungswidrigkeiten",
+    "§ 8 Inkrafttreten",
+    "Anlage A1 — Übersichtskarte 1:25.000 (Geltungsbereich)",
+    "Anlagen A2 — A82 — 81 Detailkarten 1:5.000 (verbindlicher Grenzverlauf)"
+  ],
+  "key_values": [
+    {
+      "topic_de": "Schutzschwelle — einstämmig",
+      "topic_en": "Protection threshold — single-stem",
+      "value": "Stammumfang ≥ 60 cm in 100 cm Höhe über dem Erdboden",
+      "section_reference_de": "§ 1 Abs. 1",
+      "notes_de": "Verschärft gegenüber der vorherigen 80-cm-Schwelle. Klettergehölze (Efeu, Wisteria, Wilder Wein) zum ersten Mal mit erfasst — siehe novellierte Fassung."
+    },
+    {
+      "topic_de": "Schutzschwelle — mehrstämmig",
+      "topic_en": "Protection threshold — multi-stem",
+      "value": "Summe der Stammumfänge in 100 cm Höhe ≥ 60 cm UND mindestens ein Stamm ≥ 40 cm Umfang",
+      "section_reference_de": "§ 1 Abs. 2"
+    },
+    {
+      "topic_de": "Schutz der Ersatzpflanzungen",
+      "topic_en": "Protection of replacement plantings",
+      "value": "Ersatzpflanzungen sind ebenfalls geschützt, auch wenn sie das Maß nach Abs. 1 oder 2 noch nicht erreicht haben",
+      "section_reference_de": "§ 1 Abs. 3"
+    },
+    {
+      "topic_de": "Geltungsbereich (Karten)",
+      "topic_en": "Geographic scope (maps)",
+      "value": "Übersichtskarte Anlage A1 (1:25.000) + 81 Detailkarten Anlagen A2-A82 (1:5.000), maßgeblich für genauen Grenzverlauf. Karten einsehbar im Bauaufsichtsamt, Blumenstr. 28b oder online im GeoPortal München.",
+      "section_reference_de": "§ 1 Abs. 4"
+    },
+    {
+      "topic_de": "Schutzzweck",
+      "topic_en": "Protection purpose",
+      "value": "Innerörtliche Durchgrünung; Belebung/Gliederung des Ortsbildes; Abwehr schädlicher Umwelteinwirkungen; Stadtklima/Artenvielfalt; Lebensstätten wildlebender Arten",
+      "section_reference_de": "§ 2"
+    },
+    {
+      "topic_de": "Verbotene Eingriffe",
+      "topic_en": "Prohibited interventions",
+      "value": "Fällen, abschneiden, abbrennen, verpflanzen, entwurzeln; Maßnahmen die zum Absterben führen; Eingriffe ins charakteristische Aussehen (Leittrieb-Einkürzen, künstliches Kleinhalten der Krone)",
+      "section_reference_de": "§ 3 Abs. 1+2"
+    },
+    {
+      "topic_de": "Wurzelraum-Schutz",
+      "topic_en": "Root-zone protection",
+      "value": "Bodenfläche unter der Krone zuzüglich 1,50 m (bzw. 5 m bei Säulenform) ist mitgeschützt",
+      "section_reference_de": "§ 3 Abs. 3"
+    },
+    {
+      "topic_de": "Ersatzpflanzungs-/Ausgleichszahlungspflicht",
+      "topic_en": "Replacement planting / compensation",
+      "value": "Bei genehmigter Fällung muss eine Ersatzpflanzung erfolgen; ist diese nicht möglich, sind Ausgleichszahlungen pro Baum fällig (verschärfte Beträge nach Novelle: Größenordnung 5.000–10.000 €+ je Baum)",
+      "section_reference_de": "§ 6 (siehe Volltext)",
+      "_pending": "Konkrete Beträge je Baum-Größe / je Baum-Art aus § 6 + Anlage zu transkribieren — Quartalsrefresh."
+    }
+  ],
+  "applies_to_postcodes_pattern": "80xxx (siehe Detailkarten)",
+  "geographic_scope_de": "Bestimmte Gebiete im Stadtgebiet München laut Übersichts- und Detailkarten (Anlagen A1 / A2-A82). NICHT das gesamte Stadtgebiet.",
+  "summary_de": "Die Baumschutzverordnung der Landeshauptstadt München (BaumschutzV 901, in Kraft seit 31.12.2025) schützt Bäume mit Stammumfang ab 60 cm in 1 m Höhe — verschärft gegenüber der alten 80-cm-Schwelle. Mehrstämmige Gehölze sind geschützt, wenn die Summe der Stammumfänge ≥ 60 cm UND mindestens ein Stamm ≥ 40 cm. Klettergehölze (Efeu, Wisteria, Wilder Wein) und alle Obstbäume sind erstmals mit erfasst. Genehmigungspflichtig sind Fällung, Beseitigung und Verschnitt-Eingriffe ins charakteristische Aussehen; auch der Wurzelraum (Kronenschatten + 1,50 m) ist mitgeschützt. Geltungsbereich folgt 81 Detailkarten 1:5.000 (Anlagen A2-A82) — NICHT das gesamte Stadtgebiet ist erfasst. Bei Bauvorhaben mit Eingriff in geschützte Bäume ist eine Genehmigung der Baumschutzbehörde (Lokalbaukommission Abt. 5) erforderlich; Ersatzpflanzung oder Ausgleichszahlung folgt § 6.",
+  "summary_en": "Munich's tree-protection ordinance (in force since 2025-12-31) protects trees with trunk circumference ≥ 60 cm at 1 m height — tightened from the previous 80 cm threshold. Multi-stem trees are protected when total circumference ≥ 60 cm AND at least one stem ≥ 40 cm. Climbing plants (ivy, wisteria) and all fruit trees are now included. Felling, removal, and significant pruning all require a permit from the Tree Protection Authority. The geographic scope is defined by 81 detailed 1:5,000 maps — NOT the entire city. Replacement planting or compensation payment under § 6 follows."
+}

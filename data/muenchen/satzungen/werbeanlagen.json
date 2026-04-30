@@ -1,0 +1,66 @@
+{
+  "_schemaVersion": 1,
+  "retrieved_on": "2026-04-30",
+  "id": "werbeanlagen",
+  "official_name_de": "Münchner Werbeanlagensatzung",
+  "_short_name": "Werbeanlagensatzung (Stadtratsbeschluss 24.09.2020)",
+  "_naming_note_de": "München führt eine Werbeanlagensatzung. Anders als z. B. Erlangen ist Werbung an Baudenkmälern + Denkmalensembles zusätzlich denkmalrechtlich genehmigungspflichtig (untere Denkmalschutzbehörde der Stadt München).",
+  "in_force_since": "2020-10-07",
+  "stadtratsbeschluss": "2020-09-24",
+  "bekanntmachung": "2020-10-06",
+  "rechtsgrundlage_de": "Art. 81 Abs. 1 Nrn. 1+2 BayBO",
+  "source_ids": ["stadt-muenchen-recht"],
+  "overview_url": "https://stadt.muenchen.de/infos/werbeanlagen.html",
+  "denkmal_overview_url": "https://stadt.muenchen.de/service/info/untere-denkmalschutzbehorde/1073940/",
+  "official_pdf_url": null,
+  "_pending_pdf_url": "Direkt-Link zur PDF-Fassung der Werbeanlagensatzung im Stadtrecht-Verzeichnis stadt.muenchen.de/rathaus/stadtrecht/ noch zu identifizieren — Quartalsrefresh-Aufgabe.",
+  "structure_de": [
+    "Geltungsbereich (gesamtes Stadtgebiet, gestufte Festsetzungen je Gebietstyp + Sonderschutz Denkmalensembles)",
+    "Allgemeine Gestaltungsgrundsätze",
+    "Werbung in Denkmalensembles + an Einzeldenkmälern (strengste Regeln)",
+    "Werbung in Wohngebieten",
+    "Werbung in Kern- und Mischgebieten",
+    "Werbung in Gewerbe-/Industriegebieten",
+    "Verbote (Ortseingänge, Brücken, Unterführungen)",
+    "Abweichungen / Ordnungswidrigkeiten / Inkrafttreten"
+  ],
+  "key_values": [
+    {
+      "topic_de": "Geltungsbereich",
+      "topic_en": "Geographic scope",
+      "value": "Gesamtes Stadtgebiet München, mit gestuften Festsetzungen je Gebietstyp",
+      "section_reference_de": "§ 1"
+    },
+    {
+      "topic_de": "Genehmigungsbehörde für Werbung am Denkmal",
+      "topic_en": "Approval authority for advertising on listed buildings",
+      "value": "Werbung an Baudenkmälern + in Denkmalensembles bedarf der Genehmigung der unteren Denkmalschutzbehörde der Stadt München (Abt. Denkmalschutz und Stadtgestaltung), zusätzlich zur baurechtlichen Genehmigung",
+      "section_reference_de": "BayDSchG Art. 6 i.V.m. Werbeanlagensatzung",
+      "notes_de": "Stadt München benennt die zuständige Stelle ausdrücklich als Bestandteil der Lokalbaukommission. Empfohlene Vorgehensweise: vor Antragstellung Klärungsgespräch."
+    },
+    {
+      "topic_de": "Verhältnis zum BayDSchG",
+      "topic_en": "Relation to BayDSchG",
+      "value": "Anforderungen aus dem BayDSchG bleiben unberührt — Werbeanlagengenehmigung tritt NEBEN denkmalrechtliche Erlaubnis (BayDSchG Art. 6).",
+      "section_reference_de": "Schnittstelle BayBO § 81 / BayDSchG Art. 6"
+    },
+    {
+      "topic_de": "Beleuchtung — Restriktionen",
+      "topic_en": "Lighting restrictions",
+      "value": "Blink-/Wechsel-/Reflexbeleuchtung; Lichtprojektionen; Leuchtketten/-bänder/-konturen außerhalb Gewerbe-/Industriegebiete grundsätzlich unzulässig (mit gewissen saisonalen Ausnahmen)",
+      "section_reference_de": "Allgemeine Gestaltungsgrundsätze",
+      "_pending": "Genaue Wortlauten + § aus PDF nachzutragen — Quartalsrefresh."
+    },
+    {
+      "topic_de": "Riesenposter / Großwerbeanlagen",
+      "topic_en": "Mega-poster / large advertising",
+      "value": "Großwerbeanlagen mit Auswirkung auf das Ortsbild sind im Innenstadtbereich grundsätzlich unzulässig; eine Beeinträchtigung des Ortsbildes ist eigenständige Versagungsgründe (vgl. VG-München-Rspr.)",
+      "section_reference_de": "Allgemeine Gestaltungsgrundsätze + § 3 Werbung an Denkmal",
+      "notes_de": "VG München M 1 K 19.5390 (22.02.2022) bestätigt die Versagungsgründe."
+    }
+  ],
+  "applies_to_postcodes_pattern": "80xxx (gesamtes Stadtgebiet)",
+  "geographic_scope_de": "Gesamtes Stadtgebiet München, mit gestuften Festsetzungen je Gebietstyp; strengste Regeln für Denkmalensembles + Einzeldenkmäler.",
+  "summary_de": "Die Münchner Werbeanlagensatzung (in Kraft seit 07.10.2020) regelt Werbeanlagen, Schaufensterbeschriftungen und sonstige ortsfeste Werbung im gesamten Stadtgebiet, mit gestuften Festsetzungen je Baugebietstyp. Die strengsten Regeln gelten für Denkmalensembles + Einzeldenkmäler (z. B. Altstadt-Lehel) — hier ist die Werbung zusätzlich denkmalrechtlich genehmigungspflichtig nach BayDSchG Art. 6 durch die untere Denkmalschutzbehörde der Stadt München. Riesenposter und auffällige Beleuchtung (Blink-, Wechsel-, Reflexbeleuchtung) sind außerhalb der Gewerbegebiete grundsätzlich unzulässig.",
+  "summary_en": "Munich's Advertising Installations Ordinance (in force since 2020-10-07) regulates advertising city-wide with graduated rules per area type. Strictest rules apply in heritage ensembles + at listed buildings, where advertising additionally requires a heritage-law permit under BayDSchG Art. 6 from the City of Munich's heritage authority. Mega-posters + flashing/changing lights are generally prohibited outside commercial zones."
+}

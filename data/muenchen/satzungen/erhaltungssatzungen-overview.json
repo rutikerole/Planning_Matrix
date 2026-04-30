@@ -1,0 +1,57 @@
+{
+  "_schemaVersion": 1,
+  "retrieved_on": "2026-04-30",
+  "id": "erhaltungssatzungen-overview",
+  "_note_de": "STRUKTURELLE ÜBERSICHT der Erhaltungssatzungen im Stadtgebiet München. Eine vollständige Detail-Erfassung pro Erhaltungssatzung ist Aufgabe des Quartalsrefresh — diese Datei ist die strukturelle Karte. Das WMS-Layer satz_erhalt_poly im Geoportal München liefert die Geltungsbereiche aller Erhaltungssatzungen als räumliche Daten; eine programmatische Inventur ist Phase-6-Arbeit.",
+  "rechtsgrundlage_de": "BauGB §§ 172 ff. (Erhaltung baulicher Anlagen — Erhaltungssatzung)",
+  "source_ids": ["stadt-muenchen-bplaene", "geoportal-muenchen-wms-plan", "stadt-muenchen-recht"],
+  "wms_layer_geltungsbereiche": "satz_erhalt_poly",
+  "wms_endpoint": "https://geoportal.muenchen.de/geoserver/plan/wms",
+  "stadtportal_overview_url": "https://stadt.muenchen.de/rathaus/stadtrecht.html",
+  "_total_count_approx_pending": "Eine bestätigte Gesamtzahl der Erhaltungssatzungen München liegt im Audit-Setup nicht vor. Größenordnung: niedriges 2-stelliges (~30-60). Quartalsrefresh: WFS-Abfrage gegen plan:satz_erhalt_poly mit GROUP BY name oder ähnlicher Aggregation.",
+  "key_values": [
+    {
+      "topic_de": "Genehmigungspflicht — Auslöser",
+      "topic_en": "Approval requirement triggers",
+      "value": "Im Geltungsbereich einer Erhaltungssatzung (Milieuschutz nach BauGB § 172 Abs. 1 Satz 1 Nr. 2): Abbruch, Änderung, Nutzungsänderung sowie Errichtung baulicher Anlagen sind genehmigungspflichtig",
+      "section_reference_de": "BauGB § 172 Abs. 1 Sätze 1+2"
+    },
+    {
+      "topic_de": "Verhältnis zum BayDSchG",
+      "topic_en": "Relation to BayDSchG",
+      "value": "Erhaltungs-Genehmigung tritt NEBEN baurechtliche und denkmalrechtliche Genehmigungen — bei Baudenkmälern in Erhaltungssatzungs-Geltungsbereichen sind dreifache Spuren erforderlich",
+      "section_reference_de": "BauGB § 172 + BayDSchG Art. 6 + BayBO"
+    },
+    {
+      "topic_de": "Abgrenzung Erhaltungssatzung / Denkmalschutz",
+      "topic_en": "Delimitation Erhaltungssatzung vs heritage protection",
+      "value": "Erhaltungssatzung schützt das STADTBILD-Gefüge eines Quartiers (auch ohne dass einzelne Gebäude Denkmäler sind); Denkmalschutz schützt einzelne Bauten oder Ensembles wegen ihrer historischen/künstlerischen Bedeutung",
+      "section_reference_de": "BauGB § 172 vs BayDSchG"
+    }
+  ],
+  "_known_examples": [
+    {
+      "stadtbezirk": "05 Au-Haidhausen",
+      "name_de": "Erhaltungssatzung Haidhausen",
+      "_note_de": "Mehrere Quartiere unter Erhaltungssatzung; bestätigt durch stadt.muenchen.de Suche."
+    },
+    {
+      "stadtbezirk": "01 Altstadt-Lehel",
+      "name_de": "Erhaltungssatzungen im Altstadt-Bereich",
+      "_note_de": "Überschneidung mit dem Denkmalensemble Altstadt München (BLfD)."
+    },
+    {
+      "stadtbezirk": "02 Ludwigsvorstadt-Isarvorstadt",
+      "name_de": "Erhaltungssatzungen Glockenbachviertel + Schlachthofviertel",
+      "_note_de": "Bekannte Münchner Milieuschutz-Quartiere; konkrete Geltungsbereiche aus dem WMS-Layer abrufbar."
+    }
+  ],
+  "common_geltungsbereich_pattern_de": "Erhaltungssatzungs-Geltungsbereiche werden im B-Plan-Plan-Portal (https://geoportal.muenchen.de/portal/plan/) als eigene Layer-Gruppe dargestellt. Für jeden Stadtbezirk variiert die Anzahl + Detailtiefe der Satzungen. Quartiere mit hoher Erhaltungssatzungs-Dichte: Au-Haidhausen, Glockenbachviertel, Westend (Schwanthalerhöhe), Lehel, Schwabing.",
+  "common_genehmigungspflicht_de": "Bauliche Änderungen, Abriss, Nutzungsänderungen UND Neubau erfordern erhaltungsrechtliche Erlaubnis nach BauGB § 172. In München: zuständige Stelle ist das Referat für Stadtplanung und Bauordnung — Untere Denkmalschutzbehörde + Lokalbaukommission, koordiniert über die Sub-Office-Routing-Logik (siehe ../bauamt.json).",
+  "summary_de": "Diese Datei ist eine STRUKTURELLE ÜBERSICHT der Münchner Erhaltungssatzungen, KEINE Detail-Transkription. Erhaltungssatzungen nach BauGB § 172 schützen das städtebauliche Gefüge bestimmter Quartiere — bekannte Beispiele: Haidhausen, Glockenbachviertel, Schlachthofviertel, Altstadt-Lehel, Lehel, Schwabing. Im Geltungsbereich sind Abbruch, Änderung, Nutzungsänderung und Errichtung baulicher Anlagen genehmigungspflichtig. Die räumliche Verteilung ist über das WMS-Layer plan:satz_erhalt_poly im Geoportal München abrufbar; eine vollständige Inventur ist Phase-6-Arbeit. Bei Sanierungs- oder Umbauvorhaben in den genannten Quartieren IMMER prüfen, ob eine Erhaltungssatzung greift — die Genehmigung tritt NEBEN baurechtliche und ggf. denkmalrechtliche Erlaubnisse.",
+  "summary_en": "Structural overview, not a full transcription. Munich has multiple BauGB § 172 preservation ordinances (Erhaltungssatzungen) protecting urban-fabric character in well-known quarters (Haidhausen, Glockenbachviertel, Schlachthofviertel, Altstadt-Lehel, Schwabing). In any covered area: demolition, alteration, change of use, and new construction all require a preservation-law permit, separate from any building or heritage permit. The full geographic distribution lives in the WMS layer plan:satz_erhalt_poly.",
+  "_pending_blocks": [
+    "Per-Stadtbezirk Detail-Inventar pro Erhaltungssatzung (Geltungsbereich-Beschreibung, Inkrafttretens-Datum, exakte Genehmigungspflicht-Kategorien) — Quartalsrefresh-Aufgabe oder Phase-6-Live-Integration via WFS plan:satz_erhalt_poly.",
+    "Bestätigte Gesamtzahl der Erhaltungssatzungen München."
+  ]
+}
