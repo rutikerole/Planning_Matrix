@@ -27,6 +27,7 @@
     },
     "Bauamt": {
       "type": "object",
+      "_phase4_extension_note": "Phase 4 (revised) added the optional `sub_offices` array to formalise München's 3-office routing (Mitte / Ost / West) by Stadtbezirk. The extension is purely additive — Erlangen's single-office bauamt.json continues to validate. No required fields touched.",
       "required": [
         "_schemaVersion",
         "retrieved_on",
@@ -106,6 +107,29 @@
           "type": "array",
           "items": { "$ref": "#/$defs/sourceId" },
           "minItems": 1
+        },
+        "sub_offices": {
+          "type": "array",
+          "description": "Phase 4 (revised) — optional. Cities with district-routed sub-offices (e.g. München's Mitte / Ost / West) populate this; cities with a single office (e.g. Erlangen) omit it. The union of all sub_offices[].stadtbezirke arrays should cover the city's full district set with no overlaps.",
+          "items": {
+            "type": "object",
+            "required": ["id", "name_de", "stadtbezirke"],
+            "properties": {
+              "id": { "type": "string", "minLength": 1 },
+              "name_de": { "type": "string", "minLength": 1 },
+              "phone": { "type": "string" },
+              "phone_alternate": { "type": "string" },
+              "email": { "type": "string" },
+              "stadtbezirke": {
+                "type": "array",
+                "items": { "type": "integer", "minimum": 1 }
+              },
+              "stadtbezirk_names": {
+                "type": "array",
+                "items": { "type": "string" }
+              }
+            }
+          }
         }
       }
     },

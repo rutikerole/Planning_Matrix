@@ -1,0 +1,119 @@
+{
+  "_schemaVersion": 1,
+  "retrieved_on": "2026-04-30",
+  "official_name_de": "Referat für Stadtplanung und Bauordnung — Hauptabteilung II — Stadtplanung",
+  "parent_office_de": "Landeshauptstadt München, Referat für Stadtplanung und Bauordnung",
+  "_naming_note_de": "Im Gegensatz zu Erlangen (eine zentrale 'Bauaufsichtsamt der Stadt Erlangen') ist München strukturell zweistufig: das übergeordnete Referat (Hauptadresse Blumenstraße 28b) und drei Begutachtungs-Stellen für rechtsverbindliche Bebauungspläne, aufgeteilt nach Stadtbezirken. Nutzen Sie für Bauantragsempfehlungen IMMER den korrekten Sub-Office-Namen + Email — Mitte / Ost / West — basierend auf der Stadtbezirk-Zuordnung.",
+  "address": {
+    "street": "Blumenstraße 28b",
+    "postcode": "80331",
+    "city": "München"
+  },
+  "contact": {
+    "phone_general": "089 233-28474",
+    "phone_alternate": "089 233-23576",
+    "email_general": "plan.ha2@muenchen.de"
+  },
+  "_pending_postcode_blumenstrasse": "80331 angenommen (Marienplatz-Umgriff); Live-Verifikation in Wave-6-Cross-Check sollte den genauen PLZ über Geoportal-Reverse-Geocoding bestätigen.",
+  "opening_hours": [
+    { "weekday": "mon", "open": "09:30", "close": "15:00", "notes_de": "Persönliche Termine grundsätzlich nur nach vorheriger Vereinbarung." },
+    { "weekday": "tue", "open": "09:30", "close": "15:00", "notes_de": "Persönliche Termine nur nach Vereinbarung." },
+    { "weekday": "wed", "open": "09:30", "close": "15:00", "notes_de": "Persönliche Termine nur nach Vereinbarung." },
+    { "weekday": "thu", "open": "09:30", "close": "15:00", "notes_de": "Persönliche Termine nur nach Vereinbarung." },
+    { "weekday": "fri", "open": "09:30", "close": "12:00", "notes_de": "Persönliche Termine nur nach Vereinbarung." }
+  ],
+  "responsibilities_de": [
+    "Bearbeitung von Bauanträgen nach BayBO Art. 64 (vereinfachtes Verfahren Art. 58, Baugenehmigungsverfahren Art. 60)",
+    "Prüfung der Genehmigungsfreistellung (BayBO Art. 57)",
+    "Auskünfte zu rechtsverbindlichen Bebauungsplänen, Aufstellungsverfahren und Sanierungs-/Erhaltungssatzungen",
+    "Erteilung von Abweichungs-, Ausnahme- und Befreiungsbescheiden",
+    "Werbeanlagengenehmigungen",
+    "Mitwirkung bei Denkmalschutzfragen (untere Denkmalschutzbehörde, koordiniert mit BLfD)"
+  ],
+  "sub_offices": [
+    {
+      "id": "mitte",
+      "name_de": "Begutachtung Bezirk Mitte",
+      "phone": "089 233 22550",
+      "phone_alternate": "089 233 26127",
+      "email": "plan.ha2-24b@muenchen.de",
+      "stadtbezirke": [1, 2, 3, 4, 5, 6, 7, 8, 9, 25],
+      "stadtbezirk_names": [
+        "Altstadt-Lehel",
+        "Ludwigsvorstadt-Isarvorstadt",
+        "Maxvorstadt",
+        "Schwabing-West",
+        "Au-Haidhausen",
+        "Sendling",
+        "Sendling-Westpark",
+        "Schwanthalerhöhe",
+        "Neuhausen-Nymphenburg",
+        "Laim"
+      ]
+    },
+    {
+      "id": "ost",
+      "name_de": "Begutachtung Bezirk Ost",
+      "phone": "089 233 22038",
+      "phone_alternate": "089 233 27161",
+      "email": "plan.ha2-34b@muenchen.de",
+      "stadtbezirke": [13, 14, 15, 16, 17, 18, 19],
+      "stadtbezirk_names": [
+        "Bogenhausen",
+        "Berg am Laim",
+        "Trudering-Riem",
+        "Ramersdorf-Perlach",
+        "Obergiesing-Fasangarten",
+        "Untergiesing-Harlaching",
+        "Thalkirchen-Obersendling-Forstenried-Fürstenried-Solln"
+      ]
+    },
+    {
+      "id": "west",
+      "name_de": "Begutachtung Bezirk West",
+      "phone": "089 233 22095",
+      "email": "plan.ha2-44b@muenchen.de",
+      "stadtbezirke": [10, 11, 12, 20, 21, 22, 23, 24],
+      "stadtbezirk_names": [
+        "Moosach",
+        "Milbertshofen-Am Hart",
+        "Schwabing-Freimann",
+        "Hadern",
+        "Pasing-Obermenzing",
+        "Aubing-Lochhausen-Langwied",
+        "Allach-Untermenzing",
+        "Feldmoching-Hasenbergl"
+      ]
+    }
+  ],
+  "online_services": [
+    {
+      "label_de": "Plan-Portal — interaktive Karte aller Bebauungspläne",
+      "url": "https://geoportal.muenchen.de/portal/plan/",
+      "retrieved_on": "2026-04-30"
+    },
+    {
+      "label_de": "Auslegungs-Termine (öffentliche Auslegung von B-Plänen)",
+      "url": "https://stadt.muenchen.de/infos/auslegung-termine.html",
+      "retrieved_on": "2026-04-30"
+    },
+    {
+      "label_de": "Übersichtsseite Rechtsverbindliche Bebauungspläne",
+      "url": "https://stadt.muenchen.de/infos/rechtsverbindliche-bebauungsplaene.html",
+      "retrieved_on": "2026-04-30"
+    },
+    {
+      "label_de": "BayernPortal — Bauantrag online (Assistent)",
+      "url": "https://formularserver-bp.bayern.de/intelliform/forms/bayernportal/bayernportal/Ministerien/stmb/bauantrag_hauptassistent/index",
+      "retrieved_on": "2026-04-30"
+    }
+  ],
+  "intake_notes_de": [
+    "Auskünfte über die drei Sub-Offices Mitte / Ost / West werden nach Stadtbezirken zugewiesen. Verwenden Sie für Empfehlungen IMMER die exakte Sub-Office-Email + den Sub-Office-Namen.",
+    "Persönliche Termine grundsätzlich nur nach vorheriger Vereinbarung — auch bei den Sub-Offices."
+  ],
+  "source_ids": [
+    "stadt-muenchen-bplaene",
+    "geoportal-muenchen-portal-plan"
+  ]
+}

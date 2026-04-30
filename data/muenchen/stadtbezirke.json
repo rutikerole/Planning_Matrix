@@ -1,0 +1,457 @@
+{
+  "_schemaVersion": 1,
+  "retrieved_on": "2026-04-30",
+  "source_ids": [
+    "geoportal-muenchen-wfs-gsm",
+    "stadt-muenchen-bplaene"
+  ],
+  "_note_de": "Bauamt-Zuordnung gemäß stadt.muenchen.de/infos/rechtsverbindliche-bebauungsplaene.html — Auskünfte aufgeteilt auf 3 Begutachtungs-Stellen.",
+  "_wfs_query": "GET https://geoportal.muenchen.de/geoserver/gsm_wfs/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=gsm_wfs:vablock_stadtbezirk&outputFormat=application/json",
+  "_wfs_feature_properties": [
+    "sb_nummer",
+    "sb_name",
+    "flaeche_qm"
+  ],
+  "stadtbezirke": [
+    {
+      "number": 1,
+      "number_padded": "01",
+      "name_de": "Altstadt-Lehel",
+      "bauamt_office": "mitte",
+      "flaeche_qm": 3145888.14,
+      "flaeche_km2": 3.146,
+      "postcodes_approx": [
+        "80331",
+        "80333",
+        "80335",
+        "80538",
+        "80539"
+      ],
+      "postcodes_verified": false,
+      "_pending_postcodes": "Annäherung — Stadtbezirk→PLZ-Mapping aus Open-Data-Quelle nicht im Audit-Setup verifiziert; Phase-6-Reverse-Geocoding über das Geoportal sollte exakte Zuordnung liefern."
+    },
+    {
+      "number": 2,
+      "number_padded": "02",
+      "name_de": "Ludwigsvorstadt-Isarvorstadt",
+      "bauamt_office": "mitte",
+      "flaeche_qm": 4401650.67,
+      "flaeche_km2": 4.402,
+      "postcodes_approx": [
+        "80336",
+        "80337"
+      ],
+      "postcodes_verified": false,
+      "_pending_postcodes": "Annäherung — Stadtbezirk→PLZ-Mapping aus Open-Data-Quelle nicht im Audit-Setup verifiziert; Phase-6-Reverse-Geocoding über das Geoportal sollte exakte Zuordnung liefern."
+    },
+    {
+      "number": 3,
+      "number_padded": "03",
+      "name_de": "Maxvorstadt",
+      "bauamt_office": "mitte",
+      "flaeche_qm": 4298192.33,
+      "flaeche_km2": 4.298,
+      "postcodes_approx": [
+        "80333",
+        "80335",
+        "80539",
+        "80799",
+        "80798",
+        "80797"
+      ],
+      "postcodes_verified": false,
+      "_pending_postcodes": "Annäherung — Stadtbezirk→PLZ-Mapping aus Open-Data-Quelle nicht im Audit-Setup verifiziert; Phase-6-Reverse-Geocoding über das Geoportal sollte exakte Zuordnung liefern."
+    },
+    {
+      "number": 4,
+      "number_padded": "04",
+      "name_de": "Schwabing-West",
+      "bauamt_office": "mitte",
+      "flaeche_qm": 4363287.5,
+      "flaeche_km2": 4.363,
+      "postcodes_approx": [
+        "80796",
+        "80797",
+        "80798",
+        "80803",
+        "80809"
+      ],
+      "postcodes_verified": false,
+      "_pending_postcodes": "Annäherung — Stadtbezirk→PLZ-Mapping aus Open-Data-Quelle nicht im Audit-Setup verifiziert; Phase-6-Reverse-Geocoding über das Geoportal sollte exakte Zuordnung liefern."
+    },
+    {
+      "number": 5,
+      "number_padded": "05",
+      "name_de": "Au-Haidhausen",
+      "bauamt_office": "mitte",
+      "flaeche_qm": 4219982.8,
+      "flaeche_km2": 4.22,
+      "postcodes_approx": [
+        "81541",
+        "81543",
+        "81667",
+        "81669",
+        "81675",
+        "81677"
+      ],
+      "postcodes_verified": false,
+      "_pending_postcodes": "Annäherung — Stadtbezirk→PLZ-Mapping aus Open-Data-Quelle nicht im Audit-Setup verifiziert; Phase-6-Reverse-Geocoding über das Geoportal sollte exakte Zuordnung liefern."
+    },
+    {
+      "number": 6,
+      "number_padded": "06",
+      "name_de": "Sendling",
+      "bauamt_office": "mitte",
+      "flaeche_qm": 3938931.87,
+      "flaeche_km2": 3.939,
+      "postcodes_approx": [
+        "81369",
+        "81371",
+        "81373"
+      ],
+      "postcodes_verified": false,
+      "_pending_postcodes": "Annäherung — Stadtbezirk→PLZ-Mapping aus Open-Data-Quelle nicht im Audit-Setup verifiziert; Phase-6-Reverse-Geocoding über das Geoportal sollte exakte Zuordnung liefern."
+    },
+    {
+      "number": 7,
+      "number_padded": "07",
+      "name_de": "Sendling-Westpark",
+      "bauamt_office": "mitte",
+      "flaeche_qm": 7814853.09,
+      "flaeche_km2": 7.815,
+      "postcodes_approx": [
+        "80686",
+        "81371",
+        "81373",
+        "81377",
+        "81379"
+      ],
+      "postcodes_verified": false,
+      "_pending_postcodes": "Annäherung — Stadtbezirk→PLZ-Mapping aus Open-Data-Quelle nicht im Audit-Setup verifiziert; Phase-6-Reverse-Geocoding über das Geoportal sollte exakte Zuordnung liefern."
+    },
+    {
+      "number": 8,
+      "number_padded": "08",
+      "name_de": "Schwanthalerhöhe",
+      "bauamt_office": "mitte",
+      "flaeche_qm": 2070313.18,
+      "flaeche_km2": 2.07,
+      "postcodes_approx": [
+        "80339"
+      ],
+      "postcodes_verified": false,
+      "_pending_postcodes": "Annäherung — Stadtbezirk→PLZ-Mapping aus Open-Data-Quelle nicht im Audit-Setup verifiziert; Phase-6-Reverse-Geocoding über das Geoportal sollte exakte Zuordnung liefern."
+    },
+    {
+      "number": 9,
+      "number_padded": "09",
+      "name_de": "Neuhausen-Nymphenburg",
+      "bauamt_office": "mitte",
+      "flaeche_qm": 12914863.76,
+      "flaeche_km2": 12.915,
+      "postcodes_approx": [
+        "80636",
+        "80637",
+        "80638",
+        "80639",
+        "80809"
+      ],
+      "postcodes_verified": false,
+      "_pending_postcodes": "Annäherung — Stadtbezirk→PLZ-Mapping aus Open-Data-Quelle nicht im Audit-Setup verifiziert; Phase-6-Reverse-Geocoding über das Geoportal sollte exakte Zuordnung liefern."
+    },
+    {
+      "number": 10,
+      "number_padded": "10",
+      "name_de": "Moosach",
+      "bauamt_office": "west",
+      "flaeche_qm": 11093673.14,
+      "flaeche_km2": 11.094,
+      "postcodes_approx": [
+        "80637",
+        "80638",
+        "80637",
+        "80992",
+        "80993",
+        "80995"
+      ],
+      "postcodes_verified": false,
+      "_pending_postcodes": "Annäherung — Stadtbezirk→PLZ-Mapping aus Open-Data-Quelle nicht im Audit-Setup verifiziert; Phase-6-Reverse-Geocoding über das Geoportal sollte exakte Zuordnung liefern."
+    },
+    {
+      "number": 11,
+      "number_padded": "11",
+      "name_de": "Milbertshofen-Am Hart",
+      "bauamt_office": "west",
+      "flaeche_qm": 13417212.19,
+      "flaeche_km2": 13.417,
+      "postcodes_approx": [
+        "80807",
+        "80809",
+        "80995",
+        "80937",
+        "80939"
+      ],
+      "postcodes_verified": false,
+      "_pending_postcodes": "Annäherung — Stadtbezirk→PLZ-Mapping aus Open-Data-Quelle nicht im Audit-Setup verifiziert; Phase-6-Reverse-Geocoding über das Geoportal sollte exakte Zuordnung liefern."
+    },
+    {
+      "number": 12,
+      "number_padded": "12",
+      "name_de": "Schwabing-Freimann",
+      "bauamt_office": "west",
+      "flaeche_qm": 25674767.46,
+      "flaeche_km2": 25.675,
+      "postcodes_approx": [
+        "80801",
+        "80802",
+        "80803",
+        "80804",
+        "80805",
+        "80807",
+        "80939"
+      ],
+      "postcodes_verified": false,
+      "_pending_postcodes": "Annäherung — Stadtbezirk→PLZ-Mapping aus Open-Data-Quelle nicht im Audit-Setup verifiziert; Phase-6-Reverse-Geocoding über das Geoportal sollte exakte Zuordnung liefern."
+    },
+    {
+      "number": 13,
+      "number_padded": "13",
+      "name_de": "Bogenhausen",
+      "bauamt_office": "ost",
+      "flaeche_qm": 23712962.06,
+      "flaeche_km2": 23.713,
+      "postcodes_approx": [
+        "81675",
+        "81677",
+        "81679",
+        "81925",
+        "81927",
+        "81929"
+      ],
+      "postcodes_verified": false,
+      "_pending_postcodes": "Annäherung — Stadtbezirk→PLZ-Mapping aus Open-Data-Quelle nicht im Audit-Setup verifiziert; Phase-6-Reverse-Geocoding über das Geoportal sollte exakte Zuordnung liefern."
+    },
+    {
+      "number": 14,
+      "number_padded": "14",
+      "name_de": "Berg am Laim",
+      "bauamt_office": "ost",
+      "flaeche_qm": 6315330.59,
+      "flaeche_km2": 6.315,
+      "postcodes_approx": [
+        "81671",
+        "81673",
+        "81735"
+      ],
+      "postcodes_verified": false,
+      "_pending_postcodes": "Annäherung — Stadtbezirk→PLZ-Mapping aus Open-Data-Quelle nicht im Audit-Setup verifiziert; Phase-6-Reverse-Geocoding über das Geoportal sollte exakte Zuordnung liefern."
+    },
+    {
+      "number": 15,
+      "number_padded": "15",
+      "name_de": "Trudering-Riem",
+      "bauamt_office": "ost",
+      "flaeche_qm": 22453921.63,
+      "flaeche_km2": 22.454,
+      "postcodes_approx": [
+        "81825",
+        "81827",
+        "81829"
+      ],
+      "postcodes_verified": false,
+      "_pending_postcodes": "Annäherung — Stadtbezirk→PLZ-Mapping aus Open-Data-Quelle nicht im Audit-Setup verifiziert; Phase-6-Reverse-Geocoding über das Geoportal sollte exakte Zuordnung liefern."
+    },
+    {
+      "number": 16,
+      "number_padded": "16",
+      "name_de": "Ramersdorf-Perlach",
+      "bauamt_office": "ost",
+      "flaeche_qm": 19897135.97,
+      "flaeche_km2": 19.897,
+      "postcodes_approx": [
+        "81539",
+        "81549",
+        "81669",
+        "81735",
+        "81737",
+        "81739"
+      ],
+      "postcodes_verified": false,
+      "_pending_postcodes": "Annäherung — Stadtbezirk→PLZ-Mapping aus Open-Data-Quelle nicht im Audit-Setup verifiziert; Phase-6-Reverse-Geocoding über das Geoportal sollte exakte Zuordnung liefern."
+    },
+    {
+      "number": 17,
+      "number_padded": "17",
+      "name_de": "Obergiesing-Fasangarten",
+      "bauamt_office": "ost",
+      "flaeche_qm": 5720866.27,
+      "flaeche_km2": 5.721,
+      "postcodes_approx": [
+        "81539",
+        "81541",
+        "81545",
+        "81547",
+        "81549"
+      ],
+      "postcodes_verified": false,
+      "_pending_postcodes": "Annäherung — Stadtbezirk→PLZ-Mapping aus Open-Data-Quelle nicht im Audit-Setup verifiziert; Phase-6-Reverse-Geocoding über das Geoportal sollte exakte Zuordnung liefern."
+    },
+    {
+      "number": 18,
+      "number_padded": "18",
+      "name_de": "Untergiesing-Harlaching",
+      "bauamt_office": "ost",
+      "flaeche_qm": 8057218.13,
+      "flaeche_km2": 8.057,
+      "postcodes_approx": [
+        "81539",
+        "81545",
+        "81547"
+      ],
+      "postcodes_verified": false,
+      "_pending_postcodes": "Annäherung — Stadtbezirk→PLZ-Mapping aus Open-Data-Quelle nicht im Audit-Setup verifiziert; Phase-6-Reverse-Geocoding über das Geoportal sollte exakte Zuordnung liefern."
+    },
+    {
+      "number": 19,
+      "number_padded": "19",
+      "name_de": "Thalkirchen-Obersendling-Forstenried-Fürstenried-Solln",
+      "bauamt_office": "ost",
+      "flaeche_qm": 17763489.71,
+      "flaeche_km2": 17.763,
+      "postcodes_approx": [
+        "81377",
+        "81379",
+        "81475",
+        "81476",
+        "81477",
+        "81479"
+      ],
+      "postcodes_verified": false,
+      "_pending_postcodes": "Annäherung — Stadtbezirk→PLZ-Mapping aus Open-Data-Quelle nicht im Audit-Setup verifiziert; Phase-6-Reverse-Geocoding über das Geoportal sollte exakte Zuordnung liefern."
+    },
+    {
+      "number": 20,
+      "number_padded": "20",
+      "name_de": "Hadern",
+      "bauamt_office": "west",
+      "flaeche_qm": 9223789.35,
+      "flaeche_km2": 9.224,
+      "postcodes_approx": [
+        "81375",
+        "81377",
+        "81475"
+      ],
+      "postcodes_verified": false,
+      "_pending_postcodes": "Annäherung — Stadtbezirk→PLZ-Mapping aus Open-Data-Quelle nicht im Audit-Setup verifiziert; Phase-6-Reverse-Geocoding über das Geoportal sollte exakte Zuordnung liefern."
+    },
+    {
+      "number": 21,
+      "number_padded": "21",
+      "name_de": "Pasing-Obermenzing",
+      "bauamt_office": "west",
+      "flaeche_qm": 16497538.93,
+      "flaeche_km2": 16.498,
+      "postcodes_approx": [
+        "81241",
+        "81243",
+        "81245",
+        "81247"
+      ],
+      "postcodes_verified": false,
+      "_pending_postcodes": "Annäherung — Stadtbezirk→PLZ-Mapping aus Open-Data-Quelle nicht im Audit-Setup verifiziert; Phase-6-Reverse-Geocoding über das Geoportal sollte exakte Zuordnung liefern."
+    },
+    {
+      "number": 22,
+      "number_padded": "22",
+      "name_de": "Aubing-Lochhausen-Langwied",
+      "bauamt_office": "west",
+      "flaeche_qm": 34057321.8,
+      "flaeche_km2": 34.057,
+      "postcodes_approx": [
+        "81249",
+        "80999"
+      ],
+      "postcodes_verified": false,
+      "_pending_postcodes": "Annäherung — Stadtbezirk→PLZ-Mapping aus Open-Data-Quelle nicht im Audit-Setup verifiziert; Phase-6-Reverse-Geocoding über das Geoportal sollte exakte Zuordnung liefern."
+    },
+    {
+      "number": 23,
+      "number_padded": "23",
+      "name_de": "Allach-Untermenzing",
+      "bauamt_office": "west",
+      "flaeche_qm": 15451185.15,
+      "flaeche_km2": 15.451,
+      "postcodes_approx": [
+        "80999"
+      ],
+      "postcodes_verified": false,
+      "_pending_postcodes": "Annäherung — Stadtbezirk→PLZ-Mapping aus Open-Data-Quelle nicht im Audit-Setup verifiziert; Phase-6-Reverse-Geocoding über das Geoportal sollte exakte Zuordnung liefern."
+    },
+    {
+      "number": 24,
+      "number_padded": "24",
+      "name_de": "Feldmoching-Hasenbergl",
+      "bauamt_office": "west",
+      "flaeche_qm": 28938452.24,
+      "flaeche_km2": 28.938,
+      "postcodes_approx": [
+        "80995",
+        "80997",
+        "80999",
+        "80939"
+      ],
+      "postcodes_verified": false,
+      "_pending_postcodes": "Annäherung — Stadtbezirk→PLZ-Mapping aus Open-Data-Quelle nicht im Audit-Setup verifiziert; Phase-6-Reverse-Geocoding über das Geoportal sollte exakte Zuordnung liefern."
+    },
+    {
+      "number": 25,
+      "number_padded": "25",
+      "name_de": "Laim",
+      "bauamt_office": "mitte",
+      "flaeche_qm": 5286014.77,
+      "flaeche_km2": 5.286,
+      "postcodes_approx": [
+        "80686",
+        "80687",
+        "80689"
+      ],
+      "postcodes_verified": false,
+      "_pending_postcodes": "Annäherung — Stadtbezirk→PLZ-Mapping aus Open-Data-Quelle nicht im Audit-Setup verifiziert; Phase-6-Reverse-Geocoding über das Geoportal sollte exakte Zuordnung liefern."
+    }
+  ],
+  "_routing_check": {
+    "mitte": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      25
+    ],
+    "ost": [
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19
+    ],
+    "west": [
+      10,
+      11,
+      12,
+      20,
+      21,
+      22,
+      23,
+      24
+    ],
+    "union_covers_1_to_25": true,
+    "no_overlaps": true
+  }
+}
