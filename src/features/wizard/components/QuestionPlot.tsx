@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { AnimatePresence, m, useReducedMotion } from 'framer-motion'
 import { cn } from '@/lib/utils'
 import { useWizardState } from '../hooks/useWizardState'
-import { isErlangenAddress, isPlotAddressValid } from '../lib/plotValidation'
+import { isMuenchenAddress, isPlotAddressValid } from '../lib/plotValidation'
 import type { Intent } from '../lib/selectTemplate'
 import { WizardTitleBlock } from './WizardTitleBlock'
 
@@ -49,21 +49,20 @@ export function QuestionPlot({ onSubmit, submitError }: Props) {
   }, [hasPlot, plotAddress])
 
   const addressValid = isPlotAddressValid(plotAddress)
-  // Phase 1 (post-audit) — v1 scope locked to Erlangen postcodes
-  // (91052 / 91054 / 91056 / 91058). The format check is the first
-  // floor; the Erlangen check is layered on top so the user sees a
-  // helpful, calm out-of-scope notice rather than a generic
-  // "Adresse ungültig". `addressInErlangen` is only consulted when
-  // the format-floor passes — otherwise the existing format error
-  // takes precedence.
-  const addressInErlangen = isErlangenAddress(plotAddress)
+  // Phase 5 — v1 active city pivoted from Erlangen → München. The
+  // format check is the first floor; the München-Stadtgebiet check
+  // is layered on top so the user sees a calm out-of-scope notice
+  // rather than a generic "Adresse ungültig". `addressInMuenchen`
+  // is only consulted when the format-floor passes — otherwise the
+  // format error takes precedence.
+  const addressInMuenchen = isMuenchenAddress(plotAddress)
   const showAddressError = touched && hasPlot === true && !addressValid
-  const showOutOfErlangenError =
-    touched && hasPlot === true && addressValid && !addressInErlangen
+  const showOutOfMuenchenError =
+    touched && hasPlot === true && addressValid && !addressInMuenchen
   const canSubmit =
     intent !== null &&
     (hasPlot === false ||
-      (hasPlot === true && addressValid && addressInErlangen))
+      (hasPlot === true && addressValid && addressInMuenchen))
 
   const handleSubmit = () => {
     if (!intent) return
@@ -159,9 +158,9 @@ export function QuestionPlot({ onSubmit, submitError }: Props) {
                 value={plotAddress}
                 onChange={(e) => setPlotAddress(e.target.value)}
                 onBlur={() => setTouched(true)}
-                aria-invalid={showAddressError || showOutOfErlangenError || undefined}
+                aria-invalid={showAddressError || showOutOfMuenchenError || undefined}
                 aria-describedby={
-                  showAddressError || showOutOfErlangenError
+                  showAddressError || showOutOfMuenchenError
                     ? 'plot-address-error'
                     : 'plot-address-helper'
                 }
@@ -181,17 +180,17 @@ export function QuestionPlot({ onSubmit, submitError }: Props) {
                 >
                   {t('wizard.q2.addressInvalid')}
                 </p>
-              ) : showOutOfErlangenError ? (
+              ) : showOutOfMuenchenError ? (
                 <div
                   id="plot-address-error"
                   role="alert"
                   className="flex flex-col gap-1.5 text-[12px] leading-relaxed border-l-2 border-destructive/40 pl-4 py-1"
                 >
                   <p className="text-destructive font-medium">
-                    {t('wizard.q2.errorOutOfErlangen.title')}
+                    {t('wizard.q2.errorOutOfMuenchen.title')}
                   </p>
                   <p className="text-destructive/85">
-                    {t('wizard.q2.errorOutOfErlangen.body')}
+                    {t('wizard.q2.errorOutOfMuenchen.body')}
                   </p>
                 </div>
               ) : (
@@ -202,15 +201,16 @@ export function QuestionPlot({ onSubmit, submitError }: Props) {
                   {t('wizard.q2.addressHelper')}
                 </p>
               )}
-              {/* Phase 1 — always-on scope hint sits below the helper /
-                * error so users know the v1 city scope before they ever
-                * get an out-of-scope error. Calm clay register, mirrors
-                * the existing italic Serif vocabulary. */}
+              {/* Phase 5 — always-on scope hint sits below the helper /
+                * error so users know the v1 city scope (München) before
+                * they ever get an out-of-scope error. Calm clay
+                * register, mirrors the existing italic Serif
+                * vocabulary. */}
               <p
                 className="font-serif italic text-[11px] text-clay/72 leading-relaxed"
                 aria-live="off"
               >
-                {t('wizard.q2.erlangenScopeNotice')}
+                {t('wizard.q2.muenchenScopeNotice')}
               </p>
             </div>
           </m.div>

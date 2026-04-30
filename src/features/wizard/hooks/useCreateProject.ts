@@ -72,20 +72,20 @@ export function useCreateProject() {
         has_plot: input.hasPlot,
         plot_address: input.hasPlot ? input.plotAddress : null,
         bundesland: 'bayern',
-        // Phase 1 (post-audit) — v1 scope locks to Erlangen via the
-        // wizard's postcode gate (91052/91054/91056/91058). The
-        // `city` column installed by migration 0009 carries
-        // `default 'erlangen'` + a CHECK constraint, so newly-
-        // inserted rows pick up the right value automatically once
-        // the migration is applied. We deliberately do NOT pass
-        // `city` from the SPA: that would couple the deploy ordering
-        // (SPA-deploy-before-migration would 23502 / 42703 every
-        // INSERT, hard-blocking new project creation on prod). With
-        // the field omitted, the insert succeeds even before 0009
-        // is applied — the column simply does not exist and is
-        // ignored — and after 0009 lands, the default fills it in.
-        // The migration's CHECK enforces value validity at the DB
-        // boundary regardless of the SPA.
+        // Phase 5 — v1 active city pivots from Erlangen → München via
+        // the wizard's PLZ gate (70 München Stadtgebiet postcodes).
+        // The `city` column was installed by migration 0009 and
+        // widened to admit both 'erlangen' (legacy) and 'muenchen'
+        // (active) by migration 0010, with the default flipped to
+        // 'muenchen'. We now pass `city: 'muenchen'` explicitly so
+        // the value is unambiguous on prod once 0010 has landed.
+        // Sequencing requirement: ship migration 0010 BEFORE this
+        // SPA build — otherwise the explicit insert would fail the
+        // 0009-era CHECK ('erlangen' only). Phase 5's commit
+        // ordering (Commit 3 = migration 0010, Commit 4 = wizard
+        // swap) plus the apply-then-deploy gate keeps that
+        // contract honest.
+        city: 'muenchen',
         template_id: templateId,
         name: deriveName(input.intent, input.hasPlot ? input.plotAddress : null),
       })
