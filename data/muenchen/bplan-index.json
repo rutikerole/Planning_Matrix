@@ -1,0 +1,856 @@
+{
+  "_schemaVersion": 1,
+  "retrieved_on": "2026-04-30",
+  "source_ids": [
+    "geoportal-muenchen-wms-plan",
+    "stadt-muenchen-bplaene"
+  ],
+  "harvest_strategy": "B",
+  "_harvest_strategy_reason_de": "WFS für den plan-Workspace ist deaktiviert (https://geoportal.muenchen.de/geoserver/plan/ows liefert ServiceUnavailable für service=WFS). Strategy A entfällt. Strategie B: WMS GetFeatureInfo gegen ein dichtes 12x10-Raster über das Münchner Stadtgebiet (120 Probe-Punkte, 38 Treffer-Aufrufe, 51 unique B-Pläne nach Deduplikation). Phase 6 wird mit Nutzungsvereinbarung Polygon-in-Polygon-Aggregation gegen das gesamte Layer realisieren.",
+  "harvest_query_template": "GET https://geoportal.muenchen.de/geoserver/plan/wms?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetFeatureInfo&LAYERS=vagrund_baug_umgriff_veredelt_in_kraft&QUERY_LAYERS=vagrund_baug_umgriff_veredelt_in_kraft&CRS=EPSG:25832&BBOX={x1},{y1},{x2},{y2}&WIDTH=11&HEIGHT=11&I=5&J=5&INFO_FORMAT=application/json&FEATURE_COUNT=5",
+  "wms_endpoint": "https://geoportal.muenchen.de/geoserver/plan/wms",
+  "wms_layer_bplan": "vagrund_baug_umgriff_veredelt_in_kraft",
+  "wms_layer_aufstellung": "vagrund_baug_umgriff_veredelt_in_aufstellung",
+  "wms_layer_umlegung": "vagrund_baug_umgriff_umlegung",
+  "wms_layer_combined": "baug_umgriff_veredelt_in_kraft_und_aufstellung",
+  "wms_layer_erhaltungssatzungen": "satz_erhalt_poly",
+  "wms_layer_sanierungsgebiete": "satz_sanierung_poly",
+  "feature_property_schema_de": "Jedes B-Plan-Feature liefert: nr, nr_plan, nr_va, bplan_suchtext (für Suche), bplan_te_1 (Textteil-PDF-URL), bplan_te_3 (Planteil-PDF-URL), flaeche_qm, art (z. B. BEBPLAN). Die PDF-URLs zeigen auf https://www.muenchen.info/plan/bebauungsplan/.",
+  "coverage_note_de": "Repräsentative Stichprobe von 51 rechtsgültigen B-Plänen aus dem WMS-Layer vagrund_baug_umgriff_veredelt_in_kraft, harvested am 2026-04-30 via Strategy B (GetFeatureInfo Grid-Sampling). Vollständige Inventur des B-Plan-Bestands ist Aufgabe der Phase-6-Live-API-Integration unter Nutzungsvereinbarung — diese Datei ist der Kalt-Snapshot für Phase-5-Prompt-Grounding und Phase-7-Eval-Harness. Stadtbezirk-Zuordnung pro Eintrag ist mit _pending markiert (Polygon-in-Polygon-Test gegen WFS gsm_wfs:vablock_stadtbezirk in Phase 6).",
+  "coverage_note_en": "Representative subset of 51 legally-binding B-Plans harvested via Strategy B (WMS GetFeatureInfo grid sampling). Full inventory is Phase-6 work, requiring Nutzungsvereinbarung. Per-entry Stadtbezirk attribution is _pending (point-in-polygon vs WFS in Phase 6).",
+  "license_status": "needs_nutzungsvereinbarung",
+  "license_note_de": "Sämtliche Rechte an den B-Plan-Daten + PDFs liegen bei der Landeshauptstadt München / Kommunalreferat — GeodatenService. Für die Produktiv-Nutzung der WMS-API und der hier verlinkten PDFs in einem Endkunden-Produkt (Planning Matrix Phase 6) ist eine Nutzungsvereinbarung erforderlich. Kontakt: geoportal@muenchen.de. Phase 4 (Kalt-Snapshot) und Phase 5 (Prompt-Grounding) arbeiten ohne Vereinbarung; Phase 6 setzt sie zwingend voraus.",
+  "license_note_en": "All rights to the B-Plan data + PDFs are held by the City of Munich / Kommunalreferat. Production use of the WMS API + the linked PDFs in an end-customer product requires a Nutzungsvereinbarung (usage agreement). Contact: geoportal@muenchen.de. Phase 4 (cold snapshot) and Phase 5 (prompt grounding) work without it; Phase 6 (live API integration) does not.",
+  "harvest_metrics": {
+    "grid_dimensions": "12x10",
+    "probe_points": 120,
+    "calls_with_feature_hit": 38,
+    "unique_bplaene_harvested": 51,
+    "hit_rate": "32%"
+  },
+  "entries": [
+    {
+      "plan_number": "117",
+      "plan_va": "6980",
+      "plan_combined": "117(6980)",
+      "name_de": "117 (Bebauungsplan)",
+      "flaeche_qm": 27921.43124,
+      "art": "BEBPLAN",
+      "pdf_planteil_url": "https://www.muenchen.info/plan/bebauungsplan/p_6980_117.pdf",
+      "pdf_textteil_url": "https://www.muenchen.info/plan/bebauungsplan/t_6980_117.pdf",
+      "wms_feature_id": "vagrund_baug_umgriff_veredelt_in_kraft.779",
+      "sampled_at_utm32n": [
+        695500,
+        5338000
+      ],
+      "stadtbezirk_hint": "_pending — exakte Stadtbezirk-Zuordnung erfordert Polygon-in-Polygon-Test gegen WFS gsm_wfs:vablock_stadtbezirk; Phase-6-Live-Integration."
+    },
+    {
+      "plan_number": "156",
+      "plan_va": "6766",
+      "plan_combined": "156(6766)",
+      "name_de": "156 (Bebauungsplan)",
+      "flaeche_qm": 10229.73626,
+      "art": "BEBPLAN",
+      "pdf_planteil_url": "https://www.muenchen.info/plan/bebauungsplan/p_6766_156.pdf",
+      "pdf_textteil_url": "https://www.muenchen.info/plan/bebauungsplan/t_6766_156.pdf",
+      "wms_feature_id": "vagrund_baug_umgriff_veredelt_in_kraft.648",
+      "sampled_at_utm32n": [
+        691000,
+        5330500
+      ],
+      "stadtbezirk_hint": "_pending — exakte Stadtbezirk-Zuordnung erfordert Polygon-in-Polygon-Test gegen WFS gsm_wfs:vablock_stadtbezirk; Phase-6-Live-Integration."
+    },
+    {
+      "plan_number": "162",
+      "plan_va": "6887",
+      "plan_combined": "162(6887)",
+      "name_de": "162 (Bebauungsplan)",
+      "flaeche_qm": 17715.31522,
+      "art": "BEBPLAN",
+      "pdf_planteil_url": "https://www.muenchen.info/plan/bebauungsplan/p_6887_162.pdf",
+      "pdf_textteil_url": "https://www.muenchen.info/plan/bebauungsplan/t_6887_162.pdf",
+      "wms_feature_id": "vagrund_baug_umgriff_veredelt_in_kraft.224",
+      "sampled_at_utm32n": [
+        691000,
+        5336500
+      ],
+      "stadtbezirk_hint": "_pending — exakte Stadtbezirk-Zuordnung erfordert Polygon-in-Polygon-Test gegen WFS gsm_wfs:vablock_stadtbezirk; Phase-6-Live-Integration."
+    },
+    {
+      "plan_number": "337",
+      "plan_va": "7038",
+      "plan_combined": "337(7038)",
+      "name_de": "337 (Bebauungsplan)",
+      "flaeche_qm": 55285.9514,
+      "art": "BEBPLAN",
+      "pdf_planteil_url": "https://www.muenchen.info/plan/bebauungsplan/p_7038_337.pdf",
+      "pdf_textteil_url": "https://www.muenchen.info/plan/bebauungsplan/t_7038_337.pdf",
+      "wms_feature_id": "vagrund_baug_umgriff_veredelt_in_kraft.1711",
+      "sampled_at_utm32n": [
+        683500,
+        5335000
+      ],
+      "stadtbezirk_hint": "_pending — exakte Stadtbezirk-Zuordnung erfordert Polygon-in-Polygon-Test gegen WFS gsm_wfs:vablock_stadtbezirk; Phase-6-Live-Integration."
+    },
+    {
+      "plan_number": "343",
+      "plan_va": "7634",
+      "plan_combined": "343(7634)",
+      "name_de": "343 (Bebauungsplan)",
+      "flaeche_qm": 328287.76201,
+      "art": "BEBPLAN",
+      "pdf_planteil_url": "https://www.muenchen.info/plan/bebauungsplan/p_7634_343.pdf",
+      "pdf_textteil_url": "https://www.muenchen.info/plan/bebauungsplan/t_7634_343.pdf",
+      "wms_feature_id": "vagrund_baug_umgriff_veredelt_in_kraft.1176",
+      "sampled_at_utm32n": [
+        686500,
+        5330500
+      ],
+      "stadtbezirk_hint": "_pending — exakte Stadtbezirk-Zuordnung erfordert Polygon-in-Polygon-Test gegen WFS gsm_wfs:vablock_stadtbezirk; Phase-6-Live-Integration."
+    },
+    {
+      "plan_number": "449",
+      "plan_va": "7165",
+      "plan_combined": "449(7165)",
+      "name_de": "449 (Bebauungsplan)",
+      "flaeche_qm": 40034.48955,
+      "art": "BEBPLAN",
+      "pdf_planteil_url": "https://www.muenchen.info/plan/bebauungsplan/p_7165_449.pdf",
+      "pdf_textteil_url": "https://www.muenchen.info/plan/bebauungsplan/t_7165_449.pdf",
+      "wms_feature_id": "vagrund_baug_umgriff_veredelt_in_kraft.1451",
+      "sampled_at_utm32n": [
+        688000,
+        5339500
+      ],
+      "stadtbezirk_hint": "_pending — exakte Stadtbezirk-Zuordnung erfordert Polygon-in-Polygon-Test gegen WFS gsm_wfs:vablock_stadtbezirk; Phase-6-Live-Integration."
+    },
+    {
+      "plan_number": "457",
+      "plan_va": "7212",
+      "plan_combined": "457(7212)",
+      "name_de": "457 (Bebauungsplan)",
+      "flaeche_qm": 160487.29586,
+      "art": "BEBPLAN",
+      "pdf_planteil_url": "https://www.muenchen.info/plan/bebauungsplan/p_7212_457.pdf",
+      "pdf_textteil_url": "https://www.muenchen.info/plan/bebauungsplan/t_7212_457.pdf",
+      "wms_feature_id": "vagrund_baug_umgriff_veredelt_in_kraft.647",
+      "sampled_at_utm32n": [
+        691000,
+        5332000
+      ],
+      "stadtbezirk_hint": "_pending — exakte Stadtbezirk-Zuordnung erfordert Polygon-in-Polygon-Test gegen WFS gsm_wfs:vablock_stadtbezirk; Phase-6-Live-Integration."
+    },
+    {
+      "plan_number": "476",
+      "plan_va": "7187",
+      "plan_combined": "476(7187)",
+      "name_de": "476 (Bebauungsplan)",
+      "flaeche_qm": 63113.39306,
+      "art": "BEBPLAN",
+      "pdf_planteil_url": "https://www.muenchen.info/plan/bebauungsplan/p_7187_476.pdf",
+      "pdf_textteil_url": "https://www.muenchen.info/plan/bebauungsplan/t_7187_476.pdf",
+      "wms_feature_id": "vagrund_baug_umgriff_veredelt_in_kraft.2307",
+      "sampled_at_utm32n": [
+        682000,
+        5335000
+      ],
+      "stadtbezirk_hint": "_pending — exakte Stadtbezirk-Zuordnung erfordert Polygon-in-Polygon-Test gegen WFS gsm_wfs:vablock_stadtbezirk; Phase-6-Live-Integration."
+    },
+    {
+      "plan_number": "680",
+      "plan_va": "7429",
+      "plan_combined": "680(7429)",
+      "name_de": "680 (Bebauungsplan)",
+      "flaeche_qm": 15600.76002,
+      "art": "BEBPLAN",
+      "pdf_planteil_url": "https://www.muenchen.info/plan/bebauungsplan/p_7429_680.pdf",
+      "pdf_textteil_url": "https://www.muenchen.info/plan/bebauungsplan/t_7429_680.pdf",
+      "wms_feature_id": "vagrund_baug_umgriff_veredelt_in_kraft.2593",
+      "sampled_at_utm32n": [
+        692500,
+        5338000
+      ],
+      "stadtbezirk_hint": "_pending — exakte Stadtbezirk-Zuordnung erfordert Polygon-in-Polygon-Test gegen WFS gsm_wfs:vablock_stadtbezirk; Phase-6-Live-Integration."
+    },
+    {
+      "plan_number": "795",
+      "plan_va": "7589",
+      "plan_combined": "795(7589)",
+      "name_de": "795 (Bebauungsplan)",
+      "flaeche_qm": 4077.03721,
+      "art": "BEBPLAN",
+      "pdf_planteil_url": "https://www.muenchen.info/plan/bebauungsplan/p_7589_795.pdf",
+      "pdf_textteil_url": "https://www.muenchen.info/plan/bebauungsplan/t_7589_795.pdf",
+      "wms_feature_id": "vagrund_baug_umgriff_veredelt_in_kraft.226",
+      "sampled_at_utm32n": [
+        691000,
+        5336500
+      ],
+      "stadtbezirk_hint": "_pending — exakte Stadtbezirk-Zuordnung erfordert Polygon-in-Polygon-Test gegen WFS gsm_wfs:vablock_stadtbezirk; Phase-6-Live-Integration."
+    },
+    {
+      "plan_number": "801",
+      "plan_va": "7401",
+      "plan_combined": "801(7401)",
+      "name_de": "801 (Bebauungsplan)",
+      "flaeche_qm": 501.75474,
+      "art": "BEBPLAN",
+      "pdf_planteil_url": "https://www.muenchen.info/plan/bebauungsplan/p_7401_801.pdf",
+      "pdf_textteil_url": "https://www.muenchen.info/plan/bebauungsplan/t_7401_801.pdf",
+      "wms_feature_id": "vagrund_baug_umgriff_veredelt_in_kraft.2355",
+      "sampled_at_utm32n": [
+        686500,
+        5336500
+      ],
+      "stadtbezirk_hint": "_pending — exakte Stadtbezirk-Zuordnung erfordert Polygon-in-Polygon-Test gegen WFS gsm_wfs:vablock_stadtbezirk; Phase-6-Live-Integration."
+    },
+    {
+      "plan_number": "833",
+      "plan_va": "7919",
+      "plan_combined": "833(7919)",
+      "name_de": "833 (Bebauungsplan)",
+      "flaeche_qm": 66538.47488,
+      "art": "BEBPLAN",
+      "pdf_planteil_url": "https://www.muenchen.info/plan/bebauungsplan/p_7919_833.pdf",
+      "pdf_textteil_url": "https://www.muenchen.info/plan/bebauungsplan/t_7919_833.pdf",
+      "wms_feature_id": "vagrund_baug_umgriff_veredelt_in_kraft.1186",
+      "sampled_at_utm32n": [
+        683500,
+        5332000
+      ],
+      "stadtbezirk_hint": "_pending — exakte Stadtbezirk-Zuordnung erfordert Polygon-in-Polygon-Test gegen WFS gsm_wfs:vablock_stadtbezirk; Phase-6-Live-Integration."
+    },
+    {
+      "plan_number": "996",
+      "plan_va": "7905",
+      "plan_combined": "996(7905)",
+      "name_de": "996 (Bebauungsplan)",
+      "flaeche_qm": 105033.64786,
+      "art": "BEBPLAN",
+      "pdf_planteil_url": "https://www.muenchen.info/plan/bebauungsplan/p_7905_996.pdf",
+      "pdf_textteil_url": "https://www.muenchen.info/plan/bebauungsplan/t_7905_996.pdf",
+      "wms_feature_id": "vagrund_baug_umgriff_veredelt_in_kraft.2170",
+      "sampled_at_utm32n": [
+        695500,
+        5335000
+      ],
+      "stadtbezirk_hint": "_pending — exakte Stadtbezirk-Zuordnung erfordert Polygon-in-Polygon-Test gegen WFS gsm_wfs:vablock_stadtbezirk; Phase-6-Live-Integration."
+    },
+    {
+      "plan_number": "1065",
+      "plan_va": "7903",
+      "plan_combined": "1065(7903)",
+      "name_de": "1065 (Bebauungsplan)",
+      "flaeche_qm": 2798.52515,
+      "art": "BEBPLAN",
+      "pdf_planteil_url": "https://www.muenchen.info/plan/bebauungsplan/p_7903_1065.pdf",
+      "pdf_textteil_url": "https://www.muenchen.info/plan/bebauungsplan/t_7903_1065.pdf",
+      "wms_feature_id": "vagrund_baug_umgriff_veredelt_in_kraft.986",
+      "sampled_at_utm32n": [
+        683500,
+        5335000
+      ],
+      "stadtbezirk_hint": "_pending — exakte Stadtbezirk-Zuordnung erfordert Polygon-in-Polygon-Test gegen WFS gsm_wfs:vablock_stadtbezirk; Phase-6-Live-Integration."
+    },
+    {
+      "plan_number": "1164",
+      "plan_va": "8050",
+      "plan_combined": "1164(8050)",
+      "name_de": "1164 (Bebauungsplan)",
+      "flaeche_qm": 292395.41219,
+      "art": "BEBPLAN",
+      "pdf_planteil_url": "https://www.muenchen.info/plan/bebauungsplan/p_8050_1164.pdf",
+      "pdf_textteil_url": "https://www.muenchen.info/plan/bebauungsplan/t_8050_1164.pdf",
+      "wms_feature_id": "vagrund_baug_umgriff_veredelt_in_kraft.1901",
+      "sampled_at_utm32n": [
+        697000,
+        5335000
+      ],
+      "stadtbezirk_hint": "_pending — exakte Stadtbezirk-Zuordnung erfordert Polygon-in-Polygon-Test gegen WFS gsm_wfs:vablock_stadtbezirk; Phase-6-Live-Integration."
+    },
+    {
+      "plan_number": "1180",
+      "plan_va": "8190",
+      "plan_combined": "1180(8190)",
+      "name_de": "1180 (Bebauungsplan)",
+      "flaeche_qm": 16147.88081,
+      "art": "BEBPLAN",
+      "pdf_planteil_url": "https://www.muenchen.info/plan/bebauungsplan/p_8190_1180.pdf",
+      "pdf_textteil_url": "https://www.muenchen.info/plan/bebauungsplan/t_8190_1180.pdf",
+      "wms_feature_id": "vagrund_baug_umgriff_veredelt_in_kraft.1985",
+      "sampled_at_utm32n": [
+        692500,
+        5338000
+      ],
+      "stadtbezirk_hint": "_pending — exakte Stadtbezirk-Zuordnung erfordert Polygon-in-Polygon-Test gegen WFS gsm_wfs:vablock_stadtbezirk; Phase-6-Live-Integration."
+    },
+    {
+      "plan_number": "1255",
+      "plan_va": "8078",
+      "plan_combined": "1255(8078)",
+      "name_de": "1255 (Bebauungsplan)",
+      "flaeche_qm": 28306.79339,
+      "art": "BEBPLAN",
+      "pdf_planteil_url": "https://www.muenchen.info/plan/bebauungsplan/p_8078_1255.pdf",
+      "pdf_textteil_url": "https://www.muenchen.info/plan/bebauungsplan/t_8078_1255.pdf",
+      "wms_feature_id": "vagrund_baug_umgriff_veredelt_in_kraft.1196",
+      "sampled_at_utm32n": [
+        688000,
+        5342500
+      ],
+      "stadtbezirk_hint": "_pending — exakte Stadtbezirk-Zuordnung erfordert Polygon-in-Polygon-Test gegen WFS gsm_wfs:vablock_stadtbezirk; Phase-6-Live-Integration."
+    },
+    {
+      "plan_number": "1279",
+      "plan_va": "8111",
+      "plan_combined": "1279(8111)",
+      "name_de": "1279 (Bebauungsplan)",
+      "flaeche_qm": 45887.71507,
+      "art": "BEBPLAN",
+      "pdf_planteil_url": "https://www.muenchen.info/plan/bebauungsplan/p_8111_1279.pdf",
+      "pdf_textteil_url": "https://www.muenchen.info/plan/bebauungsplan/t_8111_1279.pdf",
+      "wms_feature_id": "vagrund_baug_umgriff_veredelt_in_kraft.1060",
+      "sampled_at_utm32n": [
+        695500,
+        5338000
+      ],
+      "stadtbezirk_hint": "_pending — exakte Stadtbezirk-Zuordnung erfordert Polygon-in-Polygon-Test gegen WFS gsm_wfs:vablock_stadtbezirk; Phase-6-Live-Integration."
+    },
+    {
+      "plan_number": "1358",
+      "plan_va": "8236",
+      "plan_combined": "1358(8236)",
+      "name_de": "1358 (Bebauungsplan)",
+      "flaeche_qm": 45115.09062,
+      "art": "BEBPLAN",
+      "pdf_planteil_url": "https://www.muenchen.info/plan/bebauungsplan/p_8236_1358.pdf",
+      "pdf_textteil_url": "https://www.muenchen.info/plan/bebauungsplan/t_8236_1358.pdf",
+      "wms_feature_id": "vagrund_baug_umgriff_veredelt_in_kraft.805",
+      "sampled_at_utm32n": [
+        689500,
+        5335000
+      ],
+      "stadtbezirk_hint": "_pending — exakte Stadtbezirk-Zuordnung erfordert Polygon-in-Polygon-Test gegen WFS gsm_wfs:vablock_stadtbezirk; Phase-6-Live-Integration."
+    },
+    {
+      "plan_number": "1379",
+      "plan_va": "8237",
+      "plan_combined": "1379(8237)",
+      "name_de": "1379 (Bebauungsplan)",
+      "flaeche_qm": 286513.43388,
+      "art": "BEBPLAN",
+      "pdf_planteil_url": "https://www.muenchen.info/plan/bebauungsplan/p_8237_1379.pdf",
+      "pdf_textteil_url": "https://www.muenchen.info/plan/bebauungsplan/t_8237_1379.pdf",
+      "wms_feature_id": "vagrund_baug_umgriff_veredelt_in_kraft.2278",
+      "sampled_at_utm32n": [
+        688000,
+        5339500
+      ],
+      "stadtbezirk_hint": "_pending — exakte Stadtbezirk-Zuordnung erfordert Polygon-in-Polygon-Test gegen WFS gsm_wfs:vablock_stadtbezirk; Phase-6-Live-Integration."
+    },
+    {
+      "plan_number": "1386",
+      "plan_va": "8225",
+      "plan_combined": "1386(8225)",
+      "name_de": "1386 (Bebauungsplan)",
+      "flaeche_qm": 88153.59387,
+      "art": "BEBPLAN",
+      "pdf_planteil_url": "https://www.muenchen.info/plan/bebauungsplan/p_8225_1386.pdf",
+      "pdf_textteil_url": "https://www.muenchen.info/plan/bebauungsplan/t_8225_1386.pdf",
+      "wms_feature_id": "vagrund_baug_umgriff_veredelt_in_kraft.2666",
+      "sampled_at_utm32n": [
+        698500,
+        5335000
+      ],
+      "stadtbezirk_hint": "_pending — exakte Stadtbezirk-Zuordnung erfordert Polygon-in-Polygon-Test gegen WFS gsm_wfs:vablock_stadtbezirk; Phase-6-Live-Integration."
+    },
+    {
+      "plan_number": "1725",
+      "plan_va": "8518",
+      "plan_combined": "1725(8518)",
+      "name_de": "1725 (Bebauungsplan)",
+      "flaeche_qm": 353986.74243,
+      "art": "BEBPLAN",
+      "pdf_planteil_url": "https://www.muenchen.info/plan/bebauungsplan/p_8518_1725.pdf",
+      "pdf_textteil_url": "https://www.muenchen.info/plan/bebauungsplan/t_8518_1725.pdf",
+      "wms_feature_id": "vagrund_baug_umgriff_veredelt_in_kraft.1138",
+      "sampled_at_utm32n": [
+        695500,
+        5333500
+      ],
+      "stadtbezirk_hint": "_pending — exakte Stadtbezirk-Zuordnung erfordert Polygon-in-Polygon-Test gegen WFS gsm_wfs:vablock_stadtbezirk; Phase-6-Live-Integration."
+    },
+    {
+      "plan_number": "1727",
+      "plan_va": "8442",
+      "plan_combined": "1727(8442)",
+      "name_de": "1727 (Bebauungsplan)",
+      "flaeche_qm": 2950.07102,
+      "art": "BEBPLAN",
+      "pdf_planteil_url": "https://www.muenchen.info/plan/bebauungsplan/p_8442_1727.pdf",
+      "pdf_textteil_url": "https://www.muenchen.info/plan/bebauungsplan/t_8442_1727.pdf",
+      "wms_feature_id": "vagrund_baug_umgriff_veredelt_in_kraft.616",
+      "sampled_at_utm32n": [
+        689500,
+        5336500
+      ],
+      "stadtbezirk_hint": "_pending — exakte Stadtbezirk-Zuordnung erfordert Polygon-in-Polygon-Test gegen WFS gsm_wfs:vablock_stadtbezirk; Phase-6-Live-Integration."
+    },
+    {
+      "plan_number": "1755",
+      "plan_va": "8528",
+      "plan_combined": "1755(8528)",
+      "name_de": "1755 (Bebauungsplan)",
+      "flaeche_qm": 36457.47407,
+      "art": "BEBPLAN",
+      "pdf_planteil_url": "https://www.muenchen.info/plan/bebauungsplan/p_8528_1755.pdf",
+      "pdf_textteil_url": "https://www.muenchen.info/plan/bebauungsplan/t_8528_1755.pdf",
+      "wms_feature_id": "vagrund_baug_umgriff_veredelt_in_kraft.263",
+      "sampled_at_utm32n": [
+        689500,
+        5341000
+      ],
+      "stadtbezirk_hint": "_pending — exakte Stadtbezirk-Zuordnung erfordert Polygon-in-Polygon-Test gegen WFS gsm_wfs:vablock_stadtbezirk; Phase-6-Live-Integration."
+    },
+    {
+      "plan_number": "1781",
+      "plan_va": "8570",
+      "plan_combined": "1781(8570)",
+      "name_de": "1781 (Bebauungsplan)",
+      "flaeche_qm": 403363.20254,
+      "art": "BEBPLAN",
+      "pdf_planteil_url": "https://www.muenchen.info/plan/bebauungsplan/p_8570_1781.pdf",
+      "pdf_textteil_url": "https://www.muenchen.info/plan/bebauungsplan/t_8570_1781.pdf",
+      "wms_feature_id": "vagrund_baug_umgriff_veredelt_in_kraft.2676",
+      "sampled_at_utm32n": [
+        692500,
+        5339500
+      ],
+      "stadtbezirk_hint": "_pending — exakte Stadtbezirk-Zuordnung erfordert Polygon-in-Polygon-Test gegen WFS gsm_wfs:vablock_stadtbezirk; Phase-6-Live-Integration."
+    },
+    {
+      "plan_number": "1802",
+      "plan_va": "8614",
+      "plan_combined": "1802(8614)",
+      "name_de": "1802 (Bebauungsplan)",
+      "flaeche_qm": 88331.32112,
+      "art": "BEBPLAN",
+      "pdf_planteil_url": "https://www.muenchen.info/plan/bebauungsplan/p_8614_1802.pdf",
+      "pdf_textteil_url": "https://www.muenchen.info/plan/bebauungsplan/t_8614_1802.pdf",
+      "wms_feature_id": "vagrund_baug_umgriff_veredelt_in_kraft.2175",
+      "sampled_at_utm32n": [
+        688000,
+        5335000
+      ],
+      "stadtbezirk_hint": "_pending — exakte Stadtbezirk-Zuordnung erfordert Polygon-in-Polygon-Test gegen WFS gsm_wfs:vablock_stadtbezirk; Phase-6-Live-Integration."
+    },
+    {
+      "plan_number": "1805",
+      "plan_va": "8586",
+      "plan_combined": "1805(8586)",
+      "name_de": "1805 (Bebauungsplan)",
+      "flaeche_qm": 18555.61826,
+      "art": "BEBPLAN",
+      "pdf_planteil_url": "https://www.muenchen.info/plan/bebauungsplan/p_8586_1805.pdf",
+      "pdf_textteil_url": "https://www.muenchen.info/plan/bebauungsplan/t_8586_1805.pdf",
+      "wms_feature_id": "vagrund_baug_umgriff_veredelt_in_kraft.1266",
+      "sampled_at_utm32n": [
+        689500,
+        5336500
+      ],
+      "stadtbezirk_hint": "_pending — exakte Stadtbezirk-Zuordnung erfordert Polygon-in-Polygon-Test gegen WFS gsm_wfs:vablock_stadtbezirk; Phase-6-Live-Integration."
+    },
+    {
+      "plan_number": "1857",
+      "plan_va": "8712",
+      "plan_combined": "1857(8712)",
+      "name_de": "1857 (Bebauungsplan)",
+      "flaeche_qm": 918824.64083,
+      "art": "BEBPLAN",
+      "pdf_planteil_url": "https://www.muenchen.info/plan/bebauungsplan/p_8712_1857.pdf",
+      "pdf_textteil_url": "https://www.muenchen.info/plan/bebauungsplan/t_8712_1857.pdf",
+      "wms_feature_id": "vagrund_baug_umgriff_veredelt_in_kraft.1153",
+      "sampled_at_utm32n": [
+        685000,
+        5338000
+      ],
+      "stadtbezirk_hint": "_pending — exakte Stadtbezirk-Zuordnung erfordert Polygon-in-Polygon-Test gegen WFS gsm_wfs:vablock_stadtbezirk; Phase-6-Live-Integration."
+    },
+    {
+      "plan_number": "1921",
+      "plan_va": "8692",
+      "plan_combined": "1921(8692)",
+      "name_de": "1921 (Bebauungsplan)",
+      "flaeche_qm": 65861.12072,
+      "art": "BEBPLAN",
+      "pdf_planteil_url": "https://www.muenchen.info/plan/bebauungsplan/p_8692_1921.pdf",
+      "pdf_textteil_url": "https://www.muenchen.info/plan/bebauungsplan/t_8692_1921.pdf",
+      "wms_feature_id": "vagrund_baug_umgriff_veredelt_in_kraft.1764",
+      "sampled_at_utm32n": [
+        689500,
+        5335000
+      ],
+      "stadtbezirk_hint": "_pending — exakte Stadtbezirk-Zuordnung erfordert Polygon-in-Polygon-Test gegen WFS gsm_wfs:vablock_stadtbezirk; Phase-6-Live-Integration."
+    },
+    {
+      "plan_number": "2061",
+      "plan_va": "8885",
+      "plan_combined": "2061(8885)",
+      "name_de": "2061 (Bebauungsplan)",
+      "flaeche_qm": 390523.14296,
+      "art": "BEBPLAN",
+      "pdf_planteil_url": "https://www.muenchen.info/plan/bebauungsplan/p_8885_2061.pdf",
+      "pdf_textteil_url": "https://www.muenchen.info/plan/bebauungsplan/t_8885_2061.pdf",
+      "wms_feature_id": "vagrund_baug_umgriff_veredelt_in_kraft.679",
+      "sampled_at_utm32n": [
+        694000,
+        5333500
+      ],
+      "stadtbezirk_hint": "_pending — exakte Stadtbezirk-Zuordnung erfordert Polygon-in-Polygon-Test gegen WFS gsm_wfs:vablock_stadtbezirk; Phase-6-Live-Integration."
+    },
+    {
+      "plan_number": "2088",
+      "plan_va": "8892",
+      "plan_combined": "2088(8892)",
+      "name_de": "2088 (Bebauungsplan)",
+      "flaeche_qm": 33272.55793,
+      "art": "BEBPLAN",
+      "pdf_planteil_url": "https://www.muenchen.info/plan/bebauungsplan/p_8892_2088.pdf",
+      "pdf_textteil_url": "https://www.muenchen.info/plan/bebauungsplan/t_8892_2088.pdf",
+      "wms_feature_id": "vagrund_baug_umgriff_veredelt_in_kraft.2012",
+      "sampled_at_utm32n": [
+        691000,
+        5332000
+      ],
+      "stadtbezirk_hint": "_pending — exakte Stadtbezirk-Zuordnung erfordert Polygon-in-Polygon-Test gegen WFS gsm_wfs:vablock_stadtbezirk; Phase-6-Live-Integration."
+    },
+    {
+      "plan_number": "2126",
+      "plan_va": "8921",
+      "plan_combined": "2126(8921)",
+      "name_de": "2126 (Bebauungsplan)",
+      "flaeche_qm": 39982.85261,
+      "art": "BEBPLAN",
+      "pdf_planteil_url": "https://www.muenchen.info/plan/bebauungsplan/p_8921_2126.pdf",
+      "pdf_textteil_url": "https://www.muenchen.info/plan/bebauungsplan/t_8921_2126.pdf",
+      "wms_feature_id": "vagrund_baug_umgriff_veredelt_in_kraft.308",
+      "sampled_at_utm32n": [
+        692500,
+        5336500
+      ],
+      "stadtbezirk_hint": "_pending — exakte Stadtbezirk-Zuordnung erfordert Polygon-in-Polygon-Test gegen WFS gsm_wfs:vablock_stadtbezirk; Phase-6-Live-Integration."
+    },
+    {
+      "plan_number": "2146",
+      "plan_va": "8939",
+      "plan_combined": "2146(8939)",
+      "name_de": "2146 (Bebauungsplan)",
+      "flaeche_qm": 138530.51313,
+      "art": "BEBPLAN",
+      "pdf_planteil_url": "https://www.muenchen.info/plan/bebauungsplan/p_8939_2146.pdf",
+      "pdf_textteil_url": "https://www.muenchen.info/plan/bebauungsplan/t_8939_2146.pdf",
+      "wms_feature_id": "vagrund_baug_umgriff_veredelt_in_kraft.2292",
+      "sampled_at_utm32n": [
+        683500,
+        5339500
+      ],
+      "stadtbezirk_hint": "_pending — exakte Stadtbezirk-Zuordnung erfordert Polygon-in-Polygon-Test gegen WFS gsm_wfs:vablock_stadtbezirk; Phase-6-Live-Integration."
+    },
+    {
+      "plan_number": "1006a",
+      "plan_va": "8398",
+      "plan_combined": "1006a(8398)",
+      "name_de": "1006a (Bebauungsplan)",
+      "flaeche_qm": 46049.76965,
+      "art": "BEBPLAN",
+      "pdf_planteil_url": "https://www.muenchen.info/plan/bebauungsplan/p_8398_1006a.pdf",
+      "pdf_textteil_url": "https://www.muenchen.info/plan/bebauungsplan/t_8398_1006a.pdf",
+      "wms_feature_id": "vagrund_baug_umgriff_veredelt_in_kraft.918",
+      "sampled_at_utm32n": [
+        688000,
+        5342500
+      ],
+      "stadtbezirk_hint": "_pending — exakte Stadtbezirk-Zuordnung erfordert Polygon-in-Polygon-Test gegen WFS gsm_wfs:vablock_stadtbezirk; Phase-6-Live-Integration."
+    },
+    {
+      "plan_number": "1404a",
+      "plan_va": "8362",
+      "plan_combined": "1404a(8362)",
+      "name_de": "1404a (Bebauungsplan)",
+      "flaeche_qm": 737702.9229,
+      "art": "BEBPLAN",
+      "pdf_planteil_url": "https://www.muenchen.info/plan/bebauungsplan/p_8362_1404a.pdf",
+      "pdf_textteil_url": "https://www.muenchen.info/plan/bebauungsplan/t_8362_1404a.pdf",
+      "wms_feature_id": "vagrund_baug_umgriff_veredelt_in_kraft.1331",
+      "sampled_at_utm32n": [
+        694000,
+        5341000
+      ],
+      "stadtbezirk_hint": "_pending — exakte Stadtbezirk-Zuordnung erfordert Polygon-in-Polygon-Test gegen WFS gsm_wfs:vablock_stadtbezirk; Phase-6-Live-Integration."
+    },
+    {
+      "plan_number": "1505a",
+      "plan_va": "8530",
+      "plan_combined": "1505a(8530)",
+      "name_de": "1505a (Bebauungsplan)",
+      "flaeche_qm": 592351.84103,
+      "art": "BEBPLAN",
+      "pdf_planteil_url": "https://www.muenchen.info/plan/bebauungsplan/p_8530_1505a.pdf",
+      "pdf_textteil_url": "https://www.muenchen.info/plan/bebauungsplan/t_8530_1505a.pdf",
+      "wms_feature_id": "vagrund_baug_umgriff_veredelt_in_kraft.1296",
+      "sampled_at_utm32n": [
+        692500,
+        5341000
+      ],
+      "stadtbezirk_hint": "_pending — exakte Stadtbezirk-Zuordnung erfordert Polygon-in-Polygon-Test gegen WFS gsm_wfs:vablock_stadtbezirk; Phase-6-Live-Integration."
+    },
+    {
+      "plan_number": "1898b",
+      "plan_va": "8874",
+      "plan_combined": "1898b(8874)ÜW",
+      "name_de": "1898b (Bebauungsplan)",
+      "flaeche_qm": 169514.57335,
+      "art": "BEBPLAN",
+      "pdf_planteil_url": "https://www.muenchen.info/plan/bebauungsplan/p_8874_1898b.pdf",
+      "pdf_textteil_url": "https://www.muenchen.info/plan/bebauungsplan/t_8874_1898b.pdf",
+      "wms_feature_id": "vagrund_baug_umgriff_veredelt_in_kraft.565",
+      "sampled_at_utm32n": [
+        691000,
+        5342500
+      ],
+      "stadtbezirk_hint": "_pending — exakte Stadtbezirk-Zuordnung erfordert Polygon-in-Polygon-Test gegen WFS gsm_wfs:vablock_stadtbezirk; Phase-6-Live-Integration."
+    },
+    {
+      "plan_number": "18b_T2",
+      "plan_va": "7466",
+      "plan_combined": "18b_T2(7466)",
+      "name_de": "18b_T2 (Bebauungsplan)",
+      "flaeche_qm": 391214.23901,
+      "art": "BEBPLAN",
+      "pdf_planteil_url": "https://www.muenchen.info/plan/bebauungsplan/p_7466_18b_PT1_Fahrverkehr.pdf",
+      "pdf_textteil_url": "https://www.muenchen.info/plan/bebauungsplan/t_7466_18b_PT1_Fahrverkehr.pdf",
+      "wms_feature_id": "vagrund_baug_umgriff_veredelt_in_kraft.73",
+      "sampled_at_utm32n": [
+        689500,
+        5339500
+      ],
+      "stadtbezirk_hint": "_pending — exakte Stadtbezirk-Zuordnung erfordert Polygon-in-Polygon-Test gegen WFS gsm_wfs:vablock_stadtbezirk; Phase-6-Live-Integration."
+    },
+    {
+      "plan_number": "2061a",
+      "plan_va": "8924",
+      "plan_combined": "2061a((8924)",
+      "name_de": "2061a (Bebauungsplan)",
+      "flaeche_qm": 390523.1836,
+      "art": "BEBPLAN",
+      "pdf_planteil_url": "https://www.muenchen.info/plan/bebauungsplan/p_8924_2061a.pdf",
+      "pdf_textteil_url": "https://www.muenchen.info/plan/bebauungsplan/t_8924_2061a.pdf",
+      "wms_feature_id": "vagrund_baug_umgriff_veredelt_in_kraft.680",
+      "sampled_at_utm32n": [
+        694000,
+        5333500
+      ],
+      "stadtbezirk_hint": "_pending — exakte Stadtbezirk-Zuordnung erfordert Polygon-in-Polygon-Test gegen WFS gsm_wfs:vablock_stadtbezirk; Phase-6-Live-Integration."
+    },
+    {
+      "plan_number": "245a",
+      "plan_va": "7115",
+      "plan_combined": "245a(7115)",
+      "name_de": "245a (Bebauungsplan)",
+      "flaeche_qm": 35720.90088,
+      "art": "BEBPLAN",
+      "pdf_planteil_url": "https://www.muenchen.info/plan/bebauungsplan/p_7115_245a.pdf",
+      "pdf_textteil_url": "https://www.muenchen.info/plan/bebauungsplan/t_7115_245a.pdf",
+      "wms_feature_id": "vagrund_baug_umgriff_veredelt_in_kraft.1601",
+      "sampled_at_utm32n": [
+        688000,
+        5330500
+      ],
+      "stadtbezirk_hint": "_pending — exakte Stadtbezirk-Zuordnung erfordert Polygon-in-Polygon-Test gegen WFS gsm_wfs:vablock_stadtbezirk; Phase-6-Live-Integration."
+    },
+    {
+      "plan_number": "36a_T1",
+      "plan_va": "7002",
+      "plan_combined": "36a_T1(7002)",
+      "name_de": "36a_T1 (Bebauungsplan)",
+      "flaeche_qm": 486871.3315,
+      "art": "BEBPLAN",
+      "pdf_planteil_url": "https://www.muenchen.info/plan/bebauungsplan/p_7002_36a_t1.pdf",
+      "pdf_textteil_url": "https://www.muenchen.info/plan/bebauungsplan/t_7002_36a_t1.pdf",
+      "wms_feature_id": "vagrund_baug_umgriff_veredelt_in_kraft.2213",
+      "sampled_at_utm32n": [
+        689500,
+        5342500
+      ],
+      "stadtbezirk_hint": "_pending — exakte Stadtbezirk-Zuordnung erfordert Polygon-in-Polygon-Test gegen WFS gsm_wfs:vablock_stadtbezirk; Phase-6-Live-Integration."
+    },
+    {
+      "plan_number": "495a",
+      "plan_va": "7782",
+      "plan_combined": "495a(7782)",
+      "name_de": "495a (Bebauungsplan)",
+      "flaeche_qm": 30458.00322,
+      "art": "BEBPLAN",
+      "pdf_planteil_url": "https://www.muenchen.info/plan/bebauungsplan/p_7782_495a.pdf",
+      "pdf_textteil_url": "https://www.muenchen.info/plan/bebauungsplan/t_7782_495a.pdf",
+      "wms_feature_id": "vagrund_baug_umgriff_veredelt_in_kraft.720",
+      "sampled_at_utm32n": [
+        698500,
+        5335000
+      ],
+      "stadtbezirk_hint": "_pending — exakte Stadtbezirk-Zuordnung erfordert Polygon-in-Polygon-Test gegen WFS gsm_wfs:vablock_stadtbezirk; Phase-6-Live-Integration."
+    },
+    {
+      "plan_number": "51b",
+      "plan_va": "8184",
+      "plan_combined": "51b(8184)",
+      "name_de": "51b (Bebauungsplan)",
+      "flaeche_qm": 4457.86559,
+      "art": "BEBPLAN",
+      "pdf_planteil_url": "https://www.muenchen.info/plan/bebauungsplan/p_8184_51b.pdf",
+      "pdf_textteil_url": "https://www.muenchen.info/plan/bebauungsplan/t_8184_51b.pdf",
+      "wms_feature_id": "vagrund_baug_umgriff_veredelt_in_kraft.1314",
+      "sampled_at_utm32n": [
+        691000,
+        5333500
+      ],
+      "stadtbezirk_hint": "_pending — exakte Stadtbezirk-Zuordnung erfordert Polygon-in-Polygon-Test gegen WFS gsm_wfs:vablock_stadtbezirk; Phase-6-Live-Integration."
+    },
+    {
+      "plan_number": "57ap",
+      "plan_va": "8068",
+      "plan_combined": "57ap(8068)",
+      "name_de": "57ap (Bebauungsplan)",
+      "flaeche_qm": 791526.64978,
+      "art": "BEBPLAN",
+      "pdf_planteil_url": "https://www.muenchen.info/plan/bebauungsplan/p_8068_57ap.pdf",
+      "pdf_textteil_url": "https://www.muenchen.info/plan/bebauungsplan/t_8068_57ap.pdf",
+      "wms_feature_id": "vagrund_baug_umgriff_veredelt_in_kraft.299",
+      "sampled_at_utm32n": [
+        697000,
+        5332000
+      ],
+      "stadtbezirk_hint": "_pending — exakte Stadtbezirk-Zuordnung erfordert Polygon-in-Polygon-Test gegen WFS gsm_wfs:vablock_stadtbezirk; Phase-6-Live-Integration."
+    },
+    {
+      "plan_number": "57b",
+      "plan_va": "7042",
+      "plan_combined": "57b(7042)",
+      "name_de": "57b (Bebauungsplan)",
+      "flaeche_qm": 508576.86241,
+      "art": "BEBPLAN",
+      "pdf_planteil_url": "https://www.muenchen.info/plan/bebauungsplan/p_7042_57b.pdf",
+      "pdf_textteil_url": "https://www.muenchen.info/plan/bebauungsplan/t_7042_57b.pdf",
+      "wms_feature_id": "vagrund_baug_umgriff_veredelt_in_kraft.1762",
+      "sampled_at_utm32n": [
+        697000,
+        5332000
+      ],
+      "stadtbezirk_hint": "_pending — exakte Stadtbezirk-Zuordnung erfordert Polygon-in-Polygon-Test gegen WFS gsm_wfs:vablock_stadtbezirk; Phase-6-Live-Integration."
+    },
+    {
+      "plan_number": "57bp",
+      "plan_va": "8205",
+      "plan_combined": "57bp(8205)",
+      "name_de": "57bp (Bebauungsplan)",
+      "flaeche_qm": 30718.49858,
+      "art": "BEBPLAN",
+      "pdf_planteil_url": "https://www.muenchen.info/plan/bebauungsplan/p_8205_57bp.pdf",
+      "pdf_textteil_url": "https://www.muenchen.info/plan/bebauungsplan/t_8205_57bp.pdf",
+      "wms_feature_id": "vagrund_baug_umgriff_veredelt_in_kraft.1122",
+      "sampled_at_utm32n": [
+        697000,
+        5330500
+      ],
+      "stadtbezirk_hint": "_pending — exakte Stadtbezirk-Zuordnung erfordert Polygon-in-Polygon-Test gegen WFS gsm_wfs:vablock_stadtbezirk; Phase-6-Live-Integration."
+    },
+    {
+      "plan_number": "57ci",
+      "plan_va": "8279",
+      "plan_combined": "57ci(8279)",
+      "name_de": "57ci (Bebauungsplan)",
+      "flaeche_qm": 540297.2578,
+      "art": "BEBPLAN",
+      "pdf_planteil_url": "https://www.muenchen.info/plan/bebauungsplan/p_8279_57ci_k.pdf",
+      "pdf_textteil_url": "https://www.muenchen.info/plan/bebauungsplan/t_8279_57ci.pdf",
+      "wms_feature_id": "vagrund_baug_umgriff_veredelt_in_kraft.2565",
+      "sampled_at_utm32n": [
+        697000,
+        5329000
+      ],
+      "stadtbezirk_hint": "_pending — exakte Stadtbezirk-Zuordnung erfordert Polygon-in-Polygon-Test gegen WFS gsm_wfs:vablock_stadtbezirk; Phase-6-Live-Integration."
+    },
+    {
+      "plan_number": "71b",
+      "plan_va": "6999",
+      "plan_combined": "71b(6999)",
+      "name_de": "71b (Bebauungsplan)",
+      "flaeche_qm": 394593.25071,
+      "art": "BEBPLAN",
+      "pdf_planteil_url": "https://www.muenchen.info/plan/bebauungsplan/p_6999_71b.pdf",
+      "pdf_textteil_url": "https://www.muenchen.info/plan/bebauungsplan/t_6999_71b.pdf",
+      "wms_feature_id": "vagrund_baug_umgriff_veredelt_in_kraft.2643",
+      "sampled_at_utm32n": [
+        686500,
+        5329000
+      ],
+      "stadtbezirk_hint": "_pending — exakte Stadtbezirk-Zuordnung erfordert Polygon-in-Polygon-Test gegen WFS gsm_wfs:vablock_stadtbezirk; Phase-6-Live-Integration."
+    },
+    {
+      "plan_number": "885a",
+      "plan_va": "8027",
+      "plan_combined": "885a(8027)",
+      "name_de": "885a (Bebauungsplan)",
+      "flaeche_qm": 179865.12339,
+      "art": "BEBPLAN",
+      "pdf_planteil_url": "https://www.muenchen.info/plan/bebauungsplan/p_8027_885a.pdf",
+      "pdf_textteil_url": "https://www.muenchen.info/plan/bebauungsplan/t_8027_885a.pdf",
+      "wms_feature_id": "vagrund_baug_umgriff_veredelt_in_kraft.64",
+      "sampled_at_utm32n": [
+        694000,
+        5342500
+      ],
+      "stadtbezirk_hint": "_pending — exakte Stadtbezirk-Zuordnung erfordert Polygon-in-Polygon-Test gegen WFS gsm_wfs:vablock_stadtbezirk; Phase-6-Live-Integration."
+    },
+    {
+      "plan_number": "948b",
+      "plan_va": "8234",
+      "plan_combined": "948b(8234)",
+      "name_de": "948b (Bebauungsplan)",
+      "flaeche_qm": 183236.40669,
+      "art": "BEBPLAN",
+      "pdf_planteil_url": "https://www.muenchen.info/plan/bebauungsplan/p_8234_948b.pdf",
+      "pdf_textteil_url": "https://www.muenchen.info/plan/bebauungsplan/t_8234_948b.pdf",
+      "wms_feature_id": "vagrund_baug_umgriff_veredelt_in_kraft.1312",
+      "sampled_at_utm32n": [
+        691000,
+        5341000
+      ],
+      "stadtbezirk_hint": "_pending — exakte Stadtbezirk-Zuordnung erfordert Polygon-in-Polygon-Test gegen WFS gsm_wfs:vablock_stadtbezirk; Phase-6-Live-Integration."
+    },
+    {
+      "plan_number": "948b_TÄ",
+      "plan_va": "8340",
+      "plan_combined": "948b_TÄ(8340)",
+      "name_de": "948b_TÄ (Bebauungsplan)",
+      "flaeche_qm": 183236.40669,
+      "art": "BEBPLAN",
+      "pdf_planteil_url": "https://www.muenchen.info/plan/bebauungsplan/p_8340_948b_tae.pdf",
+      "pdf_textteil_url": "https://www.muenchen.info/plan/bebauungsplan/t_8340_948b_tae.pdf",
+      "wms_feature_id": "vagrund_baug_umgriff_veredelt_in_kraft.894",
+      "sampled_at_utm32n": [
+        691000,
+        5341000
+      ],
+      "stadtbezirk_hint": "_pending — exakte Stadtbezirk-Zuordnung erfordert Polygon-in-Polygon-Test gegen WFS gsm_wfs:vablock_stadtbezirk; Phase-6-Live-Integration."
+    }
+  ],
+  "_pending_blocks": [
+    "Per-Eintrag Stadtbezirk-Zuordnung — Phase-6-Polygon-in-Polygon gegen WFS gsm_wfs:vablock_stadtbezirk.",
+    "Per-Eintrag Inkrafttretens-Datum — derzeit nicht in der WMS-Feature-Property-Liste enthalten; ggf. aus PDF-Metadaten zu extrahieren.",
+    "Vollständige Inventur (mehrere Hundert B-Pläne) — Phase-6-Live-Integration unter Nutzungsvereinbarung.",
+    "Aufstellungsbeschluss-Layer (vagrund_baug_umgriff_veredelt_in_aufstellung) — analog zu harvesten in Phase 6.",
+    "Erhaltungssatzungs-Geltungsbereiche (satz_erhalt_poly) — vollständige Inventur in Phase 6."
+  ]
+}
