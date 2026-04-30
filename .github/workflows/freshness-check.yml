@@ -1,0 +1,148 @@
+name: data freshness check
+
+# Phase 6.5 — weekly drift detection across the data slice's source
+# URLs. Runs scripts/freshness-check.mjs, commits any updated
+# fingerprints back to main, and opens a GitHub issue when:
+#   • exit 1 → at least one URL changed (drift issue)
+#   • exit 2 → at least one URL is persistently unreachable (unreachable issue)
+#
+# Drift NEVER triggers an automatic update of data/**/*.json — human
+# review is the gate. Re-baselining silently would erase the
+# ground-truth signal that makes the data slice falsifiable.
+
+on:
+  schedule:
+    # Sundays 03:00 UTC — outside business hours and weekday traffic
+    - cron: '0 3 * * 0'
+  workflow_dispatch: # manual triggering for on-demand checks
+
+permissions:
+  contents: write # commit updated snapshots back to main
+  issues: write # open drift / unreachable issues
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    # 174 URLs at 1 req/sec + retries on unreachables can run 15–25
+    # min on a bad week; 30 min ceiling gives headroom without
+    # masking a hung step. Cron failure is non-blocking — next
+    # week's run picks up where this one stopped.
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Run freshness check
+        id: check
+        run: node scripts/freshness-check.mjs > /tmp/freshness-output.txt 2>&1
+        continue-on-error: true
+
+      - name: Read script output for downstream steps
+        id: output
+        run: |
+          {
+            echo 'STDOUT<<FRESHNESS_EOF'
+            cat /tmp/freshness-output.txt
+            echo FRESHNESS_EOF
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Commit updated snapshots
+        run: |
+          git config user.name "freshness-bot"
+          git config user.email "freshness-bot@users.noreply.github.com"
+          git add .github/freshness-snapshots/
+          if git diff --cached --quiet; then
+            echo "No snapshot updates to commit."
+          else
+            git commit -m "chore(freshness): weekly snapshot update"
+            git push
+          fi
+
+      - name: Open issue on drift or unreachable
+        if: steps.check.outcome == 'failure'
+        # NB: continue-on-error: true means `conclusion` is forced to
+        # 'success' for a tolerated failure, while `outcome` still
+        # reflects the actual exit code (failure for any non-zero).
+        # We disambiguate exit 1 (drift) vs exit 2 (unreachable) by
+        # parsing the script's summary line below.
+        uses: actions/github-script@v7
+        env:
+          OUTPUT: ${{ steps.output.outputs.STDOUT }}
+        with:
+          script: |
+            const output = process.env.OUTPUT || ''
+            const today = new Date().toISOString().slice(0, 10)
+            const hasChanged = /\bChanged: ([1-9]\d*)\./.test(output)
+            const hasUnreachable = /\bUnreachable: ([1-9]\d*)\./.test(output)
+
+            if (!hasChanged && !hasUnreachable) {
+              core.info('Script exited non-zero but no Changed / Unreachable signal in output. No issue opened.')
+              return
+            }
+
+            const truncated = output.length > 60000
+              ? output.slice(0, 60000) + '\n\n[output truncated]'
+              : output
+
+            if (hasChanged) {
+              const body = [
+                '## Source drift detected',
+                '',
+                'The weekly freshness check found that one or more canonical sources have changed since the last verified snapshot.',
+                '',
+                '### Output',
+                '```',
+                truncated,
+                '```',
+                '',
+                '### Action checklist',
+                '- [ ] Open each `[CHANGED]` URL and review the actual change',
+                '- [ ] If the change is meaningful (numbers, dates, scope): update the affected `data/**/*.json` file and update its `dataFreshAsOf` field',
+                '- [ ] If the change is cosmetic (page layout, footer link): update only the snapshot by re-running the check',
+                '- [ ] If the change is a Satzung novellation or similar: also update the system prompt slice (`legalContext/{city}.ts`)',
+                '- [ ] Close this issue when handled',
+                '',
+                '_Generated automatically by `.github/workflows/freshness-check.yml`._',
+              ].join('\n')
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: `[freshness] Source drift detected — ${today}`,
+                body,
+                labels: ['freshness', 'data-quality'],
+              })
+            }
+
+            if (hasUnreachable) {
+              const body = [
+                '## Sources unreachable',
+                '',
+                'The weekly freshness check found that one or more canonical sources are persistently unreachable (4xx responses, repeated 5xx, or network timeouts after 3 retries).',
+                '',
+                '### Output',
+                '```',
+                truncated,
+                '```',
+                '',
+                '### Action checklist',
+                '- [ ] Open each `[UNREACHABLE]` URL in a browser to confirm',
+                '- [ ] If the URL has moved: update the corresponding entry in the relevant `data/**/*.json` file (typically `_meta/sources.json`) and re-run the check',
+                '- [ ] If the URL has been retired: replace with the current canonical source, or mark the `_pending` flag with a reason if no replacement exists',
+                '- [ ] If transient (server outage): close the issue without action; next week\'s run will retest',
+                '- [ ] Close this issue when handled',
+                '',
+                '_Generated automatically by `.github/workflows/freshness-check.yml`._',
+              ].join('\n')
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: `[freshness] Sources unreachable — ${today}`,
+                body,
+                labels: ['freshness', 'data-quality'],
+              })
+            }
