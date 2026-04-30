@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { AnimatePresence, m, useReducedMotion } from 'framer-motion'
 import { cn } from '@/lib/utils'
+import { useAuthStore } from '@/stores/authStore'
+import { isMapPreviewEnabled } from '@/lib/featureFlags'
 import { useWizardState } from '../hooks/useWizardState'
 import { isMuenchenAddress, isPlotAddressValid } from '../lib/plotValidation'
 import type { Intent } from '../lib/selectTemplate'
@@ -38,6 +40,12 @@ export function QuestionPlot({ onSubmit, submitError }: Props) {
   const setPlotChoice = useWizardState((s) => s.setPlotChoice)
   const setPlotAddress = useWizardState((s) => s.setPlotAddress)
   const goBackToQ1 = useWizardState((s) => s.goBackToQ1)
+
+  // Phase 6a — admin-only map preview. Surfaced as a data-attribute
+  // on the wrapper div in this commit (zero visual impact); the
+  // PlotMap component lands in C4 and reads the same flag.
+  const userId = useAuthStore((s) => s.user?.id)
+  const mapPreviewEnabled = isMapPreviewEnabled(userId)
 
   const addressInputRef = useRef<HTMLInputElement>(null)
   const [touched, setTouched] = useState(false)
@@ -80,7 +88,10 @@ export function QuestionPlot({ onSubmit, submitError }: Props) {
   const headline = t('wizard.q2.headline').replace(/[?]\s*$/, '')
 
   return (
-    <div className="flex flex-col gap-7">
+    <div
+      className="flex flex-col gap-7"
+      data-map-preview={mapPreviewEnabled ? 'on' : 'off'}
+    >
       <WizardTitleBlock
         numeral="II"
         eyebrowKey="wizard.q2.eyebrow"
