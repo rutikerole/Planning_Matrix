@@ -1,0 +1,68 @@
+{
+  "_schemaVersion": 1,
+  "retrieved_on": "2026-04-30",
+  "id": "03-haidhausen-sanierung",
+  "narrative": {
+    "title_de": "Sanierung Wohngebäude — Au-Haidhausen (Stadtbezirk 5, Bauamt Mitte)",
+    "title_en": "Residential renovation — Au-Haidhausen",
+    "summary_de": "Au-Haidhausen (Stadtbezirk 5, PLZ 81675/81677) ist ein Stadtteil mit hoher Erhaltungssatzungs-Dichte — bekannt sind die Erhaltungssatzungen Haidhausen-Süd und das umliegende Quartier. Eine Sanierung am Bestand löst regelmäßig (a) BayBO Art. 57-/58-Anzeige bzw. Genehmigung, (b) BauGB § 172-Erlaubnis nach Erhaltungssatzung, und (c) GEG-Sanierungspflichten aus. Bei einem in der BLfD-Denkmalliste eingetragenen Gebäude tritt zusätzlich BayDSchG Art. 6 dazu — bis zu Drei-Spuren-Logik. Empfohlenes Bauamt: Begutachtung Bezirk Mitte.",
+    "summary_en": "Au-Haidhausen has high preservation-ordinance density. Renovation triggers BauGB § 172 + GEG + possibly BayDSchG dual or triple-track."
+  },
+  "input": {
+    "intent": "sanierung",
+    "has_plot": true,
+    "plot_address": "Pariser Straße 12, 81667 München-Haidhausen",
+    "city": "muenchen",
+    "bundesland": "bayern",
+    "template_id": "T-03"
+  },
+  "expected_output": {
+    "areas": {
+      "A": { "state": "ACTIVE", "reason": "Innenbereich Haidhausen; B-Plan-Lage zu prüfen über Geoportal." },
+      "B": { "state": "ACTIVE", "reason": "Sanierung an einer baulichen Anlage; Genehmigungs-/Anzeigepflicht nach BayBO Art. 57 ff." },
+      "C": { "state": "ACTIVE", "reason": "Erhaltungssatzungs-Bereich Haidhausen wahrscheinlich (BauGB § 172 Erlaubnispflicht); GEG-Sanierungspflichten anwendbar; ggf. Baumschutzverordnung 901; Denkmalstatus prüfen." }
+    },
+    "must_contain_facts": [
+      { "key": "plot.postcode", "value": "81667", "source": "CLIENT", "quality": "DECIDED" },
+      { "key": "plot.stadtbezirk_number", "value": 5, "source": "LEGAL", "quality": "CALCULATED" },
+      { "key": "plot.stadtbezirk_name", "value": "Au-Haidhausen", "source": "LEGAL", "quality": "CALCULATED" },
+      { "key": "plot.bauamt_office", "value": "mitte", "source": "LEGAL", "quality": "CALCULATED" },
+      { "key": "intent", "value": "sanierung", "source": "CLIENT", "quality": "DECIDED" }
+    ],
+    "must_contain_procedures": [
+      { "id": "P-art57-anzeige-oder-freistellung" },
+      { "id": "P-erhaltungssatzung-erlaubnis" }
+    ],
+    "must_contain_documents": [
+      { "id": "D-Bauzeichnungen" },
+      { "id": "D-GEG-Sanierungsnachweis" }
+    ],
+    "must_contain_roles": [
+      { "id": "R-Energieberater", "needed": true }
+    ],
+    "must_contain_recommendations_anchors": [
+      "Erhaltungssatzung",
+      "BauGB § 172",
+      "GEG",
+      "Begutachtung Bezirk Mitte",
+      "plan.ha2-24b@muenchen.de"
+    ],
+    "must_not_contain": [
+      "Bauaufsichtsamt der Stadt Erlangen",
+      "ÖbVI",
+      "Begutachtung Bezirk Ost",
+      "Begutachtung Bezirk West"
+    ],
+    "completion_signal": "continue"
+  },
+  "expected_specialist_voices_at_least": [
+    "moderator",
+    "bauordnungsrecht",
+    "sonstige_vorgaben"
+  ],
+  "notes_for_eval_harness": [
+    "Pariser Straße ist eine reale Münchner Straße in Haidhausen. Stadtbezirk 5 → Bauamt Mitte.",
+    "Schlüssel-Doppel-Assertion: 'Erhaltungssatzung' UND 'GEG' MÜSSEN beide vorkommen — ein Modell, das nur eine der zwei Schichten nennt, ist unvollständig (Haidhausen ist explizit Erhaltungssatzungs-Quartier laut overview.json).",
+    "Wenn das Modell zusätzlich Denkmalstatus-Prüfung nennt, ist das Plus — Haidhausen hat etliche Baudenkmäler."
+  ]
+}

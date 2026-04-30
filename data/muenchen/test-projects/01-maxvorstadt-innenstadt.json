@@ -1,0 +1,79 @@
+{
+  "_schemaVersion": 1,
+  "retrieved_on": "2026-04-30",
+  "id": "01-maxvorstadt-innenstadt",
+  "narrative": {
+    "title_de": "Neubau Mehrfamilienhaus — Türkenstraße 25, 80799 Maxvorstadt",
+    "title_en": "New multi-family residential — Türkenstraße 25, 80799 Maxvorstadt",
+    "summary_de": "Klassisches Innenstadt-Vorhaben in der Maxvorstadt (Stadtbezirk 3, Bauamt Mitte). Türkenstraße liegt im barocken Stadtgrundriss zwischen Königsplatz und Schwabinger Tor — qualifizierter B-Plan ist wahrscheinlich, Erhaltungssatzung möglich, Stellplatzsatzung-Zone-I-Reduktion (-50 % für Nicht-Wohn-Nutzungen) greift; bei Wohnnutzung bleibt 1 Stp/WE Default. PV-Pflicht (BayBO Art. 44a) für Wohnneubau. Erwartetes Bauamt: Begutachtung Bezirk Mitte (plan.ha2-24b@muenchen.de).",
+    "summary_en": "Classic inner-city case in Maxvorstadt (Stadtbezirk 3, Bauamt Mitte). Qualified B-Plan likely, possible Erhaltungssatzung, Stellplatzsatzung Zone I reduction. PV obligation under BayBO Art. 44a. Expected sub-office: Begutachtung Bezirk Mitte."
+  },
+  "input": {
+    "intent": "neubau_mehrfamilienhaus",
+    "has_plot": true,
+    "plot_address": "Türkenstraße 25, 80799 München",
+    "city": "muenchen",
+    "bundesland": "bayern",
+    "template_id": "T-02"
+  },
+  "expected_output": {
+    "areas": {
+      "A": { "state": "ACTIVE", "reason": "Innenbereich Maxvorstadt; qualifizierter B-Plan plausibel — Verifikation über Geoportal/WMS-Layer plan:vagrund_baug_umgriff_veredelt_in_kraft." },
+      "B": { "state": "ACTIVE", "reason": "Mehrfamilienhaus regelmäßig GK 3 oder GK 4; Verfahren nach BayBO Art. 60 wahrscheinlich, soweit nicht durch B-Plan vereinfacht." },
+      "C": { "state": "ACTIVE", "reason": "Stellplatzsatzung StPlS 926 (Wohnung 1 Stp/WE; BayWoFG 0,5; Mietpreis-Bindung 0,8); PV-Pflicht BayBO Art. 44a; Baumschutzverordnung 901 wenn Bestandsbäume; ggf. Erhaltungssatzung in Maxvorstadt." }
+    },
+    "must_contain_facts": [
+      { "key": "plot.postcode", "value": "80799", "source": "CLIENT", "quality": "DECIDED" },
+      { "key": "plot.city", "value": "München", "source": "CLIENT", "quality": "DECIDED" },
+      { "key": "plot.stadtbezirk_number", "value": 3, "source": "LEGAL", "quality": "CALCULATED" },
+      { "key": "plot.stadtbezirk_name", "value": "Maxvorstadt", "source": "LEGAL", "quality": "CALCULATED" },
+      { "key": "plot.bauamt_office", "value": "mitte", "source": "LEGAL", "quality": "CALCULATED" },
+      { "key": "intent", "value": "neubau_mehrfamilienhaus", "source": "CLIENT", "quality": "DECIDED" }
+    ],
+    "must_contain_procedures": [
+      { "id": "P-art60-baugenehmigungsverfahren" }
+    ],
+    "must_contain_documents": [
+      { "id": "D-Lageplan" },
+      { "id": "D-Bauzeichnungen" },
+      { "id": "D-Standsicherheitsnachweis" },
+      { "id": "D-Brandschutznachweis" },
+      { "id": "D-GEG-Nachweis" },
+      { "id": "D-Stellplatznachweis" },
+      { "id": "D-PV-Konzept" }
+    ],
+    "must_contain_roles": [
+      { "id": "R-Bauvorlageberechtigter", "needed": true },
+      { "id": "R-Tragwerksplaner", "needed": true },
+      { "id": "R-Brandschutz", "needed": true },
+      { "id": "R-Vermessungsstelle", "needed": true },
+      { "id": "R-Energieberater", "needed": true }
+    ],
+    "must_contain_recommendations_anchors": [
+      "Begutachtung Bezirk Mitte",
+      "plan.ha2-24b@muenchen.de",
+      "Stadtbezirk 3",
+      "Maxvorstadt",
+      "Stellplatzsatzung",
+      "PV-Pflicht"
+    ],
+    "must_not_contain": [
+      "Bauaufsichtsamt der Stadt Erlangen",
+      "ÖbVI",
+      "BAYIKA Brandschutz",
+      "Begutachtung Bezirk Ost",
+      "Begutachtung Bezirk West"
+    ],
+    "completion_signal": "continue"
+  },
+  "expected_specialist_voices_at_least": [
+    "moderator",
+    "planungsrecht",
+    "bauordnungsrecht"
+  ],
+  "notes_for_eval_harness": [
+    "Türkenstraße 25 ist eine reale Adresse in der Münchner Maxvorstadt; PLZ 80799 = Maxvorstadt + Schwabing-West-Übergang. Stadtbezirk-Routing über bauamt.json: 3 → mitte.",
+    "Schlüssel-Cross-Konsistenz: plot.stadtbezirk_number=3 muss zu plot.bauamt_office=mitte führen (Bauamt-Routing-Regel aus bauamt.json sub_offices[].stadtbezirke).",
+    "Schlüssel-Negativ-Assertion: 'Bauaufsichtsamt der Stadt Erlangen' UND 'ÖbVI' dürfen NICHT vorkommen (Cross-City- + Phase-2.5-Korrektheits-Schutz). Auch andere Sub-Offices dürfen nicht versehentlich genannt werden."
+  ]
+}

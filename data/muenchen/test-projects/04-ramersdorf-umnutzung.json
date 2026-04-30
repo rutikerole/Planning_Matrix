@@ -1,0 +1,72 @@
+{
+  "_schemaVersion": 1,
+  "retrieved_on": "2026-04-30",
+  "id": "04-ramersdorf-umnutzung",
+  "narrative": {
+    "title_de": "Umnutzung Gewerbe → Wohnen — Berg am Laim (Stadtbezirk 14, Bauamt Ost)",
+    "title_en": "Change of use commercial → residential — Berg am Laim",
+    "summary_de": "Berg am Laim (Stadtbezirk 14, PLZ 81671/81673) ist ein historisch industrieller Stadtteil im Osten Münchens mit verbreiteter Gewerbe-zu-Wohnen-Konversion (z. B. ehemaliges Bahnflächen-Quartier). Eine Umnutzung löst regelmäßig eine BauNVO-Konformitätsprüfung der neuen Nutzung (Wohnen in MI/MK/GE) aus, eine Stellplatz-Neuberechnung nach Münchner StPlS 926 mit ggf. Zone-II-Reduktion, und ein neues Brandschutzkonzept (BayBO Art. 24 ff.). Erwartetes Bauamt: Begutachtung Bezirk Ost.",
+    "summary_en": "Berg am Laim has frequent commercial→residential conversions. BauNVO conformity + parking re-calculation + fresh fire concept."
+  },
+  "input": {
+    "intent": "umnutzung",
+    "has_plot": true,
+    "plot_address": "Truderinger Straße 100, 81673 München-Berg-am-Laim",
+    "city": "muenchen",
+    "bundesland": "bayern",
+    "template_id": "T-04"
+  },
+  "expected_output": {
+    "areas": {
+      "A": { "state": "ACTIVE", "reason": "Neuprüfung der Nutzung nach § 34 BauGB / BauNVO — die zulässige Nutzungsart ist gegen die geplante neue Nutzung abzugleichen." },
+      "B": { "state": "ACTIVE", "reason": "Umnutzung ist baugenehmigungspflichtig — Verfahren regelmäßig nach BayBO Art. 60." },
+      "C": { "state": "ACTIVE", "reason": "Stellplatz-Neuberechnung nach Münchner Stellplatzsatzung StPlS 926 (Zone-II-Reduktion möglich); Niederschlagswasser bei baulicher Veränderung; Brandschutz neu zu konzipieren." }
+    },
+    "must_contain_facts": [
+      { "key": "plot.postcode", "value": "81673", "source": "CLIENT", "quality": "DECIDED" },
+      { "key": "plot.stadtbezirk_number", "value": 14, "source": "LEGAL", "quality": "CALCULATED" },
+      { "key": "plot.stadtbezirk_name", "value": "Berg am Laim", "source": "LEGAL", "quality": "CALCULATED" },
+      { "key": "plot.bauamt_office", "value": "ost", "source": "LEGAL", "quality": "CALCULATED" },
+      { "key": "intent", "value": "umnutzung", "source": "CLIENT", "quality": "DECIDED" }
+    ],
+    "must_contain_procedures": [
+      { "id": "P-art60-baugenehmigung", "min_status": "erforderlich" }
+    ],
+    "must_contain_documents": [
+      { "id": "D-Bauzeichnungen" },
+      { "id": "D-Brandschutznachweis" },
+      { "id": "D-Stellplatznachweis" },
+      { "id": "D-Nutzungskonzept" }
+    ],
+    "must_contain_roles": [
+      { "id": "R-Bauvorlageberechtigter", "needed": true },
+      { "id": "R-Brandschutz", "needed": true }
+    ],
+    "must_contain_recommendations_anchors": [
+      "BauNVO",
+      "Stellplatzsatzung",
+      "Brandschutz",
+      "Begutachtung Bezirk Ost",
+      "plan.ha2-34b@muenchen.de"
+    ],
+    "must_not_contain": [
+      "Bauaufsichtsamt der Stadt Erlangen",
+      "ÖbVI",
+      "Begutachtung Bezirk Mitte",
+      "Begutachtung Bezirk West"
+    ],
+    "completion_signal": "continue"
+  },
+  "expected_specialist_voices_at_least": [
+    "moderator",
+    "planungsrecht",
+    "bauordnungsrecht",
+    "sonstige_vorgaben"
+  ],
+  "notes_for_eval_harness": [
+    "Truderinger Straße 100 ist eine reale Münchner Straße in Berg am Laim. Stadtbezirk 14 → Bauamt Ost.",
+    "Schwellen-Test: das Modell muss die Stellplatz-Neuberechnung als eigenständige Pflicht erkennen — bei Gewerbe → Wohnen ändert sich die Stp-Anzahl substanziell, da Wohnung 1 Stp/WE statt z. B. 1/120m² Gewerbe.",
+    "Brandschutz als 'neu zu konzipieren' (nicht 'Bestand übernehmen') zu kennzeichnen ist Pflicht.",
+    "BauNVO-Konformität (Wohnen in GE/MI/MK) ist nicht trivial — das Modell darf nicht stillschweigend annehmen, Wohnen sei automatisch zulässig."
+  ]
+}

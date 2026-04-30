@@ -1,0 +1,72 @@
+{
+  "_schemaVersion": 1,
+  "retrieved_on": "2026-04-30",
+  "id": "07-altstadt-denkmal",
+  "narrative": {
+    "title_de": "Sanierung im Denkmalbereich — Altstadt-Lehel (Stadtbezirk 1, Bauamt Mitte)",
+    "title_en": "Renovation in heritage area — Altstadt-Lehel",
+    "summary_de": "Altstadt-Lehel (Stadtbezirk 1, PLZ 80331/80333/80335/80538/80539) liegt vollständig im Umgriff des Denkmalensembles 'Altstadt München' (BLfD) und enthält Hunderte einzeln eingetragener Baudenkmäler (z. B. Frauenkirche, Residenz, Asamkirche, Hofbräuhaus). Eine Sanierung an einem Bestandsgebäude in der Altstadt erfordert dort regelmäßig DREI Genehmigungsspuren parallel: (a) baurechtlich nach BayBO; (b) erhaltungsrechtlich nach BauGB § 172 (Erhaltungssatzung Altstadt-Lehel); (c) denkmalrechtlich nach BayDSchG Art. 6, soweit das Gebäude oder die Umgebung im BLfD-Verzeichnis ist. Erwartetes Bauamt: Begutachtung Bezirk Mitte (PLUS untere Denkmalschutzbehörde derselben Lokalbaukommission).",
+    "summary_en": "Altstadt-Lehel is fully inside the Altstadt heritage ensemble. Renovation typically triggers triple-track permits: BayBO + BauGB § 172 + BayDSchG Art. 6."
+  },
+  "input": {
+    "intent": "sanierung",
+    "has_plot": true,
+    "plot_address": "Sebastiansplatz 3, 80331 München",
+    "city": "muenchen",
+    "bundesland": "bayern",
+    "template_id": "T-03"
+  },
+  "expected_output": {
+    "areas": {
+      "A": { "state": "ACTIVE", "reason": "Innenbereich Altstadt; mit hoher Wahrscheinlichkeit qualifizierter B-Plan oder unbeplanter Innenbereich; Stadtbild-Schutz im Altstadt-Ensemble." },
+      "B": { "state": "ACTIVE", "reason": "Sanierung in BayBO Art. 57 ff.; ggf. zusätzliche Genehmigungspflichten durch Erhaltungs-/Denkmalrecht." },
+      "C": { "state": "ACTIVE", "reason": "Erhaltungssatzung Altstadt + BayDSchG Art. 6 (Denkmalensemble) — DOPPELTE bis DREIFACHE Erlaubnis erforderlich. Werbeanlagensatzung-Strenge greift bei Werbung."  }
+    },
+    "must_contain_facts": [
+      { "key": "plot.postcode", "value": "80331", "source": "CLIENT", "quality": "DECIDED" },
+      { "key": "plot.stadtbezirk_number", "value": 1, "source": "LEGAL", "quality": "CALCULATED" },
+      { "key": "plot.stadtbezirk_name", "value": "Altstadt-Lehel", "source": "LEGAL", "quality": "CALCULATED" },
+      { "key": "plot.bauamt_office", "value": "mitte", "source": "LEGAL", "quality": "CALCULATED" },
+      { "key": "intent", "value": "sanierung", "source": "CLIENT", "quality": "DECIDED" }
+    ],
+    "must_contain_procedures": [
+      { "id": "P-erhaltungssatzung-erlaubnis", "min_status": "erforderlich" },
+      { "id": "P-denkmalrechtliche-erlaubnis", "min_status": "erforderlich" }
+    ],
+    "must_contain_documents": [
+      { "id": "D-Bauzeichnungen" },
+      { "id": "D-Denkmalpflegerische-Stellungnahme" }
+    ],
+    "must_contain_roles": [
+      { "id": "R-Bauvorlageberechtigter", "needed": true },
+      { "id": "R-Denkmalpflege", "needed": true }
+    ],
+    "must_contain_recommendations_anchors": [
+      "Erhaltungssatzung",
+      "BayDSchG",
+      "Denkmalensemble",
+      "Begutachtung Bezirk Mitte",
+      "plan.ha2-24b@muenchen.de",
+      "untere Denkmalschutzbehörde"
+    ],
+    "must_not_contain": [
+      "ohne weitere Genehmigung",
+      "Bauaufsichtsamt der Stadt Erlangen",
+      "ÖbVI",
+      "Begutachtung Bezirk Ost",
+      "Begutachtung Bezirk West"
+    ],
+    "completion_signal": "continue"
+  },
+  "expected_specialist_voices_at_least": [
+    "moderator",
+    "bauordnungsrecht",
+    "sonstige_vorgaben"
+  ],
+  "notes_for_eval_harness": [
+    "Sebastiansplatz 3 ist eine reale Adresse in der Münchner Altstadt (PLZ 80331), nahe der Asamkirche. Stadtbezirk 1 → Bauamt Mitte.",
+    "Schlüssel-Drei-Spuren-Assertion: 'Erhaltungssatzung' UND 'BayDSchG' MÜSSEN beide vorkommen — ein Modell, das nur eine Schicht nennt, ist im Altstadt-Bereich strukturell falsch.",
+    "Wenn das Modell auch die Werbeanlagensatzung-Strenge anspricht (für Schaufensterwerbung an einem denkmalgeschützten Bau in der Altstadt), ist das Plus.",
+    "Strukturell parallel zu Erlangen-Test-Project 07-denkmal-burgberg, aber komplexer: München hat das größere Ensemble + die meisten Baudenkmäler."
+  ]
+}
