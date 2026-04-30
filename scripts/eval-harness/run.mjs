@@ -8,7 +8,14 @@
 //   npm run eval:run -- --single 01-maxvorstadt-innenstadt
 //   npm run eval:dry-run                       infra-only smoke; no chat-turn calls
 
-import { readdirSync, readFileSync } from 'node:fs'
+import {
+  appendFileSync,
+  existsSync,
+  mkdirSync,
+  readdirSync,
+  readFileSync,
+  writeFileSync,
+} from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
@@ -17,10 +24,12 @@ import { ensureTestUser } from './lib/auth.mjs'
 import { createProject, deleteProject, deleteAllOwnedProjects } from './lib/project.mjs'
 import { runConversation } from './lib/chat.mjs'
 import { evaluateTest } from './lib/assertions.mjs'
+import { generateReport } from './lib/report.mjs'
 
 const SCRIPT_DIR = dirname(fileURLToPath(import.meta.url))
 const ROOT = join(SCRIPT_DIR, '..', '..')
 const TEST_PROJECTS_DIR = join(ROOT, 'data', 'muenchen', 'test-projects')
+const RESULTS_DIR = join(ROOT, 'eval-results')
 
 const args = process.argv.slice(2)
 const dryRun = args.includes('--dry-run')
@@ -161,7 +170,24 @@ async function main() {
   }
   console.log(`\n[eval] ${passed} / ${total} passed (${failed} failed, ${errored} errored)`)
 
-  // Commit 4 wires the markdown report; for now stdout is the surface.
+  // ─── Markdown report ─────────────────────────────────────────────────
+  const runId = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19) + 'Z'
+  const env = {
+    SUPABASE_URL: config.SUPABASE_URL,
+    commitSha: process.env.GITHUB_SHA ?? null,
+  }
+  const md = generateReport({ runId, results, env })
+
+  if (!existsSync(RESULTS_DIR)) mkdirSync(RESULTS_DIR, { recursive: true })
+  const outPath = join(RESULTS_DIR, `${runId}.md`)
+  writeFileSync(outPath, md)
+  console.log(`[eval] report written to ${outPath}`)
+
+  // GitHub Actions step summary — render the report inline in the GHA UI.
+  if (process.env.GITHUB_ACTIONS === 'true' && process.env.GITHUB_STEP_SUMMARY) {
+    appendFileSync(process.env.GITHUB_STEP_SUMMARY, md + '\n')
+  }
+
   process.exit(passed === total - results.filter((r) => r.skipped).length ? 0 : 1)
 }
 
