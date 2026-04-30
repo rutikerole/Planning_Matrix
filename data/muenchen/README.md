@@ -133,4 +133,21 @@ grep -rn '"_pending"' data/muenchen/
 
 ---
 
+## Freshness pipeline (Phase 6.5)
+
+Every JSON file in this directory carries a `dataFreshAsOf` field — the date a human last verified its content. A weekly GitHub Actions workflow (`.github/workflows/freshness-check.yml`, Sundays 03:00 UTC, plus `workflow_dispatch`) runs `scripts/freshness-check.mjs`, which fingerprints every `source_url` referenced by these files and opens an issue when drift is detected. The pipeline NEVER auto-updates a JSON file — human review is the gate.
+
+The system prompt's `AKTUALITÄT DER QUELLEN` clause (`legalContext/shared.ts`) uses `dataFreshAsOf` directly: when a fact older than 90 days is materially load-bearing in a recommendation, the model surfaces a short freshness disclosure to the Bauherr.
+
+To run the same check locally:
+
+```bash
+npm run freshness:report   # check, do not write snapshots
+npm run freshness:check    # check AND update .github/freshness-snapshots/
+```
+
+See `docs/data-freshness.md` for the full reference.
+
+---
+
 — München-first. Erlangen as architectural reference. Every gap honestly flagged.

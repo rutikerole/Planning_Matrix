@@ -141,4 +141,19 @@ Every `_pending` is a known-unknown. There is no fabricated value. If a fact doe
 
 ---
 
+## Freshness pipeline (Phase 6.5)
+
+Every JSON file in this directory carries a `dataFreshAsOf` field — the date a human last verified its content. A weekly GitHub Actions workflow (`.github/workflows/freshness-check.yml`, Sundays 03:00 UTC, plus `workflow_dispatch`) runs `scripts/freshness-check.mjs`, which fingerprints every `source_url` referenced by these files and opens an issue when drift is detected. The pipeline NEVER auto-updates a JSON file — human review is the gate.
+
+To run the same check locally:
+
+```bash
+npm run freshness:report   # check, do not write snapshots
+npm run freshness:check    # check AND update .github/freshness-snapshots/
+```
+
+See `docs/data-freshness.md` for the full reference.
+
+---
+
 — Erlangen-first. Quality over breadth. Every gap honestly flagged.
