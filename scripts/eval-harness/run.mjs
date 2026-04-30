@@ -1,7 +1,7 @@
 // Phase 7 — eval harness entry point.
 //
-// Commit 2 scope: load test projects, drive conversations, dump
-// transcripts. Commit 3 layers assertions on top.
+// Commit 3 scope: assertions + per-test verdict + exit code propagation.
+// Commit 4 layers markdown report on top.
 //
 // Usage:
 //   npm run eval:run                           run all 7 München test projects
@@ -16,6 +16,7 @@ import { loadConfig } from './lib/config.mjs'
 import { ensureTestUser } from './lib/auth.mjs'
 import { createProject, deleteProject, deleteAllOwnedProjects } from './lib/project.mjs'
 import { runConversation } from './lib/chat.mjs'
+import { evaluateTest } from './lib/assertions.mjs'
 
 const SCRIPT_DIR = dirname(fileURLToPath(import.meta.url))
 const ROOT = join(SCRIPT_DIR, '..', '..')
@@ -45,7 +46,6 @@ async function runOne(config, accessToken, project) {
   }
 
   console.log(`\n[eval] === ${id} ===`)
-  console.log(`[eval] creating project for "${id}"…`)
   const row = await createProject(config, accessToken, {
     intent: input.intent,
     has_plot: input.has_plot,
@@ -57,7 +57,7 @@ async function runOne(config, accessToken, project) {
   })
   const projectId = row.id
 
-  let result
+  let result, verdict, error
   try {
     result = await runConversation({
       config,
@@ -65,18 +65,42 @@ async function runOne(config, accessToken, project) {
       projectId,
       script,
     })
+    verdict = evaluateTest({
+      test: project,
+      transcript: result.transcript,
+      finalProjectState: result.finalProjectState,
+    })
+    const tag = verdict.passed ? 'PASS' : 'FAIL'
     console.log(
-      `[eval] ${id}: ran ${result.transcript.length} turn(s); ` +
+      `[eval] ${id}: ${tag} — ${result.transcript.length} turn(s), ` +
         `tokens(in/out/cR/cW)=${result.totals.inputTokens}/${result.totals.outputTokens}/${result.totals.cacheReadTokens}/${result.totals.cacheWriteTokens}`,
     )
+    if (!verdict.passed) {
+      const failures = Object.entries(verdict.groups)
+        .flatMap(([group, records]) =>
+          records.filter((r) => !r.pass).map((r) => `${group}: ${r.message}`),
+        )
+      for (const f of failures) console.log(`         ✗ ${f}`)
+    }
+  } catch (err) {
+    error = err.message ?? String(err)
+    console.error(`[eval] ${id}: ERRORED — ${error}`)
   } finally {
-    // Always clean up, even if conversation errored.
     await deleteProject(config, accessToken, projectId).catch((err) =>
       console.error(`[eval] cleanup failed for ${projectId}:`, err.message),
     )
   }
 
-  return { id, skipped: false, ...result }
+  return {
+    id,
+    skipped: false,
+    errored: !!error,
+    error,
+    transcript: result?.transcript ?? [],
+    finalProjectState: result?.finalProjectState ?? null,
+    totals: result?.totals ?? null,
+    verdict: verdict ?? null,
+  }
 }
 
 async function main() {
@@ -119,21 +143,26 @@ async function main() {
 
   const results = []
   for (const test of tests) {
-    try {
-      results.push(await runOne(config, accessToken, test.data))
-    } catch (err) {
-      console.error(`[eval] ${test.data.id}: ERRORED — ${err.message}`)
-      results.push({ id: test.data.id, errored: true, error: err.message })
-    }
+    results.push(await runOne(config, accessToken, test.data))
   }
+
+  // ─── Summary + exit code ───────────────────────────────────────────────
+  const total = results.length
+  const passed = results.filter((r) => r.verdict?.passed).length
+  const failed = results.filter((r) => !r.skipped && !r.verdict?.passed).length
+  const errored = results.filter((r) => r.errored).length
 
   console.log('\n[eval] === summary ===')
   for (const r of results) {
     if (r.errored) console.log(`  ${r.id}: ERRORED — ${r.error}`)
     else if (r.skipped) console.log(`  ${r.id}: SKIPPED`)
-    else console.log(`  ${r.id}: ran ${r.transcript.length} turn(s)`)
+    else if (r.verdict?.passed) console.log(`  ${r.id}: PASS`)
+    else console.log(`  ${r.id}: FAIL`)
   }
-  console.log('[eval] (Commit 3 layers PASS/FAIL assertions on top)')
+  console.log(`\n[eval] ${passed} / ${total} passed (${failed} failed, ${errored} errored)`)
+
+  // Commit 4 wires the markdown report; for now stdout is the surface.
+  process.exit(passed === total - results.filter((r) => r.skipped).length ? 0 : 1)
 }
 
 main().catch((err) => {
