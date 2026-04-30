@@ -1,6 +1,7 @@
 {
   "_schemaVersion": 1,
   "retrieved_on": "2026-04-30",
+  "dataFreshAsOf": "2026-04-30",
   "id": "06-bauturbo-eligibility",
   "narrative": {
     "title_de": "Wohnungsbau-Nachverdichtung — § 246e BauGB Eignungsprüfung (Pasing-Obermenzing)",
@@ -18,23 +19,60 @@
   },
   "expected_output": {
     "areas": {
-      "A": { "state": "ACTIVE", "reason": "Innenbereich Pasing; B-Plan-Lage zu prüfen über Geoportal-WMS. § 246e BauGB ggf. anwendbar — gemeindliche Festsetzung zu prüfen." },
-      "B": { "state": "ACTIVE", "reason": "Mehrfamilienhaus regelmäßig GK 3/4; Verfahren BayBO Art. 60." },
-      "C": { "state": "ACTIVE", "reason": "Stellplatzsatzung StPlS 926 (1 Stp/WE Default; ÖPNV-Reduktion möglich, da Pasing am S-Bahn-Knoten); PV-Pflicht BayBO Art. 44a; Baumschutzverordnung 901." }
+      "A": {
+        "state": "ACTIVE",
+        "reason": "Innenbereich Pasing; B-Plan-Lage zu prüfen über Geoportal-WMS. § 246e BauGB ggf. anwendbar — gemeindliche Festsetzung zu prüfen."
+      },
+      "B": {
+        "state": "ACTIVE",
+        "reason": "Mehrfamilienhaus regelmäßig GK 3/4; Verfahren BayBO Art. 60."
+      },
+      "C": {
+        "state": "ACTIVE",
+        "reason": "Stellplatzsatzung StPlS 926 (1 Stp/WE Default; ÖPNV-Reduktion möglich, da Pasing am S-Bahn-Knoten); PV-Pflicht BayBO Art. 44a; Baumschutzverordnung 901."
+      }
     },
     "must_contain_facts": [
-      { "key": "plot.postcode", "value": "81241", "source": "CLIENT", "quality": "DECIDED" },
-      { "key": "plot.stadtbezirk_number", "value": 21, "source": "LEGAL", "quality": "CALCULATED" },
-      { "key": "plot.stadtbezirk_name", "value": "Pasing-Obermenzing", "source": "LEGAL", "quality": "CALCULATED" },
-      { "key": "plot.bauamt_office", "value": "west", "source": "LEGAL", "quality": "CALCULATED" }
+      {
+        "key": "plot.postcode",
+        "value": "81241",
+        "source": "CLIENT",
+        "quality": "DECIDED"
+      },
+      {
+        "key": "plot.stadtbezirk_number",
+        "value": 21,
+        "source": "LEGAL",
+        "quality": "CALCULATED"
+      },
+      {
+        "key": "plot.stadtbezirk_name",
+        "value": "Pasing-Obermenzing",
+        "source": "LEGAL",
+        "quality": "CALCULATED"
+      },
+      {
+        "key": "plot.bauamt_office",
+        "value": "west",
+        "source": "LEGAL",
+        "quality": "CALCULATED"
+      }
     ],
     "must_contain_procedures": [],
     "must_contain_documents": [
-      { "id": "D-PV-Konzept" }
+      {
+        "id": "D-PV-Konzept"
+      }
     ],
     "must_contain_roles": [
-      { "id": "R-Tragwerksplaner", "needed": true },
-      { "id": "R-Brandschutz", "needed": true }
+      {
+        "id": "R-Tragwerksplaner",
+        "needed": true
+      },
+      {
+        "id": "R-Brandschutz",
+        "needed": true
+      }
     ],
     "must_contain_recommendations_anchors": [
       "Begutachtung Bezirk West",

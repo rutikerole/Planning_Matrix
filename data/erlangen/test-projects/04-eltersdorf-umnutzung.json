@@ -1,6 +1,7 @@
 {
   "_schemaVersion": 1,
   "retrieved_on": "2026-04-29",
+  "dataFreshAsOf": "2026-04-29",
   "id": "04-eltersdorf-umnutzung",
   "narrative": {
     "title_de": "Umnutzung Gewerbe → Wohnen — Eltersdorf (Erlangen-Süd, PLZ 91058)",
@@ -18,27 +19,68 @@
   },
   "expected_output": {
     "areas": {
-      "A": { "state": "ACTIVE", "reason": "Neuprüfung der Nutzung nach § 34 BauGB / BauNVO — die zulässige Nutzungsart ist gegen die geplante neue Nutzung abzugleichen." },
-      "B": { "state": "ACTIVE", "reason": "Umnutzung ist baugenehmigungspflichtig — Verfahren regelmäßig nach BayBO Art. 60." },
-      "C": { "state": "ACTIVE", "reason": "Stellplatz-Neuberechnung nach Erlanger Stellplatzsatzung; Niederschlagswasser bei baulicher Veränderung." }
+      "A": {
+        "state": "ACTIVE",
+        "reason": "Neuprüfung der Nutzung nach § 34 BauGB / BauNVO — die zulässige Nutzungsart ist gegen die geplante neue Nutzung abzugleichen."
+      },
+      "B": {
+        "state": "ACTIVE",
+        "reason": "Umnutzung ist baugenehmigungspflichtig — Verfahren regelmäßig nach BayBO Art. 60."
+      },
+      "C": {
+        "state": "ACTIVE",
+        "reason": "Stellplatz-Neuberechnung nach Erlanger Stellplatzsatzung; Niederschlagswasser bei baulicher Veränderung."
+      }
     },
     "must_contain_facts": [
-      { "key": "plot.postcode", "value": "91058", "source": "CLIENT", "quality": "DECIDED" },
-      { "key": "plot.stadtteil", "value": "Eltersdorf", "source": "LEGAL", "quality": "CALCULATED" },
-      { "key": "intent", "value": "umnutzung", "source": "CLIENT", "quality": "DECIDED" }
+      {
+        "key": "plot.postcode",
+        "value": "91058",
+        "source": "CLIENT",
+        "quality": "DECIDED"
+      },
+      {
+        "key": "plot.stadtteil",
+        "value": "Eltersdorf",
+        "source": "LEGAL",
+        "quality": "CALCULATED"
+      },
+      {
+        "key": "intent",
+        "value": "umnutzung",
+        "source": "CLIENT",
+        "quality": "DECIDED"
+      }
     ],
     "must_contain_procedures": [
-      { "id": "P-art60-baugenehmigung", "min_status": "erforderlich" }
+      {
+        "id": "P-art60-baugenehmigung",
+        "min_status": "erforderlich"
+      }
     ],
     "must_contain_documents": [
-      { "id": "D-Bauzeichnungen" },
-      { "id": "D-Brandschutznachweis" },
-      { "id": "D-Stellplatznachweis" },
-      { "id": "D-Nutzungskonzept" }
+      {
+        "id": "D-Bauzeichnungen"
+      },
+      {
+        "id": "D-Brandschutznachweis"
+      },
+      {
+        "id": "D-Stellplatznachweis"
+      },
+      {
+        "id": "D-Nutzungskonzept"
+      }
     ],
     "must_contain_roles": [
-      { "id": "R-Bauvorlageberechtigter", "needed": true },
-      { "id": "R-Brandschutz", "needed": true }
+      {
+        "id": "R-Bauvorlageberechtigter",
+        "needed": true
+      },
+      {
+        "id": "R-Brandschutz",
+        "needed": true
+      }
     ],
     "must_contain_recommendations_anchors": [
       "BauNVO",

@@ -1,9 +1,13 @@
 {
   "_schemaVersion": 1,
   "retrieved_on": "2026-04-30",
+  "dataFreshAsOf": "2026-04-30",
   "discipline_de": "Bauvorlageberechtigte Architekt:innen",
   "discipline_en": "Filing-authorised architects (bauvorlageberechtigt)",
-  "source_ids": ["byak", "byak-architektensuche"],
+  "source_ids": [
+    "byak",
+    "byak-architektensuche"
+  ],
   "scope_note_de": "Auszug aus der öffentlichen Architektenliste der Bayerischen Architektenkammer (BAYAK), gefiltert auf Geschäftssitz München (PLZ 80xxx-81xxx). In Bayern impliziert die Eintragung als 'Architekt:in' nach Art. 61 BayBO im Regelfall die Bauvorlageberechtigung. Diese Datei ist eine Stichprobe — die kanonische Quelle ist die Architektensuche der BAYAK.",
   "registry_urls": [
     {

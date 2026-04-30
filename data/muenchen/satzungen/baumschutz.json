@@ -1,6 +1,7 @@
 {
   "_schemaVersion": 1,
   "retrieved_on": "2026-04-30",
+  "dataFreshAsOf": "2026-04-30",
   "id": "baumschutz",
   "official_name_de": "Baumschutzverordnung der Landeshauptstadt München (BaumschutzV)",
   "_short_name": "BaumschutzV 901",
@@ -11,7 +12,9 @@
   "bekanntmachung": "2025-12-30",
   "rechtsgrundlage_de": "§ 20 Abs. 2 Nr. 7, § 22 Abs. 1+2, § 29 Abs. 1 Satz 2 BNatSchG i.V.m. Art. 12 Abs. 1, Art. 51 Abs. 1 Nr. 5a BayNatSchG",
   "supersedes": "Frühere Fassung (München hat seit 1976 eine Baumschutzverordnung; aktuelle Novellierung verschärft die Schutzschwelle deutlich).",
-  "source_ids": ["stadt-muenchen-recht"],
+  "source_ids": [
+    "stadt-muenchen-recht"
+  ],
   "official_pdf_url": "https://stadt.muenchen.de/rathaus/stadtrecht/vorschrift/901.pdf",
   "overview_url": "https://stadt.muenchen.de/infos/baumschutzverordnung.html",
   "structure_de": [

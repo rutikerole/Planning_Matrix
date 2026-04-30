@@ -1,10 +1,15 @@
 {
   "_schemaVersion": 1,
   "retrieved_on": "2026-04-30",
+  "dataFreshAsOf": "2026-04-30",
   "id": "erhaltungssatzungen-overview",
   "_note_de": "STRUKTURELLE ÜBERSICHT der Erhaltungssatzungen im Stadtgebiet München. Eine vollständige Detail-Erfassung pro Erhaltungssatzung ist Aufgabe des Quartalsrefresh — diese Datei ist die strukturelle Karte. Das WMS-Layer satz_erhalt_poly im Geoportal München liefert die Geltungsbereiche aller Erhaltungssatzungen als räumliche Daten; eine programmatische Inventur ist Phase-6-Arbeit.",
   "rechtsgrundlage_de": "BauGB §§ 172 ff. (Erhaltung baulicher Anlagen — Erhaltungssatzung)",
-  "source_ids": ["stadt-muenchen-bplaene", "geoportal-muenchen-wms-plan", "stadt-muenchen-recht"],
+  "source_ids": [
+    "stadt-muenchen-bplaene",
+    "geoportal-muenchen-wms-plan",
+    "stadt-muenchen-recht"
+  ],
   "wms_layer_geltungsbereiche": "satz_erhalt_poly",
   "wms_endpoint": "https://geoportal.muenchen.de/geoserver/plan/wms",
   "stadtportal_overview_url": "https://stadt.muenchen.de/rathaus/stadtrecht.html",

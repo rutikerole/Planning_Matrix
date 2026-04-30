@@ -1,6 +1,7 @@
 {
   "_schemaVersion": 1,
   "retrieved_on": "2026-04-29",
+  "dataFreshAsOf": "2026-04-29",
   "official_name_de": "Bauaufsichtsamt",
   "parent_office_de": "Stadt Erlangen",
   "address": {
@@ -15,11 +16,36 @@
     "email_general": "bauaufsichtsamt@stadt.erlangen.de"
   },
   "opening_hours": [
-    { "weekday": "mon", "open": "09:30", "close": "15:00", "notes_de": "Persönliche Termine nur nach vorheriger Vereinbarung." },
-    { "weekday": "tue", "open": "09:30", "close": "15:00", "notes_de": "Persönliche Termine nur nach vorheriger Vereinbarung." },
-    { "weekday": "wed", "open": "09:30", "close": "15:00", "notes_de": "Persönliche Termine nur nach vorheriger Vereinbarung." },
-    { "weekday": "thu", "open": "09:30", "close": "15:00", "notes_de": "Persönliche Termine nur nach vorheriger Vereinbarung." },
-    { "weekday": "fri", "open": "09:30", "close": "12:00", "notes_de": "Persönliche Termine nur nach vorheriger Vereinbarung." }
+    {
+      "weekday": "mon",
+      "open": "09:30",
+      "close": "15:00",
+      "notes_de": "Persönliche Termine nur nach vorheriger Vereinbarung."
+    },
+    {
+      "weekday": "tue",
+      "open": "09:30",
+      "close": "15:00",
+      "notes_de": "Persönliche Termine nur nach vorheriger Vereinbarung."
+    },
+    {
+      "weekday": "wed",
+      "open": "09:30",
+      "close": "15:00",
+      "notes_de": "Persönliche Termine nur nach vorheriger Vereinbarung."
+    },
+    {
+      "weekday": "thu",
+      "open": "09:30",
+      "close": "15:00",
+      "notes_de": "Persönliche Termine nur nach vorheriger Vereinbarung."
+    },
+    {
+      "weekday": "fri",
+      "open": "09:30",
+      "close": "12:00",
+      "notes_de": "Persönliche Termine nur nach vorheriger Vereinbarung."
+    }
   ],
   "responsibilities_de": [
     "Bearbeitung von Bauanträgen nach BayBO Art. 64 (vereinfachtes Verfahren Art. 58, Baugenehmigungsverfahren Art. 60)",

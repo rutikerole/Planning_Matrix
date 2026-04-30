@@ -1,9 +1,13 @@
 {
   "_schemaVersion": 1,
   "retrieved_on": "2026-04-30",
+  "dataFreshAsOf": "2026-04-30",
   "discipline_de": "Prüfsachverständige für Brandschutz (BayBO Art. 62)",
   "discipline_en": "Certified fire-protection experts (BayBO Art. 62)",
-  "source_ids": ["byak", "byak-architektensuche"],
+  "source_ids": [
+    "byak",
+    "byak-architektensuche"
+  ],
   "scope_note_de": "Phase-2.5-Befund (übernommen): Die Liste der Prüfsachverständigen für BRANDSCHUTZ in Bayern wird gemäß PrüfVBau bei der Bayerischen ARCHITEKTENKAMMER (BAYAK) geführt — NICHT bei der BAYIKA. Brandschutznachweise nach BayBO Art. 62 sind bei Sonderbauten (Art. 2 Abs. 4) und höheren Gebäudeklassen pflichtig; ohne Eintragung gilt der Nachweis als nicht erbracht. Diese Datei dokumentiert die Eintragungs-/Suchwege; konkrete Münchner Einträge sind via BAYAK-Suche zu ermitteln.",
   "registry_urls": [
     {

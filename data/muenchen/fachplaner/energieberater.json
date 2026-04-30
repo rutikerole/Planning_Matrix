@@ -1,9 +1,12 @@
 {
   "_schemaVersion": 1,
   "retrieved_on": "2026-04-30",
+  "dataFreshAsOf": "2026-04-30",
   "discipline_de": "Energieeffizienz-Expert:innen (GEG-Nachweis, BAFA/dena/KfW)",
   "discipline_en": "Energy efficiency experts (Buildings Energy Act compliance — BAFA/dena/KfW)",
-  "source_ids": ["bafa-energieeffizienz-experten"],
+  "source_ids": [
+    "bafa-energieeffizienz-experten"
+  ],
   "scope_note_de": "Auszug aus der offiziellen Energieeffizienz-Expertenliste (gepflegt von der dena im Auftrag von BAFA/KfW). Seit 1. Juli 2023 ist die Eintragung in dieser Liste Voraussetzung für die geförderte Beratung. Such-Interface: PLZ + Umkreis (5/10/20/50/100/250 km). Diese Datei nennt die Such-URL; spezifische Münchner Anbieter sind via Such-Interface auffindbar (München-PLZ-Bereiche 80xxx-81xxx).",
   "registry_urls": [
     {

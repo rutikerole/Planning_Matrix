@@ -1,6 +1,7 @@
 {
   "_schemaVersion": 1,
   "retrieved_on": "2026-04-30",
+  "dataFreshAsOf": "2026-04-30",
   "id": "04-ramersdorf-umnutzung",
   "narrative": {
     "title_de": "Umnutzung Gewerbe → Wohnen — Berg am Laim (Stadtbezirk 14, Bauamt Ost)",
@@ -18,29 +19,80 @@
   },
   "expected_output": {
     "areas": {
-      "A": { "state": "ACTIVE", "reason": "Neuprüfung der Nutzung nach § 34 BauGB / BauNVO — die zulässige Nutzungsart ist gegen die geplante neue Nutzung abzugleichen." },
-      "B": { "state": "ACTIVE", "reason": "Umnutzung ist baugenehmigungspflichtig — Verfahren regelmäßig nach BayBO Art. 60." },
-      "C": { "state": "ACTIVE", "reason": "Stellplatz-Neuberechnung nach Münchner Stellplatzsatzung StPlS 926 (Zone-II-Reduktion möglich); Niederschlagswasser bei baulicher Veränderung; Brandschutz neu zu konzipieren." }
+      "A": {
+        "state": "ACTIVE",
+        "reason": "Neuprüfung der Nutzung nach § 34 BauGB / BauNVO — die zulässige Nutzungsart ist gegen die geplante neue Nutzung abzugleichen."
+      },
+      "B": {
+        "state": "ACTIVE",
+        "reason": "Umnutzung ist baugenehmigungspflichtig — Verfahren regelmäßig nach BayBO Art. 60."
+      },
+      "C": {
+        "state": "ACTIVE",
+        "reason": "Stellplatz-Neuberechnung nach Münchner Stellplatzsatzung StPlS 926 (Zone-II-Reduktion möglich); Niederschlagswasser bei baulicher Veränderung; Brandschutz neu zu konzipieren."
+      }
     },
     "must_contain_facts": [
-      { "key": "plot.postcode", "value": "81673", "source": "CLIENT", "quality": "DECIDED" },
-      { "key": "plot.stadtbezirk_number", "value": 14, "source": "LEGAL", "quality": "CALCULATED" },
-      { "key": "plot.stadtbezirk_name", "value": "Berg am Laim", "source": "LEGAL", "quality": "CALCULATED" },
-      { "key": "plot.bauamt_office", "value": "ost", "source": "LEGAL", "quality": "CALCULATED" },
-      { "key": "intent", "value": "umnutzung", "source": "CLIENT", "quality": "DECIDED" }
+      {
+        "key": "plot.postcode",
+        "value": "81673",
+        "source": "CLIENT",
+        "quality": "DECIDED"
+      },
+      {
+        "key": "plot.stadtbezirk_number",
+        "value": 14,
+        "source": "LEGAL",
+        "quality": "CALCULATED"
+      },
+      {
+        "key": "plot.stadtbezirk_name",
+        "value": "Berg am Laim",
+        "source": "LEGAL",
+        "quality": "CALCULATED"
+      },
+      {
+        "key": "plot.bauamt_office",
+        "value": "ost",
+        "source": "LEGAL",
+        "quality": "CALCULATED"
+      },
+      {
+        "key": "intent",
+        "value": "umnutzung",
+        "source": "CLIENT",
+        "quality": "DECIDED"
+      }
     ],
     "must_contain_procedures": [
-      { "id": "P-art60-baugenehmigung", "min_status": "erforderlich" }
+      {
+        "id": "P-art60-baugenehmigung",
+        "min_status": "erforderlich"
+      }
     ],
     "must_contain_documents": [
-      { "id": "D-Bauzeichnungen" },
-      { "id": "D-Brandschutznachweis" },
-      { "id": "D-Stellplatznachweis" },
-      { "id": "D-Nutzungskonzept" }
+      {
+        "id": "D-Bauzeichnungen"
+      },
+      {
+        "id": "D-Brandschutznachweis"
+      },
+      {
+        "id": "D-Stellplatznachweis"
+      },
+      {
+        "id": "D-Nutzungskonzept"
+      }
     ],
     "must_contain_roles": [
-      { "id": "R-Bauvorlageberechtigter", "needed": true },
-      { "id": "R-Brandschutz", "needed": true }
+      {
+        "id": "R-Bauvorlageberechtigter",
+        "needed": true
+      },
+      {
+        "id": "R-Brandschutz",
+        "needed": true
+      }
     ],
     "must_contain_recommendations_anchors": [
       "BauNVO",

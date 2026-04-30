@@ -1,6 +1,7 @@
 {
   "_schemaVersion": 1,
   "retrieved_on": "2026-04-30",
+  "dataFreshAsOf": "2026-04-30",
   "id": "freiflaechengestaltung",
   "official_name_de": "Satzung der Landeshauptstadt München über die Gestaltung und Ausstattung der unbebauten Flächen der bebauten Grundstücke und über die Begrünung baulicher Anlagen (Gestaltungs- und Begrünungssatzung)",
   "_short_name": "GBS 924 (Freiflächengestaltung im Bauantrag)",
@@ -12,7 +13,9 @@
   "last_amended": "2025-02-18",
   "rechtsgrundlage_de": "Art. 23 GO Bayern + Art. 98 Abs. 1 Nrn. 1+3, Art. 98 Abs. 2 Nr. 3 BayBO",
   "_special_status_de": "ACHTUNG: § 3 dieser Satzung (Begrünung der unbebauten Flächen) wird seit 01.10.2025 NICHT MEHR ANGEWENDET. Eine neu konzipierte Gestaltungssatzung für Begrünung und Landschaft ist in Vorbereitung und soll dem Stadtrat zur Kenntnis vorgelegt werden. Bis zum Inkrafttreten der Neuregelung gilt rechtlich die Satzung weiter, in der Praxis greift die Lokalbaukommission auf alternative Steuerungsinstrumente zurück.",
-  "source_ids": ["stadt-muenchen-recht"],
+  "source_ids": [
+    "stadt-muenchen-recht"
+  ],
   "official_pdf_url": "https://stadt.muenchen.de/rathaus/stadtrecht/vorschrift/924.pdf",
   "overview_url": "https://stadt.muenchen.de/infos/freiflaechengestaltung-in-muenchen.html",
   "structure_de": [

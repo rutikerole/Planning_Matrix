@@ -1,6 +1,7 @@
 {
   "_schemaVersion": 1,
   "retrieved_on": "2026-04-29",
+  "dataFreshAsOf": "2026-04-29",
   "id": "niederschlagswasser",
   "official_name_de": "Satzung für die öffentliche Entwässerungsanlage der Stadt Erlangen (Entwässerungssatzung — EWS)",
   "_extracted_via": "pdftotext (poppler 26.04.0) against the official PDF on erlangen.de",

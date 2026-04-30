@@ -1,6 +1,7 @@
 {
   "_schemaVersion": 1,
   "retrieved_on": "2026-04-29",
+  "dataFreshAsOf": "2026-04-29",
   "id": "01-hauptstrasse-innenstadt",
   "narrative": {
     "title_de": "Neubau Einfamilienhaus — Hauptstraße 12, Erlangen-Innenstadt",
@@ -18,31 +19,84 @@
   },
   "expected_output": {
     "areas": {
-      "A": { "state": "ACTIVE", "reason": "Innenbereich nach § 34 BauGB; ggf. qualifizierter B-Plan vorhanden — Adresse in der Innenstadt." },
-      "B": { "state": "ACTIVE", "reason": "BayBO anwendbar, GK 1 wahrscheinlich (freistehend, ≤ 7 m, ≤ 2 NE)." },
-      "C": { "state": "ACTIVE", "reason": "Stellplatzsatzung Erlangen + Erhaltungssatzung Burgberg ggf. zu prüfen + Denkmalumgebung in der historischen Altstadt." }
+      "A": {
+        "state": "ACTIVE",
+        "reason": "Innenbereich nach § 34 BauGB; ggf. qualifizierter B-Plan vorhanden — Adresse in der Innenstadt."
+      },
+      "B": {
+        "state": "ACTIVE",
+        "reason": "BayBO anwendbar, GK 1 wahrscheinlich (freistehend, ≤ 7 m, ≤ 2 NE)."
+      },
+      "C": {
+        "state": "ACTIVE",
+        "reason": "Stellplatzsatzung Erlangen + Erhaltungssatzung Burgberg ggf. zu prüfen + Denkmalumgebung in der historischen Altstadt."
+      }
     },
     "must_contain_facts": [
-      { "key": "plot.postcode", "value": "91054", "source": "CLIENT", "quality": "DECIDED" },
-      { "key": "plot.city", "value": "Erlangen", "source": "CLIENT", "quality": "DECIDED" },
-      { "key": "plot.street", "value": "Hauptstraße", "source": "CLIENT", "quality": "DECIDED" },
-      { "key": "intent", "value": "neubau_einfamilienhaus", "source": "CLIENT", "quality": "DECIDED" }
+      {
+        "key": "plot.postcode",
+        "value": "91054",
+        "source": "CLIENT",
+        "quality": "DECIDED"
+      },
+      {
+        "key": "plot.city",
+        "value": "Erlangen",
+        "source": "CLIENT",
+        "quality": "DECIDED"
+      },
+      {
+        "key": "plot.street",
+        "value": "Hauptstraße",
+        "source": "CLIENT",
+        "quality": "DECIDED"
+      },
+      {
+        "key": "intent",
+        "value": "neubau_einfamilienhaus",
+        "source": "CLIENT",
+        "quality": "DECIDED"
+      }
     ],
     "must_contain_procedures": [
-      { "id": "P-art58-vereinfachtes-verfahren", "min_status": "erforderlich" }
+      {
+        "id": "P-art58-vereinfachtes-verfahren",
+        "min_status": "erforderlich"
+      }
     ],
     "must_contain_documents": [
-      { "id": "D-Lageplan" },
-      { "id": "D-Bauzeichnungen" },
-      { "id": "D-Baubeschreibung" },
-      { "id": "D-Standsicherheitsnachweis" },
-      { "id": "D-GEG-Nachweis" },
-      { "id": "D-Stellplatznachweis" }
+      {
+        "id": "D-Lageplan"
+      },
+      {
+        "id": "D-Bauzeichnungen"
+      },
+      {
+        "id": "D-Baubeschreibung"
+      },
+      {
+        "id": "D-Standsicherheitsnachweis"
+      },
+      {
+        "id": "D-GEG-Nachweis"
+      },
+      {
+        "id": "D-Stellplatznachweis"
+      }
     ],
     "must_contain_roles": [
-      { "id": "R-Tragwerksplaner", "needed": true },
-      { "id": "R-Vermessungsingenieur", "needed": true },
-      { "id": "R-Bauvorlageberechtigter", "needed": true }
+      {
+        "id": "R-Tragwerksplaner",
+        "needed": true
+      },
+      {
+        "id": "R-Vermessungsingenieur",
+        "needed": true
+      },
+      {
+        "id": "R-Bauvorlageberechtigter",
+        "needed": true
+      }
     ],
     "must_contain_recommendations_anchors": [
       "Bauaufsichtsamt der Stadt Erlangen",

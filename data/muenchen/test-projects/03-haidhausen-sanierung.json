@@ -1,6 +1,7 @@
 {
   "_schemaVersion": 1,
   "retrieved_on": "2026-04-30",
+  "dataFreshAsOf": "2026-04-30",
   "id": "03-haidhausen-sanierung",
   "narrative": {
     "title_de": "Sanierung Wohngebäude — Au-Haidhausen (Stadtbezirk 5, Bauamt Mitte)",
@@ -18,27 +19,72 @@
   },
   "expected_output": {
     "areas": {
-      "A": { "state": "ACTIVE", "reason": "Innenbereich Haidhausen; B-Plan-Lage zu prüfen über Geoportal." },
-      "B": { "state": "ACTIVE", "reason": "Sanierung an einer baulichen Anlage; Genehmigungs-/Anzeigepflicht nach BayBO Art. 57 ff." },
-      "C": { "state": "ACTIVE", "reason": "Erhaltungssatzungs-Bereich Haidhausen wahrscheinlich (BauGB § 172 Erlaubnispflicht); GEG-Sanierungspflichten anwendbar; ggf. Baumschutzverordnung 901; Denkmalstatus prüfen." }
+      "A": {
+        "state": "ACTIVE",
+        "reason": "Innenbereich Haidhausen; B-Plan-Lage zu prüfen über Geoportal."
+      },
+      "B": {
+        "state": "ACTIVE",
+        "reason": "Sanierung an einer baulichen Anlage; Genehmigungs-/Anzeigepflicht nach BayBO Art. 57 ff."
+      },
+      "C": {
+        "state": "ACTIVE",
+        "reason": "Erhaltungssatzungs-Bereich Haidhausen wahrscheinlich (BauGB § 172 Erlaubnispflicht); GEG-Sanierungspflichten anwendbar; ggf. Baumschutzverordnung 901; Denkmalstatus prüfen."
+      }
     },
     "must_contain_facts": [
-      { "key": "plot.postcode", "value": "81667", "source": "CLIENT", "quality": "DECIDED" },
-      { "key": "plot.stadtbezirk_number", "value": 5, "source": "LEGAL", "quality": "CALCULATED" },
-      { "key": "plot.stadtbezirk_name", "value": "Au-Haidhausen", "source": "LEGAL", "quality": "CALCULATED" },
-      { "key": "plot.bauamt_office", "value": "mitte", "source": "LEGAL", "quality": "CALCULATED" },
-      { "key": "intent", "value": "sanierung", "source": "CLIENT", "quality": "DECIDED" }
+      {
+        "key": "plot.postcode",
+        "value": "81667",
+        "source": "CLIENT",
+        "quality": "DECIDED"
+      },
+      {
+        "key": "plot.stadtbezirk_number",
+        "value": 5,
+        "source": "LEGAL",
+        "quality": "CALCULATED"
+      },
+      {
+        "key": "plot.stadtbezirk_name",
+        "value": "Au-Haidhausen",
+        "source": "LEGAL",
+        "quality": "CALCULATED"
+      },
+      {
+        "key": "plot.bauamt_office",
+        "value": "mitte",
+        "source": "LEGAL",
+        "quality": "CALCULATED"
+      },
+      {
+        "key": "intent",
+        "value": "sanierung",
+        "source": "CLIENT",
+        "quality": "DECIDED"
+      }
     ],
     "must_contain_procedures": [
-      { "id": "P-art57-anzeige-oder-freistellung" },
-      { "id": "P-erhaltungssatzung-erlaubnis" }
+      {
+        "id": "P-art57-anzeige-oder-freistellung"
+      },
+      {
+        "id": "P-erhaltungssatzung-erlaubnis"
+      }
     ],
     "must_contain_documents": [
-      { "id": "D-Bauzeichnungen" },
-      { "id": "D-GEG-Sanierungsnachweis" }
+      {
+        "id": "D-Bauzeichnungen"
+      },
+      {
+        "id": "D-GEG-Sanierungsnachweis"
+      }
     ],
     "must_contain_roles": [
-      { "id": "R-Energieberater", "needed": true }
+      {
+        "id": "R-Energieberater",
+        "needed": true
+      }
     ],
     "must_contain_recommendations_anchors": [
       "Erhaltungssatzung",

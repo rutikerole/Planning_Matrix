@@ -25,6 +25,12 @@
       "minLength": 5,
       "description": "Honest 'we don't yet know' marker. Carries a short reason and the source to consult."
     },
+    "dataFreshAsOf": {
+      "type": "string",
+      "format": "date",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+      "description": "Phase 6.5 — the most recent date a human verified this content is still accurate. Distinct from `retrieved_on` (which records original extraction). Optional; the freshness pipeline opens issues when underlying sources drift, and the system prompt's AKTUALITÄT DER QUELLEN clause uses a 90-day threshold against this date to decide when to surface a freshness disclosure to the Bauherr."
+    },
     "Bauamt": {
       "type": "object",
       "_phase4_extension_note": "Phase 4 (revised) added the optional `sub_offices` array to formalise München's 3-office routing (Mitte / Ost / West) by Stadtbezirk. The extension is purely additive — Erlangen's single-office bauamt.json continues to validate. No required fields touched.",
@@ -41,6 +47,7 @@
       "properties": {
         "_schemaVersion": { "$ref": "#/$defs/schemaVersion" },
         "retrieved_on": { "$ref": "#/$defs/isoDate" },
+        "dataFreshAsOf": { "$ref": "#/$defs/dataFreshAsOf" },
         "official_name_de": { "type": "string", "minLength": 1 },
         "parent_office_de": { "type": "string" },
         "address": {
@@ -146,6 +153,7 @@
       "properties": {
         "_schemaVersion": { "$ref": "#/$defs/schemaVersion" },
         "retrieved_on": { "$ref": "#/$defs/isoDate" },
+        "dataFreshAsOf": { "$ref": "#/$defs/dataFreshAsOf" },
         "id": { "type": "string" },
         "official_name_de": { "type": "string" },
         "in_force_since": {
@@ -213,6 +221,7 @@
       "properties": {
         "_schemaVersion": { "$ref": "#/$defs/schemaVersion" },
         "retrieved_on": { "$ref": "#/$defs/isoDate" },
+        "dataFreshAsOf": { "$ref": "#/$defs/dataFreshAsOf" },
         "source_ids": { "type": "array", "items": { "$ref": "#/$defs/sourceId" } },
         "coverage_note_de": { "type": "string" },
         "stadtteile_covered": {
@@ -244,6 +253,7 @@
       "properties": {
         "_schemaVersion": { "$ref": "#/$defs/schemaVersion" },
         "retrieved_on": { "$ref": "#/$defs/isoDate" },
+        "dataFreshAsOf": { "$ref": "#/$defs/dataFreshAsOf" },
         "discipline_de": { "type": "string" },
         "discipline_en": { "type": "string" },
         "source_ids": { "type": "array", "items": { "$ref": "#/$defs/sourceId" }, "minItems": 1 },
@@ -268,6 +278,7 @@
       "properties": {
         "_schemaVersion": { "$ref": "#/$defs/schemaVersion" },
         "retrieved_on": { "$ref": "#/$defs/isoDate" },
+        "dataFreshAsOf": { "$ref": "#/$defs/dataFreshAsOf" },
         "id": { "type": "string" },
         "narrative": {
           "type": "object",

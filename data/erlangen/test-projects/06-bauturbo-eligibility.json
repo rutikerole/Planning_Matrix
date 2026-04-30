@@ -1,6 +1,7 @@
 {
   "_schemaVersion": 1,
   "retrieved_on": "2026-04-29",
+  "dataFreshAsOf": "2026-04-29",
   "id": "06-bauturbo-eligibility",
   "narrative": {
     "title_de": "Wohnungsbau-Nachverdichtung im Innenbereich — § 246e BauGB Eignungsprüfung",
@@ -18,21 +19,48 @@
   },
   "expected_output": {
     "areas": {
-      "A": { "state": "ACTIVE", "reason": "Innenbereich Anger; im Bereich Nürnberger Straße liegen mehrere B-Pläne (siehe bplan-index.json: BPlan 383, 317 'Kerngebiet Nürnberger Straße'). § 246e BauGB ggf. anwendbar — gemeindliche Festsetzung zu prüfen." },
-      "B": { "state": "ACTIVE", "reason": "Mehrfamilienhaus regelmäßig GK 3/4; vollumfängliches Verfahren nach BayBO Art. 60 wahrscheinlich, soweit nicht durch B-Plan vereinfacht." },
-      "C": { "state": "ACTIVE", "reason": "Stellplatzsatzung; PV-Pflicht (BayBO Art. 44a) für Wohnneubauten; ggf. Niederschlagswasser-Behandlung." }
+      "A": {
+        "state": "ACTIVE",
+        "reason": "Innenbereich Anger; im Bereich Nürnberger Straße liegen mehrere B-Pläne (siehe bplan-index.json: BPlan 383, 317 'Kerngebiet Nürnberger Straße'). § 246e BauGB ggf. anwendbar — gemeindliche Festsetzung zu prüfen."
+      },
+      "B": {
+        "state": "ACTIVE",
+        "reason": "Mehrfamilienhaus regelmäßig GK 3/4; vollumfängliches Verfahren nach BayBO Art. 60 wahrscheinlich, soweit nicht durch B-Plan vereinfacht."
+      },
+      "C": {
+        "state": "ACTIVE",
+        "reason": "Stellplatzsatzung; PV-Pflicht (BayBO Art. 44a) für Wohnneubauten; ggf. Niederschlagswasser-Behandlung."
+      }
     },
     "must_contain_facts": [
-      { "key": "plot.postcode", "value": "91052", "source": "CLIENT", "quality": "DECIDED" },
-      { "key": "intent", "value": "neubau_mehrfamilienhaus", "source": "CLIENT", "quality": "DECIDED" }
+      {
+        "key": "plot.postcode",
+        "value": "91052",
+        "source": "CLIENT",
+        "quality": "DECIDED"
+      },
+      {
+        "key": "intent",
+        "value": "neubau_mehrfamilienhaus",
+        "source": "CLIENT",
+        "quality": "DECIDED"
+      }
     ],
     "must_contain_procedures": [],
     "must_contain_documents": [
-      { "id": "D-PV-Konzept" }
+      {
+        "id": "D-PV-Konzept"
+      }
     ],
     "must_contain_roles": [
-      { "id": "R-Tragwerksplaner", "needed": true },
-      { "id": "R-Brandschutz", "needed": true }
+      {
+        "id": "R-Tragwerksplaner",
+        "needed": true
+      },
+      {
+        "id": "R-Brandschutz",
+        "needed": true
+      }
     ],
     "must_contain_recommendations_anchors": [
       "Bauaufsichtsamt der Stadt Erlangen",

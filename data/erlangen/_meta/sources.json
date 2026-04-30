@@ -2,6 +2,7 @@
   "_schemaVersion": 1,
   "_description": "Canonical source URL registry for the Erlangen city-truth slice. Every fact in data/erlangen/ cites one or more of these by `source_ids`. URLs verified live via web fetch on the dates noted; refresh quarterly per data/erlangen/README.md.",
   "_retrieved_on": "2026-04-29",
+  "dataFreshAsOf": "2026-04-29",
   "sources": {
     "stadt-erlangen-portal": {
       "label_de": "Stadt Erlangen — offizielles Portal",

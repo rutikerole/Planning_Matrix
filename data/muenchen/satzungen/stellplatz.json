@@ -1,6 +1,7 @@
 {
   "_schemaVersion": 1,
   "retrieved_on": "2026-04-30",
+  "dataFreshAsOf": "2026-04-30",
   "id": "stellplatz",
   "official_name_de": "Satzung der Landeshauptstadt München zur Einführung einer Pflicht zum Nachweis von notwendigen Stellplätzen für Kraftfahrzeuge (Stellplatzsatzung — StPlS)",
   "_short_name": "StPlS 926",
@@ -11,7 +12,10 @@
   "bekanntmachung": "2025-10-02",
   "rechtsgrundlage_de": "Art. 23 GO Bayern + Art. 81 Abs. 1 Nr. 4 BayBO",
   "supersedes": "Stellplatzsatzung vom 19.12.2007 (MüABl. 2008, Sondernummer 1, S. 1) — außer Kraft mit Ablauf des 30.09.2025.",
-  "source_ids": ["stadt-muenchen-recht", "gesetze-bayern-baybo"],
+  "source_ids": [
+    "stadt-muenchen-recht",
+    "gesetze-bayern-baybo"
+  ],
   "official_pdf_url": "https://stadt.muenchen.de/rathaus/stadtrecht/vorschrift/926.pdf",
   "overview_url": "https://stadt.muenchen.de/rathaus/stadtrecht/vorschrift/926/version1/0.html",
   "structure_de": [

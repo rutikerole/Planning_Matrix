@@ -1,6 +1,7 @@
 {
   "_schemaVersion": 1,
   "retrieved_on": "2026-04-29",
+  "dataFreshAsOf": "2026-04-29",
   "id": "erhaltung-burgberg",
   "official_name_de": "Satzung der Stadt Erlangen zur Erhaltung baulicher Anlagen im Bereich des Burgbergs",
   "_extracted_via": "pdftotext (poppler 26.04.0) against the official PDF on erlangen.de",

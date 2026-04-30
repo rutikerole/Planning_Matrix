@@ -1,6 +1,7 @@
 {
   "_schemaVersion": 1,
   "retrieved_on": "2026-04-30",
+  "dataFreshAsOf": "2026-04-30",
   "id": "werbeanlagen",
   "official_name_de": "Münchner Werbeanlagensatzung",
   "_short_name": "Werbeanlagensatzung (Stadtratsbeschluss 24.09.2020)",
@@ -9,7 +10,9 @@
   "stadtratsbeschluss": "2020-09-24",
   "bekanntmachung": "2020-10-06",
   "rechtsgrundlage_de": "Art. 81 Abs. 1 Nrn. 1+2 BayBO",
-  "source_ids": ["stadt-muenchen-recht"],
+  "source_ids": [
+    "stadt-muenchen-recht"
+  ],
   "overview_url": "https://stadt.muenchen.de/infos/werbeanlagen.html",
   "denkmal_overview_url": "https://stadt.muenchen.de/service/info/untere-denkmalschutzbehorde/1073940/",
   "official_pdf_url": null,

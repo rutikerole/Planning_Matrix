@@ -1,6 +1,7 @@
 {
   "_schemaVersion": 1,
   "retrieved_on": "2026-04-29",
+  "dataFreshAsOf": "2026-04-29",
   "id": "02-tennenlohe-aussenbereich",
   "narrative": {
     "title_de": "Neubau Einfamilienhaus — Außenbereichs-Adresse in Tennenlohe",
@@ -18,13 +19,32 @@
   },
   "expected_output": {
     "areas": {
-      "A": { "state": "ACTIVE", "reason": "Voraussichtlich § 35 BauGB Außenbereich; verbindliche Einstufung über Geoportal / Bauamt." },
-      "B": { "state": "PENDING", "reason": "BayBO-Bewertung erst nach Klärung der § 35-Zulässigkeit sinnvoll." },
-      "C": { "state": "PENDING", "reason": "Naturschutzrecht ggf. relevant; konkret abhängig vom Geltungsbereich." }
+      "A": {
+        "state": "ACTIVE",
+        "reason": "Voraussichtlich § 35 BauGB Außenbereich; verbindliche Einstufung über Geoportal / Bauamt."
+      },
+      "B": {
+        "state": "PENDING",
+        "reason": "BayBO-Bewertung erst nach Klärung der § 35-Zulässigkeit sinnvoll."
+      },
+      "C": {
+        "state": "PENDING",
+        "reason": "Naturschutzrecht ggf. relevant; konkret abhängig vom Geltungsbereich."
+      }
     },
     "must_contain_facts": [
-      { "key": "plot.postcode", "value": "91058", "source": "CLIENT", "quality": "DECIDED" },
-      { "key": "plot.stadtteil", "value": "Tennenlohe", "source": "LEGAL", "quality": "CALCULATED" }
+      {
+        "key": "plot.postcode",
+        "value": "91058",
+        "source": "CLIENT",
+        "quality": "DECIDED"
+      },
+      {
+        "key": "plot.stadtteil",
+        "value": "Tennenlohe",
+        "source": "LEGAL",
+        "quality": "CALCULATED"
+      }
     ],
     "must_contain_procedures": [],
     "must_contain_documents": [],

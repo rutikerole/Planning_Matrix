@@ -1,6 +1,7 @@
 {
   "_schemaVersion": 1,
   "retrieved_on": "2026-04-30",
+  "dataFreshAsOf": "2026-04-30",
   "id": "07-altstadt-denkmal",
   "narrative": {
     "title_de": "Sanierung im Denkmalbereich — Altstadt-Lehel (Stadtbezirk 1, Bauamt Mitte)",
@@ -18,28 +19,78 @@
   },
   "expected_output": {
     "areas": {
-      "A": { "state": "ACTIVE", "reason": "Innenbereich Altstadt; mit hoher Wahrscheinlichkeit qualifizierter B-Plan oder unbeplanter Innenbereich; Stadtbild-Schutz im Altstadt-Ensemble." },
-      "B": { "state": "ACTIVE", "reason": "Sanierung in BayBO Art. 57 ff.; ggf. zusätzliche Genehmigungspflichten durch Erhaltungs-/Denkmalrecht." },
-      "C": { "state": "ACTIVE", "reason": "Erhaltungssatzung Altstadt + BayDSchG Art. 6 (Denkmalensemble) — DOPPELTE bis DREIFACHE Erlaubnis erforderlich. Werbeanlagensatzung-Strenge greift bei Werbung."  }
+      "A": {
+        "state": "ACTIVE",
+        "reason": "Innenbereich Altstadt; mit hoher Wahrscheinlichkeit qualifizierter B-Plan oder unbeplanter Innenbereich; Stadtbild-Schutz im Altstadt-Ensemble."
+      },
+      "B": {
+        "state": "ACTIVE",
+        "reason": "Sanierung in BayBO Art. 57 ff.; ggf. zusätzliche Genehmigungspflichten durch Erhaltungs-/Denkmalrecht."
+      },
+      "C": {
+        "state": "ACTIVE",
+        "reason": "Erhaltungssatzung Altstadt + BayDSchG Art. 6 (Denkmalensemble) — DOPPELTE bis DREIFACHE Erlaubnis erforderlich. Werbeanlagensatzung-Strenge greift bei Werbung."
+      }
     },
     "must_contain_facts": [
-      { "key": "plot.postcode", "value": "80331", "source": "CLIENT", "quality": "DECIDED" },
-      { "key": "plot.stadtbezirk_number", "value": 1, "source": "LEGAL", "quality": "CALCULATED" },
-      { "key": "plot.stadtbezirk_name", "value": "Altstadt-Lehel", "source": "LEGAL", "quality": "CALCULATED" },
-      { "key": "plot.bauamt_office", "value": "mitte", "source": "LEGAL", "quality": "CALCULATED" },
-      { "key": "intent", "value": "sanierung", "source": "CLIENT", "quality": "DECIDED" }
+      {
+        "key": "plot.postcode",
+        "value": "80331",
+        "source": "CLIENT",
+        "quality": "DECIDED"
+      },
+      {
+        "key": "plot.stadtbezirk_number",
+        "value": 1,
+        "source": "LEGAL",
+        "quality": "CALCULATED"
+      },
+      {
+        "key": "plot.stadtbezirk_name",
+        "value": "Altstadt-Lehel",
+        "source": "LEGAL",
+        "quality": "CALCULATED"
+      },
+      {
+        "key": "plot.bauamt_office",
+        "value": "mitte",
+        "source": "LEGAL",
+        "quality": "CALCULATED"
+      },
+      {
+        "key": "intent",
+        "value": "sanierung",
+        "source": "CLIENT",
+        "quality": "DECIDED"
+      }
     ],
     "must_contain_procedures": [
-      { "id": "P-erhaltungssatzung-erlaubnis", "min_status": "erforderlich" },
-      { "id": "P-denkmalrechtliche-erlaubnis", "min_status": "erforderlich" }
+      {
+        "id": "P-erhaltungssatzung-erlaubnis",
+        "min_status": "erforderlich"
+      },
+      {
+        "id": "P-denkmalrechtliche-erlaubnis",
+        "min_status": "erforderlich"
+      }
     ],
     "must_contain_documents": [
-      { "id": "D-Bauzeichnungen" },
-      { "id": "D-Denkmalpflegerische-Stellungnahme" }
+      {
+        "id": "D-Bauzeichnungen"
+      },
+      {
+        "id": "D-Denkmalpflegerische-Stellungnahme"
+      }
     ],
     "must_contain_roles": [
-      { "id": "R-Bauvorlageberechtigter", "needed": true },
-      { "id": "R-Denkmalpflege", "needed": true }
+      {
+        "id": "R-Bauvorlageberechtigter",
+        "needed": true
+      },
+      {
+        "id": "R-Denkmalpflege",
+        "needed": true
+      }
     ],
     "must_contain_recommendations_anchors": [
       "Erhaltungssatzung",

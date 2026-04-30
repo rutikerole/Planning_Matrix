@@ -1,12 +1,16 @@
 {
   "_schemaVersion": 1,
   "retrieved_on": "2026-04-30",
+  "dataFreshAsOf": "2026-04-30",
   "id": "denkmalschutz",
   "official_name_de": "Bayerische Denkmalliste — Landeshauptstadt München (Auszug Baudenkmäler + Ensembles + Bodendenkmäler)",
   "_note_de": "Die Denkmalliste ist KEINE Satzung der Stadt München, sondern wird vom Bayerischen Landesamt für Denkmalpflege (BLfD) auf Grundlage des BayDSchG geführt. Sie liegt in dieser Datei nur strukturell als 'satzungsähnliche' Quelle vor, weil sie für jedes Münchner Bauvorhaben am Bestand denkmalrechtlich gleichermaßen verbindlich ist wie eine kommunale Satzung. Untere Denkmalschutzbehörde in München ist das Referat für Stadtplanung und Bauordnung — Lokalbaukommission, Abt. Denkmalschutz und Stadtgestaltung.",
   "in_force_since": "1973-10-01",
   "rechtsgrundlage_de": "BayDSchG (Bayerisches Denkmalschutzgesetz, in Kraft seit 1. Oktober 1973)",
-  "source_ids": ["blfd-denkmalliste", "gesetze-bayern-baydschg"],
+  "source_ids": [
+    "blfd-denkmalliste",
+    "gesetze-bayern-baydschg"
+  ],
   "blfd_html_url_pattern": "https://geodaten.bayern.de/denkmal_static_data/externe_denkmalliste/html/162_lk.html",
   "blfd_pdf_url_pattern": "https://geodaten.bayern.de/denkmal_static_data/externe_denkmalliste/pdf/denkmalliste_merge_162000.pdf",
   "_pending_blfd_url_verification": "Stand 2026-04-30: München kreisfreie Stadt entspricht nach Bayern-Konvention den BLfD-Code 162. URL-Form analog zu Erlangen 562_lk; Live-Verifikation ist Quartalsrefresh-Aufgabe.",
@@ -44,16 +48,68 @@
   ],
   "applies_to_postcodes_pattern": "80xxx (gesamtes Stadtgebiet, je nach Eintragung)",
   "iconic_anchors": [
-    { "name": "Frauenkirche (Liebfrauendom)", "address": "Frauenplatz 12, 80331 München", "stadtbezirk": "01 Altstadt-Lehel", "stadtbezirk_number": 1 },
-    { "name": "Residenz München", "address": "Residenzstraße 1, 80333 München", "stadtbezirk": "01 Altstadt-Lehel", "stadtbezirk_number": 1 },
-    { "name": "Alte Pinakothek", "address": "Barer Straße 27, 80333 München", "stadtbezirk": "03 Maxvorstadt", "stadtbezirk_number": 3 },
-    { "name": "Neue Pinakothek", "address": "Barer Straße 29, 80799 München", "stadtbezirk": "03 Maxvorstadt", "stadtbezirk_number": 3 },
-    { "name": "Olympiapark mit Olympiaturm", "address": "Spiridon-Louis-Ring 21, 80809 München", "stadtbezirk": "11 Milbertshofen-Am Hart", "stadtbezirk_number": 11, "_note": "Eingetragen 1998 als Bau- und Gartendenkmal." },
-    { "name": "Schloss Nymphenburg + Park", "address": "Schloß Nymphenburg 1, 80638 München", "stadtbezirk": "09 Neuhausen-Nymphenburg", "stadtbezirk_number": 9 },
-    { "name": "Englischer Garten (südlicher Teil)", "address": "Lehel / Schwabing, 80538-80805 München", "stadtbezirk": "01/12 mehrere", "_note": "Großes Gartendenkmal, Stadtbezirke-übergreifend." },
-    { "name": "Hofbräuhaus am Platzl", "address": "Platzl 9, 80331 München", "stadtbezirk": "01 Altstadt-Lehel", "stadtbezirk_number": 1 },
-    { "name": "Asamkirche (St. Johann Nepomuk)", "address": "Sendlinger Straße 32, 80331 München", "stadtbezirk": "01 Altstadt-Lehel", "stadtbezirk_number": 1 },
-    { "name": "Allianz Arena (jüngere Eintragung — Industriedenkmal)", "address": "Werner-Heisenberg-Allee 25, 80939 München", "stadtbezirk": "11 Milbertshofen-Am Hart", "stadtbezirk_number": 11, "_note_pending": "Eintragungsstatus zu verifizieren." }
+    {
+      "name": "Frauenkirche (Liebfrauendom)",
+      "address": "Frauenplatz 12, 80331 München",
+      "stadtbezirk": "01 Altstadt-Lehel",
+      "stadtbezirk_number": 1
+    },
+    {
+      "name": "Residenz München",
+      "address": "Residenzstraße 1, 80333 München",
+      "stadtbezirk": "01 Altstadt-Lehel",
+      "stadtbezirk_number": 1
+    },
+    {
+      "name": "Alte Pinakothek",
+      "address": "Barer Straße 27, 80333 München",
+      "stadtbezirk": "03 Maxvorstadt",
+      "stadtbezirk_number": 3
+    },
+    {
+      "name": "Neue Pinakothek",
+      "address": "Barer Straße 29, 80799 München",
+      "stadtbezirk": "03 Maxvorstadt",
+      "stadtbezirk_number": 3
+    },
+    {
+      "name": "Olympiapark mit Olympiaturm",
+      "address": "Spiridon-Louis-Ring 21, 80809 München",
+      "stadtbezirk": "11 Milbertshofen-Am Hart",
+      "stadtbezirk_number": 11,
+      "_note": "Eingetragen 1998 als Bau- und Gartendenkmal."
+    },
+    {
+      "name": "Schloss Nymphenburg + Park",
+      "address": "Schloß Nymphenburg 1, 80638 München",
+      "stadtbezirk": "09 Neuhausen-Nymphenburg",
+      "stadtbezirk_number": 9
+    },
+    {
+      "name": "Englischer Garten (südlicher Teil)",
+      "address": "Lehel / Schwabing, 80538-80805 München",
+      "stadtbezirk": "01/12 mehrere",
+      "_note": "Großes Gartendenkmal, Stadtbezirke-übergreifend."
+    },
+    {
+      "name": "Hofbräuhaus am Platzl",
+      "address": "Platzl 9, 80331 München",
+      "stadtbezirk": "01 Altstadt-Lehel",
+      "stadtbezirk_number": 1
+    },
+    {
+      "name": "Asamkirche (St. Johann Nepomuk)",
+      "address": "Sendlinger Straße 32, 80331 München",
+      "stadtbezirk": "01 Altstadt-Lehel",
+      "stadtbezirk_number": 1
+    },
+    {
+      "name": "Allianz Arena (jüngere Eintragung — Industriedenkmal)",
+      "address": "Werner-Heisenberg-Allee 25, 80939 München",
+      "stadtbezirk": "11 Milbertshofen-Am Hart",
+      "stadtbezirk_number": 11,
+      "_note_pending": "Eintragungsstatus zu verifizieren."
+    }
   ],
   "ensemble_altstadt": {
     "_note_de": "Das BLfD-Ensemble 'Altstadt München' (zugehöriger Code in der Form E-1-62-000-x) umfasst die historische Innenstadt innerhalb der ehemaligen Stadtmauer. Bei JEDEM Bauvorhaben in den Stadtbezirken 01 (Altstadt-Lehel) ist daher zu prüfen, ob das Grundstück im Ensemble-Umgriff liegt — die denkmalrechtliche Erlaubnispflicht greift dann selbst bei Gebäuden, die einzeln nicht in der Denkmalliste stehen.",

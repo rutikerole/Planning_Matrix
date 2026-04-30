@@ -1,6 +1,7 @@
 {
   "_schemaVersion": 1,
   "retrieved_on": "2026-04-29",
+  "dataFreshAsOf": "2026-04-29",
   "id": "07-denkmal-burgberg",
   "narrative": {
     "title_de": "Sanierung im Denkmal-/Erhaltungssatzungsbereich — Burgberg",
@@ -18,26 +19,66 @@
   },
   "expected_output": {
     "areas": {
-      "A": { "state": "ACTIVE", "reason": "Innenbereich, ggf. B-Plan; Stadtbild-Schutz im Burgberg-Kontext." },
-      "B": { "state": "ACTIVE", "reason": "Sanierung in BayBO Art. 57 ff.; ggf. zusätzliche Genehmigungspflichten durch Erhaltungs-/Denkmalrecht." },
-      "C": { "state": "ACTIVE", "reason": "Erhaltungssatzung Burgberg + BayDSchG Art. 6 (Denkmalliste-Eintrag Burgbergkapelle) — DOPPELTE Erlaubnis erforderlich." }
+      "A": {
+        "state": "ACTIVE",
+        "reason": "Innenbereich, ggf. B-Plan; Stadtbild-Schutz im Burgberg-Kontext."
+      },
+      "B": {
+        "state": "ACTIVE",
+        "reason": "Sanierung in BayBO Art. 57 ff.; ggf. zusätzliche Genehmigungspflichten durch Erhaltungs-/Denkmalrecht."
+      },
+      "C": {
+        "state": "ACTIVE",
+        "reason": "Erhaltungssatzung Burgberg + BayDSchG Art. 6 (Denkmalliste-Eintrag Burgbergkapelle) — DOPPELTE Erlaubnis erforderlich."
+      }
     },
     "must_contain_facts": [
-      { "key": "plot.postcode", "value": "91054", "source": "CLIENT", "quality": "DECIDED" },
-      { "key": "plot.stadtteil", "value": "Burgberg", "source": "LEGAL", "quality": "CALCULATED" },
-      { "key": "intent", "value": "sanierung", "source": "CLIENT", "quality": "DECIDED" }
+      {
+        "key": "plot.postcode",
+        "value": "91054",
+        "source": "CLIENT",
+        "quality": "DECIDED"
+      },
+      {
+        "key": "plot.stadtteil",
+        "value": "Burgberg",
+        "source": "LEGAL",
+        "quality": "CALCULATED"
+      },
+      {
+        "key": "intent",
+        "value": "sanierung",
+        "source": "CLIENT",
+        "quality": "DECIDED"
+      }
     ],
     "must_contain_procedures": [
-      { "id": "P-erhaltungssatzung-burgberg-genehmigung", "min_status": "erforderlich" },
-      { "id": "P-denkmalrechtliche-erlaubnis", "min_status": "erforderlich" }
+      {
+        "id": "P-erhaltungssatzung-burgberg-genehmigung",
+        "min_status": "erforderlich"
+      },
+      {
+        "id": "P-denkmalrechtliche-erlaubnis",
+        "min_status": "erforderlich"
+      }
     ],
     "must_contain_documents": [
-      { "id": "D-Bauzeichnungen" },
-      { "id": "D-Denkmalpflegerische-Stellungnahme" }
+      {
+        "id": "D-Bauzeichnungen"
+      },
+      {
+        "id": "D-Denkmalpflegerische-Stellungnahme"
+      }
     ],
     "must_contain_roles": [
-      { "id": "R-Bauvorlageberechtigter", "needed": true },
-      { "id": "R-Denkmalpflege", "needed": true }
+      {
+        "id": "R-Bauvorlageberechtigter",
+        "needed": true
+      },
+      {
+        "id": "R-Denkmalpflege",
+        "needed": true
+      }
     ],
     "must_contain_recommendations_anchors": [
       "Erhaltungssatzung Burgberg",

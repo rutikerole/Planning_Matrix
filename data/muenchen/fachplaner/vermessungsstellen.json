@@ -1,9 +1,12 @@
 {
   "_schemaVersion": 1,
   "retrieved_on": "2026-04-30",
+  "dataFreshAsOf": "2026-04-30",
   "discipline_de": "Vermessungsstellen / Lageplan-Ersteller:innen",
   "discipline_en": "Surveying offices (cadastral / building site plans)",
-  "source_ids": ["adbv-muenchen"],
+  "source_ids": [
+    "adbv-muenchen"
+  ],
   "scope_note_de": "WICHTIG (Phase-2.5-Befund, übernommen): Bayern verwendet die Bezeichnung 'Öffentlich bestellte:r Vermessungsingenieur:in (ÖbVI)' NICHT in der Form anderer Bundesländer. In Bayern wird das Liegenschaftskataster vom 'Amt für Digitalisierung, Breitband und Vermessung' (ADBV) geführt — für München ist das ADBV München zuständig. Amtliche Lagepläne nach BayBO Art. 64 Abs. 3 erstellen wahlweise das ADBV oder zugelassene Vermessungsstellen.",
   "registry_urls": [
     {

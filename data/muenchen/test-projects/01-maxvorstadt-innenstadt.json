@@ -1,6 +1,7 @@
 {
   "_schemaVersion": 1,
   "retrieved_on": "2026-04-30",
+  "dataFreshAsOf": "2026-04-30",
   "id": "01-maxvorstadt-innenstadt",
   "narrative": {
     "title_de": "Neubau Mehrfamilienhaus — Türkenstraße 25, 80799 Maxvorstadt",
@@ -18,36 +19,106 @@
   },
   "expected_output": {
     "areas": {
-      "A": { "state": "ACTIVE", "reason": "Innenbereich Maxvorstadt; qualifizierter B-Plan plausibel — Verifikation über Geoportal/WMS-Layer plan:vagrund_baug_umgriff_veredelt_in_kraft." },
-      "B": { "state": "ACTIVE", "reason": "Mehrfamilienhaus regelmäßig GK 3 oder GK 4; Verfahren nach BayBO Art. 60 wahrscheinlich, soweit nicht durch B-Plan vereinfacht." },
-      "C": { "state": "ACTIVE", "reason": "Stellplatzsatzung StPlS 926 (Wohnung 1 Stp/WE; BayWoFG 0,5; Mietpreis-Bindung 0,8); PV-Pflicht BayBO Art. 44a; Baumschutzverordnung 901 wenn Bestandsbäume; ggf. Erhaltungssatzung in Maxvorstadt." }
+      "A": {
+        "state": "ACTIVE",
+        "reason": "Innenbereich Maxvorstadt; qualifizierter B-Plan plausibel — Verifikation über Geoportal/WMS-Layer plan:vagrund_baug_umgriff_veredelt_in_kraft."
+      },
+      "B": {
+        "state": "ACTIVE",
+        "reason": "Mehrfamilienhaus regelmäßig GK 3 oder GK 4; Verfahren nach BayBO Art. 60 wahrscheinlich, soweit nicht durch B-Plan vereinfacht."
+      },
+      "C": {
+        "state": "ACTIVE",
+        "reason": "Stellplatzsatzung StPlS 926 (Wohnung 1 Stp/WE; BayWoFG 0,5; Mietpreis-Bindung 0,8); PV-Pflicht BayBO Art. 44a; Baumschutzverordnung 901 wenn Bestandsbäume; ggf. Erhaltungssatzung in Maxvorstadt."
+      }
     },
     "must_contain_facts": [
-      { "key": "plot.postcode", "value": "80799", "source": "CLIENT", "quality": "DECIDED" },
-      { "key": "plot.city", "value": "München", "source": "CLIENT", "quality": "DECIDED" },
-      { "key": "plot.stadtbezirk_number", "value": 3, "source": "LEGAL", "quality": "CALCULATED" },
-      { "key": "plot.stadtbezirk_name", "value": "Maxvorstadt", "source": "LEGAL", "quality": "CALCULATED" },
-      { "key": "plot.bauamt_office", "value": "mitte", "source": "LEGAL", "quality": "CALCULATED" },
-      { "key": "intent", "value": "neubau_mehrfamilienhaus", "source": "CLIENT", "quality": "DECIDED" }
+      {
+        "key": "plot.postcode",
+        "value": "80799",
+        "source": "CLIENT",
+        "quality": "DECIDED"
+      },
+      {
+        "key": "plot.city",
+        "value": "München",
+        "source": "CLIENT",
+        "quality": "DECIDED"
+      },
+      {
+        "key": "plot.stadtbezirk_number",
+        "value": 3,
+        "source": "LEGAL",
+        "quality": "CALCULATED"
+      },
+      {
+        "key": "plot.stadtbezirk_name",
+        "value": "Maxvorstadt",
+        "source": "LEGAL",
+        "quality": "CALCULATED"
+      },
+      {
+        "key": "plot.bauamt_office",
+        "value": "mitte",
+        "source": "LEGAL",
+        "quality": "CALCULATED"
+      },
+      {
+        "key": "intent",
+        "value": "neubau_mehrfamilienhaus",
+        "source": "CLIENT",
+        "quality": "DECIDED"
+      }
     ],
     "must_contain_procedures": [
-      { "id": "P-art60-baugenehmigungsverfahren" }
+      {
+        "id": "P-art60-baugenehmigungsverfahren"
+      }
     ],
     "must_contain_documents": [
-      { "id": "D-Lageplan" },
-      { "id": "D-Bauzeichnungen" },
-      { "id": "D-Standsicherheitsnachweis" },
-      { "id": "D-Brandschutznachweis" },
-      { "id": "D-GEG-Nachweis" },
-      { "id": "D-Stellplatznachweis" },
-      { "id": "D-PV-Konzept" }
+      {
+        "id": "D-Lageplan"
+      },
+      {
+        "id": "D-Bauzeichnungen"
+      },
+      {
+        "id": "D-Standsicherheitsnachweis"
+      },
+      {
+        "id": "D-Brandschutznachweis"
+      },
+      {
+        "id": "D-GEG-Nachweis"
+      },
+      {
+        "id": "D-Stellplatznachweis"
+      },
+      {
+        "id": "D-PV-Konzept"
+      }
     ],
     "must_contain_roles": [
-      { "id": "R-Bauvorlageberechtigter", "needed": true },
-      { "id": "R-Tragwerksplaner", "needed": true },
-      { "id": "R-Brandschutz", "needed": true },
-      { "id": "R-Vermessungsstelle", "needed": true },
-      { "id": "R-Energieberater", "needed": true }
+      {
+        "id": "R-Bauvorlageberechtigter",
+        "needed": true
+      },
+      {
+        "id": "R-Tragwerksplaner",
+        "needed": true
+      },
+      {
+        "id": "R-Brandschutz",
+        "needed": true
+      },
+      {
+        "id": "R-Vermessungsstelle",
+        "needed": true
+      },
+      {
+        "id": "R-Energieberater",
+        "needed": true
+      }
     ],
     "must_contain_recommendations_anchors": [
       "Begutachtung Bezirk Mitte",

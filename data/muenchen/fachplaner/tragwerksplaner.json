@@ -1,9 +1,13 @@
 {
   "_schemaVersion": 1,
   "retrieved_on": "2026-04-30",
+  "dataFreshAsOf": "2026-04-30",
   "discipline_de": "Tragwerksplaner:innen (Baustatik)",
   "discipline_en": "Structural engineers / load-bearing planning",
-  "source_ids": ["bayika", "bayika-ingenieursuche"],
+  "source_ids": [
+    "bayika",
+    "bayika-ingenieursuche"
+  ],
   "scope_note_de": "Auszug aus der öffentlichen Planer- und Ingenieursuche der Bayerischen Ingenieurekammer-Bau (BAYIKA), gefiltert auf Geschäftssitz München. Tragwerksplaner:innen müssen für die Bauvorlageberechtigung in Bayern in der 'Liste der bauvorlageberechtigten Ingenieure' eingetragen sein (BayBO Art. 61 Abs. 7). Diese Datei ist eine Stichprobe; die kanonische Quelle ist die BAYIKA-Ingenieursuche.",
   "registry_urls": [
     {

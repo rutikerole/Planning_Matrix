@@ -1,13 +1,17 @@
 {
   "_schemaVersion": 1,
   "retrieved_on": "2026-04-30",
+  "dataFreshAsOf": "2026-04-30",
   "id": "einfriedungen",
   "official_name_de": "Einfriedungssatzung der Landeshauptstadt München",
   "_short_name": "Einfriedungssatzung (existiert nicht als eigenständige Satzung — siehe _note_de)",
   "_note_de": "ACHTUNG: München führt KEINE eigenständige Einfriedungssatzung als separates Dokument im Stadtrecht-Verzeichnis. Anforderungen an Einfriedungen (Zäune, Mauern, Hecken) sind in München typischerweise in den jeweiligen Bebauungsplänen festgesetzt — sie variieren stark zwischen den Stadtbezirken und Gebietstypen. Diese Datei dokumentiert die Realität, ohne ein nicht-existierendes Dokument zu erfinden.",
   "in_force_since": null,
   "rechtsgrundlage_de": "Soweit Einfriedungs-Anforderungen bestehen, folgen sie aus: (a) den einzelnen Bebauungsplänen (BauGB § 9), (b) BayBO Art. 6 (Abstandsflächen, soweit Einfriedungen Abstandsflächen-relevant sind), (c) der Gestaltungs- und Begrünungssatzung 924 (für unbebaute Flächen), und (d) ggf. lokalen Erhaltungssatzungen.",
-  "source_ids": ["stadt-muenchen-recht", "gesetze-bayern-baybo"],
+  "source_ids": [
+    "stadt-muenchen-recht",
+    "gesetze-bayern-baybo"
+  ],
   "official_pdf_url": null,
   "overview_url": "https://stadt.muenchen.de/rathaus/stadtrecht/alphabetisch.html",
   "key_values": [

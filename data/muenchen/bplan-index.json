@@ -1,6 +1,7 @@
 {
   "_schemaVersion": 1,
   "retrieved_on": "2026-04-30",
+  "dataFreshAsOf": "2026-04-30",
   "source_ids": [
     "geoportal-muenchen-wms-plan",
     "stadt-muenchen-bplaene"

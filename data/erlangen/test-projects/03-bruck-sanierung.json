@@ -1,6 +1,7 @@
 {
   "_schemaVersion": 1,
   "retrieved_on": "2026-04-29",
+  "dataFreshAsOf": "2026-04-29",
   "id": "03-bruck-sanierung",
   "narrative": {
     "title_de": "Sanierung Wohngebäude — Bruck (Erlangen-Süd, PLZ 91056)",
@@ -18,24 +19,57 @@
   },
   "expected_output": {
     "areas": {
-      "A": { "state": "ACTIVE", "reason": "Innenbereich nach § 34 BauGB; B-Plan-Lage zu prüfen." },
-      "B": { "state": "ACTIVE", "reason": "Sanierung an einer baulichen Anlage; Genehmigungs-/Anzeigepflicht nach BayBO Art. 57 ff. zu klären." },
-      "C": { "state": "ACTIVE", "reason": "GEG-Sanierungspflichten anwendbar; Niederschlagswasser bei Eingriff in Dach/Versiegelung zu beachten." }
+      "A": {
+        "state": "ACTIVE",
+        "reason": "Innenbereich nach § 34 BauGB; B-Plan-Lage zu prüfen."
+      },
+      "B": {
+        "state": "ACTIVE",
+        "reason": "Sanierung an einer baulichen Anlage; Genehmigungs-/Anzeigepflicht nach BayBO Art. 57 ff. zu klären."
+      },
+      "C": {
+        "state": "ACTIVE",
+        "reason": "GEG-Sanierungspflichten anwendbar; Niederschlagswasser bei Eingriff in Dach/Versiegelung zu beachten."
+      }
     },
     "must_contain_facts": [
-      { "key": "plot.postcode", "value": "91056", "source": "CLIENT", "quality": "DECIDED" },
-      { "key": "plot.stadtteil", "value": "Bruck", "source": "LEGAL", "quality": "CALCULATED" },
-      { "key": "intent", "value": "sanierung", "source": "CLIENT", "quality": "DECIDED" }
+      {
+        "key": "plot.postcode",
+        "value": "91056",
+        "source": "CLIENT",
+        "quality": "DECIDED"
+      },
+      {
+        "key": "plot.stadtteil",
+        "value": "Bruck",
+        "source": "LEGAL",
+        "quality": "CALCULATED"
+      },
+      {
+        "key": "intent",
+        "value": "sanierung",
+        "source": "CLIENT",
+        "quality": "DECIDED"
+      }
     ],
     "must_contain_procedures": [
-      { "id": "P-art57-anzeige-oder-freistellung" }
+      {
+        "id": "P-art57-anzeige-oder-freistellung"
+      }
     ],
     "must_contain_documents": [
-      { "id": "D-Bauzeichnungen" },
-      { "id": "D-GEG-Sanierungsnachweis" }
+      {
+        "id": "D-Bauzeichnungen"
+      },
+      {
+        "id": "D-GEG-Sanierungsnachweis"
+      }
     ],
     "must_contain_roles": [
-      { "id": "R-Energieberater", "needed": true }
+      {
+        "id": "R-Energieberater",
+        "needed": true
+      }
     ],
     "must_contain_recommendations_anchors": [
       "BayBO Art. 57",
