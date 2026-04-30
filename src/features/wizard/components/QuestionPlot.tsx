@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { lazy, Suspense, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { AnimatePresence, m, useReducedMotion } from 'framer-motion'
 import { cn } from '@/lib/utils'
@@ -8,6 +8,13 @@ import { useWizardState } from '../hooks/useWizardState'
 import { isMuenchenAddress, isPlotAddressValid } from '../lib/plotValidation'
 import type { Intent } from '../lib/selectTemplate'
 import { WizardTitleBlock } from './WizardTitleBlock'
+
+// Phase 6a — lazy-loaded map. Non-admin users never download the
+// Leaflet bundle; the import only fires when isMapPreviewEnabled is
+// true and the wrapper actually renders.
+const PlotMap = lazy(() =>
+  import('./PlotMap/PlotMap').then((m) => ({ default: m.PlotMap })),
+)
 
 interface Props {
   /** Submit handler — orchestrates INSERT + first-turn priming + navigate. */
@@ -223,6 +230,21 @@ export function QuestionPlot({ onSubmit, submitError }: Props) {
               >
                 {t('wizard.q2.muenchenScopeNotice')}
               </p>
+
+              {/* Phase 6a — admin-only map preview. Lazy-loaded so the
+                * non-admin bundle never downloads Leaflet. Wired but
+                * not yet connected to bplan-lookup (that lands in C5).
+                * The map appears once an address is typed; debounced
+                * geocoding fires after 250 ms of typing pause. */}
+              {mapPreviewEnabled && plotAddress.trim().length >= 6 ? (
+                <Suspense
+                  fallback={
+                    <div className="pm-plotmap-empty">Karte wird geladen…</div>
+                  }
+                >
+                  <PlotMap address={plotAddress} />
+                </Suspense>
+              ) : null}
             </div>
           </m.div>
         )}

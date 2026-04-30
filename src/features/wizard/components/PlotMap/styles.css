@@ -1,0 +1,110 @@
+/* Phase 6a — Leaflet style overrides to match the Planning_Matrix
+   brand (calm, paper, hairlines, ink/clay/drafting-blue palette).
+   Imported from PlotMap.tsx. */
+
+@import 'leaflet/dist/leaflet.css';
+
+/* Container — paper-tone background, hairline border, no inner pad */
+.pm-plotmap-container {
+  border-radius: 4px;
+  border: 1px solid hsl(var(--border));
+  overflow: hidden;
+  background: hsl(var(--paper));
+}
+
+/* Attribution line — Inter 10px clay, restrained */
+.pm-plotmap-container .leaflet-control-attribution {
+  background: hsl(var(--paper) / 0.92);
+  font-family: Inter, system-ui, sans-serif;
+  font-size: 10px;
+  color: hsl(var(--clay));
+  padding: 2px 6px;
+}
+
+.pm-plotmap-container .leaflet-control-attribution a {
+  color: hsl(var(--clay-deep));
+  text-decoration: underline;
+  text-decoration-thickness: 0.5px;
+  text-underline-offset: 2px;
+}
+
+/* Zoom controls — minimal, hairline, paper background */
+.pm-plotmap-container .leaflet-control-zoom a {
+  background: hsl(var(--paper));
+  color: hsl(var(--ink));
+  border: 1px solid hsl(var(--border));
+  width: 28px;
+  height: 28px;
+  line-height: 28px;
+  font-size: 16px;
+  font-weight: 400;
+}
+
+.pm-plotmap-container .leaflet-control-zoom a:hover {
+  background: hsl(var(--clay) / 0.06);
+}
+
+/* Marker — clay-coloured pin (we render a custom DivIcon, this
+   styles its dot) */
+.pm-plotmap-pin {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: hsl(var(--clay));
+  border: 2px solid hsl(var(--paper));
+  box-shadow: 0 1px 3px hsl(0 0% 0% / 0.18);
+}
+
+.pm-plotmap-pin-shadow {
+  position: absolute;
+  bottom: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 18px;
+  height: 4px;
+  background: hsl(0 0% 0% / 0.12);
+  border-radius: 50%;
+  filter: blur(1.5px);
+}
+
+/* Empty / loading state placeholder, when geocoding has not resolved yet */
+.pm-plotmap-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 280px;
+  color: hsl(var(--clay));
+  font-style: italic;
+  font-family: Source Serif Pro, Georgia, serif;
+  font-size: 13px;
+  background: hsl(var(--paper));
+}
+
+/* Loading hairline at top of map */
+.pm-plotmap-progress {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1.5px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    hsl(var(--clay) / 0.6) 40%,
+    hsl(var(--clay) / 0.6) 60%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: pm-plotmap-progress 1.6s ease-in-out infinite;
+  z-index: 600;
+  pointer-events: none;
+}
+
+@keyframes pm-plotmap-progress {
+  0% { background-position: -100% 0; }
+  100% { background-position: 100% 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pm-plotmap-progress { animation: none; opacity: 0.7; }
+}
