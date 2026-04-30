@@ -115,6 +115,24 @@
     "bauordnungsrecht",
     "sonstige_vorgaben"
   ],
+  "eval_conversation_script": [
+    {
+      "userMessage": "Wir haben an der Truderinger Straße 100 ein ehemaliges kleines Gewerbeobjekt — bisher Werkstatt mit Lager — und wollen es zu fünf Wohnungen umbauen.",
+      "purpose": "establish umnutzung intent + plot in Berg am Laim (→ Bauamt Ost)"
+    },
+    {
+      "userMessage": "Die Fläche liegt laut B-Plan in einem Mischgebiet. Wir sind unsicher, ob Wohnen dort ohne Weiteres zulässig ist.",
+      "purpose": "trigger BauNVO conformity check"
+    },
+    {
+      "userMessage": "Wieviele Stellplätze brauchen wir bei der neuen Wohnnutzung? Bisher gibt es zwei für die Gewerbenutzung.",
+      "purpose": "trigger Münchner Stellplatzsatzung StPlS 926 re-calculation anchor"
+    },
+    {
+      "userMessage": "Das Brandschutzkonzept der jetzigen Werkstatt ist alt — wir nehmen an, es muss für die Wohnnutzung vollständig neu konzipiert werden, richtig?",
+      "purpose": "trigger Brandschutz anchor + R-Brandschutz role"
+    }
+  ],
   "notes_for_eval_harness": [
     "Truderinger Straße 100 ist eine reale Münchner Straße in Berg am Laim. Stadtbezirk 14 → Bauamt Ost.",
     "Schwellen-Test: das Modell muss die Stellplatz-Neuberechnung als eigenständige Pflicht erkennen — bei Gewerbe → Wohnen ändert sich die Stp-Anzahl substanziell, da Wohnung 1 Stp/WE statt z. B. 1/120m² Gewerbe.",

@@ -109,6 +109,24 @@
     "bauordnungsrecht",
     "verfahren"
   ],
+  "eval_conversation_script": [
+    {
+      "userMessage": "Wir planen in der Hohenzollernstraße 25 — Schwabing-West — einen Veranstaltungsraum für Konzerte und Lesungen mit etwa 350 Plätzen Fassungsvermögen.",
+      "purpose": "establish > 200 person capacity → Sonderbau classification"
+    },
+    {
+      "userMessage": "Das Objekt soll in einem bestehenden Hofgebäude entstehen, mit Umbau und einer Erweiterung des Daches.",
+      "purpose": "establish Bestandsgebäude + bauliche Veränderung"
+    },
+    {
+      "userMessage": "Wie läuft das Genehmigungsverfahren — kommt für uns ein vereinfachtes Verfahren in Betracht, oder eine Genehmigungsfreistellung?",
+      "purpose": "PROVOKE must_not_contain: model must REJECT Art. 57 / Art. 58 / vereinfachtes Verfahren / Genehmigungsfreistellung and affirm Art. 60 BayBO"
+    },
+    {
+      "userMessage": "Welche bautechnischen Nachweise brauchen wir konkret, und gibt es eine Liste der zugelassenen Prüfsachverständigen für den Brandschutz?",
+      "purpose": "trigger BAYAK anchor (NOT BAYIKA — that's the must_not contamination check)"
+    }
+  ],
   "notes_for_eval_harness": [
     "Hohenzollernstraße 25 ist eine reale Münchner Adresse in Schwabing-West (Stadtbezirk 4 → Bauamt Mitte).",
     "Schlüssel-Negativ-Assertion: 'Art. 57' UND 'Art. 58 BayBO' UND 'Genehmigungsfreistellung' UND 'vereinfachtes Verfahren' dürfen NICHT in der Antwort auftauchen — das wäre ein Verfahrens-Fehler des Modells.",

@@ -95,6 +95,24 @@
     "planungsrecht",
     "bauordnungsrecht"
   ],
+  "eval_conversation_script": [
+    {
+      "userMessage": "Wir planen in der Bäckerstraße 50 in Pasing ein Mehrfamilienhaus mit zwölf Wohneinheiten.",
+      "purpose": "establish neubau intent + Pasing-Obermenzing routing → Bauamt West"
+    },
+    {
+      "userMessage": "Das Grundstück hat etwa 850 m² und liegt in einem klassischen Pasinger Quartier — kein Bestandsgebäude, keine besondere Lärmexposition.",
+      "purpose": "plot context"
+    },
+    {
+      "userMessage": "Wir haben gehört, dass es einen 'Bauturbo' nach § 246e BauGB gibt. Können wir den für unser Vorhaben nutzen, um schneller zur Genehmigung zu kommen?",
+      "purpose": "PROVOKE must_not: model must NOT pauschal say § 246e BauGB ist anwendbar / Bauturbo greift; honest hedge required"
+    },
+    {
+      "userMessage": "Pasing liegt direkt am S-Bahn-Knoten — können wir bei den Stellplätzen reduzieren, und was ist mit Photovoltaik beim Wohnneubau?",
+      "purpose": "trigger Stellplatzsatzung anchor (StPlS 926) + PV-Pflicht (BayBO Art. 44a)"
+    }
+  ],
   "notes_for_eval_harness": [
     "Bäckerstraße 50 in 81241 Pasing ist eine reale Adresse. Stadtbezirk 21 → Bauamt West.",
     "Schlüssel-Negativ-Assertion: das Modell darf NICHT pauschal feststellen '§ 246e BauGB ist anwendbar' oder 'Bauturbo greift hier' (Audit-B4-Fix von Phase 3).",

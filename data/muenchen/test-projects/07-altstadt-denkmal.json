@@ -114,6 +114,24 @@
     "bauordnungsrecht",
     "sonstige_vorgaben"
   ],
+  "eval_conversation_script": [
+    {
+      "userMessage": "Es geht um ein historisches Wohn- und Geschäftshaus am Sebastiansplatz 3 in der Altstadt. Vier Stockwerke, vermutlich aus dem späten 19. Jahrhundert.",
+      "purpose": "establish Altstadt-Lehel routing + Bestandsgebäude"
+    },
+    {
+      "userMessage": "Wir wollen sanieren — Fenster austauschen, Innenausbau erneuern, Fassade reinigen, Heizung modernisieren. Die Substanz bleibt im Wesentlichen erhalten.",
+      "purpose": "establish sanierung scope"
+    },
+    {
+      "userMessage": "Das Gebäude steht meines Wissens unter Denkmalschutz. Welche zusätzlichen Genehmigungen brauchen wir neben der baurechtlichen?",
+      "purpose": "trigger BayDSchG Art. 6 + untere Denkmalschutzbehörde anchor"
+    },
+    {
+      "userMessage": "Die Altstadt — ist das nicht zusätzlich ein Erhaltungsbereich, in dem auch eine BauGB-§-172-Erlaubnis erforderlich werden kann?",
+      "purpose": "trigger Erhaltungssatzung Altstadt + Denkmalensemble triple-track"
+    }
+  ],
   "notes_for_eval_harness": [
     "Sebastiansplatz 3 ist eine reale Adresse in der Münchner Altstadt (PLZ 80331), nahe der Asamkirche. Stadtbezirk 1 → Bauamt Mitte.",
     "Schlüssel-Drei-Spuren-Assertion: 'Erhaltungssatzung' UND 'BayDSchG' MÜSSEN beide vorkommen — ein Modell, das nur eine Schicht nennt, ist im Altstadt-Bereich strukturell falsch.",

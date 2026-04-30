@@ -106,6 +106,24 @@
     "bauordnungsrecht",
     "sonstige_vorgaben"
   ],
+  "eval_conversation_script": [
+    {
+      "userMessage": "Das Bestandsgebäude in der Pariser Straße 12 ist ein Mehrfamilienhaus aus den 1920er-Jahren mit fünf Wohnungen, vier Stockwerken plus Dach.",
+      "purpose": "establish Bestandsgebäude + Stadtbezirk-Haidhausen routing"
+    },
+    {
+      "userMessage": "Wir möchten energetisch sanieren: Außenwand- und Dachdämmung, Heizungserneuerung, Fassadensanierung. Innen wird kein Grundriss verändert.",
+      "purpose": "trigger BayBO Art. 57 + GEG sanierung-Pflicht"
+    },
+    {
+      "userMessage": "Das Gebäude ist meines Wissens nicht einzeln in der Denkmalliste eingetragen, aber das Quartier liegt in einem Erhaltungsbereich. Was bedeutet das konkret für unser Vorhaben?",
+      "purpose": "trigger Erhaltungssatzung + BauGB § 172 Erlaubnispflicht"
+    },
+    {
+      "userMessage": "Wegen der Heizung und der Außenwanddämmung — gilt da das GEG, und welcher Sachverständige wird gebraucht?",
+      "purpose": "trigger GEG anchor + R-Energieberater role"
+    }
+  ],
   "notes_for_eval_harness": [
     "Pariser Straße ist eine reale Münchner Straße in Haidhausen. Stadtbezirk 5 → Bauamt Mitte.",
     "Schlüssel-Doppel-Assertion: 'Erhaltungssatzung' UND 'GEG' MÜSSEN beide vorkommen — ein Modell, das nur eine der zwei Schichten nennt, ist unvollständig (Haidhausen ist explizit Erhaltungssatzungs-Quartier laut overview.json).",

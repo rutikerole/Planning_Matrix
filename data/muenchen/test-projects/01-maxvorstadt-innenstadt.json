@@ -142,6 +142,28 @@
     "planungsrecht",
     "bauordnungsrecht"
   ],
+  "eval_conversation_script": [
+    {
+      "userMessage": "Wir planen ein viergeschossiges Mehrfamilienhaus mit acht Wohneinheiten zwischen 80 und 110 m². Die Adresse Türkenstraße 25 liegt in der Maxvorstadt.",
+      "purpose": "establish intent + unit count + plot location for Stadtbezirk routing"
+    },
+    {
+      "userMessage": "Das Grundstück hat etwa 620 m². Aktuell steht kein Bestandsgebäude darauf — es ist ein Eckgrundstück innerhalb des barocken Stadtgrundrisses.",
+      "purpose": "plot size + Innenstadt-Innenbereich confirmation"
+    },
+    {
+      "userMessage": "Ein qualifizierter Bebauungsplan liegt vor — wir möchten den Festsetzungen vollständig entsprechen.",
+      "purpose": "trigger § 30 BauGB regime + Art. 60 BayBO procedure"
+    },
+    {
+      "userMessage": "Photovoltaik haben wir noch nicht eingeplant. Greift die PV-Pflicht für Wohnneubauten in unserem Fall?",
+      "purpose": "trigger PV-Pflicht anchor (BayBO Art. 44a)"
+    },
+    {
+      "userMessage": "Bestandsbäume mit mehr als 60 cm Stammumfang gibt es auf dem Grundstück nicht. Welche Schritte schlagen Sie als Nächstes vor?",
+      "purpose": "preempt Baumschutz + drive recommendations toward Begutachtung Bezirk Mitte + plan.ha2-24b@muenchen.de"
+    }
+  ],
   "notes_for_eval_harness": [
     "Türkenstraße 25 ist eine reale Adresse in der Münchner Maxvorstadt; PLZ 80799 = Maxvorstadt + Schwabing-West-Übergang. Stadtbezirk-Routing über bauamt.json: 3 → mitte.",
     "Schlüssel-Cross-Konsistenz: plot.stadtbezirk_number=3 muss zu plot.bauamt_office=mitte führen (Bauamt-Routing-Regel aus bauamt.json sub_offices[].stadtbezirke).",

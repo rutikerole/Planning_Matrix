@@ -275,11 +275,24 @@
         "input",
         "expected_output"
       ],
+      "_phase7_extension_note": "Phase 7 — added the optional `eval_conversation_script` array so the eval harness in scripts/eval-harness/ can drive a 4–6-turn user-side conversation against the deployed chat-turn Edge Function. Purely additive; tests without the field skip eval gracefully.",
       "properties": {
         "_schemaVersion": { "$ref": "#/$defs/schemaVersion" },
         "retrieved_on": { "$ref": "#/$defs/isoDate" },
         "dataFreshAsOf": { "$ref": "#/$defs/dataFreshAsOf" },
         "id": { "type": "string" },
+        "eval_conversation_script": {
+          "type": "array",
+          "description": "Phase 7 — optional. Each entry is one user-side turn the eval harness sends as `userMessage` against the chat-turn Edge Function. The model's first turn is auto-primed by the function (no userMessage), so the script's first entry is the user's reply to that opening question. Authored to surface the test's `expected_output` assertions naturally.",
+          "items": {
+            "type": "object",
+            "required": ["userMessage"],
+            "properties": {
+              "userMessage": { "type": "string", "minLength": 1 },
+              "purpose": { "type": "string", "description": "Authoring note — why this turn exists; not sent to the model." }
+            }
+          }
+        },
         "narrative": {
           "type": "object",
           "required": ["title_de", "summary_de"],

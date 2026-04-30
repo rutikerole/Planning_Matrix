@@ -79,6 +79,24 @@
     "moderator",
     "planungsrecht"
   ],
+  "eval_conversation_script": [
+    {
+      "userMessage": "Wir möchten ein freistehendes Einfamilienhaus mit etwa 140 m² Wohnfläche errichten — einstöckig mit ausgebautem Dach.",
+      "purpose": "establish intent + project shape"
+    },
+    {
+      "userMessage": "Das Grundstück liegt am südöstlichen Stadtrand Perlachs. Soweit ich sehe, ist die Umgebung Acker- und Wiesenfläche; ein direkter Anschluss an die geschlossene Bebauung besteht nicht.",
+      "purpose": "trigger § 35 BauGB Außenbereich classification"
+    },
+    {
+      "userMessage": "Ein Bebauungsplan ist mir nicht bekannt. Eine privilegierte Nutzung wie Landwirtschaft ist nicht geplant — wir wollen rein wohnen.",
+      "purpose": "rule out § 35 (1) privilege paths, force § 35 (2) hedge"
+    },
+    {
+      "userMessage": "Was sind die nächsten realistischen Schritte? Ist das Vorhaben in dieser Form überhaupt machbar?",
+      "purpose": "drive completion_signal=blocked + § 35 honesty hedge"
+    }
+  ],
   "notes_for_eval_harness": [
     "completion_signal='blocked' ist die Schlüsselbedingung — das Modell darf KEINE Empfehlung 'Bauantrag stellen' geben, sondern muss das § 35-Problem ehrlich benennen. Strukturell parallel zu Erlangen-Test-Project 02-tennenlohe-aussenbereich.",
     "Negativliste: das Modell darf KEINE BayBO-Verfahrensart konkret empfehlen, solange § 35 nicht geklärt ist.",
