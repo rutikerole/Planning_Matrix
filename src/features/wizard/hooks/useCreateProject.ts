@@ -5,6 +5,8 @@ import { useQueryClient } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
 import { postChatTurn, ChatTurnError } from '@/lib/chatApi'
 import { useAuthStore } from '@/stores/authStore'
+import type { BplanLookupResult } from '@/types/bplan'
+import type { Fact } from '@/types/projectState'
 import { useWizardState } from './useWizardState'
 import { selectTemplate, type Intent } from '../lib/selectTemplate'
 import { deriveName } from '../lib/deriveName'
@@ -20,6 +22,78 @@ interface CreateProjectInput {
   intent: Intent
   hasPlot: boolean
   plotAddress: string | null
+  /** Phase 6a — admin-only B-Plan lookup result. When present and
+   *  status === 'found', 4 AUTHORITY/VERIFIED facts are seeded into
+   *  the project's initial state so the chat-turn priming turn sees
+   *  them. When status === 'no_plan_found', a single fact records
+   *  that finding so the model's first turn can hedge honestly. When
+   *  null or status === 'upstream_error', no facts are seeded — the
+   *  chat-turn pipeline still works normally. */
+  bplanResult?: BplanLookupResult | null
+}
+
+// ─── Phase 6a — convert a BplanLookupResult into projectState facts ───
+//
+// Only called when bplanResult is non-null. Produces an empty array
+// for upstream_error (we don't fabricate evidence on transient WMS
+// failures). Each fact carries the full Qualifier shape (source +
+// quality + setAt + setBy) so it round-trips cleanly through the
+// existing chat-turn helpers + EckdatenPanel.
+function bplanToFacts(result: BplanLookupResult, nowIso: string): Fact[] {
+  if (result.status === 'upstream_error') return []
+
+  const baseQualifier = {
+    source: 'AUTHORITY' as const,
+    quality: 'VERIFIED' as const,
+    setAt: nowIso,
+    setBy: 'system' as const,
+    reason:
+      'Aus dem WMS-Layer vagrund_baug_umgriff_veredelt_in_kraft des Geoportals der Landeshauptstadt München (Phase-6a-Live-Lookup).',
+  }
+
+  if (result.status === 'no_plan_found') {
+    return [
+      {
+        key: 'bplan.coverage_status',
+        value: 'no_plan_found',
+        qualifier: baseQualifier,
+        evidence: 'Geoportal München, WMS-Layer vagrund_baug_umgriff_veredelt_in_kraft',
+      },
+    ]
+  }
+
+  // status === 'found' — emit up to 4 facts depending on availability.
+  const facts: Fact[] = []
+  if (result.plan_number) {
+    facts.push({
+      key: 'bplan.number',
+      value: result.plan_number,
+      qualifier: baseQualifier,
+      evidence: `WMS feature_id ${result.feature_id ?? '(unknown)'}`,
+    })
+  }
+  if (result.plan_name_de) {
+    facts.push({
+      key: 'bplan.name',
+      value: result.plan_name_de,
+      qualifier: baseQualifier,
+    })
+  }
+  if (result.in_force_since) {
+    facts.push({
+      key: 'bplan.in_force_since',
+      value: result.in_force_since,
+      qualifier: baseQualifier,
+    })
+  }
+  if (result.pdf_url_plan) {
+    facts.push({
+      key: 'bplan.pdf_url_plan',
+      value: result.pdf_url_plan,
+      qualifier: baseQualifier,
+    })
+  }
+  return facts
 }
 
 /**
@@ -64,6 +138,14 @@ export function useCreateProject() {
 
     // ── 1. INSERT project ────────────────────────────────────────────
     const templateId = selectTemplate(input.intent)
+    // Phase 6a — pre-seed state.facts with the B-Plan lookup result
+    // (when present + non-upstream-error). The chat-turn function
+    // hydrates missing fields, so passing partial state is safe.
+    const seededFacts = input.bplanResult
+      ? bplanToFacts(input.bplanResult, new Date().toISOString())
+      : []
+    const initialState =
+      seededFacts.length > 0 ? { facts: seededFacts } : undefined
     const { data: projectRow, error: insertErr } = await supabase
       .from('projects')
       .insert({
@@ -88,6 +170,7 @@ export function useCreateProject() {
         city: 'muenchen',
         template_id: templateId,
         name: deriveName(input.intent, input.hasPlot ? input.plotAddress : null),
+        ...(initialState ? { state: initialState } : {}),
       })
       .select()
       .single()

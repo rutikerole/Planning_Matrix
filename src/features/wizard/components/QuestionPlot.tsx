@@ -24,6 +24,10 @@ interface Props {
     intent: Intent
     hasPlot: boolean
     plotAddress: string | null
+    /** Phase 6a — admin-only B-Plan lookup result (or null when not
+     *  available / not admin). The orchestrator seeds facts from it
+     *  before chat-turn priming. */
+    bplanResult: BplanLookupResult | null
   }) => Promise<void> | void
   /** Optional submit error from the orchestrator (e.g. INSERT failed). */
   submitError: string | null
@@ -96,6 +100,7 @@ export function QuestionPlot({ onSubmit, submitError }: Props) {
       intent,
       hasPlot: hasPlot === true,
       plotAddress: hasPlot === true ? plotAddress.trim() : null,
+      bplanResult,
     })
   }
 
