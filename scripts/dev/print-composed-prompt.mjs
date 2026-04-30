@@ -15,7 +15,10 @@ const __dirname = dirname(fileURLToPath(import.meta.url))
 const root = join(__dirname, '..', '..')
 const slicesDir = join(root, 'supabase/functions/chat-turn/legalContext')
 
-const files = ['shared.ts', 'federal.ts', 'bayern.ts', 'erlangen.ts']
+// Phase 5: active city is München. Erlangen slice is parked (see
+// legalContext/compose.ts comment). Update this list whenever the
+// composer's active-city slice changes.
+const files = ['shared.ts', 'federal.ts', 'bayern.ts', 'muenchen.ts']
 
 const blocks = files.map((f) => {
   const src = readFileSync(join(slicesDir, f), 'utf8')
