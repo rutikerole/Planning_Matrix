@@ -1,0 +1,150 @@
+{
+  "_schemaVersion": 1,
+  "_description": "Canonical source URL registry for the München city-truth slice. Every fact in data/muenchen/ cites one or more of these by `source_ids`. URLs verified live via web fetch on the dates noted; refresh quarterly per data/muenchen/README.md.",
+  "_retrieved_on": "2026-04-30",
+  "sources": {
+    "stadt-muenchen-bplaene": {
+      "label_de": "Stadt München — Rechtsverbindliche Bebauungspläne (Übersichtsseite)",
+      "label_en": "City of Munich — Legally binding development plans (overview)",
+      "url": "https://stadt.muenchen.de/infos/rechtsverbindliche-bebauungsplaene.html",
+      "retrieved_on": "2026-04-30",
+      "type": "official-portal",
+      "verified": true
+    },
+    "geoportal-muenchen-portal-plan": {
+      "label_de": "Geoportal München — Plan-Portal (interaktive Karte)",
+      "label_en": "Munich Geoportal — interactive plan portal",
+      "url": "https://geoportal.muenchen.de/portal/plan/",
+      "retrieved_on": "2026-04-30",
+      "type": "geoportal",
+      "verified": true
+    },
+    "geoportal-muenchen-wms-plan": {
+      "label_de": "Geoportal München — WMS Bebauungspläne (rechtsgültige + Aufstellung + Sanierung + Erhaltung)",
+      "label_en": "Munich Geoportal — WMS for B-Plans, in-process plans, redevelopment & preservation",
+      "url": "https://geoportal.muenchen.de/geoserver/plan/wms",
+      "retrieved_on": "2026-04-30",
+      "type": "api",
+      "verified": true,
+      "note_de": "Nutzungsvereinbarung erforderlich für Produktiv-Nutzung — Kontakt geoportal@muenchen.de. Phase 4/5 unkritisch; Phase 6 setzt die Vereinbarung voraus."
+    },
+    "geoportal-muenchen-wfs-gsm": {
+      "label_de": "Geoportal München — WFS GSM (Stadtbezirke, Bezirksteile, Viertel)",
+      "label_en": "Munich Geoportal — WFS for districts, sub-districts, neighbourhoods",
+      "url": "https://geoportal.muenchen.de/geoserver/gsm_wfs/ows",
+      "retrieved_on": "2026-04-30",
+      "type": "api",
+      "verified": true,
+      "note_de": "FeatureType vablock_stadtbezirk liefert die 25 Stadtbezirke als GeoJSON. Properties: sb_nummer, sb_name, flaeche_qm. Keine PLZ-Information in den Features — Postleitzahl-Mapping ist eine separate Quelle."
+    },
+    "geoportal-muenchen-opendata": {
+      "label_de": "Geoportal München — Open Geodata",
+      "label_en": "Munich Geoportal — open geodata catalogue",
+      "url": "https://geoportal.muenchen.de/portal/opendata/",
+      "retrieved_on": "2026-04-30",
+      "type": "official-portal",
+      "verified": true
+    },
+    "opendata-muenchen-portal": {
+      "label_de": "Open Data Portal München",
+      "label_en": "Munich Open Data portal",
+      "url": "https://opendata.muenchen.de/",
+      "retrieved_on": "2026-04-30",
+      "type": "official-portal",
+      "verified": true
+    },
+    "gdk-bplaene-metadata": {
+      "label_de": "GDK / GDI-DE Metadaten-Eintrag für die München-Bebauungspläne",
+      "label_en": "GDI-DE metadata record for Munich B-Plans",
+      "url": "https://gdk.gdi-de.org/geonetwork/srv/api/records/e143c153-234c-4dfe-bfd7-5404d3910db7",
+      "retrieved_on": "2026-04-30",
+      "type": "registry",
+      "verified": false,
+      "_pending": "Direkt-Fetch der Geonetwork-Record-Seite war im Audit-Setup nicht zwingend erforderlich; URL gemäß Phase-4-Revised-Brief geführt."
+    },
+    "stadt-muenchen-recht": {
+      "label_de": "Stadt München — Recht und Vorschriften (Stadtrecht-Sammlung)",
+      "label_en": "City of Munich — laws and regulations (city law collection)",
+      "url": "https://stadt.muenchen.de/rathaus/verwaltung/recht-und-vorschriften.html",
+      "retrieved_on": "2026-04-30",
+      "type": "official-portal",
+      "verified": true,
+      "note_de": "Einstiegspunkt für Satzungen-Sammlung. Einzel-Satzungen sind PDFs unter Stadtrecht-Pfad."
+    },
+    "byak": {
+      "label_de": "Bayerische Architektenkammer (BAYAK)",
+      "label_en": "Bavarian Chamber of Architects",
+      "url": "https://www.byak.de/",
+      "retrieved_on": "2026-04-30",
+      "type": "registry",
+      "verified": true
+    },
+    "byak-architektensuche": {
+      "label_de": "BAYAK — Architektensuche",
+      "label_en": "BAYAK — public architect search",
+      "url": "https://www.byak.de/planen-und-bauen/architektensuche.html",
+      "retrieved_on": "2026-04-30",
+      "type": "registry",
+      "verified": true
+    },
+    "bayika": {
+      "label_de": "Bayerische Ingenieurekammer-Bau (BAYIKA)",
+      "label_en": "Bavarian Chamber of Civil Engineers",
+      "url": "https://www.bayika.de/",
+      "retrieved_on": "2026-04-30",
+      "type": "registry",
+      "verified": true
+    },
+    "bayika-ingenieursuche": {
+      "label_de": "BAYIKA — Planer- und Ingenieursuche",
+      "label_en": "BAYIKA — engineer & planner search",
+      "url": "https://www.bayika.de/de/ingenieursuche/",
+      "retrieved_on": "2026-04-30",
+      "type": "registry",
+      "verified": true
+    },
+    "bafa-energieeffizienz-experten": {
+      "label_de": "Energieeffizienz-Experten (offizielle Liste, BAFA / dena / KfW)",
+      "label_en": "Energy efficiency experts — official BAFA/dena/KfW registry",
+      "url": "https://www.energie-effizienz-experten.de/",
+      "retrieved_on": "2026-04-30",
+      "type": "registry",
+      "verified": true
+    },
+    "gesetze-bayern-baybo": {
+      "label_de": "BayBO — Bayerische Bauordnung (Gesetze Bayern)",
+      "label_en": "BayBO — Bavarian Building Code",
+      "url": "https://www.gesetze-bayern.de/Content/Document/BayBO",
+      "retrieved_on": "2026-04-30",
+      "type": "statute",
+      "verified": true
+    },
+    "gesetze-bayern-baydschg": {
+      "label_de": "BayDSchG — Bayerisches Denkmalschutzgesetz",
+      "label_en": "BayDSchG — Bavarian Heritage Protection Act",
+      "url": "https://www.gesetze-bayern.de/Content/Document/BayDSchG",
+      "retrieved_on": "2026-04-30",
+      "type": "statute",
+      "verified": false,
+      "_pending": "Nicht direkt im Audit-Setup gefetcht — kanonische gesetze-bayern.de URL-Struktur, gleiche Form wie BayBO."
+    },
+    "blfd-denkmalliste": {
+      "label_de": "Bayerisches Landesamt für Denkmalpflege — Denkmalliste",
+      "label_en": "Bavarian Heritage Office — heritage list",
+      "url": "https://geodaten.bayern.de/denkmal_static_data/externe_denkmalliste/html/162_lk.html",
+      "retrieved_on": "2026-04-30",
+      "type": "registry",
+      "verified": false,
+      "_pending": "Erlangen-Pendant ist 562_lk; München kreisfrei sollte 162_lk sein — verifiziert bei Wave 2 denkmalschutz.json beim PDF-Abruf."
+    },
+    "adbv-muenchen": {
+      "label_de": "Amt für Digitalisierung, Breitband und Vermessung München (ADBV) — Liegenschaftskataster",
+      "label_en": "Munich land surveying authority (cadastre)",
+      "url": "https://www.adbv-muenchen.bayern.de/",
+      "retrieved_on": "2026-04-30",
+      "type": "official-portal",
+      "verified": false,
+      "_pending": "URL geführt nach Bayern-ADBV-Konvention; Live-Verifikation in Wave 4 fachplaner/vermessungsstellen.json."
+    }
+  }
+}
