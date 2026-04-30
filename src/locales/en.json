@@ -607,7 +607,7 @@
         "list": "Attached files"
       },
       "address": {
-        "placeholder": "e.g. Hauptstraße 12, 91054 Erlangen",
+        "placeholder": "e.g. Türkenstraße 25, 80799 München",
         "helper": "We use the address to research the development plan and local statutes.",
         "invalid": "Please enter a full address with house number and postal code."
       },

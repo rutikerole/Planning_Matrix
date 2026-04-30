@@ -613,7 +613,7 @@
         "list": "Angehängte Dateien"
       },
       "address": {
-        "placeholder": "z. B. Hauptstraße 12, 91054 Erlangen",
+        "placeholder": "z. B. Türkenstraße 25, 80799 München",
         "helper": "Wir nutzen die Adresse zur Recherche von Bebauungsplan und örtlichen Satzungen.",
         "invalid": "Bitte geben Sie eine vollständige Adresse mit Hausnummer und Postleitzahl an."
       },

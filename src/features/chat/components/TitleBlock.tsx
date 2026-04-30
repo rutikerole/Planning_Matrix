@@ -11,9 +11,9 @@ interface Props {
  * (Q10, locked).
  *
  *   PROJEKT
- *   NEUBAU EINFAMILIENHAUS · ERLANGEN              [N north arrow]
+ *   NEUBAU EINFAMILIENHAUS · MÜNCHEN               [N north arrow]
  *   ─────────────────────────────────────────
- *   Hauptstraße 12, 91054 Erlangen
+ *   Türkenstraße 25, 80799 München
  *   ─────────────────────────────────────────
  *   Erstellt: 28. April 2026
  *
