@@ -1,0 +1,104 @@
+name: eval harness
+
+# Phase 7 — weekly + on-demand accuracy gate against the deployed
+# chat-turn Edge Function. Runs the 7 München test projects via
+# scripts/eval-harness/run.mjs, commits the markdown report back
+# to main, and opens an issue when any test failed.
+#
+# Drift NEVER triggers an automatic update of the system prompt,
+# the data slice, or the test JSON. Human review is the gate.
+
+on:
+  schedule:
+    # Mondays 04:00 UTC — after Sunday's freshness check (Phase 6.5
+    # cron at 03:00 UTC), with one full day of settle time.
+    - cron: '0 4 * * 1'
+  workflow_dispatch:
+    inputs:
+      single_test:
+        description: 'Run only one test project (e.g. 01-maxvorstadt-innenstadt). Leave blank for all 7.'
+        required: false
+        type: string
+
+permissions:
+  contents: write # commit eval reports back to main
+  issues: write # open issue on failure
+
+jobs:
+  run-eval:
+    runs-on: ubuntu-latest
+    # 7 tests × ~5 turns × ~10 s + 2 s spacing + auth + cleanup.
+    # 25-min ceiling gives ~3× headroom.
+    timeout-minutes: 25
+    env:
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+      EVAL_HARNESS_TEST_USER_PASSWORD: ${{ secrets.EVAL_HARNESS_TEST_USER_PASSWORD }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Run eval harness
+        id: eval
+        run: |
+          if [ -n "${{ inputs.single_test }}" ]; then
+            node scripts/eval-harness/run.mjs --single "${{ inputs.single_test }}"
+          else
+            node scripts/eval-harness/run.mjs
+          fi
+        continue-on-error: true
+
+      - name: Commit eval report
+        # Always commit, even on failure — the report is the audit trail.
+        if: always()
+        run: |
+          git config user.name "eval-harness-bot"
+          git config user.email "eval-harness-bot@users.noreply.github.com"
+          git add eval-results/
+          if git diff --cached --quiet; then
+            echo "No new report to commit."
+          else
+            git commit -m "chore(eval): report from $(date -u +%Y-%m-%d)"
+            git push
+          fi
+
+      - name: Open issue on accuracy regression
+        if: steps.eval.outcome == 'failure'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const today = new Date().toISOString().slice(0, 10)
+            const body = [
+              '## Eval harness failure',
+              '',
+              'One or more of the 7 München test projects failed assertions in the latest harness run.',
+              '',
+              '### What to do',
+              '- [ ] Open the latest report at `eval-results/`',
+              '- [ ] Identify which test(s) failed and which assertions regressed',
+              '- [ ] Decide root cause: prompt drift, model change, data slice change, or unrelated bug',
+              '- [ ] Fix the cause OR update the test if the assertion was wrong (rare — discuss before)',
+              '- [ ] Close this issue when the next run is green',
+              '',
+              '_Generated automatically by `.github/workflows/eval-harness.yml`._',
+            ].join('\n')
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `[eval] Accuracy regression detected — ${today}`,
+              body,
+              labels: ['eval', 'accuracy-regression'],
+            })
+
+      - name: Mark workflow failed if eval failed
+        # Surfaces the regression as a red checkmark on the workflow
+        # run, so the GHA UI is honest about the result. The previous
+        # steps still ran (report committed, issue opened) because
+        # continue-on-error: true on the eval step.
+        if: steps.eval.outcome == 'failure'
+        run: exit 1
