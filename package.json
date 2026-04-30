@@ -14,7 +14,9 @@
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "images": "node scripts/process-images.mjs",
-    "images:download": "bash scripts/download-images.sh"
+    "images:download": "bash scripts/download-images.sh",
+    "freshness:check": "node scripts/freshness-check.mjs",
+    "freshness:report": "node scripts/freshness-check.mjs --report-only"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
