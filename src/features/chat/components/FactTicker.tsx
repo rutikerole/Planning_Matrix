@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { AnimatePresence, m, useReducedMotion } from 'framer-motion'
 import { useChatStore } from '@/stores/chatStore'
-import { FACTS_ERLANGEN } from '@/data/factsErlangen'
+import { FACTS_MUENCHEN } from '@/data/factsMuenchen'
 
 const IDLE_THRESHOLD_MS = 30_000
 const FACT_HOLD_MS = 12_000
@@ -65,14 +65,14 @@ export function FactTicker() {
     const pickNext = () => {
       const seen = seenIdsRef.current
       // Reset the seen set when we've shown them all.
-      if (seen.size >= FACTS_ERLANGEN.length) seen.clear()
-      let next = Math.floor(Math.random() * FACTS_ERLANGEN.length)
+      if (seen.size >= FACTS_MUENCHEN.length) seen.clear()
+      let next = Math.floor(Math.random() * FACTS_MUENCHEN.length)
       let guard = 0
-      while (seen.has(FACTS_ERLANGEN[next].id) && guard < 50) {
-        next = Math.floor(Math.random() * FACTS_ERLANGEN.length)
+      while (seen.has(FACTS_MUENCHEN[next].id) && guard < 50) {
+        next = Math.floor(Math.random() * FACTS_MUENCHEN.length)
         guard++
       }
-      seen.add(FACTS_ERLANGEN[next].id)
+      seen.add(FACTS_MUENCHEN[next].id)
       setFactIndex(next)
     }
     pickNext()
@@ -81,7 +81,7 @@ export function FactTicker() {
   }, [idle])
 
   if (!idle || factIndex === null) return null
-  const fact = FACTS_ERLANGEN[factIndex]
+  const fact = FACTS_MUENCHEN[factIndex]
 
   return (
     <aside className="flex flex-col gap-2 border-t border-border/40 pt-6">

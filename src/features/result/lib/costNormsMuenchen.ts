@@ -1,6 +1,12 @@
 /**
  * Phase 3.5 #63 — Bayern HOAI cost-norm lookup.
  *
+ * Phase 5 — renamed from costNormsErlangen.ts as part of the
+ * Erlangen → München pivot. HOAI is bundesland-level, not
+ * city-level, so the orientation ranges carry over unchanged;
+ * München-specific Behördengebühren are surfaced via the
+ * specialist voices using legalContext, not here.
+ *
  * verifyBeforePublicLaunch — every value here is an EDUCATIONAL
  * ORIENTATION DRAWN FROM HOAI 2021 § 35-39 + practitioner Bayern
  * Honorartabelle ranges. They are not quotes. The Result Page
@@ -13,7 +19,7 @@
  * apply a small multiplier per procedure type and per building class
  * for variety. Floor area is not factored in for v1 (HOAI fee is
  * based on Honorarsumme not area; we'd need the model to emit floor
- * area for that — Phase 4).
+ * area for that — future phase).
  */
 
 export type ProcedureType =

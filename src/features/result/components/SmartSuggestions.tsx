@@ -14,7 +14,7 @@ interface Props {
 /**
  * Phase 3.5 #64 — Section XI: Smart suggestions.
  *
- * 3–5 proactive next steps drawn from `smartSuggestionsErlangen.ts`,
+ * 3–5 proactive next steps drawn from `smartSuggestionsMuenchen.ts`,
  * filtered by intent + bundesland + scope keywords. Each suggestion
  * gets a "Zu Empfehlungen hinzufügen" action that appends a new
  * recommendation row to projects.state via supabase update.

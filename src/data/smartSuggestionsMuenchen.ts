@@ -7,6 +7,12 @@
  * smartSuggestionsMatcher.ts walks project state and returns 3-5
  * applicable entries.
  *
+ * Phase 5 — renamed from smartSuggestionsErlangen.ts as part of
+ * the Erlangen → München pivot. The Stellplatzsatzung suggestion
+ * was tightened to reference München's StPlS 926 (Oct 2025
+ * Novellation) explicitly; a new München-specific Baumschutz-
+ * suggestion was added.
+ *
  * verifyBeforePublicLaunch — same flagging pattern as the Phase 3.4
  * fact bank. These are educational, not legal advice.
  */
@@ -30,7 +36,7 @@ export interface SmartSuggestion {
   verifyBeforePublicLaunch: true
 }
 
-export const SMART_SUGGESTIONS_ERLANGEN: SmartSuggestion[] = [
+export const SMART_SUGGESTIONS_MUENCHEN: SmartSuggestion[] = [
   {
     id: 'pv-pflicht',
     titleDe: 'Photovoltaikanlage einplanen',
@@ -88,13 +94,24 @@ export const SMART_SUGGESTIONS_ERLANGEN: SmartSuggestion[] = [
     verifyBeforePublicLaunch: true,
   },
   {
-    id: 'stellplatzsatzung',
-    titleDe: 'Kommunale Stellplatzsatzung prüfen',
-    titleEn: 'Check the municipal parking ordinance',
+    id: 'stellplatzsatzung-muenchen',
+    titleDe: 'Münchner Stellplatzsatzung StPlS 926 prüfen',
+    titleEn: "Check Munich's StPlS 926 parking ordinance",
     bodyDe:
-      'Die Mindestzahl notwendiger Stellplätze richtet sich nach der örtlichen Stellplatzsatzung — diese kann strenger sein als BayBO Art. 47.',
+      'Die im Oktober 2025 novellierte Münchner Stellplatzsatzung (StPlS 926) schreibt 1 Stellplatz je Wohneinheit vor und erlaubt ÖPNV-bedingte Reduktionen. Hinweis: § 3 GBS ist seit dem 1. Oktober 2025 in München ausgesetzt — StPlS 926 ist die geltende Quelle.',
     bodyEn:
-      'Minimum parking space count follows the local Stellplatzsatzung — often stricter than BayBO Art. 47.',
+      "Munich's StPlS 926 (amended October 2025) sets 1 parking space per dwelling and allows public-transit reductions. Note: § 3 GBS has been suspended in Munich since 1 October 2025 — StPlS 926 is the governing source.",
+    bundeslaender: ['Bayern'],
+    verifyBeforePublicLaunch: true,
+  },
+  {
+    id: 'baumschutz-muenchen',
+    titleDe: 'Münchner Baumschutzverordnung 901 beachten',
+    titleEn: "Check Munich's tree-protection ordinance (901)",
+    bodyDe:
+      'Seit Dezember 2025 schützt die Münchner Baumschutzverordnung (Satzung 901) alle Bäume mit einem Stammumfang ab 60 cm in 100 cm Höhe. Vor Baubeginn ist eine Baumkartierung sinnvoll, um Fäll- oder Schutzauflagen frühzeitig zu erkennen.',
+    bodyEn:
+      "Since December 2025, Munich's tree-protection ordinance (901) covers all trees with a trunk circumference of 60 cm or more (measured at 100 cm height). A tree survey before site work helps surface felling permits or protective requirements early.",
     bundeslaender: ['Bayern'],
     verifyBeforePublicLaunch: true,
   },

@@ -4,15 +4,22 @@
  * Cycled by the right-rail FactTicker during idle moments
  * (no thinking, no recent user input, no completion interstitial).
  *
+ * Phase 5 — renamed from factsErlangen.ts as part of the
+ * Erlangen → München pivot. The Erlangen-specific Geoportal fact
+ * was retired and replaced with München-specific anchors
+ * (StPlS 2025 Novellation, BaumschutzV 60 cm, GBS § 3 Suspension)
+ * sourced from data/muenchen/. The remaining Bayern-level facts
+ * carry over unchanged.
+ *
  * VERIFY_BEFORE_PUBLIC_LAUNCH — every entry below carries the
  * `verifyBeforePublicLaunch: true` flag. These are educational
  * "Wussten Sie?" facts, not legal advice. Real legal review is a
  * Phase 4+ content task; the flag exists to make every fact greppable
  * before the product is shown to architects + Bauherren in a binding
- * context. Same flagging pattern as Phase 3.3 photo captions.
+ * context.
  */
 
-export interface ErlangenFact {
+export interface MuenchenFact {
   /** Permanent id so we can rotate stable per-session. */
   id: string
   de: string
@@ -23,7 +30,7 @@ export interface ErlangenFact {
   verifyBeforePublicLaunch: true
 }
 
-export const FACTS_ERLANGEN: ErlangenFact[] = [
+export const FACTS_MUENCHEN: MuenchenFact[] = [
   {
     id: 'pv-pflicht-2025',
     de: 'Bayern hat 2025 die PV-Pflicht für Wohnneubauten eingeführt.',
@@ -53,10 +60,10 @@ export const FACTS_ERLANGEN: ErlangenFact[] = [
     verifyBeforePublicLaunch: true,
   },
   {
-    id: 'erlangen-geoportal',
-    de: 'Erlangen veröffentlicht Bebauungspläne über das städtische Geoportal.',
-    en: "Erlangen publishes Bebauungspläne via the city's geoportal.",
-    reference: 'Stadt Erlangen Geoportal',
+    id: 'muenchen-geoportal',
+    de: 'München veröffentlicht Bebauungspläne über das städtische Geoportal (geoportal.muenchen.de).',
+    en: "Munich publishes Bebauungspläne via the city's geoportal (geoportal.muenchen.de).",
+    reference: 'Stadt München Geoportal',
     verifyBeforePublicLaunch: true,
   },
   {
@@ -221,10 +228,31 @@ export const FACTS_ERLANGEN: ErlangenFact[] = [
     verifyBeforePublicLaunch: true,
   },
   {
-    id: 'munich-stellplatz',
-    de: 'In München gilt eine eigene Stellplatzsatzung, die häufig strenger ist als die BayBO-Mindestwerte.',
-    en: "Munich has its own parking-space ordinance that is often stricter than BayBO minimums.",
-    reference: 'Stadt München Stellplatzsatzung',
+    id: 'munich-stellplatz-2025',
+    de: 'Die Münchner Stellplatzsatzung (StPlS 926) wurde im Oktober 2025 novelliert; sie schreibt 1 Stellplatz je Wohneinheit vor und erlaubt ÖPNV-Reduktionen.',
+    en: "Munich's parking ordinance (StPlS 926) was amended in October 2025; it sets 1 space per dwelling unit and allows public-transit reductions.",
+    reference: 'StPlS 926 (Oct 2025)',
+    verifyBeforePublicLaunch: true,
+  },
+  {
+    id: 'munich-baumschutz-60cm',
+    de: 'Die Münchner Baumschutzverordnung (Satzung 901) schützt seit Dezember 2025 alle Bäume ab 60 cm Stammumfang in 100 cm Höhe.',
+    en: "Munich's tree-protection ordinance (901) protects all trees with a trunk circumference of 60 cm or more (measured at 100 cm height) since December 2025.",
+    reference: 'BaumschutzV 901 (Dez 2025)',
+    verifyBeforePublicLaunch: true,
+  },
+  {
+    id: 'munich-gbs-3-suspension',
+    de: 'In München ist § 3 GBS (Garagen- und Stellplatzverordnung) seit dem 1. Oktober 2025 ausgesetzt — die Stellplatzsatzung StPlS 926 ist die geltende Quelle.',
+    en: "In Munich, § 3 GBS (garage/parking regulation) has been suspended since 1 October 2025 — StPlS 926 is the governing source.",
+    reference: 'GBS § 3 (suspended 2025-10-01)',
+    verifyBeforePublicLaunch: true,
+  },
+  {
+    id: 'munich-bauamt-3offices',
+    de: 'Die Münchner Lokalbaukommission ist in drei Bauämter (Mitte, Ost, West) gegliedert; das zuständige Amt ergibt sich aus dem Stadtbezirk.',
+    en: "Munich's Lokalbaukommission is split into three sub-offices (Mitte, Ost, West); jurisdiction is determined by Stadtbezirk.",
+    reference: 'LBK München',
     verifyBeforePublicLaunch: true,
   },
   {
