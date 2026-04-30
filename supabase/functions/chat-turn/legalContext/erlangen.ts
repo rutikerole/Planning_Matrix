@@ -1,9 +1,21 @@
 // ───────────────────────────────────────────────────────────────────────
 // Phase 3 — legalContext/erlangen.ts
 //
+// ⏸  PHASE 5 STATUS — SLEEPING MODULE
+//   This file is parked, not deleted. The active city slice as of
+//   Phase 5 is `legalContext/muenchen.ts`; the composer in
+//   `compose.ts` no longer imports this module (the import is
+//   commented out in compose.ts as a re-enable hint).
+//
+//   The Erlangen content is preserved as-is so that adding city #2
+//   in a future phase becomes a multi-slice composition change in
+//   compose.ts plus a wizard-PLZ-gate widening — no content
+//   re-derivation required. The `data/erlangen/` directory remains
+//   the source of truth for this slice.
+//
 // Source of truth: data/erlangen/. Quarterly refresh — re-extract
 // from JSON after each refresh of that directory. Hand-composed for
-// Phase 3; auto-generation from JSON is a Phase-4 polish.
+// Phase 3; auto-generation from JSON is a future polish.
 //
 // Audit B1 (city-templated Top-3 example, no fabricated Bauamt name)
 // and B3 (Stellplatzsatzung verbatim values + city-fall-back honesty)

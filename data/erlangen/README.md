@@ -5,6 +5,26 @@
 
 ---
 
+> ## ⏸ Phase 5 status — PARKED, NOT DELETED
+>
+> As of Phase 5 (Erlangen → München pivot), Erlangen is the **sleeping reference city**, not the active one.
+>
+> What Phase 5 changed:
+>
+> - The composer at `supabase/functions/chat-turn/legalContext/compose.ts` no longer imports `erlangen.ts`; the active slice is `muenchen.ts`.
+> - The wizard PLZ gate now admits the 70 München Stadtgebiet postcodes, not the 4 Erlangen ones.
+> - The `projects.city` CHECK was widened by migration `0010_projects_city_muenchen.sql` to admit both `'erlangen'` (legacy) and `'muenchen'` (active); the default flipped to `'muenchen'`.
+>
+> What Phase 5 deliberately did NOT change:
+>
+> - This directory and every file under it (`bauamt.json`, `bplan-index.json`, the 7 `test-projects/`, etc.) remain untouched. They are the architectural reference for adding city #2 in a future phase.
+> - `legalContext/erlangen.ts` is parked but not deleted; the import is left as a commented-out hint in `compose.ts` to guide re-enablement.
+> - Existing rows in production with `city='erlangen'` continue to be queryable; the widened CHECK preserves them.
+>
+> See `data/muenchen/` for the active city slice and the Phase 5 commit history (`52b5f61`, `dddff4b`, `1febbc1`, `49a71d6`, `70417f2`) for the pivot detail.
+
+---
+
 ## Purpose
 
 `AUDIT_REPORT.md` §6 narrowed v1 to **Erlangen** with a falsifiable bar: a finite ground-truth set per city, per quarter, with every datum cited. This directory is that ground truth.

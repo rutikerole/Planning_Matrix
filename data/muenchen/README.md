@@ -13,12 +13,12 @@ After Phase 4 (revised) the strategic active city is **München (Landeshauptstad
 2. **Larger Satzungen + Stadtbezirke surface** stress-tests the directory shape introduced for Erlangen — 3 Bauamt sub-offices vs Erlangen's single office, 25 Stadtbezirke, ~50 district-level Erhaltungssatzungen.
 3. **Open Data + GovData presence** for München is materially better than for any city smaller.
 
-Two consumers, both deferred to later phases:
+Two consumers:
 
-- **Phase 5** — refactors `legalContext/erlangen.ts` → `legalContext/muenchen.ts` and composes the Erlangen-prefix-eligible München content into the system prompt. The wizard postcode gate also flips from Erlangen-PLZ → München-PLZ in Phase 5.
+- **Phase 5 (shipped)** — composed `legalContext/muenchen.ts` (352 LOC), switched `compose.ts` to import the München block in the active slot, flipped the wizard PLZ gate from 4 Erlangen postcodes to the 70 München Stadtgebiet postcodes, widened the `projects.city` CHECK constraint via migration `0010_projects_city_muenchen.sql`, and renamed the SPA-side `factsErlangen.ts` / `smartSuggestionsErlangen.ts` / `costNormsErlangen.ts` to their München equivalents. Erlangen remains parked as a sleeping module (see `data/erlangen/README.md` for parking detail).
 - **Phase 7** — runs each `test-projects/*.json` as a deterministic-seed conversation; asserts the resulting `ProjectState` matches the `expected_output` block. Failures are accuracy regressions.
 
-Phase 4 (revised) is **data-only**. No TypeScript, no Edge Function code, no system-prompt edits.
+Phase 4 (revised) was **data-only** by design — no TypeScript, no Edge Function code. The actual code-side pivot (slice composition, wizard gate, schema migration, SPA renames) shipped in Phase 5.
 
 ---
 
