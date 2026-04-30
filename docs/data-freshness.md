@@ -79,3 +79,7 @@ The system prompt's `AKTUALITÄT DER QUELLEN` clause is the user-facing surface;
 ## Cost
 
 Zero. GitHub Actions free tier covers 2,000 minutes/month for private repos and is unlimited for public repos. A weekly run takes ~10–25 minutes against ~170 URLs.
+
+## Sibling pipeline
+
+Phase 7 added the eval harness — a sibling pipeline that watches the **chatbot's behaviour** against the falsifiable test projects, complementing this pipeline's watch over **source URLs**. See `docs/eval-harness.md` for the operational model.

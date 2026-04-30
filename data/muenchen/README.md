@@ -133,6 +133,12 @@ grep -rn '"_pending"' data/muenchen/
 
 ---
 
+## Eval harness (Phase 7)
+
+The 7 test projects in `test-projects/` are run weekly against the deployed chat-turn Edge Function via `scripts/eval-harness/run.mjs`. Each test asserts the chatbot's `projectState` and transcript against its `expected_output`. Failures open a GitHub issue and propagate as a red workflow checkmark; passes commit a markdown report at `eval-results/`.
+
+To run locally: copy `scripts/eval-harness/.env.local.example` to `.env.local`, fill in the three secrets, then `npm run eval:run`. See `docs/eval-harness.md` for the full operational model.
+
 ## Freshness pipeline (Phase 6.5)
 
 Every JSON file in this directory carries a `dataFreshAsOf` field — the date a human last verified its content. A weekly GitHub Actions workflow (`.github/workflows/freshness-check.yml`, Sundays 03:00 UTC, plus `workflow_dispatch`) runs `scripts/freshness-check.mjs`, which fingerprints every `source_url` referenced by these files and opens an issue when drift is detected. The pipeline NEVER auto-updates a JSON file — human review is the gate.
