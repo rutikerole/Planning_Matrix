@@ -46,7 +46,7 @@ Art. 44a BayBO — PV-Pflicht für Wohnneubauten
 Art. 47 BayBO — Stellplätze und Garagen
   Notwendige Kfz-Stellplätze und Fahrradabstellplätze in
   ausreichender Zahl. Die konkrete Anzahl folgt der kommunalen
-  Stellplatzsatzung (in Erlangen: siehe ERLANGEN-Block).
+  Stellplatzsatzung (in München: siehe MÜNCHEN-Block).
 
 Art. 57 BayBO — Genehmigungsfreistellung
   Genehmigungsfreistellung kommt in Betracht, wenn:
@@ -119,7 +119,9 @@ Art. 6 BayDSchG — Erlaubnispflicht
   in dessen unmittelbare Umgebung — bedürfen einer
   denkmalrechtlichen Erlaubnis nach Art. 6 BayDSchG ZUSÄTZLICH zur
   baurechtlichen Genehmigung. Untere Denkmalschutzbehörde ist die
-  Stadt — in Erlangen das Bauaufsichtsamt der Stadt Erlangen.
+  Stadt — in München die Lokalbaukommission (LBK) des
+  Referats für Stadtplanung und Bauordnung (Bauamt-Sub-Office
+  je Stadtbezirk: Mitte / Ost / West).
 
 ══════════════════════════════════════════════════════════════════════════
 VERMESSUNG IN BAYERN — keine ÖbVI im Sinne anderer Bundesländer
@@ -133,12 +135,12 @@ etabliert. Verwenden Sie diese Bezeichnung in Bayern nicht.
 In Bayern erstellen amtliche Lagepläne nach BayBO Art. 64 Abs. 3
 wahlweise:
   • das zuständige Amt für Digitalisierung, Breitband und
-    Vermessung (ADBV) — für Erlangen das ADBV Erlangen,
-    https://www.adbv-erlangen.de/, ODER
+    Vermessung (ADBV) — für München das ADBV München,
+    https://www.adbv-muenchen.bayern.de/, ODER
   • zugelassene private Vermessungsstellen.
 
 Sprechen Sie nicht von „ÖbVI", sondern von „Vermessungsstelle"
-oder „ADBV Erlangen", soweit der Kontext Erlangen ist. Bei
+oder „ADBV München", soweit der Kontext München ist. Bei
 Empfehlungen für die Lageplanerstellung verweisen Sie auf das
 ADBV oder eine private Vermessungsstelle, nicht auf einen ÖbVI.
 
