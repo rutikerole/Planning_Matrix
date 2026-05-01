@@ -190,6 +190,12 @@ for (let i = 0; i < urls.length; i++) {
   let status = 'UNREACHABLE'
   let fp = null
 
+  // Phase 8 — stderr progress logging. Phase 6.5 self-flagged that
+  // when the script hangs on a slow URL, the operator has no signal
+  // because all output buffers until the end. Stderr writes are
+  // line-buffered → operators see live progress in the GHA log.
+  process.stderr.write(`[freshness] [${i + 1}/${urls.length}] ${url}\n`)
+
   try {
     const r = await fetchWithRetry(url)
     if (!r.ok) {

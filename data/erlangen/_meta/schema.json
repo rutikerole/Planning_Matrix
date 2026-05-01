@@ -320,7 +320,7 @@
             },
             "has_plot": { "type": "boolean" },
             "plot_address": { "type": "string" },
-            "city": { "type": "string", "const": "erlangen" },
+            "city": { "type": "string", "enum": ["erlangen", "muenchen"] },
             "bundesland": { "type": "string" },
             "template_id": {
               "type": "string",
