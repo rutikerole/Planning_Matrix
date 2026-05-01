@@ -38,6 +38,45 @@
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
+/* ─── Phase 8 — global a11y polish ─────────────────────────────────────
+ * Skip-link visible only on focus. Lets keyboard / screen-reader users
+ * jump past the wordmark + nav directly to <main>. Add id="main" to
+ * any <main> element via the root layout to make this functional.
+ *
+ * Visible focus rings: many shadcn primitives strip the outline.
+ * Restore a brand-aligned ring as the global focus-visible default;
+ * components can override by extending. */
+
+.pm-skip-link {
+  position: absolute;
+  top: 0.5rem;
+  left: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: hsl(var(--ink));
+  color: hsl(var(--paper));
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  transform: translateY(-200%);
+  transition: transform 0.18s ease;
+  z-index: 100;
+}
+.pm-skip-link:focus {
+  transform: translateY(0);
+  outline: 2px solid hsl(var(--clay));
+  outline-offset: 2px;
+}
+
+/* Default focus-visible — slightly stronger ring than the browser's
+ * dotted outline. Components are free to override but won't strip it
+ * by accident (most strip via outline:none, which this rule re-adds
+ * via box-shadow). */
+:focus-visible {
+  outline: 2px solid hsl(var(--ink));
+  outline-offset: 2px;
+}
+
 @layer base {
   :root {
     --paper: 38 30% 97%;

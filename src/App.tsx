@@ -9,6 +9,12 @@ function App() {
   return (
     <ErrorBoundary>
       <Providers>
+        {/* Phase 8 — a11y skip link. Visible on first Tab; hidden
+            otherwise. Routes target id="main-content" via their
+            <main> element where present. */}
+        <a href="#main-content" className="pm-skip-link">
+          Zum Inhalt springen
+        </a>
         <AppRouter />
         <SiteFooter />
         <CookieBanner />

@@ -31,9 +31,14 @@ export function NotFoundPage() {
           <p className="text-body-lg text-muted-foreground max-w-md mb-10 leading-relaxed">
             {t('notFound.body')}
           </p>
-          <CtaButton href="/" variant="primary">
-            {t('notFound.cta')}
-          </CtaButton>
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-stretch sm:items-center">
+            <CtaButton href="/" variant="primary">
+              {t('notFound.cta')}
+            </CtaButton>
+            <CtaButton href="/projects/new" variant="ghost">
+              {t('notFound.ctaNewProject', { defaultValue: 'Neues Projekt anlegen' })}
+            </CtaButton>
+          </div>
         </Container>
       </main>
       <GrainOverlay />
