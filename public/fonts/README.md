@@ -1,24 +1,25 @@
-# /public/fonts/
+# `/public/fonts/`
 
-PDF embedding for the export module (Phase 3.4 #55) prefers the
-brand fonts. Drop the following TTF files here for the architectural-
-document register:
+## Phase 8 — self-hosted brand fonts (DSGVO compliant)
 
-- `Inter-Regular.ttf` (Google Fonts → Inter, weight 400)
-- `Inter-Medium.ttf` (Google Fonts → Inter, weight 500)
-- `InstrumentSerif-Regular.ttf` (Google Fonts → Instrument Serif, weight 400)
-- `InstrumentSerif-Italic.ttf` (Google Fonts → Instrument Serif, italic 400)
+Three WOFF2 files served directly from this origin to remove the third-party Google Fonts CDN dependency. Background: LG München I, 20 January 2022 (3 O 17493/20) ruled that embedding Google Fonts via `fonts.googleapis.com` transmits the visitor's IP address to a third country (US) without legal basis under DSGVO Art. 6 — €100 damages per request. Self-hosting eliminates the cross-border data flow.
 
-Source URLs (download once, commit the .ttf files):
-- https://fonts.google.com/specimen/Inter
-- https://fonts.google.com/specimen/Instrument+Serif
+| File | Family | Style | Subset | Source |
+|---|---|---|---|---|
+| `Inter-Variable-latin.woff2` | Inter | normal, weights 400–600 (variable) | latin | Google Fonts → Inter |
+| `InstrumentSerif-Regular-latin.woff2` | Instrument Serif | normal 400 | latin | Google Fonts → Instrument Serif |
+| `InstrumentSerif-Italic-latin.woff2` | Instrument Serif | italic 400 | latin | Google Fonts → Instrument Serif |
 
-If any of these files are missing at runtime, `fontLoader.ts` falls
-back to the PDF-built-in Helvetica family + logs a console warning.
-The export still works; the type just renders in Helvetica instead of
-the brand stack.
+`latin` subset only — DE + EN don't need cyrillic / vietnamese / latin-ext. Total payload: ~91 KB across all three.
 
-These files are NOT lazy-loaded by the SPA — they only ship when the
-user clicks Export, via the dynamic-imported `exportPdf.ts` module.
-The brand TTFs together are ~600 kB; the export bundle keeps them
-out of the main JS bundle.
+## Licenses
+
+Both fonts are licensed under the SIL Open Font License v1.1 (OFL). See `LICENSES.txt` in this directory for the full license text. OFL § 4 explicitly permits embedding into other software, including web embedding via `@font-face`, provided the license text travels with the font.
+
+## CSS reference
+
+`src/index.css` has the `@font-face` blocks pointing at these files. `index.html` no longer preconnects or stylesheet-loads from `fonts.googleapis.com` / `fonts.gstatic.com`.
+
+## PDF export
+
+The export module (`src/lib/exportPdf.ts` via Phase 3.4 #55) used to look for separate `.ttf` files in this directory. WOFF2 is sufficient for the SPA; if the PDF export needs a different format, that will be wired in a follow-up commit. The fontLoader fallback to PDF-built-in Helvetica still works.

@@ -61,17 +61,18 @@
       fetchpriority="high"
     />
 
-    <!-- Fonts: preconnect, then load with display=swap -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- Phase 8 — self-hosted brand fonts (DSGVO).
+       * Removed fonts.googleapis.com + fonts.gstatic.com per LG München
+       * I 3 O 17493/20 (20.01.2022). @font-face declarations live in
+       * src/styles/globals.css and reference /fonts/*.woff2 from this
+       * origin only. Preload the Inter variable font so the wizard's
+       * first paint isn't a FOIT. -->
     <link
       rel="preload"
-      as="style"
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap"
-    />
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap"
+      href="/fonts/Inter-Variable-latin.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
     />
 
     <!-- Inline a tiny FOUC-killer: keeps body transparent until first paint commits. -->
