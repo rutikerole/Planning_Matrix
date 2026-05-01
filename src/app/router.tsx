@@ -9,7 +9,10 @@ import { ResetPasswordPage } from '@/features/auth/pages/ResetPasswordPage'
 import { CheckEmailPage } from '@/features/auth/pages/CheckEmailPage'
 import { VerifyEmailPage } from '@/features/auth/pages/VerifyEmailPage'
 import { DashboardPage } from '@/features/dashboard/DashboardPage'
-import { LegalPlaceholder } from '@/features/legal/LegalPlaceholder'
+import { ImpressumPage } from '@/features/legal/pages/ImpressumPage'
+import { DatenschutzPage } from '@/features/legal/pages/DatenschutzPage'
+import { AgbPage } from '@/features/legal/pages/AgbPage'
+import { CookiesPage } from '@/features/legal/pages/CookiesPage'
 import { ProtectedRoute } from '@/components/shared/ProtectedRoute'
 import { ProjectGuard } from '@/components/shared/ProjectGuard'
 import { WizardPage } from '@/features/wizard'
@@ -129,14 +132,14 @@ export function AppRouter() {
           * SEO with project name lives inside SharedResultPage. */}
         <Route path="/result/share/:token" element={<SharedResultPage />} />
 
-        {/* Legal placeholders — required for German B2B before public launch.
-          * LegalPlaceholder reads its title via the titleKey prop. */}
+        {/* Phase 8 — full legal pages (replaces Phase 1's
+          * LegalPlaceholder). Required for German B2B launch. */}
         <Route
           path="/impressum"
           element={
             <>
               <SEO titleKey="seo.title.legalImprint" />
-              <LegalPlaceholder titleKey="legal.imprintTitle" />
+              <ImpressumPage />
             </>
           }
         />
@@ -145,7 +148,7 @@ export function AppRouter() {
           element={
             <>
               <SEO titleKey="seo.title.legalPrivacy" />
-              <LegalPlaceholder titleKey="legal.privacyTitle" />
+              <DatenschutzPage />
             </>
           }
         />
@@ -154,10 +157,21 @@ export function AppRouter() {
           element={
             <>
               <SEO titleKey="seo.title.legalTerms" />
-              <LegalPlaceholder titleKey="legal.termsTitle" />
+              <AgbPage />
             </>
           }
         />
+        <Route
+          path="/cookies"
+          element={
+            <>
+              <SEO titleKey="seo.title.legalCookies" />
+              <CookiesPage />
+            </>
+          }
+        />
+        {/* Phase-1 LegalPlaceholder removed; ImpressumPage and friends
+          * own the routes now. */}
 
         <Route
           path="*"
