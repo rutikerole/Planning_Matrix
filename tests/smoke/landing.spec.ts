@@ -9,9 +9,18 @@ test.describe('Landing page', () => {
   test('renders with the localized title and a primary CTA', async ({ page }) => {
     await page.goto('/')
     await expect(page).toHaveTitle(/Planning Matrix/)
-    // Primary CTA — the sign-in / sign-up affordance is always visible
-    // above the fold. Match either German or English copy, since the
-    // language detector may resolve either depending on Accept-Language.
+    // Primary CTA — desktop (lg+) renders the sign-in link inline in
+    // the top-right header. Mobile tucks it inside a Vaul drawer
+    // behind a hamburger trigger, so on small viewports we open the
+    // drawer first to reflect the real reach-the-CTA path. Match
+    // either German or English copy, since the language detector may
+    // resolve either depending on Accept-Language.
+    const hamburger = page
+      .getByRole('button', { name: /menü öffnen|open menu/i })
+      .first()
+    if (await hamburger.isVisible().catch(() => false)) {
+      await hamburger.click()
+    }
     const cta = page
       .getByRole('link', { name: /anmelden|sign in|anmelden\.|sign in\./i })
       .first()
@@ -26,6 +35,14 @@ test.describe('Landing page', () => {
     })
     await page.goto('/')
     await page.waitForLoadState('networkidle')
-    expect(errors).toEqual([])
+    // WebKit logs an informational warning when it encounters Chrome-
+    // only viewport keys (`interactive-widget=resizes-content` tells
+    // Chrome how the on-screen keyboard reflows the viewport — Safari
+    // ignores it harmlessly). Filter that noise so the assertion only
+    // catches real app errors.
+    const significant = errors.filter(
+      (e) => !/viewport argument key.*interactive-widget/i.test(e),
+    )
+    expect(significant).toEqual([])
   })
 })

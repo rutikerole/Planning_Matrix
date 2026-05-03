@@ -19,9 +19,11 @@ test.describe('Sign-in', () => {
     const submit = page.getByRole('button', { name: /anmelden|sign in/i }).first()
     await submit.click()
     // The form prevents submit; an error message renders next to the
-    // email field. Match either DE or EN copy.
+    // email field. Match either DE or EN copy — current strings are
+    // "Bitte geben Sie Ihre E-Mail-Adresse ein." / "Please enter your
+    // email address.".
     await expect(
-      page.getByText(/E-?Mail.*erforderlich|email.*required|gültig|valid/i).first(),
+      page.getByText(/bitte geben sie|please enter|erforderlich|required/i).first(),
     ).toBeVisible()
   })
 
@@ -42,8 +44,10 @@ test.describe('Sign-in', () => {
     await page.getByLabel(/e-?mail/i).first().fill('test@example.com')
     await page.getByLabel(/passwort|password/i).first().fill('wrong-password')
     await page.getByRole('button', { name: /anmelden|sign in/i }).first().click()
+    // Server error copy is "E-Mail-Adresse oder Passwort ist nicht
+    // korrekt." (DE) / "Email or password is incorrect." (EN).
     await expect(
-      page.getByText(/falsch|incorrect|nicht gefunden|not found|ungültig|invalid/i).first(),
+      page.getByText(/nicht korrekt|incorrect|not correct|falsch|ungültig|invalid/i).first(),
     ).toBeVisible({ timeout: 8_000 })
   })
 })
