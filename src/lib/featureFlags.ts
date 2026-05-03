@@ -27,9 +27,8 @@
 // changes, migrate to a DB table — not before.
 // ───────────────────────────────────────────────────────────────────────
 
-const ADMIN_USER_IDS: ReadonlySet<string> = new Set<string>([
-  // Add Rutik's primary user UID here after first prod deploy.
-  // Format: '8f2c1d6b-12ab-4cde-9876-fedcba012345'
+const ADMIN_USER_IDS = new Set<string>([
+  '816d9675-a6ed-46a3-a659-b73289a64811',
 ])
 
 /**
