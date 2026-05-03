@@ -12,6 +12,53 @@
   background: hsl(var(--paper));
 }
 
+/* v3 — sepia filter on the leaflet container so tiles read like
+   warmed-up cartography against the paper background. Verbatim
+   filter chain from the prototype. */
+.pm-plotmap-container .leaflet-container {
+  filter: sepia(0.18) saturate(0.62) brightness(0.99) contrast(1.04);
+}
+
+/* v3 — scan-line that sweeps left → right on address change.
+   Verbatim keyframes + class from the prototype's `<style>`. */
+.scan-line {
+  position: absolute;
+  left: -100%;
+  top: 0;
+  bottom: 0;
+  width: 100%;
+  z-index: 403;
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--pm-clay-bloom) 50%,
+    transparent 100%
+  );
+  opacity: 0;
+}
+.scan-line.run {
+  animation: pm-scan-sweep 1.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+@keyframes pm-scan-sweep {
+  0% {
+    left: -100%;
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 0.7;
+  }
+  100% {
+    left: 100%;
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .scan-line.run {
+    animation: none;
+  }
+}
+
 /* Attribution line — Inter 10px clay, restrained */
 .pm-plotmap-container .leaflet-control-attribution {
   background: hsl(var(--paper) / 0.92);

@@ -5,11 +5,12 @@ import { QuestionPlot } from '../components/QuestionPlot'
 import { LoaderScreen } from '@/features/loader/LoaderScreen'
 import { useWizardState } from '../hooks/useWizardState'
 import { useCreateProject } from '../hooks/useCreateProject'
+import { selectTemplate } from '../lib/selectTemplate'
 
 /**
  * Wizard root. Three visual states:
- *   1. Q1 (intent chips)
- *   2. Q2 (plot toggle + address + map)
+ *   1. Q1 (8 sketch cards)
+ *   2. Q2 (plot toggle + address + map + sidebar)
  *   3. Loader (INSERT + priming + handoff to /projects/:id)
  *
  * Q1 ↔ Q2 cross-fade; loader replaces the wizard entirely so the
@@ -17,6 +18,8 @@ import { useCreateProject } from '../hooks/useCreateProject'
  */
 export function WizardPage() {
   const step = useWizardState((s) => s.step)
+  const intent = useWizardState((s) => s.intent)
+  const plotAddress = useWizardState((s) => s.plotAddress)
   const reset = useWizardState((s) => s.reset)
   const reduced = useReducedMotion()
   const {
@@ -30,11 +33,15 @@ export function WizardPage() {
   } = useCreateProject()
 
   if (isInFlight) {
+    const templateId = intent ? selectTemplate(intent) : 'T-01'
     return (
       <LoaderScreen
         projectId={projectId}
         primed={primed}
         failed={failed}
+        templateId={templateId}
+        intent={intent}
+        plotAddress={plotAddress}
         onCancel={async () => {
           await cancelInFlight()
           reset()

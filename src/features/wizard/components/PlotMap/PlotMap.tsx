@@ -28,6 +28,9 @@ import {
   type GeocodeResult,
 } from './geocode'
 import { useBplanLookup } from '../../hooks/useBplanLookup'
+import { PlotMapOverlay } from '../PlotMapOverlay'
+import { MapCorners } from '../MapCorners'
+import { ScanLine } from '../ScanLine'
 import type { BplanLookupResult } from '@/types/bplan'
 import './styles.css'
 
@@ -45,18 +48,14 @@ interface Props {
   onBplanLoadingChange?: (loading: boolean) => void
 }
 
-// Custom DivIcon — we don't ship Leaflet's marker images (they're
-// PNG sprites that don't match our brand); instead a tiny styled
-// div with a clay dot + paper border.
+// Custom DivIcon — clay circle with paper border, verbatim from
+// the v3 prototype's L.divIcon. 18×18 with a soft outer ring.
 const pin = L.divIcon({
   className: '',
   html:
-    '<div style="position:relative">' +
-    '<div class="pm-plotmap-pin"></div>' +
-    '<div class="pm-plotmap-pin-shadow"></div>' +
-    '</div>',
-  iconSize: [14, 14],
-  iconAnchor: [7, 7],
+    '<div style="width:18px;height:18px;border-radius:50%;background:hsl(26 56% 44%);border:2px solid #f2ede1;box-shadow:0 0 0 1px hsl(26 56% 44%);"></div>',
+  iconSize: [18, 18],
+  iconAnchor: [9, 9],
 })
 
 // Internal: a child with access to useMap() so we can fly to a
@@ -259,9 +258,13 @@ export function PlotMap({
   )
   const initialZoom = coords ? RESOLVED_ZOOM : DEFAULT_ZOOM
 
+  // v3 — scan-line trigger increments whenever the address prop
+  // changes, so the line sweeps once per address edit.
+  const scanTrigger = address.length
+
   return (
     <div className="flex flex-col">
-      <div className="pm-plotmap-container relative" style={{ height: 280 }}>
+      <div className="pm-plotmap-container relative" style={{ height: 460 }}>
         {isGeocoding ? <div className="pm-plotmap-progress" aria-hidden="true" /> : null}
         <MapContainer
           center={initialCenter}
@@ -276,6 +279,12 @@ export function PlotMap({
           {coords ? <Marker position={[coords.lat, coords.lng]} icon={pin} /> : null}
           <FlyToOnResolve flyTarget={flyTarget} />
         </MapContainer>
+        {/* v3 architectural overlays. Stacked above the leaflet panes
+            via z-index 401–403. All `pointer-events: none` so the
+            map underneath stays draggable + clickable. */}
+        <PlotMapOverlay />
+        <MapCorners lat={coords?.lat} lng={coords?.lng} />
+        <ScanLine trigger={scanTrigger} />
         {outOfBoundsNotice ? (
           <div
             role="status"

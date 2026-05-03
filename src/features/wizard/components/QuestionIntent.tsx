@@ -1,27 +1,27 @@
 import { useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from '@/components/ui/collapsible'
 import { cn } from '@/lib/utils'
+import { splitBold } from '@/lib/text'
 import { useWizardState } from '../hooks/useWizardState'
-import { INTENT_VALUES, INTENT_TO_I18N } from '../lib/selectTemplate'
-import { IntentChip } from './IntentChip'
+import { INTENT_VALUES_V3, selectTemplate } from '../lib/selectTemplate'
+import { SketchCard } from './SketchCard'
+import './../styles/sketches.css'
 
 /**
- * Q1 — intent. Six chips with inline SVG line-icons. Chip selection
- * stores the intent but does NOT auto-advance: the user clicks
- * "Continue" or presses Enter on a focused chip to move to Q2.
+ * v3 Q1 — 8 sketch cards in a 4×2 grid (2×4 tablet, 1×8 mobile).
+ * Hover any card and the secondary stroke draws in. Selected card
+ * shows a clay accent dot top-left and pm-paper-tint background.
+ *
+ * Selection does NOT auto-advance. Continue button or Enter on a
+ * focused card moves to Q2.
  */
 export function QuestionIntent() {
   const { t } = useTranslation()
   const intent = useWizardState((s) => s.intent)
   const setIntent = useWizardState((s) => s.setIntent)
   const setStep = useWizardState((s) => s.setStep)
-  const [unsureOpen, setUnsureOpen] = useState(false)
-  const chipRefs = useRef<Array<HTMLButtonElement | null>>([])
+  const [helpOpen, setHelpOpen] = useState(false)
+  const cardRefs = useRef<Array<HTMLButtonElement | null>>([])
 
   const advance = () => {
     if (intent !== null) setStep(2)
@@ -30,22 +30,21 @@ export function QuestionIntent() {
   const handleKey = (e: React.KeyboardEvent<HTMLButtonElement>, idx: number) => {
     if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
       e.preventDefault()
-      const next = (idx + 1) % INTENT_VALUES.length
-      chipRefs.current[next]?.focus()
+      const next = (idx + 1) % INTENT_VALUES_V3.length
+      cardRefs.current[next]?.focus()
     } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
       e.preventDefault()
-      const prev = (idx - 1 + INTENT_VALUES.length) % INTENT_VALUES.length
-      chipRefs.current[prev]?.focus()
+      const prev = (idx - 1 + INTENT_VALUES_V3.length) % INTENT_VALUES_V3.length
+      cardRefs.current[prev]?.focus()
     } else if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault()
-      const target = INTENT_VALUES[idx]
+      const target = INTENT_VALUES_V3[idx]
       setIntent(target)
-      // Allow the next paint to settle so screen readers announce
-      // the selection before we leave Q1.
       setTimeout(() => setStep(2), 0)
     }
   }
 
+  const helpBody = t('wizard.q1.help.body')
   const canContinue = intent !== null
 
   return (
@@ -69,15 +68,16 @@ export function QuestionIntent() {
       <div
         role="radiogroup"
         aria-labelledby="q1-headline"
-        className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3"
+        className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-4"
       >
-        {INTENT_VALUES.map((value, idx) => (
-          <IntentChip
+        {INTENT_VALUES_V3.map((value, idx) => (
+          <SketchCard
             key={value}
             ref={(el) => {
-              chipRefs.current[idx] = el
+              cardRefs.current[idx] = el
             }}
             intent={value}
+            templateCode={selectTemplate(value)}
             selected={intent === value}
             onSelect={() => setIntent(value)}
             onKeyDown={(e) => handleKey(e, idx)}
@@ -85,36 +85,34 @@ export function QuestionIntent() {
         ))}
       </div>
 
-      <Collapsible open={unsureOpen} onOpenChange={setUnsureOpen}>
-        <CollapsibleTrigger asChild>
-          <button
-            type="button"
-            className="self-start rounded-sm font-serif text-[13px] italic text-pm-clay underline underline-offset-4 decoration-pm-clay/40 transition-colors hover:text-pm-clay-deep hover:decoration-pm-clay focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pm-clay focus-visible:ring-offset-2 focus-visible:ring-offset-pm-paper"
-          >
-            {t('wizard.q1.unsureLink')}
-          </button>
-        </CollapsibleTrigger>
-        <CollapsibleContent
-          className={cn(
-            'mt-4 overflow-hidden',
-            'data-[state=open]:animate-accordion-down',
-            'data-[state=closed]:animate-accordion-up',
-          )}
-        >
-          <ul className="flex flex-col gap-3 border-l border-pm-clay/30 pl-4 text-[13px] leading-relaxed text-pm-ink-mid">
-            {INTENT_VALUES.map((value) => (
-              <li key={value}>
-                <span className="font-sans font-medium text-pm-ink">
-                  {t(`wizard.q1.options.${INTENT_TO_I18N[value]}.label`)}.
-                </span>{' '}
-                {t(`wizard.q1.unsureBody.${INTENT_TO_I18N[value]}`)}
-              </li>
-            ))}
-          </ul>
-        </CollapsibleContent>
-      </Collapsible>
+      <button
+        type="button"
+        onClick={() => setHelpOpen((v) => !v)}
+        aria-expanded={helpOpen}
+        className="self-start rounded-sm font-serif text-[14px] italic text-pm-clay underline underline-offset-4 decoration-pm-clay/40 transition-colors hover:text-pm-clay-deep hover:decoration-pm-clay focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pm-clay focus-visible:ring-offset-2 focus-visible:ring-offset-pm-paper"
+      >
+        {t('wizard.q1.help.link')}
+      </button>
 
-      <div className="mt-12 flex items-center justify-end gap-4">
+      {helpOpen ? (
+        <div className="border border-pm-hair bg-pm-paper-tint p-5 text-[13px] leading-relaxed text-pm-ink-mid">
+          {helpBody.split('\n\n').map((para, i) => (
+            <p key={i} className={cn(i > 0 && 'mt-3')}>
+              {splitBold(para).map((part, j) =>
+                part.bold ? (
+                  <strong key={j} className="font-medium text-pm-ink">
+                    {part.text}
+                  </strong>
+                ) : (
+                  <span key={j}>{part.text}</span>
+                ),
+              )}
+            </p>
+          ))}
+        </div>
+      ) : null}
+
+      <div className="mt-8 flex items-center justify-end gap-4">
         <span className="font-mono text-[12px] italic text-pm-ink-mute2">
           {t('wizard.progress.of', { current: 1, total: 2 })}
         </span>

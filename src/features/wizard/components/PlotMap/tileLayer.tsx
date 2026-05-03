@@ -30,9 +30,12 @@
 
 import { TileLayer, WMSTileLayer } from 'react-leaflet'
 
-const VOYAGER_TILES =
-  'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png'
-const VOYAGER_SUBDOMAINS = 'abcd'
+// v3 — switched from CARTO Voyager to light_nolabels so the
+// architectural overlay reads cleanly. The sepia filter on the
+// container warms the tiles toward the paper tone.
+const LIGHT_TILES =
+  'https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png'
+const LIGHT_SUBDOMAINS = 'abcd'
 
 const BASEMAP_ATTRIBUTION =
   '© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">OpenStreetMap</a> contributors · ' +
@@ -41,8 +44,8 @@ const BASEMAP_ATTRIBUTION =
 export function MapTileLayer() {
   return (
     <TileLayer
-      url={VOYAGER_TILES}
-      subdomains={VOYAGER_SUBDOMAINS}
+      url={LIGHT_TILES}
+      subdomains={LIGHT_SUBDOMAINS}
       attribution={BASEMAP_ATTRIBUTION}
       maxZoom={19}
     />

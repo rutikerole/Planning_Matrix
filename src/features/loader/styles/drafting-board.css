@@ -1,0 +1,110 @@
+/* v3 drafting-board cinema — copied verbatim from
+   prototypes/makeover-v3.html (`.loader-illo` rules). Token names
+   mapped to the repo's --pm-* canon. The .run class fires when
+   LoaderScreen mounts; staggered animation-delays (0/300/700/
+   1100ms etc) sequence the strokes. */
+
+.drafting-board {
+  position: relative;
+  width: 340px;
+  height: 200px;
+  margin-bottom: 48px;
+}
+
+.drafting-board svg {
+  display: block;
+  overflow: visible;
+}
+
+.drafting-board .draw {
+  stroke: var(--pm-ink-soft);
+  stroke-width: 1.2;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 600;
+  stroke-dashoffset: 600;
+}
+
+.drafting-board .draw.r {
+  stroke-dasharray: 120;
+  stroke-dashoffset: 120;
+}
+
+.drafting-board .clay-stroke {
+  stroke: var(--pm-clay);
+}
+
+.drafting-board .pencil {
+  transform-origin: 60% 50%;
+}
+
+.drafting-board .ticks line {
+  stroke: var(--pm-clay);
+  stroke-width: 1.2;
+  opacity: 0;
+  transform-origin: center;
+}
+
+.drafting-board.run .draw {
+  animation: pm-drafting-draw 1100ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+.drafting-board.run .draw.delay-1 { animation-delay: 0ms; }
+.drafting-board.run .draw.delay-2 { animation-delay: 300ms; }
+.drafting-board.run .draw.delay-3 { animation-delay: 700ms; }
+.drafting-board.run .draw.delay-4 { animation-delay: 1100ms; }
+
+.drafting-board.run .ticks line {
+  animation: pm-drafting-tick 200ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+.drafting-board.run .ticks line:nth-child(1) { animation-delay: 1500ms; }
+.drafting-board.run .ticks line:nth-child(2) { animation-delay: 1600ms; }
+.drafting-board.run .ticks line:nth-child(3) { animation-delay: 1700ms; }
+.drafting-board.run .ticks line:nth-child(4) { animation-delay: 1800ms; }
+.drafting-board.run .ticks line:nth-child(5) { animation-delay: 1900ms; }
+
+.drafting-board.run .pencil-grp {
+  animation: pm-drafting-pencil 2.4s ease-in-out 1900ms infinite;
+}
+
+@keyframes pm-drafting-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes pm-drafting-tick {
+  from {
+    opacity: 0;
+    transform: scaleY(0);
+  }
+  to {
+    opacity: 1;
+    transform: scaleY(1);
+  }
+}
+
+@keyframes pm-drafting-pencil {
+  0%,
+  100% {
+    transform: rotate(-1.5deg) translate(0, 0);
+  }
+  50% {
+    transform: rotate(0.5deg) translate(2px, -1px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .drafting-board .draw {
+    stroke-dashoffset: 0 !important;
+    animation: none !important;
+  }
+  .drafting-board .ticks line {
+    opacity: 1 !important;
+    transform: scaleY(1) !important;
+    animation: none !important;
+  }
+  .drafting-board.run .pencil-grp {
+    animation: none !important;
+  }
+}

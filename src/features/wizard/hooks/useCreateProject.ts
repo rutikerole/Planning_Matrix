@@ -22,6 +22,9 @@ interface CreateProjectInput {
   hasPlot: boolean
   plotAddress: string | null
   bplanResult?: BplanLookupResult | null
+  /** v3 — friendly auto-suggested project name. Falls back to
+   *  deriveName(intent, address) when null. */
+  suggestedName?: string | null
 }
 
 function bplanToFacts(result: BplanLookupResult, nowIso: string): Fact[] {
@@ -125,7 +128,9 @@ export function useCreateProject() {
         bundesland: 'bayern',
         city: 'muenchen',
         template_id: templateId,
-        name: deriveName(input.intent, input.hasPlot ? input.plotAddress : null),
+        name:
+          input.suggestedName?.trim() ||
+          deriveName(input.intent, input.hasPlot ? input.plotAddress : null),
         ...(initialState ? { state: initialState } : {}),
       })
       .select()

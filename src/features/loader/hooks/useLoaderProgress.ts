@@ -1,10 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 
-export type LoaderPhase =
-  | 'running'
-  | 'completing'
-  | 'completed'
-  | 'failed'
+export type LoaderPhase = 'running' | 'completing' | 'completed' | 'failed'
 
 interface UseLoaderProgressArgs {
   /** True once the backend confirms the project is primed and ready. */
@@ -15,46 +11,59 @@ interface UseLoaderProgressArgs {
   timeoutMs?: number
   /** Per-segment minimum durations in ms (length 3). Defaults to [800, 800, 6000]. */
   segmentMins?: [number, number, number]
+  /** Number of cycling status messages. v3 uses 6. */
+  messageCount?: number
+  /** Per-message duration. Default 1100 ms (verbatim from prototype). */
+  messagePeriodMs?: number
+  /** Hold duration on the final message before phase becomes 'completed'. */
+  finalHoldMs?: number
 }
 
 interface UseLoaderProgressReturn {
-  /** 3-element fill array, each 0..1. */
   fills: [number, number, number]
-  /** 0-based index of the active step. */
   activeStep: 0 | 1 | 2
+  /** 0..(messageCount-1) — current status line to display. */
+  messageIndex: number
   phase: LoaderPhase
 }
 
 const FRAME_MS = 50
 
 /**
- * Drives the 3-segment stepper for the loader. Segment 1 fills over
- * 800 ms, segment 2 over 800 ms, segment 3 over up to 6 s while we
- * wait on the backend. If `primed` arrives early, segment 3
- * accelerates to full in 200 ms, then `phase` becomes 'completed'
- * (the parent navigates). If the timeout elapses without primed,
- * `phase` becomes 'failed'.
+ * v3 loader progress:
+ *   • 3-segment stepper (fills) drives 800 / 800 / up-to-6000 ms
+ *   • messageIndex cycles every messagePeriodMs (default 1100 ms)
+ *     through messageCount lines (default 6)
+ *   • when `primed` arrives early, jump messageIndex to last,
+ *     hold finalHoldMs, accelerate fill[2] to 100% in 200 ms,
+ *     then phase = 'completed'
+ *   • on timeout or `failed`, phase = 'failed'
  */
 export function useLoaderProgress({
   primed,
   failed,
   timeoutMs = 8000,
   segmentMins = [800, 800, 6000],
+  messageCount = 6,
+  messagePeriodMs = 1100,
+  finalHoldMs = 600,
 }: UseLoaderProgressArgs): UseLoaderProgressReturn {
   const [fills, setFills] = useState<[number, number, number]>([0, 0, 0])
+  const [messageIndex, setMessageIndex] = useState(0)
   const [phase, setPhase] = useState<LoaderPhase>('running')
   const startedAtRef = useRef<number | null>(null)
   const completingFromRef = useRef<{ at: number; from: number } | null>(null)
+  const primedAtRef = useRef<number | null>(null)
 
   useEffect(() => {
     startedAtRef.current = Date.now()
+    let timer: number
 
     const tick = () => {
       const now = Date.now()
       const start = startedAtRef.current ?? now
       const elapsed = now - start
 
-      // Failure path takes precedence.
       if (failed) {
         setPhase('failed')
         return
@@ -65,21 +74,23 @@ export function useLoaderProgress({
         return
       }
 
-      // Acceleration: primed arrived; sprint segment 3 to 100% in 200 ms.
+      if (primed && primedAtRef.current === null) {
+        primedAtRef.current = now
+        // Lock the message to the final line as soon as priming returns.
+        setMessageIndex(messageCount - 1)
+      }
+
+      // Stepper fills.
       if (primed && completingFromRef.current === null) {
-        completingFromRef.current = {
-          at: now,
-          from: 0, // overwritten next frame using the just-computed fills
-        }
+        completingFromRef.current = { at: now, from: 0 }
       }
 
       let f0 = Math.min(1, elapsed / segmentMins[0])
-      let f1 = elapsed > segmentMins[0]
-        ? Math.min(1, (elapsed - segmentMins[0]) / segmentMins[1])
-        : 0
-      let f2 = elapsed > segmentMins[0] + segmentMins[1]
-        ? Math.min(1, (elapsed - segmentMins[0] - segmentMins[1]) / segmentMins[2])
-        : 0
+      let f1 = elapsed > segmentMins[0] ? Math.min(1, (elapsed - segmentMins[0]) / segmentMins[1]) : 0
+      let f2 =
+        elapsed > segmentMins[0] + segmentMins[1]
+          ? Math.min(1, (elapsed - segmentMins[0] - segmentMins[1]) / segmentMins[2])
+          : 0
 
       if (primed && completingFromRef.current) {
         if (completingFromRef.current.from === 0) {
@@ -94,25 +105,42 @@ export function useLoaderProgress({
 
       setFills([f0, f1, f2])
 
-      if (primed && f2 >= 1) {
-        setPhase('completed')
-        return
+      // Status messageIndex — only advances pre-primed.
+      if (!primed) {
+        const next = Math.min(messageCount - 2, Math.floor(elapsed / messagePeriodMs))
+        setMessageIndex(next)
       }
 
-      // Schedule next tick.
+      // Completion: primed AND we've held the final line long enough.
+      if (primed && primedAtRef.current !== null) {
+        const sincePrimed = now - primedAtRef.current
+        if (f2 >= 1 && sincePrimed >= finalHoldMs) {
+          setPhase('completed')
+          return
+        }
+      }
+
       timer = window.setTimeout(tick, FRAME_MS)
     }
 
-    let timer = window.setTimeout(tick, FRAME_MS)
+    timer = window.setTimeout(tick, FRAME_MS)
     return () => {
       window.clearTimeout(timer)
       completingFromRef.current = null
+      primedAtRef.current = null
       startedAtRef.current = null
     }
-  }, [primed, failed, timeoutMs, segmentMins])
+  }, [
+    primed,
+    failed,
+    timeoutMs,
+    segmentMins,
+    messageCount,
+    messagePeriodMs,
+    finalHoldMs,
+  ])
 
-  const activeStep: 0 | 1 | 2 =
-    fills[0] < 1 ? 0 : fills[1] < 1 ? 1 : 2
+  const activeStep: 0 | 1 | 2 = fills[0] < 1 ? 0 : fills[1] < 1 ? 1 : 2
 
-  return { fills, activeStep, phase }
+  return { fills, activeStep, messageIndex, phase }
 }

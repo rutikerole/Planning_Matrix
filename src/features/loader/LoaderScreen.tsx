@@ -17,6 +17,9 @@ import { BlueprintSubstrate } from '@/components/shared/BlueprintSubstrate'
 import { DraftingBoard } from './components/DraftingBoard'
 import { Stepper } from './components/Stepper'
 import { useLoaderProgress } from './hooks/useLoaderProgress'
+import type { TemplateId } from '@/types/projectState'
+import type { Intent } from '@/features/wizard/lib/selectTemplate'
+import { extractStreetName } from '@/features/dashboard/lib/projectName'
 
 interface Props {
   /** Provided once the project row has been INSERTed. Null while inserting. */
@@ -27,27 +30,66 @@ interface Props {
   failed: boolean
   /** Cancel handler — should delete the in-flight project (if any) and route home. */
   onCancel: () => void | Promise<void>
+  /** Drives DraftingBoard archetype + template-name substitution in status copy. */
+  templateId?: TemplateId
+  /** Drives the {{template}} placeholder in step 1. */
+  intent?: Intent | null
+  /** Drives {{street}} (extracted) + {{city}} (postcode-derived). */
+  plotAddress?: string | null
+}
+
+const TEMPLATE_LABEL_DE: Record<Intent, string> = {
+  neubau_einfamilienhaus: 'Einfamilienhaus',
+  neubau_mehrfamilienhaus: 'Mehrfamilienhaus',
+  sanierung: 'Sanierung',
+  umnutzung: 'Umnutzung',
+  abbruch: 'Abbruch',
+  aufstockung: 'Aufstockung',
+  anbau: 'Anbau',
+  sonstige: 'Vorhaben',
+}
+
+const TEMPLATE_LABEL_EN: Record<Intent, string> = {
+  neubau_einfamilienhaus: 'Single-family home',
+  neubau_mehrfamilienhaus: 'Multi-family home',
+  sanierung: 'Renovation',
+  umnutzung: 'Change of use',
+  abbruch: 'Demolition',
+  aufstockung: 'Storey addition',
+  anbau: 'Side extension',
+  sonstige: 'Project',
+}
+
+function cityFromAddress(addr: string | null | undefined): string {
+  if (!addr) return 'München'
+  const m = addr.match(/\b\d{5}\s+([^,]+)/)
+  return m?.[1]?.trim() || 'München'
 }
 
 /**
- * Loader screen between wizard submit and the chat workspace.
- * Replaces TransitionScreen. Shows the drafting-board illustration
- * (with stroke-draw motion on mount), a 3-segment stepper, and the
- * current step's label below.
- *
- * Holds for at least ~1.6 s (perceived effort) and at most 8 s
- * (timeout). When the backend reports the project is primed, the
- * stepper sprints to 100% and we navigate to /projects/:id.
+ * v3 loader screen between wizard submit and the chat workspace.
+ * Replaces TransitionScreen. Drafting-board cinema + 3-segment
+ * stepper + 6 cycling status lines with placeholder substitution.
  */
-export function LoaderScreen({ projectId, primed, failed, onCancel }: Props) {
-  const { t } = useTranslation()
+export function LoaderScreen({
+  projectId,
+  primed,
+  failed,
+  onCancel,
+  templateId = 'T-01',
+  intent,
+  plotAddress,
+}: Props) {
+  const { t, i18n } = useTranslation()
   const navigate = useNavigate()
   const reduced = useReducedMotion()
   const [cancelOpen, setCancelOpen] = useState(false)
 
-  const { fills, activeStep, phase } = useLoaderProgress({
+  const { fills, messageIndex, phase } = useLoaderProgress({
     primed: primed && projectId !== null,
     failed,
+    messageCount: 6,
+    messagePeriodMs: 1100,
   })
 
   // Navigate when the loader's phase reports completion.
@@ -63,7 +105,6 @@ export function LoaderScreen({ projectId, primed, failed, onCancel }: Props) {
     navigate(`/projects/${projectId}`, { replace: true })
   }, [reduced, primed, projectId, navigate])
 
-  // Document title
   useEffect(() => {
     const prev = document.title
     document.title = `${t('loader.h').replace(/\.$/, '')} · Planning Matrix`
@@ -73,13 +114,31 @@ export function LoaderScreen({ projectId, primed, failed, onCancel }: Props) {
   }, [t])
 
   if (phase === 'failed') {
-    return <FailState projectId={projectId} onBack={onCancel} />
+    return (
+      <FailState
+        projectId={projectId}
+        templateId={templateId}
+        onBack={onCancel}
+      />
+    )
   }
 
+  // Compose placeholders.
+  const lang = i18n.language?.startsWith('en') ? 'en' : 'de'
+  const labels = lang === 'en' ? TEMPLATE_LABEL_EN : TEMPLATE_LABEL_DE
+  const templateLabel = intent ? labels[intent] : labels.sonstige
+  const street = extractStreetName(plotAddress ?? '') ?? 'Ihrem Standort'
+  const city = cityFromAddress(plotAddress)
+  const article = '58'
+  const klass = '3'
+
   const stepLabels = [
-    t('loader.steps.s1'),
-    t('loader.steps.s2'),
-    t('loader.steps.s3'),
+    t('loader.steps.s1', { template: templateLabel }),
+    t('loader.steps.s2', { street }),
+    t('loader.steps.s3', { article, class: klass }),
+    t('loader.steps.s4', { city }),
+    t('loader.steps.s5'),
+    t('loader.steps.s6'),
   ]
 
   return (
@@ -96,7 +155,7 @@ export function LoaderScreen({ projectId, primed, failed, onCancel }: Props) {
 
       <main className="relative z-10 flex flex-1 items-center justify-center px-6">
         <div className="flex w-full max-w-[34rem] flex-col items-center gap-8 text-center">
-          <DraftingBoard animate />
+          <DraftingBoard templateId={templateId} animate />
 
           <div className="flex flex-col items-center gap-4">
             <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-pm-clay">
@@ -109,22 +168,22 @@ export function LoaderScreen({ projectId, primed, failed, onCancel }: Props) {
             </h1>
           </div>
 
-          <Stepper fills={reduced ? [1, 1, 1] : fills} className="mt-2" />
-
-          <div className="h-6">
+          <div className="relative h-6 w-full max-w-[520px] overflow-hidden text-center">
             <AnimatePresence mode="wait" initial={false}>
               <m.p
-                key={activeStep}
-                initial={reduced ? false : { opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={reduced ? { opacity: 0 } : { opacity: 0 }}
-                transition={{ duration: reduced ? 0 : 0.2 }}
-                className="font-sans text-[15px] italic leading-relaxed text-pm-ink-mid"
+                key={messageIndex}
+                initial={reduced ? false : { opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={reduced ? { opacity: 0 } : { opacity: 0, y: -8 }}
+                transition={{ duration: reduced ? 0 : 0.32, ease: [0.16, 1, 0.3, 1] }}
+                className="absolute inset-x-0 top-0 font-serif text-[16px] italic leading-relaxed text-pm-ink-mid"
               >
-                {stepLabels[activeStep]}
+                {stepLabels[messageIndex]}
               </m.p>
             </AnimatePresence>
           </div>
+
+          <Stepper fills={reduced ? [1, 1, 1] : fills} className="mt-4" />
         </div>
       </main>
 
@@ -167,9 +226,11 @@ export function LoaderScreen({ projectId, primed, failed, onCancel }: Props) {
 
 function FailState({
   projectId,
+  templateId,
   onBack,
 }: {
   projectId: string | null
+  templateId: TemplateId
   onBack: () => void | Promise<void>
 }) {
   const { t } = useTranslation()
@@ -187,7 +248,7 @@ function FailState({
       <BlueprintSubstrate lensRadius={220} breathing={false} driftPx={0} />
 
       <div className="relative z-10 flex w-full max-w-[34rem] flex-col items-center gap-6 text-center">
-        <DraftingBoard />
+        <DraftingBoard templateId={templateId} />
 
         <h1 className="font-serif text-[clamp(2rem,4vw,3rem)] leading-tight text-pm-ink">
           {t('loader.fail.h')}

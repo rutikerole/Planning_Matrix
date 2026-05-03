@@ -3,9 +3,12 @@ import { useTranslation } from 'react-i18next'
 import { AnimatePresence, m, useReducedMotion } from 'framer-motion'
 import { cn } from '@/lib/utils'
 import { useWizardState } from '../hooks/useWizardState'
-import { isMuenchenAddress, isPlotAddressValid } from '../lib/plotValidation'
+import { isPlotAddressValid } from '../lib/plotValidation'
 import type { Intent } from '../lib/selectTemplate'
 import { BPlanCheck } from './BPlanCheck'
+import { PlotSidebar } from './PlotSidebar'
+import { usePlotProfile } from '../hooks/usePlotProfile'
+import { suggestProjectName } from '@/features/dashboard/lib/projectName'
 import type { BplanLookupResult } from '@/types/bplan'
 
 const PlotMap = lazy(() =>
@@ -18,14 +21,15 @@ interface Props {
     hasPlot: boolean
     plotAddress: string | null
     bplanResult: BplanLookupResult | null
+    suggestedName: string | null
   }) => Promise<void> | void
   submitError: string | null
 }
 
 /**
- * Q2 — plot. Yes/No, address input with hairline-bottom border, the
- * BPlanCheck pill, and the map. Out-of-coverage addresses produce a
- * soft note rather than a hard error — the user can still proceed.
+ * v3 Q2 — plot question. Two-column layout (map left, sidebar
+ * right) on lg+; stacked on mobile. Out-of-coverage addresses
+ * surface as a soft note rather than a hard error.
  */
 export function QuestionPlot({ onSubmit, submitError }: Props) {
   const { t } = useTranslation()
@@ -49,16 +53,14 @@ export function QuestionPlot({ onSubmit, submitError }: Props) {
     }
   }, [hasPlot, plotAddress])
 
-  const addressValid = isPlotAddressValid(plotAddress)
-  const addressInMuenchen = isMuenchenAddress(plotAddress)
-  const showFormatError = touched && hasPlot === true && !addressValid
-  const showOutsideCoverage = hasPlot === true && addressValid && !addressInMuenchen
+  const profile = usePlotProfile(plotAddress)
+  const suggestedName = intent ? suggestProjectName(intent, plotAddress) : null
 
-  // Outside-coverage is a SOFT note (brief): user can still submit.
-  // Only the format-floor blocks submit.
+  const addressValid = isPlotAddressValid(plotAddress)
+  const showFormatError = touched && hasPlot === true && !addressValid
+
   const canSubmit =
-    intent !== null &&
-    (hasPlot === false || (hasPlot === true && addressValid))
+    intent !== null && (hasPlot === false || (hasPlot === true && addressValid))
 
   const handleSubmit = () => {
     if (!intent) return
@@ -71,6 +73,7 @@ export function QuestionPlot({ onSubmit, submitError }: Props) {
       hasPlot: hasPlot === true,
       plotAddress: hasPlot === true ? plotAddress.trim() : null,
       bplanResult,
+      suggestedName,
     })
   }
 
@@ -99,7 +102,6 @@ export function QuestionPlot({ onSubmit, submitError }: Props) {
         </p>
       </header>
 
-      {/* Yes / No toggle */}
       <div role="radiogroup" aria-labelledby="q2-headline" className="flex gap-3">
         {[true, false].map((value) => {
           const isSelected = hasPlot === value
@@ -130,9 +132,8 @@ export function QuestionPlot({ onSubmit, submitError }: Props) {
         })}
       </div>
 
-      {/* Yes path */}
       <AnimatePresence initial={false}>
-        {hasPlot === true && (
+        {hasPlot === true ? (
           <m.div
             key="yes"
             initial={reduced ? { opacity: 1 } : { opacity: 0, height: 0 }}
@@ -141,87 +142,77 @@ export function QuestionPlot({ onSubmit, submitError }: Props) {
             transition={{ duration: reduced ? 0 : 0.3, ease: [0.16, 1, 0.3, 1] }}
             className="overflow-hidden"
           >
-            <div className="flex flex-col gap-4">
-              <div className="flex flex-col gap-2">
-                <label
-                  htmlFor="plot-address"
-                  className="font-mono text-[10px] uppercase tracking-[0.20em] text-pm-clay"
-                >
-                  {t('wizard.q2.addressLabel')}
-                </label>
-                <input
-                  id="plot-address"
-                  ref={addressInputRef}
-                  type="text"
-                  inputMode="text"
-                  autoComplete="street-address"
-                  placeholder={t('wizard.q2.placeholder')}
-                  value={plotAddress}
-                  onChange={(e) => setPlotAddress(e.target.value)}
-                  onBlur={() => setTouched(true)}
-                  onKeyDown={handleAddressKey}
-                  aria-invalid={showFormatError || undefined}
-                  aria-describedby="plot-address-helper"
-                  className={cn(
-                    'w-full border-0 border-b bg-transparent py-2.5 font-sans text-[17px] text-pm-ink transition-colors duration-soft placeholder:text-pm-ink-mute2',
-                    'focus:outline-none focus:ring-0',
-                    showFormatError
-                      ? 'border-pm-clay-deep/70 focus:border-pm-clay-deep'
-                      : 'border-pm-ink/25 focus:border-pm-clay',
-                  )}
-                />
-                <p
-                  id="plot-address-helper"
-                  className="font-serif text-[13px] italic leading-relaxed text-pm-clay"
-                >
-                  {t('wizard.q2.helper')}
-                </p>
-                <p className="font-mono text-[12px] leading-relaxed text-pm-ink-mute2">
-                  {t('wizard.q2.coverage')}
-                </p>
-                {showOutsideCoverage ? (
-                  <p
-                    role="status"
-                    className="font-serif text-[14px] italic leading-relaxed text-pm-clay"
+            <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1fr_320px] items-start">
+              <div className="flex flex-col gap-4">
+                <div className="flex flex-col gap-2">
+                  <label
+                    htmlFor="plot-address"
+                    className="font-mono text-[11px] uppercase tracking-[0.16em] text-pm-clay"
                   >
-                    {t('wizard.q2.outsideCoverage')}
+                    {t('wizard.q2.addressLabel')}
+                  </label>
+                  <input
+                    id="plot-address"
+                    ref={addressInputRef}
+                    type="text"
+                    inputMode="text"
+                    autoComplete="street-address"
+                    placeholder={t('wizard.q2.placeholder')}
+                    value={plotAddress}
+                    onChange={(e) => setPlotAddress(e.target.value)}
+                    onBlur={() => setTouched(true)}
+                    onKeyDown={handleAddressKey}
+                    aria-invalid={showFormatError || undefined}
+                    aria-describedby="plot-address-helper"
+                    className={cn(
+                      'w-full border-0 border-b bg-transparent py-2 font-sans text-[18px] text-pm-ink transition-colors duration-soft placeholder:text-pm-ink-mute2',
+                      'focus:outline-none focus:ring-0',
+                      showFormatError
+                        ? 'border-pm-clay-deep/70 focus:border-pm-clay-deep'
+                        : 'border-pm-hair-strong focus:border-pm-clay',
+                    )}
+                  />
+                  <p id="plot-address-helper" className="font-serif text-[13px] italic leading-relaxed text-pm-clay">
+                    {t('wizard.q2.helper')}
                   </p>
+                  <p className="font-mono text-[11px] leading-relaxed text-pm-ink-mute2">
+                    {t('wizard.q2.coverage')}
+                  </p>
+                </div>
+
+                {plotAddress.trim().length >= 6 ? (
+                  <BPlanCheck result={bplanResult} isLoading={bplanLoading} />
+                ) : null}
+
+                {plotAddress.trim().length >= 6 ? (
+                  <>
+                    <p className="font-serif text-[13px] italic leading-relaxed text-pm-ink-mid">
+                      {t('wizard.q2.mapHint')}
+                    </p>
+                    <Suspense
+                      fallback={
+                        <div className="pm-plotmap-empty">Karte wird geladen…</div>
+                      }
+                    >
+                      <PlotMap
+                        address={plotAddress}
+                        onAddressChange={setPlotAddress}
+                        onBplanResolved={setBplanResult}
+                        onBplanLoadingChange={setBplanLoading}
+                      />
+                    </Suspense>
+                  </>
                 ) : null}
               </div>
 
-              {/* B-Plan pill — sits above the map */}
-              {plotAddress.trim().length >= 6 ? (
-                <BPlanCheck result={bplanResult} isLoading={bplanLoading} />
-              ) : null}
-
-              {/* Map hint + map */}
-              {plotAddress.trim().length >= 6 ? (
-                <>
-                  <p className="font-sans text-[13px] italic leading-relaxed text-pm-ink-mid">
-                    {t('wizard.q2.mapHint')}
-                  </p>
-                  <Suspense
-                    fallback={
-                      <div className="pm-plotmap-empty">Karte wird geladen…</div>
-                    }
-                  >
-                    <PlotMap
-                      address={plotAddress}
-                      onAddressChange={setPlotAddress}
-                      onBplanResolved={setBplanResult}
-                      onBplanLoadingChange={setBplanLoading}
-                    />
-                  </Suspense>
-                </>
-              ) : null}
+              <PlotSidebar profile={profile} suggestedName={suggestedName} />
             </div>
           </m.div>
-        )}
+        ) : null}
       </AnimatePresence>
 
-      {/* No path */}
       <AnimatePresence initial={false}>
-        {hasPlot === false && (
+        {hasPlot === false ? (
           <m.div
             key="no"
             initial={reduced ? { opacity: 1 } : { opacity: 0, height: 0 }}
@@ -236,7 +227,7 @@ export function QuestionPlot({ onSubmit, submitError }: Props) {
               </p>
             </div>
           </m.div>
-        )}
+        ) : null}
       </AnimatePresence>
 
       {submitError ? (
@@ -248,7 +239,7 @@ export function QuestionPlot({ onSubmit, submitError }: Props) {
         </p>
       ) : null}
 
-      <div className="mt-16 flex items-center justify-between gap-4">
+      <div className="mt-12 flex items-center justify-between gap-4">
         <button
           type="button"
           onClick={goBackToQ1}

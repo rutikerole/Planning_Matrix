@@ -984,16 +984,6 @@
       "unsureLink": "Ich bin mir nicht sicher",
       "h": "Was möchten Sie bauen?",
       "continue": "Weiter",
-      "unsureBody": {
-        "neubau_efh": "Ein neues, eigenständiges Wohngebäude für eine Familie.",
-        "neubau_mfh": "Ein neues Wohngebäude mit mehreren Wohneinheiten.",
-        "sanierung": "Bauliche Erneuerung an einem bestehenden Gebäude.",
-        "umnutzung": "Bestehendes Gebäude erhält eine andere Nutzung (z. B. Büro → Wohnen).",
-        "abbruch": "Vollständiger oder teilweiser Rückbau eines Gebäudes.",
-        "sonstige": "Etwas anderes — wir starten mit den flexibelsten Annahmen.",
-        "aufstockung": "Ein bestehendes Gebäude erhält ein zusätzliches Geschoss.",
-        "anbau": "Ein bestehendes Gebäude wird seitlich oder rückwärtig erweitert."
-      },
       "help": {
         "link": "Unsicher? Eine kurze Entscheidungshilfe öffnen",
         "body": "Bauen Sie auf einem unbebauten Grundstück? Dann **Neubau Einfamilienhaus** (für eine Familie) oder **Neubau Mehrfamilienhaus** (mehrere Wohneinheiten).\n\nExistiert bereits ein Gebäude? Soll es modernisiert werden → **Sanierung**. Eine andere Nutzung erhalten → **Umnutzung**. Aufgestockt werden → **Aufstockung**. Erweitert werden → **Anbau**.\n\nSoll ein Gebäude entfernt werden? → **Abbruch**. Etwas, das hier nicht passt? → **Sonstiges**, wir starten mit den flexibelsten Annahmen."
@@ -1484,9 +1474,9 @@
     "eyebrow": "PLANNING MATRIX · VORBEREITUNG",
     "h": "Tisch decken.",
     "steps": {
-      "s1": "Vorlage wählen…",
-      "s2": "Matrix anlegen…",
-      "s3": "Moderator briefen…",
+      "s1": "Vorlage wählen — {{template}}…",
+      "s2": "Briefing Planungsrecht — § 34 BauGB für {{street}}…",
+      "s3": "Briefing Bauordnungsrecht — BayBO Art. {{article}}, GK {{class}}…",
       "s4": "Sonstige Vorgaben anlegen — Stellplatzsatzung {{city}}…",
       "s5": "Matrix initialisieren — drei Brillen, ein Bild…",
       "s6": "Moderator briefen — bereit für Ihr Gespräch."

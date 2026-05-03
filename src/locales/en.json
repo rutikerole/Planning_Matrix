@@ -984,16 +984,6 @@
       "unsureLink": "I'm not sure",
       "h": "What would you like to build?",
       "continue": "Continue",
-      "unsureBody": {
-        "neubau_efh": "A new, free-standing home for a single family.",
-        "neubau_mfh": "A new residential building with multiple units.",
-        "sanierung": "Structural renewal of an existing building.",
-        "umnutzung": "An existing building changes use (e.g. office → residential).",
-        "abbruch": "Full or partial demolition of a building.",
-        "sonstige": "Something else — we begin with the most flexible assumptions.",
-        "aufstockung": "An existing building gains an additional storey.",
-        "anbau": "An existing building is extended sideways or to the rear."
-      },
       "help": {
         "link": "Unsure? Open a short decision guide",
         "body": "Are you building on an empty plot? Then **Single-family home** (for one family) or **Multi-family home** (multiple units).\n\nDoes a building already exist? Modernise it → **Renovation**. Change its use → **Change of use**. Add a storey → **Storey addition**. Extend it → **Side extension**.\n\nShould a building be removed? → **Demolition**. Something that doesn’t fit here? → **Something else**, we begin with the most flexible assumptions."
@@ -1484,9 +1474,9 @@
     "eyebrow": "PLANNING MATRIX · PREPARING",
     "h": "Setting the table.",
     "steps": {
-      "s1": "Selecting your template…",
-      "s2": "Initializing the matrix…",
-      "s3": "Briefing the moderator…",
+      "s1": "Selecting template — {{template}}…",
+      "s2": "Briefing planning law — § 34 BauGB for {{street}}…",
+      "s3": "Briefing building code — BayBO Art. {{article}}, class {{class}}…",
       "s4": "Drafting other requirements — parking ordinance {{city}}…",
       "s5": "Initialising the matrix — three lenses, one picture…",
       "s6": "Briefing the moderator — ready for your conversation."
