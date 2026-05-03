@@ -771,34 +771,6 @@
     }
   },
   "dashboard": {
-    "atelier": {
-      "docTitle": "Atelier · Planning Matrix",
-      "eyebrow": "Atelier · Willkommen",
-      "greeting": "Willkommen, {{name}}.",
-      "greetingNone": "Willkommen.",
-      "lastActivitySentence": "Letzte Aktivität",
-      "lastActivityLabel": "Letzte Aktivität",
-      "turnCountLabel_one": "Wendung",
-      "turnCountLabel_other": "Wendungen",
-      "projectsHeading": "Projekte",
-      "newCta": "+ Neu",
-      "viewResult": "Ergebnis",
-      "loading": "Projekte werden geladen …",
-      "signOut": "Abmelden",
-      "archive": "Archivieren",
-      "restore": "Wiederherstellen",
-      "state": {
-        "in_progress": "Aktiv",
-        "paused": "Pausiert",
-        "archived": "Entwurf",
-        "completed": "Abgeschlossen"
-      },
-      "empty": {
-        "headline": "Noch kein Projekt.",
-        "body": "Beginnen Sie mit Ihrem ersten Vorhaben.",
-        "cta": "Neues Projekt"
-      }
-    },
     "eyebrow": "ATELIER · WILLKOMMEN",
     "welcome": "Willkommen, {{name}}.",
     "welcomeAnon": "Willkommen.",
@@ -891,7 +863,8 @@
       "weeks_other": "vor {{count}} Wochen",
       "months_one": "vor {{count}} Monat",
       "months_other": "vor {{count}} Monaten"
-    }
+    },
+    "signOut": "Abmelden"
   },
   "wizard": {
     "title": "Neues Projekt · Planning Matrix",

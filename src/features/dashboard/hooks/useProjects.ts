@@ -3,24 +3,22 @@ import { supabase } from '@/lib/supabase'
 import type { ProjectRow } from '@/types/db'
 
 export interface ProjectListEntry extends ProjectRow {
-  /** Count of assistant turns associated with this project (Wendungen). */
+  /** Count of assistant turns associated with this project. */
   turnCount: number
 }
 
-const PROJECT_LIMIT = 50
+const PROJECT_LIMIT = 200
 
 /**
- * Phase 3.3 #47 — fetch all projects owned by the active user, sorted
- * by `updated_at DESC`. RLS gates the query so passing the user id is
- * not strictly required — the policy enforces ownership server-side.
+ * Fetch all projects owned by the active user, sorted by updated_at
+ * descending. RLS gates the query server-side; the SPA does not need
+ * to scope by user id.
  *
- * Joined with a per-project count of `assistant`-role messages so the
- * dashboard can print the "X Wendungen" annotation alongside the last
- * activity timestamp without a second round trip from each row.
- *
- * Cap at 50 visible projects; pagination is a Phase 4 concern.
+ * Joined with a per-project count of assistant-role messages so the
+ * dashboard rows can render the "X turns" annotation without a
+ * second round trip per row.
  */
-export function useProjectsList() {
+export function useProjects() {
   return useQuery<ProjectListEntry[]>({
     queryKey: ['projects', 'list'],
     queryFn: async () => {
@@ -33,8 +31,6 @@ export function useProjectsList() {
       const projects = (rows ?? []) as ProjectRow[]
       if (projects.length === 0) return []
 
-      // Tally assistant turns per project. RLS lets a user only see
-      // messages on projects they own, so a single IN-clause works.
       const ids = projects.map((p) => p.id)
       const { data: messageRows, error: msgError } = await supabase
         .from('messages')

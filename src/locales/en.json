@@ -771,34 +771,6 @@
     }
   },
   "dashboard": {
-    "atelier": {
-      "docTitle": "Atelier · Planning Matrix",
-      "eyebrow": "Atelier · Welcome",
-      "greeting": "Welcome, {{name}}.",
-      "greetingNone": "Welcome.",
-      "lastActivitySentence": "Last activity",
-      "lastActivityLabel": "Last activity",
-      "turnCountLabel_one": "turn",
-      "turnCountLabel_other": "turns",
-      "projectsHeading": "Projects",
-      "newCta": "+ New",
-      "viewResult": "Briefing",
-      "loading": "Loading projects …",
-      "signOut": "Sign out",
-      "archive": "Archive",
-      "restore": "Restore",
-      "state": {
-        "in_progress": "Active",
-        "paused": "Paused",
-        "archived": "Draft",
-        "completed": "Complete"
-      },
-      "empty": {
-        "headline": "No project yet.",
-        "body": "Begin with your first scheme.",
-        "cta": "New project"
-      }
-    },
     "eyebrow": "ATELIER · WELCOME",
     "welcome": "Welcome, {{name}}.",
     "welcomeAnon": "Welcome.",
@@ -891,7 +863,8 @@
       "weeks_other": "{{count}} weeks ago",
       "months_one": "{{count}} month ago",
       "months_other": "{{count}} months ago"
-    }
+    },
+    "signOut": "Sign out"
   },
   "wizard": {
     "title": "New project · Planning Matrix",
