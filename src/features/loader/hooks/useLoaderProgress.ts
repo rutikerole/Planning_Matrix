@@ -9,7 +9,7 @@ interface UseLoaderProgressArgs {
   failed: boolean
   /** Hard timeout in ms; if `primed` doesn't arrive in time, phase → 'failed'. */
   timeoutMs?: number
-  /** Per-segment minimum durations in ms (length 3). Defaults to [800, 800, 6000]. */
+  /** Per-segment minimum durations in ms (length 3). */
   segmentMins?: [number, number, number]
   /** Number of cycling status messages. v3 uses 6. */
   messageCount?: number
@@ -30,6 +30,18 @@ interface UseLoaderProgressReturn {
 const FRAME_MS = 50
 
 /**
+ * Hoisted to a module-level constant so the `segmentMins` default
+ * parameter resolves to the SAME reference across every call to the
+ * hook. A fresh `[800, 800, 6000]` literal allocated per call would
+ * change the useEffect dep on every render → cleanup-and-re-run
+ * every tick → `startedAtRef` resets to 0, `primedAtRef` re-nulls,
+ * the completion gate `sincePrimed >= finalHoldMs` becomes
+ * mathematically unreachable, and the loader hangs on the final
+ * status message forever. Fixed in fix(loader): stable segmentMins.
+ */
+const DEFAULT_SEGMENTS: [number, number, number] = [800, 800, 6000]
+
+/**
  * v3 loader progress:
  *   • 3-segment stepper (fills) drives 800 / 800 / up-to-6000 ms
  *   • messageIndex cycles every messagePeriodMs (default 1100 ms)
@@ -37,13 +49,17 @@ const FRAME_MS = 50
  *   • when `primed` arrives early, jump messageIndex to last,
  *     hold finalHoldMs, accelerate fill[2] to 100% in 200 ms,
  *     then phase = 'completed'
- *   • on timeout or `failed`, phase = 'failed'
+ *   • on timeout (6 s) or `failed`, phase = 'failed'.
+ *     LoaderScreen treats a 'failed' phase WITH a projectId as
+ *     auto-navigate (workspace handles its own first-turn loading
+ *     state). FailState renders only when there is genuinely
+ *     nothing to navigate to.
  */
 export function useLoaderProgress({
   primed,
   failed,
-  timeoutMs = 8000,
-  segmentMins = [800, 800, 6000],
+  timeoutMs = 6000,
+  segmentMins = DEFAULT_SEGMENTS,
   messageCount = 6,
   messagePeriodMs = 1100,
   finalHoldMs = 600,
@@ -55,6 +71,12 @@ export function useLoaderProgress({
   const completingFromRef = useRef<{ at: number; from: number } | null>(null)
   const primedAtRef = useRef<number | null>(null)
 
+  // segmentMins is configuration, not reactive state. We
+  // intentionally omit it from the dep array — including it would
+  // tear down and restart the timer on every render (see the
+  // DEFAULT_SEGMENTS comment). Callers that need a different
+  // segmentMins after mount should remount the hook via a key prop.
+  /* eslint-disable react-hooks/exhaustive-deps */
   useEffect(() => {
     startedAtRef.current = Date.now()
     let timer: number
@@ -134,11 +156,12 @@ export function useLoaderProgress({
     primed,
     failed,
     timeoutMs,
-    segmentMins,
+    // segmentMins intentionally omitted — see DEFAULT_SEGMENTS doc.
     messageCount,
     messagePeriodMs,
     finalHoldMs,
   ])
+  /* eslint-enable react-hooks/exhaustive-deps */
 
   const activeStep: 0 | 1 | 2 = fills[0] < 1 ? 0 : fills[1] < 1 ? 1 : 2
 

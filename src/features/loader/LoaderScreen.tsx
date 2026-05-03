@@ -92,18 +92,27 @@ export function LoaderScreen({
     messagePeriodMs: 1100,
   })
 
-  // Navigate when the loader's phase reports completion.
+  // Navigate when:
+  //   • phase === 'completed' (the happy path) AND we have a projectId
+  //   • phase === 'failed' AND we have a projectId — i.e. the INSERT
+  //     succeeded but priming was slow / errored / timed out. The
+  //     workspace at /projects/:id handles its own first-turn
+  //     loading state, so the loader never blocks the user past the
+  //     6 s timeout. FailState only renders when projectId is null
+  //     (true INSERT failure — there is genuinely nothing to fall
+  //     back to).
+  //   • Reduced motion: navigate as soon as primed (skip the
+  //     finalHold + sprint cinematic).
   useEffect(() => {
-    if (phase !== 'completed' || !projectId) return
-    navigate(`/projects/${projectId}`, { replace: true })
-  }, [phase, projectId, navigate])
-
-  // Reduced motion: render all segments full immediately and navigate
-  // as soon as the backend is ready.
-  useEffect(() => {
-    if (!reduced || !primed || !projectId) return
-    navigate(`/projects/${projectId}`, { replace: true })
-  }, [reduced, primed, projectId, navigate])
+    if (!projectId) return
+    if (reduced && primed) {
+      navigate(`/projects/${projectId}`, { replace: true })
+      return
+    }
+    if (phase === 'completed' || phase === 'failed') {
+      navigate(`/projects/${projectId}`, { replace: true })
+    }
+  }, [phase, primed, reduced, projectId, navigate])
 
   useEffect(() => {
     const prev = document.title
@@ -113,7 +122,10 @@ export function LoaderScreen({
     }
   }, [t])
 
-  if (phase === 'failed') {
+  // FailState ONLY when there's nothing to navigate to (true INSERT
+  // failure). When projectId exists, the navigate effect above
+  // handles the handoff and the workspace shows its own state.
+  if (phase === 'failed' && !projectId) {
     return (
       <FailState
         projectId={projectId}
