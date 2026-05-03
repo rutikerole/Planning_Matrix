@@ -2,36 +2,34 @@ import { useEffect, useState, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import { m, useReducedMotion } from 'framer-motion'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog'
 import { LanguageSwitcher } from '@/components/shared/LanguageSwitcher'
 import { Wordmark } from '@/components/shared/Wordmark'
 import { BlueprintSubstrate } from '@/components/shared/BlueprintSubstrate'
-import { PaperSheet } from '@/components/shared/PaperSheet'
-import { WizardProgress } from './WizardProgress'
-import { ConfirmDialog } from './ConfirmDialog'
+import { ProgressHairline } from './ProgressHairline'
 import { useWizardState } from '../hooks/useWizardState'
 
 interface Props {
   step: 1 | 2
-  totalSteps?: number
   children: ReactNode
 }
 
 /**
- * Phase 3.3 #48 — wizard shell rebuilt around the shared atelier
- * vocabulary. The full-bleed paper background, the cancel-confirm
- * choreography, and the cross-fade between steps are unchanged. What
- * shipped here:
- *
- *   • Inline `BlueprintReveal` removed; mounts shared
- *     `<BlueprintSubstrate lensRadius={220} breathing={false} driftPx={0} />`
- *     instead. One source of truth across chat workspace + dashboard
- *     + wizard.
- *   • Step children now wrap in a `<PaperSheet>` so the wizard reads
- *     as a sheet of paper sitting on the substrate, not a bare canvas.
- *   • Footer progress meter is `<WizardProgress>` — Roman numerals on
- *     a 64px hairline rule, replacing the breath-dot pattern.
+ * Wizard shell. Sticky top bar (wordmark + DE/EN + Cancel), top hairline
+ * progress (replaces the old footer Roman-numeral dots), and a centred
+ * max-w-3xl content region. Cancel is wired to a shadcn AlertDialog.
  */
-export function WizardShell({ step, totalSteps = 2, children }: Props) {
+export function WizardShell({ step, children }: Props) {
   const { t, i18n } = useTranslation()
   const navigate = useNavigate()
   const reset = useWizardState((s) => s.reset)
@@ -43,65 +41,65 @@ export function WizardShell({ step, totalSteps = 2, children }: Props) {
     document.documentElement.lang = i18n.resolvedLanguage ?? 'de'
   }, [t, i18n.resolvedLanguage])
 
-  const handleCancelClick = () => setCancelOpen(true)
-  const handleCancelDismiss = () => setCancelOpen(false)
-  const handleCancelConfirm = () => {
-    setCancelOpen(false)
-    reset()
-    navigate('/dashboard', { replace: true })
-  }
-
   return (
     <m.div
       initial={reduced ? false : { opacity: 0 }}
       animate={{ opacity: 1 }}
-      exit={reduced ? { opacity: 0 } : { opacity: 0 }}
       transition={{ duration: reduced ? 0 : 0.25, ease: [0.16, 1, 0.3, 1] }}
-      className="min-h-dvh bg-paper relative isolate flex flex-col"
+      className="relative isolate flex min-h-dvh flex-col bg-pm-paper"
     >
-      {/* Shared atelier substrate — calmer settings on the wizard so the
-       * headline + paper card stay the focal point. */}
       <BlueprintSubstrate lensRadius={220} breathing={false} driftPx={0} />
 
-      <header className="relative z-10 px-4 sm:px-10 lg:px-14 xl:px-20 pt-safe">
-        <div className="flex h-16 md:h-[72px] items-center justify-between gap-3">
+      <header className="relative z-10 px-4 pt-safe sm:px-10 lg:px-14 xl:px-20">
+        <div className="flex h-16 items-center justify-between gap-3 md:h-[72px]">
           <Wordmark />
           <div className="flex items-center gap-3 sm:gap-5">
             <LanguageSwitcher />
-            <span
-              className="hidden sm:block h-4 w-px bg-ink/20"
-              aria-hidden="true"
-            />
-            <button
-              type="button"
-              onClick={handleCancelClick}
-              className="min-h-[44px] inline-flex items-center text-[13px] font-medium text-ink/65 hover:text-ink transition-colors duration-soft px-2 py-1.5 rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/35 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-            >
-              {t('wizard.cancel')}
-            </button>
+            <span aria-hidden="true" className="hidden h-4 w-px bg-pm-ink/20 sm:block" />
+            <AlertDialog open={cancelOpen} onOpenChange={setCancelOpen}>
+              <AlertDialogTrigger asChild>
+                <button
+                  type="button"
+                  className="inline-flex min-h-[44px] items-center rounded-sm px-2 py-1.5 font-sans text-[13px] font-medium text-pm-ink-mid transition-colors hover:text-pm-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pm-clay focus-visible:ring-offset-2 focus-visible:ring-offset-pm-paper"
+                >
+                  {t('wizard.cancel')}
+                </button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>{t('wizard.cancelConfirm.h')}</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    {t('wizard.cancelConfirm.body')}
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel onClick={() => setCancelOpen(false)}>
+                    {t('wizard.cancelConfirm.cancel')}
+                  </AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={() => {
+                      setCancelOpen(false)
+                      reset()
+                      navigate('/dashboard', { replace: true })
+                    }}
+                  >
+                    {t('wizard.cancelConfirm.ok')}
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </div>
+        </div>
+
+        {/* Top hairline progress */}
+        <div className="mt-8">
+          <ProgressHairline current={step} total={2} />
         </div>
       </header>
 
-      <main className="relative z-10 flex-1 flex items-start sm:items-center justify-center px-4 sm:px-10 pt-6 sm:pt-0 pb-20 sm:pb-24">
-        <PaperSheet padded="md" className="w-full">
-          {children}
-        </PaperSheet>
+      <main className="relative z-10 flex flex-1 items-start justify-center px-6 py-16">
+        <div className="w-full max-w-3xl">{children}</div>
       </main>
-
-      <footer className="relative z-10 pb-6 sm:pb-10 pb-safe flex items-center justify-center">
-        <WizardProgress count={totalSteps} active={step} />
-      </footer>
-
-      <ConfirmDialog
-        open={cancelOpen}
-        title={t('wizard.cancelDialog.title')}
-        body={t('wizard.cancelDialog.body')}
-        confirmLabel={t('wizard.cancelDialog.confirm')}
-        cancelLabel={t('wizard.cancelDialog.dismiss')}
-        onConfirm={handleCancelConfirm}
-        onCancel={handleCancelDismiss}
-      />
     </m.div>
   )
 }

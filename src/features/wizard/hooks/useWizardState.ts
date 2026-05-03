@@ -40,7 +40,7 @@ export const useWizardState = create<WizardState>()(
     (set) => ({
       ...initialState,
       setStep: (step) => set({ step }),
-      setIntent: (intent) => set({ intent, step: 2 }),
+      setIntent: (intent) => set({ intent }),
       setPlotChoice: (hasPlot) =>
         set((s) => ({ hasPlot, plotAddress: hasPlot ? s.plotAddress : '' })),
       setPlotAddress: (plotAddress) => set({ plotAddress }),

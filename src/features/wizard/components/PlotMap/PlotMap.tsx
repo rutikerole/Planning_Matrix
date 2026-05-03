@@ -27,8 +27,6 @@ import {
   isInMuenchenBounds,
   type GeocodeResult,
 } from './geocode'
-import { BplanResultCard } from './BplanResultCard'
-import { BplanStatusBanner } from './BplanStatusBanner'
 import { useBplanLookup } from '../../hooks/useBplanLookup'
 import type { BplanLookupResult } from '@/types/bplan'
 import './styles.css'
@@ -44,6 +42,7 @@ interface Props {
   onAddressChange?: (next: string) => void
   onCoordinatesResolved?: (coords: GeocodeResult | null) => void
   onBplanResolved?: (result: BplanLookupResult | null) => void
+  onBplanLoadingChange?: (loading: boolean) => void
 }
 
 // Custom DivIcon — we don't ship Leaflet's marker images (they're
@@ -101,6 +100,7 @@ export function PlotMap({
   onAddressChange,
   onCoordinatesResolved,
   onBplanResolved,
+  onBplanLoadingChange,
 }: Props) {
   const { t } = useTranslation()
   const [coords, setCoords] = useState<GeocodeResult | null>(null)
@@ -191,11 +191,15 @@ export function PlotMap({
     lng: coords?.lng ?? null,
   })
 
-  // Bubble the B-Plan result up to QuestionPlot so it can pass it
-  // through to useCreateProject.
+  // Bubble the B-Plan result + loading state up to QuestionPlot so the
+  // BPlanCheck pill above the map can render its status without
+  // duplicating the lookup hook.
   useEffect(() => {
     onBplanResolved?.(bplanResult)
   }, [bplanResult, onBplanResolved])
+  useEffect(() => {
+    onBplanLoadingChange?.(bplanLoading)
+  }, [bplanLoading, onBplanLoadingChange])
 
   // ─── Click-to-select ─────────────────────────────────────────────
   function handlePick(lat: number, lng: number) {
@@ -257,10 +261,6 @@ export function PlotMap({
 
   return (
     <div className="flex flex-col">
-      {coords ? <BplanStatusBanner result={bplanResult} isLoading={bplanLoading} /> : null}
-      <p className="font-serif italic text-[11px] text-clay/72 leading-relaxed mb-2">
-        {t('wizard.q2.mapClickHint')}
-      </p>
       <div className="pm-plotmap-container relative" style={{ height: 280 }}>
         {isGeocoding ? <div className="pm-plotmap-progress" aria-hidden="true" /> : null}
         <MapContainer
@@ -308,7 +308,6 @@ export function PlotMap({
           </div>
         ) : null}
       </div>
-      {coords ? <BplanResultCard result={bplanResult} isLoading={bplanLoading} /> : null}
     </div>
   )
 }

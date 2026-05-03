@@ -2,30 +2,45 @@ import { AnimatePresence, m, useReducedMotion } from 'framer-motion'
 import { WizardShell } from '../components/WizardShell'
 import { QuestionIntent } from '../components/QuestionIntent'
 import { QuestionPlot } from '../components/QuestionPlot'
-import { TransitionScreen } from '../components/TransitionScreen'
+import { LoaderScreen } from '@/features/loader/LoaderScreen'
 import { useWizardState } from '../hooks/useWizardState'
 import { useCreateProject } from '../hooks/useCreateProject'
 
 /**
  * Wizard root. Three visual states:
+ *   1. Q1 (intent chips)
+ *   2. Q2 (plot toggle + address + map)
+ *   3. Loader (INSERT + priming + handoff to /projects/:id)
  *
- *   1. Asking Q1 (intent chips)
- *   2. Asking Q2 (plot toggle + address)
- *   3. Transitioning to chat (INSERT + priming + navigate)
- *
- * Step 1 ↔ 2 cross-fade; transition replaces the entire wizard so the
+ * Q1 ↔ Q2 cross-fade; loader replaces the wizard entirely so the
  * paper background carries through but the chrome falls away.
  */
 export function WizardPage() {
   const step = useWizardState((s) => s.step)
+  const reset = useWizardState((s) => s.reset)
   const reduced = useReducedMotion()
-  const { submit, status, error } = useCreateProject()
+  const {
+    submit,
+    cancelInFlight,
+    isInFlight,
+    primed,
+    failed,
+    projectId,
+    error,
+  } = useCreateProject()
 
-  const transitioning =
-    status === 'inserting' || status === 'priming' || status === 'navigating'
-
-  if (transitioning) {
-    return <TransitionScreen />
+  if (isInFlight) {
+    return (
+      <LoaderScreen
+        projectId={projectId}
+        primed={primed}
+        failed={failed}
+        onCancel={async () => {
+          await cancelInFlight()
+          reset()
+        }}
+      />
+    )
   }
 
   return (

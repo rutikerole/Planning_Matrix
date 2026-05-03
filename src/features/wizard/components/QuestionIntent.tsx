@@ -1,34 +1,33 @@
 import { useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { m, useReducedMotion } from 'framer-motion'
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/components/ui/collapsible'
 import { cn } from '@/lib/utils'
 import { useWizardState } from '../hooks/useWizardState'
-import { INTENT_VALUES, type Intent } from '../lib/selectTemplate'
-import { WizardTitleBlock } from './WizardTitleBlock'
+import { INTENT_VALUES, INTENT_TO_I18N } from '../lib/selectTemplate'
+import { IntentChip } from './IntentChip'
 
 /**
- * Phase 3.3 #48 — Q1 redesigned to live inside the wizard's paper card.
- *
- * Title block (eyebrow + Roman I + headline + sub) sits above the chip
- * grid. Chips are now paper-tab cards: paper bg with hairline border,
- * inset white-edge highlight, and on selection drafting-blue 12% fill
- * + drafting-blue 60% border + a flush-left clay dot prefix that
- * matches the spec-index "ACTIVE" marker (Polish-Move-1 vocabulary).
- *
- * Selecting a chip immediately advances the wizard to step 2 via
- * setIntent (unchanged behaviour). Keyboard nav unchanged: Tab into
- * the group, Arrow keys cycle focus, Enter/Space activates.
+ * Q1 — intent. Six chips with inline SVG line-icons. Chip selection
+ * stores the intent but does NOT auto-advance: the user clicks
+ * "Continue" or presses Enter on a focused chip to move to Q2.
  */
 export function QuestionIntent() {
   const { t } = useTranslation()
   const intent = useWizardState((s) => s.intent)
   const setIntent = useWizardState((s) => s.setIntent)
-  const reduced = useReducedMotion()
-
+  const setStep = useWizardState((s) => s.setStep)
   const [unsureOpen, setUnsureOpen] = useState(false)
   const chipRefs = useRef<Array<HTMLButtonElement | null>>([])
 
-  const handleKey = (e: React.KeyboardEvent, idx: number) => {
+  const advance = () => {
+    if (intent !== null) setStep(2)
+  }
+
+  const handleKey = (e: React.KeyboardEvent<HTMLButtonElement>, idx: number) => {
     if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
       e.preventDefault()
       const next = (idx + 1) % INTENT_VALUES.length
@@ -37,110 +36,104 @@ export function QuestionIntent() {
       e.preventDefault()
       const prev = (idx - 1 + INTENT_VALUES.length) % INTENT_VALUES.length
       chipRefs.current[prev]?.focus()
-    } else if (e.key === 'Home') {
+    } else if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault()
-      chipRefs.current[0]?.focus()
-    } else if (e.key === 'End') {
-      e.preventDefault()
-      chipRefs.current[INTENT_VALUES.length - 1]?.focus()
+      const target = INTENT_VALUES[idx]
+      setIntent(target)
+      // Allow the next paint to settle so screen readers announce
+      // the selection before we leave Q1.
+      setTimeout(() => setStep(2), 0)
     }
   }
 
-  const headline = t('wizard.q1.headline').replace(/[?]\s*$/, '')
+  const canContinue = intent !== null
 
   return (
     <div className="flex flex-col gap-7">
-      <WizardTitleBlock
-        numeral="I"
-        eyebrowKey="wizard.q1.eyebrow"
-        headline={headline}
-        punct="?"
-        sub={t('wizard.q1.sub')}
-        headlineId="q1-headline"
-      />
+      <header className="flex flex-col gap-5">
+        <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-pm-clay">
+          {t('wizard.q1.eyebrow')}
+        </p>
+        <h1
+          id="q1-headline"
+          className="font-serif text-[clamp(2.5rem,6vw,4rem)] leading-[1.05] -tracking-[0.02em] text-pm-ink"
+        >
+          {t('wizard.q1.h').replace(/[?]\s*$/, '')}
+          <span className="text-pm-clay">?</span>
+        </h1>
+        <p className="font-sans text-[17px] italic leading-relaxed text-pm-ink-mid max-w-[36rem]">
+          {t('wizard.q1.sub')}
+        </p>
+      </header>
 
       <div
-        role="group"
+        role="radiogroup"
         aria-labelledby="q1-headline"
-        className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 mt-1"
+        className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3"
       >
-        {INTENT_VALUES.map((value, idx) => {
-          const isSelected = intent === value
-          return (
-            <button
-              key={value}
-              ref={(el) => {
-                chipRefs.current[idx] = el
-              }}
-              type="button"
-              onClick={() => handleSelect(value, setIntent)}
-              onKeyDown={(e) => handleKey(e, idx)}
-              aria-pressed={isSelected}
-              className={cn(
-                'group relative flex items-center gap-2 px-5 py-4 rounded-[2px] border text-left text-[14px] font-medium tracking-tight',
-                'transition-[background-color,color,border-color,transform,box-shadow] duration-soft ease-soft',
-                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/35 focus-visible:ring-offset-2 focus-visible:ring-offset-background',
-                isSelected
-                  ? 'border-drafting-blue/60 bg-drafting-blue/[0.12] text-ink'
-                  : 'border-ink/15 bg-paper text-ink/85 hover:border-ink/30 hover:bg-drafting-blue/[0.05] hover:text-ink motion-safe:hover:-translate-y-px',
-              )}
-              style={{
-                boxShadow: isSelected
-                  ? 'inset 0 1px 0 hsl(0 0% 100% / 0.55)'
-                  : 'inset 0 1px 0 hsl(0 0% 100% / 0.6)',
-              }}
-            >
-              {/* Selection dot — clay filled circle, matches the
-               * left-rail spec-index ACTIVE marker. Renders only when
-               * selected so unselected chips stay clean. */}
-              <span
-                aria-hidden="true"
-                className={cn(
-                  'block size-1.5 rounded-full shrink-0 transition-colors duration-soft',
-                  isSelected ? 'bg-clay' : 'bg-transparent',
-                )}
-              />
-              <span>{t(`wizard.q1.options.${value}`)}</span>
-            </button>
-          )
-        })}
+        {INTENT_VALUES.map((value, idx) => (
+          <IntentChip
+            key={value}
+            ref={(el) => {
+              chipRefs.current[idx] = el
+            }}
+            intent={value}
+            selected={intent === value}
+            onSelect={() => setIntent(value)}
+            onKeyDown={(e) => handleKey(e, idx)}
+          />
+        ))}
       </div>
 
-      <div className="-mt-1">
+      <Collapsible open={unsureOpen} onOpenChange={setUnsureOpen}>
+        <CollapsibleTrigger asChild>
+          <button
+            type="button"
+            className="self-start rounded-sm font-serif text-[13px] italic text-pm-clay underline underline-offset-4 decoration-pm-clay/40 transition-colors hover:text-pm-clay-deep hover:decoration-pm-clay focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pm-clay focus-visible:ring-offset-2 focus-visible:ring-offset-pm-paper"
+          >
+            {t('wizard.q1.unsureLink')}
+          </button>
+        </CollapsibleTrigger>
+        <CollapsibleContent
+          className={cn(
+            'mt-4 overflow-hidden',
+            'data-[state=open]:animate-accordion-down',
+            'data-[state=closed]:animate-accordion-up',
+          )}
+        >
+          <ul className="flex flex-col gap-3 border-l border-pm-clay/30 pl-4 text-[13px] leading-relaxed text-pm-ink-mid">
+            {INTENT_VALUES.map((value) => (
+              <li key={value}>
+                <span className="font-sans font-medium text-pm-ink">
+                  {t(`wizard.q1.options.${INTENT_TO_I18N[value]}.label`)}.
+                </span>{' '}
+                {t(`wizard.q1.unsureBody.${INTENT_TO_I18N[value]}`)}
+              </li>
+            ))}
+          </ul>
+        </CollapsibleContent>
+      </Collapsible>
+
+      <div className="mt-12 flex items-center justify-end gap-4">
+        <span className="font-mono text-[12px] italic text-pm-ink-mute2">
+          {t('wizard.progress.of', { current: 1, total: 2 })}
+        </span>
         <button
           type="button"
-          onClick={() => setUnsureOpen((v) => !v)}
-          aria-expanded={unsureOpen}
-          className="font-serif italic text-[12px] text-clay/85 hover:text-ink underline underline-offset-4 decoration-clay/55 transition-colors duration-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm"
+          disabled={!canContinue}
+          aria-disabled={!canContinue}
+          onClick={advance}
+          className={cn(
+            'inline-flex h-11 items-center justify-center px-5 font-sans text-[14px] tracking-tight transition-all duration-soft ease-soft',
+            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pm-clay focus-visible:ring-offset-2 focus-visible:ring-offset-pm-paper',
+            canContinue
+              ? 'bg-pm-clay text-pm-paper hover:bg-pm-clay-deep'
+              : 'cursor-not-allowed bg-pm-ink/15 text-pm-paper/80',
+          )}
         >
-          {t('wizard.q1.unsureLink')}
+          {t('wizard.q1.continue')}
         </button>
-
-        {unsureOpen && (
-          <m.div
-            initial={reduced ? false : { opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={reduced ? { opacity: 0 } : { opacity: 0, height: 0 }}
-            transition={{ duration: reduced ? 0 : 0.3, ease: [0.16, 1, 0.3, 1] }}
-            className="overflow-hidden mt-4"
-          >
-            <ul className="flex flex-col gap-3 text-[13px] text-ink/75 leading-relaxed border-l border-clay/35 pl-4">
-              {INTENT_VALUES.map((value) => (
-                <li key={value}>
-                  <span className="font-medium text-ink">
-                    {t(`wizard.q1.options.${value}`)}.
-                  </span>{' '}
-                  {t(`wizard.q1.unsureExplanation.${value}`)}
-                </li>
-              ))}
-            </ul>
-          </m.div>
-        )}
       </div>
     </div>
   )
-}
-
-function handleSelect(value: Intent, setIntent: (i: Intent) => void) {
-  setIntent(value)
 }

@@ -896,27 +896,13 @@
   "wizard": {
     "title": "New project · Planning Matrix",
     "cancel": "Cancel",
-    "cancelDialog": {
-      "title": "Discard your answers?",
-      "body": "Your answers so far will be discarded and you'll return to the dashboard.",
-      "confirm": "Discard",
-      "dismiss": "Back to wizard"
-    },
     "progress": {
-      "label": "Step {{current}} of {{total}}",
       "of": "Question {{current}} of {{total}}"
     },
     "q1": {
       "eyebrow": "Planning Matrix · Initialization",
-      "headline": "What would you like to build?",
       "sub": "Pick the option closest to your project.",
       "options": {
-        "neubau_einfamilienhaus": "New single-family home",
-        "neubau_mehrfamilienhaus": "New multi-family building",
-        "sanierung": "Renovation",
-        "umnutzung": "Change of use",
-        "abbruch": "Demolition",
-        "sonstige": "Other",
         "neubau_efh": {
           "label": "New single-family home",
           "code": "T-01"
@@ -924,17 +910,25 @@
         "neubau_mfh": {
           "label": "New multi-family home",
           "code": "T-02"
+        },
+        "sanierung": {
+          "label": "Renovation",
+          "code": "T-03"
+        },
+        "umnutzung": {
+          "label": "Change of use",
+          "code": "T-04"
+        },
+        "abbruch": {
+          "label": "Demolition",
+          "code": "T-05"
+        },
+        "sonstige": {
+          "label": "Something else",
+          "code": "T-01"
         }
       },
       "unsureLink": "I'm not sure",
-      "unsureExplanation": {
-        "neubau_einfamilienhaus": "A fully new residential building with one or two units — detached or part of a row-house cluster.",
-        "neubau_mehrfamilienhaus": "A new residential building with three or more units — usually a higher building class with stricter fire-protection requirements.",
-        "sanierung": "Modifying an existing building: energy upgrades, floor-plan changes, adding a storey. Often a notification rather than a full permit.",
-        "umnutzung": "Repurposing an existing property — for example commercial to residential or vice versa. Typically triggers a fresh building-law assessment.",
-        "abbruch": "Planned demolition of an existing building. Notification under Art. 57 (5) BayBO; additional approvals if heritage-protected.",
-        "sonstige": "A different project. We'll start with the standard single-family-home template and adapt it in conversation."
-      },
       "h": "What would you like to build?",
       "continue": "Continue",
       "unsureBody": {
@@ -948,30 +942,14 @@
     },
     "q2": {
       "eyebrow": "Planning Matrix · Initialization",
-      "headline": "Do you already have a plot?",
       "sub": "If yes, enter the address or parcel reference. If no, we'll proceed with assumptions.",
       "yes": "Yes",
       "no": "No",
       "addressLabel": "Address or parcel",
-      "addressPlaceholder": "e.g. Türkenstraße 25, 80799 München",
-      "addressHelper": "We use the address to research the development plan and local statutes.",
       "addressInvalid": "Please enter a full address with house number and postal code.",
-      "errorOutOfMuenchen": {
-        "title": "This address is outside the Munich city area.",
-        "body": "In the first version, we review building projects within the Munich city area only, with full accuracy. Please enter an address with a Munich postcode (80331–81929). More cities will follow."
-      },
-      "muenchenScopeNotice": "Currently we review building projects within the Munich city area (postcodes 80331–81929). More cities will follow.",
-      "noPlotNotice": "Note: without a plot we can't yet assess zoning (Area A) or other provisions (Area C). We start with standard assumptions and mark affected areas accordingly.",
-      "mapClickHint": "Click on the map to inspect a different location.",
       "mapClickOutOfMuenchen": "This location is outside the current scope (Munich).",
       "mapReverseLoading": "Resolving address …",
       "mapReverseFailed": "Address could not be resolved. Please type it manually.",
-      "bplanBanner": {
-        "loading": "Checking development plan …",
-        "found": "Within development plan {{plan}} — building under § 30 BauGB generally possible.",
-        "foundUnnamed": "Within a development plan — building under § 30 BauGB generally possible.",
-        "notFound": "No legally binding development plan — assessment under § 34 / § 35 BauGB to be discussed."
-      },
       "h": "Do you already have a plot?",
       "placeholder": "e.g. Türkenstraße 25, 80799 München",
       "helper": "We use the address to research the development plan and local ordinances.",
@@ -991,12 +969,6 @@
       "submit": "Set the table"
     },
     "back": "Back",
-    "submit": "Create project",
-    "transition": {
-      "eyebrow": "Planning Matrix · Preparing",
-      "headline": "Setting the table.",
-      "body": "We're laying out your drafting board — one moment."
-    },
     "errors": {
       "insertFailed": "Project couldn't be created. Please try again."
     },

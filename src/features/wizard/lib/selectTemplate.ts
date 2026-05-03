@@ -18,6 +18,20 @@ export const INTENT_VALUES: readonly Intent[] = [
 ] as const
 
 /**
+ * The DB enum and the i18n key tree use slightly different slugs.
+ * `Intent` is fixed by the `projects.intent` CHECK constraint; the
+ * i18n tree is keyed by short slugs picked for the chip labels.
+ */
+export const INTENT_TO_I18N: Record<Intent, string> = {
+  neubau_einfamilienhaus: 'neubau_efh',
+  neubau_mehrfamilienhaus: 'neubau_mfh',
+  sanierung: 'sanierung',
+  umnutzung: 'umnutzung',
+  abbruch: 'abbruch',
+  sonstige: 'sonstige',
+}
+
+/**
  * Map the user's I-01 answer to the template that backs the conversation.
  * v1 fully fleshes only T-01; T-02..T-05 fall through to T-01 with
  * annotations in the system prompt. `sonstige` also falls back to T-01
