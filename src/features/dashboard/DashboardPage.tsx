@@ -81,12 +81,25 @@ export function DashboardPage() {
     document.documentElement.lang = i18n.resolvedLanguage ?? 'de'
   }, [t, i18n.resolvedLanguage])
 
+  // Open the ⌘K palette — blurs the previously-focused element first
+  // so Radix Dialog's autofocus has a clean slate. Without this,
+  // when an Export-style trigger had focus before opening, Radix
+  // applies `aria-hidden="true"` to #root while the trigger is still
+  // focused, producing the "aria-hidden on a focused descendant"
+  // warning. Belt-and-suspenders alongside Radix's own focus dance.
+  const openPalette = () => {
+    if (document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur()
+    }
+    setPaletteOpen(true)
+  }
+
   // Global ⌘K opens the palette.
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
         e.preventDefault()
-        setPaletteOpen(true)
+        openPalette()
       }
     }
     window.addEventListener('keydown', handler)
@@ -155,7 +168,7 @@ export function DashboardPage() {
             <LanguageSwitcher />
             <button
               type="button"
-              onClick={() => setPaletteOpen(true)}
+              onClick={openPalette}
               aria-label="Open command palette"
               className="rounded-sm border border-pm-hair px-2 py-0.5 font-mono text-[11px] text-pm-ink-mute2 transition-colors hover:bg-pm-paper-tint hover:text-pm-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pm-clay focus-visible:ring-offset-2 focus-visible:ring-offset-pm-paper"
             >
@@ -212,7 +225,7 @@ export function DashboardPage() {
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-3.5">
                   <button
                     type="button"
-                    onClick={() => setPaletteOpen(true)}
+                    onClick={openPalette}
                     className="flex w-full max-w-[280px] items-center gap-2.5 border-b border-pm-hair-strong px-1 py-1.5 text-left transition-colors hover:border-pm-clay focus-visible:outline-none focus-visible:border-pm-clay"
                   >
                     <svg

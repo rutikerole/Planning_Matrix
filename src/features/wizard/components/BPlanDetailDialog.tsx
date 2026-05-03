@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next'
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
@@ -29,6 +30,9 @@ export function BPlanDetailDialog({ open, onOpenChange, result }: Props) {
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{t('wizard.q2.bplan.detailH')}</DialogTitle>
+          <DialogDescription className="sr-only">
+            {t('wizard.q2.bplan.detailDescription')}
+          </DialogDescription>
         </DialogHeader>
 
         {result?.status === 'found' ? <FoundBody result={result} /> : <NoPlanBody />}

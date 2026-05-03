@@ -645,7 +645,8 @@
         "h": "Rename project",
         "label": "Name",
         "save": "Save",
-        "cancel": "Cancel"
+        "cancel": "Cancel",
+        "description": "Enter a new name for this project."
       },
       "deleteDialog": {
         "h": "Delete project permanently?",
@@ -825,7 +826,8 @@
         "noneInner": "● No legally binding development plan — assessment under § 34 BauGB.",
         "exists": "● B-Plan {{id}} active — {{zone}}.",
         "detailLink": "View details",
-        "detailH": "Development-plan details"
+        "detailH": "Development-plan details",
+        "detailDescription": "Detail view of the development plan for the selected address."
       },
       "submit": "Set the table",
       "plot": {

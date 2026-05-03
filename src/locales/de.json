@@ -645,7 +645,8 @@
         "h": "Projekt umbenennen",
         "label": "Name",
         "save": "Speichern",
-        "cancel": "Abbrechen"
+        "cancel": "Abbrechen",
+        "description": "Geben Sie einen neuen Namen für dieses Projekt ein."
       },
       "deleteDialog": {
         "h": "Projekt unwiderruflich löschen?",
@@ -825,7 +826,8 @@
         "noneInner": "● Kein rechtsgültiger Bebauungsplan — Beurteilung nach § 34 BauGB.",
         "exists": "● B-Plan {{id}} aktiv — {{zone}}.",
         "detailLink": "Details ansehen",
-        "detailH": "Bebauungsplan-Details"
+        "detailH": "Bebauungsplan-Details",
+        "detailDescription": "Detailansicht zum Bebauungsplan für die ausgewählte Adresse."
       },
       "submit": "Tisch decken",
       "plot": {

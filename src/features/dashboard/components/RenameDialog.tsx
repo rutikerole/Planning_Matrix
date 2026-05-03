@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -57,6 +58,9 @@ function Form({
     <>
       <DialogHeader>
         <DialogTitle>{t('dashboard.row.renameDialog.h')}</DialogTitle>
+        <DialogDescription className="sr-only">
+          {t('dashboard.row.renameDialog.description')}
+        </DialogDescription>
       </DialogHeader>
       <label className="flex flex-col gap-2">
         <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-pm-clay">
