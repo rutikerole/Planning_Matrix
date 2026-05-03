@@ -10,9 +10,16 @@
     },
     "hero": {
       "eyebrow": "PLANNING MATRIX",
-      "h1": { "l1": "Bauen in Deutschland.", "l2": "Klar. Schnell. Belastbar." },
+      "h1": {
+        "l1": "Bauen in Deutschland.",
+        "l2": "Klar. Schnell. Belastbar."
+      },
       "sub": "Ein Roundtable spezialisierter KI-Fachpersonen begleitet Sie durch das deutsche Baugenehmigungsrecht — von der ersten Idee bis zum prüffähigen Antrag.",
-      "meta": { "live": "Live in 47.892 §§", "short": "4 Min Erstanalyse", "audit": "Vollständig auditierbar" },
+      "meta": {
+        "live": "Live in 47.892 §§",
+        "short": "4 Min Erstanalyse",
+        "audit": "Vollständig auditierbar"
+      },
       "cta1": "Projekt starten",
       "cta2": "Demo ansehen",
       "note": "BayBO Art. 57 — vereinfachtes Verfahren möglich?",
@@ -34,17 +41,26 @@
       }
     },
     "stats": {
-      "l1": "Normen erfasst", "d1": "BauGB · BauNVO · MBO · alle 16 LBOen",
-      "l2": "Bundesländer", "d2": "Bayern produktiv · weitere im Rollout",
-      "l3": "Minuten Erstanalyse", "d3": "Verfahren, Dokumente und Rollen — sofort",
-      "l4": "Bauanträge / Jahr", "d4": "in Deutschland — der Markt, den wir entlasten"
+      "l1": "Normen erfasst",
+      "d1": "BauGB · BauNVO · MBO · alle 16 LBOen",
+      "l2": "Bundesländer",
+      "d2": "Bayern produktiv · weitere im Rollout",
+      "l3": "Minuten Erstanalyse",
+      "d3": "Verfahren, Dokumente und Rollen — sofort",
+      "l4": "Bauanträge / Jahr",
+      "d4": "in Deutschland — der Markt, den wir entlasten"
     },
     "chat": {
       "eyebrow": "DAS GESPRÄCH",
-      "h": { "l1": "Sie sitzen am Tisch", "l2": "mit dem ganzen Team." },
+      "h": {
+        "l1": "Sie sitzen am Tisch",
+        "l2": "mit dem ganzen Team."
+      },
       "sub": "Kein Chatbot. Ein Roundtable von Fachpersonen — Planungsrecht, Bauordnung, sonstige Vorgaben — die genau dann sprechen, wenn ihre Domäne relevant ist.",
       "title": "Bauamt-Akte · 2026-04 · Erlangen",
-      "input": { "placeholder": "Antworten Sie hier — oder sagen Sie „Weiß ich nicht\"" },
+      "input": {
+        "placeholder": "Antworten Sie hier — oder sagen Sie „Weiß ich nicht\""
+      },
       "replay": "Wiedergabe starten",
       "specialists": {
         "moderator": "MODERATOR",
@@ -55,126 +71,336 @@
       }
     },
     "matrix": {
-      "areas": { "label": "BEREICHE", "a": "A — Planungsrecht", "b": "B — Bauordnung", "c": "C — Sonstige Vorgaben" },
-      "recs": { "label": "TOP 3 SCHRITTE" },
-      "states": { "active": "AKTIV", "pending": "AUSSTEHEND", "void": "UNGEKLÄRT" }
+      "areas": {
+        "label": "BEREICHE",
+        "a": "A — Planungsrecht",
+        "b": "B — Bauordnung",
+        "c": "C — Sonstige Vorgaben"
+      },
+      "recs": {
+        "label": "TOP 3 SCHRITTE"
+      },
+      "states": {
+        "active": "AKTIV",
+        "pending": "AUSSTEHEND",
+        "void": "UNGEKLÄRT"
+      }
     },
     "analyzer": {
       "eyebrow": "DER ANALYZER",
-      "h": { "l1": "Adresse rein.", "l2": "Verfahrensbild raus." },
+      "h": {
+        "l1": "Adresse rein.",
+        "l2": "Verfahrensbild raus."
+      },
       "sub": "Wählen Sie ein Beispielgrundstück. Sehen Sie, was Planning Matrix in Sekunden über Verfahren, Dokumente und Fachplaner sagt.",
-      "list": { "label": "BEISPIELGRUNDSTÜCKE" },
-      "out": { "label": "ANALYSE", "live": "Echtzeit-Auswertung" },
-      "stats": { "proc": "Verfahren", "docs": "Dokumente", "roles": "Fachplaner", "weeks": "Wochen" },
-      "details": { "planungsrecht": "PLANUNGSRECHT", "bauordnung": "BAUORDNUNG", "sonstige": "SONSTIGE", "gebaeudeklasse": "GEBÄUDEKLASSE" }
+      "list": {
+        "label": "BEISPIELGRUNDSTÜCKE"
+      },
+      "out": {
+        "label": "ANALYSE",
+        "live": "Echtzeit-Auswertung"
+      },
+      "stats": {
+        "proc": "Verfahren",
+        "docs": "Dokumente",
+        "roles": "Fachplaner",
+        "weeks": "Wochen"
+      },
+      "details": {
+        "planungsrecht": "PLANUNGSRECHT",
+        "bauordnung": "BAUORDNUNG",
+        "sonstige": "SONSTIGE",
+        "gebaeudeklasse": "GEBÄUDEKLASSE"
+      }
     },
     "persp": {
       "eyebrow": "FÜR WEN",
-      "h": { "l1": "Für alle, die ernsthaft", "l2": "in Deutschland bauen." },
+      "h": {
+        "l1": "Für alle, die ernsthaft",
+        "l2": "in Deutschland bauen."
+      },
       "more": "Mehr erfahren",
-      "b1": { "label": "ARCHITEKTEN", "h": "Planungssicherheit ab Tag eins.", "p": "Verfahrenseinordnung, Dokumentenliste und Fachplaner-Bedarf — bevor Sie den ersten Strich zeichnen.", "alt": "Architektin am Zeichentisch" },
-      "b2": { "label": "ABDECKUNG", "small": "Normen aktiv erfasst — Bayern produktiv, weitere folgen." },
-      "b3": { "label": "BAUTRÄGER & ENTWICKLER", "h": "Risiken früh erkannt.", "p": "Welche Sondervorgaben am Standort gelten, sehen Sie vor Grundstücksankauf." },
-      "b4": { "label": "BAUHERREN", "h": "Verstehen, was Sie unterschreiben.", "p": "Klare Sprache, belastbare Quellen, jederzeit auditierbare Entscheidungen.", "alt": "Bauunterlagen auf dem Zeichentisch" }
+      "b1": {
+        "label": "ARCHITEKTEN",
+        "h": "Planungssicherheit ab Tag eins.",
+        "p": "Verfahrenseinordnung, Dokumentenliste und Fachplaner-Bedarf — bevor Sie den ersten Strich zeichnen.",
+        "alt": "Architektin am Zeichentisch"
+      },
+      "b2": {
+        "label": "ABDECKUNG",
+        "small": "Normen aktiv erfasst — Bayern produktiv, weitere folgen."
+      },
+      "b3": {
+        "label": "BAUTRÄGER & ENTWICKLER",
+        "h": "Risiken früh erkannt.",
+        "p": "Welche Sondervorgaben am Standort gelten, sehen Sie vor Grundstücksankauf."
+      },
+      "b4": {
+        "label": "BAUHERREN",
+        "h": "Verstehen, was Sie unterschreiben.",
+        "p": "Klare Sprache, belastbare Quellen, jederzeit auditierbare Entscheidungen.",
+        "alt": "Bauunterlagen auf dem Zeichentisch"
+      }
     },
     "thinks": {
       "eyebrow": "WIE DAS SYSTEM DENKT",
-      "h": { "l1": "Drei Brillen.", "l2": "Ein Bild." },
+      "h": {
+        "l1": "Drei Brillen.",
+        "l2": "Ein Bild."
+      },
       "sub": "Jedes Vorhaben durchläuft drei rechtliche Perspektiven. Konsultationsprinzip — keine Lücke bleibt offen.",
-      "tab": { "a": "A — Planungsrecht", "b": "B — Bauordnung", "c": "C — Sonstige Vorgaben" },
+      "tab": {
+        "a": "A — Planungsrecht",
+        "b": "B — Bauordnung",
+        "c": "C — Sonstige Vorgaben"
+      },
       "live": "● 47.892 Normen verfügbar",
       "questionLabel": "ZENTRALE FRAGE",
       "refsLabel": "RECHTSGRUNDLAGEN",
-      "a": { "h": "Planungsrechtliches Profil", "q": "Darf das Vorhaben am gegebenen Ort überhaupt realisiert werden?", "b": "BauGB §§ 30 / 34 / 35, BauNVO-Gebiete, B-Pläne und F-Pläne. Ergebnis: ist Bauen hier zulässig — und unter welchen Bedingungen.",
+      "a": {
+        "h": "Planungsrechtliches Profil",
+        "q": "Darf das Vorhaben am gegebenen Ort überhaupt realisiert werden?",
+        "b": "BauGB §§ 30 / 34 / 35, BauNVO-Gebiete, B-Pläne und F-Pläne. Ergebnis: ist Bauen hier zulässig — und unter welchen Bedingungen.",
         "refs": [
-          { "ref": "§ 30 BauGB", "src": "qualifizierter Bebauungsplan" },
-          { "ref": "§ 34 BauGB", "src": "Innenbereich" },
-          { "ref": "§ 35 BauGB", "src": "Außenbereich" },
-          { "ref": "BauNVO §§ 1–11", "src": "Gebietstypen" },
-          { "ref": "BauNVO §§ 16–21a", "src": "Maß der Nutzung" },
-          { "ref": "B-Plan", "src": "kommunal" }
-        ] },
-      "b": { "h": "Bauordnungsrechtliches Profil", "q": "Welches Genehmigungsverfahren ist erforderlich, und welche Anforderungen stellt die Bauordnung?", "b": "BayBO mit Gebäudeklassen, Sonderbau-Tatbeständen und drei Verfahrenswegen. Brandschutz, Stellplätze, Barrierefreiheit, GEG.",
+          {
+            "ref": "§ 30 BauGB",
+            "src": "qualifizierter Bebauungsplan"
+          },
+          {
+            "ref": "§ 34 BauGB",
+            "src": "Innenbereich"
+          },
+          {
+            "ref": "§ 35 BauGB",
+            "src": "Außenbereich"
+          },
+          {
+            "ref": "BauNVO §§ 1–11",
+            "src": "Gebietstypen"
+          },
+          {
+            "ref": "BauNVO §§ 16–21a",
+            "src": "Maß der Nutzung"
+          },
+          {
+            "ref": "B-Plan",
+            "src": "kommunal"
+          }
+        ]
+      },
+      "b": {
+        "h": "Bauordnungsrechtliches Profil",
+        "q": "Welches Genehmigungsverfahren ist erforderlich, und welche Anforderungen stellt die Bauordnung?",
+        "b": "BayBO mit Gebäudeklassen, Sonderbau-Tatbeständen und drei Verfahrenswegen. Brandschutz, Stellplätze, Barrierefreiheit, GEG.",
         "refs": [
-          { "ref": "BayBO Art. 2", "src": "Gebäudeklassen" },
-          { "ref": "BayBO Art. 57", "src": "Genehmigungsfreistellung" },
-          { "ref": "BayBO Art. 58", "src": "vereinfachtes Verfahren" },
-          { "ref": "BayBO Art. 59", "src": "reguläres Verfahren" },
-          { "ref": "GEG § 10", "src": "energetische Anforderungen" },
-          { "ref": "DIN 4109", "src": "Schallschutz" }
-        ] },
-      "c": { "h": "Sonstige Vorgaben", "q": "Welche projektrelevanten Vorgaben existieren jenseits des Planungs- und Bauordnungsrechts?", "b": "Baulasten, Denkmalschutz, kommunale Satzungen, nutzungsbedingte Sondergenehmigungen — der Bereich, in dem Projekte oft tatsächlich blockieren.",
+          {
+            "ref": "BayBO Art. 2",
+            "src": "Gebäudeklassen"
+          },
+          {
+            "ref": "BayBO Art. 57",
+            "src": "Genehmigungsfreistellung"
+          },
+          {
+            "ref": "BayBO Art. 58",
+            "src": "vereinfachtes Verfahren"
+          },
+          {
+            "ref": "BayBO Art. 59",
+            "src": "reguläres Verfahren"
+          },
+          {
+            "ref": "GEG § 10",
+            "src": "energetische Anforderungen"
+          },
+          {
+            "ref": "DIN 4109",
+            "src": "Schallschutz"
+          }
+        ]
+      },
+      "c": {
+        "h": "Sonstige Vorgaben",
+        "q": "Welche projektrelevanten Vorgaben existieren jenseits des Planungs- und Bauordnungsrechts?",
+        "b": "Baulasten, Denkmalschutz, kommunale Satzungen, nutzungsbedingte Sondergenehmigungen — der Bereich, in dem Projekte oft tatsächlich blockieren.",
         "refs": [
-          { "ref": "Baulasten", "src": "Grundbuch" },
-          { "ref": "DSchG", "src": "Denkmalschutz" },
-          { "ref": "BNatSchG", "src": "Naturschutz" },
-          { "ref": "Stellplatzsatzung", "src": "kommunal" },
-          { "ref": "Erhaltungssatzung", "src": "kommunal" },
-          { "ref": "VStättVO", "src": "Versammlungsstätten" }
-        ] }
+          {
+            "ref": "Baulasten",
+            "src": "Grundbuch"
+          },
+          {
+            "ref": "DSchG",
+            "src": "Denkmalschutz"
+          },
+          {
+            "ref": "BNatSchG",
+            "src": "Naturschutz"
+          },
+          {
+            "ref": "Stellplatzsatzung",
+            "src": "kommunal"
+          },
+          {
+            "ref": "Erhaltungssatzung",
+            "src": "kommunal"
+          },
+          {
+            "ref": "VStättVO",
+            "src": "Versammlungsstätten"
+          }
+        ]
+      }
     },
     "cmp": {
       "eyebrow": "DER UNTERSCHIED",
-      "h": { "l1": "Acht Wochen Recherche.", "l2": "Oder vier Tage Klarheit." },
+      "h": {
+        "l1": "Acht Wochen Recherche.",
+        "l2": "Oder vier Tage Klarheit."
+      },
       "sub": "Was heute zwischen Idee und Antrag steht — und was es sein könnte.",
-      "before": { "label": "OHNE PLANNING MATRIX", "h": "Ein langer Pfad",
-        "s1": "Architekt-Briefing & Bestandsaufnahme", "s2": "Recherche Bebauungsplan, Satzungen, Baulasten",
-        "s3": "Vorabstimmungen, Telefonate, Wartezeiten", "s4": "Fachplaner identifizieren und beauftragen",
-        "unit": "8 Wochen" },
-      "after":  { "label": "MIT PLANNING MATRIX", "h": "Ein klarer Pfad",
-        "s1": "Zwei Fragen — Vorhaben & Grundstück", "s2": "Planning Matrix führt durch Verfahren & Dokumente",
-        "s3": "Fachplaner-Bedarf wird automatisch abgeleitet", "s4": "Architekt:in verifiziert und gibt frei",
-        "unit": "4 Tage" }
+      "before": {
+        "label": "OHNE PLANNING MATRIX",
+        "h": "Ein langer Pfad",
+        "s1": "Architekt-Briefing & Bestandsaufnahme",
+        "s2": "Recherche Bebauungsplan, Satzungen, Baulasten",
+        "s3": "Vorabstimmungen, Telefonate, Wartezeiten",
+        "s4": "Fachplaner identifizieren und beauftragen",
+        "unit": "8 Wochen"
+      },
+      "after": {
+        "label": "MIT PLANNING MATRIX",
+        "h": "Ein klarer Pfad",
+        "s1": "Zwei Fragen — Vorhaben & Grundstück",
+        "s2": "Planning Matrix führt durch Verfahren & Dokumente",
+        "s3": "Fachplaner-Bedarf wird automatisch abgeleitet",
+        "s4": "Architekt:in verifiziert und gibt frei",
+        "unit": "4 Tage"
+      }
     },
     "trust": {
       "eyebrow": "VERTRAUEN ERNST GENOMMEN",
-      "h": { "l1": "Jede Aussage", "l2": "ist nachvollziehbar." },
+      "h": {
+        "l1": "Jede Aussage",
+        "l2": "ist nachvollziehbar."
+      },
       "sub": "Provenance, Auditierbarkeit, klare Verantwortung. Kein „die KI hat gesagt\".",
-      "t1": { "label": "AUDIT-LOG · LIVE", "h": "Append-only", "p": "Jede Zustandsänderung ist zeitgestempelt, akteur-gestempelt, unveränderlich." },
-      "t2": { "label": "PROVENANCE", "h": "Source × Quality auf jedem Datum", "p": "LEGAL · CLIENT · DESIGNER · AUTHORITY — kombiniert mit CALCULATED · ASSUMED · DECIDED · VERIFIED. Sie wissen immer, woher ein Wert kommt." },
-      "t3": { "label": "BEHÖRDENNAH", "h": "Im Bauamt verstanden.", "p": "Vokabular, Verfahrenswege und Dokumentenlisten passend zur deutschen Verwaltungsrealität.", "alt": "Behördengebäude" },
-      "t4": { "h": "100 % Audit-Abdeckung", "p": "Keine stillen Mutationen." },
-      "t5": { "label": "FREIGABEN", "h": "Verifiziert nur durch Bauvorlageberechtigte" },
-      "t6": { "label": "HOSTING", "h": "Frankfurt · EU · DSGVO" }
+      "t1": {
+        "label": "AUDIT-LOG · LIVE",
+        "h": "Append-only",
+        "p": "Jede Zustandsänderung ist zeitgestempelt, akteur-gestempelt, unveränderlich."
+      },
+      "t2": {
+        "label": "PROVENANCE",
+        "h": "Source × Quality auf jedem Datum",
+        "p": "LEGAL · CLIENT · DESIGNER · AUTHORITY — kombiniert mit CALCULATED · ASSUMED · DECIDED · VERIFIED. Sie wissen immer, woher ein Wert kommt."
+      },
+      "t3": {
+        "label": "BEHÖRDENNAH",
+        "h": "Im Bauamt verstanden.",
+        "p": "Vokabular, Verfahrenswege und Dokumentenlisten passend zur deutschen Verwaltungsrealität.",
+        "alt": "Behördengebäude"
+      },
+      "t4": {
+        "h": "100 % Audit-Abdeckung",
+        "p": "Keine stillen Mutationen."
+      },
+      "t5": {
+        "label": "FREIGABEN",
+        "h": "Verifiziert nur durch Bauvorlageberechtigte"
+      },
+      "t6": {
+        "label": "HOSTING",
+        "h": "Frankfurt · EU · DSGVO"
+      }
     },
     "pricing": {
       "eyebrow": "PREISE",
-      "h": { "l1": "Faires Modell.", "l2": "Klare Stufen." },
+      "h": {
+        "l1": "Faires Modell.",
+        "l2": "Klare Stufen."
+      },
       "sub": "Pro Sitzplatz am Tisch. Jährlich gespart, monatlich gekündigt.",
-      "monthly": "Monatlich", "annual": "Jährlich",
+      "monthly": "Monatlich",
+      "annual": "Jährlich",
       "annualNote": "−16 %",
       "unit": "€ / Monat",
-      "solo":  { "name": "Solo", "sub": "Für einzelne Architekt:innen",
-        "priceMonthly": 49, "priceAnnual": 41,
-        "f1": "1 Sitzplatz", "f2": "Bayern produktiv", "f3": "Bis 5 aktive Projekte", "f4": "Audit-Log inklusive",
-        "cta": "Solo wählen" },
-      "studio":{ "name": "Studio", "sub": "Für Büros und Bauträger",
-        "priceMonthly": 189, "priceAnnual": 159,
+      "solo": {
+        "name": "Solo",
+        "sub": "Für einzelne Architekt:innen",
+        "priceMonthly": 49,
+        "priceAnnual": 41,
+        "f1": "1 Sitzplatz",
+        "f2": "Bayern produktiv",
+        "f3": "Bis 5 aktive Projekte",
+        "f4": "Audit-Log inklusive",
+        "cta": "Solo wählen"
+      },
+      "studio": {
+        "name": "Studio",
+        "sub": "Für Büros und Bauträger",
+        "priceMonthly": 189,
+        "priceAnnual": 159,
         "ribbon": "EMPFOHLEN",
-        "f1": "Bis 5 Sitzplätze", "f2": "Alle aktivierten Bundesländer", "f3": "Unbegrenzte Projekte", "f4": "Designer-Verifizierungs-Workflow", "f5": "Priorisierter Support",
-        "cta": "Studio wählen" },
-      "enterprise": { "name": "Enterprise", "sub": "Für größere Häuser & Verwaltung",
+        "f1": "Bis 5 Sitzplätze",
+        "f2": "Alle aktivierten Bundesländer",
+        "f3": "Unbegrenzte Projekte",
+        "f4": "Designer-Verifizierungs-Workflow",
+        "f5": "Priorisierter Support",
+        "cta": "Studio wählen"
+      },
+      "enterprise": {
+        "name": "Enterprise",
+        "sub": "Für größere Häuser & Verwaltung",
         "priceLabel": "Auf Anfrage",
-        "f1": "Unbegrenzte Sitzplätze", "f2": "SSO & SCIM", "f3": "Eigene Sub-Domain", "f4": "Custom Vorlagen", "f5": "Service-Level-Vertrag",
-        "cta": "Kontakt aufnehmen" },
+        "f1": "Unbegrenzte Sitzplätze",
+        "f2": "SSO & SCIM",
+        "f3": "Eigene Sub-Domain",
+        "f4": "Custom Vorlagen",
+        "f5": "Service-Level-Vertrag",
+        "cta": "Kontakt aufnehmen"
+      },
       "guarantee": "30 Tage Geld-zurück. Keine Setup-Gebühr."
     },
     "faq": {
       "eyebrow": "FRAGEN",
-      "h": { "l1": "Was wir oft", "l2": "gefragt werden." },
+      "h": {
+        "l1": "Was wir oft",
+        "l2": "gefragt werden."
+      },
       "contactLine": "Weitere Fragen? Schreiben Sie an hallo@planning-matrix.de",
       "items": [
-        { "q": "Ersetzt Planning Matrix meinen Architekten?", "a": "Nein. Planning Matrix bereitet Entscheidungen vor und macht sie transparent. Die formelle Freigabe — und die rechtliche Verantwortung — bleiben bei der bauvorlageberechtigten Architekt:in. Wir sind das Werkzeug am Tisch, nicht die Person, die unterschreibt." },
-        { "q": "Welche Bundesländer sind unterstützt?", "a": "Bayern ist produktiv. Nordrhein-Westfalen und Baden-Württemberg sind im Rollout. Weitere Bundesländer folgen schrittweise — wir pflegen jedes LBO mit Sorgfalt, nicht oberflächlich." },
-        { "q": "Wie aktuell sind die rechtlichen Daten?", "a": "Die zentralen Quellen (BauGB, BayBO, BauNVO) werden bei jeder Novelle innerhalb von 14 Tagen aktualisiert. Kommunale Satzungen werden adressspezifisch nachgezogen. Jede Aussage führt zur Quelle." },
-        { "q": "Kann ich Planning Matrix vor Grundstücksankauf nutzen?", "a": "Ja. Ohne Grundstück arbeitet das System mit Standardannahmen und markiert betroffene Bereiche entsprechend — Sie bekommen ein realistisches Bild der Bandbreite, nicht eine Pseudogenauigkeit." },
-        { "q": "Was bedeutet „auditierbar\"?", "a": "Jede Datenänderung im Projekt — Faktenneuanlage, Qualifier-Änderung, Empfehlungs-Update — wird unveränderlich protokolliert mit Zeitstempel, Akteur und Begründung. Sie können jederzeit zeigen, wie eine Entscheidung zustande kam." },
-        { "q": "Wo werden meine Daten gespeichert?", "a": "Frankfurt am Main, in der EU. DSGVO-konform. Keine Weitergabe an Dritte. Projekte werden auf Wunsch vollständig gelöscht — inklusive aller Backups innerhalb von 30 Tagen." }
+        {
+          "q": "Ersetzt Planning Matrix meinen Architekten?",
+          "a": "Nein. Planning Matrix bereitet Entscheidungen vor und macht sie transparent. Die formelle Freigabe — und die rechtliche Verantwortung — bleiben bei der bauvorlageberechtigten Architekt:in. Wir sind das Werkzeug am Tisch, nicht die Person, die unterschreibt."
+        },
+        {
+          "q": "Welche Bundesländer sind unterstützt?",
+          "a": "Bayern ist produktiv. Nordrhein-Westfalen und Baden-Württemberg sind im Rollout. Weitere Bundesländer folgen schrittweise — wir pflegen jedes LBO mit Sorgfalt, nicht oberflächlich."
+        },
+        {
+          "q": "Wie aktuell sind die rechtlichen Daten?",
+          "a": "Die zentralen Quellen (BauGB, BayBO, BauNVO) werden bei jeder Novelle innerhalb von 14 Tagen aktualisiert. Kommunale Satzungen werden adressspezifisch nachgezogen. Jede Aussage führt zur Quelle."
+        },
+        {
+          "q": "Kann ich Planning Matrix vor Grundstücksankauf nutzen?",
+          "a": "Ja. Ohne Grundstück arbeitet das System mit Standardannahmen und markiert betroffene Bereiche entsprechend — Sie bekommen ein realistisches Bild der Bandbreite, nicht eine Pseudogenauigkeit."
+        },
+        {
+          "q": "Was bedeutet „auditierbar\"?",
+          "a": "Jede Datenänderung im Projekt — Faktenneuanlage, Qualifier-Änderung, Empfehlungs-Update — wird unveränderlich protokolliert mit Zeitstempel, Akteur und Begründung. Sie können jederzeit zeigen, wie eine Entscheidung zustande kam."
+        },
+        {
+          "q": "Wo werden meine Daten gespeichert?",
+          "a": "Frankfurt am Main, in der EU. DSGVO-konform. Keine Weitergabe an Dritte. Projekte werden auf Wunsch vollständig gelöscht — inklusive aller Backups innerhalb von 30 Tagen."
+        }
       ]
     },
     "cta": {
       "eyebrow": "JETZT BEGINNEN",
-      "h": { "l1": "Sie haben ein Vorhaben.", "l2": "Wir haben den Tisch gedeckt." },
+      "h": {
+        "l1": "Sie haben ein Vorhaben.",
+        "l2": "Wir haben den Tisch gedeckt."
+      },
       "sub": "Vier Minuten bis zur ersten belastbaren Einordnung. Kostenlos, ohne Anmeldung Ihrer Architekt:in.",
       "cta1": "Projekt starten",
       "cta2": "Demo ansehen",
@@ -195,10 +421,29 @@
       "vertrauen": "Vertrauen",
       "ueber": "Über",
       "links": {
-        "produkt":   ["Funktionen", "Analyzer", "Roadmap", "Preise"],
-        "wissen":    ["Dokumentation", "Rechtliche Grundlagen", "Glossar", "Blog"],
-        "vertrauen": ["Datenschutz", "AGB", "Impressum", "Audit-Konzept"],
-        "ueber":     ["Team", "Kontakt", "Presse"]
+        "produkt": [
+          "Funktionen",
+          "Analyzer",
+          "Roadmap",
+          "Preise"
+        ],
+        "wissen": [
+          "Dokumentation",
+          "Rechtliche Grundlagen",
+          "Glossar",
+          "Blog"
+        ],
+        "vertrauen": [
+          "Datenschutz",
+          "AGB",
+          "Impressum",
+          "Audit-Konzept"
+        ],
+        "ueber": [
+          "Team",
+          "Kontakt",
+          "Presse"
+        ]
       },
       "rights": "© 2026 Planning Matrix",
       "version": "v1 · Bayern produktiv"
@@ -553,6 +798,99 @@
         "body": "Beginnen Sie mit Ihrem ersten Vorhaben.",
         "cta": "Neues Projekt"
       }
+    },
+    "eyebrow": "ATELIER · WILLKOMMEN",
+    "welcome": "Willkommen, {{name}}.",
+    "welcomeAnon": "Willkommen.",
+    "intel": {
+      "ongoing_one": "{{count}} laufendes Projekt",
+      "ongoing_other": "{{count}} laufende Projekte",
+      "awaiting_one": "{{count}} wartet auf Sie",
+      "awaiting_other": "{{count}} warten auf Sie",
+      "designer_one": "{{count}} braucht Architekt:in",
+      "designer_other": "{{count}} brauchen Architekt:in",
+      "paused_one": "{{count}} pausiert",
+      "paused_other": "{{count}} pausiert",
+      "lastActivity": "Letzte Aktivität: {{when}}.",
+      "empty": "Noch keine Projekte — legen Sie unten Ihren ersten Tisch an."
+    },
+    "filters": {
+      "all": "Alle",
+      "active": "Aktiv",
+      "awaiting": "Wartend",
+      "designer": "Architekt:in",
+      "paused": "Pausiert",
+      "archived": "Archiv"
+    },
+    "search": "Suchen — Name, Adresse, Flurstück…",
+    "newProject": "Neues Projekt",
+    "sections": {
+      "active": "Aktiv",
+      "paused": "Pausiert",
+      "archived": "Archiv"
+    },
+    "showAll": "Alle {{count}} anzeigen",
+    "showLess": "Weniger anzeigen",
+    "row": {
+      "briefing": "Briefing",
+      "turns_one": "{{count}} Wechsel",
+      "turns_other": "{{count}} Wechsel",
+      "rec": "Nächster Schritt",
+      "menu": {
+        "rename": "Umbenennen",
+        "pause": "Pausieren",
+        "resume": "Fortsetzen",
+        "archive": "Archivieren",
+        "export": "Exportieren",
+        "delete": "Löschen"
+      },
+      "renameDialog": {
+        "h": "Projekt umbenennen",
+        "label": "Name",
+        "save": "Speichern",
+        "cancel": "Abbrechen"
+      },
+      "deleteDialog": {
+        "h": "Projekt unwiderruflich löschen?",
+        "body": "Diese Aktion kann nicht rückgängig gemacht werden.",
+        "ok": "Löschen",
+        "cancel": "Abbrechen"
+      }
+    },
+    "status": {
+      "active": "AKTIV",
+      "awaiting": "WARTEND",
+      "designer": "ARCHITEKT:IN",
+      "paused": "PAUSIERT",
+      "archived": "ARCHIV",
+      "completed": "ABGESCHLOSSEN"
+    },
+    "templates": {
+      "T-01": "EFH",
+      "T-02": "MFH",
+      "T-03": "SAN",
+      "T-04": "UMN",
+      "T-05": "ABR"
+    },
+    "empty": {
+      "h": "Decken Sie Ihren ersten Tisch.",
+      "sub": "Zwei Fragen — und Sie sitzen am Werk.",
+      "cta": "Projekt starten",
+      "note": "Jedes Projekt wird zu einer prüffähigen Akte für Ihre/n Architekt:in."
+    },
+    "relativeTime": {
+      "now": "gerade eben",
+      "minutes_one": "vor {{count}} Min.",
+      "minutes_other": "vor {{count}} Min.",
+      "hours_one": "vor {{count}} Std.",
+      "hours_other": "vor {{count}} Std.",
+      "yesterday": "gestern",
+      "days_one": "vor {{count}} Tag",
+      "days_other": "vor {{count}} Tagen",
+      "weeks_one": "vor {{count}} Woche",
+      "weeks_other": "vor {{count}} Wochen",
+      "months_one": "vor {{count}} Monat",
+      "months_other": "vor {{count}} Monaten"
     }
   },
   "wizard": {
@@ -565,7 +903,8 @@
       "dismiss": "Zurück zum Wizard"
     },
     "progress": {
-      "label": "Schritt {{current}} von {{total}}"
+      "label": "Schritt {{current}} von {{total}}",
+      "of": "Frage {{current}} von {{total}}"
     },
     "q1": {
       "eyebrow": "Planning Matrix · Initialisierung",
@@ -577,7 +916,15 @@
         "sanierung": "Sanierung",
         "umnutzung": "Umnutzung",
         "abbruch": "Abbruch",
-        "sonstige": "Sonstiges"
+        "sonstige": "Sonstiges",
+        "neubau_efh": {
+          "label": "Neubau Einfamilienhaus",
+          "code": "T-01"
+        },
+        "neubau_mfh": {
+          "label": "Neubau Mehrfamilienhaus",
+          "code": "T-02"
+        }
       },
       "unsureLink": "Ich bin mir nicht sicher",
       "unsureExplanation": {
@@ -587,6 +934,16 @@
         "umnutzung": "Eine bestehende Immobilie soll künftig anders genutzt werden — z. B. Gewerbe zu Wohnen oder umgekehrt. Plant in der Regel eine erneute baurechtliche Prüfung.",
         "abbruch": "Geplanter Rückbau eines Bestandsgebäudes. Anzeigepflicht nach Art. 57 Abs. 5 BayBO; bei denkmalgeschütztem Bestand zusätzliche Genehmigungen.",
         "sonstige": "Ein anderes Vorhaben. Wir starten mit dem Standard-Template für Einfamilienhäuser und passen das im Gespräch an Ihre Situation an."
+      },
+      "h": "Was möchten Sie bauen?",
+      "continue": "Weiter",
+      "unsureBody": {
+        "neubau_efh": "Ein neues, eigenständiges Wohngebäude für eine Familie.",
+        "neubau_mfh": "Ein neues Wohngebäude mit mehreren Wohneinheiten.",
+        "sanierung": "Bauliche Erneuerung an einem bestehenden Gebäude.",
+        "umnutzung": "Bestehendes Gebäude erhält eine andere Nutzung (z. B. Büro → Wohnen).",
+        "abbruch": "Vollständiger oder teilweiser Rückbau eines Gebäudes.",
+        "sonstige": "Etwas anderes — wir starten mit den flexibelsten Annahmen."
       }
     },
     "q2": {
@@ -614,7 +971,24 @@
         "found": "Im Bebauungsplan {{plan}} — Bebauung nach § 30 BauGB grundsätzlich möglich.",
         "foundUnnamed": "Im Bebauungsplan — Bebauung nach § 30 BauGB grundsätzlich möglich.",
         "notFound": "Kein rechtsgültiger Bebauungsplan — Bewertung nach § 34 / § 35 BauGB im Gespräch."
-      }
+      },
+      "h": "Haben Sie bereits ein Grundstück?",
+      "placeholder": "z. B. Türkenstraße 25, 80799 München",
+      "helper": "Wir nutzen die Adresse zur Recherche von Bebauungsplan und örtlichen Satzungen.",
+      "coverage": "Aktuell aktiv: München (PLZ 80331–81929). Weitere Regionen folgen.",
+      "outsideCoverage": "Diese Region ist noch nicht aktiv. Sie können trotzdem starten — wir arbeiten mit bayerischen Standardannahmen und markieren die Lücke.",
+      "mapHint": "Klicken Sie in die Karte, um eine andere Lage zu prüfen.",
+      "noPlot": "Ohne Grundstück können Bereich A (Planungsrecht) und C (sonstige Vorgaben) noch nicht ermittelt werden. Wir arbeiten mit Annahmen und markieren die Lücke.",
+      "bplan": {
+        "loading": "Bebauungsplan wird geprüft…",
+        "noneInner": "● Kein rechtsgültiger Bebauungsplan — Beurteilung nach § 34 BauGB.",
+        "noneOuter": "● Außenbereich — § 35 BauGB greift, restriktiv.",
+        "exists": "● B-Plan {{id}} aktiv — {{zone}}.",
+        "heritage": "● Erhaltungssatzung — zusätzliche Prüfung.",
+        "detailLink": "Details ansehen",
+        "detailH": "Bebauungsplan-Details"
+      },
+      "submit": "Tisch decken"
     },
     "back": "Zurück",
     "submit": "Projekt anlegen",
@@ -625,6 +999,12 @@
     },
     "errors": {
       "insertFailed": "Projekt konnte nicht angelegt werden. Bitte versuchen Sie es erneut."
+    },
+    "cancelConfirm": {
+      "h": "Eingaben verwerfen?",
+      "body": "Ihre Antworten gehen verloren.",
+      "ok": "Verwerfen",
+      "cancel": "Weiter bearbeiten"
     }
   },
   "chat": {
@@ -1055,6 +1435,28 @@
       "signIn": "Melden Sie sich bei Planning Matrix an, um Ihre Bauvorhaben fortzuführen.",
       "signUp": "Erstellen Sie Ihr Planning-Matrix-Konto und kartieren Sie den Genehmigungsweg für Ihr Vorhaben.",
       "share": "Briefing zum Bauvorhaben „{{name}}\", geteilt über Planning Matrix."
+    }
+  },
+  "loader": {
+    "eyebrow": "PLANNING MATRIX · VORBEREITUNG",
+    "h": "Tisch decken.",
+    "steps": {
+      "s1": "Vorlage wählen…",
+      "s2": "Matrix anlegen…",
+      "s3": "Moderator briefen…"
+    },
+    "cancel": "Abbrechen",
+    "cancelConfirm": {
+      "h": "Vorgang abbrechen?",
+      "body": "Das Projekt wird nicht erstellt.",
+      "ok": "Abbrechen",
+      "back": "Weiter"
+    },
+    "fail": {
+      "h": "Wir konnten den Tisch nicht decken.",
+      "sub": "Ein Problem auf unserer Seite. Ihr Projekt ist gespeichert.",
+      "open": "Projekt öffnen",
+      "back": "Zur Übersicht"
     }
   }
 }

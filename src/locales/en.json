@@ -10,9 +10,16 @@
     },
     "hero": {
       "eyebrow": "PLANNING MATRIX",
-      "h1": { "l1": "Building in Germany.", "l2": "Clear. Fast. Reliable." },
+      "h1": {
+        "l1": "Building in Germany.",
+        "l2": "Clear. Fast. Reliable."
+      },
       "sub": "A roundtable of specialist AI experts walks you through German building permit law — from first idea to filing-ready application.",
-      "meta": { "live": "Live across 47,892 §§", "short": "4-min first analysis", "audit": "Fully auditable" },
+      "meta": {
+        "live": "Live across 47,892 §§",
+        "short": "4-min first analysis",
+        "audit": "Fully auditable"
+      },
       "cta1": "Start a project",
       "cta2": "Watch demo",
       "note": "BayBO Art. 57 — simplified procedure possible?",
@@ -34,17 +41,26 @@
       }
     },
     "stats": {
-      "l1": "Norms indexed", "d1": "BauGB · BauNVO · MBO · all 16 LBO codes",
-      "l2": "Federal states", "d2": "Bavaria live · others rolling out",
-      "l3": "Minutes for first analysis", "d3": "Procedure, documents and roles — instantly",
-      "l4": "Permits / year", "d4": "in Germany — the market we relieve"
+      "l1": "Norms indexed",
+      "d1": "BauGB · BauNVO · MBO · all 16 LBO codes",
+      "l2": "Federal states",
+      "d2": "Bavaria live · others rolling out",
+      "l3": "Minutes for first analysis",
+      "d3": "Procedure, documents and roles — instantly",
+      "l4": "Permits / year",
+      "d4": "in Germany — the market we relieve"
     },
     "chat": {
       "eyebrow": "THE CONVERSATION",
-      "h": { "l1": "You are at the table", "l2": "with the whole team." },
+      "h": {
+        "l1": "You are at the table",
+        "l2": "with the whole team."
+      },
       "sub": "Not a chatbot. A roundtable of specialists — planning law, building code, additional requirements — speaking exactly when their domain is relevant.",
       "title": "Permit file · 2026-04 · Erlangen",
-      "input": { "placeholder": "Reply here — or say \"I don't know\"" },
+      "input": {
+        "placeholder": "Reply here — or say \"I don't know\""
+      },
       "replay": "Replay",
       "specialists": {
         "moderator": "MODERATOR",
@@ -55,126 +71,336 @@
       }
     },
     "matrix": {
-      "areas": { "label": "AREAS", "a": "A — Planning law", "b": "B — Building code", "c": "C — Other requirements" },
-      "recs": { "label": "TOP 3 STEPS" },
-      "states": { "active": "ACTIVE", "pending": "PENDING", "void": "VOID" }
+      "areas": {
+        "label": "AREAS",
+        "a": "A — Planning law",
+        "b": "B — Building code",
+        "c": "C — Other requirements"
+      },
+      "recs": {
+        "label": "TOP 3 STEPS"
+      },
+      "states": {
+        "active": "ACTIVE",
+        "pending": "PENDING",
+        "void": "VOID"
+      }
     },
     "analyzer": {
       "eyebrow": "THE ANALYZER",
-      "h": { "l1": "Address in.", "l2": "Procedure picture out." },
+      "h": {
+        "l1": "Address in.",
+        "l2": "Procedure picture out."
+      },
       "sub": "Pick a sample plot. See what Planning Matrix says in seconds about procedure, documents and specialist planners.",
-      "list": { "label": "SAMPLE PLOTS" },
-      "out": { "label": "ANALYSIS", "live": "Live evaluation" },
-      "stats": { "proc": "Procedure", "docs": "Documents", "roles": "Specialists", "weeks": "Weeks" },
-      "details": { "planungsrecht": "PLANNING LAW", "bauordnung": "BUILDING CODE", "sonstige": "OTHER", "gebaeudeklasse": "BUILDING CLASS" }
+      "list": {
+        "label": "SAMPLE PLOTS"
+      },
+      "out": {
+        "label": "ANALYSIS",
+        "live": "Live evaluation"
+      },
+      "stats": {
+        "proc": "Procedure",
+        "docs": "Documents",
+        "roles": "Specialists",
+        "weeks": "Weeks"
+      },
+      "details": {
+        "planungsrecht": "PLANNING LAW",
+        "bauordnung": "BUILDING CODE",
+        "sonstige": "OTHER",
+        "gebaeudeklasse": "BUILDING CLASS"
+      }
     },
     "persp": {
       "eyebrow": "WHO IT'S FOR",
-      "h": { "l1": "For everyone seriously", "l2": "building in Germany." },
+      "h": {
+        "l1": "For everyone seriously",
+        "l2": "building in Germany."
+      },
       "more": "Learn more",
-      "b1": { "label": "ARCHITECTS", "h": "Planning certainty from day one.", "p": "Procedure type, document list and specialist needs — before you draw the first line.", "alt": "Architect at drafting table" },
-      "b2": { "label": "COVERAGE", "small": "Norms actively indexed — Bavaria live, more to follow." },
-      "b3": { "label": "DEVELOPERS & INVESTORS", "h": "Risks identified early.", "p": "What special site requirements apply — visible before you commit to acquisition." },
-      "b4": { "label": "OWNERS", "h": "Understand what you are signing.", "p": "Plain language, sourced statements, decisions you can audit any time.", "alt": "Building plans on the drafting table" }
+      "b1": {
+        "label": "ARCHITECTS",
+        "h": "Planning certainty from day one.",
+        "p": "Procedure type, document list and specialist needs — before you draw the first line.",
+        "alt": "Architect at drafting table"
+      },
+      "b2": {
+        "label": "COVERAGE",
+        "small": "Norms actively indexed — Bavaria live, more to follow."
+      },
+      "b3": {
+        "label": "DEVELOPERS & INVESTORS",
+        "h": "Risks identified early.",
+        "p": "What special site requirements apply — visible before you commit to acquisition."
+      },
+      "b4": {
+        "label": "OWNERS",
+        "h": "Understand what you are signing.",
+        "p": "Plain language, sourced statements, decisions you can audit any time.",
+        "alt": "Building plans on the drafting table"
+      }
     },
     "thinks": {
       "eyebrow": "HOW THE SYSTEM THINKS",
-      "h": { "l1": "Three lenses.", "l2": "One picture." },
+      "h": {
+        "l1": "Three lenses.",
+        "l2": "One picture."
+      },
       "sub": "Every project passes through three legal perspectives. Consultation principle — no gap left open.",
-      "tab": { "a": "A — Planning law", "b": "B — Building code", "c": "C — Other requirements" },
+      "tab": {
+        "a": "A — Planning law",
+        "b": "B — Building code",
+        "c": "C — Other requirements"
+      },
       "live": "● 47,892 norms available",
       "questionLabel": "CENTRAL QUESTION",
       "refsLabel": "LEGAL BASIS",
-      "a": { "h": "Planning-law profile", "q": "Can the project be realised at this location at all?", "b": "BauGB §§ 30 / 34 / 35, BauNVO zone types, B-plans and F-plans. The output: is building permitted here — and under what conditions.",
+      "a": {
+        "h": "Planning-law profile",
+        "q": "Can the project be realised at this location at all?",
+        "b": "BauGB §§ 30 / 34 / 35, BauNVO zone types, B-plans and F-plans. The output: is building permitted here — and under what conditions.",
         "refs": [
-          { "ref": "§ 30 BauGB", "src": "qualified development plan" },
-          { "ref": "§ 34 BauGB", "src": "within consolidated area" },
-          { "ref": "§ 35 BauGB", "src": "outer area" },
-          { "ref": "BauNVO §§ 1–11", "src": "zone types" },
-          { "ref": "BauNVO §§ 16–21a", "src": "extent of use" },
-          { "ref": "B-plan", "src": "municipal" }
-        ] },
-      "b": { "h": "Building-code profile", "q": "Which permit procedure is required, and what does the building code demand?", "b": "BayBO with building classes, special-use cases and three procedure paths. Fire safety, parking, accessibility, GEG.",
+          {
+            "ref": "§ 30 BauGB",
+            "src": "qualified development plan"
+          },
+          {
+            "ref": "§ 34 BauGB",
+            "src": "within consolidated area"
+          },
+          {
+            "ref": "§ 35 BauGB",
+            "src": "outer area"
+          },
+          {
+            "ref": "BauNVO §§ 1–11",
+            "src": "zone types"
+          },
+          {
+            "ref": "BauNVO §§ 16–21a",
+            "src": "extent of use"
+          },
+          {
+            "ref": "B-plan",
+            "src": "municipal"
+          }
+        ]
+      },
+      "b": {
+        "h": "Building-code profile",
+        "q": "Which permit procedure is required, and what does the building code demand?",
+        "b": "BayBO with building classes, special-use cases and three procedure paths. Fire safety, parking, accessibility, GEG.",
         "refs": [
-          { "ref": "BayBO Art. 2", "src": "building classes" },
-          { "ref": "BayBO Art. 57", "src": "exempt procedure" },
-          { "ref": "BayBO Art. 58", "src": "simplified procedure" },
-          { "ref": "BayBO Art. 59", "src": "full procedure" },
-          { "ref": "GEG § 10", "src": "energy requirements" },
-          { "ref": "DIN 4109", "src": "sound insulation" }
-        ] },
-      "c": { "h": "Other requirements", "q": "Which project-relevant requirements exist beyond planning and building law?", "b": "Encumbrances, heritage protection, municipal ordinances, use-specific permits — the area where projects often actually stall.",
+          {
+            "ref": "BayBO Art. 2",
+            "src": "building classes"
+          },
+          {
+            "ref": "BayBO Art. 57",
+            "src": "exempt procedure"
+          },
+          {
+            "ref": "BayBO Art. 58",
+            "src": "simplified procedure"
+          },
+          {
+            "ref": "BayBO Art. 59",
+            "src": "full procedure"
+          },
+          {
+            "ref": "GEG § 10",
+            "src": "energy requirements"
+          },
+          {
+            "ref": "DIN 4109",
+            "src": "sound insulation"
+          }
+        ]
+      },
+      "c": {
+        "h": "Other requirements",
+        "q": "Which project-relevant requirements exist beyond planning and building law?",
+        "b": "Encumbrances, heritage protection, municipal ordinances, use-specific permits — the area where projects often actually stall.",
         "refs": [
-          { "ref": "Encumbrances", "src": "land register" },
-          { "ref": "DSchG", "src": "heritage protection" },
-          { "ref": "BNatSchG", "src": "nature protection" },
-          { "ref": "Parking ordinance", "src": "municipal" },
-          { "ref": "Preservation ordinance", "src": "municipal" },
-          { "ref": "VStättVO", "src": "assembly venues" }
-        ] }
+          {
+            "ref": "Encumbrances",
+            "src": "land register"
+          },
+          {
+            "ref": "DSchG",
+            "src": "heritage protection"
+          },
+          {
+            "ref": "BNatSchG",
+            "src": "nature protection"
+          },
+          {
+            "ref": "Parking ordinance",
+            "src": "municipal"
+          },
+          {
+            "ref": "Preservation ordinance",
+            "src": "municipal"
+          },
+          {
+            "ref": "VStättVO",
+            "src": "assembly venues"
+          }
+        ]
+      }
     },
     "cmp": {
       "eyebrow": "THE DIFFERENCE",
-      "h": { "l1": "Eight weeks of research.", "l2": "Or four days of clarity." },
+      "h": {
+        "l1": "Eight weeks of research.",
+        "l2": "Or four days of clarity."
+      },
       "sub": "What stands today between idea and application — and what it could be.",
-      "before": { "label": "WITHOUT PLANNING MATRIX", "h": "A long path",
-        "s1": "Architect briefing & site survey", "s2": "Research B-plan, ordinances, encumbrances",
-        "s3": "Pre-meetings, calls, waiting times", "s4": "Identify and commission specialists",
-        "unit": "8 weeks" },
-      "after":  { "label": "WITH PLANNING MATRIX", "h": "A clear path",
-        "s1": "Two questions — project & plot", "s2": "Planning Matrix walks you through procedure & documents",
-        "s3": "Specialist needs are derived automatically", "s4": "Architect verifies and signs off",
-        "unit": "4 days" }
+      "before": {
+        "label": "WITHOUT PLANNING MATRIX",
+        "h": "A long path",
+        "s1": "Architect briefing & site survey",
+        "s2": "Research B-plan, ordinances, encumbrances",
+        "s3": "Pre-meetings, calls, waiting times",
+        "s4": "Identify and commission specialists",
+        "unit": "8 weeks"
+      },
+      "after": {
+        "label": "WITH PLANNING MATRIX",
+        "h": "A clear path",
+        "s1": "Two questions — project & plot",
+        "s2": "Planning Matrix walks you through procedure & documents",
+        "s3": "Specialist needs are derived automatically",
+        "s4": "Architect verifies and signs off",
+        "unit": "4 days"
+      }
     },
     "trust": {
       "eyebrow": "TRUST TAKEN SERIOUSLY",
-      "h": { "l1": "Every statement", "l2": "is traceable." },
+      "h": {
+        "l1": "Every statement",
+        "l2": "is traceable."
+      },
       "sub": "Provenance, auditability, clear responsibility. No \"the AI said so\".",
-      "t1": { "label": "AUDIT LOG · LIVE", "h": "Append-only", "p": "Every state change is timestamped, actor-stamped, immutable." },
-      "t2": { "label": "PROVENANCE", "h": "Source × Quality on every datum", "p": "LEGAL · CLIENT · DESIGNER · AUTHORITY — combined with CALCULATED · ASSUMED · DECIDED · VERIFIED. You always know where a value comes from." },
-      "t3": { "label": "ADMIN-NATIVE", "h": "Understood at the permit office.", "p": "Vocabulary, procedure paths and document lists matching German administrative reality.", "alt": "Government building" },
-      "t4": { "h": "100 % audit coverage", "p": "No silent mutations." },
-      "t5": { "label": "SIGN-OFF", "h": "Verified only by certified architects" },
-      "t6": { "label": "HOSTING", "h": "Frankfurt · EU · GDPR" }
+      "t1": {
+        "label": "AUDIT LOG · LIVE",
+        "h": "Append-only",
+        "p": "Every state change is timestamped, actor-stamped, immutable."
+      },
+      "t2": {
+        "label": "PROVENANCE",
+        "h": "Source × Quality on every datum",
+        "p": "LEGAL · CLIENT · DESIGNER · AUTHORITY — combined with CALCULATED · ASSUMED · DECIDED · VERIFIED. You always know where a value comes from."
+      },
+      "t3": {
+        "label": "ADMIN-NATIVE",
+        "h": "Understood at the permit office.",
+        "p": "Vocabulary, procedure paths and document lists matching German administrative reality.",
+        "alt": "Government building"
+      },
+      "t4": {
+        "h": "100 % audit coverage",
+        "p": "No silent mutations."
+      },
+      "t5": {
+        "label": "SIGN-OFF",
+        "h": "Verified only by certified architects"
+      },
+      "t6": {
+        "label": "HOSTING",
+        "h": "Frankfurt · EU · GDPR"
+      }
     },
     "pricing": {
       "eyebrow": "PRICING",
-      "h": { "l1": "Fair model.", "l2": "Clear tiers." },
+      "h": {
+        "l1": "Fair model.",
+        "l2": "Clear tiers."
+      },
       "sub": "Per seat at the table. Save annually, cancel monthly.",
-      "monthly": "Monthly", "annual": "Annual",
+      "monthly": "Monthly",
+      "annual": "Annual",
       "annualNote": "−16 %",
       "unit": "€ / month",
-      "solo":  { "name": "Solo", "sub": "For individual architects",
-        "priceMonthly": 49, "priceAnnual": 41,
-        "f1": "1 seat", "f2": "Bavaria live", "f3": "Up to 5 active projects", "f4": "Audit log included",
-        "cta": "Choose Solo" },
-      "studio":{ "name": "Studio", "sub": "For studios and developers",
-        "priceMonthly": 189, "priceAnnual": 159,
+      "solo": {
+        "name": "Solo",
+        "sub": "For individual architects",
+        "priceMonthly": 49,
+        "priceAnnual": 41,
+        "f1": "1 seat",
+        "f2": "Bavaria live",
+        "f3": "Up to 5 active projects",
+        "f4": "Audit log included",
+        "cta": "Choose Solo"
+      },
+      "studio": {
+        "name": "Studio",
+        "sub": "For studios and developers",
+        "priceMonthly": 189,
+        "priceAnnual": 159,
         "ribbon": "RECOMMENDED",
-        "f1": "Up to 5 seats", "f2": "All activated states", "f3": "Unlimited projects", "f4": "Designer-verification workflow", "f5": "Priority support",
-        "cta": "Choose Studio" },
-      "enterprise": { "name": "Enterprise", "sub": "For larger firms & administration",
+        "f1": "Up to 5 seats",
+        "f2": "All activated states",
+        "f3": "Unlimited projects",
+        "f4": "Designer-verification workflow",
+        "f5": "Priority support",
+        "cta": "Choose Studio"
+      },
+      "enterprise": {
+        "name": "Enterprise",
+        "sub": "For larger firms & administration",
         "priceLabel": "On request",
-        "f1": "Unlimited seats", "f2": "SSO & SCIM", "f3": "Custom subdomain", "f4": "Custom templates", "f5": "Service-level agreement",
-        "cta": "Contact us" },
+        "f1": "Unlimited seats",
+        "f2": "SSO & SCIM",
+        "f3": "Custom subdomain",
+        "f4": "Custom templates",
+        "f5": "Service-level agreement",
+        "cta": "Contact us"
+      },
       "guarantee": "30-day money-back. No setup fee."
     },
     "faq": {
       "eyebrow": "QUESTIONS",
-      "h": { "l1": "What we are often", "l2": "asked." },
+      "h": {
+        "l1": "What we are often",
+        "l2": "asked."
+      },
       "contactLine": "More questions? Write to hallo@planning-matrix.de",
       "items": [
-        { "q": "Does Planning Matrix replace my architect?", "a": "No. Planning Matrix prepares decisions and makes them transparent. The formal sign-off — and the legal responsibility — remain with the certified architect. We are the tool at the table, not the person who signs." },
-        { "q": "Which federal states are supported?", "a": "Bavaria is live. North Rhine-Westphalia and Baden-Württemberg are rolling out. Further states follow step by step — we maintain each LBO with care, not superficially." },
-        { "q": "How current is the legal data?", "a": "The central sources (BauGB, BayBO, BauNVO) are updated within 14 days of each amendment. Municipal ordinances are pulled in per address. Every statement leads to its source." },
-        { "q": "Can I use Planning Matrix before acquiring a plot?", "a": "Yes. Without a plot the system uses standard assumptions and marks affected areas accordingly — you get a realistic picture of the bandwidth, not a pseudo-precise number." },
-        { "q": "What does \"auditable\" mean?", "a": "Every data change in a project — fact creation, qualifier change, recommendation update — is recorded immutably with timestamp, actor and reason. You can always show how a decision came to be." },
-        { "q": "Where is my data stored?", "a": "Frankfurt am Main, in the EU. GDPR-compliant. No third-party sharing. Projects are deleted on request — including all backups within 30 days." }
+        {
+          "q": "Does Planning Matrix replace my architect?",
+          "a": "No. Planning Matrix prepares decisions and makes them transparent. The formal sign-off — and the legal responsibility — remain with the certified architect. We are the tool at the table, not the person who signs."
+        },
+        {
+          "q": "Which federal states are supported?",
+          "a": "Bavaria is live. North Rhine-Westphalia and Baden-Württemberg are rolling out. Further states follow step by step — we maintain each LBO with care, not superficially."
+        },
+        {
+          "q": "How current is the legal data?",
+          "a": "The central sources (BauGB, BayBO, BauNVO) are updated within 14 days of each amendment. Municipal ordinances are pulled in per address. Every statement leads to its source."
+        },
+        {
+          "q": "Can I use Planning Matrix before acquiring a plot?",
+          "a": "Yes. Without a plot the system uses standard assumptions and marks affected areas accordingly — you get a realistic picture of the bandwidth, not a pseudo-precise number."
+        },
+        {
+          "q": "What does \"auditable\" mean?",
+          "a": "Every data change in a project — fact creation, qualifier change, recommendation update — is recorded immutably with timestamp, actor and reason. You can always show how a decision came to be."
+        },
+        {
+          "q": "Where is my data stored?",
+          "a": "Frankfurt am Main, in the EU. GDPR-compliant. No third-party sharing. Projects are deleted on request — including all backups within 30 days."
+        }
       ]
     },
     "cta": {
       "eyebrow": "BEGIN NOW",
-      "h": { "l1": "You have a project.", "l2": "We have set the table." },
+      "h": {
+        "l1": "You have a project.",
+        "l2": "We have set the table."
+      },
       "sub": "Four minutes to your first reliable assessment. Free of charge, without onboarding your architect.",
       "cta1": "Start a project",
       "cta2": "Watch demo",
@@ -195,10 +421,29 @@
       "vertrauen": "Trust",
       "ueber": "About",
       "links": {
-        "produkt":   ["Features", "Analyzer", "Roadmap", "Pricing"],
-        "wissen":    ["Documentation", "Legal foundations", "Glossary", "Blog"],
-        "vertrauen": ["Privacy", "Terms", "Imprint", "Audit concept"],
-        "ueber":     ["Team", "Contact", "Press"]
+        "produkt": [
+          "Features",
+          "Analyzer",
+          "Roadmap",
+          "Pricing"
+        ],
+        "wissen": [
+          "Documentation",
+          "Legal foundations",
+          "Glossary",
+          "Blog"
+        ],
+        "vertrauen": [
+          "Privacy",
+          "Terms",
+          "Imprint",
+          "Audit concept"
+        ],
+        "ueber": [
+          "Team",
+          "Contact",
+          "Press"
+        ]
       },
       "rights": "© 2026 Planning Matrix",
       "version": "v1 · Bavaria live"
@@ -553,6 +798,99 @@
         "body": "Begin with your first scheme.",
         "cta": "New project"
       }
+    },
+    "eyebrow": "ATELIER · WELCOME",
+    "welcome": "Welcome, {{name}}.",
+    "welcomeAnon": "Welcome.",
+    "intel": {
+      "ongoing_one": "{{count}} ongoing project",
+      "ongoing_other": "{{count}} ongoing projects",
+      "awaiting_one": "{{count}} awaits your input",
+      "awaiting_other": "{{count}} await your input",
+      "designer_one": "{{count}} needs designer",
+      "designer_other": "{{count}} need designer",
+      "paused_one": "{{count}} paused",
+      "paused_other": "{{count}} paused",
+      "lastActivity": "Last activity: {{when}}.",
+      "empty": "No projects yet — set your first table below."
+    },
+    "filters": {
+      "all": "All",
+      "active": "Active",
+      "awaiting": "Awaiting",
+      "designer": "Designer",
+      "paused": "Paused",
+      "archived": "Archive"
+    },
+    "search": "Search — name, address, parcel…",
+    "newProject": "New project",
+    "sections": {
+      "active": "Active",
+      "paused": "Paused",
+      "archived": "Archive"
+    },
+    "showAll": "Show all {{count}}",
+    "showLess": "Show less",
+    "row": {
+      "briefing": "Briefing",
+      "turns_one": "{{count}} turn",
+      "turns_other": "{{count}} turns",
+      "rec": "Next step",
+      "menu": {
+        "rename": "Rename",
+        "pause": "Pause",
+        "resume": "Resume",
+        "archive": "Archive",
+        "export": "Export",
+        "delete": "Delete"
+      },
+      "renameDialog": {
+        "h": "Rename project",
+        "label": "Name",
+        "save": "Save",
+        "cancel": "Cancel"
+      },
+      "deleteDialog": {
+        "h": "Delete project permanently?",
+        "body": "This action cannot be undone.",
+        "ok": "Delete",
+        "cancel": "Cancel"
+      }
+    },
+    "status": {
+      "active": "ACTIVE",
+      "awaiting": "AWAITING",
+      "designer": "DESIGNER",
+      "paused": "PAUSED",
+      "archived": "ARCHIVED",
+      "completed": "COMPLETED"
+    },
+    "templates": {
+      "T-01": "EFH",
+      "T-02": "MFH",
+      "T-03": "SAN",
+      "T-04": "UMN",
+      "T-05": "ABR"
+    },
+    "empty": {
+      "h": "Set your first table.",
+      "sub": "Two questions and you are at work.",
+      "cta": "Start a project",
+      "note": "Each project becomes an audit-ready file for your designer."
+    },
+    "relativeTime": {
+      "now": "just now",
+      "minutes_one": "{{count}} min ago",
+      "minutes_other": "{{count}} min ago",
+      "hours_one": "{{count}} hour ago",
+      "hours_other": "{{count}} hours ago",
+      "yesterday": "yesterday",
+      "days_one": "{{count}} day ago",
+      "days_other": "{{count}} days ago",
+      "weeks_one": "{{count}} week ago",
+      "weeks_other": "{{count}} weeks ago",
+      "months_one": "{{count}} month ago",
+      "months_other": "{{count}} months ago"
     }
   },
   "wizard": {
@@ -565,7 +903,8 @@
       "dismiss": "Back to wizard"
     },
     "progress": {
-      "label": "Step {{current}} of {{total}}"
+      "label": "Step {{current}} of {{total}}",
+      "of": "Question {{current}} of {{total}}"
     },
     "q1": {
       "eyebrow": "Planning Matrix · Initialization",
@@ -577,7 +916,15 @@
         "sanierung": "Renovation",
         "umnutzung": "Change of use",
         "abbruch": "Demolition",
-        "sonstige": "Other"
+        "sonstige": "Other",
+        "neubau_efh": {
+          "label": "New single-family home",
+          "code": "T-01"
+        },
+        "neubau_mfh": {
+          "label": "New multi-family home",
+          "code": "T-02"
+        }
       },
       "unsureLink": "I'm not sure",
       "unsureExplanation": {
@@ -587,6 +934,16 @@
         "umnutzung": "Repurposing an existing property — for example commercial to residential or vice versa. Typically triggers a fresh building-law assessment.",
         "abbruch": "Planned demolition of an existing building. Notification under Art. 57 (5) BayBO; additional approvals if heritage-protected.",
         "sonstige": "A different project. We'll start with the standard single-family-home template and adapt it in conversation."
+      },
+      "h": "What would you like to build?",
+      "continue": "Continue",
+      "unsureBody": {
+        "neubau_efh": "A new, free-standing home for a single family.",
+        "neubau_mfh": "A new residential building with multiple units.",
+        "sanierung": "Structural renewal of an existing building.",
+        "umnutzung": "An existing building changes use (e.g. office → residential).",
+        "abbruch": "Full or partial demolition of a building.",
+        "sonstige": "Something else — we begin with the most flexible assumptions."
       }
     },
     "q2": {
@@ -614,7 +971,24 @@
         "found": "Within development plan {{plan}} — building under § 30 BauGB generally possible.",
         "foundUnnamed": "Within a development plan — building under § 30 BauGB generally possible.",
         "notFound": "No legally binding development plan — assessment under § 34 / § 35 BauGB to be discussed."
-      }
+      },
+      "h": "Do you already have a plot?",
+      "placeholder": "e.g. Türkenstraße 25, 80799 München",
+      "helper": "We use the address to research the development plan and local ordinances.",
+      "coverage": "Currently active: München (postal codes 80331–81929). Other regions follow.",
+      "outsideCoverage": "This region is not yet active. You can still proceed — we will use Bayern defaults and flag the gap.",
+      "mapHint": "Click on the map to inspect a different location.",
+      "noPlot": "Without a plot, areas A (planning law) and C (further requirements) cannot yet be assessed. We work with assumptions and flag the gap.",
+      "bplan": {
+        "loading": "Checking the development plan…",
+        "noneInner": "● No legally binding development plan — assessment under § 34 BauGB.",
+        "noneOuter": "● Outside consolidated area — § 35 BauGB applies, restrictive.",
+        "exists": "● B-Plan {{id}} active — {{zone}}.",
+        "heritage": "● Preservation ordinance — additional review.",
+        "detailLink": "View details",
+        "detailH": "Development-plan details"
+      },
+      "submit": "Set the table"
     },
     "back": "Back",
     "submit": "Create project",
@@ -625,6 +999,12 @@
     },
     "errors": {
       "insertFailed": "Project couldn't be created. Please try again."
+    },
+    "cancelConfirm": {
+      "h": "Discard your answers?",
+      "body": "Your responses will be lost.",
+      "ok": "Discard",
+      "cancel": "Keep editing"
     }
   },
   "chat": {
@@ -1055,6 +1435,28 @@
       "signIn": "Sign in to Planning Matrix to continue your projects.",
       "signUp": "Create your Planning Matrix account and map the approval path for your project.",
       "share": "Briefing for the project \"{{name}}\", shared via Planning Matrix."
+    }
+  },
+  "loader": {
+    "eyebrow": "PLANNING MATRIX · PREPARING",
+    "h": "Setting the table.",
+    "steps": {
+      "s1": "Selecting your template…",
+      "s2": "Initializing the matrix…",
+      "s3": "Briefing the moderator…"
+    },
+    "cancel": "Cancel",
+    "cancelConfirm": {
+      "h": "Cancel this run?",
+      "body": "The project will not be created.",
+      "ok": "Cancel",
+      "back": "Continue"
+    },
+    "fail": {
+      "h": "We could not set the table.",
+      "sub": "Something went wrong on our side. Your project is saved.",
+      "open": "Open project",
+      "back": "Back to dashboard"
     }
   }
 }
