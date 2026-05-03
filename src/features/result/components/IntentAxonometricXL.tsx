@@ -2,6 +2,7 @@ import type React from 'react'
 import { useTranslation } from 'react-i18next'
 import { project, pathFromVertices } from '@/lib/axonometric'
 import { ScaleBar } from '@/features/chat/components/illustrations/ScaleBar'
+import { INTENT_TO_I18N } from '@/features/wizard/lib/selectTemplate'
 
 interface Props {
   intent: string
@@ -45,7 +46,13 @@ export function IntentAxonometricXL({ intent, animateDraw, className }: Props) {
         {/* Phase 3.7 #78 follow-up — labels bumped from 12 px clay/85
           * to 15 px ink/80 italic so they read at viewing distance. */}
         <span className="font-serif italic text-[15px] text-ink/80 leading-none">
-          {t(`wizard.q1.options.${intent}`, { defaultValue: t('wizard.q1.options.sonstige') })}
+          {(() => {
+            const slug =
+              (INTENT_TO_I18N as Record<string, string>)[intent] ?? 'sonstige'
+            return t(`wizard.q1.options.${slug}.label`, {
+              defaultValue: t('wizard.q1.options.sonstige.label'),
+            })
+          })()}
         </span>
         <div className="pm-cover-scale">
           <ScaleBar

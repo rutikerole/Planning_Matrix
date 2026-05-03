@@ -1158,19 +1158,29 @@
       "eyebrow": "The next three steps",
       "effortLabel": "Estimated effort",
       "partyLabel": "Responsible",
-      "moreToggle": "More recommendations ({{n}})"
+      "moreToggle": "More recommendations ({{n}})",
+      "started": "Started",
+      "markStarted": "Mark as started"
     },
     "legal": {
       "eyebrow": "The legal landscape",
       "empty": "No additional requirements identified.",
       "clickHint": "Click a citation to open its public source.",
-      "sourceEyebrow": "Public source"
+      "sourceEyebrow": "Public source",
+      "whyHint": "This norm applies because it is currently being weighed in the project assessment. Only the permitting authority issues a binding interpretation."
     },
     "checklist": {
       "eyebrow": "Documents required",
       "producerLabel": "Produced by",
       "pdfCta": "Download checklist as PDF",
-      "pdfBusy": "Generating PDF …"
+      "pdfBusy": "Generating PDF …",
+      "kanbanIntro": "{{n}} documents are required for the application. Move cards between columns as you request and receive each one.",
+      "colRequired": "Required",
+      "startWork": "Request",
+      "colInProgress": "In progress",
+      "markDone": "On hand",
+      "colDone": "On hand",
+      "moveBack": "Move back"
     },
     "specialists": {
       "eyebrow": "The team",
@@ -1192,7 +1202,9 @@
     "risks": {
       "eyebrow": "What still to verify",
       "intro_one": "One point to discuss with your architect.",
-      "intro_other": "{{n}} points to discuss with your architect."
+      "intro_other": "{{n}} points to discuss with your architect.",
+      "resolveCta": "Clarify this assumption",
+      "resolveTitle": "Clarify assumption"
     },
     "confidence": {
       "eyebrow": "Data quality",
@@ -1233,7 +1245,12 @@
       "share": {
         "title": "Share link",
         "body": "30 days · Read-only",
-        "cta": "Coming in next commit"
+        "cta": "Coming in next commit",
+        "revokedEyebrow": "Link revoked",
+        "activeEyebrow": "Active share link",
+        "activeBody": "Expiring {{date}} · Copied to clipboard at creation.",
+        "copy": "Copy to clipboard",
+        "revoke": "Revoke link"
       },
       "email": {
         "title": "Send to architect",

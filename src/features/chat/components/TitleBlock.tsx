@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next'
 import { NorthArrow } from './NorthArrow'
+import { INTENT_TO_I18N } from '@/features/wizard/lib/selectTemplate'
 import type { ProjectRow } from '@/types/db'
 
 interface Props {
@@ -24,7 +25,9 @@ interface Props {
  */
 export function TitleBlock({ project }: Props) {
   const { t } = useTranslation()
-  const intentLabel = t(`wizard.q1.options.${project.intent}`).toUpperCase()
+  const intentSlug =
+    (INTENT_TO_I18N as Record<string, string>)[project.intent] ?? 'sonstige'
+  const intentLabel = t(`wizard.q1.options.${intentSlug}.label`).toUpperCase()
   const cityFromName = project.name.split('·').pop()?.trim() ?? ''
   const upperLine = cityFromName
     ? `${intentLabel} · ${cityFromName.toUpperCase()}`

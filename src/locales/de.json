@@ -1158,19 +1158,29 @@
       "eyebrow": "Die nächsten drei Schritte",
       "effortLabel": "Geschätzter Aufwand",
       "partyLabel": "Verantwortlich",
-      "moreToggle": "Weitere Empfehlungen ({{n}})"
+      "moreToggle": "Weitere Empfehlungen ({{n}})",
+      "started": "Begonnen",
+      "markStarted": "Als begonnen markieren"
     },
     "legal": {
       "eyebrow": "Die rechtliche Landschaft",
       "empty": "Keine zusätzlichen Vorgaben festgestellt.",
       "clickHint": "Klicken Sie auf eine Norm, um die öffentliche Quelle zu öffnen.",
-      "sourceEyebrow": "Öffentliche Quelle"
+      "sourceEyebrow": "Öffentliche Quelle",
+      "whyHint": "Diese Norm betrifft Sie weil sie in der laufenden Beurteilung des Vorhabens herangezogen wird. Eine verbindliche Auslegung erteilt nur die Genehmigungsbehörde."
     },
     "checklist": {
       "eyebrow": "Erforderliche Unterlagen",
       "producerLabel": "Wer erstellt?",
       "pdfCta": "Checkliste als PDF herunterladen",
-      "pdfBusy": "PDF wird erstellt …"
+      "pdfBusy": "PDF wird erstellt …",
+      "kanbanIntro": "{{n}} Dokumente sind für die Antragstellung vorzubereiten. Verschieben Sie Karten zwischen den Spalten, sobald Sie ein Dokument anfordern oder erhalten haben.",
+      "colRequired": "Erforderlich",
+      "startWork": "Anfordern",
+      "colInProgress": "In Arbeit",
+      "markDone": "Liegt vor",
+      "colDone": "Liegt vor",
+      "moveBack": "Zurück"
     },
     "specialists": {
       "eyebrow": "Das Team",
@@ -1192,7 +1202,9 @@
     "risks": {
       "eyebrow": "Was noch zu prüfen ist",
       "intro_one": "Ein Punkt sollten Sie mit Ihrer Architekt:in besprechen.",
-      "intro_other": "{{n}} Punkte sollten Sie mit Ihrer Architekt:in besprechen."
+      "intro_other": "{{n}} Punkte sollten Sie mit Ihrer Architekt:in besprechen.",
+      "resolveCta": "Diese Annahme klären",
+      "resolveTitle": "Annahme klären"
     },
     "confidence": {
       "eyebrow": "Datengüte",
@@ -1233,7 +1245,12 @@
       "share": {
         "title": "Link teilen",
         "body": "30 Tage gültig · Nur lesender Zugriff",
-        "cta": "Folgt im nächsten Commit"
+        "cta": "Folgt im nächsten Commit",
+        "revokedEyebrow": "Link widerrufen",
+        "activeEyebrow": "Aktiver Share-Link",
+        "activeBody": "{{date}} ablaufend · Bei Erzeugung in die Zwischenablage kopiert.",
+        "copy": "In Zwischenablage kopieren",
+        "revoke": "Link widerrufen"
       },
       "email": {
         "title": "An Architekt:in senden",

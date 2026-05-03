@@ -14,6 +14,7 @@ import { useTranslation } from 'react-i18next'
 import { useQueryClient } from '@tanstack/react-query'
 import { SEO } from '@/components/SEO'
 import { factLabel, factValueWithUnit } from '@/lib/factLabel'
+import { INTENT_TO_I18N } from '@/features/wizard/lib/selectTemplate'
 import { useProject } from '../hooks/useProject'
 import { useProjectEvents } from '../hooks/useProjectEvents'
 import { useMessages } from '../hooks/useMessages'
@@ -198,9 +199,13 @@ function ProjectMetaTab({ project }: { project: NonNullable<ReturnType<typeof us
     {
       key: 'intent',
       label: t('cockpit.project.intent', { defaultValue: 'Vorhaben' }),
-      value: t(`wizard.q1.options.${project.intent}`, {
-        defaultValue: project.intent,
-      }),
+      value: (() => {
+        const slug =
+          (INTENT_TO_I18N as Record<string, string>)[project.intent] ?? 'sonstige'
+        return t(`wizard.q1.options.${slug}.label`, {
+          defaultValue: project.intent,
+        })
+      })(),
     },
     {
       key: 'plot',

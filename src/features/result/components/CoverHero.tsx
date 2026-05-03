@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { m, useReducedMotion } from 'framer-motion'
 import { NorthArrow } from '@/features/chat/components/NorthArrow'
 import { useAuthStore } from '@/stores/authStore'
+import { INTENT_TO_I18N } from '@/features/wizard/lib/selectTemplate'
 import type { ProjectRow, MessageRow } from '@/types/db'
 import { buildDocumentNumber } from '../lib/documentNumber'
 import {
@@ -68,8 +69,12 @@ export function CoverHero({ project, messages, scopeKey, source }: Props) {
   )
 
   const documentNo = buildDocumentNumber(project.id)
-  const intentLabel = t(`wizard.q1.options.${project.intent}`, {
-    defaultValue: t('wizard.q1.options.sonstige'),
+  // Map the DB Intent enum value to the i18n slug; v3 stores options
+  // as { label, code } objects, so we always look up `.label`.
+  const intentSlug =
+    (INTENT_TO_I18N as Record<string, string>)[project.intent] ?? 'sonstige'
+  const intentLabel = t(`wizard.q1.options.${intentSlug}.label`, {
+    defaultValue: t('wizard.q1.options.sonstige.label'),
   })
   // Strip the "Neubau " prefix if present so we can render the typology
   // word large and the building type below it.

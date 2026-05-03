@@ -1,5 +1,6 @@
 import type React from 'react'
 import { useTranslation } from 'react-i18next'
+import { INTENT_TO_I18N } from '@/features/wizard/lib/selectTemplate'
 
 interface Props {
   intent: string
@@ -37,7 +38,13 @@ export function IntentAxonometric({ intent, className }: Props) {
       </svg>
       <figcaption className="flex items-center justify-between gap-3 px-1">
         <span className="font-serif italic text-[10px] text-clay/85 leading-none">
-          {t(`wizard.q1.options.${intent}`, { defaultValue: t('wizard.q1.options.sonstige') })}
+          {(() => {
+            const slug =
+              (INTENT_TO_I18N as Record<string, string>)[intent] ?? 'sonstige'
+            return t(`wizard.q1.options.${slug}.label`, {
+              defaultValue: t('wizard.q1.options.sonstige.label'),
+            })
+          })()}
         </span>
         <ScaleBar />
       </figcaption>

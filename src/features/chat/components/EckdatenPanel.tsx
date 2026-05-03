@@ -3,6 +3,7 @@ import { AnimatePresence, m, useReducedMotion } from 'framer-motion'
 import type { Fact } from '@/types/projectState'
 import type { ProjectRow } from '@/types/db'
 import { factLabel, factValueWithUnit } from '@/lib/factLabel'
+import { INTENT_TO_I18N } from '@/features/wizard/lib/selectTemplate'
 
 interface Props {
   project: ProjectRow
@@ -41,9 +42,13 @@ export function EckdatenPanel({ project, facts }: Props) {
     {
       id: 'derived:intent',
       key: t('chat.rail.intentLabel'),
-      value: t(`wizard.q1.options.${project.intent}`, {
-        defaultValue: t('wizard.q1.options.sonstige'),
-      }),
+      value: (() => {
+        const slug =
+          (INTENT_TO_I18N as Record<string, string>)[project.intent] ?? 'sonstige'
+        return t(`wizard.q1.options.${slug}.label`, {
+          defaultValue: t('wizard.q1.options.sonstige.label'),
+        })
+      })(),
       qualifier: 'CLIENT · DECIDED',
     },
   ]
