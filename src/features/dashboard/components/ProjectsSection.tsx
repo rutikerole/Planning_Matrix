@@ -7,15 +7,15 @@ import {
 } from '@/components/ui/collapsible'
 import { cn } from '@/lib/utils'
 import type { ProjectListEntry } from '../hooks/useProjects'
-import { ProjectRow } from './ProjectRow'
+import { ProjectCard } from './ProjectCard'
 
 const PAGE_SIZE = 12
 
+export type SectionKind = 'active' | 'awaitingDesigner' | 'paused' | 'archived'
+
 interface Props {
-  /** i18n key ending — `dashboard.sections.{kind}`. */
-  kind: 'active' | 'paused' | 'archived'
+  kind: SectionKind
   projects: ProjectListEntry[]
-  /** When false, section starts collapsed. */
   defaultExpanded: boolean
   onRename: (project: ProjectListEntry) => void
   onPauseToggle: (project: ProjectListEntry) => void
@@ -25,9 +25,10 @@ interface Props {
 }
 
 /**
- * One of the three project bands (Active / Paused / Archived).
- * Active is always expanded; Paused and Archived collapse by default.
- * Sections with more than 12 rows show 12 plus a hairline expander.
+ * v3 section band. Renders a 2-column grid of ProjectCards (1
+ * column on mobile). Section head shows a label + clay count and a
+ * collapse toggle; sections with > 12 rows show 12 plus an inline
+ * "show all" expander.
  */
 export function ProjectsSection({
   kind,
@@ -50,17 +51,17 @@ export function ProjectsSection({
   const hidden = projects.length - visible.length
 
   return (
-    <Collapsible open={open} onOpenChange={setOpen} className="flex flex-col gap-2">
+    <Collapsible open={open} onOpenChange={setOpen} className="flex flex-col gap-4">
       <CollapsibleTrigger asChild>
         <button
           type="button"
           className="flex w-full items-baseline justify-between gap-3 rounded-sm py-2 text-left transition-colors hover:bg-pm-paper-tint focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pm-clay focus-visible:ring-offset-2 focus-visible:ring-offset-pm-paper"
         >
           <span className="flex items-baseline gap-3">
-            <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-pm-clay">
+            <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-pm-ink-mute2">
               {heading}
             </span>
-            <span className="font-mono text-[11px] tabular-nums text-pm-ink-mute2">
+            <span className="font-mono text-[11px] tabular-nums text-pm-clay">
               {projects.length}
             </span>
           </span>
@@ -75,7 +76,6 @@ export function ProjectsSection({
           </span>
         </button>
       </CollapsibleTrigger>
-      <span aria-hidden="true" className="block h-px bg-pm-hair" />
       <CollapsibleContent
         className={cn(
           'overflow-hidden',
@@ -83,9 +83,9 @@ export function ProjectsSection({
           'data-[state=closed]:animate-accordion-up',
         )}
       >
-        <div className="flex flex-col">
+        <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
           {visible.map((p, idx) => (
-            <ProjectRow
+            <ProjectCard
               key={p.id}
               project={p}
               index={idx}
@@ -96,18 +96,18 @@ export function ProjectsSection({
               onDelete={() => onDelete(p)}
             />
           ))}
-          {hidden > 0 ? (
-            <button
-              type="button"
-              onClick={() => setExpandAll((v) => !v)}
-              className="self-start py-3 font-sans text-[13px] italic text-pm-clay underline underline-offset-4 decoration-pm-clay/40 transition-colors hover:text-pm-clay-deep"
-            >
-              {expandAll
-                ? t('dashboard.showLess')
-                : t('dashboard.showAll', { count: projects.length })}
-            </button>
-          ) : null}
         </div>
+        {hidden > 0 ? (
+          <button
+            type="button"
+            onClick={() => setExpandAll((v) => !v)}
+            className="mt-3 self-start py-3 font-sans text-[13px] italic text-pm-clay underline underline-offset-4 decoration-pm-clay/40 transition-colors hover:text-pm-clay-deep"
+          >
+            {expandAll
+              ? t('dashboard.showLess')
+              : t('dashboard.showAll', { count: projects.length })}
+          </button>
+        ) : null}
       </CollapsibleContent>
     </Collapsible>
   )

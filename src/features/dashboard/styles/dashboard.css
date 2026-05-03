@@ -1,0 +1,10 @@
+/* v3 dashboard — touch-device override so the card menu trigger
+   stays visible without hover. The default hide-on-hover relies on
+   :hover; touch devices don't fire :hover so the trigger would be
+   invisible without this rule. */
+
+@media (hover: none) {
+  .pm-card-menu {
+    opacity: 1 !important;
+  }
+}

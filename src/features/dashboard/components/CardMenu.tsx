@@ -17,23 +17,23 @@ interface Props {
   onArchive: () => void
   onExport: () => void
   onDelete: () => void
-  /** Visible only on hover at md+; always visible at <md. */
-  alwaysVisible?: boolean
 }
 
 /**
- * Three-dot menu on a project row. Visible on hover at md+, always
- * visible on mobile. Click on trigger does NOT bubble — the row's
- * containing link should not navigate when the user opens the menu.
+ * v3 three-dot menu on a project card. Visible on hover at md+ and
+ * always visible on touch devices via `@media (hover: none)` (the
+ * `pm-card-menu` class flips opacity to 1 on coarse pointers).
+ *
+ * Click on trigger does NOT bubble — the parent card's `<Link>`
+ * should not navigate when the user opens the menu.
  */
-export function RowMenu({
+export function CardMenu({
   project,
   onRename,
   onPauseToggle,
   onArchive,
   onExport,
   onDelete,
-  alwaysVisible,
 }: Props) {
   const { t } = useTranslation()
   const isPaused = project.status === 'paused'
@@ -51,11 +51,10 @@ export function RowMenu({
           aria-label="Project actions"
           onClick={handleTriggerClick}
           className={cn(
+            'pm-card-menu',
             'inline-flex size-8 items-center justify-center rounded-sm font-sans text-[16px] leading-none text-pm-ink-mid',
             'transition-opacity hover:bg-pm-paper-tint hover:text-pm-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pm-clay focus-visible:ring-offset-2 focus-visible:ring-offset-pm-paper',
-            alwaysVisible
-              ? 'opacity-100'
-              : 'opacity-0 group-hover:opacity-100 group-focus-within:opacity-100',
+            'opacity-0 group-hover:opacity-100 group-focus-within:opacity-100',
           )}
         >
           ⋯

@@ -799,7 +799,8 @@
     "sections": {
       "active": "Aktiv",
       "paused": "Pausiert",
-      "archived": "Archiv"
+      "archived": "Archiv",
+      "awaitingDesigner": "Wartend & Architekt:in"
     },
     "showAll": "Alle {{count}} anzeigen",
     "showLess": "Weniger anzeigen",

@@ -799,7 +799,8 @@
     "sections": {
       "active": "Active",
       "paused": "Paused",
-      "archived": "Archive"
+      "archived": "Archive",
+      "awaitingDesigner": "Awaiting & Designer"
     },
     "showAll": "Show all {{count}}",
     "showLess": "Show less",
