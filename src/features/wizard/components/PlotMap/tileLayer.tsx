@@ -1,29 +1,42 @@
 // Phase 6a — single source of truth for the basemap tile provider.
 //
-// OpenFreeMap (https://openfreemap.org/) — chosen for 2026 license
-// terms that explicitly permit commercial use, no signup, no API
-// key, no rate limits. MIT licensed; map data from OpenStreetMap.
+// CARTO Voyager (https://carto.com/basemaps/) — soft cartographic
+// raster style with labels, served from basemaps.cartocdn.com under
+// CARTO's standard "free-with-attribution" terms (commercial use
+// permitted; OpenStreetMap data under ODbL). No API key, no signup.
 //
-// Required attribution per OpenFreeMap policy: "© OpenMapTiles
-// Data from OpenStreetMap" (the OpenFreeMap branding itself is
-// optional). We attribute conservatively to be honest credit-givers
-// of the OSM contributor community on top of OpenMapTiles' work.
+// We were previously pointing at OpenFreeMap's positron raster path
+// (`tiles.openfreemap.org/styles/positron/{z}/{x}/{y}.png`) — that
+// host returns 404 because OpenFreeMap is a *vector*-tile service
+// (PMTiles + style.json for MapLibre GL); they don't ship a raster
+// XYZ endpoint. Tiles silently failed to load in production, leaving
+// a grey square under the marker.
 //
-// We use OpenFreeMap's RASTER endpoint (the "positron" style — a
-// calm, near-monochrome look that matches our paper/clay palette
-// better than the default style). Vector tiles would render
-// crisper at high zoom but require @maplibre/maplibre-gl which
-// would push the bundle past our 280 KB ceiling.
+// Required attribution per CARTO + OSM terms: "© OpenStreetMap
+// contributors, © CARTO".
+//
+// Why raster + Leaflet (not vector + MapLibre): pulling
+// @maplibre/maplibre-gl pushes the entry chunk past our 250 KB gzip
+// ceiling. Voyager's raster style at z11–19 reads cleanly enough
+// for an address-confirmation viewport.
 
 import { TileLayer } from 'react-leaflet'
 
-const POSITRON_TILES = 'https://tiles.openfreemap.org/styles/positron/{z}/{x}/{y}.png'
+const VOYAGER_TILES =
+  'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png'
+const VOYAGER_SUBDOMAINS = 'abcd'
 
 const ATTRIBUTION =
-  '© <a href="https://openfreemap.org/" target="_blank" rel="noreferrer">OpenFreeMap</a> · ' +
-  '© <a href="https://www.openmaptiles.org/" target="_blank" rel="noreferrer">OpenMapTiles</a> · ' +
-  '© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">OpenStreetMap</a>'
+  '© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">OpenStreetMap</a> contributors · ' +
+  '© <a href="https://carto.com/attributions" target="_blank" rel="noreferrer">CARTO</a>'
 
 export function MapTileLayer() {
-  return <TileLayer url={POSITRON_TILES} attribution={ATTRIBUTION} maxZoom={19} />
+  return (
+    <TileLayer
+      url={VOYAGER_TILES}
+      subdomains={VOYAGER_SUBDOMAINS}
+      attribution={ATTRIBUTION}
+      maxZoom={19}
+    />
+  )
 }
