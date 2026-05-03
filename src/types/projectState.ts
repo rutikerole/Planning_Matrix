@@ -27,7 +27,15 @@ export type Source = 'LEGAL' | 'CLIENT' | 'DESIGNER' | 'AUTHORITY'
 export type Quality = 'CALCULATED' | 'VERIFIED' | 'ASSUMED' | 'DECIDED'
 export type AreaState = 'ACTIVE' | 'PENDING' | 'VOID'
 
-export type TemplateId = 'T-01' | 'T-02' | 'T-03' | 'T-04' | 'T-05'
+export type TemplateId =
+  | 'T-01'
+  | 'T-02'
+  | 'T-03'
+  | 'T-04'
+  | 'T-05'
+  | 'T-06'
+  | 'T-07'
+  | 'T-08'
 
 export type Specialist =
   | 'moderator'

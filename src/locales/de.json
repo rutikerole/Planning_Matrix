@@ -842,7 +842,10 @@
       "T-02": "MFH",
       "T-03": "SAN",
       "T-04": "UMN",
-      "T-05": "ABR"
+      "T-05": "ABR",
+      "T-06": "AUF",
+      "T-07": "ANB",
+      "T-08": "SON"
     },
     "empty": {
       "h": "Decken Sie Ihren ersten Tisch.",
@@ -864,7 +867,76 @@
       "months_one": "vor {{count}} Monat",
       "months_other": "vor {{count}} Monaten"
     },
-    "signOut": "Abmelden"
+    "signOut": "Abmelden",
+    "taglines": {
+      "0": "Quiet work makes good work.",
+      "1": "Measure twice. Build once.",
+      "2": "The plan is the building.",
+      "3": "Slow is smooth. Smooth is fast.",
+      "4": "Lass den Plan sprechen.",
+      "5": "Gute Pläne brauchen Geduld."
+    },
+    "ticker": {
+      "label": "Werkstatt · Live",
+      "events": {
+        "fact_added": "Fakt erfasst",
+        "qualifier_changed": "Qualifizierung geändert",
+        "rec_upserted": "Empfehlung aktualisiert",
+        "area_state": "Bereich aktualisiert",
+        "turn_closed": "Wechsel abgeschlossen",
+        "designer_requested": "Architekt:in angefragt"
+      }
+    },
+    "palette": {
+      "open": "Suchen — Projekt, Adresse, Norm, Aktion…",
+      "esc": "esc",
+      "groups": {
+        "projects": "Projekte",
+        "actions": "Aktionen",
+        "legal": "Rechtsquellen",
+        "activity": "Aktivität"
+      },
+      "actions": {
+        "newProject": "Neues Projekt anlegen",
+        "newProjectSub": "Zwei Fragen — und Sie sitzen am Werk",
+        "signOut": "Abmelden",
+        "signOutSub": "Sitzung beenden",
+        "toggleLang": "Sprache wechseln",
+        "toggleLangSub": "Deutsch ⇌ English"
+      },
+      "legalRefs": {
+        "baugb34": {
+          "title": "§ 34 BauGB",
+          "sub": "Innenbereich"
+        },
+        "baugb35": {
+          "title": "§ 35 BauGB",
+          "sub": "Außenbereich"
+        },
+        "baybo57": {
+          "title": "BayBO Art. 57",
+          "sub": "Genehmigungsfreistellung"
+        },
+        "baybo58": {
+          "title": "BayBO Art. 58",
+          "sub": "Vereinfachtes Verfahren"
+        },
+        "baunvo6": {
+          "title": "BauNVO § 6",
+          "sub": "Mischgebiet"
+        }
+      },
+      "tags": {
+        "active": "AKTIV",
+        "designer": "ARCHITEKT",
+        "norm": "NORM",
+        "event": "EVENT",
+        "enter": "⏎"
+      },
+      "empty": "Keine Treffer.",
+      "projectsCount_one": "{{count}} Projekt",
+      "projectsCount_other": "{{count}} Projekte"
+    }
   },
   "wizard": {
     "title": "Neues Projekt · Planning Matrix",
@@ -899,6 +971,14 @@
         "sonstige": {
           "label": "Sonstiges",
           "code": "T-01"
+        },
+        "aufstockung": {
+          "label": "Aufstockung",
+          "code": "T-06"
+        },
+        "anbau": {
+          "label": "Anbau",
+          "code": "T-07"
         }
       },
       "unsureLink": "Ich bin mir nicht sicher",
@@ -910,7 +990,13 @@
         "sanierung": "Bauliche Erneuerung an einem bestehenden Gebäude.",
         "umnutzung": "Bestehendes Gebäude erhält eine andere Nutzung (z. B. Büro → Wohnen).",
         "abbruch": "Vollständiger oder teilweiser Rückbau eines Gebäudes.",
-        "sonstige": "Etwas anderes — wir starten mit den flexibelsten Annahmen."
+        "sonstige": "Etwas anderes — wir starten mit den flexibelsten Annahmen.",
+        "aufstockung": "Ein bestehendes Gebäude erhält ein zusätzliches Geschoss.",
+        "anbau": "Ein bestehendes Gebäude wird seitlich oder rückwärtig erweitert."
+      },
+      "help": {
+        "link": "Unsicher? Eine kurze Entscheidungshilfe öffnen",
+        "body": "Bauen Sie auf einem unbebauten Grundstück? Dann **Neubau Einfamilienhaus** (für eine Familie) oder **Neubau Mehrfamilienhaus** (mehrere Wohneinheiten).\n\nExistiert bereits ein Gebäude? Soll es modernisiert werden → **Sanierung**. Eine andere Nutzung erhalten → **Umnutzung**. Aufgestockt werden → **Aufstockung**. Erweitert werden → **Anbau**.\n\nSoll ein Gebäude entfernt werden? → **Abbruch**. Etwas, das hier nicht passt? → **Sonstiges**, wir starten mit den flexibelsten Annahmen."
       }
     },
     "q2": {
@@ -939,7 +1025,19 @@
         "detailLink": "Details ansehen",
         "detailH": "Bebauungsplan-Details"
       },
-      "submit": "Tisch decken"
+      "submit": "Tisch decken",
+      "plot": {
+        "head": "Standortprofil",
+        "stadtbezirk": "Stadtbezirk",
+        "areaEstimate": "Geschätzte Fläche",
+        "areaBuildable": "Bebaubare Fläche",
+        "planningLaw": "Planungsrecht",
+        "character": "Charakter",
+        "heritageDistance": "Denkmal-Nähe",
+        "suggestedName": "Vorgeschlagener Name",
+        "editLater": "Sie können dies später ändern.",
+        "outsideRegion": "Daten noch nicht verfügbar für diese Region."
+      }
     },
     "back": "Zurück",
     "errors": {
@@ -1388,7 +1486,10 @@
     "steps": {
       "s1": "Vorlage wählen…",
       "s2": "Matrix anlegen…",
-      "s3": "Moderator briefen…"
+      "s3": "Moderator briefen…",
+      "s4": "Sonstige Vorgaben anlegen — Stellplatzsatzung {{city}}…",
+      "s5": "Matrix initialisieren — drei Brillen, ein Bild…",
+      "s6": "Moderator briefen — bereit für Ihr Gespräch."
     },
     "cancel": "Abbrechen",
     "cancelConfirm": {

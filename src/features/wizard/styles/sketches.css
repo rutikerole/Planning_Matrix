@@ -1,0 +1,143 @@
+/* v3 sketch-card stroke architecture — copied verbatim from
+   prototypes/makeover-v3.html. Primary stroke always visible;
+   secondary stroke draws on hover/selected via stroke-dasharray
+   transition. Token names mapped from the prototype's --paper /
+   --ink / --clay / --hair shorthand to the repo's --pm-* canon. */
+
+.sketch {
+  position: relative;
+  background: var(--pm-paper);
+  border: 1px solid var(--pm-hair);
+  padding: 24px 20px 20px;
+  cursor: pointer;
+  border-radius: 1px;
+  transition: all 280ms cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+
+.sketch::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    repeating-linear-gradient(0deg, transparent 0 23px, rgba(22, 19, 16, 0.06) 23px 24px),
+    repeating-linear-gradient(90deg, transparent 0 23px, rgba(22, 19, 16, 0.06) 23px 24px);
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.sketch:hover {
+  border-color: var(--pm-clay-soft);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 28px -16px rgba(22, 19, 16, 0.2);
+}
+
+.sketch.on {
+  border-color: var(--pm-clay);
+  background: var(--pm-paper-tint);
+}
+
+.sketch.on::after {
+  content: '';
+  position: absolute;
+  left: 14px;
+  top: 14px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--pm-clay);
+  box-shadow: 0 0 0 5px hsl(26 70% 68% / 0.22);
+}
+
+.sketch svg {
+  width: 120px;
+  height: 80px;
+  position: relative;
+}
+
+.sketch .label {
+  position: relative;
+  text-align: center;
+}
+
+.sketch .label .name {
+  font-size: 13px;
+  color: var(--pm-ink);
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+.sketch .label .code {
+  font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 9px;
+  color: var(--pm-ink-mute2);
+  letter-spacing: 0.12em;
+  margin-top: 3px;
+  text-transform: uppercase;
+}
+
+/* primary stroke — always visible */
+.sketch svg .pri {
+  stroke: var(--pm-ink-soft);
+  stroke-width: 1.4;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.sketch svg .pri-d {
+  stroke-dasharray: 3 2.5;
+}
+
+/* secondary stroke — hidden, draws on hover/selected */
+.sketch svg .sec {
+  stroke: var(--pm-clay);
+  stroke-width: 1;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 200;
+  stroke-dashoffset: 200;
+  opacity: 0;
+  transition:
+    stroke-dashoffset 700ms cubic-bezier(0.16, 1, 0.3, 1) 80ms,
+    opacity 700ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.sketch svg .sec text {
+  fill: var(--pm-clay);
+  stroke: none;
+  font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 6px;
+}
+
+.sketch svg .sec-fill {
+  fill: var(--pm-clay-tint);
+  stroke: none;
+  opacity: 0;
+  transition: opacity 320ms cubic-bezier(0.16, 1, 0.3, 1) 480ms;
+}
+
+.sketch:hover svg .sec,
+.sketch.on svg .sec {
+  stroke-dashoffset: 0;
+  opacity: 1;
+}
+
+.sketch:hover svg .sec-fill,
+.sketch.on svg .sec-fill {
+  opacity: 0.55;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sketch:hover svg .sec,
+  .sketch.on svg .sec,
+  .sketch:hover svg .sec-fill,
+  .sketch.on svg .sec-fill {
+    transition: none;
+  }
+}

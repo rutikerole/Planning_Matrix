@@ -1,0 +1,1116 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Planning Matrix — Makeover Prototype v3</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<style>
+:root{
+  --paper:#f2ede1; --paper-warm:#eae0cb; --paper-tint:#fbf7ed; --paper-soft:#f7f1e3; --paper-deep:#ddd0b2;
+  --ink:#161310; --ink-soft:#2a2520; --ink-mid:#4a4239; --ink-muted:#6c6357; --ink-mute2:#978d7d;
+  --clay:hsl(26 56% 44%); --clay-deep:hsl(26 60% 30%); --clay-soft:hsl(26 56% 58%);
+  --clay-tint:hsl(26 50% 82%); --clay-bloom:hsl(26 70% 68%); --clay-glow:hsl(34 80% 64%);
+  --sage:hsl(140 18% 38%); --sage-soft:hsl(140 18% 60%);
+  --hair:rgba(22,19,16,.10); --hair-strong:rgba(22,19,16,.20); --hair-soft:rgba(22,19,16,.06);
+  --serif:'Instrument Serif',Georgia,serif;
+  --sans:'Inter',system-ui,sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,monospace;
+  --ease:cubic-bezier(.16,1,.3,1);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-font-smoothing:antialiased}
+html,body{height:100%}
+body{
+  font-family:var(--sans);font-size:15px;line-height:1.5;color:var(--ink);
+  background:var(--paper);
+  background-image:
+    linear-gradient(var(--hair-soft) 1px, transparent 1px),
+    linear-gradient(90deg, var(--hair-soft) 1px, transparent 1px);
+  background-size:32px 32px;background-attachment:fixed;
+  overflow-x:hidden;
+}
+button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
+a{color:inherit}
+input,textarea{font:inherit;color:inherit}
+::selection{background:var(--clay-bloom);color:var(--ink)}
+
+/* === topnav === */
+.topnav{
+  position:sticky;top:0;z-index:60;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 32px;
+  background:rgba(242,237,225,.82);
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--hair);
+}
+.brand{display:flex;align-items:center;gap:10px;font-family:var(--serif);font-size:18px;color:var(--ink)}
+.brand .logo{display:flex;gap:3px}
+.brand .logo i{width:5px;height:5px;border-radius:50%;background:var(--clay);display:block;animation:pulseDot 2.4s ease-in-out infinite}
+.brand .logo i:nth-child(2){animation-delay:.2s}
+.brand .logo i:nth-child(3){animation-delay:.4s}
+.brand em{font-style:italic;color:var(--ink-mid);margin-left:2px}
+@keyframes pulseDot{0%,100%{opacity:.6;transform:scale(1)}50%{opacity:1;transform:scale(1.25)}}
+
+.tabs{display:flex;gap:4px;background:var(--paper-tint);border:1px solid var(--hair);border-radius:2px;padding:3px}
+.tabs button{
+  padding:7px 14px;font-size:12px;letter-spacing:.04em;color:var(--ink-mid);
+  border-radius:1px;transition:all 240ms var(--ease);
+  font-family:var(--mono);
+}
+.tabs button:hover{color:var(--ink)}
+.tabs button.on{background:var(--ink);color:var(--paper);}
+
+.topnav-right{display:flex;align-items:center;gap:24px;font-size:13px;color:var(--ink-mid)}
+.lang{display:flex;gap:2px;background:var(--paper-tint);border:1px solid var(--hair);padding:2px;border-radius:1px}
+.lang button{padding:4px 10px;font-size:11px;font-family:var(--mono);letter-spacing:.06em;color:var(--ink-mute2)}
+.lang button.on{background:var(--ink);color:var(--paper)}
+.kbd-hint{font-family:var(--mono);font-size:11px;color:var(--ink-mute2);border:1px solid var(--hair);padding:3px 7px;border-radius:1px}
+
+/* === screens === */
+.screen{display:none;min-height:calc(100vh - 60px);padding:0 32px}
+.screen.on{display:block}
+
+/* === dashboard === */
+.dash-hero{padding:80px 0 48px;max-width:1320px;margin:0 auto;position:relative}
+.eyebrow{
+  font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--clay);
+}
+.h1-welcome{
+  font-family:var(--serif);font-size:clamp(56px,7vw,96px);line-height:.94;letter-spacing:-.01em;
+  margin-top:18px;
+}
+.h1-welcome .dot{color:var(--clay)}
+.tagline{margin-top:32px;font-style:italic;color:var(--clay-deep);font-size:17px;font-family:var(--serif)}
+
+/* live ticker */
+.ticker{
+  margin-top:36px;display:flex;align-items:center;gap:14px;
+  padding:14px 18px;border:1px solid var(--hair);background:var(--paper-tint);
+  max-width:780px;border-radius:1px;overflow:hidden;position:relative;
+}
+.ticker-dot{width:6px;height:6px;border-radius:50%;background:var(--sage);box-shadow:0 0 0 4px hsl(140 18% 60% / .25);animation:livePulse 1.8s ease-in-out infinite}
+@keyframes livePulse{0%,100%{box-shadow:0 0 0 4px hsl(140 18% 60% / .25)}50%{box-shadow:0 0 0 6px hsl(140 18% 60% / .15)}}
+.ticker-label{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-mute2)}
+.ticker-track{flex:1;height:18px;position:relative;overflow:hidden}
+.ticker-item{
+  position:absolute;left:0;top:0;width:100%;
+  font-family:var(--mono);font-size:12px;color:var(--ink-mid);white-space:nowrap;
+  display:flex;align-items:center;gap:10px;
+  transform:translateY(100%);opacity:0;transition:transform 600ms var(--ease),opacity 600ms var(--ease);
+}
+.ticker-item.on{transform:translateY(0);opacity:1}
+.ticker-item.out{transform:translateY(-100%);opacity:0}
+.ticker-item .when{color:var(--ink-mute2)}
+.ticker-item .what{color:var(--clay)}
+
+/* action band */
+.action-band{
+  display:flex;align-items:center;justify-content:space-between;gap:20px;
+  margin-top:48px;padding-bottom:24px;border-bottom:1px solid var(--hair);
+}
+.filter-pills{display:flex;gap:6px;flex-wrap:wrap}
+.pill{
+  display:inline-flex;align-items:center;gap:8px;padding:7px 14px;
+  border:1px solid var(--hair);border-radius:1px;font-size:13px;color:var(--ink-mid);
+  transition:all 240ms var(--ease);background:var(--paper);
+}
+.pill .count{font-family:var(--mono);font-size:10px;color:var(--ink-mute2);letter-spacing:.06em}
+.pill:hover{border-color:var(--hair-strong);color:var(--ink)}
+.pill.on{background:var(--clay-soft);border-color:var(--clay-soft);color:var(--paper)}
+.pill.on .count{color:rgba(242,237,225,.7)}
+
+.action-right{display:flex;align-items:center;gap:14px}
+.search{
+  display:flex;align-items:center;gap:10px;
+  border-bottom:1px solid var(--hair-strong);padding:6px 4px;width:280px;
+  transition:border-color 240ms var(--ease);
+}
+.search:focus-within{border-color:var(--clay)}
+.search input{flex:1;border:none;outline:none;background:transparent;font-size:14px}
+.search input::placeholder{color:var(--ink-mute2)}
+.search .kbd{font-family:var(--mono);font-size:10px;color:var(--ink-mute2);border:1px solid var(--hair);padding:2px 6px;border-radius:1px}
+
+.btn-primary{
+  display:inline-flex;align-items:center;gap:10px;padding:11px 20px;
+  background:var(--clay);color:var(--paper);font-size:14px;letter-spacing:.01em;
+  border-radius:1px;transition:all 240ms var(--ease);
+}
+.btn-primary:hover{background:var(--clay-deep);transform:translateY(-1px)}
+.btn-primary svg{width:14px;height:14px}
+
+/* projects grid */
+.section-head{
+  margin:48px 0 16px;display:flex;align-items:baseline;justify-content:space-between;
+}
+.section-head .label{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-mute2)}
+.section-head .label .count{color:var(--clay);margin-left:6px}
+.section-head .toggle{font-size:12px;color:var(--ink-mid);font-family:var(--mono);letter-spacing:.04em}
+
+.project-grid{
+  display:grid;grid-template-columns:repeat(2,1fr);gap:20px;
+  max-width:1320px;margin:0 auto;
+}
+@media (max-width:900px){.project-grid{grid-template-columns:1fr}}
+
+.proj-card{
+  position:relative;display:grid;grid-template-columns:80px 1fr auto;gap:20px;
+  padding:22px 24px;background:var(--paper-tint);border:1px solid var(--hair);
+  border-radius:1px;cursor:pointer;
+  transition:all 320ms var(--ease);
+  transform-origin:center;
+}
+.proj-card::before{
+  content:"";position:absolute;inset:0;
+  background:var(--paper);opacity:0;
+  transition:opacity 320ms var(--ease);pointer-events:none;border-radius:1px;
+}
+.proj-card:hover::before{opacity:1}
+.proj-card:hover{
+  transform:translateY(-3px) rotate(0deg) !important;
+  box-shadow:0 14px 40px -16px rgba(22,19,16,.18),0 4px 8px -4px rgba(22,19,16,.08);
+  border-color:var(--hair-strong);
+  z-index:2;
+}
+.proj-card > *{position:relative;z-index:1}
+/* random rotations applied via JS data-rot */
+.proj-card[data-rot="0"]{transform:rotate(-.4deg)}
+.proj-card[data-rot="1"]{transform:rotate(.3deg)}
+.proj-card[data-rot="2"]{transform:rotate(-.2deg)}
+.proj-card[data-rot="3"]{transform:rotate(.5deg)}
+.proj-card[data-rot="4"]{transform:rotate(-.6deg)}
+.proj-card[data-rot="5"]{transform:rotate(.2deg)}
+
+.thumb{
+  width:80px;height:80px;
+  background:var(--paper);border:1px solid var(--hair);border-radius:1px;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+}
+.thumb svg{display:block}
+
+.proj-body{min-width:0}
+.proj-title{font-family:var(--serif);font-size:22px;line-height:1.15;color:var(--ink);display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.tplbadge{
+  font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--clay);
+  border:1px solid var(--clay-tint);padding:2px 6px;border-radius:1px;background:var(--paper);
+  flex-shrink:0;
+}
+.proj-addr{margin-top:4px;font-style:italic;color:var(--ink-mid);font-size:13px}
+.proj-rec{
+  margin-top:12px;display:flex;align-items:flex-start;gap:8px;
+  font-size:13px;color:var(--ink-mid);font-style:italic;line-height:1.4;
+  border-left:1px solid var(--clay-tint);padding-left:10px;
+}
+.proj-rec::before{content:"→";color:var(--clay);font-style:normal;flex-shrink:0;font-family:var(--mono)}
+.proj-meta{
+  margin-top:14px;display:flex;align-items:center;gap:14px;
+  font-family:var(--mono);font-size:11px;color:var(--ink-mute2);letter-spacing:.04em;
+}
+.proj-meta .sep{color:var(--ink-mute2);opacity:.5}
+.areas-glyph{display:flex;gap:3px}
+.areas-glyph .a{width:9px;height:9px;border:1px solid var(--ink-mute2);border-radius:0}
+.areas-glyph .a.act{background:var(--clay);border-color:var(--clay)}
+.areas-glyph .a.pend{background:repeating-linear-gradient(45deg,var(--ink-mute2) 0 1px,transparent 1px 3px);border-color:var(--ink-mute2)}
+
+.proj-status{display:flex;flex-direction:column;align-items:flex-end;justify-content:space-between;gap:10px;flex-shrink:0}
+.statpill{
+  font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;
+  display:inline-flex;align-items:center;gap:6px;color:var(--clay);
+}
+.statpill::before{content:"●";font-size:9px}
+.statpill.awaiting{color:var(--ink-muted)}
+.statpill.awaiting::before{content:"○"}
+.statpill.designer{color:var(--clay-deep)}
+.statpill.designer::before{content:"◇"}
+.statpill.paused{color:var(--ink-mute2)}
+.statpill.paused::before{content:"▢"}
+.statpill.archived{color:var(--ink-mute2);opacity:.65}
+.statpill.archived::before{content:"·"}
+.proj-arrow{font-family:var(--mono);color:var(--ink-mute2);font-size:18px;transition:transform 240ms var(--ease),color 240ms var(--ease)}
+.proj-card:hover .proj-arrow{color:var(--ink);transform:translateX(4px)}
+
+/* footer */
+.dash-foot{
+  margin:120px auto 60px;max-width:1320px;padding-top:40px;border-top:1px solid var(--hair);
+  display:flex;justify-content:space-between;font-family:var(--mono);font-size:11px;color:var(--ink-mute2);letter-spacing:.04em
+}
+
+/* === wizard shared === */
+.wiz{padding:60px 0 80px;max-width:1100px;margin:0 auto;min-height:calc(100vh - 60px);display:flex;flex-direction:column}
+.wiz-progress{display:flex;align-items:center;gap:16px;margin-bottom:60px;justify-content:center}
+.wiz-progress .seg{position:relative;height:1px;background:rgba(22,19,16,.12);width:280px}
+.wiz-progress .seg.done{background:var(--clay)}
+.wiz-progress .seg.active::after{content:"";position:absolute;left:0;top:-1px;height:3px;width:100%;background:var(--clay);}
+.wiz-progress .num{font-family:var(--mono);font-size:11px;color:var(--ink-mute2);letter-spacing:.04em;min-width:14px}
+.wiz-progress .num.on{color:var(--clay)}
+
+.wiz-head{text-align:left;margin-bottom:48px}
+.wiz-head .h{font-family:var(--serif);font-size:clamp(46px,5.5vw,72px);line-height:1;letter-spacing:-.01em;margin-top:14px}
+.wiz-head .h .q{color:var(--clay)}
+.wiz-head .sub{font-style:italic;color:var(--ink-mid);font-size:18px;margin-top:18px;font-family:var(--serif);max-width:640px;line-height:1.4}
+
+.wiz-foot{
+  margin-top:auto;padding-top:48px;border-top:1px solid var(--hair);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.wiz-back{font-family:var(--serif);font-style:italic;color:var(--clay);text-decoration:underline;text-decoration-thickness:.5px;text-underline-offset:4px;font-size:15px}
+.wiz-back:hover{color:var(--clay-deep)}
+.wiz-step-label{font-family:var(--mono);font-size:11px;color:var(--ink-mute2);letter-spacing:.04em;font-style:italic}
+
+/* Q1 sketch cards */
+.sketch-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+@media (max-width:900px){.sketch-grid{grid-template-columns:repeat(2,1fr)}}
+
+.sketch{
+  position:relative;background:var(--paper);border:1px solid var(--hair);
+  padding:24px 20px 20px;cursor:pointer;border-radius:1px;
+  transition:all 280ms var(--ease);overflow:hidden;
+  display:flex;flex-direction:column;align-items:center;gap:14px;
+}
+.sketch::before{
+  content:"";position:absolute;inset:0;
+  background:repeating-linear-gradient(0deg,transparent 0 23px,var(--hair-soft) 23px 24px),
+             repeating-linear-gradient(90deg,transparent 0 23px,var(--hair-soft) 23px 24px);
+  opacity:.4;pointer-events:none;
+}
+.sketch:hover{border-color:var(--clay-soft);transform:translateY(-2px);box-shadow:0 10px 28px -16px rgba(22,19,16,.2)}
+.sketch.on{border-color:var(--clay);background:var(--paper-tint)}
+.sketch.on::after{
+  content:"";position:absolute;left:14px;top:14px;width:6px;height:6px;border-radius:50%;background:var(--clay);
+  box-shadow:0 0 0 5px hsl(26 70% 68% / .22);
+}
+.sketch svg{width:120px;height:80px;position:relative}
+.sketch .label{position:relative;text-align:center}
+.sketch .name{font-size:13px;color:var(--ink);font-weight:500;line-height:1.2}
+.sketch .code{font-family:var(--mono);font-size:9px;color:var(--ink-mute2);letter-spacing:.12em;margin-top:3px;text-transform:uppercase}
+
+/* sketch SVG anim — primary stroke always visible, secondary draws on hover */
+.sketch svg .pri{stroke:var(--ink-soft);stroke-width:1.4;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.sketch svg .pri-d{stroke-dasharray:3 2.5}
+.sketch svg .sec{stroke:var(--clay);stroke-width:1;fill:none;stroke-linecap:round;stroke-linejoin:round;
+  stroke-dasharray:200;stroke-dashoffset:200;
+  transition:stroke-dashoffset 700ms var(--ease) 80ms;
+  opacity:0;transition-property:stroke-dashoffset,opacity;
+}
+.sketch svg .sec text{fill:var(--clay);stroke:none;font-family:var(--mono);font-size:6px}
+.sketch svg .sec-fill{fill:var(--clay-tint);stroke:none;opacity:0;transition:opacity 320ms var(--ease) 480ms}
+.sketch:hover svg .sec, .sketch.on svg .sec{stroke-dashoffset:0;opacity:1}
+.sketch:hover svg .sec-fill, .sketch.on svg .sec-fill{opacity:.55}
+
+.q1-help{margin-top:32px;font-family:var(--serif);font-style:italic;color:var(--clay);font-size:14px;text-decoration:underline;text-underline-offset:4px;text-decoration-thickness:.5px;cursor:pointer;display:inline-block;align-self:flex-start}
+.q1-help-body{margin-top:14px;padding:18px 20px;background:var(--paper-tint);border:1px solid var(--hair);font-size:13px;color:var(--ink-mid);line-height:1.6;display:none}
+.q1-help-body.on{display:block}
+.q1-help-body strong{color:var(--ink);font-weight:500}
+
+/* === Q2 === */
+.q2-layout{display:grid;grid-template-columns:1fr 320px;gap:32px;align-items:start}
+@media (max-width:1000px){.q2-layout{grid-template-columns:1fr}}
+
+.toggle-yn{display:inline-flex;border:1px solid var(--hair);border-radius:1px;background:var(--paper);margin-bottom:28px}
+.toggle-yn button{padding:10px 28px;font-size:14px;color:var(--ink-mid);transition:all 200ms var(--ease)}
+.toggle-yn button.on{background:var(--clay-tint);color:var(--clay-deep)}
+.toggle-yn button.on::before{content:"●";margin-right:8px;font-size:8px;color:var(--clay)}
+
+.fld-label{font-family:var(--mono);font-size:11px;color:var(--clay);letter-spacing:.16em;text-transform:uppercase;margin-bottom:10px}
+.addr-input{width:100%;border:none;border-bottom:1px solid var(--hair-strong);padding:8px 0;font-size:18px;background:transparent;outline:none;font-family:var(--sans);color:var(--ink)}
+.addr-input:focus{border-color:var(--clay)}
+
+.helper{margin-top:10px;font-style:italic;color:var(--clay);font-size:13px}
+.helper-mono{margin-top:4px;font-family:var(--mono);font-size:11px;color:var(--ink-mute2)}
+
+.bplan-pill{
+  margin-top:18px;display:flex;align-items:center;justify-content:space-between;gap:14px;
+  padding:14px 18px;border:1px solid var(--hair);background:var(--paper);border-radius:1px;
+  font-style:italic;font-family:var(--serif);font-size:14px;color:var(--ink);
+  cursor:pointer;transition:border-color 200ms var(--ease);
+}
+.bplan-pill:hover{border-color:var(--hair-strong)}
+.bplan-pill .left{display:flex;align-items:center;gap:10px}
+.bplan-pill .dot{width:6px;height:6px;border-radius:50%;background:var(--clay);flex-shrink:0}
+.bplan-pill .view{font-family:var(--mono);font-size:11px;color:var(--clay);text-transform:none;letter-spacing:.04em;font-style:normal}
+
+/* map */
+.map-wrap{margin-top:22px;position:relative;height:460px;border:1px solid var(--hair-strong);overflow:hidden;border-radius:1px}
+#leafmap{width:100%;height:100%;
+  filter:sepia(.18) saturate(.62) brightness(.99) contrast(1.04);
+}
+.map-overlay{position:absolute;inset:0;pointer-events:none;z-index:401}
+.map-corners{position:absolute;inset:0;pointer-events:none;z-index:402;font-family:var(--mono);font-size:10px;color:var(--ink-soft);letter-spacing:.08em;text-transform:uppercase}
+.map-corners .n-arrow{position:absolute;top:14px;right:18px;width:38px;text-align:center}
+.map-corners .n-arrow svg{display:block;margin:0 auto 2px}
+.map-corners .scale{position:absolute;bottom:14px;left:18px;display:flex;align-items:center;gap:8px}
+.map-corners .scale .bar{width:60px;height:1px;background:var(--ink-soft);position:relative}
+.map-corners .scale .bar::before,.map-corners .scale .bar::after{content:"";position:absolute;width:1px;height:6px;background:var(--ink-soft);top:-3px}
+.map-corners .scale .bar::before{left:0}.map-corners .scale .bar::after{right:0}
+.map-corners .coords{position:absolute;bottom:14px;right:18px;font-size:10px;letter-spacing:.04em;text-transform:none;color:var(--ink-mid)}
+.map-corners .flst{position:absolute;top:14px;left:18px;color:var(--clay);font-weight:500}
+
+.scan-line{
+  position:absolute;left:-100%;top:0;bottom:0;width:100%;z-index:403;pointer-events:none;
+  background:linear-gradient(90deg,transparent 0%,var(--clay-bloom) 50%,transparent 100%);
+  opacity:0;
+}
+.scan-line.run{animation:scanSweep 1.4s var(--ease)}
+@keyframes scanSweep{0%{left:-100%;opacity:.55}50%{opacity:.7}100%{left:100%;opacity:0}}
+
+/* plot sidebar */
+.plot-side{
+  background:var(--paper-tint);border:1px solid var(--hair);padding:22px 22px 26px;border-radius:1px;
+  display:flex;flex-direction:column;gap:18px;
+}
+.plot-side .label-mono{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-mute2)}
+.plot-side .label-mono.clay{color:var(--clay)}
+.plot-side .row{display:flex;flex-direction:column;gap:4px}
+.plot-side .row .v{font-family:var(--serif);font-size:18px;color:var(--ink);line-height:1.2}
+.plot-side .row .v.mono{font-family:var(--mono);font-size:13px;letter-spacing:.02em}
+.plot-side .row .v.italic{font-style:italic;font-size:14px;color:var(--ink-mid)}
+.plot-side hr{border:none;height:1px;background:var(--hair)}
+.plot-side .head{font-family:var(--serif);font-size:14px;color:var(--ink);font-style:italic;margin-bottom:-8px;padding-top:4px}
+
+/* dialog */
+.dialog{position:fixed;inset:0;z-index:80;display:none;align-items:center;justify-content:center;padding:32px;background:rgba(22,19,16,.45);backdrop-filter:blur(4px)}
+.dialog.on{display:flex}
+.dialog .body{
+  max-width:560px;background:var(--paper);border:1px solid var(--hair-strong);padding:32px 36px 28px;
+  border-radius:1px;box-shadow:0 30px 80px -20px rgba(0,0,0,.3);
+}
+.dialog h3{font-family:var(--serif);font-size:28px;line-height:1.1;margin-bottom:14px;letter-spacing:-.01em}
+.dialog h3 .clay{color:var(--clay)}
+.dialog .x{position:absolute;top:18px;right:22px;font-size:22px;color:var(--ink-mute2);font-family:var(--mono)}
+.dialog p{font-family:var(--serif);font-style:italic;color:var(--ink-mid);margin-bottom:10px;line-height:1.55}
+.dialog ul{list-style:none;margin-top:18px;border-top:1px solid var(--hair);padding-top:16px}
+.dialog ul li{display:grid;grid-template-columns:140px 1fr;gap:14px;font-size:13px;padding:8px 0;border-bottom:1px solid var(--hair-soft)}
+.dialog ul li:last-child{border-bottom:none}
+.dialog ul li .k{font-family:var(--mono);font-size:11px;color:var(--ink-mute2);letter-spacing:.08em;text-transform:uppercase}
+.dialog ul li .v{color:var(--ink)}
+
+/* === loader === */
+.loader-stage{
+  min-height:calc(100vh - 60px);display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:40px;position:relative;
+}
+.loader-illo{position:relative;width:340px;height:200px;margin-bottom:48px}
+.loader-illo svg{display:block;overflow:visible}
+.loader-illo .draw{stroke:var(--ink-soft);stroke-width:1.2;fill:none;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:600;stroke-dashoffset:600}
+.loader-illo .draw.r{stroke-dasharray:120;stroke-dashoffset:120}
+.loader-illo .clay-stroke{stroke:var(--clay)}
+.loader-illo .pencil{transform-origin:60% 50%}
+.loader-illo .ticks line{stroke:var(--clay);stroke-width:1.2;opacity:0;transform-origin:center}
+.loader-illo.run .draw{animation:drawIn 1100ms var(--ease) forwards}
+.loader-illo.run .draw.delay-1{animation-delay:0ms}
+.loader-illo.run .draw.delay-2{animation-delay:300ms}
+.loader-illo.run .draw.delay-3{animation-delay:700ms}
+.loader-illo.run .draw.delay-4{animation-delay:1100ms}
+.loader-illo.run .ticks line{animation:tickIn 200ms var(--ease) forwards}
+.loader-illo.run .ticks line:nth-child(1){animation-delay:1500ms}
+.loader-illo.run .ticks line:nth-child(2){animation-delay:1600ms}
+.loader-illo.run .ticks line:nth-child(3){animation-delay:1700ms}
+.loader-illo.run .ticks line:nth-child(4){animation-delay:1800ms}
+.loader-illo.run .ticks line:nth-child(5){animation-delay:1900ms}
+.loader-illo.run .pencil-grp{animation:pencilIdle 2.4s ease-in-out 1900ms infinite}
+@keyframes drawIn{to{stroke-dashoffset:0}}
+@keyframes tickIn{from{opacity:0;transform:scaleY(0)}to{opacity:1;transform:scaleY(1)}}
+@keyframes pencilIdle{0%,100%{transform:rotate(-1.5deg) translate(0,0)}50%{transform:rotate(.5deg) translate(2px,-1px)}}
+
+.loader-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--clay)}
+.loader-h{font-family:var(--serif);font-size:clamp(48px,5.5vw,72px);line-height:1;letter-spacing:-.01em;margin-top:16px}
+.loader-h .dot{color:var(--clay)}
+
+.loader-status{margin-top:30px;height:24px;position:relative;width:520px;max-width:90vw;text-align:center;overflow:hidden}
+.loader-status .ln{
+  position:absolute;left:0;right:0;top:0;
+  font-family:var(--serif);font-style:italic;color:var(--ink-mid);font-size:16px;
+  opacity:0;transform:translateY(8px);transition:opacity 320ms var(--ease),transform 320ms var(--ease);
+}
+.loader-status .ln.on{opacity:1;transform:translateY(0)}
+.loader-status .ln.out{opacity:0;transform:translateY(-8px)}
+
+.loader-stepper{margin-top:38px;display:flex;gap:8px}
+.loader-stepper .seg{width:96px;height:1px;background:rgba(22,19,16,.12);position:relative;overflow:hidden}
+.loader-stepper .seg::after{content:"";position:absolute;left:0;top:0;height:100%;width:0;background:var(--clay);transition:width 800ms var(--ease)}
+.loader-stepper .seg.on::after{width:100%}
+.loader-stepper .seg.run::after{width:100%;transition-duration:6000ms}
+
+.loader-cancel{margin-top:auto;padding-top:80px}
+.loader-cancel a{font-family:var(--serif);font-style:italic;color:var(--clay);font-size:14px;text-decoration:underline;text-underline-offset:4px;text-decoration-thickness:.5px}
+
+/* === cmd+k palette === */
+.palette{position:fixed;inset:0;z-index:90;display:none;align-items:flex-start;justify-content:center;padding:120px 20px;background:rgba(22,19,16,.5);backdrop-filter:blur(6px)}
+.palette.on{display:flex}
+.palette-box{
+  width:100%;max-width:600px;background:var(--paper);
+  border:1px solid var(--hair-strong);border-radius:2px;
+  box-shadow:0 30px 80px -10px rgba(0,0,0,.5);
+  overflow:hidden;
+}
+.palette-search{display:flex;align-items:center;gap:14px;padding:18px 22px;border-bottom:1px solid var(--hair)}
+.palette-search input{flex:1;border:none;outline:none;background:transparent;font-size:18px;font-family:var(--serif)}
+.palette-search input::placeholder{color:var(--ink-mute2)}
+.palette-search .esc{font-family:var(--mono);font-size:11px;color:var(--ink-mute2);border:1px solid var(--hair);padding:3px 8px;border-radius:1px}
+.palette-results{max-height:480px;overflow:auto;padding:8px 0}
+.palette-group{padding:10px 22px 6px;font-family:var(--mono);font-size:10px;letter-spacing:.16em;color:var(--ink-mute2);text-transform:uppercase}
+.palette-item{display:grid;grid-template-columns:36px 1fr auto;gap:14px;align-items:center;padding:10px 22px;cursor:pointer}
+.palette-item:hover,.palette-item.kbsel{background:var(--paper-tint)}
+.palette-item .ico{width:28px;height:28px;display:flex;align-items:center;justify-content:center;border:1px solid var(--hair);border-radius:1px;color:var(--ink-mid);font-family:var(--mono);font-size:10px;letter-spacing:.06em}
+.palette-item .body{min-width:0}
+.palette-item .ttl{font-family:var(--serif);font-size:15px;color:var(--ink);line-height:1.2}
+.palette-item .sub{font-size:12px;color:var(--ink-mute2);font-family:var(--mono);letter-spacing:.04em;margin-top:2px}
+.palette-item .tag{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--clay)}
+
+/* === reduced motion === */
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms !important;transition-duration:.01ms !important}
+}
+
+/* atelier flag for static site-plan thumbnails */
+.thumb-svg .building{fill:var(--ink-soft);opacity:.85}
+.thumb-svg .building.hatch{fill:url(#hatchPat)}
+.thumb-svg .parcel{stroke:var(--clay);stroke-width:1.4;fill:var(--clay-tint);fill-opacity:.55}
+.thumb-svg .road{stroke:var(--ink-mute2);stroke-width:1;fill:none;opacity:.4}
+.thumb-svg .label{font-family:var(--mono);font-size:5.5px;fill:var(--ink-mute2);letter-spacing:.06em}
+
+</style>
+</head>
+<body>
+
+<!-- TOPNAV -->
+<header class="topnav">
+  <div class="brand"><span class="logo"><i></i><i></i><i></i></span> Planning <em>Matrix</em></div>
+  <nav class="tabs" id="tabs">
+    <button data-tab="dashboard" class="on">Dashboard</button>
+    <button data-tab="q1">Wizard · Intent</button>
+    <button data-tab="q2">Wizard · Plot</button>
+    <button data-tab="loader">Loader</button>
+  </nav>
+  <div class="topnav-right">
+    <div class="lang"><button class="on">DE</button><button>EN</button></div>
+    <div class="kbd-hint" id="kbdhint">⌘ K</div>
+  </div>
+</header>
+
+<!-- ============== DASHBOARD ============== -->
+<section id="dashboard" class="screen on">
+  <div class="dash-hero">
+    <div class="eyebrow">Atelier · Willkommen</div>
+    <h1 class="h1-welcome">Willkommen, Rutik<span class="dot">.</span></h1>
+    <p class="tagline">Quiet work makes good work.</p>
+
+    <div class="ticker">
+      <div class="ticker-dot"></div>
+      <div class="ticker-label">Werkstatt · Live</div>
+      <div class="ticker-track" id="ticker-track">
+        <div class="ticker-item on"><span class="when">vor 2 Min</span> · <span>Türkenstraße 25</span> · <span class="what">§ 34 BauGB confirmed</span></div>
+        <div class="ticker-item"><span class="when">vor 18 Min</span> · <span>Lindwurmstraße 88</span> · <span class="what">Stellplatznachweis flagged</span></div>
+        <div class="ticker-item"><span class="when">vor 1 Std</span> · <span>Goethestraße 20</span> · <span class="what">designer review requested</span></div>
+        <div class="ticker-item"><span class="when">vor 3 Std</span> · <span>Maximilianstraße 14</span> · <span class="what">8th turn closed</span></div>
+        <div class="ticker-item"><span class="when">heute, 09:14</span> · <span>Innstraße 23</span> · <span class="what">B-Plan Nr. 1842b checked</span></div>
+      </div>
+    </div>
+
+    <div class="action-band">
+      <div class="filter-pills">
+        <button class="pill on">Alle <span class="count">15</span></button>
+        <button class="pill">Aktiv <span class="count">11</span></button>
+        <button class="pill">Wartend <span class="count">2</span></button>
+        <button class="pill">Architekt:in <span class="count">1</span></button>
+        <button class="pill">Pausiert <span class="count">1</span></button>
+        <button class="pill">Archiv <span class="count">3</span></button>
+      </div>
+      <div class="action-right">
+        <div class="search">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+          <input id="searchinp" placeholder="Suchen — Name, Adresse, Flurstück…" />
+          <span class="kbd">⌘ K</span>
+        </div>
+        <button class="btn-primary" onclick="goTab('q1')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+          Neues Projekt
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-head">
+    <div class="label">Aktiv <span class="count">11</span></div>
+    <div class="toggle">↑ neueste zuerst</div>
+  </div>
+
+  <div class="project-grid" id="projgrid"><!-- cards injected by JS --></div>
+
+  <div class="section-head" style="margin-top:64px">
+    <div class="label">Wartend &amp; Architekt:in <span class="count">3</span></div>
+  </div>
+  <div class="project-grid" id="projgrid2"></div>
+
+  <div class="dash-foot">
+    <span>Planning Matrix · München · v1.0</span>
+    <span>Impressum · Datenschutz · AGB</span>
+  </div>
+</section>
+
+<!-- ============== Q1 — INTENT ============== -->
+<section id="q1" class="screen">
+  <div class="wiz">
+    <div class="wiz-progress">
+      <span class="num on">1</span>
+      <span class="seg active"></span>
+      <span class="seg"></span>
+      <span class="num">2</span>
+    </div>
+
+    <div class="wiz-head">
+      <div class="eyebrow">Planning Matrix · Initialisierung</div>
+      <h1 class="h">Was möchten Sie bauen<span class="q">?</span></h1>
+      <p class="sub">Wählen Sie die Option, die Ihrem Vorhaben am nächsten kommt. Bewegen Sie die Maus über eine Karte, um den Archetyp lebendig zu sehen.</p>
+    </div>
+
+    <div class="sketch-grid" id="sketchgrid"><!-- 8 sketch cards injected by JS --></div>
+
+    <a class="q1-help" id="q1help">Unsicher? Eine kurze Entscheidungshilfe öffnen</a>
+    <div class="q1-help-body" id="q1helpbody">
+      <p><strong>Bauen Sie auf einem unbebauten Grundstück?</strong> Dann <em>Neubau Einfamilienhaus</em> (für eine Familie) oder <em>Neubau Mehrfamilienhaus</em> (mehrere Wohneinheiten).<br><br>
+      <strong>Existiert bereits ein Gebäude?</strong> Soll es modernisiert werden → <em>Sanierung</em>. Eine andere Nutzung erhalten → <em>Umnutzung</em>. Aufgestockt werden → <em>Aufstockung</em>. Erweitert werden → <em>Anbau</em>.<br><br>
+      <strong>Soll ein Gebäude entfernt werden?</strong> → <em>Abbruch</em>. Etwas, das hier nicht passt? → <em>Sonstiges</em>, wir starten mit den flexibelsten Annahmen.</p>
+    </div>
+
+    <div class="wiz-foot">
+      <span></span>
+      <div style="display:flex;align-items:center;gap:24px">
+        <span class="wiz-step-label">Frage 1 von 2</span>
+        <button class="btn-primary" onclick="goTab('q2')">Weiter →</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== Q2 — PLOT ============== -->
+<section id="q2" class="screen">
+  <div class="wiz">
+    <div class="wiz-progress">
+      <span class="num on">1</span>
+      <span class="seg done"></span>
+      <span class="seg active"></span>
+      <span class="num on">2</span>
+    </div>
+
+    <div class="wiz-head">
+      <div class="eyebrow">Planning Matrix · Initialisierung</div>
+      <h1 class="h">Haben Sie bereits ein Grundstück<span class="q">?</span></h1>
+      <p class="sub">Wenn ja, geben Sie die Adresse oder die Flurstücksbezeichnung an. Wenn nein, fahren wir mit Annahmen fort.</p>
+    </div>
+
+    <div class="q2-layout">
+      <div>
+        <div class="toggle-yn">
+          <button class="on">Ja</button>
+          <button>Nein</button>
+        </div>
+
+        <div class="fld-label">Adresse oder Flurstück</div>
+        <input class="addr-input" id="addrinp" value="Hans-Sachs-Straße 10, 80469 München" />
+        <div class="helper">Wir nutzen die Adresse zur Recherche von Bebauungsplan und örtlichen Satzungen.</div>
+        <div class="helper-mono">Aktuell aktiv: München (PLZ 80331–81929). Weitere Regionen folgen.</div>
+
+        <div class="bplan-pill" id="bplanpill" onclick="document.getElementById('bplandlg').classList.add('on')">
+          <div class="left">
+            <span class="dot"></span>
+            <span>Kein rechtsgültiger Bebauungsplan — Beurteilung nach § 34 BauGB.</span>
+          </div>
+          <span class="view">Details ansehen →</span>
+        </div>
+
+        <div style="margin-top:22px;font-size:13px;color:var(--ink-mid);font-style:italic;font-family:var(--serif)">Klicken Sie in die Karte, um eine andere Lage zu prüfen.</div>
+
+        <div class="map-wrap">
+          <div id="leafmap"></div>
+          <svg class="map-overlay" viewBox="0 0 800 460" preserveAspectRatio="none" id="mapover">
+            <defs>
+              <pattern id="mapHatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+                <line x1="0" y1="0" x2="0" y2="6" stroke="rgba(22,19,16,.55)" stroke-width="1"/>
+              </pattern>
+              <pattern id="parcelHatch" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+                <line x1="0" y1="0" x2="0" y2="5" stroke="hsl(26 56% 44% / .45)" stroke-width="1"/>
+              </pattern>
+            </defs>
+            <!-- neighbouring buildings (hatched) -->
+            <rect x="120" y="80" width="180" height="86" fill="url(#mapHatch)" stroke="rgba(22,19,16,.7)" stroke-width="1"/>
+            <rect x="540" y="60" width="160" height="100" fill="url(#mapHatch)" stroke="rgba(22,19,16,.7)" stroke-width="1"/>
+            <rect x="80" y="280" width="240" height="120" fill="url(#mapHatch)" stroke="rgba(22,19,16,.7)" stroke-width="1"/>
+            <rect x="500" y="280" width="220" height="130" fill="url(#mapHatch)" stroke="rgba(22,19,16,.7)" stroke-width="1"/>
+            <!-- parcel (clay) -->
+            <rect x="350" y="190" width="120" height="84" fill="url(#parcelHatch)" stroke="hsl(26 56% 44%)" stroke-width="2"/>
+            <!-- corner ticks on parcel -->
+            <g stroke="hsl(26 56% 44%)" stroke-width="1.5">
+              <line x1="346" y1="190" x2="354" y2="190"/><line x1="350" y1="186" x2="350" y2="194"/>
+              <line x1="466" y1="190" x2="474" y2="190"/><line x1="470" y1="186" x2="470" y2="194"/>
+              <line x1="346" y1="274" x2="354" y2="274"/><line x1="350" y1="270" x2="350" y2="278"/>
+              <line x1="466" y1="274" x2="474" y2="274"/><line x1="470" y1="270" x2="470" y2="278"/>
+            </g>
+            <!-- dim arrow -->
+            <g stroke="hsl(26 56% 44%)" stroke-width=".8" fill="none">
+              <line x1="350" y1="282" x2="470" y2="282"/>
+              <line x1="350" y1="278" x2="350" y2="286"/>
+              <line x1="470" y1="278" x2="470" y2="286"/>
+            </g>
+            <text x="410" y="296" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="hsl(26 60% 30%)">≈ 28,4 m</text>
+          </svg>
+          <div class="map-corners">
+            <div class="flst">FLST. 0218 / 7</div>
+            <div class="n-arrow">
+              <svg width="22" height="22" viewBox="0 0 24 24"><path d="M12 2 L17 18 L12 14 L7 18 Z" fill="currentColor"/></svg>
+              N
+            </div>
+            <div class="scale">M 1:500 <span class="bar"></span> 25 m</div>
+            <div class="coords">48,1289° N · 11,5728° E</div>
+          </div>
+          <div class="scan-line" id="scanline"></div>
+        </div>
+      </div>
+
+      <aside class="plot-side">
+        <div class="head">Standortprofil</div>
+        <div class="row">
+          <span class="label-mono">Stadtbezirk</span>
+          <span class="v">2 — Ludwigsvorstadt-Isarvorstadt</span>
+        </div>
+        <hr/>
+        <div class="row">
+          <span class="label-mono">Geschätzte Fläche</span>
+          <span class="v mono">≈ 412 m²</span>
+        </div>
+        <div class="row">
+          <span class="label-mono">Bebaubare Fläche</span>
+          <span class="v mono">≈ 286 m²</span>
+        </div>
+        <hr/>
+        <div class="row">
+          <span class="label-mono clay">Planungsrecht</span>
+          <span class="v italic">Innenbereich, § 34 BauGB</span>
+        </div>
+        <div class="row">
+          <span class="label-mono">Charakter</span>
+          <span class="v italic">dichtes Mischgebiet</span>
+        </div>
+        <div class="row">
+          <span class="label-mono">Denkmal-Nähe</span>
+          <span class="v italic">≈ 1,2 km</span>
+        </div>
+        <hr/>
+        <div class="row">
+          <span class="label-mono">Vorgeschlagener Name</span>
+          <span class="v">Einfamilienhaus Hans-Sachs-Straße</span>
+        </div>
+        <div style="font-size:11px;color:var(--ink-mute2);font-family:var(--mono);letter-spacing:.04em">Sie können dies später ändern.</div>
+      </aside>
+    </div>
+
+    <div class="wiz-foot">
+      <a class="wiz-back" onclick="goTab('q1')">← Zurück</a>
+      <div style="display:flex;align-items:center;gap:24px">
+        <span class="wiz-step-label">Frage 2 von 2</span>
+        <button class="btn-primary" onclick="goTab('loader')">Tisch decken →</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== LOADER ============== -->
+<section id="loader" class="screen">
+  <div class="loader-stage" id="loaderstage">
+    <div class="loader-illo" id="loaderillo">
+      <svg viewBox="0 0 340 200" width="340" height="200">
+        <!-- drafting board base (parallelogram) -->
+        <path class="draw delay-1" d="M30 170 L90 30 L300 30 L240 170 Z" />
+        <!-- paper sheet -->
+        <path class="draw delay-2" d="M82 145 L132 50 L260 50 L210 145 Z" />
+        <!-- ruler -->
+        <path class="draw r delay-3 clay-stroke" d="M88 110 L222 60" stroke-width="1.4" />
+        <path class="draw r delay-3" d="M88 117 L222 67" stroke-dasharray="2 2.5" stroke-width=".8"/>
+        <!-- archetype silhouette (single-family house) -->
+        <g class="pencil-grp">
+          <path class="draw delay-4" d="M150 130 L150 100 L175 80 L200 100 L200 130 Z" />
+          <path class="draw delay-4" d="M170 130 L170 113 L182 113 L182 130" />
+        </g>
+        <!-- scale ticks -->
+        <g class="ticks">
+          <line x1="125" y1="155" x2="125" y2="161"/>
+          <line x1="148" y1="155" x2="148" y2="161"/>
+          <line x1="171" y1="155" x2="171" y2="161"/>
+          <line x1="194" y1="155" x2="194" y2="161"/>
+          <line x1="217" y1="155" x2="217" y2="161"/>
+        </g>
+        <!-- M 1:100 label -->
+        <text x="170" y="172" font-family="JetBrains Mono" font-size="7" fill="hsl(26 56% 44%)" text-anchor="middle" letter-spacing="1">M 1:100</text>
+      </svg>
+    </div>
+
+    <div class="loader-eyebrow">Planning Matrix · Vorbereitung</div>
+    <h1 class="loader-h">Tisch decken<span class="dot">.</span></h1>
+
+    <div class="loader-status" id="loaderstat">
+      <div class="ln on">Vorlage wählen — Einfamilienhaus…</div>
+      <div class="ln">Briefing Planungsrecht — § 34 BauGB für Hans-Sachs-Straße…</div>
+      <div class="ln">Briefing Bauordnungsrecht — BayBO Art. 58, GK 3…</div>
+      <div class="ln">Sonstige Vorgaben anlegen — Stellplatzsatzung München…</div>
+      <div class="ln">Matrix initialisieren — drei Brillen, ein Bild…</div>
+      <div class="ln">Moderator briefen — bereit für Ihr Gespräch.</div>
+    </div>
+
+    <div class="loader-stepper" id="stepper">
+      <div class="seg"></div>
+      <div class="seg"></div>
+      <div class="seg"></div>
+    </div>
+
+    <div class="loader-cancel"><a onclick="goTab('q2')">Abbrechen</a></div>
+  </div>
+</section>
+
+<!-- ============== B-PLAN DIALOG ============== -->
+<div class="dialog" id="bplandlg">
+  <div class="body" style="position:relative">
+    <button class="x" onclick="document.getElementById('bplandlg').classList.remove('on')">×</button>
+    <div class="eyebrow">Bebauungsplan</div>
+    <h3>Hans-Sachs-Straße 10<span class="clay">.</span></h3>
+    <p>Für diese Adresse liegt im Datensatz <strong>kein rechtsgültiger Bebauungsplan</strong> vor — der Innenbereichscharakter (§ 34 BauGB) oder Außenbereich (§ 35 BauGB) wird im Gespräch geprüft.</p>
+    <p>Die nähere Umgebung ist als <strong>dichtes Mischgebiet</strong> einzustufen. Wohnnutzung mit drei Geschossen ist im Bestand mehrfach vorhanden und fügt sich grundsätzlich ein.</p>
+    <ul>
+      <li><span class="k">Quelle</span><span class="v">Geoportal Bayern · Stadt München</span></li>
+      <li><span class="k">Stand</span><span class="v">Datensatz vom 02.05.2026</span></li>
+      <li><span class="k">Stadtbezirk</span><span class="v">2 — Ludwigsvorstadt-Isarvorstadt</span></li>
+      <li><span class="k">Charakter</span><span class="v">Mischgebiet, drei Vollgeschosse vorherrschend</span></li>
+      <li><span class="k">Erhaltung</span><span class="v">Erhaltungssatzung südliche Isarvorstadt — zu prüfen</span></li>
+    </ul>
+  </div>
+</div>
+
+<!-- ============== CMD+K PALETTE ============== -->
+<div class="palette" id="palette">
+  <div class="palette-box">
+    <div class="palette-search">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <input id="palinp" placeholder="Suchen — Projekt, Adresse, Norm, Aktion…" />
+      <span class="esc">esc</span>
+    </div>
+    <div class="palette-results" id="palres"></div>
+  </div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+/* ============== TABS ============== */
+const tabs=document.querySelectorAll('#tabs button');
+const screens=document.querySelectorAll('.screen');
+function goTab(id){
+  tabs.forEach(t=>t.classList.toggle('on',t.dataset.tab===id));
+  screens.forEach(s=>s.classList.toggle('on',s.id===id));
+  window.scrollTo({top:0,behavior:'instant'});
+  if(id==='q2') initMap();
+  if(id==='loader') runLoader();
+}
+tabs.forEach(t=>t.addEventListener('click',()=>goTab(t.dataset.tab)));
+
+/* ============== ACTIVITY TICKER ============== */
+const tickItems=document.querySelectorAll('#ticker-track .ticker-item');
+let tickIdx=0;
+setInterval(()=>{
+  tickItems[tickIdx].classList.remove('on');
+  tickItems[tickIdx].classList.add('out');
+  setTimeout(()=>tickItems[tickIdx].classList.remove('out'),700);
+  tickIdx=(tickIdx+1)%tickItems.length;
+  tickItems[tickIdx].classList.add('on');
+},4000);
+
+/* ============== PROJECTS DATA ============== */
+const projects=[
+  {n:'Einfamilienhaus Türkenstraße',a:'Türkenstraße 25 · 80799 München',tpl:'EFH',code:'T-01',rec:'Bebauungsplan beim Bauamt anfordern.',when:'vor 1 Std',turns:1,areas:['act','pend','pend'],status:'active'},
+  {n:'Mehrfamilienhaus Lindwurmstraße',a:'Lindwurmstraße 88 · 80337 München',tpl:'MFH',code:'T-02',rec:'Tragwerksplaner für Einreichplanung kontaktieren.',when:'vor 4 Std',turns:4,areas:['act','act','pend'],status:'awaiting'},
+  {n:'Sanierung Maximilianstraße',a:'Maximilianstraße 14 · 80539 München',tpl:'SAN',code:'T-03',rec:'Energieberater anbinden — GEG § 10 prüfen.',when:'gestern',turns:8,areas:['act','act','act'],status:'active'},
+  {n:'Aufstockung Goethestraße',a:'Goethestraße 20 · 91054 Erlangen',tpl:'AUF',code:'T-06',rec:'Architekt:in für formelle Freigabe einladen.',when:'vor 3 Tagen',turns:12,areas:['act','act','act'],status:'designer'},
+  {n:'Anbau Innstraße',a:'Innstraße 23 · 83022 Rosenheim',tpl:'ANB',code:'T-07',rec:'Nachbarzustimmung formell einholen.',when:'vor 5 Tagen',turns:3,areas:['act','pend','act'],status:'active'},
+  {n:'Umnutzung Schellingstraße',a:'Schellingstraße 41 · 80799 München',tpl:'UMN',code:'T-04',rec:'Brandschutzkonzept aufsetzen.',when:'vor 1 Wo',turns:2,areas:['act','pend','pend'],status:'paused'},
+];
+const projectsB=[
+  {n:'Neubau Maxvorstadt',a:'Barer Straße 92 · 80799 München',tpl:'EFH',code:'T-01',rec:'Stellplatzsatzung München prüfen.',when:'gestern',turns:6,areas:['act','act','pend'],status:'awaiting'},
+  {n:'Sanierung Schwabing',a:'Hohenzollernstraße 12 · 80801 München',tpl:'SAN',code:'T-03',rec:'Erhaltungssatzung Schwabing einholen.',when:'vor 2 Tagen',turns:9,areas:['act','act','act'],status:'designer'},
+];
+
+/* deterministic mini site-plan SVG */
+function hashAddr(a){let h=0;for(let i=0;i<a.length;i++)h=(h<<5)-h+a.charCodeAt(i)|0;return Math.abs(h)}
+function siteplan(addr){
+  const h=hashAddr(addr); let s=0;
+  function r(){s++;return ((Math.sin(h+s*7.13)*43758.5453)%1+1)%1}
+  const px=18+r()*8, py=22+r()*10, pw=22+r()*10, ph=18+r()*8;
+  const buildings=[];
+  for(let i=0;i<5+Math.floor(r()*3);i++){
+    const bx=4+r()*72, by=4+r()*68;
+    const bw=8+r()*12, bh=6+r()*10;
+    // skip overlap with parcel
+    if(bx<px+pw+4 && bx+bw>px-4 && by<py+ph+4 && by+bh>py-4) continue;
+    if(bx+bw>76 || by+bh>72) continue;
+    buildings.push({bx,by,bw,bh,hatch:r()>.4});
+  }
+  return `
+  <svg class="thumb-svg" viewBox="0 0 80 80" width="80" height="80">
+    <defs>
+      <pattern id="hatchPat" width="3" height="3" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+        <line x1="0" y1="0" x2="0" y2="3" stroke="rgba(22,19,16,.55)" stroke-width=".6"/>
+      </pattern>
+    </defs>
+    <rect x="0" y="0" width="80" height="80" fill="none"/>
+    <line x1="0" y1="${30+r()*10}" x2="80" y2="${30+r()*10}" class="road"/>
+    <line x1="${30+r()*10}" y1="0" x2="${30+r()*10}" y2="80" class="road"/>
+    ${buildings.map(b=>`<rect x="${b.bx}" y="${b.by}" width="${b.bw}" height="${b.bh}" class="building ${b.hatch?'hatch':''}" />`).join('')}
+    <rect x="${px}" y="${py}" width="${pw}" height="${ph}" class="parcel"/>
+    <text x="2" y="78" class="label">N ↑</text>
+  </svg>`;
+}
+
+/* render project cards */
+function statusLabel(s){return {active:'Aktiv',awaiting:'Wartend',designer:'Architekt:in',paused:'Pausiert',archived:'Archiv'}[s]}
+function renderCards(arr,target){
+  target.innerHTML=arr.map((p,i)=>`
+    <article class="proj-card" data-rot="${i%6}" onclick="alert('In production: open project workspace')">
+      <div class="thumb">${siteplan(p.a)}</div>
+      <div class="proj-body">
+        <div class="proj-title">${p.n} <span class="tplbadge">${p.tpl} · ${p.code}</span></div>
+        <div class="proj-addr">${p.a}</div>
+        <div class="proj-rec">${p.rec}</div>
+        <div class="proj-meta">
+          <span>${p.when}</span><span class="sep">·</span>
+          <span>${p.turns} ${p.turns===1?'Wechsel':'Wechsel'}</span><span class="sep">·</span>
+          <span class="areas-glyph">${p.areas.map(a=>`<span class="a ${a}"></span>`).join('')}</span>
+        </div>
+      </div>
+      <div class="proj-status">
+        <span class="statpill ${p.status}">${statusLabel(p.status)}</span>
+        <span class="proj-arrow">→</span>
+      </div>
+    </article>`).join('');
+}
+renderCards(projects,document.getElementById('projgrid'));
+renderCards(projectsB,document.getElementById('projgrid2'));
+
+/* ============== Q1 SKETCH SVGs ============== */
+/* each sketch = primary stroke (always visible) + secondary (.sec) drawn on hover */
+const sketches=[
+  {name:'Neubau Einfamilienhaus',code:'T-01',svg:`
+    <svg viewBox="0 0 120 80">
+      <line class="pri pri-d" x1="14" y1="68" x2="106" y2="68"/>
+      <path class="pri" d="M34 68 L34 38 L60 22 L86 38 L86 68 Z"/>
+      <rect class="pri" x="56" y="50" width="10" height="18"/>
+      <rect class="pri" x="42" y="42" width="8" height="8"/>
+      <rect class="pri" x="72" y="42" width="8" height="8"/>
+      <g class="sec">
+        <line x1="34" y1="76" x2="86" y2="76"/>
+        <line x1="34" y1="73" x2="34" y2="79"/>
+        <line x1="86" y1="73" x2="86" y2="79"/>
+        <text x="60" y="85" text-anchor="middle">8 m</text>
+      </g>
+    </svg>`},
+  {name:'Neubau Mehrfamilienhaus',code:'T-02',svg:`
+    <svg viewBox="0 0 120 80">
+      <line class="pri pri-d" x1="14" y1="68" x2="106" y2="68"/>
+      <rect class="pri" x="36" y="20" width="48" height="48"/>
+      <rect class="pri" x="42" y="26" width="6" height="6"/>
+      <rect class="pri" x="52" y="26" width="6" height="6"/>
+      <rect class="pri" x="62" y="26" width="6" height="6"/>
+      <rect class="pri" x="72" y="26" width="6" height="6"/>
+      <rect class="pri" x="42" y="38" width="6" height="6"/>
+      <rect class="pri" x="52" y="38" width="6" height="6"/>
+      <rect class="pri" x="62" y="38" width="6" height="6"/>
+      <rect class="pri" x="72" y="38" width="6" height="6"/>
+      <rect class="pri" x="42" y="50" width="6" height="6"/>
+      <rect class="pri" x="52" y="50" width="6" height="6"/>
+      <rect class="pri" x="62" y="50" width="6" height="6"/>
+      <rect class="pri" x="72" y="50" width="6" height="6"/>
+      <g class="sec">
+        <line x1="28" y1="20" x2="36" y2="20"/>
+        <line x1="28" y1="44" x2="36" y2="44"/>
+        <line x1="28" y1="68" x2="36" y2="68"/>
+        <text x="22" y="46" text-anchor="middle">3 OG</text>
+      </g>
+    </svg>`},
+  {name:'Sanierung',code:'T-03',svg:`
+    <svg viewBox="0 0 120 80">
+      <line class="pri pri-d" x1="14" y1="68" x2="106" y2="68"/>
+      <path class="pri pri-d" d="M30 68 L30 36 L60 20 L90 36 L90 68 Z"/>
+      <g class="sec">
+        <rect class="sec-fill" x="34" y="40" width="52" height="28"/>
+        <path d="M34 40 L86 40 M34 50 L86 50 M34 60 L86 60"/>
+        <text x="60" y="32" text-anchor="middle">Erneuerung</text>
+      </g>
+    </svg>`},
+  {name:'Umnutzung',code:'T-04',svg:`
+    <svg viewBox="0 0 120 80">
+      <line class="pri pri-d" x1="14" y1="68" x2="106" y2="68"/>
+      <path class="pri" d="M34 68 L34 36 L60 20 L86 36 L86 68 Z"/>
+      <g class="sec">
+        <path d="M50 56 A12 12 0 1 1 70 56" />
+        <path d="M70 56 L66 53 M70 56 L74 52" />
+        <text x="60" y="78" text-anchor="middle">Büro → Wohnen</text>
+      </g>
+    </svg>`},
+  {name:'Abbruch',code:'T-05',svg:`
+    <svg viewBox="0 0 120 80">
+      <line class="pri pri-d" x1="14" y1="68" x2="106" y2="68"/>
+      <path class="pri pri-d" d="M34 68 L34 36 L60 20 L86 36 L86 68 Z"/>
+      <g class="sec">
+        <line x1="30" y1="22" x2="90" y2="68"/>
+        <line x1="36" y1="60" x2="46" y2="60"/>
+        <line x1="58" y1="62" x2="68" y2="62"/>
+        <text x="60" y="78" text-anchor="middle">Rückbau</text>
+      </g>
+    </svg>`},
+  {name:'Aufstockung',code:'T-06',svg:`
+    <svg viewBox="0 0 120 80">
+      <line class="pri pri-d" x1="14" y1="68" x2="106" y2="68"/>
+      <rect class="pri" x="34" y="40" width="52" height="28"/>
+      <rect class="pri" x="42" y="48" width="6" height="6"/>
+      <rect class="pri" x="54" y="48" width="6" height="6"/>
+      <rect class="pri" x="66" y="48" width="6" height="6"/>
+      <rect class="pri" x="74" y="48" width="6" height="6"/>
+      <g class="sec">
+        <rect class="sec-fill" x="34" y="22" width="52" height="18"/>
+        <path d="M34 22 L34 40 M86 22 L86 40 M34 22 L86 22"/>
+        <path d="M60 14 L60 19 M58 17 L60 19 L62 17"/>
+        <text x="60" y="34" text-anchor="middle">+1 Geschoss</text>
+      </g>
+    </svg>`},
+  {name:'Anbau',code:'T-07',svg:`
+    <svg viewBox="0 0 120 80">
+      <line class="pri pri-d" x1="14" y1="68" x2="106" y2="68"/>
+      <path class="pri" d="M34 68 L34 36 L60 20 L86 36 L86 68 Z"/>
+      <g class="sec">
+        <rect class="sec-fill" x="86" y="44" width="22" height="24"/>
+        <path d="M86 44 L108 44 M108 44 L108 68 M86 68 L108 68"/>
+        <path d="M76 56 L82 56 M80 54 L82 56 L80 58"/>
+        <text x="97" y="80" text-anchor="middle">Erweiterung</text>
+      </g>
+    </svg>`},
+  {name:'Sonstiges',code:'T-08',svg:`
+    <svg viewBox="0 0 120 80">
+      <line class="pri pri-d" x1="14" y1="68" x2="106" y2="68"/>
+      <path class="pri pri-d" d="M34 68 L34 38 L60 22 L86 38 L86 68 Z"/>
+      <g class="sec">
+        <circle cx="60" cy="48" r="3"/>
+        <circle cx="50" cy="48" r="2"/>
+        <circle cx="70" cy="48" r="2"/>
+        <text x="60" y="78" text-anchor="middle">flexibel</text>
+      </g>
+    </svg>`},
+];
+const sg=document.getElementById('sketchgrid');
+sg.innerHTML=sketches.map((s,i)=>`
+  <div class="sketch ${i===0?'on':''}" data-i="${i}">
+    ${s.svg}
+    <div class="label"><div class="name">${s.name}</div><div class="code">${s.code}</div></div>
+  </div>`).join('');
+sg.addEventListener('click',e=>{
+  const c=e.target.closest('.sketch'); if(!c)return;
+  sg.querySelectorAll('.sketch').forEach(x=>x.classList.remove('on'));
+  c.classList.add('on');
+});
+document.getElementById('q1help').addEventListener('click',()=>{
+  document.getElementById('q1helpbody').classList.toggle('on');
+});
+
+/* ============== Q2 MAP ============== */
+let map;
+function initMap(){
+  if(map)return;
+  map=L.map('leafmap',{zoomControl:false,attributionControl:false,scrollWheelZoom:false,dragging:true})
+    .setView([48.1289,11.5728],17);
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png',{
+    subdomains:'abcd',maxZoom:19
+  }).addTo(map);
+  L.control.zoom({position:'topleft'}).addTo(map);
+  // marker
+  const ico=L.divIcon({
+    className:'',
+    html:'<div style="width:18px;height:18px;border-radius:50%;background:hsl(26 56% 44%);border:2px solid #f2ede1;box-shadow:0 0 0 1px hsl(26 56% 44%);"></div>',
+    iconSize:[18,18],iconAnchor:[9,9]
+  });
+  L.marker([48.1289,11.5728],{icon:ico}).addTo(map);
+  // address change → scan animation
+  document.getElementById('addrinp').addEventListener('input',()=>{
+    const sl=document.getElementById('scanline');
+    sl.classList.remove('run');
+    void sl.offsetWidth;
+    sl.classList.add('run');
+  });
+}
+
+/* ============== LOADER ============== */
+function runLoader(){
+  const illo=document.getElementById('loaderillo');
+  illo.classList.remove('run');void illo.offsetWidth;illo.classList.add('run');
+  // status messages
+  const lines=document.querySelectorAll('#loaderstat .ln');
+  lines.forEach(l=>l.classList.remove('on','out'));
+  lines[0].classList.add('on');
+  let li=0;
+  const lt=setInterval(()=>{
+    if(li>=lines.length-1){clearInterval(lt);return}
+    lines[li].classList.add('out');lines[li].classList.remove('on');
+    li++;lines[li].classList.add('on');
+  },1100);
+  // stepper
+  const segs=document.querySelectorAll('#stepper .seg');
+  segs.forEach(s=>s.classList.remove('on','run'));
+  setTimeout(()=>segs[0].classList.add('on'),100);
+  setTimeout(()=>segs[1].classList.add('on'),900);
+  setTimeout(()=>segs[2].classList.add('run'),1700);
+}
+
+/* ============== CMD+K PALETTE ============== */
+const palette=document.getElementById('palette');
+const palinp=document.getElementById('palinp');
+const palres=document.getElementById('palres');
+const palData=[
+  {grp:'Projekte',ico:'T01',ttl:'Einfamilienhaus Türkenstraße',sub:'Türkenstraße 25 · München',tag:'AKTIV'},
+  {grp:'Projekte',ico:'T03',ttl:'Sanierung Maximilianstraße',sub:'Maximilianstraße 14 · München',tag:'AKTIV'},
+  {grp:'Projekte',ico:'T06',ttl:'Aufstockung Goethestraße',sub:'Goethestraße 20 · Erlangen',tag:'ARCHITEKT'},
+  {grp:'Projekte',ico:'T07',ttl:'Anbau Innstraße',sub:'Innstraße 23 · Rosenheim',tag:'AKTIV'},
+  {grp:'Aktionen',ico:'+',ttl:'Neues Projekt anlegen',sub:'Zwei Fragen — und Sie sitzen am Werk',tag:'⏎'},
+  {grp:'Aktionen',ico:'⏏',ttl:'Abmelden',sub:'Sitzung beenden',tag:''},
+  {grp:'Rechtsquellen',ico:'§',ttl:'§ 34 BauGB',sub:'Innenbereich · 5 Projekte',tag:'NORM'},
+  {grp:'Rechtsquellen',ico:'§',ttl:'BayBO Art. 58',sub:'Vereinfachtes Verfahren · 8 Projekte',tag:'NORM'},
+  {grp:'Rechtsquellen',ico:'§',ttl:'BauNVO § 6',sub:'Mischgebiet · 3 Projekte',tag:'NORM'},
+  {grp:'Aktivität',ico:'●',ttl:'Türkenstraße 25 · § 34 BauGB confirmed',sub:'vor 2 Min',tag:'EVENT'},
+  {grp:'Aktivität',ico:'●',ttl:'Lindwurmstraße 88 · Stellplatznachweis flagged',sub:'vor 18 Min',tag:'EVENT'},
+];
+function renderPal(q=''){
+  const fl=q?palData.filter(d=>(d.ttl+' '+d.sub).toLowerCase().includes(q.toLowerCase())):palData;
+  const grouped={};
+  fl.forEach(d=>{(grouped[d.grp]=grouped[d.grp]||[]).push(d)});
+  palres.innerHTML=Object.entries(grouped).map(([g,items])=>`
+    <div class="palette-group">${g}</div>
+    ${items.map(d=>`<div class="palette-item"><div class="ico">${d.ico}</div><div class="body"><div class="ttl">${d.ttl}</div><div class="sub">${d.sub}</div></div><div class="tag">${d.tag}</div></div>`).join('')}
+  `).join('');
+}
+renderPal();
+function openPal(){palette.classList.add('on');setTimeout(()=>palinp.focus(),50)}
+function closePal(){palette.classList.remove('on');palinp.value='';renderPal()}
+document.getElementById('kbdhint').addEventListener('click',openPal);
+document.querySelector('.search input').addEventListener('focus',openPal);
+palinp.addEventListener('input',e=>renderPal(e.target.value));
+palette.addEventListener('click',e=>{if(e.target===palette)closePal()});
+window.addEventListener('keydown',e=>{
+  if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==='k'){e.preventDefault();openPal();return}
+  if(e.key==='Escape'){
+    closePal();
+    document.getElementById('bplandlg').classList.remove('on');
+  }
+});
+
+/* run loader once on initial load if loader tab is active */
+window.addEventListener('load',()=>{
+  if(document.getElementById('loader').classList.contains('on')) runLoader();
+});
+</script>
+</body>
+</html>

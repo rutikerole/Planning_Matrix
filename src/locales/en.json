@@ -842,7 +842,10 @@
       "T-02": "MFH",
       "T-03": "SAN",
       "T-04": "UMN",
-      "T-05": "ABR"
+      "T-05": "ABR",
+      "T-06": "STA",
+      "T-07": "EXT",
+      "T-08": "OTH"
     },
     "empty": {
       "h": "Set your first table.",
@@ -864,7 +867,76 @@
       "months_one": "{{count}} month ago",
       "months_other": "{{count}} months ago"
     },
-    "signOut": "Sign out"
+    "signOut": "Sign out",
+    "taglines": {
+      "0": "Quiet work makes good work.",
+      "1": "Measure twice. Build once.",
+      "2": "The plan is the building.",
+      "3": "Slow is smooth. Smooth is fast.",
+      "4": "Let the plan speak.",
+      "5": "Good plans take patience."
+    },
+    "ticker": {
+      "label": "Workshop · Live",
+      "events": {
+        "fact_added": "fact recorded",
+        "qualifier_changed": "qualifier changed",
+        "rec_upserted": "recommendation updated",
+        "area_state": "area updated",
+        "turn_closed": "turn closed",
+        "designer_requested": "designer requested"
+      }
+    },
+    "palette": {
+      "open": "Search — project, address, norm, action…",
+      "esc": "esc",
+      "groups": {
+        "projects": "Projects",
+        "actions": "Actions",
+        "legal": "Legal references",
+        "activity": "Activity"
+      },
+      "actions": {
+        "newProject": "Start a new project",
+        "newProjectSub": "Two questions and you are at work",
+        "signOut": "Sign out",
+        "signOutSub": "End session",
+        "toggleLang": "Switch language",
+        "toggleLangSub": "English ⇌ Deutsch"
+      },
+      "legalRefs": {
+        "baugb34": {
+          "title": "§ 34 BauGB",
+          "sub": "consolidated area"
+        },
+        "baugb35": {
+          "title": "§ 35 BauGB",
+          "sub": "outer area"
+        },
+        "baybo57": {
+          "title": "BayBO Art. 57",
+          "sub": "permit exemption"
+        },
+        "baybo58": {
+          "title": "BayBO Art. 58",
+          "sub": "simplified procedure"
+        },
+        "baunvo6": {
+          "title": "BauNVO § 6",
+          "sub": "mixed-use area"
+        }
+      },
+      "tags": {
+        "active": "ACTIVE",
+        "designer": "DESIGNER",
+        "norm": "NORM",
+        "event": "EVENT",
+        "enter": "⏎"
+      },
+      "empty": "No matches.",
+      "projectsCount_one": "{{count}} project",
+      "projectsCount_other": "{{count}} projects"
+    }
   },
   "wizard": {
     "title": "New project · Planning Matrix",
@@ -899,6 +971,14 @@
         "sonstige": {
           "label": "Something else",
           "code": "T-01"
+        },
+        "aufstockung": {
+          "label": "Storey addition",
+          "code": "T-06"
+        },
+        "anbau": {
+          "label": "Side extension",
+          "code": "T-07"
         }
       },
       "unsureLink": "I'm not sure",
@@ -910,7 +990,13 @@
         "sanierung": "Structural renewal of an existing building.",
         "umnutzung": "An existing building changes use (e.g. office → residential).",
         "abbruch": "Full or partial demolition of a building.",
-        "sonstige": "Something else — we begin with the most flexible assumptions."
+        "sonstige": "Something else — we begin with the most flexible assumptions.",
+        "aufstockung": "An existing building gains an additional storey.",
+        "anbau": "An existing building is extended sideways or to the rear."
+      },
+      "help": {
+        "link": "Unsure? Open a short decision guide",
+        "body": "Are you building on an empty plot? Then **Single-family home** (for one family) or **Multi-family home** (multiple units).\n\nDoes a building already exist? Modernise it → **Renovation**. Change its use → **Change of use**. Add a storey → **Storey addition**. Extend it → **Side extension**.\n\nShould a building be removed? → **Demolition**. Something that doesn’t fit here? → **Something else**, we begin with the most flexible assumptions."
       }
     },
     "q2": {
@@ -939,7 +1025,19 @@
         "detailLink": "View details",
         "detailH": "Development-plan details"
       },
-      "submit": "Set the table"
+      "submit": "Set the table",
+      "plot": {
+        "head": "Location profile",
+        "stadtbezirk": "District",
+        "areaEstimate": "Estimated area",
+        "areaBuildable": "Buildable area",
+        "planningLaw": "Planning law",
+        "character": "Character",
+        "heritageDistance": "Heritage proximity",
+        "suggestedName": "Suggested name",
+        "editLater": "You can change this later.",
+        "outsideRegion": "Data not yet available for this region."
+      }
     },
     "back": "Back",
     "errors": {
@@ -1388,7 +1486,10 @@
     "steps": {
       "s1": "Selecting your template…",
       "s2": "Initializing the matrix…",
-      "s3": "Briefing the moderator…"
+      "s3": "Briefing the moderator…",
+      "s4": "Drafting other requirements — parking ordinance {{city}}…",
+      "s5": "Initialising the matrix — three lenses, one picture…",
+      "s6": "Briefing the moderator — ready for your conversation."
     },
     "cancel": "Cancel",
     "cancelConfirm": {

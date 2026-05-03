@@ -6,10 +6,10 @@
 // gzips in-memory, and fails if the gzipped size exceeds the
 // MAX_GZIP_KB ceiling.
 //
-// Default ceiling is 250 KB — generous slack against the cellular
-// target of 200 KB so unrelated PRs don't bust the gate. PLAN §9
-// flagged that 220 KB was aggressive; bumping to 250 keeps the gate
-// useful (catches obvious regressions) without becoming a nuisance.
+// Default ceiling is 300 KB — bumped from 250 in v3 to cover the
+// Cmd+K palette + activity ticker + custom map overlay + site-plan
+// SVG infrastructure landing across the dashboard/wizard rewrite.
+// Aim is still to stay under 280 KB; 300 is the hard wall.
 //
 // To raise the ceiling intentionally: edit MAX_GZIP_KB below + commit
 // with rationale in the commit message.
@@ -19,7 +19,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { gzipSync } from 'node:zlib'
 
-const MAX_GZIP_KB = 250 // ceiling against bundle bloat regressions
+const MAX_GZIP_KB = 300 // ceiling against bundle bloat regressions
 const ASSETS_DIR = 'dist/assets'
 
 if (!fs.existsSync(ASSETS_DIR)) {

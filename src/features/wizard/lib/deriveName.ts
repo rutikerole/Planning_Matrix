@@ -6,6 +6,8 @@ const INTENT_LABELS_DE: Record<Intent, string> = {
   sanierung: 'Sanierung',
   umnutzung: 'Umnutzung',
   abbruch: 'Abbruch',
+  aufstockung: 'Aufstockung',
+  anbau: 'Anbau',
   sonstige: 'Sonstiges',
 }
 

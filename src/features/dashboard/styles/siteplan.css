@@ -1,0 +1,31 @@
+/* v3 site-plan thumbnail styles — copied from
+   prototypes/makeover-v3.html. Token names mapped to the repo's
+   --pm-* canon. Hatched buildings inline their fill via the
+   per-thumb pattern id, so the .building.hatch CSS rule from the
+   prototype is intentionally not transcribed here. */
+
+.thumb-svg .building {
+  fill: var(--pm-ink-soft);
+  opacity: 0.85;
+}
+
+.thumb-svg .parcel {
+  stroke: var(--pm-clay);
+  stroke-width: 1.4;
+  fill: var(--pm-clay-tint);
+  fill-opacity: 0.55;
+}
+
+.thumb-svg .road {
+  stroke: var(--pm-ink-mute2);
+  stroke-width: 1;
+  fill: none;
+  opacity: 0.4;
+}
+
+.thumb-svg .label {
+  font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 5.5px;
+  fill: var(--pm-ink-mute2);
+  letter-spacing: 0.06em;
+}

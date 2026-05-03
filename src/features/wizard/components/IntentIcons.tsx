@@ -90,6 +90,13 @@ const REGISTRY: Record<Intent, ComponentType<Props>> = {
   sanierung: HouseWrench,
   umnutzung: HouseArrow,
   abbruch: HouseSlash,
+  // v3 stubs — file is replaced by SketchCard SVGs in commit 2.
+  // Kept here only so Record<Intent, ...> compiles after the union
+  // grew to 8 values. INTENT_VALUES (the legacy 6-item order) does
+  // not include these slugs, so they never render in the existing
+  // chip grid.
+  aufstockung: HouseEFH,
+  anbau: HouseEFH,
   sonstige: MoreDots,
 }
 
