@@ -1,12 +1,16 @@
 {
   "url": "https://geoportal.muenchen.de/geoserver/plan/wms",
-  "fingerprint": "55ab2997632f2c4f73d2d44108ac0593297b0cf59d115bae86e49169bfd46595",
-  "lastChecked": "2026-04-30",
-  "lastChanged": "2026-04-30",
+  "fingerprint": "267688939af400617f33a1785daaa0c39a6ae2c1044a10d6d58ff19fd038c8d7",
+  "lastChecked": "2026-05-03",
+  "lastChanged": "2026-05-03",
   "statusHistory": [
     {
       "status": "UNCHANGED",
       "date": "2026-04-30"
+    },
+    {
+      "status": "CHANGED",
+      "date": "2026-05-03"
     }
   ]
 }

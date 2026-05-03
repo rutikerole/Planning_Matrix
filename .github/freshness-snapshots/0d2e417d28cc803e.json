@@ -1,12 +1,16 @@
 {
   "url": "https://stadt.muenchen.de/rathaus/stadtrecht/vorschrift/926/version1/0.html",
   "fingerprint": "db2d9ea077b91da2a41b5ff02388e22464cb2e929c72ede77757574f729d2664",
-  "lastChecked": "2026-04-30",
+  "lastChecked": "2026-05-03",
   "lastChanged": "2026-04-30",
   "statusHistory": [
     {
       "status": "UNCHANGED",
       "date": "2026-04-30"
+    },
+    {
+      "status": "UNCHANGED",
+      "date": "2026-05-03"
     }
   ]
 }

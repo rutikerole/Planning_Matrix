@@ -1,12 +1,16 @@
 {
   "url": "https://erlangen.de/uwao-api/faila/files/bypath/Dokumente/Stadtrecht/051.00_entwaesserungssatzung.pdf",
   "fingerprint": "40b9b3e645a583b515e13fb9370a17d19be234175a01fcd9ce398d604e23208c",
-  "lastChecked": "2026-04-30",
+  "lastChecked": "2026-05-03",
   "lastChanged": "2026-04-30",
   "statusHistory": [
     {
       "status": "UNCHANGED",
       "date": "2026-04-30"
+    },
+    {
+      "status": "UNCHANGED",
+      "date": "2026-05-03"
     }
   ]
 }

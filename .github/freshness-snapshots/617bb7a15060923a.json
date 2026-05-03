@@ -1,12 +1,16 @@
 {
   "url": "https://geoportal.bayern.de/bauleitplanungsportal/",
   "fingerprint": "8ce04dba0fa9e760a99e6a539343231eb1352726eabd0cd3d9ad3ae376882939",
-  "lastChecked": "2026-04-30",
+  "lastChecked": "2026-05-03",
   "lastChanged": "2026-04-30",
   "statusHistory": [
     {
       "status": "UNCHANGED",
       "date": "2026-04-30"
+    },
+    {
+      "status": "UNCHANGED",
+      "date": "2026-05-03"
     }
   ]
 }

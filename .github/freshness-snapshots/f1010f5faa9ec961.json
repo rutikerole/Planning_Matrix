@@ -1,12 +1,16 @@
 {
   "url": "https://erlangen.de/amt/37761",
   "fingerprint": "0f4b3685829c6017f1b5a355e1cbcadf8a5154aba475f7e67f3aba03584485b5",
-  "lastChecked": "2026-04-30",
+  "lastChecked": "2026-05-03",
   "lastChanged": "2026-04-30",
   "statusHistory": [
     {
       "status": "UNCHANGED",
       "date": "2026-04-30"
+    },
+    {
+      "status": "UNCHANGED",
+      "date": "2026-05-03"
     }
   ]
 }

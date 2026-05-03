@@ -1,12 +1,16 @@
 {
   "url": "https://www.muenchen.info/plan/bebauungsplan/p_7002_36a_t1.pdf",
   "fingerprint": "948a7faa86c43e6a1286976300ade8cf2ec124a2bf0d68c191165b614b462184",
-  "lastChecked": "2026-04-30",
+  "lastChecked": "2026-05-03",
   "lastChanged": "2026-04-30",
   "statusHistory": [
     {
       "status": "UNCHANGED",
       "date": "2026-04-30"
+    },
+    {
+      "status": "UNCHANGED",
+      "date": "2026-05-03"
     }
   ]
 }

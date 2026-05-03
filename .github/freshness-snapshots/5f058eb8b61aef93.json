@@ -1,12 +1,16 @@
 {
   "url": "https://geodaten.bayern.de/denkmal_static_data/externe_denkmalliste/html/162_lk.html",
   "fingerprint": "7076305271ab222a658cd8e806e7e5e718d201665d9f0026b6f425e96dff4c03",
-  "lastChecked": "2026-04-30",
+  "lastChecked": "2026-05-03",
   "lastChanged": "2026-04-30",
   "statusHistory": [
     {
       "status": "UNCHANGED",
       "date": "2026-04-30"
+    },
+    {
+      "status": "UNCHANGED",
+      "date": "2026-05-03"
     }
   ]
 }
