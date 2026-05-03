@@ -1,0 +1,76 @@
+/* ─── Landing v2 design tokens (pm-* scope) ──────────────────────────
+ * Per Phase-redesign decision: namespaced under --pm-* so the new
+ * landing's saturated/dark palette doesn't collide with the existing
+ * global Phase 0–2 palette (--paper / --ink / --clay) which the chat
+ * + dashboard surfaces depend on. Tailwind config maps `pm-*` color
+ * names to these vars; landing components use `bg-pm-paper`, etc.
+ *
+ * Self-hosted JetBrains Mono (Apache 2.0) Regular + Medium added in
+ * /public/fonts/ — declared inline below. */
+
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/JetBrainsMono-Regular.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('/fonts/JetBrainsMono-Medium.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+:root {
+  /* paper family */
+  --pm-paper:        #f2ede1;
+  --pm-paper-warm:   #eae0cb;
+  --pm-paper-deep:   #ddd0b2;
+  --pm-paper-tint:   #fbf7ed;
+  --pm-paper-soft:   #f7f1e3;
+
+  /* ink family */
+  --pm-ink:          #161310;
+  --pm-ink-soft:     #2a2520;
+  --pm-ink-mid:      #4a4239;
+  --pm-ink-muted:    #6c6357;
+  --pm-ink-mute2:    #978d7d;
+
+  /* clay family — saturated */
+  --pm-clay:         hsl(26 56% 44%);
+  --pm-clay-deep:    hsl(26 60% 30%);
+  --pm-clay-soft:    hsl(26 56% 58%);
+  --pm-clay-tint:    hsl(26 50% 82%);
+  --pm-clay-bloom:   hsl(26 70% 68%);
+  --pm-clay-glow:    hsl(34 80% 64%);
+
+  /* sage accent */
+  --pm-sage:         hsl(140 18% 38%);
+  --pm-sage-soft:    hsl(140 18% 60%);
+
+  /* hairlines */
+  --pm-hair:         rgba(22, 19, 16, 0.10);
+  --pm-hair-strong:  rgba(22, 19, 16, 0.20);
+
+  /* dark sections */
+  --pm-dark:         #1a1612;
+  --pm-dark-soft:    #211c17;
+  --pm-dark-mid:     #2c2520;
+  --pm-dark-paper:   #f2ede1;
+  --pm-dark-mute:    rgba(242, 237, 225, 0.55);
+  --pm-dark-mute2:   rgba(242, 237, 225, 0.30);
+  --pm-dark-hair:    rgba(242, 237, 225, 0.10);
+}
+
+/* keyframes — referenced by Tailwind animation utilities */
+@keyframes pm-bloom-drift   { 0%,100%{opacity:.4;transform:translate(0,0)} 50%{opacity:.7;transform:translate(20px,-15px)} }
+@keyframes pm-pulse-clay    { 0%,100%{opacity:.6;transform:scale(1)} 50%{opacity:1;transform:scale(1.15)} }
+@keyframes pm-blink-soft    { 0%,100%{opacity:1} 50%{opacity:.3} }
+@keyframes pm-area-scan     { 0%{transform:translateX(-100%)} 100%{transform:translateX(100%)} }
+@keyframes pm-float-card    { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
+@keyframes pm-hairline-sweep{ 0%{transform:translateX(-100%)} 100%{transform:translateX(100%)} }
+@keyframes pm-counter-bloom { 0%{box-shadow:0 0 0 0 var(--pm-clay-bloom)} 100%{box-shadow:0 0 0 24px transparent} }

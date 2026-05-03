@@ -1,4 +1,209 @@
 {
+  "landing": {
+    "nav": {
+      "product": "Product",
+      "analyzer": "Analyzer",
+      "audience": "Audience",
+      "pricing": "Pricing",
+      "faq": "FAQ",
+      "cta": "Start a project"
+    },
+    "hero": {
+      "eyebrow": "PLANNING MATRIX",
+      "h1": { "l1": "Building in Germany.", "l2": "Clear. Fast. Reliable." },
+      "sub": "A roundtable of specialist AI experts walks you through German building permit law — from first idea to filing-ready application.",
+      "meta": { "live": "Live across 47,892 §§", "short": "4-min first analysis", "audit": "Fully auditable" },
+      "cta1": "Start a project",
+      "cta2": "Watch demo",
+      "note": "BayBO Art. 57 — simplified procedure possible?",
+      "card2": {
+        "title": "Permit file · 2026-04",
+        "row1Key": "Procedure",
+        "row1Val": "Simplified",
+        "row1Tag": "LEGAL · CALC",
+        "row2Key": "Building class",
+        "row2Val": "GK 3",
+        "row2Tag": "LEGAL · CALC",
+        "row3Key": "Parking spaces",
+        "row3Val": "2 req.",
+        "row3Tag": "CLIENT · ASSUMED",
+        "topThree": "TOP 3 STEPS",
+        "rec1": "Pre-meeting with permit office",
+        "rec2": "Commission structural design",
+        "rec3": "Parking-space documentation"
+      }
+    },
+    "stats": {
+      "l1": "Norms indexed", "d1": "BauGB · BauNVO · MBO · all 16 LBO codes",
+      "l2": "Federal states", "d2": "Bavaria live · others rolling out",
+      "l3": "Minutes for first analysis", "d3": "Procedure, documents and roles — instantly",
+      "l4": "Permits / year", "d4": "in Germany — the market we relieve"
+    },
+    "chat": {
+      "eyebrow": "THE CONVERSATION",
+      "h": { "l1": "You are at the table", "l2": "with the whole team." },
+      "sub": "Not a chatbot. A roundtable of specialists — planning law, building code, additional requirements — speaking exactly when their domain is relevant.",
+      "title": "Permit file · 2026-04 · Erlangen",
+      "input": { "placeholder": "Reply here — or say \"I don't know\"" },
+      "replay": "Replay",
+      "specialists": {
+        "moderator": "MODERATOR",
+        "planungsrecht": "PLANNING LAW",
+        "bauordnungsrecht": "BUILDING CODE",
+        "sonstige": "OTHER REQUIREMENTS",
+        "verfahren": "PROCEDURE"
+      }
+    },
+    "matrix": {
+      "areas": { "label": "AREAS", "a": "A — Planning law", "b": "B — Building code", "c": "C — Other requirements" },
+      "recs": { "label": "TOP 3 STEPS" },
+      "states": { "active": "ACTIVE", "pending": "PENDING", "void": "VOID" }
+    },
+    "analyzer": {
+      "eyebrow": "THE ANALYZER",
+      "h": { "l1": "Address in.", "l2": "Procedure picture out." },
+      "sub": "Pick a sample plot. See what Planning Matrix says in seconds about procedure, documents and specialist planners.",
+      "list": { "label": "SAMPLE PLOTS" },
+      "out": { "label": "ANALYSIS", "live": "Live evaluation" },
+      "stats": { "proc": "Procedure", "docs": "Documents", "roles": "Specialists", "weeks": "Weeks" },
+      "details": { "planungsrecht": "PLANNING LAW", "bauordnung": "BUILDING CODE", "sonstige": "OTHER", "gebaeudeklasse": "BUILDING CLASS" }
+    },
+    "persp": {
+      "eyebrow": "WHO IT'S FOR",
+      "h": { "l1": "For everyone seriously", "l2": "building in Germany." },
+      "more": "Learn more",
+      "b1": { "label": "ARCHITECTS", "h": "Planning certainty from day one.", "p": "Procedure type, document list and specialist needs — before you draw the first line.", "alt": "Architect at drafting table" },
+      "b2": { "label": "COVERAGE", "small": "Norms actively indexed — Bavaria live, more to follow." },
+      "b3": { "label": "DEVELOPERS & INVESTORS", "h": "Risks identified early.", "p": "What special site requirements apply — visible before you commit to acquisition." },
+      "b4": { "label": "OWNERS", "h": "Understand what you are signing.", "p": "Plain language, sourced statements, decisions you can audit any time.", "alt": "Building plans on the drafting table" }
+    },
+    "thinks": {
+      "eyebrow": "HOW THE SYSTEM THINKS",
+      "h": { "l1": "Three lenses.", "l2": "One picture." },
+      "sub": "Every project passes through three legal perspectives. Consultation principle — no gap left open.",
+      "tab": { "a": "A — Planning law", "b": "B — Building code", "c": "C — Other requirements" },
+      "live": "● 47,892 norms available",
+      "questionLabel": "CENTRAL QUESTION",
+      "refsLabel": "LEGAL BASIS",
+      "a": { "h": "Planning-law profile", "q": "Can the project be realised at this location at all?", "b": "BauGB §§ 30 / 34 / 35, BauNVO zone types, B-plans and F-plans. The output: is building permitted here — and under what conditions.",
+        "refs": [
+          { "ref": "§ 30 BauGB", "src": "qualified development plan" },
+          { "ref": "§ 34 BauGB", "src": "within consolidated area" },
+          { "ref": "§ 35 BauGB", "src": "outer area" },
+          { "ref": "BauNVO §§ 1–11", "src": "zone types" },
+          { "ref": "BauNVO §§ 16–21a", "src": "extent of use" },
+          { "ref": "B-plan", "src": "municipal" }
+        ] },
+      "b": { "h": "Building-code profile", "q": "Which permit procedure is required, and what does the building code demand?", "b": "BayBO with building classes, special-use cases and three procedure paths. Fire safety, parking, accessibility, GEG.",
+        "refs": [
+          { "ref": "BayBO Art. 2", "src": "building classes" },
+          { "ref": "BayBO Art. 57", "src": "exempt procedure" },
+          { "ref": "BayBO Art. 58", "src": "simplified procedure" },
+          { "ref": "BayBO Art. 59", "src": "full procedure" },
+          { "ref": "GEG § 10", "src": "energy requirements" },
+          { "ref": "DIN 4109", "src": "sound insulation" }
+        ] },
+      "c": { "h": "Other requirements", "q": "Which project-relevant requirements exist beyond planning and building law?", "b": "Encumbrances, heritage protection, municipal ordinances, use-specific permits — the area where projects often actually stall.",
+        "refs": [
+          { "ref": "Encumbrances", "src": "land register" },
+          { "ref": "DSchG", "src": "heritage protection" },
+          { "ref": "BNatSchG", "src": "nature protection" },
+          { "ref": "Parking ordinance", "src": "municipal" },
+          { "ref": "Preservation ordinance", "src": "municipal" },
+          { "ref": "VStättVO", "src": "assembly venues" }
+        ] }
+    },
+    "cmp": {
+      "eyebrow": "THE DIFFERENCE",
+      "h": { "l1": "Eight weeks of research.", "l2": "Or four days of clarity." },
+      "sub": "What stands today between idea and application — and what it could be.",
+      "before": { "label": "WITHOUT PLANNING MATRIX", "h": "A long path",
+        "s1": "Architect briefing & site survey", "s2": "Research B-plan, ordinances, encumbrances",
+        "s3": "Pre-meetings, calls, waiting times", "s4": "Identify and commission specialists",
+        "unit": "8 weeks" },
+      "after":  { "label": "WITH PLANNING MATRIX", "h": "A clear path",
+        "s1": "Two questions — project & plot", "s2": "Planning Matrix walks you through procedure & documents",
+        "s3": "Specialist needs are derived automatically", "s4": "Architect verifies and signs off",
+        "unit": "4 days" }
+    },
+    "trust": {
+      "eyebrow": "TRUST TAKEN SERIOUSLY",
+      "h": { "l1": "Every statement", "l2": "is traceable." },
+      "sub": "Provenance, auditability, clear responsibility. No \"the AI said so\".",
+      "t1": { "label": "AUDIT LOG · LIVE", "h": "Append-only", "p": "Every state change is timestamped, actor-stamped, immutable." },
+      "t2": { "label": "PROVENANCE", "h": "Source × Quality on every datum", "p": "LEGAL · CLIENT · DESIGNER · AUTHORITY — combined with CALCULATED · ASSUMED · DECIDED · VERIFIED. You always know where a value comes from." },
+      "t3": { "label": "ADMIN-NATIVE", "h": "Understood at the permit office.", "p": "Vocabulary, procedure paths and document lists matching German administrative reality.", "alt": "Government building" },
+      "t4": { "h": "100 % audit coverage", "p": "No silent mutations." },
+      "t5": { "label": "SIGN-OFF", "h": "Verified only by certified architects" },
+      "t6": { "label": "HOSTING", "h": "Frankfurt · EU · GDPR" }
+    },
+    "pricing": {
+      "eyebrow": "PRICING",
+      "h": { "l1": "Fair model.", "l2": "Clear tiers." },
+      "sub": "Per seat at the table. Save annually, cancel monthly.",
+      "monthly": "Monthly", "annual": "Annual",
+      "annualNote": "−16 %",
+      "unit": "€ / month",
+      "solo":  { "name": "Solo", "sub": "For individual architects",
+        "priceMonthly": 49, "priceAnnual": 41,
+        "f1": "1 seat", "f2": "Bavaria live", "f3": "Up to 5 active projects", "f4": "Audit log included",
+        "cta": "Choose Solo" },
+      "studio":{ "name": "Studio", "sub": "For studios and developers",
+        "priceMonthly": 189, "priceAnnual": 159,
+        "ribbon": "RECOMMENDED",
+        "f1": "Up to 5 seats", "f2": "All activated states", "f3": "Unlimited projects", "f4": "Designer-verification workflow", "f5": "Priority support",
+        "cta": "Choose Studio" },
+      "enterprise": { "name": "Enterprise", "sub": "For larger firms & administration",
+        "priceLabel": "On request",
+        "f1": "Unlimited seats", "f2": "SSO & SCIM", "f3": "Custom subdomain", "f4": "Custom templates", "f5": "Service-level agreement",
+        "cta": "Contact us" },
+      "guarantee": "30-day money-back. No setup fee."
+    },
+    "faq": {
+      "eyebrow": "QUESTIONS",
+      "h": { "l1": "What we are often", "l2": "asked." },
+      "contactLine": "More questions? Write to hallo@planning-matrix.de",
+      "items": [
+        { "q": "Does Planning Matrix replace my architect?", "a": "No. Planning Matrix prepares decisions and makes them transparent. The formal sign-off — and the legal responsibility — remain with the certified architect. We are the tool at the table, not the person who signs." },
+        { "q": "Which federal states are supported?", "a": "Bavaria is live. North Rhine-Westphalia and Baden-Württemberg are rolling out. Further states follow step by step — we maintain each LBO with care, not superficially." },
+        { "q": "How current is the legal data?", "a": "The central sources (BauGB, BayBO, BauNVO) are updated within 14 days of each amendment. Municipal ordinances are pulled in per address. Every statement leads to its source." },
+        { "q": "Can I use Planning Matrix before acquiring a plot?", "a": "Yes. Without a plot the system uses standard assumptions and marks affected areas accordingly — you get a realistic picture of the bandwidth, not a pseudo-precise number." },
+        { "q": "What does \"auditable\" mean?", "a": "Every data change in a project — fact creation, qualifier change, recommendation update — is recorded immutably with timestamp, actor and reason. You can always show how a decision came to be." },
+        { "q": "Where is my data stored?", "a": "Frankfurt am Main, in the EU. GDPR-compliant. No third-party sharing. Projects are deleted on request — including all backups within 30 days." }
+      ]
+    },
+    "cta": {
+      "eyebrow": "BEGIN NOW",
+      "h": { "l1": "You have a project.", "l2": "We have set the table." },
+      "sub": "Four minutes to your first reliable assessment. Free of charge, without onboarding your architect.",
+      "cta1": "Start a project",
+      "cta2": "Watch demo",
+      "live": "● Today already",
+      "liveSuffix": "projects started"
+    },
+    "footer": {
+      "updates": "Substantial updates",
+      "updatesSub": "About once a month. What changes legally, in product, and in rollout. No marketing.",
+      "emailPlaceholder": "you@email.com",
+      "submit": "Subscribe",
+      "thankyou": "Thank you — we'll be in touch.",
+      "errorEmpty": "Please enter an email address.",
+      "errorInvalid": "Please enter a valid email address.",
+      "hint": "By subscribing you accept our privacy policy.",
+      "produkt": "Product",
+      "wissen": "Knowledge",
+      "vertrauen": "Trust",
+      "ueber": "About",
+      "links": {
+        "produkt":   ["Features", "Analyzer", "Roadmap", "Pricing"],
+        "wissen":    ["Documentation", "Legal foundations", "Glossary", "Blog"],
+        "vertrauen": ["Privacy", "Terms", "Imprint", "Audit concept"],
+        "ueber":     ["Team", "Contact", "Press"]
+      },
+      "rights": "© 2026 Planning Matrix",
+      "version": "v1 · Bavaria live"
+    }
+  },
   "a11y": {
     "skipToMain": "Skip to main content"
   },

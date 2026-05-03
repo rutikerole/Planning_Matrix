@@ -1,66 +1,78 @@
 import { useTranslation } from 'react-i18next'
-import * as AccordionPrimitive from '@radix-ui/react-accordion'
-import { Plus } from 'lucide-react'
-import { cn } from '@/lib/utils'
-import { Container } from '@/components/shared/Container'
-import { Section } from '@/components/shared/Section'
-import { SectionHeader } from '@/components/shared/SectionHeader'
+import * as Accordion from '@radix-ui/react-accordion'
+import { SectionHead, FadeRise } from './shared'
 
-const ITEMS = ['1', '2', '3', '4', '5', '6'] as const
+type FaqItem = { q: string; a: string }
 
-export function Faq() {
+export function FAQ() {
   const { t } = useTranslation()
-  return (
-    <Section id="faq" bordered>
-      <Container>
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-y-12 lg:gap-x-12">
-          <div className="lg:col-span-4">
-            <SectionHeader
-              eyebrow={t('faq.eyebrow')}
-              heading={t('faq.heading')}
-            />
-          </div>
+  const raw = t('landing.faq.items', { returnObjects: true })
+  const items: FaqItem[] = Array.isArray(raw) ? (raw as FaqItem[]) : []
 
-          <div className="lg:col-span-7 lg:col-start-6">
-            <AccordionPrimitive.Root type="single" collapsible className="border-t border-border">
-              {ITEMS.map((n) => (
-                <AccordionPrimitive.Item
-                  key={n}
-                  value={`item-${n}`}
-                  className="border-b border-border"
-                >
-                  <AccordionPrimitive.Header>
-                    <AccordionPrimitive.Trigger
-                      className={cn(
-                        'group flex w-full items-start justify-between gap-6 py-7 md:py-8 text-left',
-                        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink focus-visible:ring-offset-2 focus-visible:ring-offset-background',
-                      )}
-                    >
-                      <span className="font-display text-title md:text-title-lg text-ink leading-[1.18] pr-6 transition-colors duration-soft group-hover:text-clay group-data-[state=open]:text-clay">
-                        {t(`faq.q${n}`)}
-                      </span>
+  const ld = JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: items.map((it) => ({
+      '@type': 'Question',
+      name: it.q,
+      acceptedAnswer: { '@type': 'Answer', text: it.a },
+    })),
+  })
+
+  return (
+    <section id="faq" className="bg-pm-paper-soft py-32">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: ld }}
+      />
+      <div className="mx-auto max-w-4xl px-6">
+        <SectionHead
+          eyebrow={t('landing.faq.eyebrow')}
+          l1={t('landing.faq.h.l1')}
+          l2={t('landing.faq.h.l2')}
+          align="left"
+          maxWidth="max-w-3xl"
+        />
+
+        <FadeRise delay={0.08} className="mt-12">
+          <Accordion.Root type="single" collapsible className="w-full">
+            {items.map((it, i) => (
+              <Accordion.Item
+                key={i}
+                value={`q${i}`}
+                className="border-t border-pm-hair last:border-b"
+              >
+                <Accordion.Header>
+                  <Accordion.Trigger className="group flex w-full items-center justify-between gap-6 py-6 text-left">
+                    <span className="flex items-baseline gap-3 font-sans text-[17px] text-pm-ink group-data-[state=open]:text-pm-clay">
                       <span
-                        aria-hidden="true"
-                        className="shrink-0 mt-2 size-9 rounded-sm border border-border-strong inline-flex items-center justify-center text-ink/70 group-data-[state=open]:bg-ink group-data-[state=open]:text-paper group-data-[state=open]:border-ink transition-colors duration-soft"
-                      >
-                        <Plus
-                          className="size-4 transition-transform duration-soft group-data-[state=open]:rotate-45"
-                          aria-hidden="true"
-                        />
-                      </span>
-                    </AccordionPrimitive.Trigger>
-                  </AccordionPrimitive.Header>
-                  <AccordionPrimitive.Content className="overflow-hidden text-base data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down">
-                    <p className="pb-8 max-w-2xl text-body-lg text-muted-foreground leading-relaxed">
-                      {t(`faq.a${n}`)}
-                    </p>
-                  </AccordionPrimitive.Content>
-                </AccordionPrimitive.Item>
-              ))}
-            </AccordionPrimitive.Root>
-          </div>
-        </div>
-      </Container>
-    </Section>
+                        aria-hidden
+                        className="block h-1.5 w-1.5 rounded-full bg-pm-clay opacity-0 transition-opacity group-data-[state=open]:opacity-100"
+                      />
+                      {it.q}
+                    </span>
+                    <span
+                      aria-hidden
+                      className="font-mono text-[18px] text-pm-ink-mid transition-transform duration-200 group-data-[state=open]:rotate-45 group-data-[state=open]:text-pm-clay"
+                    >
+                      +
+                    </span>
+                  </Accordion.Trigger>
+                </Accordion.Header>
+                <Accordion.Content className="overflow-hidden data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down">
+                  <p className="max-w-prose pb-6 font-sans text-[16px] leading-relaxed text-pm-ink-mid">
+                    {it.a}
+                  </p>
+                </Accordion.Content>
+              </Accordion.Item>
+            ))}
+          </Accordion.Root>
+        </FadeRise>
+
+        <p className="mt-10 font-sans text-[13px] text-pm-ink-muted">
+          {t('landing.faq.contactLine')}
+        </p>
+      </div>
+    </section>
   )
 }

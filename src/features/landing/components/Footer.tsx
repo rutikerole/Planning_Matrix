@@ -1,94 +1,162 @@
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Container } from '@/components/shared/Container'
-import { LanguageSwitcher } from '@/components/shared/LanguageSwitcher'
-import { Wordmark } from '@/components/shared/Wordmark'
 
-const MAILTO = 'mailto:vibecoders786@gmail.com'
+const COL_KEYS = ['produkt', 'wissen', 'vertrauen', 'ueber'] as const
+type Col = (typeof COL_KEYS)[number]
+
+const COL_SPAN: Record<Col, string> = {
+  produkt: 'md:col-span-2',
+  wissen: 'md:col-span-2',
+  vertrauen: 'md:col-span-2',
+  ueber: 'md:col-span-1',
+}
 
 export function Footer() {
-  const { t } = useTranslation()
-  const year = new Date().getFullYear()
+  const { t, i18n } = useTranslation()
+  const [email, setEmail] = useState('')
+  const [error, setError] = useState<string | null>(null)
+  const [submitted, setSubmitted] = useState(false)
+
+  function setLang(lng: 'de' | 'en') {
+    if (!i18n.language.startsWith(lng)) i18n.changeLanguage(lng)
+  }
+
+  function onSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault()
+    const v = email.trim()
+    if (!v) {
+      setError(t('landing.footer.errorEmpty'))
+      return
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) {
+      setError(t('landing.footer.errorInvalid'))
+      return
+    }
+    setError(null)
+    setSubmitted(true)
+  }
 
   return (
-    <footer className="border-t border-border">
-      <Container className="py-16 md:py-20">
-        <div className="grid grid-cols-1 gap-12 md:grid-cols-12">
-          <div className="md:col-span-5 flex flex-col gap-5">
-            <Wordmark />
-            <p className="text-sm text-muted-foreground max-w-xs leading-relaxed">
-              {t('footer.tagline')}
-            </p>
-            <div className="mt-2">
-              <LanguageSwitcher />
+    <footer className="border-t border-pm-hair bg-pm-paper-warm pb-10 pt-20">
+      <div className="mx-auto max-w-7xl px-6">
+        <div className="grid grid-cols-1 gap-10 md:grid-cols-12">
+          {/* Newsletter */}
+          <div className="md:col-span-5">
+            <div className="flex items-center gap-2">
+              <span className="flex items-center gap-1" aria-hidden>
+                <span className="h-1 w-1 rounded-full bg-pm-clay" />
+                <span className="h-1 w-1 rounded-full bg-pm-clay" />
+                <span className="h-1 w-1 rounded-full bg-pm-clay" />
+              </span>
+              <span className="font-serif text-base text-pm-ink">
+                Planning Matrix
+              </span>
             </div>
+            <h3 className="mt-6 font-serif text-[clamp(1.25rem,1.8vw,1.5rem)] text-pm-ink">
+              {t('landing.footer.updates')}
+            </h3>
+            <p className="mt-2 max-w-prose font-sans text-[14px] leading-relaxed text-pm-ink-mid">
+              {t('landing.footer.updatesSub')}
+            </p>
+
+            {submitted ? (
+              <p className="mt-6 font-sans text-[14px] text-pm-clay">
+                {t('landing.footer.thankyou')}
+              </p>
+            ) : (
+              <form onSubmit={onSubmit} noValidate className="mt-6">
+                <div className="flex max-w-md items-center gap-3 border-b border-pm-hair pb-2">
+                  <input
+                    type="email"
+                    inputMode="email"
+                    autoComplete="email"
+                    aria-label={t('landing.footer.emailPlaceholder') as string}
+                    aria-invalid={error ? true : undefined}
+                    placeholder={t('landing.footer.emailPlaceholder') as string}
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="w-full bg-transparent font-sans text-[15px] text-pm-ink outline-none placeholder:text-pm-ink-mute2"
+                  />
+                  <button
+                    type="submit"
+                    className="font-sans text-[14px] text-pm-clay hover:text-pm-clay-deep"
+                  >
+                    {t('landing.footer.submit')}
+                  </button>
+                </div>
+                {error ? (
+                  <p
+                    role="alert"
+                    className="mt-2 font-sans text-[12px] text-pm-clay-deep"
+                  >
+                    {error}
+                  </p>
+                ) : null}
+              </form>
+            )}
+
+            <p className="mt-3 font-mono text-[10px] text-pm-ink-mute2">
+              {t('landing.footer.hint')}
+            </p>
           </div>
 
-          <FooterCol
-            title={t('footer.colProductTitle')}
-            links={[
-              { label: t('footer.colProductFunctions'), href: '#product' },
-              { label: t('footer.colProductDomains'), href: '#domains' },
-              { label: t('footer.colProductAudience'), href: '#audience' },
-              { label: t('footer.colProductFaq'), href: '#faq' },
-            ]}
-            className="md:col-span-3"
-          />
-          <FooterCol
-            title={t('footer.colCompanyTitle')}
-            links={[
-              { label: t('footer.colCompanyAbout'), href: '#' },
-              { label: t('footer.colCompanyContact'), href: MAILTO },
-              { label: t('footer.colCompanyAccess'), href: '#cta' },
-            ]}
-            className="md:col-span-2"
-          />
-          <FooterCol
-            title={t('footer.colLegalTitle')}
-            links={[
-              { label: t('footer.colLegalImprint'), href: '#' },
-              { label: t('footer.colLegalPrivacy'), href: '#' },
-              { label: t('footer.colLegalTerms'), href: '#' },
-            ]}
-            className="md:col-span-2"
-          />
+          {/* Link columns */}
+          {COL_KEYS.map((c) => (
+            <FooterCol key={c} col={c} className={COL_SPAN[c]} />
+          ))}
         </div>
 
-        <div className="mt-16 pt-8 border-t border-border flex flex-col-reverse gap-4 md:flex-row md:items-center md:justify-between">
-          <p className="text-[13px] text-muted-foreground">
-            © {year} Planning Matrix. {t('footer.rightsReserved')}
-          </p>
-          <p className="text-[13px] text-muted-foreground tabular-nums">
-            <span
-              aria-hidden="true"
-              className="inline-block size-1 rounded-full bg-clay align-middle mr-2.5 animate-breath-dot"
-              style={{ transformOrigin: 'center' }}
-            />
-            v0.1 · in Pilotphase
-          </p>
+        <div className="mt-16 flex flex-col items-start justify-between gap-3 border-t border-pm-hair pt-6 font-mono text-[11px] text-pm-ink-mute2 md:flex-row md:items-center">
+          <span>{t('landing.footer.rights')}</span>
+          <span>{t('landing.footer.version')}</span>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setLang('de')}
+              className={
+                i18n.language.startsWith('de')
+                  ? 'text-pm-ink'
+                  : 'hover:text-pm-ink'
+              }
+            >
+              DE
+            </button>
+            <span>/</span>
+            <button
+              type="button"
+              onClick={() => setLang('en')}
+              className={
+                i18n.language.startsWith('en')
+                  ? 'text-pm-ink'
+                  : 'hover:text-pm-ink'
+              }
+            >
+              EN
+            </button>
+          </div>
         </div>
-      </Container>
+      </div>
     </footer>
   )
 }
 
-interface FooterColProps {
-  title: string
-  links: Array<{ label: string; href: string }>
-  className?: string
-}
-
-function FooterCol({ title, links, className }: FooterColProps) {
+function FooterCol({ col, className }: { col: Col; className: string }) {
+  const { t } = useTranslation()
+  const raw = t(`landing.footer.links.${col}`, { returnObjects: true })
+  const links: string[] = Array.isArray(raw) ? (raw as string[]) : []
   return (
     <div className={className}>
-      <h4 className="eyebrow mb-5 font-sans text-ink/90 not-italic">{title}</h4>
-      <ul className="flex flex-col gap-3">
-        {links.map((l) => (
-          <li key={l.label}>
+      <h4 className="font-mono text-[11px] uppercase tracking-[0.18em] text-pm-clay">
+        {t(`landing.footer.${col}`)}
+      </h4>
+      <ul className="mt-3 list-none space-y-2">
+        {links.map((l, i) => (
+          <li key={i}>
             <a
-              href={l.href}
-              className="text-sm text-muted-foreground hover:text-ink transition-colors duration-soft"
+              href="#"
+              className="font-sans text-[14px] text-pm-ink-mid hover:text-pm-ink"
             >
-              {l.label}
+              {l}
             </a>
           </li>
         ))}

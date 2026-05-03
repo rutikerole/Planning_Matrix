@@ -1,0 +1,93 @@
+export type AddressDetails = {
+  planungsrecht: string
+  bauordnung: string
+  sonstige: string
+  gebaeudeklasse: string
+}
+
+export type Address = {
+  id: string
+  line1: string
+  line2: string
+  flst: string
+  /** SVG dimensions in viewBox 0 0 600 360 coords */
+  plot: { x: number; y: number; w: number; h: number }
+  buildable: { x: number; y: number; w: number; h: number }
+  dimWidthLabel: string
+  dimHeightLabel: string
+  stats: { proc: string; docs: number; roles: number; weeks: number }
+  details_de: AddressDetails
+  details_en: AddressDetails
+}
+
+export const addresses: Address[] = [
+  {
+    id: 'erlangen',
+    line1: 'Hauptstraße 12',
+    line2: '91054 Erlangen',
+    flst: 'FLST. 0742/3',
+    plot: { x: 80, y: 60, w: 440, h: 240 },
+    buildable: { x: 130, y: 100, w: 340, h: 160 },
+    dimWidthLabel: '32,4 m',
+    dimHeightLabel: '18,1 m',
+    stats: { proc: 'Vereinfacht', docs: 9, roles: 4, weeks: 6 },
+    details_de: {
+      planungsrecht: 'BauGB § 34 — Innenbereich, eingefügt',
+      bauordnung: 'BayBO Art. 58 — vereinfachtes Verfahren',
+      sonstige: 'Stellplatzsatzung Erlangen, keine Baulasten',
+      gebaeudeklasse: 'GK 3 — bis 7 m Höhe',
+    },
+    details_en: {
+      planungsrecht: 'BauGB § 34 — within consolidated area',
+      bauordnung: 'BayBO Art. 58 — simplified procedure',
+      sonstige: 'Erlangen parking ordinance, no encumbrances',
+      gebaeudeklasse: 'Building class 3 — up to 7 m',
+    },
+  },
+  {
+    id: 'muenchen',
+    line1: 'Lindwurmstraße 88',
+    line2: '80337 München',
+    flst: 'FLST. 1184/12',
+    plot: { x: 80, y: 80, w: 380, h: 200 },
+    buildable: { x: 120, y: 110, w: 300, h: 140 },
+    dimWidthLabel: '28,6 m',
+    dimHeightLabel: '15,2 m',
+    stats: { proc: 'Regulär', docs: 14, roles: 6, weeks: 12 },
+    details_de: {
+      planungsrecht: 'B-Plan Nr. 1842b — Mischgebiet',
+      bauordnung: 'BayBO Art. 59 — reguläres Verfahren (Sonderbau)',
+      sonstige: 'Erhaltungssatzung Schlachthofviertel',
+      gebaeudeklasse: 'GK 4 — bis 13 m Höhe',
+    },
+    details_en: {
+      planungsrecht: 'B-Plan No. 1842b — mixed-use zone',
+      bauordnung: 'BayBO Art. 59 — full procedure (special use)',
+      sonstige: 'Schlachthofviertel preservation ordinance',
+      gebaeudeklasse: 'Building class 4 — up to 13 m',
+    },
+  },
+  {
+    id: 'rosenheim',
+    line1: 'Innstraße 23',
+    line2: '83022 Rosenheim',
+    flst: 'FLST. 0218/7',
+    plot: { x: 100, y: 50, w: 400, h: 260 },
+    buildable: { x: 150, y: 90, w: 300, h: 180 },
+    dimWidthLabel: '24,8 m',
+    dimHeightLabel: '21,4 m',
+    stats: { proc: 'Freistellung', docs: 6, roles: 3, weeks: 4 },
+    details_de: {
+      planungsrecht: 'BauGB § 30 — qualifizierter B-Plan',
+      bauordnung: 'BayBO Art. 57 — Genehmigungsfreistellung',
+      sonstige: 'Keine besonderen Vorgaben',
+      gebaeudeklasse: 'GK 2 — bis 7 m Höhe',
+    },
+    details_en: {
+      planungsrecht: 'BauGB § 30 — qualified development plan',
+      bauordnung: 'BayBO Art. 57 — exempt procedure',
+      sonstige: 'No special requirements',
+      gebaeudeklasse: 'Building class 2 — up to 7 m',
+    },
+  },
+]

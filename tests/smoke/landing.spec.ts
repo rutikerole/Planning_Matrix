@@ -21,8 +21,11 @@ test.describe('Landing page', () => {
     if (await hamburger.isVisible().catch(() => false)) {
       await hamburger.click()
     }
+    // Match either DE ("Anmelden") or EN ("Log in") variants of the
+    // sign-in/login affordance — depending on which locale i18next
+    // resolves under the test's Accept-Language.
     const cta = page
-      .getByRole('link', { name: /anmelden|sign in|anmelden\.|sign in\./i })
+      .getByRole('link', { name: /anmelden|sign in|log in/i })
       .first()
     await expect(cta).toBeVisible()
   })

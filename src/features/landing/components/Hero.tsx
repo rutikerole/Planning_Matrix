@@ -1,181 +1,230 @@
-import { useRef } from 'react'
 import { useTranslation } from 'react-i18next'
-import { m, useScroll, useTransform } from 'framer-motion'
-import { Container } from '@/components/shared/Container'
-import { CtaButton } from '@/components/shared/CtaButton'
-import { Picture } from '@/components/shared/Picture'
-import { MatrixHero } from '../visuals/MatrixHero'
-import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion'
+import { Link } from 'react-router-dom'
+import { motion } from 'framer-motion'
+import { BlueprintGrid } from './shared'
+import { CursorBloom } from './CursorBloom'
+import { useReducedMotionPref } from '../hooks/useReducedMotionPref'
+import { photos } from '../lib/photos'
 
-const MAILTO =
-  'mailto:vibecoders786@gmail.com?subject=Planning%20Matrix%20%E2%80%94%20Fr%C3%BChzugang'
-
-const HERO_STEM = 'hero-rooftop'
+const EASE = [0.16, 1, 0.3, 1] as const
 
 export function Hero() {
   const { t } = useTranslation()
-  const reduced = usePrefersReducedMotion()
-  const ref = useRef<HTMLElement>(null)
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ['start start', 'end start'],
-  })
-  const photoY = useTransform(
-    scrollYProgress,
-    [0, 1],
-    reduced ? [0, 0] : [0, -80],
-  )
-  const textY = useTransform(
-    scrollYProgress,
-    [0, 1],
-    reduced ? [0, 0] : [0, -40],
-  )
-  const sealY = useTransform(
-    scrollYProgress,
-    [0, 1],
-    reduced ? [0, 0] : [0, 60],
-  )
+  const reduce = useReducedMotionPref()
 
   return (
     <section
-      ref={ref}
-      id="hero"
-      className="relative isolate overflow-hidden bg-paper min-h-[86vh] lg:min-h-[90vh] pt-32 md:pt-40 lg:pt-44 pb-20 md:pb-24 lg:pb-28"
+      id="top"
+      className="relative overflow-hidden bg-pm-paper pb-32 pt-32 sm:pb-40 sm:pt-36"
     >
-      {/* Background photo with parallax + Ken Burns */}
-      <m.div
-        aria-hidden="true"
-        style={{ y: photoY }}
-        className="absolute inset-0 -z-20"
-      >
-        <Picture
-          stem={HERO_STEM}
-          alt=""
-          loading="eager"
-          fetchPriority="high"
-          decoding="sync"
-          width={1600}
-          height={1067}
-          sizes="100vw"
-          className="absolute inset-0 w-full h-full"
-          imgClassName="absolute inset-0 w-full h-full object-cover object-[60%_50%] motion-safe:animate-ken-burns"
-        />
-      </m.div>
-
-      {/* Warm-paper gradient overlay — heavier at top-left where type sits */}
+      <BlueprintGrid />
+      {/* Atmospheric warm-clay bloom (CSS only) */}
       <div
-        aria-hidden="true"
-        className="absolute inset-0 -z-10 bg-gradient-to-br from-[hsl(var(--paper)/0.82)] via-[hsl(var(--paper)/0.45)] to-[hsl(var(--paper)/0.12)]"
+        aria-hidden
+        className="pointer-events-none absolute -top-40 left-1/4 h-[640px] w-[640px] rounded-full opacity-40 blur-3xl"
+        style={{
+          background:
+            'radial-gradient(circle, var(--pm-clay-bloom) 0%, transparent 60%)',
+          mixBlendMode: 'multiply',
+          animation: reduce ? 'none' : 'pm-bloom-drift 14s ease-in-out infinite',
+        }}
       />
+      <CursorBloom scope="hero" />
 
-      {/* Subtle gradient shimmer — drifts on a 38-second loop */}
-      <div
-        aria-hidden="true"
-        className="absolute -inset-[3%] -z-10 pointer-events-none mix-blend-multiply motion-safe:animate-gradient-shimmer"
-      >
-        <div className="absolute inset-0 bg-gradient-to-tl from-transparent via-[hsl(32_50%_88%/0.18)] to-transparent" />
-      </div>
-
-      {/* Bottom fade-out so the section blends into Problem */}
-      <div
-        aria-hidden="true"
-        className="absolute inset-x-0 bottom-0 h-40 -z-10 bg-gradient-to-b from-transparent to-paper"
-      />
-
-      <Container className="relative z-10 h-full">
-        <m.div
-          style={{ y: textY }}
-          className="max-w-[42rem] flex flex-col"
+      <div className="relative mx-auto max-w-7xl px-6">
+        <motion.div
+          initial={reduce ? { opacity: 0 } : { opacity: 0, y: 16 }}
+          animate={reduce ? { opacity: 1 } : { opacity: 1, y: 0 }}
+          transition={{ duration: reduce ? 0.1 : 0.6, ease: EASE }}
         >
-          <p className="eyebrow inline-flex items-center mb-6 animate-fade-rise text-ink/85">
-            <span className="accent-dot" aria-hidden="true" />
-            {t('hero.eyebrow')}
-          </p>
+          <span className="font-mono text-[12px] uppercase tracking-[0.18em] text-pm-clay">
+            {t('landing.hero.eyebrow')}
+          </span>
+        </motion.div>
 
-          <span
-            aria-hidden="true"
-            className="block h-px w-24 bg-ink/40 mb-8 origin-left animate-hairline-draw"
-          />
+        <motion.h1
+          initial={reduce ? { opacity: 0 } : { opacity: 0, y: 24 }}
+          animate={reduce ? { opacity: 1 } : { opacity: 1, y: 0 }}
+          transition={{ duration: reduce ? 0.1 : 0.7, ease: EASE, delay: reduce ? 0 : 0.08 }}
+          className="mt-6 font-serif text-[clamp(3rem,8vw,7rem)] leading-[0.92] tracking-tight text-pm-ink"
+        >
+          {t('landing.hero.h1.l1')}
+          <br />
+          <span className="italic text-pm-clay">{t('landing.hero.h1.l2')}</span>
+        </motion.h1>
 
-          <h1
-            className="font-display text-display-2 lg:text-display-1 text-ink mb-7 lg:mb-9 animate-fade-rise"
-            style={{ animationDelay: '0.18s' }}
+        <motion.p
+          initial={reduce ? { opacity: 0 } : { opacity: 0, y: 16 }}
+          animate={reduce ? { opacity: 1 } : { opacity: 1, y: 0 }}
+          transition={{ duration: reduce ? 0.1 : 0.6, ease: EASE, delay: reduce ? 0 : 0.18 }}
+          className="mt-8 max-w-2xl text-[1.1875rem] leading-relaxed text-pm-ink-mid"
+        >
+          {t('landing.hero.sub')}
+        </motion.p>
+
+        <motion.ul
+          initial={reduce ? { opacity: 0 } : { opacity: 0, y: 12 }}
+          animate={reduce ? { opacity: 1 } : { opacity: 1, y: 0 }}
+          transition={{ duration: reduce ? 0.1 : 0.5, ease: EASE, delay: reduce ? 0 : 0.28 }}
+          className="mt-10 flex flex-wrap gap-3"
+        >
+          {(['live', 'short', 'audit'] as const).map((k, i) => (
+            <li
+              key={k}
+              className="flex items-center gap-2 rounded-full border border-pm-hair px-4 py-1.5 font-sans text-[13px] text-pm-ink-mid"
+            >
+              <span
+                className={`block h-1.5 w-1.5 rounded-full bg-pm-clay ${
+                  i === 0 ? 'animate-pm-pulse-clay' : ''
+                }`}
+                aria-hidden
+              />
+              {t(`landing.hero.meta.${k}`)}
+            </li>
+          ))}
+        </motion.ul>
+
+        <motion.div
+          initial={reduce ? { opacity: 0 } : { opacity: 0, y: 12 }}
+          animate={reduce ? { opacity: 1 } : { opacity: 1, y: 0 }}
+          transition={{ duration: reduce ? 0.1 : 0.5, ease: EASE, delay: reduce ? 0 : 0.36 }}
+          className="mt-12 flex flex-wrap gap-4"
+        >
+          <Link
+            to="/sign-up"
+            className="border border-pm-clay bg-pm-clay px-7 py-3 font-sans text-[15px] text-pm-paper transition-colors hover:bg-pm-clay-deep"
           >
-            <span className="block">{t('hero.headlineLineOne')}</span>
-            <span className="block italic text-ink/85">
-              {t('hero.headlineLineTwo')}
-            </span>
-          </h1>
-
-          <p
-            className="text-body-lg md:text-body-xl text-ink/85 max-w-[34rem] mb-9 animate-fade-rise"
-            style={{ animationDelay: '0.45s' }}
+            {t('landing.hero.cta1')}
+          </Link>
+          <a
+            href="#chat"
+            className="border border-pm-ink/30 px-7 py-3 font-sans text-[15px] text-pm-ink transition-colors hover:bg-pm-paper-deep/40"
           >
-            {t('hero.subheadline')}
-          </p>
+            {t('landing.hero.cta2')}
+          </a>
+        </motion.div>
 
-          {/* Phase 4.1.5 — early-access is now the primary action in
-            * the body (the header demoted it to a text link). Supporting
-            * microcopy sits directly under the button so first-time
-            * visitors still see the offer twice on the page. */}
-          <div
-            className="flex flex-col gap-3 animate-fade-rise"
-            style={{ animationDelay: '0.65s' }}
-          >
-            <div className="flex flex-wrap items-center gap-x-6 gap-y-4">
-              <CtaButton href={MAILTO} variant="primary">
-                {t('common.ctaPrimary')}
-              </CtaButton>
-              <CtaButton href="#product" variant="ghost">
-                {t('common.ctaSecondary')}
-              </CtaButton>
-            </div>
-            <p className="text-[13px] italic text-ink/70 leading-relaxed max-w-[28rem]">
-              {t('hero.earlyAccessSupport')}
-            </p>
-          </div>
+        {/* 3-card stack — desktop only */}
+        <div className="relative mt-20 hidden h-[480px] md:block">
+          <CardA reduce={reduce} />
+          <CardB reduce={reduce} />
+          <CardC reduce={reduce} />
+        </div>
 
-          <p
-            className="mt-12 text-sm text-ink/70 max-w-md animate-fade-rise"
-            style={{ animationDelay: '0.85s' }}
-          >
-            <span
-              aria-hidden="true"
-              className="inline-block size-1 rounded-full bg-clay align-middle mr-2.5"
-            />
-            {t('hero.trustline')}
-          </p>
-
-          {/* Mobile-only matrix seal — inline below trustline */}
-          <div className="lg:hidden mt-12 self-start">
-            <SealCard>
-              <MatrixHero size="seal" className="max-w-[200px]" />
-            </SealCard>
-          </div>
-        </m.div>
-      </Container>
-
-      {/* Desktop matrix seal — absolute bottom-right */}
-      <m.div
-        style={{ y: sealY }}
-        className="absolute hidden lg:block z-10 bottom-10 right-10 xl:bottom-14 xl:right-14"
-      >
-        <SealCard>
-          <MatrixHero size="seal" />
-        </SealCard>
-      </m.div>
+        {/* Mobile fallback — single card */}
+        <div className="mt-16 flex justify-center md:hidden">
+          <CardB reduce={reduce} mobile />
+        </div>
+      </div>
     </section>
   )
 }
 
-/**
- * Paper-tinted glass card that hosts the matrix seal so it stays legible
- * on top of the hero photograph.
- */
-function SealCard({ children }: { children: React.ReactNode }) {
+function CardA({ reduce }: { reduce: boolean }) {
   return (
-    <div className="relative bg-[hsl(var(--paper)/0.78)] backdrop-blur-md p-3 rounded-md border border-border-strong/45 shadow-[0_4px_12px_-4px_hsl(220_15%_11%/0.10),0_18px_40px_-16px_hsl(220_15%_11%/0.18)]">
-      {children}
-    </div>
+    <motion.div
+      initial={reduce ? { opacity: 0 } : { opacity: 0, y: 30 }}
+      whileInView={reduce ? { opacity: 0.9 } : { opacity: 0.9, y: 0 }}
+      viewport={{ once: true, amount: 0.3 }}
+      transition={{ duration: reduce ? 0.1 : 0.7, ease: EASE }}
+      className="absolute left-[6%] top-8 z-10 h-[280px] w-[420px] -rotate-3 overflow-hidden border border-pm-hair shadow-sm"
+      style={{ scale: 0.92 }}
+    >
+      <img
+        src={photos.hero}
+        alt="Wohngebäude in Deutschland — Beispielmotiv"
+        loading="lazy"
+        decoding="async"
+        width={420}
+        height={280}
+        className="h-full w-full object-cover"
+      />
+    </motion.div>
+  )
+}
+
+function CardB({ reduce, mobile = false }: { reduce: boolean; mobile?: boolean }) {
+  const { t } = useTranslation()
+  const c = (key: string) => t(`landing.hero.card2.${key}`) as string
+  const rows = [
+    { k: c('row1Key'), v: c('row1Val'), tag: c('row1Tag'), accent: 'clay' as const },
+    { k: c('row2Key'), v: c('row2Val'), tag: c('row2Tag'), accent: 'clay' as const },
+    { k: c('row3Key'), v: c('row3Val'), tag: c('row3Tag'), accent: 'mute' as const },
+  ]
+  const recs = [c('rec1'), c('rec2'), c('rec3')]
+
+  return (
+    <motion.div
+      initial={reduce ? { opacity: 0 } : { opacity: 0, y: 30 }}
+      whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.3 }}
+      transition={{ duration: reduce ? 0.1 : 0.7, ease: EASE, delay: reduce ? 0 : 0.15 }}
+      className={`${
+        mobile
+          ? 'relative w-full max-w-[420px]'
+          : 'absolute left-1/2 top-0 z-20 h-[360px] w-[460px] -translate-x-1/2 animate-pm-float-card'
+      } border border-pm-hair bg-pm-paper-tint p-6 shadow-md`}
+    >
+      <div className="mb-5 font-mono text-[11px] uppercase tracking-[0.16em] text-pm-ink-mid">
+        {c('title')}
+      </div>
+      <div className="space-y-3">
+        {rows.map((r, i) => (
+          <div
+            key={i}
+            className="flex items-baseline justify-between border-b border-pm-hair pb-2"
+          >
+            <span className="text-sm text-pm-ink-mid">{r.k}</span>
+            <div className="flex items-center gap-3">
+              <span className="font-serif text-base text-pm-ink">{r.v}</span>
+              <span
+                className={`font-mono text-[9px] uppercase tracking-wider ${
+                  r.accent === 'clay' ? 'text-pm-clay' : 'text-pm-ink-mute2'
+                }`}
+              >
+                {r.tag}
+              </span>
+            </div>
+          </div>
+        ))}
+      </div>
+      <div className="mt-6 border-t border-pm-hair pt-4">
+        <div className="mb-3 font-mono text-[11px] uppercase tracking-[0.18em] text-pm-clay">
+          {c('topThree')}
+        </div>
+        <ol className="list-none space-y-2">
+          {recs.map((item, i) => (
+            <li key={i} className="flex items-baseline gap-3">
+              <span className="font-mono text-xs text-pm-clay">0{i + 1}</span>
+              <span className="text-sm text-pm-ink">{item}</span>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </motion.div>
+  )
+}
+
+function CardC({ reduce }: { reduce: boolean }) {
+  const { t } = useTranslation()
+  return (
+    <motion.div
+      initial={reduce ? { opacity: 0 } : { opacity: 0, y: 30, rotate: 4 }}
+      whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0, rotate: 4 }}
+      viewport={{ once: true, amount: 0.3 }}
+      transition={{ duration: reduce ? 0.1 : 0.7, ease: EASE, delay: reduce ? 0 : 0.3 }}
+      className="absolute right-[4%] top-24 z-30 h-[180px] w-[280px] border border-pm-hair p-5 shadow-md"
+      style={{
+        background:
+          'linear-gradient(180deg, hsl(48 70% 88%) 0%, hsl(46 60% 84%) 100%)',
+      }}
+    >
+      <div className="font-mono text-[10px] uppercase tracking-[0.16em] text-pm-ink-mid">
+        Note · 04.27
+      </div>
+      <p className="mt-4 font-serif text-[19px] italic leading-snug text-pm-ink-soft">
+        {t('landing.hero.note')}
+      </p>
+    </motion.div>
   )
 }

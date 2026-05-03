@@ -43,6 +43,14 @@ export default {
           'Times New Roman',
           'serif',
         ],
+        mono: [
+          'JetBrains Mono',
+          'ui-monospace',
+          'SFMono-Regular',
+          'Menlo',
+          'Consolas',
+          'monospace',
+        ],
       },
       fontSize: {
         eyebrow: [
@@ -126,6 +134,40 @@ export default {
         'border-strong': 'hsl(var(--border-strong))',
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',
+
+        /* ── Landing v2 — pm-* scoped palette (does not touch globals) ── */
+        'pm-paper':        'var(--pm-paper)',
+        'pm-paper-warm':   'var(--pm-paper-warm)',
+        'pm-paper-deep':   'var(--pm-paper-deep)',
+        'pm-paper-tint':   'var(--pm-paper-tint)',
+        'pm-paper-soft':   'var(--pm-paper-soft)',
+
+        'pm-ink':          'var(--pm-ink)',
+        'pm-ink-soft':     'var(--pm-ink-soft)',
+        'pm-ink-mid':      'var(--pm-ink-mid)',
+        'pm-ink-muted':    'var(--pm-ink-muted)',
+        'pm-ink-mute2':    'var(--pm-ink-mute2)',
+
+        'pm-clay':         'var(--pm-clay)',
+        'pm-clay-deep':    'var(--pm-clay-deep)',
+        'pm-clay-soft':    'var(--pm-clay-soft)',
+        'pm-clay-tint':    'var(--pm-clay-tint)',
+        'pm-clay-bloom':   'var(--pm-clay-bloom)',
+        'pm-clay-glow':    'var(--pm-clay-glow)',
+
+        'pm-sage':         'var(--pm-sage)',
+        'pm-sage-soft':    'var(--pm-sage-soft)',
+
+        'pm-hair':         'var(--pm-hair)',
+        'pm-hair-strong':  'var(--pm-hair-strong)',
+
+        'pm-dark':         'var(--pm-dark)',
+        'pm-dark-soft':    'var(--pm-dark-soft)',
+        'pm-dark-mid':     'var(--pm-dark-mid)',
+        'pm-dark-paper':   'var(--pm-dark-paper)',
+        'pm-dark-mute':    'var(--pm-dark-mute)',
+        'pm-dark-mute2':   'var(--pm-dark-mute2)',
+        'pm-dark-hair':    'var(--pm-dark-hair)',
       },
       transitionTimingFunction: {
         calm: 'cubic-bezier(0.16, 1, 0.3, 1)',
@@ -203,6 +245,15 @@ export default {
         'blink-cursor': 'blink-cursor 1.05s ease-in-out infinite',
         'ken-burns': 'ken-burns 24s cubic-bezier(0.45, 0, 0.55, 1) infinite alternate',
         'gradient-shimmer': 'gradient-shimmer 38s ease-in-out infinite',
+
+        /* ── Landing v2 ambient + signature loops ── */
+        'pm-bloom-drift':    'pm-bloom-drift 8s ease-in-out infinite',
+        'pm-pulse-clay':     'pm-pulse-clay 2.4s ease-in-out infinite',
+        'pm-blink-soft':     'pm-blink-soft 1.6s ease-in-out infinite',
+        'pm-area-scan':      'pm-area-scan 3s linear infinite',
+        'pm-float-card':     'pm-float-card 6s ease-in-out infinite',
+        'pm-hairline-sweep': 'pm-hairline-sweep 1.6s linear infinite',
+        'pm-counter-bloom':  'pm-counter-bloom 600ms ease-out',
       },
     },
   },
