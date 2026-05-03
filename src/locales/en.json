@@ -79,11 +79,6 @@
       },
       "recs": {
         "label": "TOP 3 STEPS"
-      },
-      "states": {
-        "active": "ACTIVE",
-        "pending": "PENDING",
-        "void": "VOID"
       }
     },
     "analyzer": {
@@ -97,7 +92,6 @@
         "label": "SAMPLE PLOTS"
       },
       "out": {
-        "label": "ANALYSIS",
         "live": "Live evaluation"
       },
       "stats": {
@@ -119,7 +113,6 @@
         "l1": "For everyone seriously",
         "l2": "building in Germany."
       },
-      "more": "Learn more",
       "b1": {
         "label": "ARCHITECTS",
         "h": "Planning certainty from day one.",
@@ -453,176 +446,10 @@
     "skipToMain": "Skip to main content"
   },
   "common": {
-    "ctaPrimary": "Request early access",
-    "ctaSecondary": "How it works",
     "ctaLogin": "Log in",
     "languageGerman": "German",
     "languageEnglish": "English",
-    "skipToContent": "Skip to main content",
-    "openMenu": "Open menu"
-  },
-  "nav": {
-    "product": "Product",
-    "audience": "For whom",
-    "pricing": "Pricing",
-    "faq": "FAQ"
-  },
-  "hero": {
-    "eyebrow": "Building permits, rethought.",
-    "headlineLineOne": "You can sketch a building in five minutes.",
-    "headlineLineTwo": "Getting it approved still takes five months.",
-    "subheadline": "Planning Matrix maps your full permit path in two questions — authorities, documents, specialist reports. Recommended by the system. Released by your certified architect.",
-    "trustline": "In pilot with architecture firms and developers in Thuringia and Saxony.",
-    "earlyAccessSupport": "Be among the first to get access."
-  },
-  "problem": {
-    "eyebrow": "The problem",
-    "heading": "You can design a building in five minutes. Everything around it, you can't.",
-    "block1": "Volume, area, cost — automatic. AI renders — trivial. Creativity is no longer the bottleneck.",
-    "block2": "Today, you commission a full planning process just to find out which permits you actually need, which documents go to which authority, which specialist reports you must obtain.",
-    "block3": "Three questions. Six months. Before a single stone is laid."
-  },
-  "product": {
-    "eyebrow": "The system",
-    "heading": "Three steps. From plot to permit path.",
-    "step1Title": "Capture",
-    "step1Body": "You answer two questions: where do you want to build, what do you want to build? Nothing more.",
-    "step2Title": "Recommend",
-    "step2Body": "The system maps your project against German planning and building law — and produces a complete roadmap of permits, documents, and specialist reports.",
-    "step3Title": "Release",
-    "step3Body": "Your certified architect reviews the recommendation. Only their release turns the suggestion into a plan."
-  },
-  "mockups": {
-    "captureLabel": "Input",
-    "capturePrompt": "What do you want to build?",
-    "captureAnswer": "Apartment building, 6 units",
-    "captureFooter": "Question 2 / 2",
-    "captureNext": "Next",
-    "recommendLabel": "Recommendation",
-    "recommendTitle": "Permit path",
-    "recommendItem1": "Building application · simplified",
-    "recommendItem2": "Fire safety statement",
-    "recommendItem3": "Parking proof",
-    "recommendItem4": "Statics · Structural plan",
-    "recommendItem5": "Energy certificate (GEG)",
-    "recommendFooter": "5 recommendations",
-    "releaseLabel": "Release",
-    "releaseRole": "Architect",
-    "releaseName": "M. Müller",
-    "releaseChamber": "AKB Berlin · 142···",
-    "releaseFooter": "Ready to file",
-    "stampVerified": "VERIFIED"
-  },
-  "domains": {
-    "eyebrow": "The three dimensions",
-    "heading": "How the system thinks.",
-    "subheading": "Every German building permit lives across three legal domains. Planning Matrix maps all three.",
-    "tabAlabel": "A · Zoning law",
-    "tabAtitle": "Planungsrecht",
-    "tabAquestion": "What may be built at this site?",
-    "tabAbody": "Bebauungsplan, Flächennutzungsplan, § 34 BauGB. Which use, which scale, which height — and who decides at the municipal level.",
-    "tabBlabel": "B · Building code",
-    "tabBtitle": "Bauordnungsrecht",
-    "tabBquestion": "How must it be built?",
-    "tabBbody": "Landesbauordnung, setbacks, fire safety, parking. Which construction requirements apply — and which evidence must be filed with the application.",
-    "tabClabel": "C · Adjacent rules",
-    "tabCtitle": "Sonstige Vorgaben",
-    "tabCquestion": "What other rules apply?",
-    "tabCbody": "Heritage protection, environment, water, emissions, energy. Which specialist authorities are involved in parallel — and at which point in the process."
-  },
-  "demo": {
-    "eyebrow": "Preview",
-    "heading": "From intention to roadmap. In two answers.",
-    "sub": "Live demo. Scripted, no backend.",
-    "url": "planning-matrix.app/project/new",
-    "projectTitle": "New project",
-    "liveLabel": "Live",
-    "q1": "Where will the project be built?",
-    "a1": "Musterstraße 12, 99084 Erfurt",
-    "q2": "What do you want to build?",
-    "a2": "Apartment building, 6 units, ~800 m² GRZ",
-    "analyzing": "Analyzing",
-    "resultTitle": "Recommendation — Permit path",
-    "resultSub": "Erfurt 99084 · Apartment building, 6 units",
-    "item1": "Building application · simplified",
-    "item2": "Fire safety statement (B2)",
-    "item3": "Parking proof (12 spaces)",
-    "item4": "Statics · Structural plan",
-    "item5": "Energy certificate (GEG-compliant)",
-    "item6": "Neighbor consultation",
-    "annahme": "Assumed",
-    "verifiedBy": "Verified by",
-    "verifiedName": "M. Müller · Architect"
-  },
-  "audience": {
-    "eyebrow": "For whom",
-    "heading": "Three perspectives. One system.",
-    "card1Tag": "Building owner",
-    "card1Title": "Clarity before you plan.",
-    "card1Body": "You understand early what your project actually costs — not in euros, but in permits, reports, and time. Before you engage your first architect.",
-    "card2Tag": "Architect",
-    "card2Title": "Research automatic. Judgment yours.",
-    "card2Body": "The system does the research. You do the judgment. Every recommendation is your release — fully traceable, always reviewable.",
-    "card3Tag": "Developer",
-    "card3Title": "Comparability at a glance.",
-    "card3Body": "You plan portfolios, not single projects. One permit roadmap per plot, one click to compare locations side by side."
-  },
-  "trust": {
-    "eyebrow": "Legal posture",
-    "heading": "Recommendation is not decision.",
-    "body1": "Planning Matrix is not legal advice. The system recommends — your certified architect releases. Every recommendation is provenance-tracked: which statute, which source, which version. Every transition is auditable.",
-    "body2": "What is ultimately submitted to the Bauamt carries a human seal. Not \"AI-powered approval.\" AI-assisted preparation — confirmed by a person.",
-    "pillarOneTitle": "Provenance",
-    "pillarOneBody": "Every recommendation tagged with statute, source, version, and reasoning.",
-    "pillarTwoTitle": "Audit trail",
-    "pillarTwoBody": "Every transition from suggestion to release fully logged.",
-    "pillarThreeTitle": "Architect release",
-    "pillarThreeBody": "Submission authority stays with the person — not the tool."
-  },
-  "pricing": {
-    "eyebrow": "Pricing",
-    "heading": "Pricing model in development.",
-    "body": "Planning Matrix is preparing for public launch. We are working with pilot partners on a pricing model that fits the reality of construction projects — not standard SaaS tiers. To shape it with us, talk to us.",
-    "note": "Preferred terms for pilot users."
-  },
-  "faq": {
-    "eyebrow": "Frequently asked",
-    "heading": "Short, honest answers.",
-    "q1": "Is Planning Matrix legal advice?",
-    "a1": "No. Planning Matrix is a recommendation system. Every recommendation is reviewed and released by a certified architect — only then does it become the basis of your application. Only the authority itself can give legally binding information.",
-    "q2": "Which German states are supported?",
-    "a2": "We are starting in Thuringia and expanding state by state. Which state comes next depends on the availability of the respective state building codes and on local pilot partnerships.",
-    "q3": "Who is liable for the recommendations?",
-    "a3": "Responsibility for the submitted application sits — as it does today — with the submitting architect. Planning Matrix documents the statutes and sources behind every recommendation. That provenance is part of the audit trail.",
-    "q4": "Do I still need my own architect?",
-    "a4": "Yes. Submission authority in Germany is bound to the person, not the tool. If you don't yet have an architect, we can introduce certified partners from our network on request.",
-    "q5": "How does Planning Matrix handle my data?",
-    "a5": "All data is processed and stored in the EU, GDPR-compliant. Project data is used solely to generate your roadmap — never for model training or third parties.",
-    "q6": "What does it cost?",
-    "a6": "The pricing model is being shaped with pilot partners. We will publish it once it holds up. Early users get preferred terms — talk to us."
-  },
-  "finalCta": {
-    "eyebrow": "Early access",
-    "heading": "Build with foresight.",
-    "body": "Early access is limited. We are working directly with pilot users in Thuringia and Saxony first.",
-    "cta": "Request early access"
-  },
-  "footer": {
-    "tagline": "Building permits, rethought.",
-    "colProductTitle": "Product",
-    "colProductFunctions": "Features",
-    "colProductDomains": "Three dimensions",
-    "colProductAudience": "For whom",
-    "colProductFaq": "FAQ",
-    "colCompanyTitle": "Company",
-    "colCompanyAbout": "About",
-    "colCompanyContact": "Contact",
-    "colCompanyAccess": "Early access",
-    "colLegalTitle": "Legal",
-    "colLegalImprint": "Imprint",
-    "colLegalPrivacy": "Privacy",
-    "colLegalTerms": "Terms",
-    "rightsReserved": "All rights reserved."
+    "skipToContent": "Skip to main content"
   },
   "notFound": {
     "code": "404",
@@ -794,7 +621,6 @@
       "paused": "Paused",
       "archived": "Archive"
     },
-    "search": "Search — name, address, parcel…",
     "newProject": "New project",
     "sections": {
       "active": "Active",
@@ -805,10 +631,8 @@
     "showAll": "Show all {{count}}",
     "showLess": "Show less",
     "row": {
-      "briefing": "Briefing",
       "turns_one": "{{count}} turn",
       "turns_other": "{{count}} turns",
-      "rec": "Next step",
       "menu": {
         "rename": "Rename",
         "pause": "Pause",
@@ -878,16 +702,7 @@
       "5": "Good plans take patience."
     },
     "ticker": {
-      "label": "Workshop · Live",
-      "events": {
-        "fact_added": "fact recorded",
-        "qualifier_changed": "qualifier changed",
-        "rec_upserted": "recommendation updated",
-        "area_state": "area updated",
-        "turn_closed": "turn closed",
-        "designer_requested": "designer requested",
-        "turn_processed": "turn closed"
-      }
+      "label": "Workshop · Live"
     },
     "palette": {
       "open": "Search — project, address, norm, action…",
@@ -983,7 +798,6 @@
           "code": "T-07"
         }
       },
-      "unsureLink": "I'm not sure",
       "h": "What would you like to build?",
       "continue": "Continue",
       "help": {
@@ -997,7 +811,6 @@
       "yes": "Yes",
       "no": "No",
       "addressLabel": "Address or parcel",
-      "addressInvalid": "Please enter a full address with house number and postal code.",
       "mapClickOutOfMuenchen": "This location is outside the current scope (Munich).",
       "mapReverseLoading": "Resolving address …",
       "mapReverseFailed": "Address could not be resolved. Please type it manually.",
@@ -1005,15 +818,12 @@
       "placeholder": "e.g. Türkenstraße 25, 80799 München",
       "helper": "We use the address to research the development plan and local ordinances.",
       "coverage": "Currently active: München (postal codes 80331–81929). Other regions follow.",
-      "outsideCoverage": "This region is not yet active. You can still proceed — we will use Bayern defaults and flag the gap.",
       "mapHint": "Click on the map to inspect a different location.",
       "noPlot": "Without a plot, areas A (planning law) and C (further requirements) cannot yet be assessed. We work with assumptions and flag the gap.",
       "bplan": {
         "loading": "Checking the development plan…",
         "noneInner": "● No legally binding development plan — assessment under § 34 BauGB.",
-        "noneOuter": "● Outside consolidated area — § 35 BauGB applies, restrictive.",
         "exists": "● B-Plan {{id}} active — {{zone}}.",
-        "heritage": "● Preservation ordinance — additional review.",
         "detailLink": "View details",
         "detailH": "Development-plan details"
       },
@@ -1434,15 +1244,8 @@
   },
   "legal": {
     "placeholder": {
-      "eyebrow": "Coming soon",
-      "headline": "Coming soon.",
-      "body": "This page will be added before public launch.",
       "back": "Back to home"
-    },
-    "notFoundCtaNewProject": "Start a new project",
-    "imprintTitle": "Imprint · Planning Matrix",
-    "privacyTitle": "Privacy · Planning Matrix",
-    "termsTitle": "Terms · Planning Matrix"
+    }
   },
   "seo": {
     "title": {
