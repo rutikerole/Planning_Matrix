@@ -257,6 +257,7 @@ export function QuestionPlot({ onSubmit, submitError }: Props) {
                 >
                   <PlotMap
                     address={plotAddress}
+                    onAddressChange={setPlotAddress}
                     onBplanResolved={setBplanResult}
                   />
                 </Suspense>

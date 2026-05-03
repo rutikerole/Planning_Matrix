@@ -399,7 +399,17 @@
         "body": "In the first version, we review building projects within the Munich city area only, with full accuracy. Please enter an address with a Munich postcode (80331–81929). More cities will follow."
       },
       "muenchenScopeNotice": "Currently we review building projects within the Munich city area (postcodes 80331–81929). More cities will follow.",
-      "noPlotNotice": "Note: without a plot we can't yet assess zoning (Area A) or other provisions (Area C). We start with standard assumptions and mark affected areas accordingly."
+      "noPlotNotice": "Note: without a plot we can't yet assess zoning (Area A) or other provisions (Area C). We start with standard assumptions and mark affected areas accordingly.",
+      "mapClickHint": "Click on the map to inspect a different location.",
+      "mapClickOutOfMuenchen": "This location is outside the current scope (Munich).",
+      "mapReverseLoading": "Resolving address …",
+      "mapReverseFailed": "Address could not be resolved. Please type it manually.",
+      "bplanBanner": {
+        "loading": "Checking development plan …",
+        "found": "Within development plan {{plan}} — building under § 30 BauGB generally possible.",
+        "foundUnnamed": "Within a development plan — building under § 30 BauGB generally possible.",
+        "notFound": "No legally binding development plan — assessment under § 34 / § 35 BauGB to be discussed."
+      }
     },
     "back": "Back",
     "submit": "Create project",

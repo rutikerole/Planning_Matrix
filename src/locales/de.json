@@ -399,7 +399,17 @@
         "body": "Wir prüfen Bauvorhaben in der ersten Version ausschließlich im Münchner Stadtgebiet mit voller Genauigkeit. Bitte geben Sie eine Adresse mit einer Münchner Postleitzahl (80331–81929) ein. Weitere Städte folgen."
       },
       "muenchenScopeNotice": "Aktuell prüfen wir Bauvorhaben im Münchner Stadtgebiet (PLZ 80331–81929). Weitere Städte folgen.",
-      "noPlotNotice": "Hinweis: Ohne Grundstück können wir das Planungsrecht (Bereich A) und sonstige Vorgaben (Bereich C) noch nicht ermitteln. Wir arbeiten zunächst mit Standardannahmen und markieren betroffene Bereiche entsprechend."
+      "noPlotNotice": "Hinweis: Ohne Grundstück können wir das Planungsrecht (Bereich A) und sonstige Vorgaben (Bereich C) noch nicht ermitteln. Wir arbeiten zunächst mit Standardannahmen und markieren betroffene Bereiche entsprechend.",
+      "mapClickHint": "Klicken Sie auf die Karte, um eine andere Stelle zu prüfen.",
+      "mapClickOutOfMuenchen": "Diese Stelle liegt außerhalb des aktuellen Anwendungsbereichs (München).",
+      "mapReverseLoading": "Adresse wird ermittelt …",
+      "mapReverseFailed": "Adresse konnte nicht ermittelt werden. Bitte tippen Sie sie manuell ein.",
+      "bplanBanner": {
+        "loading": "Bebauungsplan wird geprüft …",
+        "found": "Im Bebauungsplan {{plan}} — Bebauung nach § 30 BauGB grundsätzlich möglich.",
+        "foundUnnamed": "Im Bebauungsplan — Bebauung nach § 30 BauGB grundsätzlich möglich.",
+        "notFound": "Kein rechtsgültiger Bebauungsplan — Bewertung nach § 34 / § 35 BauGB im Gespräch."
+      }
     },
     "back": "Zurück",
     "submit": "Projekt anlegen",
