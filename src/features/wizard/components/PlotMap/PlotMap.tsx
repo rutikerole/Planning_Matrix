@@ -20,7 +20,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { MapContainer, Marker, useMap, useMapEvents } from 'react-leaflet'
 import L from 'leaflet'
-import { MapTileLayer } from './tileLayer'
+import { MapTileLayer, BplanWmsLayer } from './tileLayer'
 import {
   geocodeAddress,
   reverseGeocode,
@@ -269,6 +269,7 @@ export function PlotMap({
           attributionControl={true}
         >
           <MapTileLayer />
+          <BplanWmsLayer />
           <MapClickHandler onPick={handlePick} onOutOfBounds={handleOutOfBounds} />
           {coords ? <Marker position={[coords.lat, coords.lng]} icon={pin} /> : null}
           <FlyToOnResolve flyTarget={flyTarget} />
