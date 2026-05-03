@@ -1,15 +1,15 @@
-// Phase 6a — inline card showing the B-Plan lookup result.
+// Phase 6a — inline card showing the B-Plan lookup detail under the map.
+// Phase 6c — slimmed: the headline ("Im Bebauungsplan {Nr}") moved
+// up into BplanStatusBanner above the map. The card now carries
+// only the supplementary detail that doesn't fit on a single banner
+// line: in-force date, PDF links, and the §34/§35 long-form copy
+// that screen-reader users rely on for context.
 //
-// Three states:
-//   • Loading (isLoading=true): hairline progress + status text
-//   • Found (result.status='found'): plan number, name, in-force date, PDF links
-//   • Not found (result.status='no_plan_found'): honest § 34 / § 35 BauGB hedge
-//   • Upstream error (result.status='upstream_error'): silent (no card rendered) —
-//     the chat-turn pipeline still works without B-Plan facts and we don't
-//     want to red-flag a transient WMS hiccup as a user-visible failure.
-//
-// Copy: formal Sie register, calm clay register, matches the wizard's
-// existing voice. No exclamations, no emojis.
+// States:
+//   • Loading: no card (banner already says "wird geprüft …")
+//   • Found: in-force date + Plan-PDF + Text-PDF links
+//   • Not found: §34 / §35 long-form copy
+//   • Upstream error: silent (no card; banner is also empty)
 
 import type { BplanLookupResult } from '@/types/bplan'
 
@@ -27,23 +27,7 @@ function formatGermanDate(iso?: string): string | null {
 }
 
 export function BplanResultCard({ result, isLoading }: Props) {
-  if (isLoading) {
-    return (
-      <div
-        role="status"
-        aria-live="polite"
-        className="flex flex-col gap-1 mt-3 px-3 py-2.5 border-l-2 border-clay/35 bg-paper"
-      >
-        <p className="text-[10px] font-medium uppercase tracking-[0.20em] text-clay/85">
-          Bebauungsplan
-        </p>
-        <p className="font-serif italic text-[12px] text-clay/85 leading-relaxed">
-          Wird geprüft…
-        </p>
-      </div>
-    )
-  }
-
+  if (isLoading) return null
   if (!result) return null
   if (result.status === 'upstream_error') return null
 
@@ -62,16 +46,21 @@ export function BplanResultCard({ result, isLoading }: Props) {
     )
   }
 
-  // status === 'found'
+  // status === 'found' — banner above already names the plan; the
+  // card carries supplementary detail (in-force date + PDF links)
+  // that wouldn't fit on a single banner line.
   const dateGerman = formatGermanDate(result.in_force_since)
+  const planLabel = result.plan_name_de ??
+    (result.plan_number ? `${result.plan_number} (Bebauungsplan)` : null)
+
+  if (!dateGerman && !result.pdf_url_plan && !result.pdf_url_text) {
+    return null
+  }
+
   return (
     <div className="flex flex-col gap-1.5 mt-3 px-3 py-2.5 border-l-2 border-drafting-blue/45 bg-paper">
       <p className="text-[10px] font-medium uppercase tracking-[0.20em] text-clay/85">
-        Bebauungsplan
-      </p>
-      <p className="text-[14px] font-medium text-ink leading-snug">
-        {result.plan_name_de ??
-          (result.plan_number ? `${result.plan_number} (Bebauungsplan)` : 'Bebauungsplan')}
+        Bebauungsplan {planLabel ? `· ${planLabel}` : ''}
       </p>
       {dateGerman ? (
         <p className="font-serif italic text-[11px] text-clay-deep">

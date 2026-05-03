@@ -108,3 +108,28 @@
 @media (prefers-reduced-motion: reduce) {
   .pm-plotmap-progress { animation: none; opacity: 0.7; }
 }
+
+/* Phase 6c — BplanStatusBanner dots. Three calm states, no red/green
+   traffic-light language. */
+.pm-bplan-banner-dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.pm-bplan-banner-dot--loading {
+  background: transparent;
+  border: 1px solid hsl(var(--clay) / 0.55);
+}
+
+.pm-bplan-banner-dot--found {
+  background: hsl(var(--clay));
+  box-shadow: 0 0 0 2px hsl(var(--clay) / 0.18);
+}
+
+.pm-bplan-banner-dot--none {
+  background: hsl(var(--ink) / 0.55);
+  box-shadow: 0 0 0 2px hsl(var(--ink) / 0.10);
+}

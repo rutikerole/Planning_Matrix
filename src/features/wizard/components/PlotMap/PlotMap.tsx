@@ -28,6 +28,7 @@ import {
   type GeocodeResult,
 } from './geocode'
 import { BplanResultCard } from './BplanResultCard'
+import { BplanStatusBanner } from './BplanStatusBanner'
 import { useBplanLookup } from '../../hooks/useBplanLookup'
 import type { BplanLookupResult } from '@/types/bplan'
 import './styles.css'
@@ -256,6 +257,7 @@ export function PlotMap({
 
   return (
     <div className="flex flex-col">
+      {coords ? <BplanStatusBanner result={bplanResult} isLoading={bplanLoading} /> : null}
       <p className="font-serif italic text-[11px] text-clay/72 leading-relaxed mb-2">
         {t('wizard.q2.mapClickHint')}
       </p>
