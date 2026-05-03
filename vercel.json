@@ -22,7 +22,14 @@
       ]
     },
     {
-      "source": "/fonts/(.*\\.(woff2|ttf))",
+      "source": "/fonts/(.*\\.woff2)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" },
+        { "key": "Access-Control-Allow-Origin", "value": "*" }
+      ]
+    },
+    {
+      "source": "/fonts/(.*\\.ttf)",
       "headers": [
         { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" },
         { "key": "Access-Control-Allow-Origin", "value": "*" }
