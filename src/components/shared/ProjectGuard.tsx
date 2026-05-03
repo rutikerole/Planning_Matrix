@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom'
 import { useAuthStore } from '@/stores/authStore'
 import { useProject } from '@/features/chat/hooks/useProject'
 import { AuthSkeleton } from '@/components/shared/AuthSkeleton'
-import { ProjectNotFound } from '@/features/chat/pages/ProjectNotFound'
+import { ProjectNotFound } from '@/components/shared/ProjectNotFound'
 
 interface Props {
   children: ReactNode

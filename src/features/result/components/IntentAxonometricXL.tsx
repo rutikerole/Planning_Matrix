@@ -1,7 +1,7 @@
 import type React from 'react'
 import { useTranslation } from 'react-i18next'
 import { project, pathFromVertices } from '@/lib/axonometric'
-import { ScaleBar } from '@/features/chat/components/illustrations/ScaleBar'
+import { ScaleBar } from '@/components/shared/ScaleBar'
 import { INTENT_TO_I18N } from '@/features/wizard/lib/selectTemplate'
 
 interface Props {

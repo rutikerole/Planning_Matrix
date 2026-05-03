@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { m, useReducedMotion } from 'framer-motion'
-import { NorthArrow } from '@/features/chat/components/NorthArrow'
+import { NorthArrow } from '@/components/shared/NorthArrow'
 import { useAuthStore } from '@/stores/authStore'
 import { INTENT_TO_I18N } from '@/features/wizard/lib/selectTemplate'
 import type { ProjectRow, MessageRow } from '@/types/db'

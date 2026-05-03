@@ -16,7 +16,7 @@ import { cn } from '@/lib/utils'
 import { supabase } from '@/lib/supabase'
 import type { DocumentItem, ProjectState } from '@/types/projectState'
 import type { ProjectRow } from '@/types/db'
-import { buildExportFilename } from '@/features/chat/lib/exportFilename'
+import { buildExportFilename } from '@/lib/export/exportFilename'
 
 interface Props {
   project: ProjectRow

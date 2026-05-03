@@ -23,7 +23,7 @@ import { ArrowRight } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type { SuggestionId } from '@/types/chatInput'
 import type { MessageRow } from '@/types/db'
-import { isPlotAddressValid } from '@/features/wizard/lib/plotValidation'
+import { isPlotAddressValid } from '@/lib/addressParse'
 
 interface SelectOption {
   value: string

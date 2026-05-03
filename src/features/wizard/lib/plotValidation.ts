@@ -1,30 +1,8 @@
-/**
- * D8 — plot-address validation.
- *
- * The wizard takes the address as free text, with no autocomplete or
- * geocoding for v1. We require minimal evidence that it actually is a
- * postal address rather than a stray phrase: ≥ 6 characters, contains
- * a digit (a house number or postcode), AND either contains a comma
- * (separating street from city) OR matches a 5-digit German postcode
- * pattern.
- *
- * Phase 5 — v1 active city pivots from Erlangen → München. The
- * format check stays as the first floor; the München-postcode check
- * is layered on top by `isMuenchenAddress` and surfaced in the
- * wizard UI. Erlangen-only helpers were removed in this pivot;
- * the data/erlangen/ slice and the legacy DB rows
- * (city='erlangen') are preserved but the wizard no longer admits
- * Erlangen postcodes.
- *
- * Pure function — also used by the submission flow to prevent invalid
- * addresses from reaching the project insert.
- */
-export function isPlotAddressValid(input: string): boolean {
-  const trimmed = input.trim()
-  if (trimmed.length < 6) return false
-  if (!/\d/.test(trimmed)) return false
-  return /,/.test(trimmed) || /\b\d{5}\b/.test(trimmed)
-}
+// `isPlotAddressValid` moved to `src/lib/addressParse.ts` so the
+// chat workspace's address-suggestion logic can consume it without
+// crossing into wizard/. Re-exported here for backwards-compat with
+// callers that still import from this path.
+export { isPlotAddressValid } from '@/lib/addressParse'
 
 /**
  * München Stadtgebiet postcodes — 70 entries spanning 80331-81929.

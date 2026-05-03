@@ -1,9 +1,9 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Download, FileText, Braces, Link2, Mail } from 'lucide-react'
-import { buildExportFilename } from '@/features/chat/lib/exportFilename'
-import { buildExportMarkdown } from '@/features/chat/lib/exportMarkdown'
-import { buildExportJson } from '@/features/chat/lib/exportJson'
+import { buildExportFilename } from '@/lib/export/exportFilename'
+import { buildExportMarkdown } from '@/lib/export/exportMarkdown'
+import { buildExportJson } from '@/lib/export/exportJson'
 import {
   createShareToken,
   revokeShareToken,

@@ -4,9 +4,9 @@ import { Drawer } from 'vaul'
 import { AlertTriangle, Copy, Download, X } from 'lucide-react'
 import type { MessageRow, ProjectRow } from '@/types/db'
 import type { ProjectEventRow } from '../hooks/useProjectEvents'
-import { buildExportFilename } from '../lib/exportFilename'
-import { buildExportMarkdown } from '../lib/exportMarkdown'
-import { buildExportJson } from '../lib/exportJson'
+import { buildExportFilename } from '@/lib/export/exportFilename'
+import { buildExportMarkdown } from '@/lib/export/exportMarkdown'
+import { buildExportJson } from '@/lib/export/exportJson'
 import { logExportEvent, type ExportEventType } from '@/lib/telemetry'
 
 interface Props {

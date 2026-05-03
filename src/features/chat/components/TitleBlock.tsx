@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next'
-import { NorthArrow } from './NorthArrow'
+import { NorthArrow } from '@/components/shared/NorthArrow'
 import { INTENT_TO_I18N } from '@/features/wizard/lib/selectTemplate'
 import type { ProjectRow } from '@/types/db'
 

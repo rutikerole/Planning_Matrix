@@ -16,7 +16,7 @@ import { useAuthStore } from '@/stores/authStore'
 import { useProjects, type ProjectListEntry } from './hooks/useProjects'
 import { useProjectMutations } from './hooks/useProjectMutations'
 import { deriveStatus, intelCounts } from './lib/projectIntel'
-import { computeLegalRefCounts } from './lib/legalRefCounts'
+import { computeLegalRefCounts, projectMatchesLegalRef } from './lib/legalRefCounts'
 import { WelcomeBand } from './components/WelcomeBand'
 import { FilterPills } from './components/FilterPills'
 import { ProjectsSection } from './components/ProjectsSection'
@@ -344,28 +344,3 @@ export function DashboardPage() {
   )
 }
 
-const LEGAL_PATTERNS: Record<string, RegExp> = {
-  baugb34: /(§\s*34\s*BauGB|BauGB\s*§\s*34)/i,
-  baugb35: /(§\s*35\s*BauGB|BauGB\s*§\s*35)/i,
-  baybo57: /(BayBO\s*Art\.?\s*57|Art\.?\s*57\s*BayBO)/i,
-  baybo58: /(BayBO\s*Art\.?\s*58|Art\.?\s*58\s*BayBO)/i,
-  baunvo6: /(BauNVO\s*§\s*6|§\s*6\s*BauNVO|Mischgebiet)/i,
-}
-
-function projectMatchesLegalRef(p: ProjectListEntry, key: string): boolean {
-  const pattern = LEGAL_PATTERNS[key]
-  if (!pattern) return true
-  const state = p.state as { facts?: Array<{ value?: unknown; evidence?: string }> } | null
-  const facts = state?.facts ?? []
-  for (const f of facts) {
-    const evidence = typeof f.evidence === 'string' ? f.evidence : ''
-    let value: string
-    try {
-      value = typeof f.value === 'string' ? f.value : JSON.stringify(f.value ?? '')
-    } catch {
-      value = ''
-    }
-    if (pattern.test(`${evidence} ${value}`)) return true
-  }
-  return false
-}

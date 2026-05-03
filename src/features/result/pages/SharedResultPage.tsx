@@ -1,7 +1,7 @@
 import { useParams } from 'react-router-dom'
 import { SEO } from '@/components/SEO'
 import { AuthSkeleton } from '@/components/shared/AuthSkeleton'
-import { ProjectNotFound } from '@/features/chat/pages/ProjectNotFound'
+import { ProjectNotFound } from '@/components/shared/ProjectNotFound'
 import { useSharedProject } from '../hooks/useSharedProject'
 import { ResultPageBody } from './ResultPage'
 

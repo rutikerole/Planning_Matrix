@@ -18,8 +18,8 @@ import { DraftingBoard } from './components/DraftingBoard'
 import { Stepper } from './components/Stepper'
 import { useLoaderProgress } from './hooks/useLoaderProgress'
 import type { TemplateId } from '@/types/projectState'
-import type { Intent } from '@/features/wizard/lib/selectTemplate'
-import { extractStreetName } from '@/features/dashboard/lib/projectName'
+import { INTENT_LABELS, type Intent } from '@/features/wizard/lib/selectTemplate'
+import { extractStreetName, extractCity } from '@/lib/addressParse'
 
 interface Props {
   /** Provided once the project row has been INSERTed. Null while inserting. */
@@ -38,32 +38,8 @@ interface Props {
   plotAddress?: string | null
 }
 
-const TEMPLATE_LABEL_DE: Record<Intent, string> = {
-  neubau_einfamilienhaus: 'Einfamilienhaus',
-  neubau_mehrfamilienhaus: 'Mehrfamilienhaus',
-  sanierung: 'Sanierung',
-  umnutzung: 'Umnutzung',
-  abbruch: 'Abbruch',
-  aufstockung: 'Aufstockung',
-  anbau: 'Anbau',
-  sonstige: 'Vorhaben',
-}
-
-const TEMPLATE_LABEL_EN: Record<Intent, string> = {
-  neubau_einfamilienhaus: 'Single-family home',
-  neubau_mehrfamilienhaus: 'Multi-family home',
-  sanierung: 'Renovation',
-  umnutzung: 'Change of use',
-  abbruch: 'Demolition',
-  aufstockung: 'Storey addition',
-  anbau: 'Side extension',
-  sonstige: 'Project',
-}
-
 function cityFromAddress(addr: string | null | undefined): string {
-  if (!addr) return 'München'
-  const m = addr.match(/\b\d{5}\s+([^,]+)/)
-  return m?.[1]?.trim() || 'München'
+  return extractCity(addr ?? '') ?? 'München'
 }
 
 /**
@@ -137,8 +113,9 @@ export function LoaderScreen({
 
   // Compose placeholders.
   const lang = i18n.language?.startsWith('en') ? 'en' : 'de'
-  const labels = lang === 'en' ? TEMPLATE_LABEL_EN : TEMPLATE_LABEL_DE
-  const templateLabel = intent ? labels[intent] : labels.sonstige
+  const templateLabel = intent
+    ? INTENT_LABELS[intent][lang]
+    : INTENT_LABELS.sonstige[lang]
   const street = extractStreetName(plotAddress ?? '') ?? 'Ihrem Standort'
   const city = cityFromAddress(plotAddress)
   const article = '58'

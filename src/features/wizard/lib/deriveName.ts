@@ -1,4 +1,5 @@
 import type { Intent } from './selectTemplate'
+import { extractCity } from '@/lib/addressParse'
 
 const INTENT_LABELS_DE: Record<Intent, string> = {
   neubau_einfamilienhaus: 'Neubau Einfamilienhaus',
@@ -28,23 +29,8 @@ export function deriveName(intent: Intent, plotAddress: string | null): string {
   const label = INTENT_LABELS_DE[intent]
 
   if (plotAddress) {
-    const trimmed = plotAddress.trim()
-
-    // Prefer the postcode-anchored capture (Bayern PLZ start with 8 or 9
-    // but we don't gate on that here — the model is the sanity check).
-    const postcodeMatch = trimmed.match(/\b\d{5}\s+([^,]+)/)
-    const cityFromPostcode = postcodeMatch?.[1]?.trim()
-    if (cityFromPostcode) {
-      return `${label} · ${cityFromPostcode}`
-    }
-
-    // Fall back to the last comma-separated chunk if it differs from the
-    // whole address (i.e. there IS a comma).
-    const lastChunk = trimmed.split(',').pop()?.trim()
-    if (lastChunk && lastChunk !== trimmed) {
-      return `${label} · ${lastChunk}`
-    }
-
+    const city = extractCity(plotAddress)
+    if (city) return `${label} · ${city}`
     return label
   }
 

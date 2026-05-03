@@ -42,6 +42,32 @@ export const INTENT_VALUES_V3: readonly Intent[] = [
 ] as const
 
 /**
+ * Display labels per intent, used by the dashboard's suggested
+ * project name and the loader's "Vorlage wählen — {label}" status
+ * message. Short form, no "Neubau " prefix.
+ *
+ * Wizard's `deriveName` keeps its own longer-form labels
+ * (`INTENT_LABELS_DE`) because they're stored as `projects.name`
+ * where the "Neubau " prefix carries the meaningful distinction
+ * between new builds and existing-building work. The two maps
+ * intentionally diverge on:
+ *   - `neubau_einfamilienhaus`: "Neubau Einfamilienhaus" (DB-name)
+ *     vs "Einfamilienhaus" (display label)
+ *   - `neubau_mehrfamilienhaus`: same pattern
+ *   - `sonstige`: "Sonstiges" (DB-name) vs "Projekt" (display label)
+ */
+export const INTENT_LABELS: Record<Intent, { de: string; en: string }> = {
+  neubau_einfamilienhaus: { de: 'Einfamilienhaus', en: 'Single-family home' },
+  neubau_mehrfamilienhaus: { de: 'Mehrfamilienhaus', en: 'Multi-family home' },
+  sanierung: { de: 'Sanierung', en: 'Renovation' },
+  umnutzung: { de: 'Umnutzung', en: 'Change of use' },
+  abbruch: { de: 'Abbruch', en: 'Demolition' },
+  aufstockung: { de: 'Aufstockung', en: 'Storey addition' },
+  anbau: { de: 'Anbau', en: 'Extension' },
+  sonstige: { de: 'Projekt', en: 'Project' },
+}
+
+/**
  * The DB enum and the i18n key tree use slightly different slugs.
  * `Intent` is fixed by the `projects.intent` CHECK constraint; the
  * i18n tree is keyed by short slugs picked for the chip / sketch labels.

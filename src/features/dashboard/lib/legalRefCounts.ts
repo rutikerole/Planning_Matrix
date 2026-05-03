@@ -12,7 +12,7 @@ import type { Fact } from '@/types/projectState'
 export type LegalRefKey = 'baugb34' | 'baugb35' | 'baybo57' | 'baybo58' | 'baunvo6'
 export type LegalRefCounts = Record<LegalRefKey, number>
 
-const PATTERNS: Record<LegalRefKey, RegExp> = {
+export const LEGAL_PATTERNS: Record<LegalRefKey, RegExp> = {
   baugb34: /(§\s*34\s*BauGB|BauGB\s*§\s*34)/i,
   baugb35: /(§\s*35\s*BauGB|BauGB\s*§\s*35)/i,
   baybo57: /(BayBO\s*Art\.?\s*57|Art\.?\s*57\s*BayBO)/i,
@@ -37,6 +37,27 @@ function factHaystack(f: Fact): string {
   return `${evidence} ${value}`
 }
 
+/**
+ * Project predicate used by the dashboard's `?legal=<key>` URL filter.
+ * Single source of truth shared with the Cmd+K palette's count logic.
+ */
+export function projectMatchesLegalRef(project: ProjectRow, key: string): boolean {
+  const pattern = (LEGAL_PATTERNS as Record<string, RegExp>)[key]
+  if (!pattern) return true
+  const state = project.state as ProjectStateForCounts | null | undefined
+  const facts = state?.facts ?? []
+  for (const f of facts) {
+    let haystack: string
+    try {
+      haystack = factHaystack(f)
+    } catch {
+      continue
+    }
+    if (pattern.test(haystack)) return true
+  }
+  return false
+}
+
 export function computeLegalRefCounts(projects: readonly ProjectRow[]): LegalRefCounts {
   const counts: LegalRefCounts = {
     baugb34: 0,
@@ -59,7 +80,7 @@ export function computeLegalRefCounts(projects: readonly ProjectRow[]): LegalRef
       }
       for (const key of KEYS) {
         if (seen.has(key)) continue
-        if (PATTERNS[key].test(haystack)) seen.add(key)
+        if (LEGAL_PATTERNS[key].test(haystack)) seen.add(key)
       }
       if (seen.size === KEYS.length) break
     }

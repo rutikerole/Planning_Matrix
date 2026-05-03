@@ -6,9 +6,10 @@
  * available" notice.
  *
  * No external geocoder or API call here — keep this synchronous so
- * the sidebar can re-render in step with the address input. Adding
- * a real backend lookup is a follow-up.
+ * the sidebar can re-render in step with the address input.
  */
+
+import { isMuenchenAddress } from '../lib/plotValidation'
 
 export interface PlotProfile {
   stadtbezirk: string | null
@@ -37,14 +38,7 @@ const EMPTY_PROFILE: PlotProfile = {
   heritageDistance: null,
 }
 
-function isMunichPostcode(addr: string): boolean {
-  const match = addr.match(/\b(\d{5})\b/)
-  if (!match) return false
-  const n = Number(match[1])
-  return n >= 80331 && n <= 81929
-}
-
 export function usePlotProfile(address: string | null | undefined): PlotProfile {
   if (!address || address.trim().length < 6) return EMPTY_PROFILE
-  return isMunichPostcode(address) ? MUNICH_FALLBACK : EMPTY_PROFILE
+  return isMuenchenAddress(address) ? MUNICH_FALLBACK : EMPTY_PROFILE
 }
