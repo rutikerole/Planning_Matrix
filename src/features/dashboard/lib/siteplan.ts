@@ -22,13 +22,17 @@ export function siteplanSvg(addr: string): string {
   const pw = 22 + r() * 10
   const ph = 18 + r() * 8
   const buildings: Array<{ bx: number; by: number; bw: number; bh: number; hatch: boolean }> = []
-  for (let i = 0; i < 5 + Math.floor(r() * 3); i++) {
-    const bx = 4 + r() * 72
-    const by = 4 + r() * 68
+  // v3 fix #1 — sample more candidates and tighten the bx/by range
+  // so over-bound rejections drop. Overlap margin is 2 (was 4).
+  // The verbatim prototype attempted 5–7 with bx/by spanning the
+  // full canvas; on real data that produced 67% sparse thumbnails.
+  for (let i = 0; i < 18 + Math.floor(r() * 6); i++) {
+    const bx = 4 + r() * 52
+    const by = 4 + r() * 52
     const bw = 8 + r() * 12
     const bh = 6 + r() * 10
     // skip overlap with parcel
-    if (bx < px + pw + 4 && bx + bw > px - 4 && by < py + ph + 4 && by + bh > py - 4) continue
+    if (bx < px + pw + 2 && bx + bw > px - 2 && by < py + ph + 2 && by + bh > py - 2) continue
     if (bx + bw > 76 || by + bh > 72) continue
     buildings.push({ bx, by, bw, bh, hatch: r() > 0.4 })
   }

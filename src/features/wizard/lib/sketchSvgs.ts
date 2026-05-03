@@ -62,7 +62,8 @@ export const SKETCH_SVGS: Record<Intent, string> = {
   umnutzung: `
     <svg viewBox="0 0 120 80">
       <line class="pri pri-d" x1="14" y1="68" x2="106" y2="68"/>
-      <path class="pri" d="M34 68 L34 36 L60 20 L86 36 L86 68 Z"/>
+      <!-- v3 fix #4 — dashed silhouette = existing structure changing use. -->
+      <path class="pri pri-d" d="M34 68 L34 36 L60 20 L86 36 L86 68 Z"/>
       <g class="sec">
         <path d="M50 56 A12 12 0 1 1 70 56" />
         <path d="M70 56 L66 53 M70 56 L74 52" />

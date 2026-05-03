@@ -885,7 +885,8 @@
         "rec_upserted": "Empfehlung aktualisiert",
         "area_state": "Bereich aktualisiert",
         "turn_closed": "Wechsel abgeschlossen",
-        "designer_requested": "Architekt:in angefragt"
+        "designer_requested": "Architekt:in angefragt",
+        "turn_processed": "Wechsel abgeschlossen"
       }
     },
     "palette": {

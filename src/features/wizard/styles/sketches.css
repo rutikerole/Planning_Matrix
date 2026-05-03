@@ -90,7 +90,9 @@
 }
 
 .sketch svg .pri-d {
-  stroke-dasharray: 3 2.5;
+  /* v3 fix #4 — looser dasharray reads sketchy/hand-drawn rather
+     than mechanical-blueprint at the card's full size. */
+  stroke-dasharray: 5 4;
 }
 
 /* secondary stroke — hidden, draws on hover/selected */

@@ -885,7 +885,8 @@
         "rec_upserted": "recommendation updated",
         "area_state": "area updated",
         "turn_closed": "turn closed",
-        "designer_requested": "designer requested"
+        "designer_requested": "designer requested",
+        "turn_processed": "turn closed"
       }
     },
     "palette": {

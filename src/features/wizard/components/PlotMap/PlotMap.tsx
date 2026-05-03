@@ -18,7 +18,7 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { MapContainer, Marker, useMap, useMapEvents } from 'react-leaflet'
+import { MapContainer, Marker, useMap, useMapEvents, ZoomControl } from 'react-leaflet'
 import L from 'leaflet'
 import { MapTileLayer, BplanWmsLayer } from './tileLayer'
 import {
@@ -270,11 +270,15 @@ export function PlotMap({
           center={initialCenter}
           zoom={initialZoom}
           scrollWheelZoom={false}
+          zoomControl={false}
           style={{ height: '100%', width: '100%' }}
           attributionControl={true}
         >
           <MapTileLayer />
           <BplanWmsLayer />
+          {/* v3 fix #3 — zoom buttons live bottom-right so the FLST
+              label and north arrow at the top corners stay legible. */}
+          <ZoomControl position="bottomright" />
           <MapClickHandler onPick={handlePick} onOutOfBounds={handleOutOfBounds} />
           {coords ? <Marker position={[coords.lat, coords.lng]} icon={pin} /> : null}
           <FlyToOnResolve flyTarget={flyTarget} />
