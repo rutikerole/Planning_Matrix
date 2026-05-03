@@ -26,11 +26,17 @@ AlertDialogOverlay.displayName = 'AlertDialogOverlay'
 const AlertDialogContent = forwardRef<
   ElementRef<typeof AlertDialogPrimitive.Content>,
   ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Content>
->(({ className, ...props }, ref) => (
+>(({ className, onOpenAutoFocus, ...props }, ref) => (
   <AlertDialogPortal>
     <AlertDialogOverlay />
     <AlertDialogPrimitive.Content
       ref={ref}
+      onOpenAutoFocus={(e) => {
+        if (document.activeElement instanceof HTMLElement) {
+          document.activeElement.blur()
+        }
+        onOpenAutoFocus?.(e)
+      }}
       className={cn(
         'fixed left-1/2 top-1/2 z-50 grid w-full max-w-lg -translate-x-1/2 -translate-y-1/2 gap-4',
         'border border-pm-hair bg-pm-paper p-8 shadow-[0_24px_48px_-24px_rgba(22,19,16,0.18)]',

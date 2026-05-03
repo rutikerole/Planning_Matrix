@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Drawer } from 'vaul'
 import { AlertTriangle, Copy, Download, X } from 'lucide-react'
@@ -8,6 +8,30 @@ import { buildExportFilename } from '@/lib/export/exportFilename'
 import { buildExportMarkdown } from '@/lib/export/exportMarkdown'
 import { buildExportJson } from '@/lib/export/exportJson'
 import { logExportEvent, type ExportEventType } from '@/lib/telemetry'
+
+// Tailwind's md: breakpoint is 768px. Both desktop popover and mobile Vaul
+// Drawer used to mount unconditionally — Vaul's Portal escaped its parent's
+// display:none and applied aria-hidden on desktop clicks. Gate by viewport
+// so only the matching branch lives in the DOM.
+const DESKTOP_MD_QUERY = '(min-width: 768px)'
+
+function useIsDesktopMd() {
+  const subscribe = (cb: () => void) => {
+    const mql = window.matchMedia(DESKTOP_MD_QUERY)
+    mql.addEventListener('change', cb)
+    return () => mql.removeEventListener('change', cb)
+  }
+  const getSnapshot = () => window.matchMedia(DESKTOP_MD_QUERY).matches
+  // SSR / hydration: assume desktop. The first client render corrects it.
+  const getServerSnapshot = () => true
+  return useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot)
+}
+
+function blurActiveElement() {
+  if (document.activeElement instanceof HTMLElement) {
+    document.activeElement.blur()
+  }
+}
 
 interface Props {
   project: ProjectRow
@@ -40,6 +64,7 @@ export function ExportMenu({ project, messages, events, variant = 'ghost' }: Pro
   const [busy, setBusy] = useState<'pdf' | 'md' | 'json' | null>(null)
   const [error, setError] = useState<ExportError | null>(null)
   const containerRef = useRef<HTMLDivElement>(null)
+  const isDesktop = useIsDesktopMd()
 
   // Desktop click-outside: close popover on outside click or Escape.
   useEffect(() => {
@@ -135,11 +160,17 @@ export function ExportMenu({ project, messages, events, variant = 'ghost' }: Pro
     void triggerExport('md')
   }
 
-  return (
-    <>
-      {/* Desktop trigger + popover */}
-      <div className="hidden md:block relative" ref={containerRef}>
-        <Trigger variant={variant} onClick={() => setOpen((v) => !v)} t={t} />
+  if (isDesktop) {
+    return (
+      <div className="relative" ref={containerRef}>
+        <Trigger
+          variant={variant}
+          onClick={() => {
+            blurActiveElement()
+            setOpen((v) => !v)
+          }}
+          t={t}
+        />
         {open && (
           <div
             role="menu"
@@ -162,50 +193,58 @@ export function ExportMenu({ project, messages, events, variant = 'ghost' }: Pro
           </div>
         )}
       </div>
+    )
+  }
 
-      {/* Mobile trigger + drawer */}
-      <div className="md:hidden">
-        <Trigger variant={variant} onClick={() => setOpen(true)} t={t} />
-        <Drawer.Root open={open} onOpenChange={setOpen} direction="bottom">
-          <Drawer.Portal>
-            <Drawer.Overlay className="fixed inset-0 bg-ink/40 backdrop-blur-[2px] z-40" />
-            <Drawer.Content
-              aria-label={t('chat.export.menuLabel', { defaultValue: 'Exportieren' })}
-              className="fixed inset-x-0 bottom-0 z-50 bg-paper border-t border-ink/15 outline-none p-6 pb-10 rounded-t-[2px]"
-            >
-              <Drawer.Title className="sr-only">
-                {t('chat.export.menuLabel', { defaultValue: 'Exportieren' })}
-              </Drawer.Title>
-              <div className="flex items-center justify-between mb-4">
-                <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-clay/85">
-                  {t('chat.export.eyebrow', { defaultValue: 'Exportieren' })}
-                </p>
-                <button
-                  type="button"
-                  onClick={() => setOpen(false)}
-                  aria-label={t('chat.export.close', { defaultValue: 'Schließen' })}
-                  className="size-8 inline-flex items-center justify-center text-ink/65 hover:text-ink"
-                >
-                  <X className="size-4" aria-hidden="true" />
-                </button>
+  return (
+    <div>
+      <Trigger
+        variant={variant}
+        onClick={() => {
+          blurActiveElement()
+          setOpen(true)
+        }}
+        t={t}
+      />
+      <Drawer.Root open={open} onOpenChange={setOpen} direction="bottom">
+        <Drawer.Portal>
+          <Drawer.Overlay className="fixed inset-0 bg-ink/40 backdrop-blur-[2px] z-40" />
+          <Drawer.Content
+            aria-label={t('chat.export.menuLabel', { defaultValue: 'Exportieren' })}
+            className="fixed inset-x-0 bottom-0 z-50 bg-paper border-t border-ink/15 outline-none p-6 pb-10 rounded-t-[2px]"
+          >
+            <Drawer.Title className="sr-only">
+              {t('chat.export.menuLabel', { defaultValue: 'Exportieren' })}
+            </Drawer.Title>
+            <div className="flex items-center justify-between mb-4">
+              <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-clay/85">
+                {t('chat.export.eyebrow', { defaultValue: 'Exportieren' })}
+              </p>
+              <button
+                type="button"
+                onClick={() => setOpen(false)}
+                aria-label={t('chat.export.close', { defaultValue: 'Schließen' })}
+                className="size-8 inline-flex items-center justify-center text-ink/65 hover:text-ink"
+              >
+                <X className="size-4" aria-hidden="true" />
+              </button>
+            </div>
+            <ExportRows lang={lang} busy={busy} onPick={triggerExport} t={t} />
+            {error && (
+              <div className="mt-4">
+                <ExportErrorPanel
+                  error={error}
+                  onCopy={copyError}
+                  onMd={tryMarkdownInstead}
+                  onDismiss={() => setError(null)}
+                  t={t}
+                />
               </div>
-              <ExportRows lang={lang} busy={busy} onPick={triggerExport} t={t} />
-              {error && (
-                <div className="mt-4">
-                  <ExportErrorPanel
-                    error={error}
-                    onCopy={copyError}
-                    onMd={tryMarkdownInstead}
-                    onDismiss={() => setError(null)}
-                    t={t}
-                  />
-                </div>
-              )}
-            </Drawer.Content>
-          </Drawer.Portal>
-        </Drawer.Root>
-      </div>
-    </>
+            )}
+          </Drawer.Content>
+        </Drawer.Portal>
+      </Drawer.Root>
+    </div>
   )
 }
 
