@@ -57,14 +57,14 @@ export function SpecialistTeam({
           : t('chat.chamber.specialistTooltipNeverSpoken', {
               specialist: t(`chat.specialists.${spec}`),
             })
+        const specName = t(`chat.specialists.${spec}`)
         return (
-          <li key={spec}>
+          <li key={spec} className="relative group/sigil">
             <button
               type="button"
               onClick={onSigilClick ? () => onSigilClick(spec) : undefined}
               disabled={!onSigilClick}
               aria-label={tooltip}
-              title={tooltip}
               className={cn(
                 'relative grid place-items-center rounded-full',
                 onSigilClick && 'cursor-pointer hover:scale-110 transition-transform duration-200',
@@ -96,6 +96,15 @@ export function SpecialistTeam({
                 <ChamberSigil specialist={spec} size={sigilSize} />
               </span>
             </button>
+            {/* Phase 7.7 §1.7 — styled tooltip below each sigil.
+              * 9 px caps clay name, hairline border + paper-card bg.
+              * Reveals on hover/focus 4 px below the sigil. */}
+            <span
+              role="tooltip"
+              className="pointer-events-none absolute left-1/2 -translate-x-1/2 top-full mt-1 z-20 whitespace-nowrap font-mono text-[9px] uppercase tracking-[0.18em] text-clay px-1.5 py-0.5 bg-paper-card border border-[var(--hairline,rgba(26,22,18,0.10))] rounded-sm opacity-0 translate-y-[-2px] transition-[opacity,transform] duration-150 group-hover/sigil:opacity-100 group-hover/sigil:translate-y-0 group-focus-within/sigil:opacity-100 group-focus-within/sigil:translate-y-0"
+            >
+              {specName}
+            </span>
           </li>
         )
       })}

@@ -122,8 +122,20 @@ export function ChamberLayout({
             {stickyHeader}
 
             {topRegion ? (
-              <div className="hidden md:block mx-auto w-full max-w-[var(--chamber-col-max)] px-[var(--chamber-col-px-tablet)] lg:px-[var(--chamber-col-px-desktop)] pt-12 lg:pt-14">
-                {topRegion}
+              // Phase 7.7 §1.7 — sticky bordered top region. Anchors
+              // SpecialistTeam + full Astrolabe to the conversation
+              // column with a 0.5 px hairline bottom border so the
+              // two elements stop floating in space, and pins them
+              // to the top of <main>'s scroll context so "where am
+              // I in the journey" stays visible while the user
+              // scrolls the thread.
+              <div
+                data-chamber-top-region="true"
+                className="hidden md:block sticky top-0 z-[15] bg-[hsl(var(--paper)/0.92)] backdrop-blur-[3px] border-b border-[var(--hairline,rgba(26,22,18,0.10))]"
+              >
+                <div className="mx-auto w-full max-w-[var(--chamber-col-max)] px-[var(--chamber-col-px-tablet)] lg:px-[var(--chamber-col-px-desktop)] py-5">
+                  {topRegion}
+                </div>
               </div>
             ) : null}
 
