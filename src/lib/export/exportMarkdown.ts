@@ -8,6 +8,10 @@
 import type { ProjectRow } from '@/types/db'
 import type { ProjectState, AreaState } from '@/types/projectState'
 import { factLabel, factValueWithUnit } from '@/lib/factLabel'
+import {
+  MEANINGFUL_EVENT_TYPES,
+  summarizeEvent,
+} from '@/features/dashboard/lib/recentActivity'
 
 interface ProjectEventRow {
   id: string
@@ -170,14 +174,23 @@ export function buildExportMarkdown({ project, events, lang }: BuildArgs): strin
     lines.push('---')
   }
 
-  // ── Audit trail ─────────────────────────────────────────────────
-  if (events.length > 0) {
+  // ── Audit trail (Bauherr-grade: only meaningful events) ────────
+  // Phase 6 A.7 — filter to MEANINGFUL_EVENT_TYPES so the export
+  // doesn't drown in `turn_processed` and high-volume `fact_extracted`
+  // rows. The architect-grade JSON export shows everything.
+  const meaningful = events.filter((ev) =>
+    MEANINGFUL_EVENT_TYPES.has(ev.event_type),
+  )
+  if (meaningful.length > 0) {
     lines.push('')
     lines.push(`## ${t('Auditspur', 'Audit log')}`)
     lines.push('')
-    events.slice(0, 30).forEach((ev) => {
+    meaningful.slice(0, 30).forEach((ev) => {
       const when = formatDate(ev.created_at, lang, true)
-      lines.push(`- **${when}** — ${ev.triggered_by} · ${ev.event_type}${ev.reason ? ` *(${ev.reason})*` : ''}`)
+      const summary = summarizeEvent(ev.event_type, lang)
+      lines.push(
+        `- **${when}** — ${summary}${ev.reason ? ` *(${ev.reason})*` : ''}`,
+      )
     })
     lines.push('')
     lines.push('---')

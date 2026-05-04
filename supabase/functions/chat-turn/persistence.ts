@@ -333,6 +333,13 @@ export async function updateProjectState(
  * audit UI can replay state evolution without parsing every assistant
  * message. Failure here is logged but does not abort the turn — missing
  * events are an audit gap, not a correctness issue.
+ *
+ * Phase 6 A.7 — emits SEMANTIC events derived from the diff between
+ * beforeState and afterState, not just a single 'turn_processed' marker.
+ * The Bauherr-grade PDF and Markdown exports filter to the meaningful
+ * subset (recommendation_added / procedure_committed / area_state_changed
+ * / document_added / role_added); the architect-grade JSON includes all
+ * events including the umbrella 'turn_processed' marker.
  */
 export async function logTurnEvent(
   supabase: SupabaseClient,
@@ -343,21 +350,124 @@ export async function logTurnEvent(
     reason: string | null
   },
 ): Promise<void> {
-  const { error } = await supabase.from('project_events').insert({
-    project_id: args.projectId,
-    event_type: 'turn_processed',
-    before_state: args.beforeState,
-    after_state: args.afterState,
-    triggered_by: 'assistant',
-    reason: args.reason,
+  const events: Array<{
+    event_type: string
+    triggered_by: 'assistant' | 'user' | 'system'
+    reason: string | null
+  }> = [
+    {
+      event_type: 'turn_processed',
+      triggered_by: 'assistant',
+      reason: args.reason,
+    },
+  ]
+
+  const before = args.beforeState
+  const after = args.afterState
+
+  // Recommendations — newly added.
+  const beforeRecIds = new Set(before.recommendations.map((r) => r.id))
+  for (const rec of after.recommendations) {
+    if (!beforeRecIds.has(rec.id)) {
+      events.push({
+        event_type: 'recommendation_added',
+        triggered_by: 'assistant',
+        reason: `${rec.id} · rank ${rec.rank} · ${rec.title_de}`,
+      })
+    }
+  }
+
+  // Procedures — newly added or status-changed.
+  const beforeProcs = new Map(before.procedures.map((p) => [p.id, p.status]))
+  for (const p of after.procedures) {
+    const prevStatus = beforeProcs.get(p.id)
+    if (prevStatus === undefined) {
+      events.push({
+        event_type: 'procedure_committed',
+        triggered_by: 'assistant',
+        reason: `${p.id} · ${p.status} · ${p.title_de}`,
+      })
+    } else if (prevStatus !== p.status) {
+      events.push({
+        event_type: 'procedure_status_changed',
+        triggered_by: 'assistant',
+        reason: `${p.id} · ${prevStatus} → ${p.status}`,
+      })
+    }
+  }
+
+  // Areas — state transitions.
+  ;(['A', 'B', 'C'] as const).forEach((key) => {
+    const prev = before.areas[key]?.state
+    const next = after.areas[key]?.state
+    if (prev !== next) {
+      events.push({
+        event_type: 'area_state_changed',
+        triggered_by: 'assistant',
+        reason: `${key} · ${prev ?? 'PENDING'} → ${next ?? 'PENDING'}`,
+      })
+    }
   })
+
+  // Documents — newly added.
+  const beforeDocIds = new Set(before.documents.map((d) => d.id))
+  for (const d of after.documents) {
+    if (!beforeDocIds.has(d.id)) {
+      events.push({
+        event_type: 'document_added',
+        triggered_by: 'assistant',
+        reason: `${d.id} · ${d.status} · ${d.title_de}`,
+      })
+    }
+  }
+
+  // Roles — newly added or needed flag flipped.
+  const beforeRoles = new Map(before.roles.map((r) => [r.id, r.needed]))
+  for (const r of after.roles) {
+    const prevNeeded = beforeRoles.get(r.id)
+    if (prevNeeded === undefined) {
+      events.push({
+        event_type: 'role_added',
+        triggered_by: 'assistant',
+        reason: `${r.id} · ${r.needed ? 'needed' : 'not needed'} · ${r.title_de}`,
+      })
+    } else if (prevNeeded !== r.needed) {
+      events.push({
+        event_type: 'role_needed_changed',
+        triggered_by: 'assistant',
+        reason: `${r.id} · ${prevNeeded} → ${r.needed}`,
+      })
+    }
+  }
+
+  // Facts — key-level new additions.
+  const beforeFactKeys = new Set(before.facts.map((f) => f.key))
+  for (const f of after.facts) {
+    if (!beforeFactKeys.has(f.key)) {
+      events.push({
+        event_type: 'fact_extracted',
+        triggered_by: 'assistant',
+        reason: `${f.key} · ${f.qualifier.source}/${f.qualifier.quality}`,
+      })
+    }
+  }
+
+  // Insert all events in one batch. Carry before/after state on the
+  // umbrella row only — the per-delta rows are small chronological
+  // markers, not state snapshots. Saves storage and keeps the audit
+  // table queryable.
+  const rows = events.map((e, i) => ({
+    project_id: args.projectId,
+    event_type: e.event_type,
+    triggered_by: e.triggered_by,
+    reason: e.reason,
+    ...(i === 0
+      ? { before_state: before, after_state: after }
+      : { before_state: null, after_state: null }),
+  }))
+
+  const { error } = await supabase.from('project_events').insert(rows)
   if (error) {
-    // Phase 2.5 — promote from a casual `console.warn` to a structured
-    // line that platform log filters can pick up. The audit (Tier-2)
-    // flagged that a silently-dropped audit-event row leaves no trail
-    // for future investigation. We still do NOT abort the turn — a
-    // missing audit row is an audit gap, not a correctness regression
-    // — but failures are now greppable via the `event=audit_drop` tag.
     console.error(
       JSON.stringify({
         component: 'chat-turn',
@@ -365,13 +475,30 @@ export async function logTurnEvent(
         severity: 'warn',
         project_id: args.projectId,
         reason: args.reason,
+        events_count: events.length,
         sql_error_code: error.code ?? null,
         sql_error_message: error.message,
-        hint: 'project_events insert failed — turn proceeded but the audit row was lost.',
+        hint: 'project_events batch insert failed — turn proceeded but the audit rows were lost.',
       }),
     )
   }
 }
+
+/**
+ * Phase 6 A.7 — set of event types considered "meaningful" for the
+ * Bauherr-grade exports (PDF, Markdown). The architect-grade JSON
+ * export includes everything including 'turn_processed' and the
+ * high-volume 'fact_extracted' rows.
+ */
+export const MEANINGFUL_EVENT_TYPES: ReadonlySet<string> = new Set([
+  'recommendation_added',
+  'procedure_committed',
+  'procedure_status_changed',
+  'area_state_changed',
+  'document_added',
+  'role_added',
+  'role_needed_changed',
+])
 
 // ── Map messages to Anthropic shape ────────────────────────────────────
 
