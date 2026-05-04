@@ -20,6 +20,7 @@ import { ConversationCursor } from '../components/ConversationCursor'
 import { ChatDropZone } from '../components/ChatDropZone'
 import { ChatProgressBar } from '../components/Progress/ChatProgressBar'
 import { StickyContext } from '../components/StickyContext'
+import { StandUpButton } from '../components/StandUp'
 import { UnifiedFooter } from '../components/UnifiedFooter/UnifiedFooter'
 import { RateLimitBanner } from '../components/RateLimitBanner'
 import { useProjectEvents } from '../hooks/useProjectEvents'
@@ -349,6 +350,15 @@ export function ChatWorkspacePage() {
         </>
       )}
       <ConversationCursor />
+
+      {/* Phase 7 Move 11 — pause-and-orient surface. Hidden under
+        * 4 assistant turns; mounted alongside the layout so the
+        * fixed-position button works in both mobile + desktop. */}
+      <StandUpButton
+        project={project}
+        messages={messages ?? []}
+        events={events ?? []}
+      />
 
       <MobileRailDrawer
         open={leftOpen}

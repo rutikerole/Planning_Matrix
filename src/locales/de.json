@@ -921,6 +921,31 @@
     "impact": {
       "prefix": "Festgehalten"
     },
+    "standup": {
+      "button": "Aufstehen & umsehen",
+      "title": "Aufstehen & umsehen",
+      "close": "Schließen",
+      "storySoFar": "Bisheriger Verlauf",
+      "storySoFarMeta": "{{turns}} Runden · {{minutes}} Min.",
+      "storyEmpty": "Noch keine Meilensteine.",
+      "openQuestions": "Offene Fragen",
+      "openQuestionsMeta_one": "{{count}} offen",
+      "openQuestionsMeta_other": "{{count}} offen",
+      "openEmpty": "Aktuell keine offenen Fragen.",
+      "pendingBauamt": "Offen · Bauamt",
+      "pendingHeritage": "Offen · Denkmal",
+      "pendingYou": "Offen · von Ihnen",
+      "verifyAssumed": "Bestätigen: {{label}}",
+      "confirmPlanning": "Planungsrecht klären: existiert ein qualifizierter Bebauungsplan?",
+      "action": {
+        "pdf": "Checkliste als PDF",
+        "markdown": "Markdown-Checkliste",
+        "briefing": "Briefing öffnen",
+        "json": "Projektdaten exportieren"
+      },
+      "resumePrompt": "Pause durchatmen — wenn Sie bereit sind, setzen wir uns wieder.",
+      "sitBack": "Wieder Platz nehmen ↩"
+    },
     "chapters": {
       "moderator":         { "inProgress": "Eröffnung · läuft",          "resolved": "Eröffnung · geklärt" },
       "planungsrecht":     { "inProgress": "Planungsrecht · läuft",      "resolved": "Planungsrecht · geklärt" },

@@ -921,6 +921,31 @@
     "impact": {
       "prefix": "Established"
     },
+    "standup": {
+      "button": "Stand up & look around",
+      "title": "Stand up & look around",
+      "close": "Close",
+      "storySoFar": "Story so far",
+      "storySoFarMeta": "{{turns}} turns · {{minutes}} min",
+      "storyEmpty": "No milestones yet.",
+      "openQuestions": "Open questions",
+      "openQuestionsMeta_one": "{{count}} to resolve",
+      "openQuestionsMeta_other": "{{count}} to resolve",
+      "openEmpty": "No open questions right now.",
+      "pendingBauamt": "Pending · Bauamt",
+      "pendingHeritage": "Pending · Heritage",
+      "pendingYou": "Pending · You",
+      "verifyAssumed": "Confirm: {{label}}",
+      "confirmPlanning": "Confirm planning law: is there a qualified Bebauungsplan?",
+      "action": {
+        "pdf": "Checklist PDF",
+        "markdown": "Markdown checklist",
+        "briefing": "View briefing",
+        "json": "Export project data"
+      },
+      "resumePrompt": "Take a breath. Sit back down whenever you're ready.",
+      "sitBack": "Sit back down ↩"
+    },
     "chapters": {
       "moderator":         { "inProgress": "Opening · in progress",          "resolved": "Opening · resolved" },
       "planungsrecht":     { "inProgress": "Planning law · in progress",     "resolved": "Planning law · resolved" },
