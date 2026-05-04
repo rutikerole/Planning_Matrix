@@ -2,11 +2,15 @@
 //
 // A tiny pair of warm radial gradients that drift with the cursor.
 // Disabled on touch devices (no mouse) and on reduced-motion.
+//
+// Phase 7.8 §2.8 — magnitude halved (18 → 9 px). With AmbientTint
+// gone, the parallax was the only ambient motion left and it was
+// reading as too active for the Manuscript surface.
 
 import { useEffect, useRef } from 'react'
 import { useReducedMotion } from 'framer-motion'
 
-const STRENGTH = 18 // max px offset from cursor
+const STRENGTH = 9 // max px offset from cursor
 
 export function CursorParallax() {
   const reduced = useReducedMotion()
