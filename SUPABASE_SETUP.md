@@ -259,6 +259,23 @@ If any of those fail, jump to the **Troubleshooting** section below.
 
 ---
 
+## Step 8 — Pre-launch RLS smoke test (do this before promoting to prod)
+
+Row-level security is the only enforcement boundary in this project — the Edge Function uses the anon key with the caller's bearer token, never the `service_role` key. A regression in the RLS policies is a real privacy incident.
+
+Before promoting a fresh Supabase project to production, run the assertions in `supabase/migrations/_smoke_tests/rls_second_account.sql` against a populated DB:
+
+1. Sign up two test accounts via your running SPA (suggested addresses: `rls-test-a@example.invalid`, `rls-test-b@example.invalid`). The `.invalid` TLD ensures these can never collide with real signups.
+2. Sign in as User A, complete the wizard, run a couple of conversation turns. Note the resulting `projects.id` from the URL `/projects/<UUID>`.
+3. Open **SQL Editor**, open the smoke-test file, replace the three placeholder UUIDs at the top (`USER_A_ID`, `USER_B_ID`, `PROJECT_A_ID`), and run the assertions one by one.
+4. Each assertion has a comment block stating its expected result — zero rows for cross-user reads, "UPDATE 0 / DELETE 0" for cross-user mutations, an explicit policy-violation error for cross-user inserts, and zero rows for owner-side audit-tampering attempts.
+
+A single deviation blocks the deploy.
+
+The smoke-test file is intentionally NOT a migration — the leading underscore on `_smoke_tests/` keeps it out of the Supabase migrations runner. Re-run it any time RLS policies are touched.
+
+---
+
 ## Troubleshooting
 
 ### "I never receive the confirmation email"
