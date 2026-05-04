@@ -98,7 +98,21 @@ export const SPINE_STAGES: SpineStageDef[] = [
     index: 1,
     titleKey: 'chat.spine.stages.project_intent.title',
     ownerSpecialist: 'moderator',
-    isDone: (state) => factPrefixCount(state, 'PROJECT.') > 0,
+    // Phase 7.7 §1.3 — defensive widening (matches the legal-regime
+    // shape from Phase 7.6 §1.3). Done when any of:
+    //   (a) any PROJECT.* fact captured (canonical persona signal)
+    //   (b) the moderator has spoken AND a different specialist has
+    //       since taken the floor (the persona has moved on)
+    //   (c) the user has provided 2+ user-answers (the moderator's
+    //       opening pair has clearly been answered)
+    isDone: (state, messages) => {
+      if (factPrefixCount(state, 'PROJECT.') > 0) return true
+      if (specialistHandedOff(messages, 'moderator')) return true
+      const userAnswers = messages.filter(
+        (m) => m.role === 'user' && m.user_answer != null,
+      ).length
+      return userAnswers >= 2
+    },
     getSnippet: (state) => formatFactSnippet(state, 'PROJECT.'),
     getFirstMessageIndex: (messages) =>
       indexOfFirst(messages, (m) => m.role === 'assistant' && m.specialist === 'moderator'),
@@ -108,12 +122,20 @@ export const SPINE_STAGES: SpineStageDef[] = [
     index: 2,
     titleKey: 'chat.spine.stages.plot_address.title',
     ownerSpecialist: 'moderator',
-    // Done when any PLOT.* fact landed OR area A is no longer PENDING
-    // (no-plot path explicitly takes A → VOID; with-plot path
-    // eventually flips A → ACTIVE).
-    isDone: (state) =>
-      factPrefixCount(state, 'PLOT.') > 0 ||
-      (state.areas?.A?.state ?? 'PENDING') !== 'PENDING',
+    // Phase 7.7 §1.3 — defensive widening. Done when any of:
+    //   (a) any PLOT.* fact captured
+    //   (b) area A is no longer PENDING (ACTIVE for with-plot path,
+    //       VOID for explicit no-plot path)
+    //   (c) the planungsrecht specialist has spoken — that persona
+    //       receives the plot context and only takes the floor once
+    //       moderator has finished collecting it
+    isDone: (state, messages) => {
+      if (factPrefixCount(state, 'PLOT.') > 0) return true
+      if ((state.areas?.A?.state ?? 'PENDING') !== 'PENDING') return true
+      return messages.some(
+        (m) => m.role === 'assistant' && m.specialist === 'planungsrecht',
+      )
+    },
     getSnippet: (state) => formatFactSnippet(state, 'PLOT.'),
     getFirstMessageIndex: (messages) =>
       indexOfFirst(messages, (m) => m.role === 'user' && m.user_answer != null),
