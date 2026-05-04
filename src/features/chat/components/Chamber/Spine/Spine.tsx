@@ -31,7 +31,8 @@ export function Spine({ header, stageList, footer, className }: Props) {
       data-spine-root="true"
       className={cn(
         'hidden lg:flex',
-        'fixed left-0 top-0 bottom-0 z-[25]',
+        // Phase 7.6 §1.7 — sits below the global app header (48 px).
+        'fixed left-0 top-12 bottom-0 z-[25]',
         'w-spine flex-col',
         'bg-paper-card border-r border-[var(--hairline,rgba(26,22,18,0.10))]',
         className,

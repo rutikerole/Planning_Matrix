@@ -1,10 +1,9 @@
 // Phase 7.5 — SpineHeader.
-//
-// Sticky top of the Spine. Wordmark, project name, plot, round
-// counter, slim 2 px progress bar.
+// Phase 7.6 §1.7 — wordmark dropped (the global <AppHeader> carries it
+// now). The header now reads as: project name + plot + round counter
+// + percent + 2 px clay progress bar.
 
 import { useTranslation } from 'react-i18next'
-import { Link } from 'react-router-dom'
 import { useReducedMotion } from 'framer-motion'
 
 interface Props {
@@ -24,20 +23,9 @@ export function SpineHeader({ projectName, plotAddress, percent, round, totalEst
 
   return (
     <header className="sticky top-0 bg-paper-card px-4 pt-4 pb-3.5 border-b border-[var(--hairline,rgba(26,22,18,0.08))] z-[1]">
-      {/* Wordmark */}
-      <Link
-        to="/dashboard"
-        className="inline-flex font-serif italic text-[11px] text-clay-deep hover:text-clay leading-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/55 focus-visible:ring-offset-2 focus-visible:ring-offset-paper-card rounded-sm"
-      >
-        <span className="italic">{t('chat.chamber.wordmark').split(' ')[0]}</span>
-        <span className="not-italic font-sans tracking-[0.02em] ml-1">
-          {t('chat.chamber.wordmark').split(' ').slice(1).join(' ')}
-        </span>
-      </Link>
-
-      {/* Project name */}
+      {/* Project name (wordmark moved to <AppHeader> in commit 3) */}
       <p
-        className="mt-3 text-[12.5px] font-medium text-ink leading-[1.3] line-clamp-2"
+        className="text-[12.5px] font-medium text-ink leading-[1.3] line-clamp-2"
         title={projectName}
       >
         {cleanName}

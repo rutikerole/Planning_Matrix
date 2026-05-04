@@ -3,9 +3,14 @@ import { useEffect } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useAuthStore } from '@/stores/authStore'
 import { AuthSkeleton } from './AuthSkeleton'
+import { AppHeader } from './AppHeader'
 
 interface Props {
   children: ReactNode
+  /** Phase 7.6 §1.7 — opt out of the global app header for routes
+   *  that need to render their own (currently: dashboard keeps its
+   *  legacy header until commit 11 reconciles them). */
+  hideAppHeader?: boolean
 }
 
 /**
@@ -21,7 +26,7 @@ interface Props {
  * isLoading=false, the effect fires immediately, redirect happens
  * before the protected component can render. Net effect: no flash.
  */
-export function ProtectedRoute({ children }: Props) {
+export function ProtectedRoute({ children, hideAppHeader }: Props) {
   const { user, isLoading } = useAuthStore()
   const location = useLocation()
   const navigate = useNavigate()
@@ -36,5 +41,10 @@ export function ProtectedRoute({ children }: Props) {
 
   if (isLoading) return <AuthSkeleton />
   if (!user) return null
-  return <>{children}</>
+  return (
+    <>
+      {!hideAppHeader && <AppHeader />}
+      {children}
+    </>
+  )
 }

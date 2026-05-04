@@ -78,7 +78,7 @@ export function AppRouter() {
           element={
             <>
               <SEO titleKey="seo.title.dashboard" />
-              <ProtectedRoute>
+              <ProtectedRoute hideAppHeader>
                 <DashboardPage />
               </ProtectedRoute>
             </>

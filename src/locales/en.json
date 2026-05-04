@@ -442,6 +442,11 @@
       "version": "v1 · Bavaria live"
     }
   },
+  "appHeader": {
+    "openMenu": "Open account menu",
+    "signOut": "Sign out",
+    "myProfile": "My profile"
+  },
   "a11y": {
     "skipToMain": "Skip to main content"
   },

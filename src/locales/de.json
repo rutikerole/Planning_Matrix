@@ -442,6 +442,11 @@
       "version": "v1 · Bayern produktiv"
     }
   },
+  "appHeader": {
+    "openMenu": "Konto-Menü öffnen",
+    "signOut": "Abmelden",
+    "myProfile": "Mein Profil"
+  },
   "a11y": {
     "skipToMain": "Zum Hauptinhalt springen"
   },
