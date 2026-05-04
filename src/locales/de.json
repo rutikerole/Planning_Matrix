@@ -923,6 +923,62 @@
       "beteiligte":        { "inProgress": "Beteiligte · läuft",         "resolved": "Beteiligte · geklärt" },
       "synthesizer":       { "inProgress": "Synthese · läuft",           "resolved": "Synthese · geklärt" }
     },
+    "law": {
+      "viewFull": "Vollständigen Artikel anzeigen",
+      "baugb": {
+        "30": {
+          "head": "BauGB · § 30",
+          "title": "Zulässigkeit von Vorhaben im Geltungsbereich qualifizierter Bebauungspläne",
+          "summary": "Vorhaben sind zulässig, wenn sie den Festsetzungen eines qualifizierten Bebauungsplans nicht widersprechen und die Erschließung gesichert ist. § 30 ist die strengste der drei BauGB-Zulässigkeitsregelungen — Festsetzungen sind verbindlich."
+        },
+        "34": {
+          "head": "BauGB · § 34",
+          "title": "Zulässigkeit innerhalb der im Zusammenhang bebauten Ortsteile (Innenbereich)",
+          "summary": "Im unbeplanten Innenbereich richtet sich die Zulässigkeit nach der Eigenart der näheren Umgebung. § 34 verlangt, dass sich das Vorhaben nach Art und Maß der baulichen Nutzung einfügt — auch ohne Bebauungsplan."
+        },
+        "35": {
+          "head": "BauGB · § 35",
+          "title": "Bauen im Außenbereich",
+          "summary": "Im Außenbereich sind Vorhaben grundsätzlich unzulässig, sofern sie nicht privilegiert (§ 35 Abs. 1) oder sonstig (Abs. 2) zulässig sind. Die Hürden sind hoch — die meisten Wohnvorhaben fallen nicht unter die Privilegierung."
+        }
+      },
+      "baybo": {
+        "2": {
+          "head": "BayBO · Art. 2",
+          "title": "Begriffe — Gebäudeklassen 1–5",
+          "summary": "Definiert die Gebäudeklassen 1–5 nach Höhe (7 m / 13 m / 22 m), Nutzungseinheiten und Grundflächen. Die Gebäudeklasse bestimmt die Verfahrensart und die Anforderungen an Brandschutz, Standsicherheit und Bauvorlageberechtigung."
+        },
+        "57": {
+          "head": "BayBO · Art. 57",
+          "title": "Genehmigungsfreistellung",
+          "summary": "Wohngebäude der GK 1–3 im Geltungsbereich eines qualifizierten Bebauungsplans sind unter engen Voraussetzungen genehmigungsfrei. Die Gemeinde hat eine 1-Monatsfrist; Sonderbauten und Eingriffe in tragende Bauteile entfallen."
+        },
+        "58": {
+          "head": "BayBO · Art. 58",
+          "title": "Vereinfachtes Baugenehmigungsverfahren",
+          "summary": "Häufigste Verfahrensart für Wohnhäuser GK 1–3, wenn die Freistellung nach Art. 57 nicht greift. Nur planungsrechtliche und örtliche Bauvorschriften werden geprüft — Standsicherheit, Brandschutz und Wärmeschutz bleiben Bauherren-Verantwortung."
+        },
+        "59": {
+          "head": "BayBO · Art. 59",
+          "title": "Reguläres Baugenehmigungsverfahren",
+          "summary": "Vollumfängliche Prüfung aller Anforderungen — planungsrechtlich, bauordnungsrechtlich und sonstige öffentlich-rechtliche Vorgaben. Anwendung bei größeren Vorhaben außerhalb des vereinfachten Verfahrens; Frist 3 Monate."
+        }
+      },
+      "baydschg": {
+        "6": {
+          "head": "BayDSchG · Art. 6",
+          "title": "Erlaubnispflicht für Eingriffe an Baudenkmälern",
+          "summary": "Veränderungen an oder in der Nähe von Baudenkmälern bedürfen einer denkmalrechtlichen Erlaubnis. Die Erlaubnis ist neben der Baugenehmigung einzuholen — ohne sie ist auch ein an sich genehmigungsfreies Vorhaben unzulässig."
+        }
+      },
+      "baumschutzv": {
+        "3": {
+          "head": "BaumschutzV · § 3",
+          "title": "Geschützte Bäume — Stammumfang ab 60 cm",
+          "summary": "In München sind Bäume mit einem Stammumfang ab 60 cm in 1 m Höhe geschützt. Fällung, starke Eingriffe oder Wurzelbeschädigung benötigen eine Genehmigung — auch im Privatgarten."
+        }
+      }
+    },
     "export": {
       "menuLabel": "Exportieren",
       "eyebrow": "Exportieren",

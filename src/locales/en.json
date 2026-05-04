@@ -923,6 +923,62 @@
       "beteiligte":        { "inProgress": "Specialists · in progress",      "resolved": "Specialists · resolved" },
       "synthesizer":       { "inProgress": "Synthesis · in progress",        "resolved": "Synthesis · resolved" }
     },
+    "law": {
+      "viewFull": "View full article",
+      "baugb": {
+        "30": {
+          "head": "BauGB · Section 30",
+          "title": "Admissibility within qualified development plans",
+          "summary": "Projects are admissible when they do not contradict the provisions of a qualified development plan and access is assured. Section 30 is the strictest of the three BauGB admissibility regimes — plan provisions are binding."
+        },
+        "34": {
+          "head": "BauGB · Section 34",
+          "title": "Admissibility inside built-up areas (Innenbereich)",
+          "summary": "Inside built-up areas without a development plan, admissibility follows the character of the immediate surroundings. Section 34 requires the project to fit the type and scale of existing land use — even without a plan."
+        },
+        "35": {
+          "head": "BauGB · Section 35",
+          "title": "Building in the outer area (Außenbereich)",
+          "summary": "Projects in the outer area are generally inadmissible unless privileged (subsection 1) or otherwise admissible (subsection 2). The bar is high — most residential projects do not qualify for privileged status."
+        }
+      },
+      "baybo": {
+        "2": {
+          "head": "BayBO · Article 2",
+          "title": "Definitions — building classes 1–5",
+          "summary": "Defines building classes 1–5 by height (7 m / 13 m / 22 m), usage units, and floor area. The class determines the procedure type and the requirements for fire protection, structural integrity, and submission authority."
+        },
+        "57": {
+          "head": "BayBO · Article 57",
+          "title": "Approval exemption (Genehmigungsfreistellung)",
+          "summary": "Residential buildings in classes 1–3 within a qualified development plan are exempt from approval under tight conditions. The municipality has a 1-month review window; special buildings and structural alterations are excluded."
+        },
+        "58": {
+          "head": "BayBO · Article 58",
+          "title": "Simplified building permit procedure",
+          "summary": "The most common procedure type for residential buildings in classes 1–3 when Article 57 does not apply. Only planning law and local building regulations are reviewed — structural integrity, fire protection, and energy compliance remain the owner's responsibility."
+        },
+        "59": {
+          "head": "BayBO · Article 59",
+          "title": "Regular building permit procedure",
+          "summary": "Full review of all requirements — planning law, building regulations, and other public-law provisions. Used for larger projects outside the simplified procedure; statutory deadline is 3 months."
+        }
+      },
+      "baydschg": {
+        "6": {
+          "head": "BayDSchG · Article 6",
+          "title": "Heritage permission for alterations to listed buildings",
+          "summary": "Alterations to or near listed buildings require a heritage permit. The permit is required in addition to the building permit — without it, even an otherwise exempt project is inadmissible."
+        }
+      },
+      "baumschutzv": {
+        "3": {
+          "head": "BaumschutzV · Section 3",
+          "title": "Protected trees — trunk circumference ≥ 60 cm",
+          "summary": "In Munich, trees with a trunk circumference of 60 cm or more (measured at 1 m height) are protected. Felling, heavy interventions, or root damage require permission — including in private gardens."
+        }
+      }
+    },
     "export": {
       "menuLabel": "Export",
       "eyebrow": "Export",
