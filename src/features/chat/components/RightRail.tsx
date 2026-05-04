@@ -35,8 +35,11 @@ export function RightRail({ project }: Props) {
 
   return (
     <div className="w-full flex flex-col px-5 py-7 gap-7">
-      {/* 1. Axonometric drawing of the active intent */}
-      <IntentAxonometric intent={project.intent} />
+      {/* 1. Axonometric drawing of the active intent. Phase 7 Move 9
+        * passes state so the EFH variant layers reactive annotations
+        * (wall height, storey line, GK badge) on top of the existing
+        * 6-variant gallery. Other intents render unchanged. */}
+      <IntentAxonometric intent={project.intent} state={state} />
 
       {/* 2. TOP-3 cards */}
       <Top3 recommendations={recommendations} />

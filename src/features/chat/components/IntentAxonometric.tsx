@@ -1,10 +1,33 @@
 import type React from 'react'
 import { useTranslation } from 'react-i18next'
+import { m, useReducedMotion } from 'framer-motion'
 import { INTENT_TO_I18N } from '@/features/wizard/lib/selectTemplate'
+import type { Fact, ProjectState } from '@/types/projectState'
 
 interface Props {
   intent: string
+  /**
+   * Phase 7 Move 9 — when supplied, the EFH variant layers reactive
+   * annotations on top of the existing axonometric: wall-height
+   * dimensional bracket, vollgeschosse mid-storey line, and a GK
+   * badge in the upper-left corner. Each annotation fades in over
+   * 240 ms when the corresponding fact establishes; absent facts
+   * render no annotation. Other intent variants are unchanged.
+   */
+  state?: Partial<ProjectState>
   className?: string
+}
+
+function pickFact<T = unknown>(
+  facts: Fact[] | undefined,
+  keys: string[],
+): T | null {
+  if (!facts) return null
+  for (const k of keys) {
+    const f = facts.find((x) => x.key === k)
+    if (f && f.value !== null && f.value !== undefined) return f.value as T
+  }
+  return null
 }
 
 /**
@@ -18,9 +41,30 @@ interface Props {
  *
  * Intent unknown → falls through to the Sonstiges placeholder.
  */
-export function IntentAxonometric({ intent, className }: Props) {
+export function IntentAxonometric({ intent, state, className }: Props) {
   const { t } = useTranslation()
+  const reduced = useReducedMotion()
   const Drawing = INTENT_REGISTRY[intent] ?? SonstigesDrawing
+
+  // Phase 7 Move 9 — reactive annotations for the EFH variant. Fact
+  // keys are tried in a small alias list because the model has used
+  // both German and English forms across phases.
+  const facts = state?.facts
+  const wallHeight = pickFact<number>(facts, [
+    'wandhoehe',
+    'wall_height_m',
+    'wandhoehe_m',
+  ])
+  const stories = pickFact<number>(facts, ['vollgeschosse'])
+  const gk = pickFact<number>(facts, ['gebaeudeklasse'])
+  const isEfh = intent === 'neubau_einfamilienhaus'
+  const fadeIn = reduced
+    ? { initial: false as const, animate: { opacity: 1 } }
+    : {
+        initial: { opacity: 0 },
+        animate: { opacity: 1 },
+        transition: { duration: 0.24, ease: [0.16, 1, 0.3, 1] as const },
+      }
 
   return (
     <figure className={`flex flex-col gap-2 ${className ?? ''}`}>
@@ -35,6 +79,92 @@ export function IntentAxonometric({ intent, className }: Props) {
         className="text-drafting-blue/55 w-full h-auto"
       >
         <Drawing />
+        {isEfh && (
+          <g className="text-clay">
+            {/* Wall-height bracket on the right side of the side
+              * gable. Dashed mid-line + tick marks + JetBrains Mono
+              * value. */}
+            {wallHeight !== null && (
+              <m.g {...fadeIn}>
+                <line x1="186" y1="60" x2="194" y2="60" stroke="currentColor" strokeWidth="0.8" />
+                <line x1="186" y1="130" x2="194" y2="130" stroke="currentColor" strokeWidth="0.8" />
+                <line
+                  x1="190"
+                  y1="60"
+                  x2="190"
+                  y2="130"
+                  stroke="currentColor"
+                  strokeWidth="0.8"
+                  strokeDasharray="2 2"
+                />
+                <text
+                  x="198"
+                  y="98"
+                  fontFamily="JetBrains Mono, ui-monospace, monospace"
+                  fontSize="6"
+                  fill="currentColor"
+                  stroke="none"
+                  letterSpacing="0.5"
+                >
+                  {wallHeight}m
+                </text>
+              </m.g>
+            )}
+            {/* Mid-storey line across the front face when ≥ 2 stories. */}
+            {stories !== null && stories >= 2 && (
+              <m.line
+                x1="70"
+                y1="105"
+                x2="150"
+                y2="105"
+                stroke="currentColor"
+                strokeWidth="0.6"
+                {...fadeIn}
+              />
+            )}
+            {/* GK badge in the upper-left corner. */}
+            {gk !== null && (
+              <m.g {...fadeIn}>
+                <rect
+                  x="10"
+                  y="8"
+                  width="34"
+                  height="14"
+                  fill="hsl(var(--clay) / 0.10)"
+                  stroke="currentColor"
+                  strokeWidth="0.5"
+                />
+                <text
+                  x="27"
+                  y="18"
+                  fontFamily="JetBrains Mono, ui-monospace, monospace"
+                  fontSize="7"
+                  fill="currentColor"
+                  stroke="none"
+                  textAnchor="middle"
+                  letterSpacing="0.4"
+                >
+                  GK {gk}
+                </text>
+              </m.g>
+            )}
+            {/* North arrow — always visible for the EFH variant. */}
+            <g transform="translate(220,18)">
+              <line x1="0" y1="0" x2="0" y2="14" stroke="currentColor" strokeWidth="0.8" />
+              <polygon points="-3,3 0,0 3,3" fill="currentColor" stroke="none" />
+              <text
+                x="-3"
+                y="22"
+                fontFamily="JetBrains Mono, ui-monospace, monospace"
+                fontSize="6"
+                fill="currentColor"
+                stroke="none"
+              >
+                N
+              </text>
+            </g>
+          </g>
+        )}
       </svg>
       <figcaption className="flex items-center justify-between gap-3 px-1">
         <span className="font-serif italic text-[10px] text-clay/85 leading-none">
