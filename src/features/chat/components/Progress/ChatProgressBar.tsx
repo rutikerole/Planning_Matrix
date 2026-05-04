@@ -1,16 +1,30 @@
 // ───────────────────────────────────────────────────────────────────────
-// Phase 3.6 #69 — Loud progress indicator at top of thread
+// Phase 3.6 #69 / Phase 7 Move 1 — Compass-arc progress indicator
 //
-// Replaces the "dotted hairline" feel of the left-rail ProgressMeter as
-// the dominant signal of "where am I in the conversation." Sticky to
-// the top of the thread, full-width within the message column,
-// 7 segments matching the seven conversation gates.
+// Sticky top-of-thread compass arc that reads as architectural drawing
+// rather than browser tabs. Replaces the segmented-pill visual of the
+// Phase 3.6 implementation; keeps the same export, the same engine
+// (`computeSegmentProgress` over `SEGMENT_ORDER`), and the same a11y
+// surface so import sites and Phase 2.5 durability behaviour are
+// untouched.
 //
-//   ●━━━━●━━━━●━━━━●━━━━○━━━━○━━━━○                         42 %
-//   Init   Plot   Code   Sonst.  Verf.  Team    Synth.       turn 9
+//   journey ━━━●━━━━━━━━━━━━━━           Turn 18 / ~24   M 1:100 ⊢━━⊣
 //
-// The left-rail ProgressMeter stays mounted as a secondary indicator
-// (Q8 locked: keep, demote visually).
+// • A 1 px hairline track spans the row.
+// • A 1 px clay overlay grows left → right at `percent`% with a clay
+//   halo dot at the leading edge (animates over 600 ms cubic-bezier
+//   0.16, 1, 0.3, 1 — the prototype's `--ease`).
+// • Seven 1 px-wide station ticks distribute evenly across the arc,
+//   one per existing SEGMENT_ORDER specialist. State drives colour
+//   and height: passed = clay-soft, current = clay (raised to 22 px
+//   and lifted 2 px), upcoming = hairline.
+// • Right side: italic-serif turn count `Turn 18 / ~24` with a mono
+//   eyebrow, plus a 36 px scale-mark "M 1:100" with bracket ticks.
+//
+// Compact mode (mobile drawer) drops the journey label, the meta
+// column, and the per-station labels, but keeps the arc + ticks at
+// the same stroke weight. ChatProgressBarMobile thin-wraps this with
+// `compact` for use inside the mobile top-bar drawer.
 // ───────────────────────────────────────────────────────────────────────
 
 import { useTranslation } from 'react-i18next'
@@ -18,7 +32,6 @@ import { useReducedMotion } from 'framer-motion'
 import { useChatStore } from '@/stores/chatStore'
 import { cn } from '@/lib/utils'
 import {
-  SEGMENT_ORDER,
   computeSegmentProgress,
   type ProgressSegment,
 } from '../../lib/progressEstimate'
@@ -29,12 +42,12 @@ interface Props {
   /** When true (mobile drawer), drops the labels and shrinks the bar. */
   compact?: boolean
   /**
-   * Phase 2.5 fix — durable progress derivation.
+   * Phase 2.5 — durable progress derivation.
    *
    * The chatStore's `turnCount` and `currentSpecialist` are session-
    * scoped: a `useEffect(() => () => reset(), [projectId])` in
    * ChatWorkspacePage clears them on every project (re)mount. Refresh
-   * a project that already has 8 messages and the bar reads 5%
+   * a project that already has 8 messages and the bar reads 5 %
    * (specialist anchor for `null` specialist + 0/18 turn ratio).
    *
    * When `messages` is provided, the bar derives both signals from
@@ -48,29 +61,10 @@ interface Props {
   messages?: MessageRow[]
 }
 
-const SEGMENT_LABEL_DE: Record<Specialist, string> = {
-  moderator: 'Init',
-  planungsrecht: 'Plan.',
-  bauordnungsrecht: 'BauO',
-  sonstige_vorgaben: 'Sonst.',
-  verfahren: 'Verf.',
-  beteiligte: 'Team',
-  synthesizer: 'Synth.',
-}
-
-const SEGMENT_LABEL_EN: Record<Specialist, string> = {
-  moderator: 'Init',
-  planungsrecht: 'Plan.',
-  bauordnungsrecht: 'Code',
-  sonstige_vorgaben: 'Other',
-  verfahren: 'Proc.',
-  beteiligte: 'Team',
-  synthesizer: 'Synth.',
-}
+const TYPICAL_TURN_COUNT = 18
 
 export function ChatProgressBar({ compact = false, messages }: Props) {
-  const { t, i18n } = useTranslation()
-  const lang = (i18n.resolvedLanguage ?? 'de') as 'de' | 'en'
+  const { t } = useTranslation()
   const reduced = useReducedMotion()
 
   const turnCountFromStore = useChatStore((s) => s.turnCount)
@@ -78,11 +72,6 @@ export function ChatProgressBar({ compact = false, messages }: Props) {
   const completionSignal = useChatStore((s) => s.lastCompletionSignal)
 
   // Phase 2.5 — durable derivation from the persisted messages list.
-  // chatStore values reset on project remount (see Props doc); without
-  // this fallback the bar shows 5% on every reload of a long
-  // conversation. Use Math.max() so an in-flight specialist promotion
-  // (chatStore wins because it's the freshest signal) still reflects
-  // even when messages haven't yet caught up to the streaming turn.
   let turnCount = turnCountFromStore
   let currentSpecialist = currentSpecialistFromStore
   if (messages && messages.length > 0) {
@@ -101,134 +90,243 @@ export function ChatProgressBar({ compact = false, messages }: Props) {
     isReadyForReview,
   )
 
-  const labels = lang === 'en' ? SEGMENT_LABEL_EN : SEGMENT_LABEL_DE
+  // Estimated total clamps to never display "Turn 22 / ~18". When the
+  // conversation runs longer than the typical ceiling we widen the
+  // denominator to match so the ratio stays honest.
+  const estimatedTotal = Math.max(turnCount, TYPICAL_TURN_COUNT)
 
+  const ariaLabel = t('chat.progress.eyebrow', { defaultValue: 'Fortschritt' })
+
+  // ── Compact (mobile drawer) — bare arc, no labels, no meta. ─────
+  if (compact) {
+    return (
+      <div
+        role="progressbar"
+        aria-valuenow={percent}
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-label={ariaLabel}
+        data-pm-progress-bar="true"
+        className="w-full py-2"
+      >
+        <CompassArc
+          segments={segments}
+          percent={percent}
+          currentIdx={currentIdx}
+          isReadyForReview={isReadyForReview}
+          reduced={!!reduced}
+          showLabels={false}
+        />
+      </div>
+    )
+  }
+
+  // ── Desktop sticky compass — label · arc · meta. ────────────────
+  // Background is a paper-to-transparent gradient (paper opaque to 70 %,
+  // fades to 0 by 100 %). Implemented as inline style because Tailwind
+  // 3.4's gradient utilities don't compose stop-positions with the
+  // hsl(var(--paper)) indirection cleanly. Backdrop blur preserves
+  // legibility when the thread scrolls through.
   return (
     <div
       role="progressbar"
       aria-valuenow={percent}
       aria-valuemin={0}
       aria-valuemax={100}
-      aria-label={t('chat.progress.eyebrow', { defaultValue: 'Fortschritt' })}
+      aria-label={ariaLabel}
       data-pm-progress-bar="true"
-      className={cn(
-        'w-full bg-paper/95 backdrop-blur-[2px]',
-        compact ? 'py-2' : 'sticky top-0 z-30 border-b border-ink/12 px-4 sm:px-6 lg:px-8 py-3',
-      )}
+      className="sticky top-0 z-30 px-14 pt-4 pb-[14px] backdrop-blur-[2px]"
+      style={{
+        backgroundImage:
+          'linear-gradient(180deg, hsl(var(--paper)) 0%, hsl(var(--paper)) 70%, hsl(var(--paper) / 0) 100%)',
+      }}
     >
-      <div className="flex items-center gap-4">
-        <ol
-          role="list"
-          aria-label={t('chat.progress.segments', {
-            defaultValue: 'Konversationsabschnitte',
-          })}
-          className="flex flex-1 items-center gap-1 sm:gap-2"
-        >
-          {segments.map((seg, idx) => (
-            <Segment
-              key={seg.specialist}
-              segment={seg}
-              isLast={idx === SEGMENT_ORDER.length - 1}
-              label={labels[seg.specialist]}
-              showLabel={!compact}
-              isCurrent={idx === currentIdx && !isReadyForReview}
-              reduced={reduced ?? false}
-            />
-          ))}
-        </ol>
+      <div className="flex items-center justify-between gap-6">
+        <span className="font-mono text-[9.5px] tracking-[0.18em] uppercase text-ink-mute whitespace-nowrap">
+          {t('chat.compass.journey', { defaultValue: 'Journey' })}
+        </span>
 
-        <div className="flex items-baseline gap-2 shrink-0 tabular-nums">
-          <span className="font-serif italic text-[15px] text-ink leading-none">
-            {percent}
-            <span className="text-clay/70 ml-0.5">%</span>
-          </span>
-          {!compact && (
-            <span className="text-[11px] uppercase tracking-[0.18em] text-clay/72 leading-none">
-              {t('chat.progress.turnLabel', {
-                defaultValue: 'Turn',
-              })}{' '}
-              <span className="text-ink/85">{turnCount}</span>
-            </span>
+        <CompassArc
+          segments={segments}
+          percent={percent}
+          currentIdx={currentIdx}
+          isReadyForReview={isReadyForReview}
+          reduced={!!reduced}
+          showLabels={true}
+          stationLabels={segments.map((s) =>
+            t(`chat.compass.station.${s.specialist}`, {
+              defaultValue: s.specialist,
+            }),
           )}
+        />
+
+        <div className="flex items-center gap-3.5 whitespace-nowrap">
+          <p className="font-serif italic text-[16px] text-ink leading-none m-0">
+            <span className="font-mono not-italic text-[9.5px] tracking-[0.14em] uppercase text-ink-mute mr-1.5">
+              {t('chat.compass.turn', { defaultValue: 'Turn' })}
+            </span>
+            <span className="tabular-figures">{turnCount}</span>
+            <span className="mx-1">/</span>
+            <span className="text-ink-mute tabular-figures">~{estimatedTotal}</span>
+          </p>
+          <ScaleMark />
         </div>
       </div>
     </div>
   )
 }
 
-interface SegmentProps {
-  segment: ProgressSegment
-  isLast: boolean
-  label: string
-  showLabel: boolean
-  isCurrent: boolean
+// ── Compass arc core ────────────────────────────────────────────────
+//
+// The arc is a 18 px-tall flex container with three absolutely-positioned
+// layers + one in-flow stations row:
+//   1. track     — 1 px hairline horizontal rule at vertical centre
+//   2. progress  — 1 px clay overlay, width animates over 600 ms,
+//                  with a clay halo dot at its leading edge
+//   3. stations  — 7 evenly-spaced 1 px-wide vertical ticks
+//
+// Pinned widths come from the segment array's length (always 7); the
+// flex justify-between then gives even spacing without per-tick offset
+// math. Reduced-motion zeroes the width transition.
+
+interface ArcProps {
+  segments: ProgressSegment[]
+  percent: number
+  currentIdx: number
+  isReadyForReview: boolean
   reduced: boolean
+  showLabels: boolean
+  stationLabels?: string[]
 }
 
-function Segment({ segment, isLast, label, showLabel, isCurrent, reduced }: SegmentProps) {
-  const { state, fill } = segment
-
-  // Segment color rules:
-  //   done      → solid clay
-  //   current   → clay anchor + drafting-blue fill proportional to `fill`
-  //   upcoming  → paper background, ink/15 hairline
-  const isDone = state === 'done'
-  const isUpcoming = state === 'upcoming'
+function CompassArc({
+  segments,
+  percent,
+  currentIdx,
+  isReadyForReview,
+  reduced,
+  showLabels,
+  stationLabels,
+}: ArcProps) {
+  const clampedPercent = Math.max(0, Math.min(100, percent))
 
   return (
-    <li className="flex flex-col items-stretch flex-1 min-w-0">
-      <div className="flex items-center min-w-0">
-        {/* The segment bar — 4px tall stripe. */}
-        <div
-          className={cn(
-            'relative h-1 rounded-full flex-1 min-w-0 overflow-hidden',
-            isDone && 'bg-clay',
-            isCurrent && 'bg-clay/15',
-            isUpcoming && 'bg-ink/10',
-          )}
-        >
-          {/* Current segment progress fill — drafting-blue at 65%. */}
-          {isCurrent && (
-            <span
-              aria-hidden="true"
-              className={cn(
-                'absolute inset-y-0 left-0 bg-drafting-blue/65 rounded-full',
-                !reduced && 'transition-[width] duration-soft ease-soft',
-              )}
-              style={{ width: `${Math.max(8, Math.round(fill * 100))}%` }}
-            />
-          )}
-        </div>
+    <div className="relative flex-1 h-[18px] flex items-center">
+      {/* Track */}
+      <span
+        aria-hidden="true"
+        className="absolute left-0 right-0 top-1/2 h-px bg-hairline -translate-y-1/2"
+      />
 
-        {/* Connector hairline between segments. */}
-        {!isLast && (
-          <span
-            aria-hidden="true"
-            className={cn(
-              'h-px w-1.5 sm:w-2 shrink-0',
-              isDone ? 'bg-clay' : 'bg-ink/10',
-            )}
+      {/* Progress overlay — 1 px clay, width animates 600 ms ease */}
+      <span
+        aria-hidden="true"
+        className="absolute left-0 top-1/2 -translate-y-1/2 h-px bg-clay"
+        style={{
+          width: `${clampedPercent}%`,
+          transition: reduced
+            ? 'none'
+            : 'width 600ms cubic-bezier(0.16, 1, 0.3, 1)',
+        }}
+      >
+        {/* Halo dot at the leading edge — 8×8 clay with 2 px paper
+         * ring and 1 px clay outer ring, matching the prototype. */}
+        <span
+          aria-hidden="true"
+          className="absolute -right-1 -top-[3.5px] block w-2 h-2 rounded-full bg-clay border-2 border-paper"
+          style={{ boxShadow: '0 0 0 1px var(--clay, hsl(var(--clay)))' }}
+        />
+      </span>
+
+      {/* Stations — 7 ticks, evenly distributed via flex justify-between */}
+      <ol
+        aria-hidden="true"
+        className="relative w-full h-[18px] flex justify-between items-center"
+      >
+        {segments.map((seg, idx) => (
+          <Station
+            key={seg.specialist}
+            segment={seg}
+            isCurrent={idx === currentIdx && !isReadyForReview}
+            label={showLabels ? stationLabels?.[idx] ?? '' : ''}
+            showLabel={showLabels}
           />
-        )}
-      </div>
+        ))}
+      </ol>
+    </div>
+  )
+}
 
-      {showLabel && (
-        <p
+// ── Station tick ────────────────────────────────────────────────────
+//
+// Tailwind can't use `attr()` in pseudo-elements reliably, so the
+// per-station label below the tick is a real <span> positioned with
+// `top-[22px] left-1/2 -translate-x-1/2`. Compact mode skips the label.
+
+interface StationProps {
+  segment: ProgressSegment
+  isCurrent: boolean
+  label: string
+  showLabel: boolean
+}
+
+function Station({ segment, isCurrent, label, showLabel }: StationProps) {
+  const isPassed = segment.state === 'done'
+
+  return (
+    <li
+      className={cn(
+        'relative w-px shrink-0',
+        isCurrent
+          ? 'h-[22px] -mt-[2px] bg-clay'
+          : isPassed
+            ? 'h-[18px] bg-clay-soft'
+            : 'h-[18px] bg-hairline',
+      )}
+    >
+      {showLabel && label && (
+        <span
           className={cn(
-            'mt-1.5 text-[11px] tracking-[0.10em] truncate text-center',
+            'absolute top-[22px] left-1/2 -translate-x-1/2 font-mono text-[8.5px] tracking-[0.12em] uppercase whitespace-nowrap',
             isCurrent
-              ? 'text-ink font-medium'
-              : isDone
-                ? 'text-clay/85'
-                : 'text-ink/40',
+              ? 'text-clay font-medium'
+              : isPassed
+                ? 'text-ink-mute'
+                : 'text-ink-faint',
           )}
-          // The label sits beneath each segment, tightly bound to it.
-          // Truncate so a long Inter label doesn't push neighbouring
-          // segments off-grid on narrow viewports.
         >
           {label}
-        </p>
+        </span>
       )}
     </li>
+  )
+}
+
+// ── Scale mark ──────────────────────────────────────────────────────
+//
+// 36 px hairline with 5 px-tall bracket ticks at each end + "M 1:100"
+// mono label. Architectural-drawing finishing flourish.
+
+function ScaleMark() {
+  return (
+    <span
+      aria-hidden="true"
+      className="inline-flex items-center gap-1.5 text-ink-mute font-mono text-[9.5px] tracking-[0.08em]"
+    >
+      <svg
+        width="36"
+        height="6"
+        viewBox="0 0 36 6"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1"
+        strokeLinecap="round"
+      >
+        <line x1="0" y1="3" x2="36" y2="3" />
+        <line x1="0.5" y1="0.5" x2="0.5" y2="5.5" />
+        <line x1="35.5" y1="0.5" x2="35.5" y2="5.5" />
+      </svg>
+      <span>M 1:100</span>
+    </span>
   )
 }
