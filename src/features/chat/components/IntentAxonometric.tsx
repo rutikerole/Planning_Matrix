@@ -15,6 +15,12 @@ interface Props {
    * render no annotation. Other intent variants are unchanged.
    */
   state?: Partial<ProjectState>
+  /**
+   * Phase 7 Pass 3 — when true, omits the figcaption (intent label
+   * + scale-mark). Used by ProjectPortrait so it can lay the legend
+   * between the drawing and the title row.
+   */
+  hideCaption?: boolean
   className?: string
 }
 
@@ -41,7 +47,12 @@ function pickFact<T = unknown>(
  *
  * Intent unknown → falls through to the Sonstiges placeholder.
  */
-export function IntentAxonometric({ intent, state, className }: Props) {
+export function IntentAxonometric({
+  intent,
+  state,
+  hideCaption = false,
+  className,
+}: Props) {
   const { t } = useTranslation()
   const reduced = useReducedMotion()
   const Drawing = INTENT_REGISTRY[intent] ?? SonstigesDrawing
@@ -177,21 +188,25 @@ export function IntentAxonometric({ intent, state, className }: Props) {
           </g>
         )}
       </svg>
-      <figcaption className="flex items-center justify-between gap-3 px-1">
-        <span className="font-serif italic text-[10px] text-clay/85 leading-none">
-          {(() => {
-            const slug =
-              (INTENT_TO_I18N as Record<string, string>)[intent] ?? 'sonstige'
-            return t(`wizard.q1.options.${slug}.label`, {
-              defaultValue: t('wizard.q1.options.sonstige.label'),
-            })
-          })()}
-        </span>
-        <ScaleBar />
-      </figcaption>
+      {!hideCaption && (
+        <figcaption className="flex items-center justify-between gap-3 px-1">
+          <span className="font-serif italic text-[10px] text-clay/85 leading-none">
+            {(() => {
+              const slug =
+                (INTENT_TO_I18N as Record<string, string>)[intent] ?? 'sonstige'
+              return t(`wizard.q1.options.${slug}.label`, {
+                defaultValue: t('wizard.q1.options.sonstige.label'),
+              })
+            })()}
+          </span>
+          <ScaleBar />
+        </figcaption>
+      )}
     </figure>
   )
 }
+
+export { ScaleBar as IntentScaleBar }
 
 /** Scale bar — three 12px segments + tick marks + "M 1:100" label. */
 function ScaleBar() {

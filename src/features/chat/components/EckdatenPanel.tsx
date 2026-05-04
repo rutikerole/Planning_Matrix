@@ -122,7 +122,7 @@ export function EckdatenPanel({ project, facts }: Props) {
                 <span className="text-[11px] text-clay/85 uppercase tracking-[0.18em]">
                   {row.key}
                 </span>
-                <span className="text-[14px] font-medium text-ink leading-snug break-words">
+                <span className="text-[13px] font-medium text-ink leading-[1.35] break-words">
                   {row.value}
                 </span>
                 <span className="text-[9px] text-clay/60 italic uppercase tracking-[0.14em] tabular-nums">
