@@ -10,6 +10,7 @@
 
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { m, useReducedMotion } from 'framer-motion'
 import { cn } from '@/lib/utils'
 import type { MessageRow } from '@/types/db'
 import type { Specialist } from '@/types/projectState'
@@ -56,6 +57,7 @@ export function MessageAssistant({
   const specialistLabel = t(`chat.specialists.${specialist}`)
   const runningHead = SPECIALIST_RUNNING_HEAD[specialist] ?? specialistLabel
 
+  const reduced = useReducedMotion()
   const longPress = useLongPress({
     onLongPress: () => {
       if (isMobile) setSheetOpen(true)
@@ -78,14 +80,27 @@ export function MessageAssistant({
         {isHandoff && (
           <MatchCut from={previousSpecialist as Specialist} to={specialist} />
         )}
-        <div className="flex items-center gap-3">
+        <m.div
+          initial={
+            reduced || isHistory || !isHandoff
+              ? false
+              : { opacity: 0, y: 8 }
+          }
+          animate={{ opacity: 1, y: 0 }}
+          transition={{
+            duration: reduced || isHistory || !isHandoff ? 0 : 0.32,
+            delay: reduced || isHistory || !isHandoff ? 0 : 0.32,
+            ease: [0.16, 1, 0.3, 1],
+          }}
+          className="flex items-center gap-3"
+        >
           <span style={{ color: 'hsl(var(--clay))' }}>
             <ChamberSigil specialist={specialist} size={20} />
           </span>
           <h2 className="font-serif italic text-[28px] md:text-[38px] leading-[1.05] tracking-[-0.02em] text-ink m-0">
             {specialistLabel}
           </h2>
-        </div>
+        </m.div>
         <p className="role-running-head pl-9">{runningHead}</p>
       </header>
 
