@@ -72,8 +72,10 @@ export function ConversationStrip({
           </p>
         )}
         {specialistDisplay && (
+          // Hide the sub-line below sm to keep the strip on a single
+          // line at 375 px viewports; eyebrow + 38 px dial stay.
           <p
-            className="text-[11px] italic text-clay leading-tight whitespace-nowrap"
+            className="hidden sm:block text-[11px] italic text-clay leading-tight whitespace-nowrap"
             style={{ fontFamily: "Georgia, 'Instrument Serif', serif" }}
           >
             {specialistDisplay} · {t('chat.chamber.stage.speakingNow')}
