@@ -585,11 +585,15 @@
   .spine-glow { animation: spineGlow 2.4s ease-in-out infinite; }
   @media (prefers-reduced-motion: reduce) { .spine-glow { animation: none; } }
 
-  /* Phase 7.7 §1.3 — ruled-paper substrate on the Spine. Faint
-   * horizontal rule every 24 px; user feels "paper" without
-   * consciously seeing the lines. */
+  /* Phase 7.7 §1.3 — ruled-paper substrate, applied only to the
+   * stage-list region so the SpineHeader and SpineFooter stay a
+   * clean #FBF7EE (no rules cutting through the project name or
+   * the progress bar). Solid paper-card bg flows through the entire
+   * Spine; the rule pattern is layered on the stage list only. */
   [data-spine-root='true'] {
     background-color: var(--paper-card, #FBF7EE);
+  }
+  [data-spine-stage-list='true'] {
     background-image: linear-gradient(
       to bottom,
       transparent 23.5px,

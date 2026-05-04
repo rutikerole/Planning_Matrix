@@ -18,6 +18,7 @@ interface Props {
 export function SpineStageList({ stages, onStageClick, className }: Props) {
   return (
     <div
+      data-spine-stage-list="true"
       className={cn(
         'relative flex-1 min-h-0 overflow-y-auto overflow-x-hidden pt-3.5 pb-3.5',
         '[&::-webkit-scrollbar]:hidden',
