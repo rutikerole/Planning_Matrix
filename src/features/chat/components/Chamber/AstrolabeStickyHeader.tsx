@@ -53,17 +53,15 @@ export function AstrolabeStickyHeader({
   const [scrolled, setScrolled] = useState(!hasFullAbove)
 
   useEffect(() => {
-    if (!hasFullAbove) {
-      setScrolled(true)
-      return
-    }
+    if (!hasFullAbove) return
     const onScroll = () => setScrolled(window.scrollY > THRESHOLD_PX)
     onScroll()
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
   }, [hasFullAbove])
 
-  const visible = scrolled
+  // Mobile / no-full-above mode — always visible. Derived; no effect.
+  const visible = !hasFullAbove ? true : scrolled
 
   const specialistLabel = progress.recentSpecialist
     ? t(`chat.specialists.${progress.recentSpecialist}`)

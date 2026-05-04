@@ -18,7 +18,7 @@ interface SigilDef {
 
 const STROKE = 1.5
 
-export const SIGIL_DEFS: Record<Specialist, SigilDef> = {
+const SIGIL_DEFS: Record<Specialist, SigilDef> = {
   // Diamond + center cross — balance / mediation.
   moderator: {
     viewBox: '0 0 24 24',

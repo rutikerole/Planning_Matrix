@@ -268,7 +268,6 @@ export function useChatTurn(projectId: string) {
       // Phase 7 Chamber — cost ticker removed from the user surface.
       // Admin emails (Rutik) still see per-turn cost in the console.
       if (isAdminEmail(useAuthStore.getState().user?.email)) {
-        // eslint-disable-next-line no-console
         console.log('[pm-cost]', response.costInfo)
       }
 

@@ -8,7 +8,7 @@
 // Each option submits {kind:'idk', mode:'research'|'assume'|'skip'}
 // via the parent's onChoose callback.
 
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Drawer } from 'vaul'
 import { useViewport } from '@/lib/useViewport'
@@ -136,12 +136,3 @@ function MenuBody({ onChoose }: { onChoose: (m: IdkMode) => void }) {
   )
 }
 
-/** Slot helper. Used by InputBar for the popover-anchored desktop path. */
-export function useLongPressMenuState(): [
-  boolean,
-  (next: boolean) => void,
-  () => void,
-] {
-  const [open, setOpen] = useState(false)
-  return [open, setOpen, () => setOpen(true)]
-}

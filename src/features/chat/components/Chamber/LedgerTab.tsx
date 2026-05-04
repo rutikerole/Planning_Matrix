@@ -28,12 +28,14 @@ export function LedgerTab({ projectId, projectName, summary, pulseKey = 0 }: Pro
   const [pulsed, setPulsed] = useState(false)
   const [open, setOpen] = useState(false)
 
+  /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
     if (!pulseKey) return
     setPulsed(true)
     const id = window.setTimeout(() => setPulsed(false), 2400)
     return () => window.clearTimeout(id)
   }, [pulseKey])
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   const count = summary.factCount
 

@@ -54,8 +54,13 @@ export function Typewriter({ text, instant = false, messageId }: Props) {
   )
 
   const skipImmediate = instant || reduced
+  // seedRef is captured by a useState lazy initializer above; reading
+  // .current during the initial render is safe (the ref is never
+  // written after) but tripped React 19's strict ref rule.
+  /* eslint-disable react-hooks/refs */
   const [shown, setShown] = useState<string>(skipImmediate ? text : seedRef.current)
   const [done, setDone] = useState<boolean>(skipImmediate || seedRef.current === text)
+  /* eslint-enable react-hooks/refs */
 
   // Drive the reveal from the seed forward.
   /* eslint-disable react-hooks/set-state-in-effect */

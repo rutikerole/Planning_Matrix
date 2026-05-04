@@ -14,7 +14,7 @@
 import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import type { Specialist } from '@/types/projectState'
-import { SEGMENT_ORDER } from './Astrolabe'
+import { SEGMENT_ORDER } from '../../lib/segmentOrder'
 import { ChamberSigil } from '../../lib/specialistSigils'
 
 interface Props {

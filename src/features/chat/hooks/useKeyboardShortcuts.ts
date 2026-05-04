@@ -21,7 +21,9 @@ interface Options {
 
 export function useKeyboardShortcuts(opts: Options) {
   const optsRef = useRef(opts)
-  optsRef.current = opts
+  useEffect(() => {
+    optsRef.current = opts
+  })
 
   useEffect(() => {
     let lastG = 0

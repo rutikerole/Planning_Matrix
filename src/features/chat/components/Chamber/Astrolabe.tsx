@@ -30,17 +30,8 @@ import {
 import { useReducedMotion } from 'framer-motion'
 import { cn } from '@/lib/utils'
 import type { Specialist } from '@/types/projectState'
-import { ChamberSigil, SIGIL_DEFS } from '../../lib/specialistSigils'
-
-const SEGMENT_ORDER: Specialist[] = [
-  'moderator',
-  'planungsrecht',
-  'bauordnungsrecht',
-  'sonstige_vorgaben',
-  'verfahren',
-  'beteiligte',
-  'synthesizer',
-]
+import { ChamberSigil } from '../../lib/specialistSigils'
+import { SEGMENT_ORDER } from '../../lib/segmentOrder'
 
 export interface AstrolabeProps {
   percent: number
@@ -73,6 +64,9 @@ export function Astrolabe(props: AstrolabeProps) {
   const rootRef = useRef<HTMLDivElement>(null)
   const draggingRef = useRef(false)
   const [hoverTurn, setHoverTurn] = useState<number | null>(null)
+  // State mirror of draggingRef so the className can read it without
+  // tripping react-hooks/refs.
+  const [isDragging, setIsDragging] = useState(false)
 
   const px = size === 'full' ? 132 : 44
   const cx = px / 2
@@ -143,6 +137,7 @@ export function Astrolabe(props: AstrolabeProps) {
     if (e.button !== 0) return
     e.stopPropagation()
     draggingRef.current = true
+    setIsDragging(true)
     ;(e.target as Element).setPointerCapture?.(e.pointerId)
     const idx = turnIndexFromPointer(e.clientX, e.clientY)
     if (idx >= 0 && idx < currentTurn) setHoverTurn(idx)
@@ -155,6 +150,7 @@ export function Astrolabe(props: AstrolabeProps) {
   const onPointerUp = () => {
     if (!draggingRef.current) return
     draggingRef.current = false
+    setIsDragging(false)
     if (hoverTurn !== null && props.onScrubTo) {
       props.onScrubTo(hoverTurn)
     }
@@ -166,6 +162,7 @@ export function Astrolabe(props: AstrolabeProps) {
     if (!scrubEnabled) return
     const onCancel = () => {
       draggingRef.current = false
+    setIsDragging(false)
       setHoverTurn(null)
     }
     window.addEventListener('pointercancel', onCancel)
@@ -193,7 +190,7 @@ export function Astrolabe(props: AstrolabeProps) {
       className={cn(
         'relative inline-block select-none',
         interactive && 'cursor-pointer',
-        draggingRef.current && 'cursor-grabbing',
+        isDragging && 'cursor-grabbing',
         className,
       )}
       style={{ width: px, height: px } as CSSProperties}
@@ -381,6 +378,3 @@ export function Astrolabe(props: AstrolabeProps) {
   )
 }
 
-/** Order export for AstrolabeStickyHeader / SpecialistTeam reuse. */
-export { SEGMENT_ORDER }
-export const ASTROLABE_SIGIL_KEYS = Object.keys(SIGIL_DEFS) as Specialist[]

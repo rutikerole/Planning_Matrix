@@ -5,7 +5,7 @@
 // useOfflineQueueDrain) to the Chamber components and Chamber hooks.
 // No data-layer changes; only assembly.
 
-import { useCallback, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
@@ -98,10 +98,12 @@ export function ChatWorkspacePage() {
   // Captured-toast pulse key — bumped whenever ledger.factCount grows.
   const lastFactCountRef = useRef(ledger.factCount)
   const [pulseKey, setPulseKey] = useState(0)
-  if (ledger.factCount > lastFactCountRef.current) {
-    lastFactCountRef.current = ledger.factCount
-    queueMicrotask(() => setPulseKey((k) => k + 1))
-  }
+  useEffect(() => {
+    if (ledger.factCount > lastFactCountRef.current) {
+      lastFactCountRef.current = ledger.factCount
+      setPulseKey((k) => k + 1)
+    }
+  }, [ledger.factCount])
 
   // StandUp + mobile-astrolabe sheet state.
   const [standUpOpen, setStandUpOpen] = useState(false)
@@ -188,15 +190,8 @@ export function ChatWorkspacePage() {
     [messages],
   )
 
-  if (!project) return null
-
-  const lang = (i18n.resolvedLanguage ?? 'de') as 'de' | 'en'
-  const factsForToast = (project.state as ProjectState | undefined)?.facts ?? []
-  const hasMessages = (messages?.length ?? 0) > 0
-  const onAstrolabeOpen = () =>
-    isMobile ? setMobileAstroOpen(true) : setStandUpOpen(true)
-
-  // Build the contributions map for SpecialistTeam tooltips.
+  // Build the contributions map for SpecialistTeam tooltips. Hoisted
+  // above the early-return so the hook order stays stable.
   const contributions = useMemo(() => {
     const out = {
       moderator: { count: 0 },
@@ -214,6 +209,14 @@ export function ChatWorkspacePage() {
     }
     return out
   }, [messages])
+
+  if (!project) return null
+
+  const lang = (i18n.resolvedLanguage ?? 'de') as 'de' | 'en'
+  const factsForToast = (project.state as ProjectState | undefined)?.facts ?? []
+  const hasMessages = (messages?.length ?? 0) > 0
+  const onAstrolabeOpen = () =>
+    isMobile ? setMobileAstroOpen(true) : setStandUpOpen(true)
 
   const standUpLink = (
     <button

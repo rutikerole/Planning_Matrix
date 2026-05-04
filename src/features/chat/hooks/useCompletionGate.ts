@@ -15,7 +15,7 @@
 // 'ready' fires once per project session — onRevealReady() should be
 // invoked by the consumer to acknowledge the pulse.
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useState } from 'react'
 
 export type BriefingProminence = 'hidden' | 'whisper' | 'badge' | 'outlined' | 'hero' | 'ready'
 
@@ -39,7 +39,7 @@ export interface CompletionGate {
 }
 
 export function useCompletionGate(input: CompletionGateInput): CompletionGate {
-  const pulseFiredRef = useRef(false)
+  const [pulseFired, setPulseFired] = useState(false)
 
   // Determine the steady-state prominence.
   let prominence: BriefingProminence = 'hidden'
@@ -58,23 +58,19 @@ export function useCompletionGate(input: CompletionGateInput): CompletionGate {
   }
 
   const shouldPulse =
-    !pulseFiredRef.current &&
+    !pulseFired &&
     input.hasMessages &&
     (input.completionSignal === 'ready_for_review' || input.percent >= 95)
 
-  // The 'ready' label gets pinned for the first paint that triggers
-  // the one-shot pulse. After acknowledgment the prominence stays
+  // 'ready' label is pinned for the first paint that triggers the
+  // one-shot pulse. After acknowledgment the prominence stays
   // 'hero' on subsequent renders.
   if (shouldPulse) prominence = 'ready'
 
-  // Auto-clear the pulse after 800ms via the consumer's onRevealReady
-  // callback. We can't clear from here without scheduling a setState,
-  // so the consumer schedules a setTimeout to call acknowledgePulse.
+  // Auto-clear the pulse after 900ms.
   useEffect(() => {
     if (!shouldPulse) return
-    const id = window.setTimeout(() => {
-      pulseFiredRef.current = true
-    }, 900)
+    const id = window.setTimeout(() => setPulseFired(true), 900)
     return () => window.clearTimeout(id)
   }, [shouldPulse])
 
@@ -82,8 +78,6 @@ export function useCompletionGate(input: CompletionGateInput): CompletionGate {
     prominence,
     visible: prominence !== 'hidden',
     shouldPulse,
-    acknowledgePulse: () => {
-      pulseFiredRef.current = true
-    },
+    acknowledgePulse: () => setPulseFired(true),
   }
 }

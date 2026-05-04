@@ -6,7 +6,8 @@
 // it under the legacy name so the result page keeps compiling without
 // edits.
 
-import { ChamberSigil, SIGIL_DEFS } from '../lib/specialistSigils'
+import { ChamberSigil } from '../lib/specialistSigils'
+import { SEGMENT_ORDER } from '../lib/segmentOrder'
 import type { Specialist } from '@/types/projectState'
 
 interface Props {
@@ -19,7 +20,7 @@ interface Props {
   isActive?: boolean
 }
 
-const KNOWN: Specialist[] = Object.keys(SIGIL_DEFS) as Specialist[]
+const KNOWN: Specialist[] = SEGMENT_ORDER
 
 export function SpecialistSigil({ specialist, size, className, isActive }: Props) {
   const safe = (KNOWN.includes(specialist as Specialist)
