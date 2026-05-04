@@ -4,10 +4,18 @@
 // variant (always visible, ignores the gate's progress-scaled
 // prominence). A 24 px gradient mask sits above the border so the
 // stage list dissolves into the footer cleanly.
+//
+// Phase 7.9 §2.3 — auth zone added below the briefing button.
+// DE/EN segmented switch (left) + RE avatar with chevron (right).
+// The components are reused as-is from the AppHeader (LanguageSwitcher
+// + UserMenu) so DE/EN persistence and the sign-out flow continue
+// to wire through the same hooks.
 
 import type { CompletionGate } from '../../../hooks/useCompletionGate'
 import type { CompletionSignal } from '@/types/chatTurn'
 import { BriefingCTA } from '../BriefingCTA'
+import { LanguageSwitcher } from '@/components/shared/LanguageSwitcher'
+import { UserMenu } from '@/components/shared/AppHeader'
 
 interface Props {
   projectId: string
@@ -27,13 +35,18 @@ export function SpineFooter({ projectId, gate, signal }: Props) {
             'linear-gradient(to bottom, hsl(38 30% 96% / 0) 0%, hsl(38 30% 96% / 1) 100%)',
         }}
       />
-      <div className="border-t border-[var(--hairline,rgba(26,22,18,0.10))] px-3.5 py-3">
+      <div className="border-t border-[var(--hairline,rgba(26,22,18,0.10))] px-3.5 py-3 flex flex-col gap-2">
         <BriefingCTA
           projectId={projectId}
           gate={gate}
           signal={signal}
           variant="sidebar"
         />
+        {/* Phase 7.9 §2.3 — auth zone. */}
+        <div className="flex items-center justify-between px-1 pt-1">
+          <LanguageSwitcher />
+          <UserMenu />
+        </div>
       </div>
     </footer>
   )

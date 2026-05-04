@@ -62,7 +62,7 @@ export function AppHeader({ className }: Props) {
   )
 }
 
-function UserMenu() {
+export function UserMenu() {
   const { t } = useTranslation()
   const { signOut } = useAuth()
   const user = useAuthStore((s) => s.user)
