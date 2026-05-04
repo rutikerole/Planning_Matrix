@@ -53,6 +53,16 @@ export default {
         ],
       },
       fontSize: {
+        // ── Phase 7 Chamber scale ────────────────────────────────
+        'chamber-eyebrow':  ['0.6875rem', { lineHeight: '1',    letterSpacing: '0.20em', fontWeight: '500' }],
+        'chamber-meta':     ['0.75rem',   { lineHeight: '1.4',  letterSpacing: '0.04em' }],
+        'chamber-body-sm':  ['0.8125rem', { lineHeight: '1.55' }],
+        'chamber-body':     ['1.125rem',  { lineHeight: '1.7',  letterSpacing: '0.005em' }],
+        'chamber-body-user':['0.96875rem',{ lineHeight: '1.55' }],
+        'chamber-display-sm':['1.375rem', { lineHeight: '1.2',  letterSpacing: '-0.01em' }],
+        'chamber-display':  ['2.375rem',  { lineHeight: '1.05', letterSpacing: '-0.02em' }],
+        'chamber-display-lg':['3rem',     { lineHeight: '1.0',  letterSpacing: '-0.025em' }],
+
         eyebrow: [
           '0.6875rem',
           { lineHeight: '1', letterSpacing: '0.18em', fontWeight: '500' },

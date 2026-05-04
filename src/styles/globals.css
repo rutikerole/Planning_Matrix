@@ -248,13 +248,52 @@
     --ease:         cubic-bezier(0.16, 1, 0.3, 1);
     --ease-soft:    cubic-bezier(0.32, 0.72, 0, 1);
 
-    /* Layout (rail widths / max content) — vocabulary tokens for the
-     * Phase 7 standup-modal positioning + bounding boxes. The chat
-     * workspace itself still uses Tailwind's grid template literals;
-     * these vars are additive design references. */
+    /* Layout vars (legacy Phase 7 vocabulary; the Chamber rebuild
+     * drops the rails entirely — kept only for any non-chat surface
+     * that may still reference them). */
     --rail-l:       260px;
     --rail-r:       340px;
     --max-content:  1480px;
+
+    /* ── Phase 7 Chamber tokens ────────────────────────────────
+     * Single-column conversation, ambient tinting, no rails. */
+    --chamber-col-max:        720px;
+    --chamber-col-px-desktop: 32px;
+    --chamber-col-px-tablet:  24px;
+    --chamber-col-px-mobile:  16px;
+
+    /* Specialist tints — very low saturation, applied as a fixed
+     * full-page overlay at 100% opacity behind the substrate. The
+     * page never reads as "blue" or "green"; the light just shifts. */
+    --tint-none:              hsl(38 30% 97%);
+    --tint-moderator:         hsl(38 30% 96%);
+    --tint-planungsrecht:     hsl(212 22% 96%);
+    --tint-bauordnungsrecht:  hsl(35 30% 96%);
+    --tint-sonstige_vorgaben: hsl(15 28% 96%);
+    --tint-verfahren:         hsl(220 12% 96%);
+    --tint-beteiligte:        hsl(140 14% 96%);
+    --tint-synthesizer:       hsl(0 18% 96%);
+
+    /* The active tint is mounted on <html> via JS; AmbientTint reads
+     * this var so cross-fades happen via a single CSS transition on
+     * the overlay div instead of in JS. */
+    --chamber-active-tint:    var(--tint-none);
+
+    /* Body text color is locked regardless of tint; never recompute
+     * from the tint. WCAG AA on every tint background. */
+    --chamber-body-color:     hsl(220 16% 11% / 0.92);
+
+    /* Astrolabe geometry. */
+    --astrolabe-full-size:    132px;
+    --astrolabe-compact-size: 44px;
+    --astrolabe-tick-count:   22;
+
+    /* Motion curves used across the chamber. */
+    --chamber-ease:        cubic-bezier(0.16, 1, 0.3, 1);
+    --chamber-ease-soft:   cubic-bezier(0.32, 0.72, 0, 1);
+    --chamber-tint-dur:    1200ms;
+    --chamber-fade-dur:    320ms;
+    --chamber-mc-dur:      720ms;
   }
 
   /* ─────────────────────────────────────────────────────────────────
@@ -476,6 +515,66 @@
   .pm-area-pulse {
     animation: pmAreaPulse 1.4s cubic-bezier(0.32, 0.72, 0, 1) infinite;
   }
+
+  /* ─────────────────────────────────────────────────────────────────
+   * Phase 7 Chamber — past-turn fade + magnetic focus
+   * Single observer drives `data-focus="true"` on the message nearest
+   * the viewport center; CSS does the rest. The fade rule reads from
+   * `--chamber-distance` set per message in JS (0..N).
+   * ────────────────────────────────────────────────────────────────── */
+  [data-chamber-message] {
+    --chamber-distance: 0;
+    opacity: clamp(0.32, calc(1 - var(--chamber-distance) * 0.18), 1);
+    transform: scale(calc(1 - var(--chamber-distance) * 0.008));
+    filter: saturate(calc(1 - var(--chamber-distance) * 0.05));
+    transition:
+      opacity 320ms var(--chamber-ease, cubic-bezier(0.16,1,0.3,1)),
+      transform 320ms var(--chamber-ease, cubic-bezier(0.16,1,0.3,1)),
+      filter 320ms var(--chamber-ease, cubic-bezier(0.16,1,0.3,1));
+  }
+  [data-chamber-message]:hover,
+  [data-chamber-message][data-focus='true'] {
+    opacity: 1 !important;
+    transform: scale(1) !important;
+    filter: saturate(1) !important;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    [data-chamber-message] { transition: none !important; }
+  }
+
+  /* Chamber breath loop — the page subtly warms over a 14s cycle.
+   * Mounted via animation on <body> through ChamberLayout. */
+  @keyframes chamberBreath {
+    0%, 100% { filter: brightness(1); }
+    50%      { filter: brightness(1.012); }
+  }
+  .chamber-breath { animation: chamberBreath 14s ease-in-out infinite; }
+  @media (prefers-reduced-motion: reduce) { .chamber-breath { animation: none; } }
+
+  /* Briefing CTA halo — only visible when the CTA is in its hero state.
+   * Soft clay glow that breathes over 4.8s. */
+  @keyframes ctaHalo {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(123,92,63,0); }
+    50%      { box-shadow: 0 0 0 14px rgba(123,92,63,0.18); }
+  }
+  .chamber-cta-halo { animation: ctaHalo 4.8s ease-in-out infinite; }
+  @media (prefers-reduced-motion: reduce) { .chamber-cta-halo { animation: none; box-shadow: none; } }
+
+  /* SpecialistTeam active sigil scale loop. */
+  @keyframes sigilActive {
+    0%, 100% { transform: scale(1); }
+    50%      { transform: scale(1.08); }
+  }
+  .chamber-sigil-active { animation: sigilActive 2.4s ease-in-out infinite; }
+  @media (prefers-reduced-motion: reduce) { .chamber-sigil-active { animation: none; } }
+
+  /* Astrolabe halo pulse for the active specialist sigil. */
+  @keyframes astroHalo {
+    0%, 100% { opacity: 0.18; }
+    50%      { opacity: 0.32; }
+  }
+  .chamber-astro-halo { animation: astroHalo 2.4s ease-in-out infinite; }
+  @media (prefers-reduced-motion: reduce) { .chamber-astro-halo { animation: none; opacity: 0.24; } }
 
   /* Phase 3.2 #36 — italic running head used as a "voice" label below
    * specialist tags, on completion interstitials, and on overview headers. */
