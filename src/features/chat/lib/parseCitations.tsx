@@ -1,74 +1,120 @@
 // ───────────────────────────────────────────────────────────────────────
-// Phase 7 Move 5 — Citation parser
+// Phase 7 Pass 2 — Citation parser (rewrite)
 //
-// Walks an assistant-message body, finds law citations via the same
-// permissive regex highlightCitations has used since Phase 3, and for
-// each match consults LAW_ARTICLES to decide whether to render the
-// hit as an interactive <CitationChip /> or as plain bold text.
+// Walks an assistant-message body, finds law citations via a permissive
+// outer regex, and for each match emits one or more <CitationChip />
+// components — one per article number in the citation.
 //
-// Behavior contract:
-//   • Recognised citation (regex match AND in LAW_ARTICLES) → chip.
-//   • Recognised citation (regex match, NOT in registry)    → bold.
-//   • Plain text segments pass through unchanged.
+// Behaviour:
+//   • "§ 34 BauGB"               → 1 chip (§ 34 BauGB)
+//   • "§34 BauGB"                → 1 chip (no whitespace after §)
+//   • "Art. 2 Abs. 3 BayBO"      → 1 chip on the article number (2);
+//                                  Abs. is treated as a sub-section,
+//                                  not a separate article.
+//   • "§§ 30, 34 or 35 BauGB"    → 3 chips (§ 30 BauGB · § 34 BauGB
+//                                  · § 35 BauGB), back-to-back.
 //
-// The regex itself is unchanged from highlightCitations.tsx so the
-// detection breadth doesn't regress; BaumschutzV is added as a
-// recognised abbreviation since it's now in the registry.
+// Registry lookup is by canonical "<articleNumber> <abbrev>" display
+// string. Articles not in LAW_ARTICLES still render as bold (v1
+// fallback) so unknown citations stay legible.
 // ───────────────────────────────────────────────────────────────────────
 
 import type { ReactNode } from 'react'
 import { CitationChip } from '../components/CitationChip'
-import { LAW_ARTICLES } from './lawArticles'
+import { LAW_ARTICLES, type LawArticle } from './lawArticles'
 
 const LAW_ABBREVS =
   '(?:BauGB|BayBO|BauNVO|BayDSchG|BayNatSchG|BNatSchG|GEG|GaStellV|BayBauVorlV|BaumschutzV)'
 
+// Outer detection regex — captures whole citation tokens. Permissive on
+// whitespace after § / Art. so both "§ 34 BauGB" and "§34 BauGB" match.
+// The middle character class includes period so "Abs." sub-section
+// references inside a citation are absorbed into the same token.
 const CITATION_REGEX = new RegExp(
-  `((?:§§?|Art\\.)[\\s\\u00A0]+[\\d\\w.,\\s]+?[\\s\\u00A0]+${LAW_ABBREVS})`,
+  `((?:§§?|Art\\.)[\\s\\u00A0]*[\\d\\w.,\\s]+?[\\s\\u00A0]+${LAW_ABBREVS})`,
   'g',
 )
 
-/**
- * Whitespace normaliser kept identical to the v1 highlightCitations
- * post-processor so existing prose renders the same — collapses any
- * trailing whitespace after `§§`, `§`, and `Art.` into a single space.
- */
+const ABBREV_TAIL = new RegExp(`(${LAW_ABBREVS})$`)
+
 function normaliseSpacing(part: string): string {
   return part
     .replace(/§§\s+/g, '§§ ')
     .replace(/§\s+/g, '§ ')
     .replace(/Art\.\s+/g, 'Art. ')
+    .trim()
 }
 
-/**
- * Returns the registry entry whose pattern matches the citation
- * token, or null if none does.
- */
-function findArticle(citation: string) {
-  for (const a of LAW_ARTICLES) {
-    if (a.match.test(citation)) return a
+function findArticle(num: string, abbrev: string): LawArticle | null {
+  const display = `${num} ${abbrev}`
+  return LAW_ARTICLES.find((a) => a.display === display) ?? null
+}
+
+interface Expansion {
+  kind: 'chip' | 'bold'
+  article: LawArticle | null
+  text: string
+}
+
+function expandCitation(token: string): Expansion[] {
+  const abbrevMatch = token.match(ABBREV_TAIL)
+  const abbrev = abbrevMatch ? abbrevMatch[1] : null
+  if (!abbrev) return [{ kind: 'bold', article: null, text: token }]
+
+  const isMulti = /^§§/.test(token)
+  const numbers = token.match(/\d+/g) ?? []
+
+  if (numbers.length === 0) {
+    return [{ kind: 'bold', article: null, text: token }]
   }
-  return null
+
+  const [first, ...rest] = numbers
+  if (!isMulti) {
+    // Single-form: first number is the article; ignore Abs. sub-section
+    // numbers that may follow. Display preserves the original token so
+    // "Art. 2 Abs. 3 BayBO" still reads naturally inside the chip.
+    void rest
+    if (!first) return [{ kind: 'bold', article: null, text: token }]
+    const article = findArticle(first, abbrev)
+    return [
+      article
+        ? { kind: 'chip', article, text: token }
+        : { kind: 'bold', article: null, text: token },
+    ]
+  }
+
+  // Multi-form (§§): every number is its own article reference.
+  return numbers.map((num) => {
+    const article = findArticle(num, abbrev)
+    const text = `§ ${num} ${abbrev}`
+    if (article) return { kind: 'chip' as const, article, text }
+    return { kind: 'bold' as const, article: null, text }
+  })
 }
 
 export function parseCitations(text: string): ReactNode[] {
   if (!text) return []
   const parts = text.split(CITATION_REGEX)
-  return parts.map((part, idx) => {
-    // Even indices are surrounding text; odd indices are matched citations.
-    if (idx % 2 === 0) return part
-    const normalised = normaliseSpacing(part)
-    const article = findArticle(normalised)
-    if (article) {
-      return <CitationChip key={idx} article={article} />
+  const out: ReactNode[] = []
+  parts.forEach((part, idx) => {
+    if (idx % 2 === 0) {
+      out.push(part)
+      return
     }
-    // Recognised by the citation regex but not in the registry —
-    // fall back to the v1 bold rendering so unknown articles stay
-    // legible rather than disappearing.
-    return (
-      <span key={idx} className="font-medium text-ink">
-        {normalised}
-      </span>
-    )
+    const expansions = expandCitation(normaliseSpacing(part))
+    expansions.forEach((e, i) => {
+      const key = `cite-${idx}-${i}`
+      if (i > 0) out.push(' ')
+      if (e.kind === 'chip' && e.article) {
+        out.push(<CitationChip key={key} article={e.article} />)
+      } else {
+        out.push(
+          <span key={key} className="font-medium text-ink">
+            {e.text}
+          </span>,
+        )
+      }
+    })
   })
+  return out
 }

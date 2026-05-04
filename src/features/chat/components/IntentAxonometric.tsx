@@ -56,7 +56,18 @@ export function IntentAxonometric({ intent, state, className }: Props) {
     'wandhoehe_m',
   ])
   const stories = pickFact<number>(facts, ['vollgeschosse'])
-  const gk = pickFact<number>(facts, ['gebaeudeklasse'])
+  const gkRaw = pickFact<number | string>(facts, ['gebaeudeklasse'])
+  // Some assistant turns emit gebaeudeklasse as the formatted string
+  // "GK 1" rather than the raw integer 1. Strip the prefix so the
+  // badge doesn't render as "GK GK 1". Numbers pass through.
+  const gk = (() => {
+    if (gkRaw === null || gkRaw === undefined) return null
+    if (typeof gkRaw === 'string') {
+      const stripped = gkRaw.replace(/^GK\s*/i, '').trim()
+      return stripped || null
+    }
+    return String(gkRaw)
+  })()
   const isEfh = intent === 'neubau_einfamilienhaus'
   const fadeIn = reduced
     ? { initial: false as const, animate: { opacity: 1 } }
