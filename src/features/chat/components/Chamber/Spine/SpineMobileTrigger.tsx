@@ -4,7 +4,7 @@
 // < 1024 px. Carries a tiny progress bar + "{done} of 8 · {current}"
 // + chevron. Tap opens a vaul left drawer with the full Spine.
 
-import { useState, type ReactNode } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Drawer } from 'vaul'
 import { ChevronDown } from 'lucide-react'
@@ -26,6 +26,16 @@ export function SpineMobileTrigger({ stages, percent, drawerContent }: Props) {
   const doneCount = stages.filter((s) => s.status === 'done').length
   const liveStage = stages.find((s) => s.status === 'live')
   const currentTitle = liveStage?.title ?? '—'
+
+  // Hook into the chamber:escape CustomEvent dispatched by
+  // useKeyboardShortcuts so Esc closes the drawer in priority order.
+  useEffect(() => {
+    if (!open) return
+    const onEsc = () => setOpen(false)
+    document.addEventListener('chamber:escape', onEsc as EventListener)
+    return () =>
+      document.removeEventListener('chamber:escape', onEsc as EventListener)
+  }, [open])
 
   return (
     <Drawer.Root open={open} onOpenChange={setOpen} direction="left">

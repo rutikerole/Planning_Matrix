@@ -27,6 +27,7 @@ export function Spine({ header, stageList, footer, className }: Props) {
   return (
     <aside
       aria-label="Project journey"
+      role="complementary"
       data-spine-root="true"
       className={cn(
         'hidden lg:flex',
