@@ -26,6 +26,10 @@ import { CursorParallax } from './CursorParallax'
 interface Props {
   /** Active specialist drives the AmbientTint cross-fade. */
   activeSpecialist: Specialist | null
+  /** Phase 7.5 — left Spine sidebar (desktop only, ≥ 1024 px). */
+  spine?: ReactNode
+  /** Phase 7.5 — collapsed Spine trigger strip (< 1024 px). */
+  spineMobileTrigger?: ReactNode
   /** Sticky header (AstrolabeStickyHeader). */
   stickyHeader?: ReactNode
   /** Top region — wordmark + full astrolabe + team strip. Hidden on mobile. */
@@ -44,6 +48,8 @@ interface Props {
 
 export function ChamberLayout({
   activeSpecialist,
+  spine,
+  spineMobileTrigger,
   stickyHeader,
   topRegion,
   thread,
@@ -63,14 +69,20 @@ export function ChamberLayout({
       <BlueprintSubstrate />
       <div aria-hidden="true" className="grain-overlay-fixed" />
 
+      {/* Phase 7.5 — left Spine (desktop, ≥ 1024 px) */}
+      {spine}
+
       {/* Banners — fixed at the very top (above sticky header). */}
       {banners}
 
       {/* Sticky header — z-30. */}
       {stickyHeader}
 
-      {/* Conversation surface */}
-      <div className="relative z-10">
+      {/* Phase 7.5 — collapsed Spine trigger strip (< 1024 px). */}
+      {spineMobileTrigger}
+
+      {/* Conversation surface — shifted right of the Spine on lg+ */}
+      <div className="relative z-10 lg:pl-spine">
         {topRegion ? (
           <div className="hidden md:block mx-auto w-full max-w-[var(--chamber-col-max)] px-[var(--chamber-col-px-tablet)] lg:px-[var(--chamber-col-px-desktop)] pt-12 lg:pt-14">
             {topRegion}
@@ -82,9 +94,9 @@ export function ChamberLayout({
           {thread}
         </main>
 
-        {/* Input zone — fixed bottom. */}
+        {/* Input zone — fixed bottom. Also shifted on lg+. */}
         <div
-          className="fixed bottom-0 left-0 right-0 z-30"
+          className="fixed bottom-0 left-0 lg:left-spine right-0 z-30"
           style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
         >
           <div

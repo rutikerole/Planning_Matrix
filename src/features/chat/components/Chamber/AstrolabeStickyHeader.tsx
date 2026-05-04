@@ -74,7 +74,9 @@ export function AstrolabeStickyHeader({
   return (
     <div
       className={cn(
-        'fixed top-0 left-0 right-0 z-30',
+        // Phase 7.5 — shift to start at left-spine on desktop so the
+        // Spine sidebar stays visible to the left of the bar.
+        'fixed top-0 left-0 lg:left-spine right-0 z-30',
         'transition-[opacity,transform] duration-[240ms] ease-[cubic-bezier(0.16,1,0.3,1)]',
         visible
           ? 'opacity-100 translate-y-0 pointer-events-auto'
@@ -83,16 +85,18 @@ export function AstrolabeStickyHeader({
     >
       <div className="bg-[hsl(var(--paper)/0.92)] backdrop-blur-[6px] border-b border-[var(--hairline,rgba(26,22,18,0.10))]">
         <div className="mx-auto w-full max-w-[1280px] px-4 md:px-6 py-2 flex items-center gap-3 md:gap-4">
-          {/* Wordmark */}
+          {/* Phase 7.5 — Wordmark + project name DROPPED on desktop;
+            * the Spine sidebar carries them. Mobile keeps both since
+            * the Spine is collapsed and the user must open the drawer
+            * to see project context. */}
           <Link
             to="/dashboard"
-            className="hidden md:inline-flex font-serif italic text-[14px] text-clay-deep hover:text-clay leading-none whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/55 focus-visible:ring-offset-2 focus-visible:ring-offset-paper rounded-sm"
+            className="lg:hidden md:inline-flex font-serif italic text-[14px] text-clay-deep hover:text-clay leading-none whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/55 focus-visible:ring-offset-2 focus-visible:ring-offset-paper rounded-sm"
           >
             {t('chat.chamber.wordmark')}
           </Link>
-          {/* Project name */}
           <p
-            className="hidden sm:block font-serif text-[13px] text-ink truncate min-w-0 max-w-[260px]"
+            className="lg:hidden sm:block font-serif text-[13px] text-ink truncate min-w-0 max-w-[260px]"
             title={projectName}
           >
             {projectName.split('·')[0]?.trim() ?? projectName}

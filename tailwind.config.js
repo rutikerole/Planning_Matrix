@@ -103,6 +103,7 @@ export default {
       },
       width: { spine: 'var(--spine-width)' },
       spacing: { spine: 'var(--spine-width)' },
+      inset: { spine: 'var(--spine-width)' },
       colors: {
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',

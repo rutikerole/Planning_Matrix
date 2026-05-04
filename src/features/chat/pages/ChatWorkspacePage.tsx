@@ -26,9 +26,19 @@ import { useLedgerSummary } from '../hooks/useLedgerSummary'
 import { useCompletionGate } from '../hooks/useCompletionGate'
 import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts'
 import { useAutoScroll } from '../hooks/useAutoScroll'
+import { useSpineStages } from '../hooks/useSpineStages'
 import { buildUserMessageText, buildUserMessageTextEn } from '../lib/userAnswerHelpers'
 import { ChamberLayout } from '../components/Chamber/ChamberLayout'
+import {
+  ThreadContextProvider,
+  defaultScrollToMessage,
+} from '../components/Chamber/ThreadContext'
 import { Thread } from '../components/Chamber/Thread'
+import { Spine } from '../components/Chamber/Spine/Spine'
+import { SpineHeader } from '../components/Chamber/Spine/SpineHeader'
+import { SpineStageList } from '../components/Chamber/Spine/SpineStageList'
+import { SpineFooter } from '../components/Chamber/Spine/SpineFooter'
+import { SpineMobileTrigger } from '../components/Chamber/Spine/SpineMobileTrigger'
 import { Astrolabe } from '../components/Chamber/Astrolabe'
 import { AstrolabeStickyHeader } from '../components/Chamber/AstrolabeStickyHeader'
 import { SpecialistTeam } from '../components/Chamber/SpecialistTeam'
@@ -229,11 +239,61 @@ export function ChatWorkspacePage() {
     </button>
   )
 
+  // Phase 7.5 — Spine + mobile trigger slots. Both consume the same
+  // useSpineStages output so the desktop sidebar and the mobile
+  // trigger label can never disagree.
+  const spineStages = useSpineStages(project, messages)
+  const handleStageClick = (stageId: string) => {
+    const stage = spineStages.find((s) => s.id === stageId)
+    if (!stage || stage.firstMessageIndex == null) return
+    defaultScrollToMessage(stage.firstMessageIndex, {
+      behavior: 'smooth',
+      topOffset: 90,
+    })
+  }
+
+  const spineHeaderNode = (
+    <SpineHeader
+      projectName={project.name}
+      plotAddress={project.plot_address}
+      percent={progress.percent}
+      round={progress.currentTurn}
+      totalEstimate={progress.totalEstimate}
+    />
+  )
+  const spineFooterNode = (
+    <SpineFooter projectId={project.id} gate={gate} signal={completionSignal} />
+  )
+  const spineNode = (
+    <Spine
+      header={spineHeaderNode}
+      stageList={
+        <SpineStageList stages={spineStages} onStageClick={handleStageClick} />
+      }
+      footer={spineFooterNode}
+    />
+  )
+  const spineMobileTriggerNode = (
+    <SpineMobileTrigger
+      stages={spineStages}
+      percent={progress.percent}
+      drawerContent={
+        <>
+          {spineHeaderNode}
+          <SpineStageList stages={spineStages} onStageClick={handleStageClick} />
+          {spineFooterNode}
+        </>
+      }
+    />
+  )
+
   return (
-    <>
+    <ThreadContextProvider>
       <SEO titleKey="seo.title.project" params={{ name: project.name }} />
       <ChamberLayout
         activeSpecialist={progress.recentSpecialist}
+        spine={spineNode}
+        spineMobileTrigger={spineMobileTriggerNode}
         banners={
           <>
             <OfflineBanner />
@@ -302,30 +362,20 @@ export function ChatWorkspacePage() {
           />
         }
         topRegion={
+          // Phase 7.5 — project nameplate dropped (Spine carries it).
+          // Top region now reads as: SpecialistTeam md-size + full
+          // Astrolabe with drag-to-scrub. The Spine handles "where am
+          // I" identity; this row handles "where am I in the journey
+          // visually."
           hasMessages && !isMobile ? (
             <div className="flex items-start justify-between gap-6">
-              <div className="flex flex-col gap-1.5 min-w-0">
-                <p className="font-mono text-[10.5px] uppercase tracking-[0.20em] text-clay">
-                  {t('chat.titleBlock.eyebrow', { defaultValue: 'Projekt' })}
-                </p>
-                <h1 className="font-serif italic text-[26px] text-ink m-0 truncate" title={project.name}>
-                  {project.name.split('·')[0]?.trim() ?? project.name}
-                </h1>
-                {project.plot_address && (
-                  <p className="font-serif italic text-[14px] text-clay/82">
-                    {project.plot_address}
-                  </p>
-                )}
-                <div className="mt-3">
-                  <SpecialistTeam
-                    active={progress.recentSpecialist}
-                    spoken={progress.spokenSpecialists}
-                    contributions={contributions}
-                    size="md"
-                    onSigilClick={handleSigilClick}
-                  />
-                </div>
-              </div>
+              <SpecialistTeam
+                active={progress.recentSpecialist}
+                spoken={progress.spokenSpecialists}
+                contributions={contributions}
+                size="md"
+                onSigilClick={handleSigilClick}
+              />
               <Astrolabe
                 percent={progress.percent}
                 currentTurn={progress.currentTurn}
@@ -398,7 +448,7 @@ export function ChatWorkspacePage() {
           </>
         }
       />
-    </>
+    </ThreadContextProvider>
   )
 }
 
