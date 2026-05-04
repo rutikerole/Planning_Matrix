@@ -13,6 +13,10 @@ import { useEffect, useMemo, useState } from 'react'
 import { useChatStore } from '@/stores/chatStore'
 import type { MessageRow } from '@/types/db'
 import { useMagneticFocus } from '../../hooks/useMagneticFocus'
+import {
+  defaultScrollToMessage,
+  useThreadController,
+} from './ThreadContext'
 import { MessageAssistant } from './MessageAssistant'
 import { MessageUser } from './MessageUser'
 import { MessageSystem } from './MessageSystem'
@@ -43,10 +47,15 @@ export function Thread({ messages }: Props) {
   // Activate magnetic focus once we have any messages.
   useMagneticFocus()
 
-  // Keep the focused message attribute fresh on initial mount.
+  // Phase 7.5 — register a thread controller so the Spine can scroll
+  // to a stage's first message via context. Uses the default DOM-scan
+  // implementation; the magnetic-focus IO is untouched.
+  const ctx = useThreadController()
   useEffect(() => {
-    // No-op; the hook handles it via MutationObserver.
-  }, [messages.length])
+    if (!ctx) return
+    ctx.registerController({ scrollToMessage: defaultScrollToMessage })
+    return () => ctx.registerController(null)
+  }, [ctx])
 
   return (
     <ol

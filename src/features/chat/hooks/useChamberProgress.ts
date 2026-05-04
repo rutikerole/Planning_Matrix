@@ -15,6 +15,8 @@
 import { useMemo } from 'react'
 import type { MessageRow } from '@/types/db'
 import type { ProjectState, Specialist } from '@/types/projectState'
+import { currentStageId } from './useSpineStages'
+import type { SpineStageId } from '../lib/spineStageDefinitions'
 
 const TOTAL_ESTIMATE_T01 = 22
 
@@ -25,6 +27,10 @@ export interface ChamberProgress {
   spokenSpecialists: Set<Specialist>
   recentSpecialist: Specialist | null
   isReadyForReview: boolean
+  /** Phase 7.5 — the Spine's "live" stage. Null pre-state. Both
+   *  surfaces (Spine + any other progress UI) must derive from the
+   *  same shared computation; do not duplicate. */
+  currentStageId: SpineStageId | null
 }
 
 export function useChamberProgress(
@@ -73,6 +79,7 @@ export function useChamberProgress(
       spokenSpecialists: spoken,
       recentSpecialist: recent,
       isReadyForReview,
+      currentStageId: currentStageId(state as ProjectState | undefined, list),
     }
   }, [messages, state, completionSignal, templateOverride])
 }
