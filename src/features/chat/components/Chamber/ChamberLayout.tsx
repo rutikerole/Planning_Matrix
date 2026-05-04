@@ -82,7 +82,12 @@ export function ChamberLayout({
         className="relative isolate chamber-breath"
         data-mode="operating"
         style={{
-          height: `calc(100dvh - ${appHeaderHeight}px)`,
+          // Phase 7.7 §1.2 — AppHeader is now position:fixed so it
+          // never consumes layout space. The chamber occupies the
+          // full dvh and reserves the AppHeader's vertical band via
+          // pt and the Spine's top offset.
+          height: '100dvh',
+          paddingTop: `${appHeaderHeight}px`,
         }}
       >
         {/* z-0 background stack — fixed to viewport, paint across the

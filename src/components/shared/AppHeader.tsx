@@ -34,7 +34,10 @@ export function AppHeader({ className }: Props) {
     <header
       data-app-header="true"
       className={cn(
-        'sticky top-0 z-50 w-full',
+        // Phase 7.7 §1.2 — fixed (not sticky) so it never consumes
+        // layout space. Eliminates the ChamberLayout's appHeaderHeight
+        // arithmetic and the visible gap above the Spine.
+        'fixed top-0 left-0 right-0 z-50 w-full',
         'h-12',
         'bg-[hsl(var(--paper)/0.92)] backdrop-blur-[6px]',
         'border-b border-[var(--hairline,rgba(26,22,18,0.10))]',
