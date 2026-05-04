@@ -1,4 +1,4 @@
-import { useCallback } from 'react'
+import { useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { AnimatePresence, m, useReducedMotion } from 'framer-motion'
 import { cn } from '@/lib/utils'
@@ -7,6 +7,8 @@ import type { ProjectRow } from '@/types/db'
 import { factLabel, factValueWithUnit } from '@/lib/factLabel'
 import { INTENT_TO_I18N } from '@/features/wizard/lib/selectTemplate'
 import { useFreshSet } from '../lib/useFreshSet'
+
+const VISIBLE_LIMIT = 5
 
 interface Props {
   project: ProjectRow
@@ -72,13 +74,20 @@ export function EckdatenPanel({ project, facts }: Props) {
     evidence: f.evidence ?? f.qualifier.reason,
   }))
 
-  const all = [...derived, ...fromState].slice(0, 6)
+  const all = [...derived, ...fromState]
+
+  // Phase 7 Pass 5 — cap the right rail to 5 visible items so a
+  // 1080 px viewport doesn't need to scroll. Items 6+ collapse under
+  // a "show all (N)" / "show less" toggle.
+  const [expanded, setExpanded] = useState(false)
+  const visible = expanded ? all : all.slice(0, VISIBLE_LIMIT)
+  const hiddenCount = all.length - visible.length
 
   // Phase 7 Move 10b — flag newly-arriving fact rows for the 2.4 s
   // clay edge-bar fade. First-mount items are seeded as seen, so
   // existing facts don't pulse on initial render.
   const getRowId = useCallback((row: RailFact) => row.id, [])
-  const freshIds = useFreshSet(all, getRowId)
+  const freshIds = useFreshSet(visible, getRowId)
 
   return (
     <div className="flex flex-col gap-3 border-t border-border/40 pt-6">
@@ -87,12 +96,12 @@ export function EckdatenPanel({ project, facts }: Props) {
           {t('chat.rail.facts')}
         </p>
         <span className="font-serif italic text-[9px] text-clay/60 tabular-figures">
-          {String(all.length).padStart(2, '0')} / 06
+          {String(visible.length).padStart(2, '0')} / {String(all.length).padStart(2, '0')}
         </span>
       </div>
       <ul className="flex flex-col">
         <AnimatePresence initial={false}>
-          {all.map((row, idx) => (
+          {visible.map((row, idx) => (
             <m.li
               key={row.id}
               initial={reduced ? false : { opacity: 0, y: 12 }}
@@ -148,6 +157,20 @@ export function EckdatenPanel({ project, facts }: Props) {
           ))}
         </AnimatePresence>
       </ul>
+      {(hiddenCount > 0 || expanded) && all.length > VISIBLE_LIMIT && (
+        <button
+          type="button"
+          onClick={() => setExpanded((v) => !v)}
+          className="self-start mt-1 font-mono text-[9.5px] tracking-[0.14em] uppercase text-ink-mute hover:text-clay transition-colors duration-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/55 focus-visible:ring-offset-2 focus-visible:ring-offset-paper rounded-sm"
+        >
+          {expanded
+            ? t('chat.rail.showLess', { defaultValue: '← show less' })
+            : t('chat.rail.showAll', {
+                count: all.length,
+                defaultValue: `show all (${all.length})`,
+              })}
+        </button>
+      )}
     </div>
   )
 }

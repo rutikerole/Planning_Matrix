@@ -188,54 +188,69 @@ function CompassArc({
   stationLabels,
 }: ArcProps) {
   const clampedPercent = Math.max(0, Math.min(100, percent))
+  const stationCount = segments.length || 7
+  const TRACK_Y_PX = 11 // half of arc-row height (22 px)
 
   return (
-    <div className="relative flex-1 h-[22px] flex items-center">
-      {/* Track — 2 px hairline */}
+    <div className="relative flex-1 h-[22px]">
+      {/* Track — 1 px hairline, full width */}
       <span
         aria-hidden="true"
-        className="absolute left-0 right-0 top-1/2 h-[2px] bg-hairline -translate-y-1/2"
+        className="absolute left-0 right-0 h-px bg-hairline"
+        style={{ top: `${TRACK_Y_PX}px`, transform: 'translateY(-50%)' }}
       />
 
-      {/* Progress overlay — 2 px clay-deep, width animates 600 ms ease */}
+      {/* Progress overlay — 2 px clay-deep solid, full opacity. Sits
+       * over the track for obvious contrast. */}
       <span
         aria-hidden="true"
-        className="absolute left-0 top-1/2 -translate-y-1/2 h-[2px] bg-clay-deep"
+        className="absolute left-0 h-[2px] bg-clay-deep"
         style={{
+          top: `${TRACK_Y_PX}px`,
           width: `${clampedPercent}%`,
+          transform: 'translateY(-50%)',
           transition: reduced
             ? 'none'
             : 'width 600ms cubic-bezier(0.16, 1, 0.3, 1)',
         }}
-      >
-        {/* Halo dot — 12 px clay-deep with 3 px paper ring + 2 px clay
-         * shadow ring. The translate(50%) keeps the dot's center
-         * exactly on the leading edge of the progress bar. */}
-        <span
-          aria-hidden="true"
-          className="absolute right-0 top-1/2 block w-3 h-3 rounded-full bg-clay-deep border-[3px] border-paper -translate-y-1/2 translate-x-1/2"
-          style={{ boxShadow: '0 0 0 2px var(--clay, hsl(var(--clay)))' }}
-        />
-      </span>
+      />
 
-      {/* Stations — 7 marks, evenly distributed via flex justify-between.
-       * Each station's parent li is zero-width with overflow centered, so
-       * the visible mark (circle or tick) sits exactly on the spacing
-       * grid regardless of its diameter. */}
-      <ol
+      {/* Halo dot at the progress leading edge — 12 px clay-deep,
+       * 3 px paper ring, 2 px clay shadow ring. Absolutely positioned
+       * so it tracks the progress percentage exactly. */}
+      <span
         aria-hidden="true"
-        className="relative w-full h-[22px] flex justify-between items-center"
-      >
-        {segments.map((seg, idx) => (
-          <Station
+        className="absolute block w-3 h-3 rounded-full bg-clay-deep border-[3px] border-paper"
+        style={{
+          left: `${clampedPercent}%`,
+          top: `${TRACK_Y_PX}px`,
+          transform: 'translate(-50%, -50%)',
+          boxShadow: '0 0 0 2px var(--clay, hsl(var(--clay)))',
+          transition: reduced
+            ? 'none'
+            : 'left 600ms cubic-bezier(0.16, 1, 0.3, 1)',
+        }}
+      />
+
+      {/* Stations — absolute-positioned at exact percentages so each
+       * label centers on its tick regardless of label width or flex
+       * compression. With 7 stations and 6 gaps, station k sits at
+       * (k / 6) * 100 % of the bar. */}
+      {segments.map((seg, idx) => {
+        const leftPct =
+          stationCount === 1 ? 50 : (idx / (stationCount - 1)) * 100
+        return (
+          <StationMark
             key={seg.specialist}
             segment={seg}
             isCurrent={idx === currentIdx && !isReadyForReview}
             label={showLabels ? stationLabels?.[idx] ?? '' : ''}
             showLabel={showLabels}
+            leftPct={leftPct}
+            trackY={TRACK_Y_PX}
           />
-        ))}
-      </ol>
+        )
+      })}
     </div>
   )
 }
@@ -247,42 +262,70 @@ interface StationProps {
   isCurrent: boolean
   label: string
   showLabel: boolean
+  leftPct: number
+  trackY: number
 }
 
-function Station({ segment, isCurrent, label, showLabel }: StationProps) {
+function StationMark({
+  segment,
+  isCurrent,
+  label,
+  showLabel,
+  leftPct,
+  trackY,
+}: StationProps) {
   const isPassed = segment.state === 'done'
 
   return (
-    <li
-      className="relative flex items-center justify-center shrink-0"
-      style={{ width: 0 }}
+    <div
+      className="absolute"
+      style={{
+        left: `${leftPct}%`,
+        top: 0,
+        transform: 'translateX(-50%)',
+        height: '100%',
+      }}
     >
-      {isCurrent ? (
-        <span
-          className="block w-[10px] h-[10px] rounded-full bg-clay"
-          style={{ boxShadow: '0 0 0 4px var(--clay-tint)' }}
-        />
-      ) : isPassed ? (
-        <span className="block w-[6px] h-[6px] rounded-full bg-clay-soft" />
-      ) : (
-        <span className="block w-px h-[16px] bg-hairline" />
-      )}
+      <span
+        className="absolute"
+        style={{
+          top: `${trackY}px`,
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+        }}
+      >
+        {isCurrent ? (
+          <span
+            className="block w-[10px] h-[10px] rounded-full bg-clay"
+            style={{ boxShadow: '0 0 0 4px var(--clay-tint)' }}
+          />
+        ) : isPassed ? (
+          <span className="block w-[6px] h-[6px] rounded-full bg-clay-soft" />
+        ) : (
+          <span className="block w-px h-[16px] bg-hairline" />
+        )}
+      </span>
 
       {showLabel && label && (
         <span
           className={cn(
-            'absolute top-[22px] left-1/2 -translate-x-1/2 font-mono text-[8.5px] tracking-[0.12em] uppercase whitespace-nowrap',
+            'absolute font-mono text-[8.5px] tracking-[0.12em] uppercase whitespace-nowrap',
             isCurrent
               ? 'text-clay font-medium'
               : isPassed
                 ? 'text-ink-mute'
                 : 'text-ink-faint',
           )}
+          style={{
+            top: `${trackY + 11}px`,
+            left: '50%',
+            transform: 'translateX(-50%)',
+          }}
         >
           {label}
         </span>
       )}
-    </li>
+    </div>
   )
 }
 

@@ -1266,6 +1266,8 @@
       "top3": "Top 3 Schritte",
       "areas": "Bereiche",
       "facts": "Eckdaten",
+      "showAll": "Alle ({{count}})",
+      "showLess": "← weniger",
       "intentLabel": "Vorhaben",
       "plotLabel": "Grundstück",
       "procedures": "Verfahren",

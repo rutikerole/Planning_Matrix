@@ -1,0 +1,2420 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Planning Matrix · Chat Workspace · Redesign Prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ========================================================================
+   PLANNING MATRIX · CHAT WORKSPACE REDESIGN
+   Brand: paper · ink · clay · hairlines · architectural drawing
+   ======================================================================== */
+
+:root {
+  /* Paper hierarchy */
+  --paper:        #F4EFE5;
+  --paper-deep:   #ECE5D5;
+  --paper-card:   #FBF7EE;
+  --paper-soft:   #F8F2E5;
+
+  /* Ink hierarchy */
+  --ink:          #1A1612;
+  --ink-soft:     #3A322A;
+  --ink-mute:     #6B5F50;
+  --ink-faint:    #8E8270;
+
+  /* Clay (the only accent) */
+  --clay:         #8E6A47;
+  --clay-deep:    #6B4F32;
+  --clay-soft:    #B89478;
+  --clay-tint:    rgba(142,106,71,0.10);
+  --clay-glow:    rgba(142,106,71,0.18);
+
+  /* Hairlines */
+  --line:         rgba(26,22,18,0.10);
+  --line-strong:  rgba(26,22,18,0.18);
+  --line-faint:   rgba(26,22,18,0.05);
+
+  /* Type */
+  --serif:        'Instrument Serif', 'Iowan Old Style', 'Times New Roman', serif;
+  --sans:         'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --mono:         'JetBrains Mono', ui-monospace, 'SF Mono', monospace;
+
+  /* Motion */
+  --ease:         cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-soft:    cubic-bezier(0.32, 0.72, 0, 1);
+
+  /* Layout */
+  --rail-l:       260px;
+  --rail-r:       340px;
+  --max:          1480px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+
+body {
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--ink);
+  background: var(--paper);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+/* Blueprint grid — only visible near interaction zones */
+.grid-bg {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background-image:
+    linear-gradient(to right, rgba(26,22,18,0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(26,22,18,0.04) 1px, transparent 1px);
+  background-size: 24px 24px;
+  mask-image: radial-gradient(ellipse 70% 60% at center 60%, black 30%, transparent 75%);
+  -webkit-mask-image: radial-gradient(ellipse 70% 60% at center 60%, black 30%, transparent 75%);
+  opacity: 0.6;
+}
+
+/* Subtle paper texture */
+.paper-tex {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background-image:
+    radial-gradient(circle at 20% 30%, rgba(139,107,72,0.025), transparent 40%),
+    radial-gradient(circle at 80% 70%, rgba(139,107,72,0.02), transparent 50%);
+}
+
+/* ========================================================================
+   APP SHELL · 3-zone grid
+   ======================================================================== */
+
+.app {
+  position: relative;
+  display: grid;
+  grid-template-columns: var(--rail-l) 1fr var(--rail-r);
+  max-width: var(--max);
+  margin: 0 auto;
+  min-height: 100vh;
+  z-index: 1;
+}
+
+/* ========================================================================
+   LEFT RAIL · "Verlauf"
+   ======================================================================== */
+
+.rail-l {
+  position: sticky; top: 0;
+  height: 100vh;
+  padding: 28px 24px 24px;
+  border-right: 1px solid var(--line);
+  display: flex; flex-direction: column;
+  background: linear-gradient(180deg, var(--paper) 0%, var(--paper-soft) 100%);
+}
+
+.brand {
+  display: flex; align-items: baseline; gap: 8px;
+  margin-bottom: 22px;
+}
+.brand-mark {
+  font-family: var(--serif);
+  font-size: 22px; font-weight: 400;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+.brand-mark em { font-style: italic; color: var(--clay); }
+.brand-version {
+  font-family: var(--mono);
+  font-size: 9px; color: var(--ink-mute);
+  letter-spacing: 0.08em;
+  margin-left: auto;
+  padding: 2px 5px;
+  border: 1px solid var(--line);
+  border-radius: 2px;
+}
+
+/* Project header card */
+.proj {
+  padding: 14px 0 16px;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 18px;
+}
+.proj-name {
+  font-family: var(--serif);
+  font-size: 19px;
+  line-height: 1.15;
+  color: var(--ink);
+  margin-bottom: 6px;
+}
+.proj-loc {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 13px;
+  color: var(--ink-mute);
+  margin-bottom: 10px;
+}
+.proj-meta {
+  display: flex; justify-content: space-between; align-items: center;
+  font-family: var(--mono);
+  font-size: 9.5px; letter-spacing: 0.06em;
+  color: var(--ink-mute);
+  text-transform: uppercase;
+}
+.proj-meta-dot {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--clay); display: inline-block;
+  margin-right: 5px;
+  animation: pulse 2.4s var(--ease-soft) infinite;
+}
+
+/* Gates list */
+.gates-label {
+  font-family: var(--mono);
+  font-size: 9.5px; letter-spacing: 0.16em;
+  color: var(--ink-mute);
+  text-transform: uppercase;
+  margin-bottom: 12px;
+  display: flex; justify-content: space-between;
+}
+.gates {
+  list-style: none;
+  margin-bottom: 24px;
+}
+.gate {
+  display: grid;
+  grid-template-columns: 18px 1fr 22px;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 0;
+  font-size: 13px;
+  color: var(--ink-soft);
+  cursor: pointer;
+  transition: color 200ms var(--ease);
+  position: relative;
+}
+.gate:hover { color: var(--ink); }
+.gate.active { color: var(--ink); font-weight: 500; }
+.gate.active::before {
+  content: ''; position: absolute;
+  left: -24px; top: 50%; transform: translateY(-50%);
+  width: 14px; height: 1px; background: var(--clay);
+}
+.gate-num {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 11px;
+  color: var(--ink-mute);
+  text-align: right;
+}
+.gate-state {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--line-strong);
+  justify-self: end;
+}
+.gate.active .gate-state {
+  background: var(--clay);
+  box-shadow: 0 0 0 3px var(--clay-tint);
+}
+.gate.done .gate-state { background: var(--ink-mute); }
+.gate.pending .gate-state {
+  background: transparent;
+  border: 1px solid var(--ink-mute);
+}
+
+.gate-sub {
+  list-style: none;
+  margin: -4px 0 4px 26px;
+  padding-left: 12px;
+  border-left: 1px solid var(--line);
+}
+.gate-sub .gate { font-size: 12px; padding: 4px 0; }
+.gate-sub .gate-num { font-style: italic; }
+
+/* At the table — specialists currently active */
+.table-section {
+  margin-top: auto;
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+}
+.table-label {
+  font-family: var(--mono);
+  font-size: 9.5px; letter-spacing: 0.16em;
+  color: var(--ink-mute);
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.specialists {
+  display: flex; flex-direction: column; gap: 6px;
+  margin-bottom: 18px;
+}
+.specialist {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 12px;
+  color: var(--ink-soft);
+  font-family: var(--sans);
+}
+.spec-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--clay-soft);
+}
+.specialist.live .spec-dot {
+  background: var(--clay);
+  animation: pulse 1.4s var(--ease-soft) infinite;
+}
+.specialist.live { color: var(--ink); }
+
+.rail-l-foot {
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+  display: flex; justify-content: space-between;
+  font-family: var(--mono);
+  font-size: 10px; letter-spacing: 0.06em;
+  color: var(--ink-mute);
+  text-transform: uppercase;
+}
+.rail-l-foot a { color: var(--ink-mute); text-decoration: none; }
+.rail-l-foot a:hover { color: var(--clay); }
+
+/* ========================================================================
+   CENTER · Compass arc + thread + input
+   ======================================================================== */
+
+.center {
+  position: relative;
+  display: flex; flex-direction: column;
+  min-height: 100vh;
+}
+
+/* === COMPASS ARC (replaces ugly top tabs) === */
+.compass {
+  position: sticky; top: 0;
+  z-index: 30;
+  padding: 16px 56px 14px;
+  background: linear-gradient(180deg, var(--paper) 0%, var(--paper) 70%, rgba(244,239,229,0) 100%);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+}
+.compass-row {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 24px;
+}
+.compass-label {
+  font-family: var(--mono);
+  font-size: 9.5px; letter-spacing: 0.18em;
+  color: var(--ink-mute);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.compass-arc {
+  flex: 1;
+  position: relative; height: 18px;
+  display: flex; align-items: center;
+}
+/* The base hairline */
+.compass-track {
+  position: absolute; left: 0; right: 0; top: 50%;
+  height: 1px; background: var(--line);
+  transform: translateY(-50%);
+}
+/* The progress overlay */
+.compass-progress {
+  position: absolute; left: 0; top: 50%;
+  height: 1px; background: var(--clay);
+  transform: translateY(-50%);
+  width: 38%;
+  transition: width 600ms var(--ease);
+}
+.compass-progress::after {
+  content: '';
+  position: absolute; right: -4px; top: -3.5px;
+  width: 8px; height: 8px;
+  background: var(--clay);
+  border: 2px solid var(--paper);
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px var(--clay);
+}
+/* Stations along the arc */
+.compass-stations {
+  position: relative; width: 100%; height: 18px;
+  display: flex; justify-content: space-between;
+}
+.station {
+  position: relative;
+  width: 1px; height: 18px;
+  background: var(--line);
+}
+.station::before {
+  content: attr(data-label);
+  position: absolute;
+  top: 22px; left: 50%; transform: translateX(-50%);
+  font-family: var(--mono);
+  font-size: 8.5px; letter-spacing: 0.12em;
+  color: var(--ink-faint);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.station.passed { background: var(--clay-soft); }
+.station.passed::before { color: var(--ink-mute); }
+.station.current { background: var(--clay); height: 22px; margin-top: -2px; }
+.station.current::before { color: var(--clay); font-weight: 500; }
+
+/* Turn count + scale notation on right */
+.compass-meta {
+  display: flex; align-items: center; gap: 14px;
+  white-space: nowrap;
+}
+.turn-count {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 16px;
+  color: var(--ink);
+}
+.turn-count em {
+  font-family: var(--mono);
+  font-style: normal;
+  font-size: 9.5px;
+  letter-spacing: 0.14em;
+  color: var(--ink-mute);
+  text-transform: uppercase;
+  margin-right: 6px;
+}
+.scale-mark {
+  display: flex; align-items: center; gap: 6px;
+  font-family: var(--mono);
+  font-size: 9.5px; letter-spacing: 0.08em;
+  color: var(--ink-mute);
+}
+.scale-mark-bar {
+  width: 36px; height: 1px;
+  background: var(--ink-mute);
+  position: relative;
+}
+.scale-mark-bar::before, .scale-mark-bar::after {
+  content: ''; position: absolute; top: -2px;
+  width: 1px; height: 5px; background: var(--ink-mute);
+}
+.scale-mark-bar::before { left: 0; }
+.scale-mark-bar::after  { right: 0; }
+
+/* === STICKY CONTEXT HEADER (anti-scroll-loss) === */
+.sticky-ctx {
+  position: sticky; top: 70px;
+  z-index: 20;
+  margin: 0 56px;
+  padding: 10px 16px;
+  background: var(--paper-card);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  display: flex; align-items: center; gap: 12px;
+  font-size: 12px;
+  opacity: 0;
+  transform: translateY(-8px);
+  transition: opacity 220ms var(--ease), transform 220ms var(--ease);
+  pointer-events: none;
+  box-shadow: 0 1px 0 rgba(26,22,18,0.03), 0 6px 24px -8px rgba(26,22,18,0.08);
+}
+.sticky-ctx.visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+.sticky-ctx-tag {
+  display: flex; align-items: center; gap: 6px;
+  font-family: var(--mono);
+  font-size: 9.5px; letter-spacing: 0.16em;
+  color: var(--clay);
+  text-transform: uppercase;
+}
+.sticky-ctx-tag::before {
+  content: ''; display: inline-block;
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--clay);
+  animation: pulse 1.6s var(--ease-soft) infinite;
+}
+.sticky-ctx-q {
+  flex: 1;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 14px;
+  color: var(--ink-soft);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.sticky-ctx-back {
+  font-family: var(--mono);
+  font-size: 10px; letter-spacing: 0.08em;
+  color: var(--ink-mute);
+  text-transform: uppercase;
+  cursor: pointer;
+  display: flex; align-items: center; gap: 5px;
+  padding: 4px 8px;
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  background: transparent;
+}
+.sticky-ctx-back:hover { color: var(--clay); border-color: var(--clay); }
+
+/* === THREAD === */
+.thread {
+  flex: 1;
+  padding: 32px 56px 220px;
+  max-width: 760px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* Chapter divider */
+.chapter {
+  margin: 56px 0 40px;
+  display: flex; align-items: center; gap: 16px;
+}
+.chapter::before, .chapter::after {
+  content: ''; flex: 1; height: 1px; background: var(--line);
+}
+.chapter-label {
+  font-family: var(--mono);
+  font-size: 10px; letter-spacing: 0.22em;
+  color: var(--ink-mute);
+  text-transform: uppercase;
+}
+.chapter-num {
+  font-family: var(--serif);
+  font-style: italic;
+  color: var(--clay);
+  font-size: 12px;
+  margin-right: 4px;
+}
+
+/* Specialist tag */
+.spec-tag {
+  display: flex; align-items: baseline; gap: 10px;
+  margin-bottom: 12px;
+  margin-top: 36px;
+}
+.spec-tag-dot {
+  width: 6px; height: 6px;
+  background: var(--clay);
+  border-radius: 50%;
+  position: relative; top: -1px;
+  flex-shrink: 0;
+}
+.spec-tag-name {
+  font-family: var(--mono);
+  font-size: 10.5px; letter-spacing: 0.18em;
+  color: var(--clay);
+  text-transform: uppercase;
+  font-weight: 500;
+}
+.spec-tag-de {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 13px;
+  color: var(--ink-mute);
+  margin-left: 2px;
+}
+
+/* Assistant message */
+.msg-a {
+  font-size: 15px;
+  line-height: 1.65;
+  color: var(--ink);
+  margin-bottom: 28px;
+  max-width: 640px;
+}
+.msg-a strong, .msg-a b {
+  font-weight: 500;
+  color: var(--ink);
+}
+.msg-a p + p { margin-top: 14px; }
+
+/* Citation chip — interactive law reference */
+.cite {
+  display: inline-flex; align-items: center;
+  padding: 1px 7px 2px;
+  font-family: var(--mono);
+  font-size: 12px;
+  background: var(--clay-tint);
+  color: var(--clay-deep);
+  border-radius: 3px;
+  cursor: pointer;
+  position: relative;
+  transition: background 160ms var(--ease);
+  text-decoration: none;
+  white-space: nowrap;
+  margin: 0 1px;
+}
+.cite:hover { background: var(--clay-glow); }
+.cite::before {
+  content: '§';
+  margin-right: 3px;
+  font-style: italic;
+  color: var(--clay);
+  font-size: 11px;
+}
+.cite-pop {
+  position: absolute;
+  top: calc(100% + 8px); left: 0;
+  width: 320px;
+  padding: 14px 16px 13px;
+  background: var(--paper-card);
+  border: 1px solid var(--line-strong);
+  border-radius: 4px;
+  font-family: var(--sans);
+  color: var(--ink-soft);
+  font-size: 12.5px;
+  line-height: 1.5;
+  opacity: 0; pointer-events: none;
+  transform: translateY(-4px) scale(0.98);
+  transition: opacity 180ms var(--ease), transform 180ms var(--ease);
+  z-index: 50;
+  box-shadow: 0 1px 0 rgba(26,22,18,0.04), 0 12px 36px -10px rgba(26,22,18,0.18);
+}
+.cite:hover .cite-pop {
+  opacity: 1; pointer-events: auto;
+  transform: translateY(0) scale(1);
+}
+.cite-pop-head {
+  font-family: var(--mono);
+  font-size: 9.5px; letter-spacing: 0.14em;
+  color: var(--clay);
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.cite-pop-title {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 14px;
+  color: var(--ink);
+  margin-bottom: 8px;
+}
+.cite-pop-link {
+  display: inline-block;
+  margin-top: 10px;
+  font-family: var(--mono);
+  font-size: 9.5px; letter-spacing: 0.12em;
+  color: var(--clay);
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+/* User message */
+.msg-u-wrap {
+  display: flex; justify-content: flex-end;
+  margin: 24px 0 12px;
+}
+.msg-u {
+  max-width: 78%;
+  padding: 11px 16px 12px;
+  background: var(--paper-card);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  font-size: 14.5px;
+  color: var(--ink);
+  position: relative;
+  box-shadow: 0 1px 0 rgba(26,22,18,0.02);
+}
+.msg-u-time {
+  font-family: var(--mono);
+  font-size: 9.5px; letter-spacing: 0.06em;
+  color: var(--ink-faint);
+  text-align: right;
+  margin-top: 6px;
+}
+.msg-u-impact {
+  display: inline-block;
+  margin-top: 4px;
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--ink-mute);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0;
+  transition: opacity 400ms var(--ease) 200ms;
+}
+.msg-u.shaped .msg-u-impact { opacity: 1; }
+.msg-u-impact em {
+  font-family: var(--serif);
+  font-style: italic;
+  color: var(--clay);
+  text-transform: none;
+  font-size: 11px;
+  letter-spacing: 0;
+}
+
+/* === THINKING INDICATOR (drafting compass) === */
+.thinking {
+  display: flex; align-items: center; gap: 14px;
+  padding: 18px 0 6px;
+  margin-bottom: 18px;
+  opacity: 0; transform: translateY(4px);
+  transition: opacity 240ms var(--ease), transform 240ms var(--ease);
+  pointer-events: none;
+  height: 0; overflow: hidden;
+}
+.thinking.visible {
+  opacity: 1; transform: translateY(0);
+  height: auto;
+}
+.compass-svg {
+  width: 28px; height: 28px;
+  flex-shrink: 0;
+}
+.compass-svg circle, .compass-svg path, .compass-svg line {
+  stroke: var(--clay);
+  stroke-width: 1;
+  fill: none;
+  stroke-linecap: round;
+}
+.compass-arm {
+  transform-origin: 14px 14px;
+  animation: spin 2.6s linear infinite;
+}
+.compass-arc-draw {
+  stroke-dasharray: 60;
+  stroke-dashoffset: 60;
+  animation: arc-draw 2.6s var(--ease) infinite;
+}
+.thinking-text {
+  display: flex; flex-direction: column; gap: 3px;
+}
+.thinking-spec {
+  font-family: var(--mono);
+  font-size: 10px; letter-spacing: 0.18em;
+  color: var(--clay);
+  text-transform: uppercase;
+}
+.thinking-action {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 13.5px;
+  color: var(--ink-soft);
+  transition: opacity 300ms var(--ease);
+}
+.thinking-action.swap { opacity: 0; }
+
+/* === SYSTEM LINE === */
+.sys-line {
+  margin: 32px 0;
+  padding: 14px 0;
+  border-top: 1px dashed var(--line-strong);
+  border-bottom: 1px dashed var(--line-strong);
+  display: flex; align-items: center; gap: 12px;
+}
+.sys-tag {
+  font-family: var(--mono);
+  font-size: 9.5px; letter-spacing: 0.16em;
+  color: var(--ink-mute);
+  text-transform: uppercase;
+}
+.sys-msg {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 13.5px;
+  color: var(--ink-mute);
+}
+
+/* === INPUT BAR (sticky bottom) === */
+.input-zone {
+  position: fixed;
+  bottom: 0;
+  left: var(--rail-l);
+  right: var(--rail-r);
+  max-width: calc(var(--max) - var(--rail-l) - var(--rail-r));
+  background: linear-gradient(180deg, rgba(244,239,229,0) 0%, var(--paper) 30%);
+  padding: 24px 56px 22px;
+  z-index: 25;
+}
+.input-frame {
+  max-width: 760px;
+  margin: 0 auto;
+}
+.idk-row {
+  display: flex; gap: 8px;
+  margin-bottom: 10px;
+  font-size: 11.5px;
+  align-items: center;
+}
+.idk-label {
+  font-family: var(--mono);
+  font-size: 9.5px; letter-spacing: 0.14em;
+  color: var(--ink-mute);
+  text-transform: uppercase;
+  margin-right: 4px;
+}
+.idk-chip {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 5px 11px 6px;
+  font-family: var(--sans);
+  font-size: 11.5px;
+  color: var(--ink-soft);
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: 100px;
+  cursor: pointer;
+  transition: all 180ms var(--ease);
+}
+.idk-chip:hover {
+  border-color: var(--clay);
+  color: var(--clay);
+  background: var(--clay-tint);
+}
+.idk-chip-icon {
+  width: 9px; height: 9px;
+  display: inline-block;
+}
+.input-bar {
+  display: grid;
+  grid-template-columns: 22px 1fr auto;
+  align-items: end;
+  gap: 12px;
+  padding: 14px 18px 14px;
+  background: var(--paper-card);
+  border: 1px solid var(--line-strong);
+  border-radius: 6px;
+  transition: border-color 200ms var(--ease), box-shadow 200ms var(--ease);
+}
+.input-bar:focus-within {
+  border-color: var(--clay-soft);
+  box-shadow: 0 0 0 4px var(--clay-tint);
+}
+.input-attach {
+  width: 18px; height: 18px;
+  color: var(--ink-faint);
+  cursor: pointer;
+  margin-bottom: 2px;
+}
+.input-attach:hover { color: var(--clay); }
+.input-text {
+  width: 100%;
+  border: none; outline: none; background: transparent;
+  resize: none;
+  font-family: var(--sans);
+  font-size: 14.5px;
+  line-height: 1.55;
+  color: var(--ink);
+  min-height: 22px; max-height: 120px;
+  padding: 0;
+}
+.input-text::placeholder { color: var(--ink-faint); }
+.input-send {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--line-strong);
+  background: var(--paper);
+  color: var(--ink-mute);
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 200ms var(--ease);
+}
+.input-send.ready {
+  background: var(--ink);
+  color: var(--paper);
+  border-color: var(--ink);
+}
+.input-send:hover.ready {
+  background: var(--clay-deep);
+  border-color: var(--clay-deep);
+}
+.input-foot {
+  display: flex; justify-content: space-between;
+  margin-top: 8px;
+  font-family: var(--mono);
+  font-size: 9.5px; letter-spacing: 0.06em;
+  color: var(--ink-faint);
+  text-transform: uppercase;
+}
+.input-foot kbd {
+  font-family: var(--mono);
+  font-size: 9px;
+  padding: 1px 4px;
+  background: var(--paper-deep);
+  border: 1px solid var(--line);
+  border-radius: 2px;
+}
+
+/* ========================================================================
+   RIGHT RAIL · "Was wir wissen"
+   ======================================================================== */
+
+.rail-r {
+  position: sticky; top: 0;
+  height: 100vh;
+  border-left: 1px solid var(--line);
+  background: linear-gradient(180deg, var(--paper) 0%, var(--paper-deep) 100%);
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--line-strong) transparent;
+}
+.rail-r::-webkit-scrollbar { width: 4px; }
+.rail-r::-webkit-scrollbar-thumb { background: var(--line-strong); border-radius: 2px; }
+
+.rail-r-inner {
+  padding: 28px 22px 32px;
+}
+
+.rail-section {
+  margin-bottom: 28px;
+}
+.rail-head {
+  display: flex; justify-content: space-between; align-items: baseline;
+  margin-bottom: 14px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--line);
+}
+.rail-head-title {
+  font-family: var(--mono);
+  font-size: 9.5px; letter-spacing: 0.18em;
+  color: var(--ink-mute);
+  text-transform: uppercase;
+}
+.rail-head-meta {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 12px;
+  color: var(--ink-faint);
+}
+
+/* Project portrait — line drawing that evolves */
+.portrait {
+  position: relative;
+  margin: 8px 0 18px;
+  padding: 14px 8px 8px;
+  background: linear-gradient(180deg, transparent, rgba(139,107,72,0.03));
+  border-radius: 4px;
+}
+.portrait svg {
+  width: 100%; height: 100px;
+  display: block;
+}
+.portrait svg path,
+.portrait svg line,
+.portrait svg rect,
+.portrait svg polygon {
+  fill: none;
+  stroke: var(--ink-soft);
+  stroke-width: 0.8;
+  stroke-linecap: round;
+}
+.portrait svg .accent { stroke: var(--clay); stroke-width: 1; }
+.portrait svg .scale { stroke: var(--ink-faint); stroke-width: 0.5; }
+.portrait-label {
+  display: flex; justify-content: space-between;
+  margin-top: 4px;
+  font-family: var(--mono);
+  font-size: 9px; letter-spacing: 0.08em;
+  color: var(--ink-faint);
+  text-transform: uppercase;
+}
+
+/* Top 3 */
+.top3 {
+  display: flex; flex-direction: column; gap: 14px;
+}
+.rec {
+  position: relative;
+  padding: 12px 14px 13px;
+  background: var(--paper-card);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  transition: all 320ms var(--ease);
+}
+.rec.fresh {
+  border-color: var(--clay-soft);
+  background: linear-gradient(180deg, var(--paper-card), rgba(184,148,120,0.06));
+}
+.rec.fresh::before {
+  content: '';
+  position: absolute; left: -1px; top: -1px; bottom: -1px;
+  width: 2px; background: var(--clay);
+  border-radius: 2px 0 0 2px;
+}
+.rec-rank {
+  position: absolute; top: 12px; right: 12px;
+  font-family: var(--serif);
+  font-style: italic;
+  color: var(--clay);
+  font-size: 14px;
+}
+.rec-title {
+  font-family: var(--serif);
+  font-size: 16px; line-height: 1.25;
+  color: var(--ink);
+  margin-bottom: 4px;
+  padding-right: 24px;
+}
+.rec-detail {
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--ink-soft);
+}
+.rec-foot {
+  margin-top: 8px;
+  padding-top: 6px;
+  border-top: 1px dashed var(--line);
+  font-family: var(--mono);
+  font-size: 9px; letter-spacing: 0.06em;
+  color: var(--ink-faint);
+  font-style: italic;
+  text-transform: none;
+}
+
+/* Areas */
+.areas-vis {
+  position: relative;
+  margin: 4px 0 14px;
+  padding: 8px;
+  background: var(--paper-card);
+  border-radius: 4px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 6px;
+}
+.area-row {
+  display: grid;
+  grid-template-columns: 22px 1fr auto;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: background 200ms var(--ease);
+  position: relative;
+}
+.area-row:hover { background: var(--paper-soft); }
+.area-glyph {
+  width: 22px; height: 22px;
+  border: 1px solid var(--ink-mute);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 13px;
+  color: var(--ink-soft);
+  background:
+    repeating-linear-gradient(135deg, transparent 0, transparent 3px, rgba(26,22,18,0.06) 3px, rgba(26,22,18,0.06) 4px);
+}
+.area-name {
+  font-family: var(--serif);
+  font-size: 14px;
+  color: var(--ink);
+  line-height: 1.1;
+}
+.area-desc {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 11px;
+  color: var(--ink-mute);
+}
+.area-state {
+  font-family: var(--mono);
+  font-size: 9px; letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  border-radius: 2px;
+}
+.area-state.active {
+  background: var(--clay-tint);
+  color: var(--clay-deep);
+}
+.area-state.pending {
+  background: var(--paper-deep);
+  color: var(--ink-mute);
+}
+.area-state.void {
+  color: var(--ink-faint);
+  border: 1px dashed var(--line-strong);
+}
+.area-row.live::before {
+  content: '';
+  position: absolute; left: 0; top: 0; bottom: 0;
+  width: 2px; background: var(--clay);
+  border-radius: 2px;
+  animation: pulse-bar 1.4s var(--ease-soft) infinite;
+}
+
+/* Eckdaten / Facts */
+.facts {
+  display: flex; flex-direction: column;
+}
+.fact {
+  position: relative;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--line-faint);
+}
+.fact:last-child { border-bottom: none; }
+.fact-row {
+  display: grid;
+  grid-template-columns: 18px 1fr;
+  gap: 10px;
+}
+.fact-num {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 11px;
+  color: var(--ink-mute);
+  padding-top: 3px;
+}
+.fact-key {
+  font-family: var(--mono);
+  font-size: 9.5px; letter-spacing: 0.12em;
+  color: var(--ink-mute);
+  text-transform: uppercase;
+  margin-bottom: 3px;
+}
+.fact-val {
+  font-family: var(--serif);
+  font-size: 14px;
+  color: var(--ink);
+  line-height: 1.3;
+  margin-bottom: 4px;
+}
+.qual {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-family: var(--mono);
+  font-size: 8.5px; letter-spacing: 0.12em;
+  color: var(--ink-faint);
+  text-transform: uppercase;
+}
+.qual-dot {
+  width: 4px; height: 4px; border-radius: 50%;
+  background: var(--ink-faint);
+}
+.qual.legal .qual-dot { background: var(--clay); }
+.qual.client .qual-dot { background: var(--ink-soft); }
+.fact.fresh::before {
+  content: '';
+  position: absolute; left: -22px; top: 0; bottom: 0;
+  width: 2px; background: var(--clay);
+  animation: fresh-fade 2400ms var(--ease) forwards;
+}
+
+/* Collapsible sections */
+.collapse {
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  margin-bottom: 10px;
+  background: var(--paper-card);
+  overflow: hidden;
+}
+.collapse-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 14px;
+  cursor: pointer;
+  font-family: var(--mono);
+  font-size: 10px; letter-spacing: 0.16em;
+  color: var(--ink-mute);
+  text-transform: uppercase;
+  transition: color 180ms var(--ease);
+}
+.collapse-head:hover { color: var(--ink); }
+.collapse-head .num {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 11px;
+  color: var(--clay);
+  letter-spacing: 0;
+  text-transform: none;
+}
+.collapse-arrow {
+  font-family: var(--mono); font-size: 10px;
+  color: var(--ink-faint);
+  transition: transform 200ms var(--ease);
+}
+.collapse.open .collapse-arrow { transform: rotate(90deg); }
+.collapse-body {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 320ms var(--ease);
+}
+.collapse.open .collapse-body { max-height: 600px; }
+.collapse-body-inner {
+  padding: 4px 14px 12px;
+  border-top: 1px dashed var(--line);
+}
+.list-item {
+  padding: 8px 0;
+  border-bottom: 1px solid var(--line-faint);
+  font-size: 12.5px;
+  color: var(--ink-soft);
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+}
+.list-item:last-child { border-bottom: none; }
+.list-item-status {
+  font-family: var(--mono);
+  font-size: 8.5px; letter-spacing: 0.12em;
+  color: var(--ink-faint);
+  text-transform: uppercase;
+}
+
+/* Cost ticker bottom */
+.cost-tick {
+  margin-top: 22px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+  display: flex; justify-content: space-between; align-items: center;
+  font-family: var(--mono);
+  font-size: 9px; letter-spacing: 0.06em;
+  color: var(--ink-faint);
+}
+.cost-bar {
+  flex: 1; margin: 0 12px;
+  height: 1px;
+  background: linear-gradient(90deg, var(--clay-soft) 0%, var(--clay-soft) 12%, var(--line) 12%);
+}
+
+/* Stand-up button (pause-and-orient) */
+.standup {
+  position: fixed;
+  bottom: 24px; right: calc(var(--rail-r) + 24px);
+  display: flex; align-items: center; gap: 8px;
+  padding: 9px 14px 10px;
+  background: var(--paper-card);
+  border: 1px solid var(--line-strong);
+  border-radius: 100px;
+  font-family: var(--mono);
+  font-size: 10px; letter-spacing: 0.14em;
+  color: var(--ink-soft);
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 220ms var(--ease);
+  z-index: 22;
+  box-shadow: 0 1px 0 rgba(26,22,18,0.04), 0 8px 28px -10px rgba(26,22,18,0.16);
+}
+.standup:hover {
+  border-color: var(--clay);
+  color: var(--clay);
+  transform: translateY(-1px);
+}
+.standup-icon {
+  width: 12px; height: 12px;
+  display: inline-block;
+}
+
+/* === DEMO PANEL (only for prototype) === */
+.demo-panel {
+  position: fixed; top: 16px; right: 16px;
+  z-index: 100;
+  background: var(--ink);
+  color: var(--paper);
+  padding: 10px 12px;
+  border-radius: 6px;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  display: flex; flex-direction: column; gap: 6px;
+  max-width: 260px;
+  box-shadow: 0 12px 36px -10px rgba(0,0,0,0.4);
+}
+.demo-panel-head {
+  font-size: 9px; letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--clay-soft);
+  padding-bottom: 6px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  margin-bottom: 2px;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.demo-btn {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.08);
+  color: var(--paper);
+  padding: 7px 10px;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  text-align: left;
+  cursor: pointer;
+  border-radius: 3px;
+  transition: all 160ms var(--ease);
+}
+.demo-btn:hover {
+  background: var(--clay);
+  border-color: var(--clay);
+}
+.demo-toggle {
+  cursor: pointer;
+  background: transparent; border: none;
+  color: var(--clay-soft);
+  font-size: 14px;
+  padding: 0;
+}
+.demo-panel.collapsed .demo-btn,
+.demo-panel.collapsed .demo-panel-sub { display: none; }
+.demo-panel-sub {
+  font-size: 8.5px;
+  color: rgba(255,255,255,0.5);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-top: 4px;
+  padding-top: 4px;
+  border-top: 1px dashed rgba(255,255,255,0.1);
+}
+
+/* === STAND-UP MODAL === */
+.modal-bg {
+  position: fixed; inset: 0;
+  background: rgba(26,22,18,0.4);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  z-index: 200;
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none;
+  transition: opacity 240ms var(--ease);
+}
+.modal-bg.open { opacity: 1; pointer-events: auto; }
+.modal {
+  width: 90%; max-width: 880px; max-height: 85vh;
+  overflow-y: auto;
+  background: var(--paper);
+  border: 1px solid var(--line-strong);
+  border-radius: 6px;
+  padding: 32px 40px;
+  transform: scale(0.96) translateY(8px);
+  transition: transform 280ms var(--ease);
+}
+.modal-bg.open .modal { transform: scale(1) translateY(0); }
+.modal-head {
+  display: flex; justify-content: space-between; align-items: baseline;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 16px; margin-bottom: 24px;
+}
+.modal-title {
+  font-family: var(--serif);
+  font-size: 28px;
+  color: var(--ink);
+}
+.modal-title em { font-style: italic; color: var(--clay); }
+.modal-close {
+  font-family: var(--mono);
+  font-size: 11px; letter-spacing: 0.14em;
+  color: var(--ink-mute);
+  background: none; border: 1px solid var(--line);
+  padding: 6px 12px;
+  border-radius: 2px;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+.modal-close:hover { color: var(--clay); border-color: var(--clay); }
+.timeline {
+  padding-left: 24px;
+  border-left: 1px solid var(--line);
+  margin-bottom: 24px;
+}
+.timeline-item {
+  position: relative;
+  margin-bottom: 18px;
+}
+.timeline-item::before {
+  content: '';
+  position: absolute; left: -28px; top: 6px;
+  width: 6px; height: 6px;
+  background: var(--clay);
+  border-radius: 50%;
+}
+.timeline-time {
+  font-family: var(--mono);
+  font-size: 9.5px; letter-spacing: 0.1em;
+  color: var(--ink-mute);
+  text-transform: uppercase;
+}
+.timeline-event {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 15px;
+  color: var(--ink);
+  margin-top: 2px;
+}
+
+/* ========================================================================
+   ANIMATIONS
+   ======================================================================== */
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%      { opacity: 0.6; transform: scale(0.85); }
+}
+@keyframes pulse-bar {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.4; }
+}
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+@keyframes arc-draw {
+  0%   { stroke-dashoffset: 60; }
+  60%  { stroke-dashoffset: 0; }
+  100% { stroke-dashoffset: -60; }
+}
+@keyframes fresh-fade {
+  0%   { opacity: 1; }
+  60%  { opacity: 1; }
+  100% { opacity: 0; }
+}
+@keyframes slide-in-right {
+  from { opacity: 0; transform: translateX(8px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes slide-in-up {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes type-cursor {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+
+.entering {
+  animation: slide-in-up 480ms var(--ease) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ========================================================================
+   RESPONSIVE — basic mobile fallback (full mobile pass is its own task)
+   ======================================================================== */
+@media (max-width: 1100px) {
+  .app { grid-template-columns: 1fr; }
+  .rail-l, .rail-r { display: none; }
+  .input-zone { left: 0; right: 0; padding: 16px 20px; }
+  .compass, .thread, .sticky-ctx { padding-left: 20px; padding-right: 20px; margin-left: 0; margin-right: 0; }
+  .standup { right: 16px; }
+}
+</style>
+</head>
+<body>
+
+<div class="grid-bg"></div>
+<div class="paper-tex"></div>
+
+<!-- ============================================================ -->
+<!-- DEMO CONTROL PANEL (top-right, floating)                     -->
+<!-- ============================================================ -->
+<div class="demo-panel" id="demo">
+  <div class="demo-panel-head">
+    <span>Prototype controls</span>
+    <button class="demo-toggle" id="demoToggle">−</button>
+  </div>
+  <button class="demo-btn" data-demo="thinking">▸ Show thinking indicator</button>
+  <button class="demo-btn" data-demo="newturn">▸ Replay new turn arrival</button>
+  <button class="demo-btn" data-demo="fact">▸ Add new fact (right rail)</button>
+  <button class="demo-btn" data-demo="reorder">▸ Reorder Top-3 (rank change)</button>
+  <button class="demo-btn" data-demo="standup">▸ Open Stand-up overview</button>
+  <button class="demo-btn" data-demo="scroll">▸ Trigger sticky context (scroll)</button>
+  <div class="demo-panel-sub">Hover any §-chip to see citation</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- APP                                                           -->
+<!-- ============================================================ -->
+<div class="app">
+
+  <!-- ====================== LEFT RAIL ====================== -->
+  <aside class="rail-l">
+    <div class="brand">
+      <div class="brand-mark">Planning<em>Matrix</em></div>
+      <div class="brand-version">v1.0</div>
+    </div>
+
+    <div class="proj">
+      <div class="proj-name">Single-family home Türkenstraße</div>
+      <div class="proj-loc">Türkenstraße 52k, 80799 München</div>
+      <div class="proj-meta">
+        <span><span class="proj-meta-dot"></span>Live · turn 18</span>
+        <span>5% covered</span>
+      </div>
+    </div>
+
+    <div class="gates-label">
+      <span>Gates</span>
+      <span>I—VII</span>
+    </div>
+    <ul class="gates">
+      <li class="gate done">
+        <span class="gate-num">I</span>
+        <span>Overview</span>
+        <span class="gate-state"></span>
+      </li>
+      <li class="gate done">
+        <span class="gate-num">II</span>
+        <span>Project</span>
+        <span class="gate-state"></span>
+      </li>
+      <li class="gate done">
+        <span class="gate-num">III</span>
+        <span>Plot</span>
+        <span class="gate-state"></span>
+      </li>
+      <li class="gate pending">
+        <span class="gate-num">IV</span>
+        <span>Parties</span>
+        <span class="gate-state"></span>
+      </li>
+      <li class="gate active">
+        <span class="gate-num">V</span>
+        <span>Legal classification</span>
+        <span class="gate-state"></span>
+      </li>
+      <ul class="gate-sub">
+        <li class="gate done"><span class="gate-num">a</span><span>Zoning law</span><span class="gate-state"></span></li>
+        <li class="gate active"><span class="gate-num">b</span><span>Building code</span><span class="gate-state"></span></li>
+        <li class="gate active"><span class="gate-num">c</span><span>Adjacent rules</span><span class="gate-state"></span></li>
+        <li class="gate pending"><span class="gate-num">d</span><span>Procedure</span><span class="gate-state"></span></li>
+        <li class="gate pending"><span class="gate-num">e</span><span>Documents</span><span class="gate-state"></span></li>
+      </ul>
+      <li class="gate pending">
+        <span class="gate-num">VI</span>
+        <span>Planning</span>
+        <span class="gate-state"></span>
+      </li>
+      <li class="gate pending">
+        <span class="gate-num">VII</span>
+        <span>Documents</span>
+        <span class="gate-state"></span>
+      </li>
+    </ul>
+
+    <div class="table-section">
+      <div class="table-label">At the table · now</div>
+      <div class="specialists">
+        <div class="specialist live"><span class="spec-dot"></span>Procedure synthesizer</div>
+        <div class="specialist"><span class="spec-dot"></span>Zoning law</div>
+        <div class="specialist"><span class="spec-dot"></span>Building code</div>
+        <div class="specialist"><span class="spec-dot"></span>Adjacent rules</div>
+      </div>
+      <div class="rail-l-foot">
+        <a href="#">View briefing</a>
+        <a href="#">Leave →</a>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ====================== CENTER ====================== -->
+  <main class="center" id="center">
+
+    <!-- COMPASS ARC -->
+    <div class="compass">
+      <div class="compass-row">
+        <div class="compass-label">Journey</div>
+        <div class="compass-arc">
+          <div class="compass-track"></div>
+          <div class="compass-progress" id="compassProgress"></div>
+          <div class="compass-stations">
+            <span class="station passed" data-label="Init"></span>
+            <span class="station passed" data-label="Plot"></span>
+            <span class="station passed" data-label="Zone"></span>
+            <span class="station current" data-label="Code"></span>
+            <span class="station" data-label="Adj"></span>
+            <span class="station" data-label="Proc"></span>
+            <span class="station" data-label="Docs"></span>
+          </div>
+        </div>
+        <div class="compass-meta">
+          <div class="turn-count"><em>Turn</em>18 / <span style="color:var(--ink-mute);">~34</span></div>
+          <div class="scale-mark">
+            <div class="scale-mark-bar"></div>
+            <span>M 1:100</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STICKY CONTEXT HEADER (appears on scroll) -->
+    <div class="sticky-ctx" id="stickyCtx">
+      <div class="sticky-ctx-tag">Building code</div>
+      <div class="sticky-ctx-q">Currently establishing: building class &amp; procedure type under BayBO</div>
+      <button class="sticky-ctx-back" id="backToLive">↓ back to live</button>
+    </div>
+
+    <!-- THREAD -->
+    <div class="thread" id="thread">
+
+      <!-- SYSTEM line (returning user) -->
+      <div class="sys-line">
+        <span class="sys-tag">System</span>
+        <span class="sys-msg">You were last here on 04 May 2026 at 12:30 — we'll continue from where you left off.</span>
+      </div>
+
+      <!-- CHAPTER: Zoning law (collapsed/passed) -->
+      <div class="chapter">
+        <span class="chapter-label"><span class="chapter-num">I</span> Zoning law · resolved</span>
+      </div>
+
+      <!-- ZONING — message -->
+      <div class="spec-tag">
+        <span class="spec-tag-dot"></span>
+        <span class="spec-tag-name">Zoning law</span>
+        <span class="spec-tag-de">Planungsrecht</span>
+      </div>
+      <div class="msg-a">
+        <p>Without a confirmed Bebauungsplan we treat the plot under
+          <a class="cite">34 BauGB
+            <span class="cite-pop">
+              <span class="cite-pop-head">BauGB · § 34</span>
+              <span class="cite-pop-title">Zulässigkeit von Vorhaben innerhalb der im Zusammenhang bebauten Ortsteile</span>
+              A project is permissible if it fits the character of its surroundings in type and scale of use, building form, and plot coverage — and infrastructure is secured.
+              <span class="cite-pop-link">View full article →</span>
+            </span>
+          </a>
+          (developed inner area) — typical for Maxvorstadt — and mark this as an <strong>assumption</strong> until verified.</p>
+        <p>Was the plot previously developed, or is there a building currently standing?</p>
+      </div>
+
+      <!-- USER reply -->
+      <div class="msg-u-wrap">
+        <div class="msg-u shaped">
+          there is an existing building on the site that will be demolished as part of the project.
+          <div class="msg-u-time">11:44</div>
+          <div class="msg-u-impact"><em>Established →</em> Replacement build · §34 inner-area context</div>
+        </div>
+      </div>
+
+      <!-- CHAPTER: Building code -->
+      <div class="chapter">
+        <span class="chapter-label"><span class="chapter-num">II</span> Building code · in progress</span>
+      </div>
+
+      <!-- BUILDING CODE — message -->
+      <div class="spec-tag">
+        <span class="spec-tag-dot"></span>
+        <span class="spec-tag-name">Building code</span>
+        <span class="spec-tag-de">Bauordnungsrecht</span>
+      </div>
+      <div class="msg-a">
+        <p>Thank you. A demolition + replacement-build on a developed plot in Maxvorstadt is a
+          common case under
+          <a class="cite">34 BauGB
+            <span class="cite-pop">
+              <span class="cite-pop-head">BauGB · § 34</span>
+              <span class="cite-pop-title">Innenbereich · permissible if it integrates</span>
+              The new building must integrate with its surroundings in type and scale of use, building form, and plot coverage.
+              <span class="cite-pop-link">View full article →</span>
+            </span>
+          </a>
+          (unbeplanter Innenbereich). To classify the procedure we need the building class under
+          <a class="cite">2 BayBO
+            <span class="cite-pop">
+              <span class="cite-pop-head">BayBO · Art. 2</span>
+              <span class="cite-pop-title">Begriffe — Gebäudeklassen 1–5</span>
+              Class 1: free-standing, ≤7 m height, ≤2 dwelling units, ≤400 m². Class 2: similar, attached. Class 3: ≤7 m, others. Class 4: ≤13 m, units ≤400 m². Class 5: all others incl. high-rises.
+              <span class="cite-pop-link">View full article →</span>
+            </span>
+          </a>
+          and whether any Sonderbau criteria apply.</p>
+        <p>For your single-family home with one dwelling unit, two full storeys, approximately 180 m² gross floor area — what is the planned <strong>Wandhöhe</strong> (wall height to eave)?</p>
+      </div>
+
+      <!-- USER reply -->
+      <div class="msg-u-wrap">
+        <div class="msg-u shaped">
+          Approximately 6.4 metres.
+          <div class="msg-u-time">12:14</div>
+          <div class="msg-u-impact"><em>Established →</em> Gebäudeklasse 1 · &lt;7 m</div>
+        </div>
+      </div>
+
+      <!-- BUILDING CODE — follow-up message -->
+      <div class="spec-tag">
+        <span class="spec-tag-dot"></span>
+        <span class="spec-tag-name">Building code</span>
+        <span class="spec-tag-de">Bauordnungsrecht</span>
+      </div>
+      <div class="msg-a">
+        <p>Confirmed: <strong>Gebäudeklasse 1</strong> under
+          <a class="cite">2 BayBO
+            <span class="cite-pop">
+              <span class="cite-pop-head">BayBO · Art. 2 (3) Nr. 1</span>
+              <span class="cite-pop-title">Class 1 — free-standing buildings ≤7 m, ≤2 units, ≤400 m²</span>
+              No Sonderbau criteria triggered for a single-family home of this scale.
+              <span class="cite-pop-link">View full article →</span>
+            </span>
+          </a>.
+          No Sonderbau criteria applicable. Procedure type now depends on whether a qualified Bebauungsplan exists for Türkenstraße 52k:</p>
+        <p>If a qualified B-Plan exists and your project complies →
+          <a class="cite">57 BayBO
+            <span class="cite-pop">
+              <span class="cite-pop-head">BayBO · Art. 57</span>
+              <span class="cite-pop-title">Genehmigungsfreistellung</span>
+              No formal building permit required if a qualified B-Plan exists, the project complies, and the municipality does not require a procedure within 1 month.
+              <span class="cite-pop-link">View full article →</span>
+            </span>
+          </a>
+          (Genehmigungsfreistellung). Otherwise →
+          <a class="cite">58 BayBO
+            <span class="cite-pop">
+              <span class="cite-pop-head">BayBO · Art. 58</span>
+              <span class="cite-pop-title">Vereinfachtes Baugenehmigungsverfahren</span>
+              Simplified procedure for non-Sonderbau projects. Limited municipal review; statics + fire protection certified by qualified specialists.
+              <span class="cite-pop-link">View full article →</span>
+            </span>
+          </a>
+          (vereinfachtes Verfahren).</p>
+        <p>I can request the Bebauungsplan from the responsible Bauamt — shall I proceed?</p>
+      </div>
+
+      <!-- USER reply -->
+      <div class="msg-u-wrap">
+        <div class="msg-u shaped">
+          Yes, please request it.
+          <div class="msg-u-time">12:21</div>
+        </div>
+      </div>
+
+      <!-- THINKING INDICATOR -->
+      <div class="thinking" id="thinking">
+        <svg class="compass-svg" viewBox="0 0 28 28">
+          <!-- The drafting-compass: outer circle + arc + arm -->
+          <circle cx="14" cy="14" r="12" stroke-opacity="0.2"></circle>
+          <path class="compass-arc-draw" d="M 14 4 A 10 10 0 0 1 24 14"></path>
+          <g class="compass-arm">
+            <line x1="14" y1="14" x2="14" y2="4"></line>
+            <line x1="14" y1="14" x2="22" y2="20"></line>
+            <circle cx="14" cy="14" r="1.4" fill="var(--clay)" stroke="none"></circle>
+          </g>
+          <line x1="14" y1="2" x2="14" y2="4" stroke-width="1.5"></line>
+        </svg>
+        <div class="thinking-text">
+          <div class="thinking-spec">Procedure synthesizer</div>
+          <div class="thinking-action" id="thinkingAction">cross-checking BayBO Art. 57 against your plot data…</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- INPUT ZONE -->
+    <div class="input-zone">
+      <div class="input-frame">
+        <div class="idk-row">
+          <span class="idk-label">If unsure</span>
+          <button class="idk-chip">
+            <svg class="idk-chip-icon" viewBox="0 0 9 9" fill="none">
+              <circle cx="4.5" cy="4.5" r="3.5" stroke="currentColor" stroke-width="0.8"/>
+              <path d="M3 4.5 L4 5.5 L6.2 3.3" stroke="currentColor" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Research it
+          </button>
+          <button class="idk-chip">
+            <svg class="idk-chip-icon" viewBox="0 0 9 9" fill="none">
+              <path d="M4.5 1 L4.5 8 M1 4.5 L8 4.5" stroke="currentColor" stroke-width="0.8" stroke-linecap="round"/>
+            </svg>
+            Use a default assumption
+          </button>
+          <button class="idk-chip">
+            <svg class="idk-chip-icon" viewBox="0 0 9 9" fill="none">
+              <rect x="2" y="2" width="5" height="5" stroke="currentColor" stroke-width="0.8" rx="0.5"/>
+            </svg>
+            Park this question
+          </button>
+        </div>
+        <div class="input-bar">
+          <svg class="input-attach" viewBox="0 0 18 18" fill="none">
+            <path d="M11.5 4.5 L7 9 a2 2 0 0 0 2.83 2.83 L14.5 7" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/>
+          </svg>
+          <textarea class="input-text" rows="1" placeholder="Your reply…" id="inputText"></textarea>
+          <button class="input-send" id="sendBtn">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+              <path d="M7 11 L7 3 M3.5 6.5 L7 3 L10.5 6.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+        </div>
+        <div class="input-foot">
+          <span><kbd>↵</kbd> send · <kbd>⇧↵</kbd> newline</span>
+          <span>Vorläufig — bestätigt durch eine/n bauvorlageberechtigte/n Architekt/in</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- STAND-UP BUTTON -->
+    <button class="standup" id="standupBtn">
+      <svg class="standup-icon" viewBox="0 0 12 12" fill="none">
+        <path d="M2 10 L2 6 L6 2 L10 6 L10 10" stroke="currentColor" stroke-width="0.9" stroke-linecap="round" stroke-linejoin="round"/>
+        <line x1="2" y1="10" x2="10" y2="10" stroke="currentColor" stroke-width="0.9"/>
+      </svg>
+      Stand up &amp; look around
+    </button>
+
+  </main>
+
+  <!-- ====================== RIGHT RAIL ====================== -->
+  <aside class="rail-r">
+    <div class="rail-r-inner">
+
+      <!-- Project portrait -->
+      <div class="rail-section">
+        <div class="rail-head">
+          <div class="rail-head-title">Project portrait</div>
+          <div class="rail-head-meta">Schnitt AA</div>
+        </div>
+        <div class="portrait">
+          <svg viewBox="0 0 280 100" preserveAspectRatio="xMidYMid meet">
+            <!-- ground -->
+            <line x1="10" y1="86" x2="270" y2="86"></line>
+            <!-- ground hatch -->
+            <line class="scale" x1="14" y1="89" x2="20" y2="95"></line>
+            <line class="scale" x1="32" y1="89" x2="38" y2="95"></line>
+            <line class="scale" x1="50" y1="89" x2="56" y2="95"></line>
+            <line class="scale" x1="68" y1="89" x2="74" y2="95"></line>
+            <line class="scale" x1="86" y1="89" x2="92" y2="95"></line>
+            <line class="scale" x1="104" y1="89" x2="110" y2="95"></line>
+            <line class="scale" x1="122" y1="89" x2="128" y2="95"></line>
+            <line class="scale" x1="140" y1="89" x2="146" y2="95"></line>
+            <line class="scale" x1="158" y1="89" x2="164" y2="95"></line>
+            <line class="scale" x1="176" y1="89" x2="182" y2="95"></line>
+            <line class="scale" x1="194" y1="89" x2="200" y2="95"></line>
+            <line class="scale" x1="212" y1="89" x2="218" y2="95"></line>
+            <line class="scale" x1="230" y1="89" x2="236" y2="95"></line>
+            <line class="scale" x1="248" y1="89" x2="254" y2="95"></line>
+
+            <!-- House outline -->
+            <polygon points="80,86 80,42 140,18 200,42 200,86" />
+            <!-- Floor lines -->
+            <line x1="80" y1="64" x2="200" y2="64"></line>
+            <!-- Windows -->
+            <rect x="92" y="48" width="14" height="10"></rect>
+            <rect x="116" y="48" width="14" height="10"></rect>
+            <rect x="150" y="48" width="14" height="10"></rect>
+            <rect x="174" y="48" width="14" height="10"></rect>
+            <rect x="92" y="70" width="14" height="10"></rect>
+            <rect x="174" y="70" width="14" height="10"></rect>
+            <!-- Door -->
+            <rect x="130" y="68" width="20" height="18"></rect>
+            <line x1="140" y1="68" x2="140" y2="86" class="scale"></line>
+
+            <!-- Wall height annotation -->
+            <line class="accent" x1="208" y1="42" x2="216" y2="42"></line>
+            <line class="accent" x1="208" y1="86" x2="216" y2="86"></line>
+            <line class="accent" x1="212" y1="42" x2="212" y2="86" stroke-dasharray="2 2"></line>
+            <text x="220" y="68" font-family="JetBrains Mono" font-size="6" fill="var(--clay)" letter-spacing="0.5">6.4m</text>
+
+            <!-- N arrow -->
+            <g transform="translate(252,12)">
+              <line x1="0" y1="0" x2="0" y2="14" class="accent"></line>
+              <polygon points="-3,3 0,0 3,3" class="accent" fill="var(--clay)"></polygon>
+              <text x="-3" y="22" font-family="JetBrains Mono" font-size="6" fill="var(--clay)">N</text>
+            </g>
+          </svg>
+          <div class="portrait-label">
+            <span>Türkenstr. 52k</span>
+            <span>EFH · GK 1 · ~180 m²</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Top 3 -->
+      <div class="rail-section">
+        <div class="rail-head">
+          <div class="rail-head-title">Top 3 next steps</div>
+          <div class="rail-head-meta">live</div>
+        </div>
+        <div class="top3" id="top3">
+          <div class="rec" data-id="r1">
+            <span class="rec-rank">i</span>
+            <div class="rec-title">Heritage clarification</div>
+            <div class="rec-detail">Existing 1905 building — request review under BayDSchG Art. 6 from Untere Denkmalschutzbehörde Bezirk Mitte.</div>
+            <div class="rec-foot">Vorläufig — bestätigt durch Architekt/in</div>
+          </div>
+          <div class="rec" data-id="r2">
+            <span class="rec-rank">ii</span>
+            <div class="rec-title">Tree protection permit</div>
+            <div class="rec-detail">Linden tree (80 cm trunk circumference) — file BaumschutzV 901 §3 application before site preparation.</div>
+            <div class="rec-foot">Vorläufig — bestätigt durch Architekt/in</div>
+          </div>
+          <div class="rec" data-id="r3">
+            <span class="rec-rank">iii</span>
+            <div class="rec-title">Bebauungsplan enquiry</div>
+            <div class="rec-detail">Request from Begutachtung Bezirk Mitte (plan.ha2-24b@muenchen.de · 089 233 22550) to confirm Art. 57 / 58 path.</div>
+            <div class="rec-foot">Vorläufig — bestätigt durch Architekt/in</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Areas -->
+      <div class="rail-section">
+        <div class="rail-head">
+          <div class="rail-head-title">Areas</div>
+          <div class="rail-head-meta">A · B · C</div>
+        </div>
+        <div class="areas-vis">
+          <div class="area-row live">
+            <span class="area-glyph">A</span>
+            <div>
+              <div class="area-name">Zoning law</div>
+              <div class="area-desc">Planungsrecht · §34</div>
+            </div>
+            <span class="area-state active">Active</span>
+          </div>
+          <div class="area-row">
+            <span class="area-glyph">B</span>
+            <div>
+              <div class="area-name">Building code</div>
+              <div class="area-desc">Bauordnungsrecht · BayBO</div>
+            </div>
+            <span class="area-state active">Active</span>
+          </div>
+          <div class="area-row">
+            <span class="area-glyph">C</span>
+            <div>
+              <div class="area-name">Adjacent rules</div>
+              <div class="area-desc">Sonstige Vorgaben · Denkmal+Baum</div>
+            </div>
+            <span class="area-state pending">Pending</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Key data / facts -->
+      <div class="rail-section">
+        <div class="rail-head">
+          <div class="rail-head-title">Key data</div>
+          <div class="rail-head-meta">07/12</div>
+        </div>
+        <div class="facts" id="facts">
+          <div class="fact">
+            <div class="fact-row">
+              <span class="fact-num">i</span>
+              <div>
+                <div class="fact-key">Project</div>
+                <div class="fact-val">New single-family home</div>
+                <div class="qual client"><span class="qual-dot"></span>Client · Decided</div>
+              </div>
+            </div>
+          </div>
+          <div class="fact">
+            <div class="fact-row">
+              <span class="fact-num">ii</span>
+              <div>
+                <div class="fact-key">Plot</div>
+                <div class="fact-val">Türkenstraße 52k, 80799 München</div>
+                <div class="qual client"><span class="qual-dot"></span>Client · Decided</div>
+              </div>
+            </div>
+          </div>
+          <div class="fact">
+            <div class="fact-row">
+              <span class="fact-num">iii</span>
+              <div>
+                <div class="fact-key">Existing structure</div>
+                <div class="fact-val">1905 building — to be demolished</div>
+                <div class="qual client"><span class="qual-dot"></span>Client · Decided</div>
+              </div>
+            </div>
+          </div>
+          <div class="fact">
+            <div class="fact-row">
+              <span class="fact-num">iv</span>
+              <div>
+                <div class="fact-key">Planungsrecht</div>
+                <div class="fact-val">§34 BauGB Innenbereich</div>
+                <div class="qual legal"><span class="qual-dot"></span>Legal · Assumed</div>
+              </div>
+            </div>
+          </div>
+          <div class="fact">
+            <div class="fact-row">
+              <span class="fact-num">v</span>
+              <div>
+                <div class="fact-key">Wandhöhe</div>
+                <div class="fact-val">~6.4 m</div>
+                <div class="qual client"><span class="qual-dot"></span>Client · Decided</div>
+              </div>
+            </div>
+          </div>
+          <div class="fact">
+            <div class="fact-row">
+              <span class="fact-num">vi</span>
+              <div>
+                <div class="fact-key">Gebäudeklasse</div>
+                <div class="fact-val">Klasse 1</div>
+                <div class="qual legal"><span class="qual-dot"></span>Legal · Calculated</div>
+              </div>
+            </div>
+          </div>
+          <div class="fact">
+            <div class="fact-row">
+              <span class="fact-num">vii</span>
+              <div>
+                <div class="fact-key">Sonderbau</div>
+                <div class="fact-val">Nein — keine Tatbestände</div>
+                <div class="qual legal"><span class="qual-dot"></span>Legal · Calculated</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Collapsibles -->
+      <div class="collapse open" id="collapseProc">
+        <div class="collapse-head">
+          <span><span class="num">α</span> Procedures · 2 candidate</span>
+          <span class="collapse-arrow">›</span>
+        </div>
+        <div class="collapse-body">
+          <div class="collapse-body-inner">
+            <div class="list-item">
+              <span>Genehmigungsfreistellung · Art. 57</span>
+              <span class="list-item-status">if B-Plan</span>
+            </div>
+            <div class="list-item">
+              <span>Vereinfachtes Verfahren · Art. 58</span>
+              <span class="list-item-status">fallback</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="collapse" id="collapseDocs">
+        <div class="collapse-head">
+          <span><span class="num">β</span> Documents · 7 expected</span>
+          <span class="collapse-arrow">›</span>
+        </div>
+        <div class="collapse-body">
+          <div class="collapse-body-inner">
+            <div class="list-item">
+              <span>Lageplan (amtlich)</span>
+              <span class="list-item-status">Required</span>
+            </div>
+            <div class="list-item">
+              <span>Bauzeichnungen</span>
+              <span class="list-item-status">Required</span>
+            </div>
+            <div class="list-item">
+              <span>Standsicherheitsnachweis</span>
+              <span class="list-item-status">Required</span>
+            </div>
+            <div class="list-item">
+              <span>Brandschutznachweis</span>
+              <span class="list-item-status">Required</span>
+            </div>
+            <div class="list-item">
+              <span>GEG / Wärmeschutz</span>
+              <span class="list-item-status">Required</span>
+            </div>
+            <div class="list-item">
+              <span>Stellplatznachweis</span>
+              <span class="list-item-status">Required</span>
+            </div>
+            <div class="list-item">
+              <span>Baubeschreibung</span>
+              <span class="list-item-status">Required</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="collapse" id="collapseRoles">
+        <div class="collapse-head">
+          <span><span class="num">γ</span> Specialists · 4 needed</span>
+          <span class="collapse-arrow">›</span>
+        </div>
+        <div class="collapse-body">
+          <div class="collapse-body-inner">
+            <div class="list-item">
+              <span>Tragwerksplaner/in</span>
+              <span class="list-item-status">Confirmed</span>
+            </div>
+            <div class="list-item">
+              <span>Brandschutzplaner/in</span>
+              <span class="list-item-status">Required</span>
+            </div>
+            <div class="list-item">
+              <span>Energieberater/in (GEG)</span>
+              <span class="list-item-status">Required</span>
+            </div>
+            <div class="list-item">
+              <span>Vermesser/in (ÖbVI)</span>
+              <span class="list-item-status">Required</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cost ticker -->
+      <div class="cost-tick">
+        <span>Spend</span>
+        <span class="cost-bar"></span>
+        <span>≈ 444k tok · $0.86</span>
+      </div>
+
+    </div>
+  </aside>
+
+</div>
+
+<!-- ============================================================ -->
+<!-- STAND-UP MODAL                                               -->
+<!-- ============================================================ -->
+<div class="modal-bg" id="modalBg">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title">Stand up &amp; <em>look around</em></div>
+      <button class="modal-close" id="modalClose">close ×</button>
+    </div>
+
+    <div style="display:grid; grid-template-columns: 1.2fr 1fr; gap:32px;">
+      <div>
+        <div class="rail-head" style="margin-bottom:18px;">
+          <div class="rail-head-title">Story so far</div>
+          <div class="rail-head-meta">18 turns · 47 minutes</div>
+        </div>
+        <div class="timeline">
+          <div class="timeline-item">
+            <div class="timeline-time">11:30 · Init</div>
+            <div class="timeline-event">Project opened — Einfamilienhaus, plot at Türkenstraße 52k confirmed.</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-time">11:42 · Zoning law</div>
+            <div class="timeline-event">No Bebauungsplan known. Provisionally classified as §34 BauGB Innenbereich.</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-time">11:44 · Zoning law</div>
+            <div class="timeline-event">Existing 1905 structure noted — replacement build pattern established.</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-time">12:14 · Building code</div>
+            <div class="timeline-event">Wandhöhe 6.4 m → Gebäudeklasse 1, no Sonderbau triggers.</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-time">12:21 · Procedure</div>
+            <div class="timeline-event">Two procedure paths identified — Art. 57 vs Art. 58, awaiting B-Plan confirmation.</div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="rail-head" style="margin-bottom:18px;">
+          <div class="rail-head-title">Open questions</div>
+          <div class="rail-head-meta">3 to resolve</div>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:14px;">
+          <div style="padding:14px; background:var(--paper-card); border:1px solid var(--line); border-radius:4px;">
+            <div style="font-family:var(--mono); font-size:9.5px; letter-spacing:0.16em; color:var(--clay); text-transform:uppercase; margin-bottom:6px;">Pending · Bauamt</div>
+            <div style="font-family:var(--serif); font-size:15px; color:var(--ink);">Does a qualified Bebauungsplan exist for Türkenstraße 52k?</div>
+          </div>
+          <div style="padding:14px; background:var(--paper-card); border:1px solid var(--line); border-radius:4px;">
+            <div style="font-family:var(--mono); font-size:9.5px; letter-spacing:0.16em; color:var(--clay); text-transform:uppercase; margin-bottom:6px;">Pending · Heritage</div>
+            <div style="font-family:var(--serif); font-size:15px; color:var(--ink);">Is the existing 1905 building heritage-listed (Denkmalschutzliste)?</div>
+          </div>
+          <div style="padding:14px; background:var(--paper-card); border:1px solid var(--line); border-radius:4px;">
+            <div style="font-family:var(--mono); font-size:9.5px; letter-spacing:0.16em; color:var(--clay); text-transform:uppercase; margin-bottom:6px;">Pending · You</div>
+            <div style="font-family:var(--serif); font-size:15px; color:var(--ink);">Number of parking spaces (Stellplätze) planned?</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:28px; padding-top:16px; border-top:1px solid var(--line); display:flex; justify-content:space-between; align-items:center;">
+      <span style="font-family:var(--serif); font-style:italic; font-size:14px; color:var(--ink-mute);">Rest a moment. Then sit back down whenever you're ready.</span>
+      <button class="modal-close" id="modalClose2" style="background:var(--ink); color:var(--paper); border-color:var(--ink); padding:8px 18px;">Sit back down ↩</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SCRIPT                                                        -->
+<!-- ============================================================ -->
+<script>
+/* ============================================================
+   Sticky context header — appears once user scrolls past the
+   most-recent specialist tag.
+   ============================================================ */
+const center = document.getElementById('center');
+const stickyCtx = document.getElementById('stickyCtx');
+const thread = document.getElementById('thread');
+
+function checkSticky() {
+  const tags = thread.querySelectorAll('.spec-tag');
+  if (!tags.length) return;
+  const lastTag = tags[tags.length - 1];
+  const r = lastTag.getBoundingClientRect();
+  // Show if the last spec-tag has scrolled past the top of viewport
+  if (r.top < 80) {
+    stickyCtx.classList.add('visible');
+  } else {
+    stickyCtx.classList.remove('visible');
+  }
+}
+window.addEventListener('scroll', checkSticky, { passive: true });
+checkSticky();
+
+document.getElementById('backToLive').addEventListener('click', () => {
+  const last = thread.querySelector('.thinking');
+  (last || thread.lastElementChild).scrollIntoView({ behavior: 'smooth', block: 'start' });
+});
+
+/* ============================================================
+   Thinking indicator — rotates action text every ~3s while live
+   ============================================================ */
+const thinking = document.getElementById('thinking');
+const thinkingAction = document.getElementById('thinkingAction');
+const actions = [
+  'cross-checking BayBO Art. 57 against your plot data…',
+  'reviewing precedents in Maxvorstadt district…',
+  'verifying plot dimensions against BauNVO thresholds…',
+  'consulting Bauamt München records (cached)…',
+  'composing reply…',
+];
+let actionIdx = 0;
+let actionInterval = null;
+function startThinkingRotation() {
+  if (actionInterval) return;
+  actionInterval = setInterval(() => {
+    thinkingAction.classList.add('swap');
+    setTimeout(() => {
+      actionIdx = (actionIdx + 1) % actions.length;
+      thinkingAction.textContent = actions[actionIdx];
+      thinkingAction.classList.remove('swap');
+    }, 280);
+  }, 2800);
+}
+function stopThinkingRotation() {
+  clearInterval(actionInterval);
+  actionInterval = null;
+}
+
+/* ============================================================
+   Demo controls
+   ============================================================ */
+const demo = document.getElementById('demo');
+const demoToggle = document.getElementById('demoToggle');
+demoToggle.addEventListener('click', () => {
+  demo.classList.toggle('collapsed');
+  demoToggle.textContent = demo.classList.contains('collapsed') ? '+' : '−';
+});
+
+document.querySelectorAll('[data-demo]').forEach(b => {
+  b.addEventListener('click', e => {
+    const k = e.currentTarget.dataset.demo;
+    if (k === 'thinking') showThinking();
+    if (k === 'newturn') replayNewTurn();
+    if (k === 'fact') addFact();
+    if (k === 'reorder') reorderTop3();
+    if (k === 'standup') openStandup();
+    if (k === 'scroll') {
+      window.scrollTo({ top: 360, behavior: 'smooth' });
+    }
+  });
+});
+
+function showThinking() {
+  thinking.classList.toggle('visible');
+  if (thinking.classList.contains('visible')) {
+    actionIdx = 0;
+    thinkingAction.textContent = actions[0];
+    startThinkingRotation();
+    setTimeout(() => {
+      thinking.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 100);
+  } else {
+    stopThinkingRotation();
+  }
+}
+
+function replayNewTurn() {
+  // Add a fresh user message + assistant response to thread, with animations
+  const newU = document.createElement('div');
+  newU.className = 'msg-u-wrap entering';
+  newU.innerHTML = `
+    <div class="msg-u shaped">
+      Yes, please proceed with the B-Plan request.
+      <div class="msg-u-time">just now</div>
+      <div class="msg-u-impact"><em>Established →</em> Action queued for Bauamt</div>
+    </div>`;
+  thread.appendChild(newU);
+
+  // Show thinking
+  thinking.classList.add('visible');
+  startThinkingRotation();
+  thinking.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+  // After a moment, hide thinking and append assistant message
+  setTimeout(() => {
+    thinking.classList.remove('visible');
+    stopThinkingRotation();
+
+    const tag = document.createElement('div');
+    tag.className = 'spec-tag entering';
+    tag.innerHTML = `
+      <span class="spec-tag-dot"></span>
+      <span class="spec-tag-name">Procedure synthesizer</span>
+      <span class="spec-tag-de">Verfahrenssynthese</span>`;
+    thread.appendChild(tag);
+
+    const m = document.createElement('div');
+    m.className = 'msg-a entering';
+    m.innerHTML = `
+      <p>Request queued. While we wait — three preliminary checks can run in parallel: heritage clarification under
+        <a class="cite">6 BayDSchG
+          <span class="cite-pop">
+            <span class="cite-pop-head">BayDSchG · Art. 6</span>
+            <span class="cite-pop-title">Erlaubnis bei Baudenkmälern</span>
+            Modifications, demolitions or relocations of listed buildings require permit from the Lower Heritage Authority.
+          </span>
+        </a>,
+        tree protection under
+        <a class="cite">3 BaumschutzV
+          <span class="cite-pop">
+            <span class="cite-pop-head">BaumschutzV · § 3</span>
+            <span class="cite-pop-title">Schutzgegenstand</span>
+            Trees with ≥80 cm trunk circumference (1 m height) require permit before removal or significant alteration.
+          </span>
+        </a>,
+        and B-Plan verification with Sub-Office Mitte.</p>
+      <p>I'll surface these as your top-3 next steps in the right rail. Anything else for this section, or shall we move to specialists (Fachplaner)?</p>`;
+    thread.appendChild(m);
+
+    // Smart scroll: place the new spec-tag at top of viewport (~80px below header)
+    setTimeout(() => {
+      const rect = tag.getBoundingClientRect();
+      const offset = window.scrollY + rect.top - 90;
+      window.scrollTo({ top: offset, behavior: 'smooth' });
+    }, 50);
+  }, 2400);
+}
+
+let factCounter = 8;
+const factKeys = [
+  ['Bebauungsplan', 'Anfrage gestellt — Antwort erwartet', 'legal'],
+  ['Stellplatzpflicht', 'erfüllt — 1 Stellplatz', 'legal'],
+  ['Denkmalschutz', 'Voranfrage angefordert', 'legal'],
+  ['Brandschutzklasse', 'GK 1 — keine zusätzlichen Anforderungen', 'legal'],
+];
+function addFact() {
+  const [k, v, src] = factKeys[(factCounter - 8) % factKeys.length];
+  const facts = document.getElementById('facts');
+  const fact = document.createElement('div');
+  fact.className = 'fact fresh entering';
+  const roman = ['i','ii','iii','iv','v','vi','vii','viii','ix','x','xi','xii','xiii','xiv','xv'][factCounter - 1];
+  fact.innerHTML = `
+    <div class="fact-row">
+      <span class="fact-num">${roman}</span>
+      <div>
+        <div class="fact-key">${k}</div>
+        <div class="fact-val">${v}</div>
+        <div class="qual ${src}"><span class="qual-dot"></span>${src === 'legal' ? 'Legal · Calculated' : 'Client · Decided'}</div>
+      </div>
+    </div>`;
+  facts.appendChild(fact);
+  factCounter++;
+  setTimeout(() => fact.classList.remove('fresh'), 2400);
+
+  // Update count in head
+  const head = facts.parentElement.querySelector('.rail-head-meta');
+  if (head) head.textContent = `${Math.min(factCounter, 12).toString().padStart(2,'0')}/12`;
+}
+
+function reorderTop3() {
+  const top3 = document.getElementById('top3');
+  const items = Array.from(top3.children);
+  // FLIP animation
+  const positions = items.map(i => i.getBoundingClientRect());
+
+  // Reverse the order
+  items.reverse().forEach((el, i) => {
+    top3.appendChild(el);
+    el.querySelector('.rec-rank').textContent = ['i','ii','iii'][i];
+  });
+
+  // Mark new top item as fresh
+  top3.firstElementChild.classList.add('fresh');
+  setTimeout(() => top3.firstElementChild.classList.remove('fresh'), 1800);
+
+  // Animate using FLIP
+  const newPositions = Array.from(top3.children).map(i => i.getBoundingClientRect());
+  Array.from(top3.children).forEach((el, i) => {
+    const oldI = items.indexOf(el);
+    if (oldI < 0) return;
+    const dy = positions[oldI].top - newPositions[i].top;
+    el.animate(
+      [{ transform: `translateY(${dy}px)` }, { transform: 'translateY(0)' }],
+      { duration: 480, easing: 'cubic-bezier(0.16,1,0.3,1)' }
+    );
+  });
+}
+
+const modalBg = document.getElementById('modalBg');
+function openStandup() { modalBg.classList.add('open'); }
+function closeStandup() { modalBg.classList.remove('open'); }
+document.getElementById('standupBtn').addEventListener('click', openStandup);
+document.getElementById('modalClose').addEventListener('click', closeStandup);
+document.getElementById('modalClose2').addEventListener('click', closeStandup);
+modalBg.addEventListener('click', e => { if (e.target === modalBg) closeStandup(); });
+
+/* ============================================================
+   Collapsibles
+   ============================================================ */
+document.querySelectorAll('.collapse').forEach(c => {
+  c.querySelector('.collapse-head').addEventListener('click', () => c.classList.toggle('open'));
+});
+
+/* ============================================================
+   Input bar — auto-grow + send-button activation
+   ============================================================ */
+const inputText = document.getElementById('inputText');
+const sendBtn = document.getElementById('sendBtn');
+inputText.addEventListener('input', () => {
+  inputText.style.height = 'auto';
+  inputText.style.height = inputText.scrollHeight + 'px';
+  sendBtn.classList.toggle('ready', inputText.value.trim().length > 0);
+});
+inputText.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    if (inputText.value.trim()) {
+      replayNewTurn();
+      inputText.value = '';
+      inputText.style.height = 'auto';
+      sendBtn.classList.remove('ready');
+    }
+  }
+});
+sendBtn.addEventListener('click', () => {
+  if (inputText.value.trim()) {
+    replayNewTurn();
+    inputText.value = '';
+    inputText.style.height = 'auto';
+    sendBtn.classList.remove('ready');
+  }
+});
+
+/* ============================================================
+   Compass progress — slowly creep forward
+   ============================================================ */
+const cp = document.getElementById('compassProgress');
+let prog = 38;
+setInterval(() => {
+  prog = Math.min(95, prog + 0.05);
+  cp.style.width = prog + '%';
+}, 4000);
+
+/* ============================================================
+   Citation chip — fix popover positioning if it goes offscreen
+   ============================================================ */
+document.querySelectorAll('.cite').forEach(c => {
+  c.addEventListener('mouseenter', () => {
+    const pop = c.querySelector('.cite-pop');
+    if (!pop) return;
+    pop.style.left = '0';
+    const r = pop.getBoundingClientRect();
+    if (r.right > window.innerWidth - 20) {
+      pop.style.left = 'auto';
+      pop.style.right = '0';
+    }
+  });
+});
+
+/* ============================================================
+   Init: hide thinking initially
+   ============================================================ */
+thinking.classList.remove('visible');
+</script>
+
+</body>
+</html>

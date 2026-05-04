@@ -6,6 +6,7 @@ import { DocumentsPanel } from './DocumentsPanel'
 import { RolesPanel } from './RolesPanel'
 import { EckdatenPanel } from './EckdatenPanel'
 import { ProjectPortrait } from './ProjectPortrait'
+import { AreasSection } from './AreasSection'
 import { FactTicker } from './FactTicker'
 
 interface Props {
@@ -54,23 +55,21 @@ function liveAreaFromMessages(
 export function RightRail({ project, messages }: Props) {
   const state = (project.state ?? {}) as Partial<ProjectState>
   const recommendations = state.recommendations ?? []
-  const facts = (state.facts ?? []).slice(-5).reverse()
+  // Phase 7 Pass 5 — pass the last 12 facts so EckdatenPanel's
+  // show-all toggle has something meaningful to reveal beyond the
+  // 5-item visible cap.
+  const facts = (state.facts ?? []).slice(-12).reverse()
   const liveArea = liveAreaFromMessages(messages)
 
   return (
     <div className="w-full flex flex-col px-5 py-7 gap-7">
-      {/* 1. Project portrait — Phase 7 Pass 2 merges what used to be
-        * two separate blocks (IntentAxonometric + BereichePlanSection)
-        * into a single drawing-with-legend card. Live-area pulse
-        * still drives the band whose specialist is currently
-        * speaking. */}
-      <ProjectPortrait
-        intent={project.intent}
-        state={state}
-        liveArea={liveArea}
-      />
+      {/* Phase 7 Pass 5 — back to two visualisations: Project Portrait
+        * is the single section drawing (matches prototype 1:1),
+        * AreasSection is the hatched-bands A/B/C illustration. */}
+      <ProjectPortrait intent={project.intent} state={state} />
+      <AreasSection state={state} liveArea={liveArea} />
 
-      {/* 2. TOP-3 cards — hidden when empty (Pass 2 Move 4). */}
+      {/* TOP-3 cards — hidden when empty (Pass 2 Move 4). */}
       <Top3 recommendations={recommendations} />
 
       {/* 4. ECKDATEN schedule */}

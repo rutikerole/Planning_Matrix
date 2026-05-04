@@ -1266,6 +1266,8 @@
       "top3": "Top 3 next steps",
       "areas": "Areas",
       "facts": "Key data",
+      "showAll": "show all ({{count}})",
+      "showLess": "← show less",
       "intentLabel": "Project",
       "plotLabel": "Plot",
       "procedures": "Procedures",
