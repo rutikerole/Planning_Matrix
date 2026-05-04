@@ -67,9 +67,11 @@ export function SpineHeader({ projectName, plotAddress, percent, round, totalEst
           </p>
         )}
 
-        {/* Round + percent */}
+        {/* Round + percent. Phase 7.9 §2.8 — caps 10 → 9.5 px,
+          * tracking 0.20em → 0.22em (closer to the prototype's
+          * sparse rhythm). */}
         <div className="mt-3.5 flex items-baseline justify-between gap-2">
-          <p className="font-mono text-[10px] uppercase tracking-[0.20em] text-clay leading-none">
+          <p className="font-mono text-[9.5px] uppercase tracking-[0.22em] text-clay font-medium leading-none">
             {t('chat.spine.header.round', { current: round, total: totalEstimate })}
           </p>
           <p className="font-serif italic text-[13px] text-ink tabular-figures leading-none">

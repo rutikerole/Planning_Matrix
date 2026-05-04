@@ -168,11 +168,22 @@ export function ChatWorkspacePage() {
   const factsForToast = (project.state as ProjectState | undefined)?.facts ?? []
   const hasMessages = (messages?.length ?? 0) > 0
 
+  // Phase 7.9 §3 (table) — Stand-up link restyled from caps mono
+  // to italic Georgia clay 11.5 px with a dotted under-decoration,
+  // per the prototype.
   const standUpLink = (
     <button
       type="button"
       onClick={() => setStandUpOpen(true)}
-      className="inline-flex items-center gap-1.5 px-2 py-1 font-mono text-[10.5px] uppercase tracking-[0.18em] text-clay/82 hover:text-clay-deep transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/55 rounded-sm"
+      className="inline-flex items-center gap-1.5 px-1 py-1 text-clay/85 hover:text-clay-deep transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/55 rounded-sm"
+      style={{
+        fontFamily: "Georgia, 'Instrument Serif', serif",
+        fontStyle: 'italic',
+        fontSize: 11.5,
+        textDecoration: 'underline dotted',
+        textDecorationColor: 'rgba(123,92,63,0.55)',
+        textUnderlineOffset: 3,
+      }}
     >
       <span aria-hidden="true">↗</span>
       {t('chat.chamber.inputStandUpLink')}
