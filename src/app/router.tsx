@@ -100,7 +100,7 @@ export function AppRouter() {
         <Route
           path="/projects/:id"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute hideAppHeader>
               <ProjectGuard>
                 <ChatWorkspacePage />
               </ProjectGuard>

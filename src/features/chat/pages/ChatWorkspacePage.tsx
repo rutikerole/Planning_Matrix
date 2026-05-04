@@ -230,7 +230,6 @@ export function ChatWorkspacePage() {
     <ThreadContextProvider>
       <SEO titleKey="seo.title.project" params={{ name: project.name }} />
       <ChamberLayout
-        appHeaderHeight={48}
         spine={spineNode}
         spineMobileTrigger={spineMobileTriggerNode}
         banners={

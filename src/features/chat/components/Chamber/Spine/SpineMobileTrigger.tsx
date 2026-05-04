@@ -43,7 +43,9 @@ export function SpineMobileTrigger({ stages, percent, drawerContent }: Props) {
         aria-label={t('chat.spine.mobile.drawerTitle')}
         className={cn(
           'lg:hidden',
-          'sticky top-[56px] z-[24] w-full',
+          // Phase 7.9 — AppHeader removed from chat; mobile trigger
+          // sticks to top:0 of viewport instead of below the band.
+          'sticky top-0 z-[24] w-full',
           'flex items-center gap-3 h-9 px-4',
           'bg-paper-card border-b border-[var(--hairline,rgba(26,22,18,0.10))]',
           'text-[12px] text-ink/85',

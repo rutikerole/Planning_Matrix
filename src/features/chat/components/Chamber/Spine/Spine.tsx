@@ -32,7 +32,9 @@ export function Spine({ header, stageList, footer, className }: Props) {
       className={cn(
         'hidden lg:flex',
         // Phase 7.6 §1.7 — sits below the global app header (48 px).
-        'fixed left-0 top-12 bottom-0 z-[25]',
+        // Phase 7.9 §2.1 — AppHeader is no longer rendered on
+        // /projects/:id. Spine starts at top:0 of viewport.
+        'fixed left-0 top-0 bottom-0 z-[25]',
         'w-spine flex-col',
         'bg-paper-card border-r border-[var(--hairline,rgba(26,22,18,0.10))]',
         className,

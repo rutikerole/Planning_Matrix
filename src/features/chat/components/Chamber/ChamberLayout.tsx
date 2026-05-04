@@ -44,10 +44,6 @@ interface Props {
   banners?: ReactNode
   /** Modals / overlays (StandUp). */
   overlays?: ReactNode
-  /** Phase 7.6 §1.7 — global app header reservation. The router-level
-   *  <AppHeader> sits above the Chamber; this prop just tells the
-   *  layout the height to reserve at the top of the grid. Default 0. */
-  appHeaderHeight?: number
 }
 
 // Phase 7.6 — main scroll container ref exposed via context so
@@ -67,7 +63,6 @@ export function ChamberLayout({
   ledger,
   banners,
   overlays,
-  appHeaderHeight = 0,
 }: Props) {
   const mainRef = useRef<HTMLElement | null>(null)
   return (
@@ -76,12 +71,11 @@ export function ChamberLayout({
         className="relative isolate chamber-breath"
         data-mode="operating"
         style={{
-          // Phase 7.7 §1.2 — AppHeader is now position:fixed so it
-          // never consumes layout space. The chamber occupies the
-          // full dvh and reserves the AppHeader's vertical band via
-          // pt and the Spine's top offset.
+          // Phase 7.7 §1.2 — AppHeader was fixed at top; Phase 7.9
+          // drops it on /projects/:id entirely (Spine carries the
+          // wordmark + auth). Chamber now occupies the full dvh
+          // with no top padding.
           height: '100dvh',
-          paddingTop: `${appHeaderHeight}px`,
         }}
       >
         {/* z-0 background stack — fixed to viewport, paint across the
