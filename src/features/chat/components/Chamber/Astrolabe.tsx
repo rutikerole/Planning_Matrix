@@ -19,7 +19,14 @@
 // Drag-to-scrub lives in commit 7. This commit ships static geometry +
 // state-driven styling.
 
-import { type CSSProperties, type MouseEvent } from 'react'
+import {
+  useEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+  type MouseEvent,
+  type PointerEvent as ReactPointerEvent,
+} from 'react'
 import { useReducedMotion } from 'framer-motion'
 import { cn } from '@/lib/utils'
 import type { Specialist } from '@/types/projectState'
@@ -63,6 +70,9 @@ export function Astrolabe(props: AstrolabeProps) {
     ariaLabel,
   } = props
   const reduced = useReducedMotion()
+  const rootRef = useRef<HTMLDivElement>(null)
+  const draggingRef = useRef(false)
+  const [hoverTurn, setHoverTurn] = useState<number | null>(null)
 
   const px = size === 'full' ? 132 : 44
   const cx = px / 2
@@ -111,21 +121,79 @@ export function Astrolabe(props: AstrolabeProps) {
     onSigilClick(s)
   }
 
+  // Drag-to-scrub (full size only, when onScrubTo is provided).
+  const scrubEnabled = size === 'full' && !!props.onScrubTo && currentTurn > 0
+
+  const turnIndexFromPointer = (clientX: number, clientY: number): number => {
+    const el = rootRef.current
+    if (!el) return -1
+    const rect = el.getBoundingClientRect()
+    const dx = clientX - (rect.left + cx)
+    const dy = clientY - (rect.top + cy)
+    // atan2 returns radians from +x axis. We rotate so 12 o'clock = 0.
+    let theta = Math.atan2(dy, dx) + Math.PI / 2
+    if (theta < 0) theta += Math.PI * 2
+    const fraction = theta / (Math.PI * 2)
+    const idx = Math.round(fraction * totalTicks) % totalTicks
+    return idx
+  }
+
+  const onPointerDown = (e: ReactPointerEvent<HTMLDivElement>) => {
+    if (!scrubEnabled) return
+    if (e.button !== 0) return
+    e.stopPropagation()
+    draggingRef.current = true
+    ;(e.target as Element).setPointerCapture?.(e.pointerId)
+    const idx = turnIndexFromPointer(e.clientX, e.clientY)
+    if (idx >= 0 && idx < currentTurn) setHoverTurn(idx)
+  }
+  const onPointerMove = (e: ReactPointerEvent<HTMLDivElement>) => {
+    if (!draggingRef.current) return
+    const idx = turnIndexFromPointer(e.clientX, e.clientY)
+    if (idx >= 0 && idx < currentTurn) setHoverTurn(idx)
+  }
+  const onPointerUp = () => {
+    if (!draggingRef.current) return
+    draggingRef.current = false
+    if (hoverTurn !== null && props.onScrubTo) {
+      props.onScrubTo(hoverTurn)
+    }
+    setHoverTurn(null)
+  }
+
+  // Cancel drag if pointer leaves the window.
+  useEffect(() => {
+    if (!scrubEnabled) return
+    const onCancel = () => {
+      draggingRef.current = false
+      setHoverTurn(null)
+    }
+    window.addEventListener('pointercancel', onCancel)
+    return () => window.removeEventListener('pointercancel', onCancel)
+  }, [scrubEnabled])
+
   const handleRootClick = () => {
+    if (draggingRef.current) return // suppressed during drag
     onClick?.()
   }
 
-  const interactive = !!onClick
+  const interactive = !!onClick || scrubEnabled
   const tickStrokeBase = 'rgba(26, 22, 18, 0.18)'
 
   return (
     <div
+      ref={rootRef}
       role="img"
       aria-label={ariaLabel ?? `${cappedPercent}% — Runde ${currentTurn} von ungefähr ${totalEstimate}`}
       onClick={interactive ? handleRootClick : undefined}
+      onPointerDown={scrubEnabled ? onPointerDown : undefined}
+      onPointerMove={scrubEnabled ? onPointerMove : undefined}
+      onPointerUp={scrubEnabled ? onPointerUp : undefined}
+      onPointerLeave={scrubEnabled ? onPointerUp : undefined}
       className={cn(
         'relative inline-block select-none',
         interactive && 'cursor-pointer',
+        draggingRef.current && 'cursor-grabbing',
         className,
       )}
       style={{ width: px, height: px } as CSSProperties}
@@ -218,6 +286,25 @@ export function Astrolabe(props: AstrolabeProps) {
             }}
           />
         )}
+
+        {/* Ghost needle while scrubbing */}
+        {hoverTurn !== null && (() => {
+          const a = (hoverTurn / totalTicks) * Math.PI * 2 - Math.PI / 2
+          const gx = cx + rNeedleEnd * Math.cos(a)
+          const gy = cy + rNeedleEnd * Math.sin(a)
+          return (
+            <line
+              x1={cx}
+              y1={cy}
+              x2={gx}
+              y2={gy}
+              stroke="hsl(var(--clay-deep))"
+              strokeWidth={1.5}
+              strokeLinecap="round"
+              strokeOpacity={0.7}
+            />
+          )
+        })()}
 
         {/* Center dot */}
         <circle cx={cx} cy={cy} r={1.4} fill="hsl(var(--clay))" />
