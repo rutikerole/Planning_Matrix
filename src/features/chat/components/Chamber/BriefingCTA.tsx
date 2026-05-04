@@ -74,7 +74,7 @@ export function BriefingCTA({ projectId, gate, signal, variant = 'inline' }: Pro
           to={`/projects/${projectId}/result`}
           aria-label={t('chat.spine.footer.openBriefing')}
           className={cn(
-            'group inline-flex w-full items-center justify-center gap-2 px-3 py-2.5 rounded-lg',
+            'group inline-flex w-full items-center justify-center gap-2 px-3 py-2.5 rounded-[6px]',
             'bg-paper-card border border-clay/55 text-ink',
             'font-serif italic text-[13px]',
             'transition-[background-color,border-color] duration-200',
