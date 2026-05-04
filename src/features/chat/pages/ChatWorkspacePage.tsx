@@ -51,6 +51,7 @@ import { ErrorBanner } from '../components/Chamber/ErrorBanner'
 import { EmptyState } from '../components/Chamber/EmptyState'
 import { StandUp } from '../components/Chamber/StandUp'
 import { MobileAstrolabeSheet } from '../components/Chamber/MobileAstrolabeSheet'
+import { SpineDebugPanel } from '../components/Chamber/Spine/SpineDebugPanel'
 
 export function ChatWorkspacePage() {
   const { t, i18n } = useTranslation()
@@ -447,6 +448,12 @@ export function ChatWorkspacePage() {
               project={project}
               progress={progress}
               summary={ledger}
+            />
+            <SpineDebugPanel
+              project={project}
+              messages={messages ?? []}
+              stages={spineStages}
+              progress={progress}
             />
           </>
         }
