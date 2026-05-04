@@ -1,0 +1,114 @@
+// Phase 7 Chamber — JumpToLatest.
+//
+// Calm pill that surfaces above the input bar when the user has
+// scrolled away from the latest assistant message. Click → smooth-
+// scroll the spec-tag back to viewport-top:90 (matching useAutoScroll
+// in the chat-page wiring).
+
+import { useEffect, useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { ArrowDown } from 'lucide-react'
+import { AnimatePresence, m, useReducedMotion } from 'framer-motion'
+
+interface Props {
+  /** id of the latest assistant message; null = no anchor. */
+  latestAssistantId: string | null
+}
+
+const TOP_OFFSET = 90
+const AWAY_THRESHOLD = 200
+
+export function JumpToLatest({ latestAssistantId }: Props) {
+  const { t } = useTranslation()
+  const reduced = useReducedMotion()
+  const [scrolledAway, setScrolledAway] = useState(false)
+  const [newCount, setNewCount] = useState(0)
+  const lastSeen = useRef<string | null>(latestAssistantId)
+  const awayRef = useRef(false)
+
+  useEffect(() => {
+    awayRef.current = scrolledAway
+  }, [scrolledAway])
+
+  // Increment new-count on arrival while scrolled away.
+  useEffect(() => {
+    const prev = lastSeen.current
+    lastSeen.current = latestAssistantId
+    if (!latestAssistantId || latestAssistantId === prev || prev === null) return
+    if (awayRef.current) setNewCount((c) => c + 1)
+  }, [latestAssistantId])
+
+  // Measure scroll-away.
+  useEffect(() => {
+    const measure = () => {
+      if (!latestAssistantId) {
+        setScrolledAway(false)
+        return
+      }
+      const el = document.getElementById(`spec-tag-${latestAssistantId}`)
+      if (!el) {
+        setScrolledAway(false)
+        return
+      }
+      const rect = el.getBoundingClientRect()
+      const dist = Math.abs(rect.top - TOP_OFFSET)
+      setScrolledAway(dist > AWAY_THRESHOLD)
+    }
+    measure()
+    window.addEventListener('scroll', measure, { passive: true })
+    window.addEventListener('resize', measure, { passive: true })
+    return () => {
+      window.removeEventListener('scroll', measure)
+      window.removeEventListener('resize', measure)
+    }
+  }, [latestAssistantId])
+
+  const onJump = () => {
+    setNewCount(0)
+    if (!latestAssistantId) {
+      window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'smooth' })
+      return
+    }
+    const el = document.getElementById(`spec-tag-${latestAssistantId}`)
+    if (!el) {
+      window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'smooth' })
+      return
+    }
+    const rect = el.getBoundingClientRect()
+    window.scrollTo({ top: window.scrollY + rect.top - TOP_OFFSET, behavior: 'smooth' })
+  }
+
+  const label =
+    newCount > 0
+      ? `${newCount} · ${t('chat.chamber.jumpToLatest')}`
+      : t('chat.chamber.jumpToLatest')
+
+  return (
+    <AnimatePresence>
+      {scrolledAway && (
+        <m.div
+          initial={reduced ? false : { opacity: 0, y: 8, scale: 0.92 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={reduced ? { opacity: 0 } : { opacity: 0, y: 4, scale: 0.92 }}
+          transition={{ duration: reduced ? 0 : 0.2, ease: [0.16, 1, 0.3, 1] }}
+          className="pointer-events-none absolute -top-12 left-1/2 -translate-x-1/2 z-10"
+        >
+          <button
+            type="button"
+            onClick={onJump}
+            aria-label={label}
+            title={label}
+            className="pointer-events-auto inline-flex items-center justify-center gap-2 h-10 min-w-10 px-4 bg-paper-card border border-[var(--hairline-strong)] rounded-full text-ink/85 shadow-[0_4px_16px_-4px_rgba(26,22,18,0.22)] hover:bg-ink hover:text-paper motion-safe:hover:scale-[1.05] transition-[background-color,color,transform] duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/40 focus-visible:ring-offset-2 focus-visible:ring-offset-paper"
+          >
+            <ArrowDown aria-hidden="true" className="size-[16px]" />
+            {newCount > 0 && (
+              <span className="font-mono text-[10.5px] tracking-[0.06em] tabular-nums">
+                {newCount}
+              </span>
+            )}
+          </button>
+        </m.div>
+      )}
+    </AnimatePresence>
+  )
+}
