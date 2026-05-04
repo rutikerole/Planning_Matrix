@@ -26,6 +26,7 @@
 // ───────────────────────────────────────────────────────────────────────
 
 import { useEffect, useRef } from 'react'
+import { useChamberMainRef } from '../components/Chamber/ChamberLayout'
 
 interface Options {
   /**
@@ -50,54 +51,56 @@ export function useAutoScroll({
 }: Options): void {
   const lastIdRef = useRef<string | null>(null)
   const pausedRef = useRef(false)
+  const mainRefHolder = useChamberMainRef()
 
-  // Watch user scroll to update pausedRef. Bound on `latestAssistantId`
-  // so the listener references the current anchor; we deliberately do
-  // NOT call measure() at mount-time — the new tag is always far
-  // below the fold at the instant it arrives, which would trip a
-  // false pause.
+  // Phase 7.6 §1.6 — measurements + scroll target the chamber-main
+  // scroll container (Phase 7.6 viewport-grid layout) rather than
+  // the document. Falls back to window.* if no main ref is mounted
+  // (e.g. pre-Chamber surfaces or test environments).
   useEffect(() => {
     if (!latestAssistantId) {
       pausedRef.current = false
       return
     }
+    const main = mainRefHolder?.current
+    const target: HTMLElement | Window = main ?? window
     const measure = () => {
       const tag = document.getElementById(`spec-tag-${latestAssistantId}`)
       if (!tag) return
       const rect = tag.getBoundingClientRect()
-      const distance = Math.abs(rect.top - topOffset)
+      const baseTop = main ? main.getBoundingClientRect().top : 0
+      const distance = Math.abs(rect.top - baseTop - topOffset)
       pausedRef.current = distance > PAUSE_THRESHOLD_PX
     }
-    window.addEventListener('scroll', measure, { passive: true })
+    target.addEventListener('scroll', measure, { passive: true })
     window.addEventListener('resize', measure, { passive: true })
     return () => {
-      window.removeEventListener('scroll', measure)
+      target.removeEventListener('scroll', measure)
       window.removeEventListener('resize', measure)
     }
-  }, [latestAssistantId, topOffset])
+  }, [latestAssistantId, topOffset, mainRefHolder])
 
-  // Scroll on new id when not paused.
   useEffect(() => {
     if (!latestAssistantId) return
     if (latestAssistantId === lastIdRef.current) return
-
     const previousId = lastIdRef.current
     lastIdRef.current = latestAssistantId
-
-    // First mount: don't yank — leave the user wherever the page
-    // landed naturally (re-load + recovery row + thread render).
     if (previousId === null) return
-
     if (pausedRef.current) return
 
-    // rAF so the new spec-tag has a chance to land in the DOM before
-    // we measure its position.
     requestAnimationFrame(() => {
       const tag = document.getElementById(`spec-tag-${latestAssistantId}`)
       if (!tag) return
       const rect = tag.getBoundingClientRect()
-      const target = window.scrollY + rect.top - topOffset
-      window.scrollTo({ top: target, behavior: 'smooth' })
+      const main = mainRefHolder?.current
+      if (main) {
+        const baseTop = main.getBoundingClientRect().top
+        const top = main.scrollTop + (rect.top - baseTop) - topOffset
+        main.scrollTo({ top, behavior: 'smooth' })
+      } else {
+        const top = window.scrollY + rect.top - topOffset
+        window.scrollTo({ top, behavior: 'smooth' })
+      }
     })
-  }, [latestAssistantId, topOffset])
+  }, [latestAssistantId, topOffset, mainRefHolder])
 }

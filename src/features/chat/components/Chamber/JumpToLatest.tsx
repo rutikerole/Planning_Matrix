@@ -9,6 +9,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ArrowDown } from 'lucide-react'
 import { AnimatePresence, m, useReducedMotion } from 'framer-motion'
+import { useChamberMainRef } from './ChamberLayout'
 
 interface Props {
   /** id of the latest assistant message; null = no anchor. */
@@ -21,6 +22,7 @@ const AWAY_THRESHOLD = 200
 export function JumpToLatest({ latestAssistantId }: Props) {
   const { t } = useTranslation()
   const reduced = useReducedMotion()
+  const mainRefHolder = useChamberMainRef()
   const [scrolledAway, setScrolledAway] = useState(false)
   const [newCount, setNewCount] = useState(0)
   const lastSeen = useRef<string | null>(latestAssistantId)
@@ -38,8 +40,12 @@ export function JumpToLatest({ latestAssistantId }: Props) {
     if (awayRef.current) setNewCount((c) => c + 1)
   }, [latestAssistantId])
 
-  // Measure scroll-away.
+  // Measure scroll-away. Phase 7.6 §1.6: the conversation column owns
+  // its own scroll context (chamber-main), so we read scroll position
+  // off that element instead of window.scrollY.
   useEffect(() => {
+    const main = mainRefHolder?.current
+    if (!main) return
     const measure = () => {
       if (!latestAssistantId) {
         setScrolledAway(false)
@@ -51,31 +57,38 @@ export function JumpToLatest({ latestAssistantId }: Props) {
         return
       }
       const rect = el.getBoundingClientRect()
-      const dist = Math.abs(rect.top - TOP_OFFSET)
+      const mainRect = main.getBoundingClientRect()
+      const dist = Math.abs(rect.top - mainRect.top - TOP_OFFSET)
       setScrolledAway(dist > AWAY_THRESHOLD)
     }
     measure()
-    window.addEventListener('scroll', measure, { passive: true })
+    main.addEventListener('scroll', measure, { passive: true })
     window.addEventListener('resize', measure, { passive: true })
     return () => {
-      window.removeEventListener('scroll', measure)
+      main.removeEventListener('scroll', measure)
       window.removeEventListener('resize', measure)
     }
-  }, [latestAssistantId])
+  }, [latestAssistantId, mainRefHolder])
 
   const onJump = () => {
     setNewCount(0)
+    const main = mainRefHolder?.current
+    if (!main) return
     if (!latestAssistantId) {
-      window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'smooth' })
+      main.scrollTo({ top: main.scrollHeight, behavior: 'smooth' })
       return
     }
     const el = document.getElementById(`spec-tag-${latestAssistantId}`)
     if (!el) {
-      window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'smooth' })
+      main.scrollTo({ top: main.scrollHeight, behavior: 'smooth' })
       return
     }
     const rect = el.getBoundingClientRect()
-    window.scrollTo({ top: window.scrollY + rect.top - TOP_OFFSET, behavior: 'smooth' })
+    const mainRect = main.getBoundingClientRect()
+    main.scrollTo({
+      top: main.scrollTop + (rect.top - mainRect.top) - TOP_OFFSET,
+      behavior: 'smooth',
+    })
   }
 
   const label =
