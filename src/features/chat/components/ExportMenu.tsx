@@ -192,7 +192,11 @@ export function ExportMenu({
             aria-label={t('chat.export.menuLabel', { defaultValue: 'Exportieren' })}
             className={
               placement === 'top'
-                ? 'absolute right-0 bottom-full mb-2 w-[320px] z-30 bg-paper border border-ink/15 rounded-[2px] shadow-[0_-8px_32px_-12px_hsl(220_15%_11%/0.22)] p-5 flex flex-col gap-4'
+                ? // Upward + left-anchored: trigger sits in the left half of
+                  // the viewport (FooterLeftColumn). `left-0` opens the
+                  // popover to the right of the trigger; `right-0` would
+                  // push it off-screen to the left.
+                  'absolute left-0 bottom-full mb-2 w-[320px] z-30 bg-paper border border-ink/15 rounded-[2px] shadow-[0_-8px_32px_-12px_hsl(220_15%_11%/0.22)] p-5 flex flex-col gap-4'
                 : 'absolute right-0 top-full mt-2 w-[320px] z-30 bg-paper border border-ink/15 rounded-[2px] shadow-[0_8px_32px_-12px_hsl(220_15%_11%/0.22)] p-5 flex flex-col gap-4'
             }
           >
