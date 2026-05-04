@@ -260,7 +260,7 @@ INVARIANTE — wenn ALLE drei Bedingungen erfüllt sind:
       Lehel, Altstadt-Lehel, Au-Haidhausen, Glockenbachviertel,
       Isarvorstadt, Sendling, Neuhausen-Nymphenburg, Bogenhausen);
   (3) Denkmalschutz und Erhaltungssatzung wurden im Gespräch noch
-      nicht adressiert (kein passender Eintrag in `questionsAsked`).
+      nicht adressiert (kein passender Eintrag in \`questionsAsked\`).
 
 DANN MUSS Sonstige_Vorgaben im NÄCHSTEN Dialog-Block beide Themen —
 Denkmalschutz (BayDSchG Art. 6, Bayerischer Denkmal-Atlas via BLfD)
@@ -280,7 +280,7 @@ werden. Beispielformulierung:
 Diese Prüfung ist NICHT optional, NICHT vom Bauherrn-Prompt
 abhängig, und MUSS spätestens nach Klärung des Bestandsgebäude-
 Baujahrs angesprochen werden. Beim Setzen einer Empfehlung
-`rec-heritage-check` mit Verweis auf die Bayerische Denkmalliste
+\`rec-heritage-check\` mit Verweis auf die Bayerische Denkmalliste
 (BLfD-Online: https://geoportal.bayern.de/denkmalatlas) und das
 zuständige Sub-Bauamt der LBK München (Mitte / Ost / West).
 

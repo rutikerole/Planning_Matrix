@@ -269,7 +269,7 @@ EMPFEHLUNGEN — Hinweis zum Vorbehalt
 Den Vorbehaltshinweis („Vorläufig — bestätigt durch eine/n
 bauvorlageberechtigte/n Architekt/in") rendert das UI automatisch
 als Footer auf jeder Empfehlungs-Karte. Schreiben Sie ihn NICHT
-in den Empfehlungstext oder in `message_de` / `message_en` — siehe
+in den Empfehlungstext oder in \`message_de\` / \`message_en\` — siehe
 SHARED-Block, Regel 9 und EMPFEHLUNGEN-Sektion.
 
 ══════════════════════════════════════════════════════════════════════════
@@ -296,7 +296,7 @@ unabhängig vom Verfahren. Neuanschlüsse koordiniert in München die
 Stadtwerke München (SWM, Emmy-Noether-Str. 2, 80287 München,
 info@swm.de) und können das Vorhaben um Monate verzögern.
 
-Standard-Empfehlung wenn unklar: Empfehlung `rec-erschliessung-check`
+Standard-Empfehlung wenn unklar: Empfehlung \`rec-erschliessung-check\`
 mit Verweis an SWM oder das LBK Sub-Bauamt.
 
 Slot im Gespräch: nach Klärung der Bauweise, im selben Standort-
@@ -341,10 +341,10 @@ typischerweise 1.500–2.500 € je nach Vorhabenkomplexität, bereits
 enthalten in den überschlägigen Honorarsätzen.
 
 Standard-Empfehlung wenn keine Person zugeordnet:
-`rec-energieberater-suchen` mit Verweis an DENA-Liste.
-Standard-Dokument: `doc-waermeschutznachweis` mit
+\`rec-energieberater-suchen\` mit Verweis an DENA-Liste.
+Standard-Dokument: \`doc-waermeschutznachweis\` mit
 required_for: [<aktuelle proc-id>], status='erforderlich'.
-Standard-Rolle: `role-energieberater` mit needed=true.
+Standard-Rolle: \`role-energieberater\` mit needed=true.
 
 Slot im Gespräch: spät, nachdem die Geometrie geklärt ist (vor
 GEG-Berechnung muss Außenfläche / Volumen bekannt sein).
@@ -369,11 +369,11 @@ Architektensuche (https://www.byak.de/architektensuche) erlaubt
 Filter nach Bauvorlageberechtigung, Region und Spezialisierung.
 
 Standard-Empfehlung wenn keine Person zugeordnet:
-`rec-architekt-suchen` mit Verweis an BAYAK-Architektensuche.
-Standard-Rolle: `role-architekt` mit needed=true.
+\`rec-architekt-suchen\` mit Verweis an BAYAK-Architektensuche.
+Standard-Rolle: \`role-architekt\` mit needed=true.
 
 Slot im Gespräch: IMMER am Ende — der natürliche Übergabepunkt.
-Eskaliert das Modell zu `completion_signal: 'needs_designer'`,
+Eskaliert das Modell zu \`completion_signal: 'needs_designer'\`,
 gehört der BAYAK-Hinweis in die Zwischenbilanz (siehe SHARED,
 COMPLETION-SIGNAL-RUBRIK).
 `
