@@ -114,6 +114,7 @@ export interface Role {
   title_en: string
   needed: boolean
   rationale_de: string
+  rationale_en?: string
   qualifier: Qualifier
 }
 

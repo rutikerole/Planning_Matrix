@@ -221,6 +221,7 @@ export const respondToolDefinition = {
           title_en: { type: 'string' },
           needed: { type: 'boolean' },
           rationale_de: { type: 'string' },
+          rationale_en: { type: 'string' },
           source: { type: 'string', enum: [...SOURCE_VALUES] },
           quality: { type: 'string', enum: [...QUALITY_VALUES] },
           reason: { type: 'string' },
@@ -244,7 +245,14 @@ export const respondToolDefinition = {
         maxItems: 3,
         items: { type: 'string', maxLength: 60 },
         description:
-          'Up to 3 plausible short replies (≤ 6 words each) the Bauherr might give to this question. Emit ONLY when input_type is "text" AND the question has identifiable plausible answers. Omit on the very first turn (address opener) and on free-form research follow-ups where suggestions would constrain the user. Match the conversation language: German for German conversations, English for English.',
+          'Up to 3 plausible short replies in GERMAN (≤ 6 words each) the Bauherr might give to this question. Emit ONLY when input_type is "text" AND the question has identifiable plausible answers. Omit on the very first turn (address opener) and on free-form research follow-ups where suggestions would constrain the user. ALWAYS pair with likely_user_replies_en when this field is set.',
+      },
+      likely_user_replies_en: {
+        type: 'array',
+        maxItems: 3,
+        items: { type: 'string', maxLength: 60 },
+        description:
+          'English mirror of likely_user_replies — same suggestions in idiomatic British English. Always emit when likely_user_replies is emitted, so the UI can render the user-locale variant.',
       },
     },
   },

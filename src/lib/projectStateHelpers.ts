@@ -342,6 +342,7 @@ export function applyRolesDelta(
         ...(d.title_en !== undefined ? { title_en: d.title_en } : {}),
         ...(d.needed !== undefined ? { needed: d.needed } : {}),
         ...(d.rationale_de !== undefined ? { rationale_de: d.rationale_de } : {}),
+        ...(d.rationale_en !== undefined ? { rationale_en: d.rationale_en } : {}),
         qualifier: { ...cur.qualifier, ...baseQual },
       }
     } else {
@@ -351,6 +352,7 @@ export function applyRolesDelta(
         title_en: d.title_en ?? '',
         needed: d.needed ?? true,
         rationale_de: d.rationale_de ?? '',
+        rationale_en: d.rationale_en ?? '',
         qualifier: baseQual,
       }
       roles.push(fresh)

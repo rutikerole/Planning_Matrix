@@ -145,6 +145,7 @@ export async function insertUserMessageOrFetchExisting(
   args: {
     projectId: string
     content: string
+    contentEn?: string | null
     userAnswer: UserAnswer | null
     clientRequestId: string
   },
@@ -155,6 +156,7 @@ export async function insertUserMessageOrFetchExisting(
       project_id: args.projectId,
       role: 'user',
       content_de: args.content,
+      content_en: args.contentEn ?? null,
       user_answer: args.userAnswer,
       client_request_id: args.clientRequestId,
     })

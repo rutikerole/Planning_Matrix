@@ -67,9 +67,19 @@ export function SuggestionChips({
   onContinue,
   completionSignal,
 }: Props) {
+  const { i18n } = useTranslation()
+  const lang = (i18n.resolvedLanguage ?? 'de') as 'de' | 'en'
   const inputType = lastAssistant?.input_type ?? 'text'
   const options = (lastAssistant?.input_options as SelectOption[] | null) ?? []
-  const replies = lastAssistant?.likely_user_replies ?? []
+  // Phase 6.1 — pick the locale-correct reply set. The DE column is the
+  // legacy field (always present); the EN mirror lives in tool_input
+  // since it has no dedicated DB column.
+  const repliesDe = lastAssistant?.likely_user_replies ?? []
+  const repliesEn =
+    (lastAssistant?.tool_input as { likely_user_replies_en?: string[] } | null)
+      ?.likely_user_replies_en ?? []
+  const replies =
+    lang === 'en' && repliesEn.length > 0 ? repliesEn : repliesDe
 
   // input_type: 'none' — show a Weiter button + companion note,
   // never replace the textarea.

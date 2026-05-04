@@ -54,6 +54,7 @@ export function useOfflineQueueDrain(
           try {
             await chatTurnRef.current.mutateAsync({
               userMessage: entry.userMessage,
+              userMessageEn: entry.userMessageEn,
               userAnswer: entry.userAnswer,
               attachmentIds: entry.attachmentIds,
               clientRequestId: entry.clientRequestId,

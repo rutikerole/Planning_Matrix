@@ -455,7 +455,8 @@
     "code": "404",
     "heading": "This page does not exist.",
     "body": "Maybe it was moved — or just a typo. No problem.",
-    "cta": "Back to home"
+    "cta": "Back to home",
+    "ctaNewProject": "Start a new project"
   },
   "auth": {
     "phraseSignUp": "From the first sketch to the permit.",
@@ -1026,7 +1027,22 @@
       "json": {
         "title": "JSON data export",
         "body": "Complete project state for integrations."
+      },
+      "error": {
+        "eyebrow": "Export failed",
+        "pdfBody": "The PDF export unfortunately failed. Try the Markdown checklist or the JSON data export instead.",
+        "mdBody": "The export unfortunately failed. Please try again.",
+        "tryMd": "Markdown instead",
+        "copy": "Copy error",
+        "dismiss": "Close"
       }
+    },
+    "attachment": {
+      "openInNewTab": "Open {{name}}"
+    },
+    "dropZone": {
+      "title": "Drop file here",
+      "subtitle": "Plans, photos and PDFs · max 25 MB · up to 5 files"
     },
     "titleBlock": {
       "eyebrow": "Project",
@@ -1207,7 +1223,16 @@
         "remove": "Remove attachment",
         "uploading": "Uploading…",
         "failed": "Upload failed",
-        "list": "Attached files"
+        "list": "Attached files",
+        "helper": "Plans, photos and PDFs · max 25 MB · PDF, JPG, PNG, DOCX, DWG.",
+        "category": "Category",
+        "choose": "Choose files…",
+        "camera": "Take photo",
+        "cameraHint": "Camera · rear",
+        "gallery": "Pick from gallery",
+        "galleryHint": "Photos from device",
+        "document": "Pick file",
+        "documentHint": "PDF, DOCX, DWG · max 25 MB"
       },
       "address": {
         "placeholder": "e.g. Türkenstraße 25, 80799 München",
@@ -1293,6 +1318,83 @@
       "cta": "Back to dashboard"
     }
   },
+  "cockpit": {
+    "search": "Search…",
+    "tabs": {
+      "project": "Project",
+      "facts": "Data",
+      "areas": "Areas",
+      "procedures": "Procedures",
+      "documents": "Documents",
+      "roles": "Team",
+      "recommendations": "Recommendations",
+      "audit": "Audit"
+    },
+    "project": {
+      "name": "Project name",
+      "intent": "Intent",
+      "plot": "Plot",
+      "bundesland": "Federal state",
+      "template": "Template",
+      "created": "Created",
+      "updated": "Last active"
+    },
+    "cols": {
+      "attribute": "Attribute",
+      "value": "Value",
+      "label": "Label",
+      "qualifier": "Source",
+      "evidence": "Evidence",
+      "title": "Title",
+      "state": "Status",
+      "rationale": "Rationale",
+      "reason": "Reason",
+      "requiredFor": "Required for",
+      "detail": "Details",
+      "effort": "Effort",
+      "owner": "Responsible",
+      "when": "When",
+      "event": "Event",
+      "who": "Triggered by"
+    },
+    "status": {
+      "ok": "OK",
+      "pending": "Pending",
+      "attention": "Attention",
+      "verified": "Verified",
+      "assumption": "Assumption",
+      "void": "Unresolved",
+      "active": "Active",
+      "erforderlich": "Required",
+      "liegt_vor": "Available",
+      "in_bearbeitung": "In progress",
+      "nicht_erforderlich": "Not required",
+      "eingereicht": "Submitted",
+      "genehmigt": "Approved",
+      "freigegeben": "Released",
+      "needed": "Required",
+      "not_needed": "Not required"
+    },
+    "editAriaLabel": "Edit {{label}}"
+  },
+  "bundesland": {
+    "bayern": "Bavaria",
+    "baden_wuerttemberg": "Baden-Württemberg",
+    "berlin": "Berlin",
+    "brandenburg": "Brandenburg",
+    "bremen": "Bremen",
+    "hamburg": "Hamburg",
+    "hessen": "Hesse",
+    "mecklenburg_vorpommern": "Mecklenburg-Vorpommern",
+    "niedersachsen": "Lower Saxony",
+    "nordrhein_westfalen": "North Rhine-Westphalia",
+    "rheinland_pfalz": "Rhineland-Palatinate",
+    "saarland": "Saarland",
+    "sachsen": "Saxony",
+    "sachsen_anhalt": "Saxony-Anhalt",
+    "schleswig_holstein": "Schleswig-Holstein",
+    "thueringen": "Thuringia"
+  },
   "result": {
     "backToChat": "Back to conversation",
     "cover": {
@@ -1311,6 +1413,8 @@
       "eyebrow": "The procedure",
       "basisIntro": "This classification is based on:",
       "confidenceLine": "Classification confidence:",
+      "whyToggle": "Why this procedure?",
+      "noFactors": "No determining facts captured yet.",
       "empty": {
         "body": "The classification needs more information. Continue the consultation to complete this section.",
         "cta": "Back to consultation"
@@ -1366,7 +1470,12 @@
       "intro_one": "One point to discuss with your architect.",
       "intro_other": "{{n}} points to discuss with your architect.",
       "resolveCta": "Clarify this assumption",
-      "resolveTitle": "Clarify assumption"
+      "resolveTitle": "Clarify assumption",
+      "resolveHint": "Enter the reliable value. We will mark the fact as CLIENT · DECIDED and record the correction in the audit trail.",
+      "resolveValueLabel": "Actual value",
+      "resolveCancel": "Cancel",
+      "resolveSave": "Clarify assumption",
+      "resolveSaving": "Saving…"
     },
     "confidence": {
       "eyebrow": "Data quality",

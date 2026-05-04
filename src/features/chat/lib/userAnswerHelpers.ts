@@ -10,10 +10,16 @@
 
 import type { UserAnswer } from '@/types/chatTurn'
 
-const IDK_TEXTS: Record<'research' | 'assume' | 'skip', string> = {
+const IDK_TEXTS_DE: Record<'research' | 'assume' | 'skip', string> = {
   research: 'Weiß ich nicht — bitte recherchieren.',
   assume: 'Weiß ich nicht — bitte als Annahme markieren.',
   skip: 'Weiß ich nicht — bitte zurückstellen.',
+}
+
+const IDK_TEXTS_EN: Record<'research' | 'assume' | 'skip', string> = {
+  research: "I don't know — please research it.",
+  assume: "I don't know — please mark it as an assumption.",
+  skip: "I don't know — please set it aside for now.",
 }
 
 /**
@@ -33,6 +39,30 @@ export function buildUserMessageText(answer: UserAnswer): string {
     case 'address':
       return answer.text.trim()
     case 'idk':
-      return IDK_TEXTS[answer.mode]
+      return IDK_TEXTS_DE[answer.mode]
+  }
+}
+
+/**
+ * English mirror of `buildUserMessageText`. Used to populate the
+ * `content_en` column on user messages so the thread can render
+ * the user's own pick in their UI language.
+ */
+export function buildUserMessageTextEn(answer: UserAnswer): string {
+  switch (answer.kind) {
+    case 'text':
+      return answer.text.trim()
+    case 'yesno':
+      return answer.value === 'ja' ? 'Yes' : 'No'
+    case 'single_select':
+      return answer.label_en || answer.label_de
+    case 'multi_select':
+      return answer.values
+        .map((v) => v.label_en || v.label_de)
+        .join(', ')
+    case 'address':
+      return answer.text.trim()
+    case 'idk':
+      return IDK_TEXTS_EN[answer.mode]
   }
 }

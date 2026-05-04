@@ -13,6 +13,8 @@ export interface OfflineQueueEntry {
   clientRequestId: string
   projectId: string
   userMessage: string
+  /** Phase 6.1 — English mirror of userMessage. */
+  userMessageEn?: string
   userAnswer: UserAnswer
   attachmentIds: string[]
   queuedAt: string

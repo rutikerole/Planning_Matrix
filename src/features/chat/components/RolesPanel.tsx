@@ -43,7 +43,10 @@ export function RolesPanel({ roles }: Props) {
                   {r.needed ? t('chat.role.needed') : t('chat.role.notNeeded')}
                 </span>
               }
-              sub={r.rationale_de || undefined}
+              sub={
+                (lang === 'en' ? r.rationale_en || r.rationale_de : r.rationale_de) ||
+                undefined
+              }
               qualifier={`${r.qualifier.source} · ${r.qualifier.quality}`}
             />
           ))

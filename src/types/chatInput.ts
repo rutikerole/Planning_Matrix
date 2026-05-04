@@ -99,6 +99,20 @@ export function suggestionToText(s: SuggestionId, lang: 'de' | 'en'): string {
 }
 
 /**
+ * German rendering of a suggestion (the model is briefed in German;
+ * structured answers are stored as content_de). Mirrors
+ * `suggestionToText(s, 'en')` semantically but always emits German.
+ */
+export function suggestionToTextDe(s: SuggestionId): string {
+  return suggestionToText(s, 'de')
+}
+
+/** English rendering of a suggestion. */
+export function suggestionToTextEn(s: SuggestionId): string {
+  return suggestionToText(s, 'en')
+}
+
+/**
  * Resolves the active suggestion into the `UserAnswer` that goes onto
  * the chat-turn request alongside `userMessage`. The model gets both
  * the structured signal and the free text.

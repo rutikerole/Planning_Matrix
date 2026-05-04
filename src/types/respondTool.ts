@@ -168,6 +168,7 @@ const roleDeltaSchema = z.discriminatedUnion('op', [
     title_en: z.string().optional(),
     needed: z.boolean().optional(),
     rationale_de: z.string().optional(),
+    rationale_en: z.string().optional(),
     source: sourceSchema.optional(),
     quality: qualitySchema.optional(),
     reason: z.string().optional(),
@@ -232,6 +233,11 @@ export const respondToolInputSchema = z
      * follow-up where suggestions would constrain the user.
      */
     likely_user_replies: z
+      .array(z.string().min(1).max(60))
+      .max(3)
+      .optional(),
+    /** English mirror of likely_user_replies (Phase 6.1 #L1). */
+    likely_user_replies_en: z
       .array(z.string().min(1).max(60))
       .max(3)
       .optional(),

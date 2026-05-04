@@ -64,7 +64,9 @@ export function MessageUser({ message, impactFacts = [] }: Props) {
         {...(isMobile ? longPress : {})}
       >
         <p className="text-[15px] text-ink leading-[1.55] whitespace-pre-wrap break-words">
-          {message.content_de}
+          {lang === 'en' && message.content_en
+            ? message.content_en
+            : message.content_de}
         </p>
 
         {/* Phase 3.6 #68 — attachments inline below the body. Skip
@@ -115,7 +117,11 @@ export function MessageUser({ message, impactFacts = [] }: Props) {
           open={sheetOpen}
           onOpenChange={setSheetOpen}
           fromLabel={t('chat.contextSheet.fromYou', { defaultValue: 'Sie' })}
-          text={message.content_de}
+          text={
+            lang === 'en' && message.content_en
+              ? message.content_en
+              : message.content_de
+          }
         />
       )}
     </div>

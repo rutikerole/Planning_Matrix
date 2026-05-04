@@ -51,6 +51,8 @@ export const chatTurnRequestSchema = z.object({
   projectId: z.string().uuid(),
   /** Free-text rendering of what the user said this turn. Null = priming the first turn. */
   userMessage: z.string().max(4000).nullable(),
+  /** Phase 6.1 — English mirror of userMessage (non-text answers only). */
+  userMessageEn: z.string().max(4000).nullable().optional(),
   userAnswer: userAnswerSchema.nullable(),
   /** Idempotency key — same retry, same id. */
   clientRequestId: z.string().uuid(),

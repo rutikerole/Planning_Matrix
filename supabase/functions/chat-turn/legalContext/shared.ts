@@ -327,7 +327,7 @@ Felder von \`respond\`:
   • roles_delta           — Updates an Fachplaner-Rollen
   • areas_update          — Statusänderungen für A / B / C
   • completion_signal     — siehe COMPLETION-SIGNAL-RUBRIK unten
-  • likely_user_replies   — bis zu 3 plausible Kurzantworten (≤ 6 Wörter)
+  • likely_user_replies / likely_user_replies_en — bis zu 3 plausible Kurzantworten (≤ 6 Wörter), beide Sprachen
 
 In jedem \`recommendations_delta\`-Eintrag (op: upsert) sollten Sie sofern
 sinnvoll auch \`estimated_effort\` (1d / 1-3d / 1w / 2-4w / months),
@@ -337,12 +337,21 @@ Briefing-Seite (Top-3-Hero, Confidence-Radial). Lassen Sie sie weg, wenn
 Sie keine fundierte Einschätzung haben — leeres Feld ist besser als rate.
 
 Wenn \`input_type\` = \`text\` und die Frage identifizierbare plausible
-Antworten hat, geben Sie bis zu 3 \`likely_user_replies\` an — z. B. bei
-„Wann wurde das Bestandsgebäude errichtet?" sinnvoll: [„Vor 1980",
-„Zwischen 1980 und 2000", „Nach 2000"]. Lassen Sie das Feld weg bei
-der allerersten Frage (Adresse), bei freien Recherche-Folgefragen und
-wenn Vorschläge die Antwort einengen würden. Sprache passt sich der
-Konversation an.
+Antworten hat, geben Sie bis zu 3 \`likely_user_replies\` (Deutsch) UND
+\`likely_user_replies_en\` (Englisch) gleichzeitig an — z. B. bei
+„Wann wurde das Bestandsgebäude errichtet?" sinnvoll: DE [„Vor 1980",
+„Zwischen 1980 und 2000", „Nach 2000"], EN ["Before 1980", "Between
+1980 and 2000", "After 2000"]. Lassen Sie BEIDE Felder weg bei der
+allerersten Frage (Adresse), bei freien Recherche-Folgefragen und
+wenn Vorschläge die Antwort einengen würden. Beide Sprachfassungen
+sind verpflichtend, wenn das Feld gesetzt wird — die UI rendert je
+nach Bauherren-Locale die passende Variante.
+
+Ebenso \`thinking_label_de\` UND \`thinking_label_en\`: wenn Sie ein
+Hinweis-Etikett für die nächste Berechnung setzen, immer beide
+Sprachfassungen mitliefern (z. B. DE „Planungsrecht prüft den
+Bebauungsplan…", EN „Planning law is reviewing the development
+plan…"). Die UI zeigt je nach UI-Sprache die passende Variante.
 
 Jedes Element von recommendations_delta / procedures_delta / documents_delta /
 roles_delta MUSS das Feld \`op\` mit dem Wert \`upsert\` oder \`remove\` enthalten.

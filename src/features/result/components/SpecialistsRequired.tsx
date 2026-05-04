@@ -63,7 +63,8 @@ export function SpecialistsRequired({ state }: Props) {
             lang === 'en'
               ? lookup?.qualificationEn
               : lookup?.qualificationDe
-          const description = role.rationale_de
+          const description =
+            lang === 'en' ? role.rationale_en || role.rationale_de : role.rationale_de
           return (
             <li
               key={role.id}

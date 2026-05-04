@@ -26,7 +26,7 @@ import { RateLimitBanner } from '../components/RateLimitBanner'
 import { useProjectEvents } from '../hooks/useProjectEvents'
 import { MobileChatWorkspace } from '../components/MobileChatWorkspace'
 import { useViewport } from '@/lib/useViewport'
-import { buildUserMessageText } from '../lib/userAnswerHelpers'
+import { buildUserMessageText, buildUserMessageTextEn } from '../lib/userAnswerHelpers'
 import { useProject } from '../hooks/useProject'
 import { useMessages } from '../hooks/useMessages'
 import { useChatTurn } from '../hooks/useChatTurn'
@@ -218,11 +218,14 @@ export function ChatWorkspacePage() {
 
   const handleSubmit = (payload: {
     userMessage: string
+    userMessageEn?: string
     userAnswer: UserAnswer
     attachmentIds?: string[]
   }) => {
     chatTurn.mutate({
       userMessage: payload.userMessage,
+      userMessageEn:
+        payload.userMessageEn ?? buildUserMessageTextEn(payload.userAnswer),
       userAnswer: payload.userAnswer,
       attachmentIds: payload.attachmentIds ?? [],
     })
@@ -232,6 +235,7 @@ export function ChatWorkspacePage() {
     const answer: UserAnswer = { kind: 'idk', mode }
     handleSubmit({
       userMessage: buildUserMessageText(answer),
+      userMessageEn: buildUserMessageTextEn(answer),
       userAnswer: answer,
       attachmentIds: [],
     })

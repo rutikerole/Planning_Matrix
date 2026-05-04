@@ -215,7 +215,9 @@ function ProjectMetaTab({ project }: { project: NonNullable<ReturnType<typeof us
     {
       key: 'bundesland',
       label: t('cockpit.project.bundesland', { defaultValue: 'Bundesland' }),
-      value: project.bundesland,
+      value: t(`bundesland.${project.bundesland}`, {
+        defaultValue: project.bundesland,
+      }),
     },
     {
       key: 'template',
@@ -296,7 +298,10 @@ function FactsTab({
         <EditableCell
           value={r.value}
           readOnly={!r.isClient}
-          ariaLabel={`${r.label} bearbeiten`}
+          ariaLabel={t('cockpit.editAriaLabel', {
+            label: r.label,
+            defaultValue: `${r.label} bearbeiten`,
+          })}
           onSave={(next) => onSave(r.fact.key, next)}
         />
       ),
@@ -533,7 +538,9 @@ function RolesTab({
     <CockpitTable
       rows={rows}
       rowKey={(r) => r.r.id}
-      searchable={(r) => `${r.title} ${r.r.rationale_de ?? ''}`}
+      searchable={(r) =>
+        `${r.title} ${(lang === 'en' ? r.r.rationale_en : null) ?? r.r.rationale_de ?? ''}`
+      }
       searchPlaceholder={t('cockpit.search', { defaultValue: 'Team durchsuchen…' })}
       emptyMessage={t('chat.rail.rolesEmpty')}
       columns={[
@@ -554,11 +561,17 @@ function RolesTab({
         {
           id: 'rationale',
           header: t('cockpit.cols.rationale', { defaultValue: 'Begründung' }),
-          render: (r) => (
-            <span className="text-[12px] italic text-ink/65">
-              {r.r.rationale_de ?? '—'}
-            </span>
-          ),
+          render: (r) => {
+            const rationale =
+              lang === 'en'
+                ? r.r.rationale_en || r.r.rationale_de
+                : r.r.rationale_de
+            return (
+              <span className="text-[12px] italic text-ink/65">
+                {rationale || '—'}
+              </span>
+            )
+          },
           className: 'w-1/2',
         },
         {
@@ -573,6 +586,34 @@ function RolesTab({
 }
 
 // ── Tab: Empfehlungen ──────────────────────────────────────────────────
+
+const EFFORT_LABELS_DE: Record<string, string> = {
+  '1d': '1 Werktag',
+  '1-3d': '1–3 Werktage',
+  '1w': 'ca. 1 Woche',
+  '2-4w': '2–4 Wochen',
+  months: 'mehrere Monate',
+}
+const EFFORT_LABELS_EN: Record<string, string> = {
+  '1d': '1 working day',
+  '1-3d': '1–3 working days',
+  '1w': 'approx. 1 week',
+  '2-4w': '2–4 weeks',
+  months: 'several months',
+}
+
+const PARTY_LABELS_DE: Record<string, string> = {
+  bauherr: 'Bauherr',
+  architekt: 'Architekt:in',
+  fachplaner: 'Fachplaner:in',
+  bauamt: 'Bauamt',
+}
+const PARTY_LABELS_EN: Record<string, string> = {
+  bauherr: 'Owner',
+  architekt: 'Architect',
+  fachplaner: 'Specialist',
+  bauamt: 'Building authority',
+}
 
 function RecommendationsTab({
   recommendations,
@@ -620,27 +661,31 @@ function RecommendationsTab({
         {
           id: 'effort',
           header: t('cockpit.cols.effort', { defaultValue: 'Aufwand' }),
-          render: (r) =>
-            r.estimated_effort ? (
+          render: (r) => {
+            const eff = r.estimated_effort
+            if (!eff) return <span className="text-ink/30">—</span>
+            const labels = lang === 'en' ? EFFORT_LABELS_EN : EFFORT_LABELS_DE
+            return (
               <span className="text-[11px] uppercase tracking-[0.14em] text-clay">
-                {r.estimated_effort}
+                {labels[eff] ?? eff}
               </span>
-            ) : (
-              <span className="text-ink/30">—</span>
-            ),
+            )
+          },
           className: 'w-24',
         },
         {
           id: 'owner',
           header: t('cockpit.cols.owner', { defaultValue: 'Verantwortlich' }),
-          render: (r) =>
-            r.responsible_party ? (
-              <span className="text-[12px] capitalize text-ink/70">
-                {r.responsible_party}
+          render: (r) => {
+            const party = r.responsible_party
+            if (!party) return <span className="text-ink/30">—</span>
+            const labels = lang === 'en' ? PARTY_LABELS_EN : PARTY_LABELS_DE
+            return (
+              <span className="text-[12px] text-ink/70">
+                {labels[party] ?? party}
               </span>
-            ) : (
-              <span className="text-ink/30">—</span>
-            ),
+            )
+          },
           className: 'w-32',
         },
       ]}

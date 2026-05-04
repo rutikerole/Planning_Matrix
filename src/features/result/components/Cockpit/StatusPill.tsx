@@ -6,6 +6,7 @@
 // and functional, made to live in a 32px-tall data row.
 // ───────────────────────────────────────────────────────────────────────
 
+import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import {
   STATUS_PILL_STYLES,
@@ -25,7 +26,10 @@ interface Props {
 }
 
 export function StatusPill({ kind, label }: Props) {
-  const text = label ?? defaultStatusLabelDe(kind)
+  const { t } = useTranslation()
+  const text =
+    label ??
+    t(`cockpit.status.${kind}`, { defaultValue: defaultStatusLabelDe(kind) })
   return (
     <span
       className={cn(

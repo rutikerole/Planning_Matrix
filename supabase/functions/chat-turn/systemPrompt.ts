@@ -167,6 +167,19 @@ export function buildLocaleBlock(locale: 'de' | 'en' | undefined): string {
       '',
       'message_de bleibt formales Deutsch (Sie). Beide Felder bilden',
       'denselben semantischen Inhalt ab.',
+      '',
+      'PFLICHT für ALLE natürlichsprachlichen Felder, wenn gesetzt:',
+      '  • likely_user_replies (DE) UND likely_user_replies_en (EN)',
+      '  • thinking_label_de (DE) UND thinking_label_en (EN)',
+      '  • input_options[*].label_de (DE) UND label_en (EN)',
+      '  • recommendations_delta[*].title_de/title_en, detail_de/detail_en,',
+      '    ctaLabel_de/ctaLabel_en',
+      '  • procedures_delta[*].title_de/title_en, rationale_de/rationale_en',
+      '  • documents_delta[*].title_de/title_en',
+      '  • roles_delta[*].title_de/title_en',
+      'Die UI zeigt dem Bauherrn ausschließlich die englischen Felder.',
+      'Lassen Sie KEIN englisches Feld leer, wenn die deutsche Variante',
+      'gesetzt ist — sonst sieht der EN-Nutzer deutschen Text.',
     ].join('\n')
   }
   return [
@@ -176,6 +189,12 @@ export function buildLocaleBlock(locale: 'de' | 'en' | undefined): string {
     'Der Nutzer arbeitet auf DEUTSCH. message_de ist primär.',
     'message_en bleibt eine vollwertige englische Spiegelung im Sinne',
     'der Audit- und Locale-Switch-Anforderung.',
+    '',
+    'Auch wenn der Nutzer auf DEUTSCH arbeitet, liefern Sie bei jedem',
+    'Feld mit DE/EN-Paar (input_options.label_de/_en, recommendations,',
+    'procedures, documents, roles, likely_user_replies/_en,',
+    'thinking_label_de/_en) IMMER beide Sprachfassungen — der Bauherr',
+    'kann jederzeit auf Englisch wechseln.',
   ].join('\n')
 }
 

@@ -198,7 +198,8 @@ export async function buildExportPdf({
           index: sorted.indexOf(r) + 1,
           title: lang === 'en' ? r.title_en : r.title_de,
           meta: tag,
-          body: r.rationale_de ?? '',
+          body:
+            (lang === 'en' ? r.rationale_en || r.rationale_de : r.rationale_de) ?? '',
           qualifier: `${r.qualifier.source} · ${r.qualifier.quality}`,
         })
         page = result.page

@@ -31,7 +31,9 @@ export function DocumentsPanel({ documents }: Props) {
               meta={<StatusPill status={d.status} />}
               sub={
                 d.required_for.length > 0
-                  ? `Erforderlich für: ${d.required_for.join(', ')}`
+                  ? t('cockpit.cols.requiredFor', {
+                      defaultValue: 'Erforderlich für',
+                    }) + `: ${d.required_for.join(', ')}`
                   : undefined
               }
               qualifier={`${d.qualifier.source} · ${d.qualifier.quality}`}

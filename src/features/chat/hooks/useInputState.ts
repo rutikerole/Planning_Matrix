@@ -19,6 +19,8 @@ import {
   type PendingAttachment,
   type SuggestionId,
   suggestionToText,
+  suggestionToTextDe,
+  suggestionToTextEn,
   suggestionToUserAnswer,
 } from '@/types/chatInput'
 import type { UserAnswer } from '@/types/chatTurn'
@@ -26,6 +28,8 @@ import { useChatStore } from '@/stores/chatStore'
 
 export interface InputSubmitPayload {
   userMessage: string
+  /** English mirror of userMessage (Phase 6.1). */
+  userMessageEn?: string
   userAnswer: UserAnswer
   attachmentIds: string[]
 }
@@ -102,29 +106,34 @@ export function useInputState(): UseInputStateReturn {
     // Determine the userAnswer + userMessage to forward to chat-turn.
     let userAnswer: UserAnswer
     let userMessage: string
+    let userMessageEn: string | undefined
 
     if (activeSuggestion && trimmed === suggestionToText(activeSuggestion, lang)) {
       // The user clicked a chip and didn't edit. Forward the structured
-      // answer; userMessage echoes the chip's text for the model.
+      // answer; userMessage stores the German rendering for the model
+      // and userMessageEn the English rendering for EN-locale display.
       userAnswer = suggestionToUserAnswer(activeSuggestion, trimmed)
-      userMessage = trimmed
+      userMessage = suggestionToTextDe(activeSuggestion)
+      userMessageEn = suggestionToTextEn(activeSuggestion)
     } else if (activeSuggestion && trimmed.length > 0) {
       // The user clicked a chip AND typed/edited around it. Send the
       // structured signal but let the model see the full free-text.
       userAnswer = suggestionToUserAnswer(activeSuggestion, trimmed)
       userMessage = trimmed
+      userMessageEn = trimmed
     } else if (trimmed.length === 0 && sendable.length > 0) {
       // Attachment-only: synthesise the body so chat-turn doesn't reject
-      // an empty message.
-      const body = lang === 'en' ? '(File attached)' : '(Datei angehängt)'
-      userAnswer = { kind: 'text', text: body }
-      userMessage = body
+      // an empty message. Always store DE for the model; mirror EN.
+      userAnswer = { kind: 'text', text: '(Datei angehängt)' }
+      userMessage = '(Datei angehängt)'
+      userMessageEn = '(File attached)'
     } else if (trimmed.length === 0) {
       // Should be filtered by `isEmpty`; defensive.
       return null
     } else {
       userAnswer = { kind: 'text', text: trimmed }
       userMessage = trimmed
+      userMessageEn = trimmed
     }
 
     const attachmentIds = sendable
@@ -136,7 +145,7 @@ export function useInputState(): UseInputStateReturn {
     setActiveSuggestion(null)
     clearAttachments()
 
-    return { userMessage, userAnswer, attachmentIds }
+    return { userMessage, userMessageEn, userAnswer, attachmentIds }
   }, [text, attachments, activeSuggestion, lang, clearAttachments])
 
   return {

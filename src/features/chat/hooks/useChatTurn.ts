@@ -36,6 +36,8 @@ type ChatTurnSettled =
 
 interface SubmitInput {
   userMessage: string
+  /** Phase 6.1 — English mirror of userMessage (rendered when EN locale). */
+  userMessageEn?: string
   userAnswer: UserAnswer
   clientRequestId?: string
   /** Phase 3.6 #68 — project_files row ids to bind to the persisted
@@ -99,6 +101,7 @@ export function useChatTurn(projectId: string) {
           clientRequestId,
           projectId,
           userMessage: input.userMessage,
+          userMessageEn: input.userMessageEn,
           userAnswer: input.userAnswer,
           attachmentIds: input.attachmentIds ?? [],
           queuedAt: new Date().toISOString(),
@@ -113,6 +116,7 @@ export function useChatTurn(projectId: string) {
       const request: ChatTurnRequest = {
         projectId,
         userMessage: input.userMessage,
+        userMessageEn: input.userMessageEn ?? null,
         userAnswer: input.userAnswer,
         clientRequestId,
         // Phase 3.7 #79 — tell the Edge Function which locale the user
@@ -195,7 +199,7 @@ export function useChatTurn(projectId: string) {
         role: 'user',
         specialist: null,
         content_de: input.userMessage,
-        content_en: null,
+        content_en: input.userMessageEn ?? null,
         input_type: null,
         input_options: null,
         allow_idk: null,
@@ -220,10 +224,21 @@ export function useChatTurn(projectId: string) {
 
       const lastAssistant = mostRecentAssistant(previousMessages)
       const seedSpecialist = (lastAssistant?.specialist ?? 'moderator') as Specialist
-      const seedLabel = lastAssistant?.thinking_label_de ?? null
+      // Phase 6.1 — locale-correct thinking label. EN mirror lives in
+      // tool_input (no DB column), with DE as the always-present fallback.
+      const lang = (i18n.resolvedLanguage ?? 'de') as 'de' | 'en'
+      const labelDe = lastAssistant?.thinking_label_de ?? null
+      const labelEn =
+        (lastAssistant?.tool_input as { thinking_label_en?: string } | null)
+          ?.thinking_label_en ?? null
+      const seedLabel = lang === 'en' ? labelEn ?? labelDe : labelDe ?? labelEn
 
       const heuristicSource =
-        seedLabel ?? (lastAssistant?.content_de ?? '') + ' ' + input.userMessage
+        (lastAssistant?.thinking_label_de ?? '') +
+        ' ' +
+        (lastAssistant?.content_de ?? '') +
+        ' ' +
+        input.userMessage
       const activitySection = thinkingLabelToSection(heuristicSource)
 
       setThinking(true, seedSpecialist, seedLabel, activitySection)

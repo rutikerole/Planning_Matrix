@@ -455,7 +455,8 @@
     "code": "404",
     "heading": "Diese Seite existiert nicht.",
     "body": "Vielleicht wurde sie verschoben — oder es war ein Tippfehler. Kein Problem.",
-    "cta": "Zur Startseite"
+    "cta": "Zur Startseite",
+    "ctaNewProject": "Neues Projekt anlegen"
   },
   "auth": {
     "phraseSignUp": "Vom ersten Strich bis zur Genehmigung.",
@@ -1026,7 +1027,22 @@
       "json": {
         "title": "JSON-Datenexport",
         "body": "Vollständiger Projektzustand für Integrationen."
+      },
+      "error": {
+        "eyebrow": "Export fehlgeschlagen",
+        "pdfBody": "Der PDF-Export ist leider fehlgeschlagen. Versuchen Sie stattdessen die Markdown-Checkliste oder den JSON-Datenexport.",
+        "mdBody": "Der Export ist leider fehlgeschlagen. Bitte erneut versuchen.",
+        "tryMd": "Markdown stattdessen",
+        "copy": "Fehler kopieren",
+        "dismiss": "Schließen"
       }
+    },
+    "attachment": {
+      "openInNewTab": "{{name}} öffnen"
+    },
+    "dropZone": {
+      "title": "Datei hier ablegen",
+      "subtitle": "Pläne, Fotos und PDFs · max. 25 MB · bis zu 5 Dateien"
     },
     "titleBlock": {
       "eyebrow": "Projekt",
@@ -1213,7 +1229,16 @@
         "remove": "Anhang entfernen",
         "uploading": "Wird hochgeladen…",
         "failed": "Hochladen fehlgeschlagen",
-        "list": "Angehängte Dateien"
+        "list": "Angehängte Dateien",
+        "helper": "Pläne, Fotos und PDFs · max. 25 MB · PDF, JPG, PNG, DOCX, DWG.",
+        "category": "Kategorie",
+        "choose": "Dateien auswählen…",
+        "camera": "Foto aufnehmen",
+        "cameraHint": "Kamera · Rückseite",
+        "gallery": "Aus Galerie wählen",
+        "galleryHint": "Bilder vom Gerät",
+        "document": "Datei wählen",
+        "documentHint": "PDF, DOCX, DWG · max. 25 MB"
       },
       "address": {
         "placeholder": "z. B. Türkenstraße 25, 80799 München",
@@ -1293,6 +1318,83 @@
       "cta": "Zum Dashboard"
     }
   },
+  "cockpit": {
+    "search": "Suchen…",
+    "tabs": {
+      "project": "Projekt",
+      "facts": "Daten",
+      "areas": "Bereiche",
+      "procedures": "Verfahren",
+      "documents": "Dokumente",
+      "roles": "Team",
+      "recommendations": "Empfehlungen",
+      "audit": "Audit"
+    },
+    "project": {
+      "name": "Projektname",
+      "intent": "Vorhaben",
+      "plot": "Grundstück",
+      "bundesland": "Bundesland",
+      "template": "Template",
+      "created": "Erstellt",
+      "updated": "Zuletzt aktiv"
+    },
+    "cols": {
+      "attribute": "Attribut",
+      "value": "Wert",
+      "label": "Bezeichnung",
+      "qualifier": "Quelle",
+      "evidence": "Beleg",
+      "title": "Titel",
+      "state": "Status",
+      "rationale": "Begründung",
+      "reason": "Begründung",
+      "requiredFor": "Erforderlich für",
+      "detail": "Details",
+      "effort": "Aufwand",
+      "owner": "Verantwortlich",
+      "when": "Zeitpunkt",
+      "event": "Ereignis",
+      "who": "Ausgelöst"
+    },
+    "status": {
+      "ok": "OK",
+      "pending": "Ausstehend",
+      "attention": "Achtung",
+      "verified": "Verifiziert",
+      "assumption": "Annahme",
+      "void": "Nicht ermittelbar",
+      "active": "Aktiv",
+      "erforderlich": "Erforderlich",
+      "liegt_vor": "Liegt vor",
+      "in_bearbeitung": "In Arbeit",
+      "nicht_erforderlich": "Nicht erforderlich",
+      "eingereicht": "Eingereicht",
+      "genehmigt": "Genehmigt",
+      "freigegeben": "Freigegeben",
+      "needed": "Erforderlich",
+      "not_needed": "Nicht erforderlich"
+    },
+    "editAriaLabel": "{{label}} bearbeiten"
+  },
+  "bundesland": {
+    "bayern": "Bayern",
+    "baden_wuerttemberg": "Baden-Württemberg",
+    "berlin": "Berlin",
+    "brandenburg": "Brandenburg",
+    "bremen": "Bremen",
+    "hamburg": "Hamburg",
+    "hessen": "Hessen",
+    "mecklenburg_vorpommern": "Mecklenburg-Vorpommern",
+    "niedersachsen": "Niedersachsen",
+    "nordrhein_westfalen": "Nordrhein-Westfalen",
+    "rheinland_pfalz": "Rheinland-Pfalz",
+    "saarland": "Saarland",
+    "sachsen": "Sachsen",
+    "sachsen_anhalt": "Sachsen-Anhalt",
+    "schleswig_holstein": "Schleswig-Holstein",
+    "thueringen": "Thüringen"
+  },
   "result": {
     "backToChat": "Zurück zum Gespräch",
     "cover": {
@@ -1311,6 +1413,8 @@
       "eyebrow": "Das Verfahren",
       "basisIntro": "Diese Einordnung basiert auf:",
       "confidenceLine": "Sicherheit der Einordnung:",
+      "whyToggle": "Warum dieses Verfahren?",
+      "noFactors": "Noch keine bestimmenden Fakten erfasst.",
       "empty": {
         "body": "Die Einordnung erfordert weitere Angaben. Setzen Sie die Konsultation fort, um diesen Abschnitt zu vervollständigen.",
         "cta": "Zur Konsultation"
@@ -1366,7 +1470,12 @@
       "intro_one": "Ein Punkt sollten Sie mit Ihrer Architekt:in besprechen.",
       "intro_other": "{{n}} Punkte sollten Sie mit Ihrer Architekt:in besprechen.",
       "resolveCta": "Diese Annahme klären",
-      "resolveTitle": "Annahme klären"
+      "resolveTitle": "Annahme klären",
+      "resolveHint": "Geben Sie den belastbaren Wert ein. Wir markieren den Fakt anschließend als CLIENT · DECIDED und tragen die Korrektur in die Auditspur ein.",
+      "resolveValueLabel": "Tatsächlicher Wert",
+      "resolveCancel": "Abbrechen",
+      "resolveSave": "Annahme klären",
+      "resolveSaving": "Wird gespeichert…"
     },
     "confidence": {
       "eyebrow": "Datengüte",

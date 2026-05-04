@@ -38,11 +38,6 @@ import { SendButton } from './SendButton'
 import { IdkChips, type IdkMode } from './IdkChips'
 import { JumpToLatestFab } from '../JumpToLatestFab'
 
-/** Resolve the send-now text for the Continue button. */
-function continueText(lang: 'de' | 'en'): string {
-  return lang === 'en' ? 'Continue.' : 'Weiter.'
-}
-
 // Two module-level shell components for the bar's outer chrome. The
 // embedded variant is used when InputBar is composed into UnifiedFooter
 // (which owns the sticky band). The standalone variant carries its own
@@ -104,6 +99,7 @@ interface Props {
   lastAssistant: MessageRow | null
   onSubmit: (payload: {
     userMessage: string
+    userMessageEn?: string
     userAnswer: UserAnswer
     attachmentIds: string[]
   }) => void
@@ -157,8 +153,7 @@ export function InputBar({
   forceDisabled,
   embedded,
 }: Props) {
-  const { t, i18n } = useTranslation()
-  const lang = (i18n.resolvedLanguage ?? 'de') as 'de' | 'en'
+  const { t } = useTranslation()
   const disabled = !!forceDisabled
   const allowIdk = lastAssistant?.allow_idk ?? false
   const completionSignal = useChatStore((s) => s.lastCompletionSignal)
@@ -215,6 +210,7 @@ export function InputBar({
     if (!payload) return
     onSubmit({
       userMessage: payload.userMessage,
+      userMessageEn: payload.userMessageEn,
       userAnswer: payload.userAnswer,
       attachmentIds: payload.attachmentIds,
     })
@@ -292,10 +288,14 @@ export function InputBar({
               onPick={applySuggestion}
               onContinue={() => {
                 if (disabled) return
-                const msg = continueText(lang)
+                // Always send German content_de (the model is briefed in
+                // German); the SPA mirrors content_en for the user's UI.
+                const msgDe = 'Weiter.'
+                const msgEn = 'Continue.'
                 onSubmit({
-                  userMessage: msg,
-                  userAnswer: { kind: 'text', text: msg },
+                  userMessage: msgDe,
+                  userMessageEn: msgEn,
+                  userAnswer: { kind: 'text', text: msgDe },
                   attachmentIds: [],
                 })
               }}

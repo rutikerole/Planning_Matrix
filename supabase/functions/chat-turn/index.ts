@@ -88,8 +88,14 @@ Deno.serve(async (req: Request) => {
   if (!parsed.success) {
     return respond({ code: 'validation', message: parsed.error.message }, 400)
   }
-  const { projectId, userMessage, userAnswer, clientRequestId, locale } =
-    parsed.data
+  const {
+    projectId,
+    userMessage,
+    userMessageEn,
+    userAnswer,
+    clientRequestId,
+    locale,
+  } = parsed.data
 
   // ── Env ───────────────────────────────────────────────────────────
   const apiKey = Deno.env.get('ANTHROPIC_API_KEY')
@@ -174,6 +180,7 @@ Deno.serve(async (req: Request) => {
     const userInsert = await insertUserMessageOrFetchExisting(supabase, {
       projectId,
       content: userMessage,
+      contentEn: userMessageEn ?? null,
       userAnswer,
       clientRequestId,
     })
