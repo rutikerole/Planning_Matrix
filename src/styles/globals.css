@@ -242,6 +242,15 @@
     --line-strong:  rgba(26, 22, 18, 0.18);
     --line-faint:   rgba(26, 22, 18, 0.05);
 
+    /* ── Phase 7.5 Spine sidebar tokens ───────────────────────────── */
+    --spine-width:                240px;
+    --spine-rail-color:           rgba(123, 92, 63, 0.32);
+    --spine-stage-done-opacity:   0.42;
+    --spine-stage-future-opacity: 0.55;
+    --spine-stage-live-bar:       hsl(var(--clay));
+    --spine-stage-halo:           rgba(123, 92, 63, 0.22);
+    --spine-stage-halo-soft:      rgba(123, 92, 63, 0.08);
+
     /* Motion. --ease matches the existing transition-calm curve;
      * --ease-soft is the new fast-but-soft curve used for pulses
      * and the sticky-context slide. */
@@ -567,6 +576,20 @@
   }
   .chamber-sigil-active { animation: sigilActive 2.4s ease-in-out infinite; }
   @media (prefers-reduced-motion: reduce) { .chamber-sigil-active { animation: none; } }
+
+  /* Phase 7.5 — Spine live-stage halo pulse. */
+  @keyframes spineGlow {
+    0%, 100% { transform: scale(1);   opacity: 0.7; }
+    50%      { transform: scale(1.4); opacity: 0.3; }
+  }
+  .spine-glow { animation: spineGlow 2.4s ease-in-out infinite; }
+  @media (prefers-reduced-motion: reduce) { .spine-glow { animation: none; } }
+
+  /* Top + bottom mask so the rail fades into the paper at edges. */
+  .spine-rail-mask {
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 12%, black 88%, transparent 100%);
+            mask-image: linear-gradient(to bottom, transparent 0%, black 12%, black 88%, transparent 100%);
+  }
 
   /* Astrolabe halo pulse for the active specialist sigil. */
   @keyframes astroHalo {

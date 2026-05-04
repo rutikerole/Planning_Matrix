@@ -101,6 +101,8 @@ export default {
         md: 'calc(var(--radius) - 2px)',
         sm: 'calc(var(--radius) - 4px)',
       },
+      width: { spine: 'var(--spine-width)' },
+      spacing: { spine: 'var(--spine-width)' },
       colors: {
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
