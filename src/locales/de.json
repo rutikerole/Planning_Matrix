@@ -1389,7 +1389,31 @@
       "emptyBody": "Einen Moment — das Team setzt sich an den Tisch.",
       "completionContinueHint": "Sie können weiter fragen oder das Briefing öffnen.",
       "errorRetry": "Erneut versuchen",
-      "errorDismiss": "Schließen"
+      "errorDismiss": "Schließen",
+      "strip": {
+        "speaking": "{{specialist}} · live"
+      },
+      "stage": {
+        "speakingNow": "spricht jetzt"
+      },
+      "specialistShort": {
+        "moderator": "MODERATION",
+        "planungsrecht": "PLANUNGSRECHT",
+        "bauordnungsrecht": "BAUORDNUNG",
+        "sonstige_vorgaben": "SONSTIGE",
+        "verfahren": "VERFAHREN",
+        "beteiligte": "BETEILIGTE",
+        "synthesizer": "SYNTHESE"
+      },
+      "specialistDisplay": {
+        "moderator": "Moderation",
+        "planungsrecht": "Planungsrecht",
+        "bauordnungsrecht": "Bauordnung",
+        "sonstige_vorgaben": "Sonstige Vorgaben",
+        "verfahren": "Verfahren",
+        "beteiligte": "Beteiligte",
+        "synthesizer": "Synthese"
+      }
     },
     "spine": {
       "header": {

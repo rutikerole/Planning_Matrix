@@ -1389,7 +1389,31 @@
       "emptyBody": "One moment — the team is taking their seats.",
       "completionContinueHint": "You can keep asking or open the briefing.",
       "errorRetry": "Try again",
-      "errorDismiss": "Dismiss"
+      "errorDismiss": "Dismiss",
+      "strip": {
+        "speaking": "{{specialist}} · live"
+      },
+      "stage": {
+        "speakingNow": "speaking now"
+      },
+      "specialistShort": {
+        "moderator": "MODERATOR",
+        "planungsrecht": "ZONING LAW",
+        "bauordnungsrecht": "BUILDING CODE",
+        "sonstige_vorgaben": "OTHER RULES",
+        "verfahren": "PROCEDURE",
+        "beteiligte": "STAKEHOLDERS",
+        "synthesizer": "SYNTHESIS"
+      },
+      "specialistDisplay": {
+        "moderator": "Moderator",
+        "planungsrecht": "Zoning law",
+        "bauordnungsrecht": "Building code",
+        "sonstige_vorgaben": "Other rules",
+        "verfahren": "Procedure",
+        "beteiligte": "Stakeholders",
+        "synthesizer": "Synthesis"
+      }
     },
     "spine": {
       "header": {
