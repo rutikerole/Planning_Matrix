@@ -189,12 +189,17 @@ export function InputBar({
         </ul>
       )}
 
-      {/* Textarea card */}
+      {/* Phase 7.7 §1.5 — textarea row, edge-to-edge, no card. The
+        * sticky-bottom ChamberLayout band already carries the
+        * single hairline top-border; this row provides only the
+        * input affordances. No rounded corners, no shadow, no
+        * focus-within ring. The textarea inside keeps its
+        * leading and the focus state is communicated by the
+        * SendButton enabling, not by the wrapper. */}
       <div
         className={cn(
-          'flex items-end gap-2 bg-paper-card border border-[var(--hairline-strong,rgba(26,22,18,0.18))] px-4 py-3',
-          'rounded-3xl transition-colors duration-150',
-          'focus-within:border-clay focus-within:shadow-[0_0_0_3px_hsl(var(--clay)/0.10)]',
+          'flex items-end gap-2 px-1 py-1',
+          'transition-colors duration-150',
           disabled && 'opacity-95',
         )}
       >
