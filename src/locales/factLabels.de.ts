@@ -187,4 +187,71 @@ export const factLabelsDe: Record<string, FactLabel> = {
   'NATURSCHUTZ.SCHUTZGEBIET': { label: 'Schutzgebiet betroffen' },
   'NATURSCHUTZ.BAUMBESTAND': { label: 'Geschützter Baumbestand' },
   'NATURSCHUTZ.ARTENSCHUTZ': { label: 'Artenschutz-Prüfung erforderlich' },
+
+  // ── Phase 6 A.6 — keys the Phase 6 system prompt encourages
+  //                  the model to emit for T-01 in München.
+  // Heritage / Denkmal / Erhaltungssatzung
+  'HERITAGE.DENKMAL_PROTECTION': { label: 'Denkmalschutz (BayDSchG Art. 6)' },
+  'HERITAGE.DENKMAL_LISTED': { label: 'Eingetragenes Baudenkmal' },
+  'HERITAGE.DENKMAL_ATLAS_CHECK_REQUIRED': {
+    label: 'Bayerischer Denkmal-Atlas zu prüfen',
+  },
+  'HERITAGE.ERHALTUNGSSATZUNG_AREA': {
+    label: 'Im Erhaltungssatzungs-Bereich (BauGB § 172)',
+  },
+  'HERITAGE.ERHALTUNGSSATZUNG_NAME': { label: 'Erhaltungssatzung (Name)' },
+  'HERITAGE.BLfD_ENQUIRY_REQUIRED': {
+    label: 'BLfD-Voranfrage erforderlich',
+  },
+
+  // Existing building / Bestandsgebäude
+  'BUILDING.EXISTING_PRESENT': { label: 'Bestandsgebäude vorhanden' },
+  'BUILDING.EXISTING_YEAR_BUILT': { label: 'Baujahr Bestandsgebäude' },
+  'BUILDING.EXISTING_USE': { label: 'Bisherige Nutzung Bestandsgebäude' },
+  'BUILDING.DEMOLITION_PLANNED': { label: 'Abbruch geplant' },
+  'BUILDING.DEMOLITION_PERMIT_REQUIRED': {
+    label: 'Abbruchgenehmigung erforderlich',
+  },
+
+  // Erschließung
+  'PLOT.ERSCHLIESSUNG_STATUS': { label: 'Erschließungs-Status' },
+  'PLOT.ERSCHLIESSUNG_GESICHERT': { label: 'Erschließung gesichert' },
+  'PLOT.WATER_CONNECTION': { label: 'Wasseranschluss' },
+  'PLOT.SEWAGE_CONNECTION': { label: 'Abwasseranschluss' },
+  'PLOT.ELECTRIC_CONNECTION': { label: 'Stromanschluss' },
+  'PLOT.GAS_CONNECTION': { label: 'Gasanschluss' },
+  'PLOT.DISTRICT_HEATING_CONNECTION': { label: 'Fernwärmeanschluss' },
+
+  // Geometry / Building class derivation
+  'BUILDING.VOLLGESCHOSSE': { label: 'Anzahl Vollgeschosse' },
+  'BUILDING.BASEMENT_PRESENT': { label: 'Untergeschoss vorhanden' },
+  'BUILDING.BASEMENT_VOLLGESCHOSS': {
+    label: 'Untergeschoss zählt als Vollgeschoss',
+  },
+  'BUILDING.ATTIC_PRESENT': { label: 'Dachgeschoss vorhanden' },
+  'BUILDING.ATTIC_VOLLGESCHOSS': {
+    label: 'Dachgeschoss zählt als Vollgeschoss',
+  },
+  'BUILDING.DETACHED': { label: 'Freistehend' },
+
+  // Stadtbezirk routing (LBK Mitte/Ost/West)
+  'PLOT.STADTBEZIRK_NUMBER': { label: 'Stadtbezirk (Nr.)' },
+  'PLOT.STADTBEZIRK_NAME': { label: 'Stadtbezirk' },
+  'PLOT.LBK_SUB_OFFICE': { label: 'Zuständiges Sub-Bauamt (LBK)' },
+
+  // Trees / BaumschutzV München
+  'TREES.SPECIES': { label: 'Baumart' },
+  'TREES.TRUNK_CIRCUMFERENCE_CM': { label: 'Stammumfang (in 1 m Höhe)', unit: 'cm' },
+  'TREES.PROTECTED_BY_BAUMSCHUTZV': {
+    label: 'Geschützt nach BaumschutzV München',
+  },
+  'TREES.FELLING_PERMIT_REQUIRED': {
+    label: 'Fällgenehmigung erforderlich',
+  },
+
+  // Architekt-Beziehung
+  'PARTIES.ARCHITEKT.ASSIGNED': {
+    label: 'Bauvorlageberechtigte/r Architekt:in zugeordnet',
+  },
+  'PARTIES.ARCHITEKT.SOURCE': { label: 'Architekten-Quelle (BAYAK / privat)' },
 }
