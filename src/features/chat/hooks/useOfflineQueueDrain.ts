@@ -24,6 +24,17 @@ export function useOfflineQueueDrain(
   chatTurn: ReturnType<typeof useChatTurn>,
 ) {
   const drainingRef = useRef(false)
+  // useMutation returns a new object on every render, so depending on
+  // `chatTurn` directly would re-add the `online` listener on every
+  // re-render of ChatWorkspacePage. Pin it via a ref synced in a
+  // post-render effect — React's recommended pattern for "I want an
+  // effect that runs once per project but always uses the latest
+  // value of a fast-changing prop." (Mutating the ref inline during
+  // render trips react-hooks/refs.)
+  const chatTurnRef = useRef(chatTurn)
+  useEffect(() => {
+    chatTurnRef.current = chatTurn
+  })
 
   useEffect(() => {
     const drain = async () => {
@@ -41,7 +52,7 @@ export function useOfflineQueueDrain(
           // need it because we want to await between turns so the
           // conversation stays in order.
           try {
-            await chatTurn.mutateAsync({
+            await chatTurnRef.current.mutateAsync({
               userMessage: entry.userMessage,
               userAnswer: entry.userAnswer,
               attachmentIds: entry.attachmentIds,
@@ -75,5 +86,5 @@ export function useOfflineQueueDrain(
     }
     window.addEventListener('online', handler)
     return () => window.removeEventListener('online', handler)
-  }, [projectId, chatTurn])
+  }, [projectId])
 }
