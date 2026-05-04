@@ -16,21 +16,31 @@
 
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { m, useReducedMotion } from 'framer-motion'
 import { cn } from '@/lib/utils'
+import { factLabel } from '@/lib/factLabel'
 import type { MessageRow } from '@/types/db'
 import { useViewport } from '@/lib/useViewport'
 import { useLongPress } from '@/lib/useLongPress'
 import { MessageAttachment } from './MessageAttachment'
 import { MessageContextSheet } from './MessageContextSheet'
 import { formatRelativeShort } from '../lib/formatRelativeShort'
+import type { ImpactFact } from '../lib/extractedFacts'
 
 interface Props {
   message: MessageRow
+  /**
+   * Phase 7 Move 8 — facts the next assistant turn extracted from
+   * this user message. Surfaced as a "Festgehalten → …" impact line
+   * below the bubble when non-empty. Empty or absent = no line.
+   */
+  impactFacts?: ImpactFact[]
 }
 
-export function MessageUser({ message }: Props) {
+export function MessageUser({ message, impactFacts = [] }: Props) {
   const { t, i18n } = useTranslation()
   const lang = (i18n.resolvedLanguage ?? 'de') as 'de' | 'en'
+  const reduced = useReducedMotion()
   const time = formatTime(message.created_at, lang)
   const tooltip = formatRelativeShort(new Date(message.created_at), lang)
   const { isMobile } = useViewport()
@@ -62,6 +72,32 @@ export function MessageUser({ message }: Props) {
           * "pending-") since the row hasn't been persisted yet. */}
         {!message.id.startsWith('pending-') && (
           <MessageAttachment messageId={message.id} />
+        )}
+
+        {/* Phase 7 Move 8 — impact line. Renders below body when the
+          * next assistant turn extracted facts (cache lookup). Top 2
+          * fact LABELS only (not values — values stringify badly for
+          * heterogeneous types). 400 ms opacity fade with 200 ms
+          * delay; reduced-motion = instant. */}
+        {impactFacts.length > 0 && (
+          <m.p
+            initial={reduced ? false : { opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{
+              duration: reduced ? 0 : 0.4,
+              delay: reduced ? 0 : 0.2,
+              ease: [0.16, 1, 0.3, 1],
+            }}
+            className="font-mono text-[9px] uppercase tracking-[0.08em] text-ink-mute mt-1 leading-snug"
+          >
+            <em className="font-serif italic text-[11px] normal-case tracking-normal text-clay">
+              {t('chat.impact.prefix', { defaultValue: 'Festgehalten' })} →
+            </em>{' '}
+            {impactFacts
+              .slice(0, 2)
+              .map((f) => factLabel(f.key, lang).label)
+              .join(' · ')}
+          </m.p>
         )}
 
         {/* Phase 3.7 #76 — absolute timestamp always visible

@@ -918,6 +918,9 @@
       "label": "Aktueller Gesprächskontext",
       "backToLive": "zurück zum Live-Stand"
     },
+    "impact": {
+      "prefix": "Festgehalten"
+    },
     "chapters": {
       "moderator":         { "inProgress": "Eröffnung · läuft",          "resolved": "Eröffnung · geklärt" },
       "planungsrecht":     { "inProgress": "Planungsrecht · läuft",      "resolved": "Planungsrecht · geklärt" },

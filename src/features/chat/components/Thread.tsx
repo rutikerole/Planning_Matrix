@@ -10,6 +10,7 @@ import { ChapterDivider } from './ChapterDivider'
 import { useChatStore } from '@/stores/chatStore'
 import { useAutoScroll } from '../hooks/useAutoScroll'
 import { detectChapters } from '../lib/detectChapters'
+import { nextAssistantExtractedFacts } from '../lib/extractedFacts'
 import type { MessageRow } from '@/types/db'
 
 interface Props {
@@ -91,7 +92,12 @@ export function Thread({ messages }: Props) {
             {showDivider && (
               <span aria-hidden="true" className="block h-px bg-border-strong/30 my-2" />
             )}
-            {row.role === 'user' && <MessageUser message={row} />}
+            {row.role === 'user' && (
+              <MessageUser
+                message={row}
+                impactFacts={nextAssistantExtractedFacts(messages, idx)}
+              />
+            )}
             {row.role === 'assistant' && (
               <MessageAssistant
                 message={row}
