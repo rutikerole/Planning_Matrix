@@ -1,0 +1,73 @@
+-- ───────────────────────────────────────────────────────────────────────
+-- 0012_messages_tool_input.sql
+--
+-- Phase 6 A.1 — capture the raw `respond` tool input on each assistant
+-- message for forensic debugging.
+--
+-- Why this exists: the Phase 6 audit found that the model talks about
+-- recommendations / procedures / area transitions in prose but the
+-- corresponding deltas don't always reach `projects.state`. Without
+-- the raw tool input, we cannot tell whether (a) the model failed to
+-- emit the delta in its tool call, or (b) the persistence layer dropped
+-- it on the way through. This single column makes that forensic
+-- distinction possible: compare `messages.content_de` (the prose) with
+-- `messages.tool_input -> 'recommendations_delta'` (the structured
+-- intent), then with `projects.state -> 'recommendations'` (the
+-- persisted result).
+--
+-- Apply path: Supabase Dashboard → SQL Editor → New query → paste →
+-- Run. **Apply this migration BEFORE redeploying chat-turn**, otherwise
+-- the function's INSERT into messages will silently drop the
+-- `tool_input` value (Postgres ignores unknown columns? no — it errors).
+-- Specifically the function will fail with `column "tool_input" of
+-- relation "messages" does not exist`.
+--
+-- Idempotent? Yes — `if not exists` makes the column add forgiving on
+-- a re-run. RLS unchanged; existing select / insert policies cover the
+-- new column transparently.
+-- ───────────────────────────────────────────────────────────────────────
+
+alter table public.messages
+  add column if not exists tool_input jsonb;
+
+-- No backfill — historical rows stay NULL. The forensics use-case is
+-- forward-looking; we don't try to reconstruct old tool calls from
+-- prose. Consumers that read tool_input must tolerate NULL.
+--
+-- Storage cost: a typical respond tool input is 1–3 KB JSON. At ~50
+-- assistant messages per project and ~200 projects, the column adds
+-- ~30 MB to the messages table even at 1k projects — well within
+-- Supabase free-tier headroom.
+
+-- ───────────────────────────────────────────────────────────────────────
+-- DEBUG SQL — copy/paste into SQL Editor for forensic queries
+--
+-- Compare prose vs tool_input vs persisted state for one project:
+--
+--   select
+--     m.created_at,
+--     m.role,
+--     m.specialist,
+--     left(m.content_de, 80) as prose,
+--     m.tool_input -> 'recommendations_delta' as recs_delta,
+--     m.tool_input -> 'procedures_delta'      as procs_delta,
+--     m.tool_input -> 'areas_update'          as areas_delta
+--   from public.messages m
+--   where m.project_id = '<paste-project-uuid>'
+--     and m.role = 'assistant'
+--   order by m.created_at;
+--
+-- Then compare to the resulting state:
+--
+--   select state -> 'recommendations',
+--          state -> 'procedures',
+--          state -> 'areas'
+--     from public.projects
+--    where id = '<paste-project-uuid>';
+--
+-- If the deltas in tool_input are non-null but the corresponding
+-- state fields are empty, the bug is in the persistence layer
+-- (projectStateHelpers.applyToolInputToState). If the deltas are
+-- missing from tool_input but the model promised them in prose,
+-- the bug is in the LLM layer (system prompt invariant violated).
+-- ───────────────────────────────────────────────────────────────────────

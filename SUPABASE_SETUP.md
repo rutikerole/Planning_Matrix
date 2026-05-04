@@ -259,6 +259,36 @@ If any of those fail, jump to the **Troubleshooting** section below.
 
 ---
 
+## Forensics — comparing model prose vs tool input vs persisted state
+
+When the model promises something in prose but the right-rail / PDF doesn't show it, you need to know whether the bug is in the LLM (didn't emit the delta) or the persistence layer (dropped the delta on the way through). Migration `0012_messages_tool_input.sql` adds a `tool_input jsonb` column that captures the full validated `respond` tool call alongside each assistant message. To diagnose:
+
+```sql
+-- 1) What the model said in prose vs what it emitted in the tool call
+select
+  m.created_at,
+  m.specialist,
+  left(m.content_de, 80) as prose,
+  m.tool_input -> 'recommendations_delta' as recs_delta,
+  m.tool_input -> 'procedures_delta'      as procs_delta,
+  m.tool_input -> 'areas_update'          as areas_delta
+from public.messages m
+where m.project_id = '<paste-project-uuid>'
+  and m.role = 'assistant'
+order by m.created_at;
+
+-- 2) What landed in projects.state
+select state -> 'recommendations',
+       state -> 'procedures',
+       state -> 'areas'
+  from public.projects
+ where id = '<paste-project-uuid>';
+```
+
+If the deltas in `tool_input` are non-null but the corresponding state fields are empty, the bug is in `projectStateHelpers.applyToolInputToState`. If the deltas are missing from `tool_input` but the model promised them in prose, the bug is in the LLM layer (system-prompt invariant violated).
+
+---
+
 ## Step 8 — Pre-launch RLS smoke test (do this before promoting to prod)
 
 Row-level security is the only enforcement boundary in this project — the Edge Function uses the anon key with the caller's bearer token, never the `service_role` key. A regression in the RLS policies is a real privacy incident.

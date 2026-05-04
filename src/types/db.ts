@@ -44,6 +44,11 @@ export interface MessageRow {
   thinking_label_de: string | null
   /** Phase 3.4 #54: up to 3 plausible short replies for free-text turns. */
   likely_user_replies: string[] | null
+  /** Phase 6 A.1: full validated `respond` tool-call payload. Forensic
+   *  column — lets the JSON export and the architect-grade dump compare
+   *  what the model emitted vs what landed in projects.state. NULL on
+   *  pre-A.1 historical messages. */
+  tool_input: unknown
   user_answer: unknown
   client_request_id: string | null
   model: string | null

@@ -261,6 +261,11 @@ export async function insertAssistantMessage(
   // Phase 3.4 #54: likely_user_replies persists per assistant turn so
   // suggested-reply chips render above the input bar. Requires
   // migration 0005_likely_user_replies.sql.
+  // Phase 6 A.1: tool_input persists the full validated tool-call
+  // payload alongside the prose. Forensic foundation for the rest of
+  // the sprint — lets us compare "what the model said in prose" with
+  // "what the model emitted in the tool call" with "what landed in
+  // projects.state." Requires migration 0012_messages_tool_input.sql.
   const { data, error } = await supabase
     .from('messages')
     .insert({
@@ -274,6 +279,7 @@ export async function insertAssistantMessage(
       allow_idk: t.allow_idk ?? true,
       thinking_label_de: t.thinking_label_de ?? null,
       likely_user_replies: t.likely_user_replies ?? null,
+      tool_input: t,
       model: args.model,
       input_tokens: args.usage.inputTokens,
       output_tokens: args.usage.outputTokens,

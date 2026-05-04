@@ -120,6 +120,8 @@ export interface AssistantMessageRow {
   input_type: string | null
   input_options: unknown
   allow_idk: boolean | null
+  /** Phase 6 A.1 — forensic column. NULL on historical pre-A.1 rows. */
+  tool_input: unknown
   model: string
   input_tokens: number | null
   output_tokens: number | null
