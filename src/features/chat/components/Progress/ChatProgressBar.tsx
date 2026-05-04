@@ -1,32 +1,27 @@
 // ───────────────────────────────────────────────────────────────────────
-// Phase 3.6 #69 / Phase 7 Move 1 — Compass-arc progress indicator
+// Phase 7 Pass 2 — Compass arc with real visual weight
 //
-// Sticky top-of-thread compass arc that reads as architectural drawing
-// rather than browser tabs. Replaces the segmented-pill visual of the
-// Phase 3.6 implementation; keeps the same export, the same engine
-// (`computeSegmentProgress` over `SEGMENT_ORDER`), and the same a11y
-// surface so import sites and Phase 2.5 durability behaviour are
-// untouched.
+// Pass 1 shipped a calm but feather-thin compass that read as text
+// labels with a hairline. Pass 2 makes it unmistakably a progress
+// meter without abandoning the architectural register:
 //
-//   journey ━━━●━━━━━━━━━━━━━━           Turn 18 / ~24   M 1:100 ⊢━━⊣
+//   • Track 2 px hairline (was 1 px).
+//   • Progress 2 px clay-deep (was 1 px clay).
+//   • Halo dot 12 px clay-deep with 3 px paper ring + 2 px clay
+//     shadow ring — visible from 3 feet.
+//   • Stations: passed = 6 px filled clay-soft circles; current =
+//     10 px filled clay with clay-tint halo glow; upcoming = 1 px
+//     hairline ticks (the only state that stays as a line).
+//   • Always-on hairline border-bottom under the compass row.
+//   • Sticky-scrolled state: clay border-bottom + slightly darker
+//     gradient for read-as-toolbar, applied via a scrollY > 8 px
+//     check.
 //
-// • A 1 px hairline track spans the row.
-// • A 1 px clay overlay grows left → right at `percent`% with a clay
-//   halo dot at the leading edge (animates over 600 ms cubic-bezier
-//   0.16, 1, 0.3, 1 — the prototype's `--ease`).
-// • Seven 1 px-wide station ticks distribute evenly across the arc,
-//   one per existing SEGMENT_ORDER specialist. State drives colour
-//   and height: passed = clay-soft, current = clay (raised to 22 px
-//   and lifted 2 px), upcoming = hairline.
-// • Right side: italic-serif turn count `Turn 18 / ~24` with a mono
-//   eyebrow, plus a 36 px scale-mark "M 1:100" with bracket ticks.
-//
-// Compact mode (mobile drawer) drops the journey label, the meta
-// column, and the per-station labels, but keeps the arc + ticks at
-// the same stroke weight. ChatProgressBarMobile thin-wraps this with
-// `compact` for use inside the mobile top-bar drawer.
+// Same export, same engine (computeSegmentProgress over SEGMENT_ORDER),
+// same a11y surface — only the visual geometry shifts.
 // ───────────────────────────────────────────────────────────────────────
 
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useReducedMotion } from 'framer-motion'
 import { useChatStore } from '@/stores/chatStore'
@@ -42,26 +37,14 @@ interface Props {
   /** When true (mobile drawer), drops the labels and shrinks the bar. */
   compact?: boolean
   /**
-   * Phase 2.5 — durable progress derivation.
-   *
-   * The chatStore's `turnCount` and `currentSpecialist` are session-
-   * scoped: a `useEffect(() => () => reset(), [projectId])` in
-   * ChatWorkspacePage clears them on every project (re)mount. Refresh
-   * a project that already has 8 messages and the bar reads 5 %
-   * (specialist anchor for `null` specialist + 0/18 turn ratio).
-   *
-   * When `messages` is provided, the bar derives both signals from
-   * the message list directly (count of assistant messages,
-   * specialist of the most recent assistant message). This makes
-   * the bar honest across reloads + tab switches + cold mounts.
-   *
-   * Falls back to chatStore values when the prop is absent so
-   * legacy callers (and the in-stream "live" path) still work.
+   * Phase 2.5 — durable progress derivation from persisted messages
+   * (chatStore values reset on project remount).
    */
   messages?: MessageRow[]
 }
 
 const TYPICAL_TURN_COUNT = 18
+const SCROLL_TRIGGER_PX = 8
 
 export function ChatProgressBar({ compact = false, messages }: Props) {
   const { t } = useTranslation()
@@ -71,7 +54,6 @@ export function ChatProgressBar({ compact = false, messages }: Props) {
   const currentSpecialistFromStore = useChatStore((s) => s.currentSpecialist)
   const completionSignal = useChatStore((s) => s.lastCompletionSignal)
 
-  // Phase 2.5 — durable derivation from the persisted messages list.
   let turnCount = turnCountFromStore
   let currentSpecialist = currentSpecialistFromStore
   if (messages && messages.length > 0) {
@@ -89,15 +71,22 @@ export function ChatProgressBar({ compact = false, messages }: Props) {
     currentSpecialist,
     isReadyForReview,
   )
-
-  // Estimated total clamps to never display "Turn 22 / ~18". When the
-  // conversation runs longer than the typical ceiling we widen the
-  // denominator to match so the ratio stays honest.
   const estimatedTotal = Math.max(turnCount, TYPICAL_TURN_COUNT)
-
   const ariaLabel = t('chat.progress.eyebrow', { defaultValue: 'Fortschritt' })
 
-  // ── Compact (mobile drawer) — bare arc, no labels, no meta. ─────
+  // Track scrollY so the sticky compass can shift to a "toolbar" look
+  // (clay border-bottom + darker gradient) once the user has scrolled
+  // past the natural top.
+  const [scrolled, setScrolled] = useState(false)
+  useEffect(() => {
+    if (compact) return
+    const onScroll = () => setScrolled(window.scrollY > SCROLL_TRIGGER_PX)
+    onScroll()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [compact])
+
+  // Compact (mobile drawer) — bare arc, no chrome.
   if (compact) {
     return (
       <div
@@ -121,12 +110,6 @@ export function ChatProgressBar({ compact = false, messages }: Props) {
     )
   }
 
-  // ── Desktop sticky compass — label · arc · meta. ────────────────
-  // Background is a paper-to-transparent gradient (paper opaque to 70 %,
-  // fades to 0 by 100 %). Implemented as inline style because Tailwind
-  // 3.4's gradient utilities don't compose stop-positions with the
-  // hsl(var(--paper)) indirection cleanly. Backdrop blur preserves
-  // legibility when the thread scrolls through.
   return (
     <div
       role="progressbar"
@@ -135,10 +118,17 @@ export function ChatProgressBar({ compact = false, messages }: Props) {
       aria-valuemax={100}
       aria-label={ariaLabel}
       data-pm-progress-bar="true"
-      className="sticky top-0 z-30 px-14 pt-4 pb-[14px] backdrop-blur-[2px]"
+      className={cn(
+        'sticky top-0 z-30 px-14 pt-4 pb-[14px] backdrop-blur-[2px]',
+        'transition-[border-color,background-color] duration-[220ms] ease-ease',
+        scrolled
+          ? 'border-b border-clay/40'
+          : 'border-b border-hairline-faint',
+      )}
       style={{
-        backgroundImage:
-          'linear-gradient(180deg, hsl(var(--paper)) 0%, hsl(var(--paper)) 70%, hsl(var(--paper) / 0) 100%)',
+        backgroundImage: scrolled
+          ? 'linear-gradient(180deg, hsl(var(--paper)) 0%, hsl(var(--paper-tinted)) 90%, hsl(var(--paper) / 0.85) 100%)'
+          : 'linear-gradient(180deg, hsl(var(--paper)) 0%, hsl(var(--paper)) 70%, hsl(var(--paper) / 0) 100%)',
       }}
     >
       <div className="flex items-center justify-between gap-6">
@@ -177,17 +167,6 @@ export function ChatProgressBar({ compact = false, messages }: Props) {
 }
 
 // ── Compass arc core ────────────────────────────────────────────────
-//
-// The arc is a 18 px-tall flex container with three absolutely-positioned
-// layers + one in-flow stations row:
-//   1. track     — 1 px hairline horizontal rule at vertical centre
-//   2. progress  — 1 px clay overlay, width animates over 600 ms,
-//                  with a clay halo dot at its leading edge
-//   3. stations  — 7 evenly-spaced 1 px-wide vertical ticks
-//
-// Pinned widths come from the segment array's length (always 7); the
-// flex justify-between then gives even spacing without per-tick offset
-// math. Reduced-motion zeroes the width transition.
 
 interface ArcProps {
   segments: ProgressSegment[]
@@ -211,17 +190,17 @@ function CompassArc({
   const clampedPercent = Math.max(0, Math.min(100, percent))
 
   return (
-    <div className="relative flex-1 h-[18px] flex items-center">
-      {/* Track */}
+    <div className="relative flex-1 h-[22px] flex items-center">
+      {/* Track — 2 px hairline */}
       <span
         aria-hidden="true"
-        className="absolute left-0 right-0 top-1/2 h-px bg-hairline -translate-y-1/2"
+        className="absolute left-0 right-0 top-1/2 h-[2px] bg-hairline -translate-y-1/2"
       />
 
-      {/* Progress overlay — 1 px clay, width animates 600 ms ease */}
+      {/* Progress overlay — 2 px clay-deep, width animates 600 ms ease */}
       <span
         aria-hidden="true"
-        className="absolute left-0 top-1/2 -translate-y-1/2 h-px bg-clay"
+        className="absolute left-0 top-1/2 -translate-y-1/2 h-[2px] bg-clay-deep"
         style={{
           width: `${clampedPercent}%`,
           transition: reduced
@@ -229,19 +208,23 @@ function CompassArc({
             : 'width 600ms cubic-bezier(0.16, 1, 0.3, 1)',
         }}
       >
-        {/* Halo dot at the leading edge — 8×8 clay with 2 px paper
-         * ring and 1 px clay outer ring, matching the prototype. */}
+        {/* Halo dot — 12 px clay-deep with 3 px paper ring + 2 px clay
+         * shadow ring. The translate(50%) keeps the dot's center
+         * exactly on the leading edge of the progress bar. */}
         <span
           aria-hidden="true"
-          className="absolute -right-1 -top-[3.5px] block w-2 h-2 rounded-full bg-clay border-2 border-paper"
-          style={{ boxShadow: '0 0 0 1px var(--clay, hsl(var(--clay)))' }}
+          className="absolute right-0 top-1/2 block w-3 h-3 rounded-full bg-clay-deep border-[3px] border-paper -translate-y-1/2 translate-x-1/2"
+          style={{ boxShadow: '0 0 0 2px var(--clay, hsl(var(--clay)))' }}
         />
       </span>
 
-      {/* Stations — 7 ticks, evenly distributed via flex justify-between */}
+      {/* Stations — 7 marks, evenly distributed via flex justify-between.
+       * Each station's parent li is zero-width with overflow centered, so
+       * the visible mark (circle or tick) sits exactly on the spacing
+       * grid regardless of its diameter. */}
       <ol
         aria-hidden="true"
-        className="relative w-full h-[18px] flex justify-between items-center"
+        className="relative w-full h-[22px] flex justify-between items-center"
       >
         {segments.map((seg, idx) => (
           <Station
@@ -257,11 +240,7 @@ function CompassArc({
   )
 }
 
-// ── Station tick ────────────────────────────────────────────────────
-//
-// Tailwind can't use `attr()` in pseudo-elements reliably, so the
-// per-station label below the tick is a real <span> positioned with
-// `top-[22px] left-1/2 -translate-x-1/2`. Compact mode skips the label.
+// ── Station mark ────────────────────────────────────────────────────
 
 interface StationProps {
   segment: ProgressSegment
@@ -275,15 +254,20 @@ function Station({ segment, isCurrent, label, showLabel }: StationProps) {
 
   return (
     <li
-      className={cn(
-        'relative w-px shrink-0',
-        isCurrent
-          ? 'h-[22px] -mt-[2px] bg-clay'
-          : isPassed
-            ? 'h-[18px] bg-clay-soft'
-            : 'h-[18px] bg-hairline',
-      )}
+      className="relative flex items-center justify-center shrink-0"
+      style={{ width: 0 }}
     >
+      {isCurrent ? (
+        <span
+          className="block w-[10px] h-[10px] rounded-full bg-clay"
+          style={{ boxShadow: '0 0 0 4px var(--clay-tint)' }}
+        />
+      ) : isPassed ? (
+        <span className="block w-[6px] h-[6px] rounded-full bg-clay-soft" />
+      ) : (
+        <span className="block w-px h-[16px] bg-hairline" />
+      )}
+
       {showLabel && label && (
         <span
           className={cn(
@@ -303,9 +287,6 @@ function Station({ segment, isCurrent, label, showLabel }: StationProps) {
 }
 
 // ── Scale mark ──────────────────────────────────────────────────────
-//
-// 36 px hairline with 5 px-tall bracket ticks at each end + "M 1:100"
-// mono label. Architectural-drawing finishing flourish.
 
 function ScaleMark() {
   return (
