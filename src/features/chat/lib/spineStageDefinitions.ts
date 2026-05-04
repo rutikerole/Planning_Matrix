@@ -72,6 +72,26 @@ const formatFactSnippet = (
   return value.length > 0 ? value.slice(0, 60) : null
 }
 
+/** Phase 7.6 §1.3 — has the named specialist spoken AND a *later*
+ *  assistant turn from a different specialist landed afterwards? If
+ *  so the persona has clearly moved on; treat the stage as done even
+ *  if the official area-state flag never flipped. */
+function specialistHandedOff(
+  messages: MessageRow[],
+  spec: Specialist,
+): boolean {
+  let sawSpec = false
+  for (const m of messages) {
+    if (m.role !== 'assistant') continue
+    if (!sawSpec) {
+      if (m.specialist === spec) sawSpec = true
+      continue
+    }
+    if (m.specialist && m.specialist !== spec) return true
+  }
+  return false
+}
+
 export const SPINE_STAGES: SpineStageDef[] = [
   {
     id: 'project_intent',
@@ -103,13 +123,26 @@ export const SPINE_STAGES: SpineStageDef[] = [
     index: 3,
     titleKey: 'chat.spine.stages.planungsrecht.title',
     ownerSpecialist: 'planungsrecht',
-    // The planungsrecht persona's deliverable is moving area A to
-    // ACTIVE; we treat "ACTIVE" as the canonical signal. PLOT.B_PLAN_*
-    // / PLOT.IS_INNENBEREICH facts are secondary corroboration.
-    isDone: (state) => state.areas?.A?.state === 'ACTIVE',
+    // Phase 7.6 §1.3 — defensive widening. The persona's "official"
+    // deliverable is moving area A → ACTIVE, but in real conversations
+    // a section is genuinely "done" when:
+    //   (a) area A is ACTIVE OR VOID (committed verdict either way), OR
+    //   (b) we have any PLOT.B_PLAN.* or PLOT.IS_* fact captured
+    //       (Bebauungsplan situation pinned), OR
+    //   (c) at least one assistant message after the planungsrecht
+    //       specialist has spoken AND a different specialist has
+    //       moved on (i.e., the persona handed off).
+    isDone: (state, messages) => {
+      const a = state.areas?.A?.state ?? 'PENDING'
+      if (a === 'ACTIVE' || a === 'VOID') return true
+      if (factPrefixCount(state, 'PLOT.B_PLAN') > 0) return true
+      if (factPrefixCount(state, 'PLOT.IS_') > 0) return true
+      return specialistHandedOff(messages, 'planungsrecht')
+    },
     getSnippet: (state) =>
       formatFactSnippet(state, 'PLOT.B_PLAN') ??
-      formatFactSnippet(state, 'PLOT.IS_'),
+      formatFactSnippet(state, 'PLOT.IS_') ??
+      formatFactSnippet(state, 'PLANUNGSRECHT.'),
     getFirstMessageIndex: (messages) =>
       indexOfFirst(messages, (m) => m.role === 'assistant' && m.specialist === 'planungsrecht'),
   },
@@ -118,10 +151,20 @@ export const SPINE_STAGES: SpineStageDef[] = [
     index: 4,
     titleKey: 'chat.spine.stages.bauordnungsrecht.title',
     ownerSpecialist: 'bauordnungsrecht',
-    isDone: (state) => state.areas?.B?.state === 'ACTIVE',
+    isDone: (state, messages) => {
+      const b = state.areas?.B?.state ?? 'PENDING'
+      if (b === 'ACTIVE' || b === 'VOID') return true
+      if (factPrefixCount(state, 'BUILDING.') > 0) return true
+      if (factPrefixCount(state, 'STELLPLATZ.') > 0) return true
+      if (factPrefixCount(state, 'BRANDSCHUTZ.') > 0) return true
+      if (factPrefixCount(state, 'STRUCTURAL.') > 0) return true
+      if (factPrefixCount(state, 'ABSTANDSFLAECHEN.') > 0) return true
+      return specialistHandedOff(messages, 'bauordnungsrecht')
+    },
     getSnippet: (state) =>
       formatFactSnippet(state, 'BUILDING.') ??
-      formatFactSnippet(state, 'STELLPLATZ.'),
+      formatFactSnippet(state, 'STELLPLATZ.') ??
+      formatFactSnippet(state, 'BRANDSCHUTZ.'),
     getFirstMessageIndex: (messages) =>
       indexOfFirst(messages, (m) => m.role === 'assistant' && m.specialist === 'bauordnungsrecht'),
   },
@@ -130,7 +173,14 @@ export const SPINE_STAGES: SpineStageDef[] = [
     index: 5,
     titleKey: 'chat.spine.stages.sonstige_vorgaben.title',
     ownerSpecialist: 'sonstige_vorgaben',
-    isDone: (state) => state.areas?.C?.state === 'ACTIVE',
+    isDone: (state, messages) => {
+      const c = state.areas?.C?.state ?? 'PENDING'
+      if (c === 'ACTIVE' || c === 'VOID') return true
+      if (factPrefixCount(state, 'HERITAGE.') > 0) return true
+      if (factPrefixCount(state, 'TREES.') > 0) return true
+      if (factPrefixCount(state, 'NATURSCHUTZ.') > 0) return true
+      return specialistHandedOff(messages, 'sonstige_vorgaben')
+    },
     getSnippet: (state) =>
       formatFactSnippet(state, 'HERITAGE.') ??
       formatFactSnippet(state, 'TREES.') ??
