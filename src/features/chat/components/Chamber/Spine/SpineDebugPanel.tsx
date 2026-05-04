@@ -101,12 +101,25 @@ export function SpineDebugPanel({ project, messages, stages, progress }: Props) 
       </header>
 
       <Section title="progress">
-        <KV label="percent" value={`${progress.percent}%`} />
+        <KV label="percent (displayed)" value={`${progress.percent}%`} />
         <KV label="currentTurn" value={String(progress.currentTurn)} />
         <KV label="totalEstimate" value={String(progress.totalEstimate)} />
         <KV label="recentSpecialist" value={progress.recentSpecialist ?? 'null'} />
         <KV label="currentStageId" value={progress.currentStageId ?? 'null'} />
         <KV label="isReadyForReview" value={String(progress.isReadyForReview)} />
+      </Section>
+
+      <Section title="progress · inputs">
+        <KV label="turnsFraction" value={progress.debug.turnsFraction.toFixed(3)} />
+        <KV label="areasFraction" value={progress.debug.areasFraction.toFixed(3)} />
+        <KV label="recsFraction" value={progress.debug.recsFraction.toFixed(3)} />
+        <KV label="blended (raw)" value={progress.debug.blended.toFixed(3)} />
+        <KV
+          label="floored → displayed × 0.01"
+          value={Math.max(progress.debug.turnsFraction, progress.debug.blended).toFixed(3)}
+        />
+        <KV label="areasComplete" value={String(progress.debug.areasComplete)} />
+        <KV label="recsCount" value={String(progress.debug.recsCount)} />
       </Section>
 
       <Section title="counts">

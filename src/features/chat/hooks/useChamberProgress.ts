@@ -5,12 +5,19 @@
 // recent specialist (used by the astrolabe to highlight the active
 // sigil and by AmbientTint to choose its background tint).
 //
-// Computation:
-//   percent =
-//       (turnCount / totalEstimate) × 0.6
-//     + (areasComplete / 3)         × 0.2
-//     + min(recsCount, 3) / 3       × 0.2
-//   then clamp to [0, 100] and round to integer.
+// Phase 7.7 §1.1 — percent is the MAX of (turnsFraction, blended).
+// The "blended" formula stays as the upward-boost signal when the
+// persona has committed (areas → ACTIVE, recs ≥ 3); the floor at
+// turnsFraction prevents the formula from PUNISHING a project where
+// the persona hasn't emitted recommendations yet.
+//
+//   blended =  (turnCount / totalEstimate) × 0.6
+//            + (areasComplete / 3)         × 0.2
+//            + min(recsCount, 3) / 3       × 0.2
+//   percent =  round(max(turnsFraction, blended) × 100)
+//
+// Exposes the intermediate fractions on the return shape so the
+// ?debug=spine panel can show inputs vs output side-by-side.
 
 import { useMemo } from 'react'
 import type { MessageRow } from '@/types/db'
@@ -31,6 +38,16 @@ export interface ChamberProgress {
    *  surfaces (Spine + any other progress UI) must derive from the
    *  same shared computation; do not duplicate. */
   currentStageId: SpineStageId | null
+  /** Phase 7.7 §1.1 — diagnostic fractions exposed for the
+   *  ?debug=spine panel. Inputs vs output side-by-side. */
+  debug: {
+    turnsFraction: number
+    areasFraction: number
+    recsFraction: number
+    blended: number
+    areasComplete: number
+    recsCount: number
+  }
 }
 
 export function useChamberProgress(
@@ -67,10 +84,12 @@ export function useChamberProgress(
     const isReadyForReview = completionSignal === 'ready_for_review'
     const blended =
       turnsFraction * 0.6 + areasFraction * 0.2 + recsFraction * 0.2
-    const percent = Math.max(
-      0,
-      Math.min(100, Math.round((isReadyForReview ? Math.max(blended, 0.95) : blended) * 100)),
-    )
+    // Phase 7.7 §1.1 — floor at turnsFraction. The blended formula
+    // can BOOST upward when areas/recs are present; it cannot drag
+    // progress below the user's actual turn count.
+    const floored = Math.max(turnsFraction, blended)
+    const finalRaw = isReadyForReview ? Math.max(floored, 0.95) : floored
+    const percent = Math.max(0, Math.min(100, Math.round(finalRaw * 100)))
 
     return {
       percent,
@@ -80,6 +99,14 @@ export function useChamberProgress(
       recentSpecialist: recent,
       isReadyForReview,
       currentStageId: currentStageId(state as ProjectState | undefined, list),
+      debug: {
+        turnsFraction,
+        areasFraction,
+        recsFraction,
+        blended,
+        areasComplete,
+        recsCount,
+      },
     }
   }, [messages, state, completionSignal, templateOverride])
 }
