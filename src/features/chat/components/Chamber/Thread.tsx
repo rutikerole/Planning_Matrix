@@ -84,6 +84,7 @@ export function Thread({ messages }: Props) {
                 message={row}
                 isHistory={isHistory}
                 previousSpecialist={previousSpecialist}
+                isActive={idx === latestIdx}
               />
             )}
             {row.role === 'system' && <MessageSystem message={row} />}
