@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { AnimatePresence, m, useReducedMotion } from 'framer-motion'
 import { cn } from '@/lib/utils'
 import { useWizardState } from '../hooks/useWizardState'
-import { isPlotAddressValid } from '../lib/plotValidation'
+import { isPlotAddressValid, isMuenchenAddress } from '../lib/plotValidation'
 import type { Intent } from '../lib/selectTemplate'
 import { BPlanCheck } from './BPlanCheck'
 import { PlotSidebar } from './PlotSidebar'
@@ -22,6 +22,10 @@ interface Props {
     plotAddress: string | null
     bplanResult: BplanLookupResult | null
     suggestedName: string | null
+    /** Phase 5 — true when the user explicitly confirmed proceeding
+     *  with a non-München PLZ. Persisted as a CLIENT/DECIDED fact so
+     *  the system prompt can adjust honesty disclaimers. */
+    outsideMunichAcknowledged?: boolean
   }) => Promise<void> | void
   submitError: string | null
 }
@@ -46,6 +50,13 @@ export function QuestionPlot({ onSubmit, submitError }: Props) {
   const [touched, setTouched] = useState(false)
   const [bplanResult, setBplanResult] = useState<BplanLookupResult | null>(null)
   const [bplanLoading, setBplanLoading] = useState(false)
+  // Phase 5 — Mode B PLZ gate: when the address is structurally valid
+  // but the PLZ isn't in München, the primary CTA flips to "Adresse
+  // prüfen" and the user must explicitly click "Trotzdem fortfahren"
+  // (which sets this flag) before submission proceeds. The flag is
+  // persisted as a CLIENT/DECIDED fact so the system prompt can adjust
+  // its honesty disclaimers downstream.
+  const [outsideMunichConfirmed, setOutsideMunichConfirmed] = useState(false)
 
   useEffect(() => {
     if (hasPlot === true && !plotAddress) {
@@ -53,14 +64,29 @@ export function QuestionPlot({ onSubmit, submitError }: Props) {
     }
   }, [hasPlot, plotAddress])
 
+  // Reset the outside-München confirmation whenever the address text
+  // changes — the user may have corrected to a München PLZ, or moved
+  // to a different non-München address that needs its own ack.
+  useEffect(() => {
+    setOutsideMunichConfirmed(false)
+  }, [plotAddress])
+
   const profile = usePlotProfile(plotAddress)
   const suggestedName = intent ? suggestProjectName(intent, plotAddress) : null
 
   const addressValid = isPlotAddressValid(plotAddress)
+  const isMunich = addressValid && isMuenchenAddress(plotAddress)
   const showFormatError = touched && hasPlot === true && !addressValid
+  // Show the soft outside-München warning only after the address looks
+  // structurally valid AND the user has touched the field — keeps the
+  // warning out of the way during fresh typing.
+  const showOutsideMunichWarning =
+    hasPlot === true && addressValid && !isMunich
 
   const canSubmit =
-    intent !== null && (hasPlot === false || (hasPlot === true && addressValid))
+    intent !== null &&
+    (hasPlot === false ||
+      (hasPlot === true && addressValid && (isMunich || outsideMunichConfirmed)))
 
   const handleSubmit = () => {
     if (!intent) return
@@ -74,6 +100,8 @@ export function QuestionPlot({ onSubmit, submitError }: Props) {
       plotAddress: hasPlot === true ? plotAddress.trim() : null,
       bplanResult,
       suggestedName,
+      outsideMunichAcknowledged:
+        hasPlot === true && addressValid && !isMunich && outsideMunichConfirmed,
     })
   }
 
@@ -230,6 +258,46 @@ export function QuestionPlot({ onSubmit, submitError }: Props) {
         ) : null}
       </AnimatePresence>
 
+      {/* Phase 5 — soft outside-München warning. Renders when the
+        * address is structurally valid but the PLZ isn't in the
+        * München Stadtgebiet set. The user can either correct the
+        * address or click "Trotzdem fortfahren" to acknowledge the
+        * reduced data state, which sets outsideMunichConfirmed. */}
+      <AnimatePresence initial={false}>
+        {showOutsideMunichWarning ? (
+          <m.div
+            key="outside-munich"
+            initial={reduced ? { opacity: 1 } : { opacity: 0, y: 4 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={reduced ? { opacity: 0 } : { opacity: 0, y: -4 }}
+            transition={{ duration: reduced ? 0 : 0.22, ease: [0.16, 1, 0.3, 1] }}
+            role="status"
+            aria-live="polite"
+            className="max-w-[40rem] border-l-2 border-pm-clay/55 bg-pm-paper-tint py-2 pl-4 pr-3"
+          >
+            <p className="font-sans text-[13px] leading-relaxed text-pm-ink">
+              {t('wizard.q2.outsideMunich.warning')}
+            </p>
+            <p className="mt-1 font-serif text-[12px] italic leading-relaxed text-pm-ink-mid">
+              {t('wizard.q2.outsideMunich.detail')}
+            </p>
+            {!outsideMunichConfirmed ? (
+              <button
+                type="button"
+                onClick={() => setOutsideMunichConfirmed(true)}
+                className="mt-2 inline-flex rounded-sm font-serif text-[12px] italic text-pm-clay underline underline-offset-4 decoration-pm-clay/45 transition-colors hover:text-pm-clay-deep focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pm-clay focus-visible:ring-offset-2 focus-visible:ring-offset-pm-paper"
+              >
+                {t('wizard.q2.outsideMunich.confirmLink')} →
+              </button>
+            ) : (
+              <p className="mt-2 font-mono text-[11px] uppercase tracking-[0.16em] text-pm-clay">
+                ● {t('wizard.q2.outsideMunich.confirmedNote')}
+              </p>
+            )}
+          </m.div>
+        ) : null}
+      </AnimatePresence>
+
       {submitError ? (
         <p
           role="alert"
@@ -265,7 +333,9 @@ export function QuestionPlot({ onSubmit, submitError }: Props) {
                 : 'cursor-not-allowed bg-pm-ink/15 text-pm-paper/80',
             )}
           >
-            {t('wizard.q2.submit')} →
+            {showOutsideMunichWarning && !outsideMunichConfirmed
+              ? t('wizard.q2.checkAddress')
+              : `${t('wizard.q2.submit')} →`}
           </button>
         </div>
       </div>

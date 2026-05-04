@@ -830,6 +830,13 @@
         "detailDescription": "Detailansicht zum Bebauungsplan für die ausgewählte Adresse."
       },
       "submit": "Tisch decken",
+      "checkAddress": "Adresse prüfen",
+      "outsideMunich": {
+        "warning": "Diese Adresse liegt außerhalb des aktuellen Versorgungsgebiets (München).",
+        "detail": "Im Vorabbetrieb verfügen wir nur für München (PLZ 80331–81929) über vollständige Daten zu Bauamt, Stellplatz- und Erhaltungssatzungen. Für andere Kommunen läuft das Gespräch mit reduziertem Datenstand.",
+        "confirmLink": "Trotzdem fortfahren",
+        "confirmedNote": "Adresse außerhalb München bestätigt — System läuft mit reduziertem Datenstand."
+      },
       "plot": {
         "head": "Standortprofil",
         "stadtbezirk": "Stadtbezirk",

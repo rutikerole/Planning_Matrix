@@ -25,6 +25,10 @@ interface CreateProjectInput {
   /** v3 — friendly auto-suggested project name. Falls back to
    *  deriveName(intent, address) when null. */
   suggestedName?: string | null
+  /** Phase 5 — true when the user explicitly proceeded with a non-
+   *  München address. Persisted as a CLIENT/DECIDED fact so the
+   *  system prompt can adjust honesty disclaimers. */
+  outsideMunichAcknowledged?: boolean
 }
 
 function bplanToFacts(result: BplanLookupResult, nowIso: string): Fact[] {
@@ -112,9 +116,29 @@ export function useCreateProject() {
     }
 
     const templateId = selectTemplate(input.intent)
-    const seededFacts = input.bplanResult
-      ? bplanToFacts(input.bplanResult, new Date().toISOString())
+    const nowIso = new Date().toISOString()
+    const seededFacts: Fact[] = input.bplanResult
+      ? bplanToFacts(input.bplanResult, nowIso)
       : []
+    // Phase 5 — when the user proceeded past the soft Münchner-PLZ
+    // gate, record the acknowledgement as a CLIENT/DECIDED fact. The
+    // system prompt's live-state block will surface this so the model
+    // can frame the conversation as "outside München, reduced data"
+    // rather than asserting München-specific Satzungen.
+    if (input.outsideMunichAcknowledged) {
+      seededFacts.push({
+        key: 'plot.outside_munich_acknowledged',
+        value: true,
+        qualifier: {
+          source: 'CLIENT',
+          quality: 'DECIDED',
+          setAt: nowIso,
+          setBy: 'user',
+          reason:
+            'Bauherr hat Adresse außerhalb des aktuellen München-Versorgungsgebiets bewusst bestätigt; System läuft mit reduziertem Datenstand.',
+        },
+      })
+    }
     const initialState =
       seededFacts.length > 0 ? { facts: seededFacts } : undefined
 

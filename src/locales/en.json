@@ -830,6 +830,13 @@
         "detailDescription": "Detail view of the development plan for the selected address."
       },
       "submit": "Set the table",
+      "checkAddress": "Check address",
+      "outsideMunich": {
+        "warning": "This address is outside the current coverage area (Munich).",
+        "detail": "Our preview release covers Munich only (postal codes 80331–81929) with full Bauamt, parking and preservation-ordinance data. Conversations for other municipalities run with a reduced dataset.",
+        "confirmLink": "Continue anyway",
+        "confirmedNote": "Address outside Munich acknowledged — system runs with reduced dataset."
+      },
       "plot": {
         "head": "Location profile",
         "stadtbezirk": "District",
