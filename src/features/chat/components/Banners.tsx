@@ -1,11 +1,15 @@
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { AnimatePresence, m, useReducedMotion } from 'framer-motion'
+import { useChatStore } from '@/stores/chatStore'
 
 /**
  * Top-of-workspace status strips. Hidden by default; surface only
  * when needed. Inter 12 clay copy, paper backdrop, hairline bottom
  * border. No icons, no shadow, no chrome — quiet bar.
+ *
+ * Phase 5 — when offline, also surface the queue depth so the user
+ * knows how many of their inputs are buffered for replay-on-reconnect.
  */
 export function OfflineBanner() {
   const { t } = useTranslation()
@@ -13,6 +17,7 @@ export function OfflineBanner() {
   const [online, setOnline] = useState(
     typeof navigator !== 'undefined' ? navigator.onLine : true,
   )
+  const queueDepth = useChatStore((s) => s.offlineQueue.length)
 
   useEffect(() => {
     const onOnline = () => setOnline(true)
@@ -38,6 +43,11 @@ export function OfflineBanner() {
         >
           <div className="mx-auto max-w-[1440px] px-6 sm:px-10 lg:px-14 py-2 text-[12px] text-clay/85 italic">
             {t('chat.banner.offline')}
+            {queueDepth > 0 ? (
+              <span className="ml-2 not-italic font-mono text-[11px] tracking-[0.16em] text-clay">
+                · {t('chat.banner.offlineQueued', { count: queueDepth })}
+              </span>
+            ) : null}
           </div>
         </m.div>
       )}

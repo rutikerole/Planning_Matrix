@@ -948,6 +948,9 @@
     },
     "banner": {
       "offline": "Offline — your input will send once the connection returns.",
+      "offlineQueued_one": "{{count}} message queued",
+      "offlineQueued_other": "{{count}} messages queued",
+      "offlineQueueFull": "Queue full — please reconnect before sending more messages.",
       "rateLimit": "You have sent a lot of messages this hour ({{count}} of {{max}}). Please wait until {{time}}.",
       "rateLimitDismiss": "Dismiss",
       "errorDismiss": "Close"

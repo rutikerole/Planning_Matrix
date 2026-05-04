@@ -66,10 +66,17 @@ export function QuestionPlot({ onSubmit, submitError }: Props) {
 
   // Reset the outside-München confirmation whenever the address text
   // changes — the user may have corrected to a München PLZ, or moved
-  // to a different non-München address that needs its own ack.
+  // to a different non-München address that needs its own ack. This
+  // is the canonical "react to external value change" pattern: the
+  // address is owned by the wizard zustand store, not local state, so
+  // we sync the local confirmation flag in an effect. The lint rule
+  // is suppressed inline (matching the existing convention in this
+  // codebase, e.g. ChatWorkspacePage.tsx:181).
+  /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
     setOutsideMunichConfirmed(false)
   }, [plotAddress])
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   const profile = usePlotProfile(plotAddress)
   const suggestedName = intent ? suggestProjectName(intent, plotAddress) : null

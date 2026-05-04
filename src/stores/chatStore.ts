@@ -1,6 +1,24 @@
 import { create } from 'zustand'
 import type { Specialist } from '@/types/projectState'
 import type { PendingAttachment } from '@/types/chatInput'
+import type { UserAnswer } from '@/types/chatTurn'
+
+/**
+ * Phase 5 — offline queue entry. `useChatTurn` enqueues turns when
+ * `navigator.onLine` is false; `useOfflineQueueDrain` drains them on
+ * the `online` event. Idempotency via `clientRequestId` makes the
+ * server-side replay safe.
+ */
+export interface OfflineQueueEntry {
+  clientRequestId: string
+  projectId: string
+  userMessage: string
+  userAnswer: UserAnswer
+  attachmentIds: string[]
+  queuedAt: string
+}
+
+export const OFFLINE_QUEUE_CAP = 5
 
 /**
  * Phase 3.4 #52 — streaming bubble surfaced while Anthropic is emitting
@@ -91,6 +109,15 @@ interface ChatState {
     code: string
   } | null
 
+  /**
+   * Phase 5 — offline-mode queue. Mutations submitted while
+   * navigator.onLine is false are buffered here and drained when the
+   * online event fires. Capped at OFFLINE_QUEUE_CAP entries; once
+   * full, the input bar disables itself with a "reconnect first"
+   * message rather than silently losing inputs.
+   */
+  offlineQueue: OfflineQueueEntry[]
+
   setThinking: (
     thinking: boolean,
     specialist?: Specialist | null,
@@ -128,6 +155,14 @@ interface ChatState {
   setRateLimit: (info: ChatState['lastRateLimit']) => void
   /** Phase 3 — set / clear the last non-rate-limit error envelope. */
   setLastError: (info: ChatState['lastError']) => void
+  /** Phase 5 — push a turn into the offline queue. No-op when the
+   *  cap is already reached (caller should pre-check and disable the
+   *  input). Returns true when accepted, false when rejected. */
+  enqueueOffline: (entry: OfflineQueueEntry) => boolean
+  /** Phase 5 — remove a queued turn (called after a successful drain). */
+  removeFromOfflineQueue: (clientRequestId: string) => void
+  /** Phase 5 — drop everything in the queue (e.g. on project unmount). */
+  clearOfflineQueue: () => void
   reset: () => void
 }
 
@@ -146,6 +181,7 @@ export const useChatStore = create<ChatState>((set) => ({
   currentAbortController: null,
   lastRateLimit: null,
   lastError: null,
+  offlineQueue: [],
 
   setThinking: (thinking, specialist, label, activitySection) =>
     set((s) => ({
@@ -252,6 +288,24 @@ export const useChatStore = create<ChatState>((set) => ({
   setRateLimit: (info) => set({ lastRateLimit: info }),
   setLastError: (info) => set({ lastError: info }),
 
+  enqueueOffline: (entry) => {
+    const cur = useChatStore.getState().offlineQueue
+    if (cur.length >= OFFLINE_QUEUE_CAP) return false
+    // Idempotent on clientRequestId — never queue the same retry twice.
+    if (cur.some((e) => e.clientRequestId === entry.clientRequestId)) {
+      return true
+    }
+    set({ offlineQueue: [...cur, entry] })
+    return true
+  },
+  removeFromOfflineQueue: (clientRequestId) =>
+    set((s) => ({
+      offlineQueue: s.offlineQueue.filter(
+        (e) => e.clientRequestId !== clientRequestId,
+      ),
+    })),
+  clearOfflineQueue: () => set({ offlineQueue: [] }),
+
   reset: () =>
     set((s) => {
       // Revoke any object URLs the previous project staged so we don't
@@ -288,6 +342,7 @@ export const useChatStore = create<ChatState>((set) => ({
         currentAbortController: null,
         lastRateLimit: null,
         lastError: null,
+        offlineQueue: [],
       }
     }),
 }))

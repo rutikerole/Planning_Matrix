@@ -948,6 +948,9 @@
     },
     "banner": {
       "offline": "Offline — Eingaben werden bei erneuter Verbindung gesendet.",
+      "offlineQueued_one": "{{count}} Nachricht in Warteschlange",
+      "offlineQueued_other": "{{count}} Nachrichten in Warteschlange",
+      "offlineQueueFull": "Warteschlange voll — bitte stellen Sie die Verbindung wieder her, bevor Sie weitere Nachrichten senden.",
       "rateLimit": "Sie haben in dieser Stunde sehr viele Nachrichten gesendet ({{count}} von {{max}}). Bitte warten Sie bis {{time}}.",
       "rateLimitDismiss": "Hinweis ausblenden",
       "errorDismiss": "Schließen"

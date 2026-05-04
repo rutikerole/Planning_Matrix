@@ -29,7 +29,8 @@ import { buildUserMessageText } from '../lib/userAnswerHelpers'
 import { useProject } from '../hooks/useProject'
 import { useMessages } from '../hooks/useMessages'
 import { useChatTurn } from '../hooks/useChatTurn'
-import { useChatStore } from '@/stores/chatStore'
+import { useOfflineQueueDrain } from '../hooks/useOfflineQueueDrain'
+import { useChatStore, OFFLINE_QUEUE_CAP } from '@/stores/chatStore'
 import type { UserAnswer } from '@/types/chatTurn'
 import type { MessageRow } from '@/types/db'
 
@@ -160,6 +161,13 @@ export function ChatWorkspacePage() {
   const reduced = useReducedMotion()
   const { t: tT } = useTranslation()
 
+  // Phase 5 — drain the offline queue when connectivity returns. The
+  // hook is no-op while online with an empty queue; mounting it here
+  // ties its lifecycle to the active project.
+  useOfflineQueueDrain(projectId, chatTurn)
+  const offlineQueueDepth = useChatStore((s) => s.offlineQueue.length)
+  const queueFull = offlineQueueDepth >= OFFLINE_QUEUE_CAP
+
   // Mobile drawer state.
   const [leftOpen, setLeftOpen] = useState(false)
   const [rightOpen, setRightOpen] = useState(false)
@@ -248,7 +256,7 @@ export function ChatWorkspacePage() {
       lastAssistant={lastAssistant}
       onSubmit={handleSubmit}
       onIdkClick={() => setIdkOpen(true)}
-      forceDisabled={isThinking}
+      forceDisabled={isThinking || queueFull}
       embedded
     />
   ) : null

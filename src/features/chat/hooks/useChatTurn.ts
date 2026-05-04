@@ -9,11 +9,30 @@ import {
   fetchPersistedUserMessageId,
   linkFilesToMessage,
 } from '@/lib/uploadApi'
-import { useChatStore } from '@/stores/chatStore'
+import { useChatStore, OFFLINE_QUEUE_CAP } from '@/stores/chatStore'
 import { thinkingLabelToSection } from '../lib/thinkingLabelToSection'
 import type { MessageRow, ProjectRow } from '@/types/db'
 import type { ChatTurnRequest, ChatTurnResponse, UserAnswer } from '@/types/chatTurn'
 import type { Specialist } from '@/types/projectState'
+
+/**
+ * Phase 5 — sentinel value returned by mutationFn when the SPA is
+ * offline at submit time. The turn is parked in the offline queue
+ * (see chatStore.enqueueOffline). onSuccess detects the sentinel and
+ * leaves the optimistic placeholder in place rather than appending a
+ * (non-existent) assistant response. The queued turn is replayed by
+ * useOfflineQueueDrain when the `online` event fires.
+ */
+type ChatTurnSettled =
+  | {
+      kind: 'sent'
+      response: Extract<ChatTurnResponse, { ok: true }>
+      clientRequestId: string
+      optimisticUserMessage: string
+      optimisticUserAnswer: UserAnswer
+      attachmentIds: string[]
+    }
+  | { kind: 'queued'; clientRequestId: string }
 
 interface SubmitInput {
   userMessage: string
@@ -53,14 +72,44 @@ export function useChatTurn(projectId: string) {
   const setAbortController = useChatStore((s) => s.setAbortController)
   const setRateLimit = useChatStore((s) => s.setRateLimit)
   const setLastError = useChatStore((s) => s.setLastError)
+  const enqueueOffline = useChatStore((s) => s.enqueueOffline)
 
-  return useMutation({
+  return useMutation<
+    ChatTurnSettled,
+    unknown,
+    SubmitInput,
+    { previousMessages: MessageRow[]; clientRequestId: string }
+  >({
     mutationKey: ['chat-turn', projectId],
     retry: 0,
 
-    mutationFn: async (input: SubmitInput) => {
+    mutationFn: async (input: SubmitInput): Promise<ChatTurnSettled> => {
       const clientRequestId = input.clientRequestId ?? crypto.randomUUID()
       const lang = (i18n.resolvedLanguage ?? 'de') as 'de' | 'en'
+
+      // Phase 5 — offline guard. When navigator reports offline, park
+      // the turn in the queue and resolve with a `queued` sentinel so
+      // onSuccess can keep the optimistic user-bubble in place without
+      // pretending an assistant response arrived. The drain hook will
+      // replay this with the same clientRequestId when connectivity
+      // returns; idempotency on the messages partial unique index
+      // makes the replay safe.
+      if (typeof navigator !== 'undefined' && navigator.onLine === false) {
+        const accepted = enqueueOffline({
+          clientRequestId,
+          projectId,
+          userMessage: input.userMessage,
+          userAnswer: input.userAnswer,
+          attachmentIds: input.attachmentIds ?? [],
+          queuedAt: new Date().toISOString(),
+        })
+        if (!accepted) {
+          throw new Error(
+            `Offline-Warteschlange voll (max. ${OFFLINE_QUEUE_CAP}). Bitte stellen Sie die Verbindung wieder her.`,
+          )
+        }
+        return { kind: 'queued', clientRequestId }
+      }
       const request: ChatTurnRequest = {
         projectId,
         userMessage: input.userMessage,
@@ -125,6 +174,7 @@ export function useChatTurn(projectId: string) {
       })
 
       return {
+        kind: 'sent',
         response,
         clientRequestId,
         optimisticUserMessage: input.userMessage,
@@ -182,7 +232,21 @@ export function useChatTurn(projectId: string) {
       return { previousMessages, clientRequestId }
     },
 
-    onSuccess: ({ response, clientRequestId, attachmentIds }) => {
+    onSuccess: (settled) => {
+      // Phase 5 — offline-queued turn. Leave the optimistic placeholder
+      // visible (so the user sees their message) and STOP — no
+      // assistant message exists yet, no thinking-indicator finalisation
+      // is needed. The drain hook will replay this turn when online.
+      if (settled.kind === 'queued') {
+        // Just stop the thinking indicator; the placeholder stays.
+        setThinking(false, undefined, null, null)
+        closeStreamingMessage()
+        setAbortController(null)
+        return
+      }
+
+      const { response, clientRequestId, attachmentIds } = settled
+
       // Append the persisted assistant message to cache.
       const current =
         queryClient.getQueryData<MessageRow[]>(['messages', projectId]) ?? []
