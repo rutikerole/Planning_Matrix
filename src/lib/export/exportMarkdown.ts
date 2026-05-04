@@ -187,8 +187,8 @@ export function buildExportMarkdown({ project, events, lang }: BuildArgs): strin
   lines.push('')
   lines.push(
     t(
-      '*Vorläufige Einschätzung — bestätigt durch eine/n bauvorlageberechtigte/n Architekt/in.*',
-      '*Preliminary assessment — confirmed by a licensed architect (bauvorlageberechtigt).*',
+      '*Vorläufig — bestätigt durch eine/n bauvorlageberechtigte/n Architekt/in.*',
+      '*Preliminary — to be confirmed by a certified architect (Bauvorlageberechtigte/r).*',
     ),
   )
   lines.push('')

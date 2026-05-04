@@ -404,8 +404,8 @@ async function drawTitlePage(
   page.drawText(
     safe(
       lang === 'en'
-        ? 'Preliminary assessment - confirmed by a licensed architect (bauvorlageberechtigt).'
-        : 'Vorläufige Zusammenfassung - bestätigt durch eine/n bauvorlageberechtigte/n Architekt/in.',
+        ? 'Preliminary - to be confirmed by a certified architect (Bauvorlageberechtigte/r).'
+        : 'Vorläufig - bestätigt durch eine/n bauvorlageberechtigte/n Architekt/in.',
     ),
     {
       x: MARGIN,
@@ -512,8 +512,8 @@ function drawTop3Page(
     page.drawText(
       safe(
         lang === 'en'
-          ? '- Preliminary; confirmation by a licensed architect required.'
-          : '- Vorläufig; Bestätigung durch eine/n bauvorlageberechtigte/n Architekt/in.',
+          ? 'Preliminary - to be confirmed by a certified architect (Bauvorlageberechtigte/r).'
+          : 'Vorläufig - bestätigt durch eine/n bauvorlageberechtigte/n Architekt/in.',
       ),
       {
         x: MARGIN + 28,

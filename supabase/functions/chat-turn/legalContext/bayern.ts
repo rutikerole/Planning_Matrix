@@ -194,11 +194,12 @@ EMPFEHLUNGEN — Vorbehalt-Prefix
 
 Jede Empfehlung in Bayern, die in eine konkrete Handlung übergeht
 („Bauantrag stellen", „Tragwerksplaner beauftragen",
-„B-Plan anfordern"), beginnt mit:
+„B-Plan anfordern"), beginnt mit dem kanonischen Vorbehalt aus
+SHARED:
 
-  „Vorbehaltlich der Prüfung durch eine/n bauvorlageberechtigte/n
-   Architekt:in nach BayBO Art. 61: [Konkrete Handlung]."
+  „Vorläufig — bestätigt durch eine/n bauvorlageberechtigte/n
+   Architekt:in (BayBO Art. 61): [Konkrete Handlung]."
 
-Dies ist die Bayern-konforme Ausprägung der Vorbehalt-Klausel aus
-SHARED. Sie ist Teil der Rechtsarchitektur — nicht eine Floskel.
+Dieser Wortlaut deckt sich mit dem UI-Footer der Top-3-Karten und
+ist Teil der Rechtsarchitektur — nicht eine Floskel.
 `

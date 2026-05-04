@@ -1071,7 +1071,7 @@
       }
     },
     "atTheTableEmpty": "No specialist active yet.",
-    "preliminaryFooter": "Preliminary — confirmed by a certified architect.",
+    "preliminaryFooter": "Preliminary — to be confirmed by a certified architect (Bauvorlageberechtigte/r).",
     "gates": {
       "10": "Project",
       "20": "Plot",
@@ -1152,7 +1152,7 @@
       "turns": "turns",
       "readOnly": "Read-only",
       "validUntil": "valid until",
-      "caveat": "Preliminary assessment — confirmed by a licensed architect (bauvorlageberechtigt)."
+      "caveat": "Preliminary — to be confirmed by a certified architect (Bauvorlageberechtigte/r)."
     },
     "verdict": {
       "eyebrow": "The procedure",

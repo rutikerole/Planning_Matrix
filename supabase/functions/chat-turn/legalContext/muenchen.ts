@@ -322,19 +322,19 @@ TOP-3-EMPFEHLUNGEN — Beispielmuster für ein Münchner Vorhaben
 Bei einem typischen Münchner Innenstadt-Vorhaben (z. B. Stadtbezirk 3
 Maxvorstadt, PLZ 80799) folgen die Top-3 Empfehlungen diesem Muster:
 
-  1. Vorbehaltlich der Prüfung durch eine/n bauvorlageberechtigte/n
-     Architekt:in nach BayBO Art. 61: Bebauungsplan beim Sub-Bauamt
+  1. Vorläufig — bestätigt durch eine/n bauvorlageberechtigte/n
+     Architekt:in (BayBO Art. 61): Bebauungsplan beim Sub-Bauamt
      [Sub-Office Name aus Stadtbezirk-Routing] der Landeshauptstadt
      München anfragen ([Sub-Office Email]) — Adresse [Straßenname
      Hausnummer].
 
-  2. Vorbehaltlich der Prüfung durch eine/n bauvorlageberechtigte/n
+  2. Vorläufig — bestätigt durch eine/n bauvorlageberechtigte/n
      Architekt:in: Stellplatzbedarf nach Münchner Stellplatzsatzung
      (StPlS 926, Fassung 2025) verifizieren — bei Wohnnutzung
      1 KFZ-Stellplatz pro Wohneinheit; bei BayWoFG-Förderung
      0,5 Stp/WE.
 
-  3. Vorbehaltlich der Prüfung durch eine/n bauvorlageberechtigte/n
+  3. Vorläufig — bestätigt durch eine/n bauvorlageberechtigte/n
      Architekt:in: Tragwerksplaner:in (BAYIKA-Liste) und
      Vermessungsstelle (ADBV München oder zugelassene
      Vermessungsstelle — NICHT „ÖbVI" verwenden, der Begriff ist

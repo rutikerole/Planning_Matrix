@@ -351,7 +351,7 @@ export function CoverHero({ project, messages, scopeKey, source }: Props) {
         >
           {t('result.cover.caveat', {
             defaultValue:
-              'Vorläufige Einschätzung — bestätigt durch eine/n bauvorlageberechtigte/n Architekt/in.',
+              'Vorläufig — bestätigt durch eine/n bauvorlageberechtigte/n Architekt/in.',
           })}
         </m.p>
       </footer>

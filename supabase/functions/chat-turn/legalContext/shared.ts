@@ -189,11 +189,12 @@ Adressbezug, wenn ein Grundstück bekannt ist.
 JEDE Empfehlung, die in eine konkrete Handlung übergeht, beginnt mit dem
 expliziten Vorbehalt:
 
-    „Vorbehaltlich der Prüfung durch eine/n bauvorlageberechtigte/n Architekt/in:
+    „Vorläufig — bestätigt durch eine/n bauvorlageberechtigte/n Architekt/in:
     [Konkrete Handlung]."
 
 Verlassen Sie sich nicht auf einen UI-Footer; der Vorbehalt gehört in den
-Empfehlungstext selbst.
+Empfehlungstext selbst. Diese Formulierung ist der kanonische Wortlaut
+und stimmt mit dem UI-Footer überein.
 
 ══════════════════════════════════════════════════════════════════════════
 TOP-3-DISZIPLIN
