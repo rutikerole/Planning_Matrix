@@ -30,10 +30,10 @@ interface Props {
   spine?: ReactNode
   /** Phase 7.5 — collapsed Spine trigger strip (< 1024 px). */
   spineMobileTrigger?: ReactNode
-  /** Sticky header (AstrolabeStickyHeader) — sticky to top of main. */
+  /** Sticky header — sticky to top of <main> scroll context.
+   *  Phase 7.8: now hosts <ConversationStrip /> instead of
+   *  <AstrolabeStickyHeader />. */
   stickyHeader?: ReactNode
-  /** Top region — full astrolabe + team strip. Hidden on mobile. */
-  topRegion?: ReactNode
   /** The conversation thread. */
   thread: ReactNode
   /** Smart chips + briefing CTA + input bar (always rendered together). */
@@ -62,7 +62,6 @@ export function ChamberLayout({
   spine,
   spineMobileTrigger,
   stickyHeader,
-  topRegion,
   thread,
   inputZone,
   ledger,
@@ -117,26 +116,11 @@ export function ChamberLayout({
             className="h-full overflow-y-auto overflow-x-hidden flex flex-col"
           >
             {/* Sticky-top sticky header — sticks to the top of the
-              * scroll container (main), never overlays the Spine. */}
+              * scroll container (main), never overlays the Spine.
+              * Phase 7.8 §2.2: hosts <ConversationStrip />. The
+              * <topRegion> slot (full Astrolabe + 7-sigil row) was
+              * killed and never re-mounted. */}
             {stickyHeader}
-
-            {topRegion ? (
-              // Phase 7.7 §1.7 — sticky bordered top region. Anchors
-              // SpecialistTeam + full Astrolabe to the conversation
-              // column with a 0.5 px hairline bottom border so the
-              // two elements stop floating in space, and pins them
-              // to the top of <main>'s scroll context so "where am
-              // I in the journey" stays visible while the user
-              // scrolls the thread.
-              <div
-                data-chamber-top-region="true"
-                className="hidden md:block sticky top-0 z-[15] bg-[hsl(var(--paper)/0.92)] backdrop-blur-[3px] border-b border-[var(--hairline,rgba(26,22,18,0.10))]"
-              >
-                <div className="mx-auto w-full max-w-[var(--chamber-col-max)] px-[var(--chamber-col-px-tablet)] lg:px-[var(--chamber-col-px-desktop)] py-5">
-                  {topRegion}
-                </div>
-              </div>
-            ) : null}
 
             {/* Thread column */}
             <div className="mx-auto w-full max-w-[var(--chamber-col-max)] px-[var(--chamber-col-px-mobile)] md:px-[var(--chamber-col-px-tablet)] lg:px-[var(--chamber-col-px-desktop)] pt-6 md:pt-8 pb-[180px] md:pb-[200px] flex-1">

@@ -8,13 +8,10 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { Link } from 'react-router-dom'
 import { SEO } from '@/components/SEO'
 import { useChatStore, OFFLINE_QUEUE_CAP } from '@/stores/chatStore'
-import { useViewport } from '@/lib/useViewport'
-import { useAuth } from '@/hooks/useAuth'
 import type { MessageRow } from '@/types/db'
-import type { Specialist, ProjectState } from '@/types/projectState'
+import type { ProjectState } from '@/types/projectState'
 import type { UserAnswer } from '@/types/chatTurn'
 import { useProject } from '../hooks/useProject'
 import { useMessages } from '../hooks/useMessages'
@@ -37,9 +34,7 @@ import { SpineHeader } from '../components/Chamber/Spine/SpineHeader'
 import { SpineStageList } from '../components/Chamber/Spine/SpineStageList'
 import { SpineFooter } from '../components/Chamber/Spine/SpineFooter'
 import { SpineMobileTrigger } from '../components/Chamber/Spine/SpineMobileTrigger'
-import { Astrolabe } from '../components/Chamber/Astrolabe'
-import { AstrolabeStickyHeader } from '../components/Chamber/AstrolabeStickyHeader'
-import { SpecialistTeam } from '../components/Chamber/SpecialistTeam'
+import { ConversationStrip } from '../components/Chamber/ConversationStrip'
 import { InputBar } from '../components/Chamber/InputBar'
 import { JumpToLatest } from '../components/Chamber/JumpToLatest'
 import { LedgerTab } from '../components/Chamber/LedgerTab'
@@ -50,14 +45,12 @@ import { RateLimitBanner } from '../components/Chamber/RateLimitBanner'
 import { ErrorBanner } from '../components/Chamber/ErrorBanner'
 import { EmptyState } from '../components/Chamber/EmptyState'
 import { StandUp } from '../components/Chamber/StandUp'
-import { MobileAstrolabeSheet } from '../components/Chamber/MobileAstrolabeSheet'
 import { SpineDebugPanel } from '../components/Chamber/Spine/SpineDebugPanel'
 
 export function ChatWorkspacePage() {
   const { t, i18n } = useTranslation()
   const { id } = useParams<{ id: string }>()
   const projectId = id ?? ''
-  const { isMobile } = useViewport()
 
   const { data: project } = useProject(projectId)
   const { data: messages } = useMessages(projectId)
@@ -116,7 +109,6 @@ export function ChatWorkspacePage() {
 
   // StandUp + mobile-astrolabe sheet state.
   const [standUpOpen, setStandUpOpen] = useState(false)
-  const [mobileAstroOpen, setMobileAstroOpen] = useState(false)
 
   // Keyboard shortcuts.
   const inputRef = useRef<HTMLTextAreaElement | null>(null)
@@ -165,60 +157,6 @@ export function ChatWorkspacePage() {
     [handleSubmit],
   )
 
-  // Sigil click → scroll to most recent message from that specialist.
-  const handleSigilClick = useCallback(
-    (spec: Specialist) => {
-      const list = messages ?? []
-      for (let i = list.length - 1; i >= 0; i--) {
-        if (list[i].role === 'assistant' && list[i].specialist === spec) {
-          const el = document.getElementById(`spec-tag-${list[i].id}`)
-          if (el) {
-            const rect = el.getBoundingClientRect()
-            window.scrollTo({ top: window.scrollY + rect.top - 90, behavior: 'smooth' })
-          }
-          return
-        }
-      }
-    },
-    [messages],
-  )
-
-  // Astrolabe drag-to-scrub.
-  const handleScrubTo = useCallback(
-    (turnIdx: number) => {
-      const list = messages ?? []
-      const assistants = list.filter((m) => m.role === 'assistant')
-      const target = assistants[turnIdx]
-      if (!target) return
-      const el = document.getElementById(`spec-tag-${target.id}`)
-      if (el) {
-        const rect = el.getBoundingClientRect()
-        window.scrollTo({ top: window.scrollY + rect.top - 90, behavior: 'smooth' })
-      }
-    },
-    [messages],
-  )
-
-  // Build the contributions map for SpecialistTeam tooltips. Hoisted
-  // above the early-return so the hook order stays stable.
-  const contributions = useMemo(() => {
-    const out = {
-      moderator: { count: 0 },
-      planungsrecht: { count: 0 },
-      bauordnungsrecht: { count: 0 },
-      sonstige_vorgaben: { count: 0 },
-      verfahren: { count: 0 },
-      beteiligte: { count: 0 },
-      synthesizer: { count: 0 },
-    } as Record<Specialist, { count: number }>
-    for (const m of messages ?? []) {
-      if (m.role === 'assistant' && m.specialist) {
-        out[m.specialist as Specialist].count += 1
-      }
-    }
-    return out
-  }, [messages])
-
   // Phase 7.5 — useSpineStages must be called unconditionally; hook
   // tolerates project=null and returns 8 future-status rows in that
   // case, so it's safe above the early-return.
@@ -229,8 +167,6 @@ export function ChatWorkspacePage() {
   const lang = (i18n.resolvedLanguage ?? 'de') as 'de' | 'en'
   const factsForToast = (project.state as ProjectState | undefined)?.facts ?? []
   const hasMessages = (messages?.length ?? 0) > 0
-  const onAstrolabeOpen = () =>
-    isMobile ? setMobileAstroOpen(true) : setStandUpOpen(true)
 
   const standUpLink = (
     <button
@@ -305,93 +241,17 @@ export function ChatWorkspacePage() {
           </>
         }
         stickyHeader={
-          <AstrolabeStickyHeader
-            projectName={project.name}
-            plotAddress={project.plot_address}
-            progress={progress}
-            hasFullAbove={!isMobile && hasMessages}
-            onAstrolabeClick={onAstrolabeOpen}
-            onSigilClick={handleSigilClick}
-            teamSlot={
-              <SpecialistTeam
-                active={progress.recentSpecialist}
-                spoken={progress.spokenSpecialists}
-                contributions={contributions}
-                size="sm"
-                onSigilClick={handleSigilClick}
-              />
-            }
-            briefingSlot={
-              gate.visible && (gate.prominence === 'hero' || gate.prominence === 'ready') ? (
-                <Link
-                  to={`/projects/${project.id}/result`}
-                  className="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-clay text-paper text-[12.5px] font-medium hover:bg-clay-deep transition-colors duration-150"
-                >
-                  {t('chat.chamber.briefingCtaFull')}
-                  <span aria-hidden="true">→</span>
-                </Link>
-              ) : null
-            }
-            overflowSlot={
-              <>
-                <button
-                  type="button"
-                  role="menuitem"
-                  onClick={() => setStandUpOpen(true)}
-                  className="w-full text-left px-3 py-2 text-[13px] text-ink hover:bg-[hsl(var(--clay)/0.08)] rounded-md"
-                >
-                  {t('chat.chamber.inputStandUpLink')}
-                </button>
-                <div className="px-3 py-2 text-[11px] uppercase tracking-[0.16em] text-clay/72">
-                  {t('chat.chamber.stickyHeaderShortcuts')}
-                </div>
-                <ul className="px-3 pb-2 space-y-1 text-[12px] text-ink/72 font-mono">
-                  <li>{t('chat.chamber.keyboardSearch')}</li>
-                  <li>{t('chat.chamber.keyboardHelp')}</li>
-                  <li>{t('chat.chamber.keyboardScrollUp')}</li>
-                  <li>{t('chat.chamber.keyboardScrollDown')}</li>
-                  <li>{t('chat.chamber.keyboardEscape')}</li>
-                </ul>
-                <div aria-hidden="true" className="border-t border-[var(--hairline)] my-1" />
-                <Link
-                  to="/dashboard"
-                  className="block px-3 py-2 text-[13px] text-ink/85 hover:bg-[hsl(var(--clay)/0.08)] rounded-md"
-                >
-                  ← {t('chat.chamber.stickyHeaderLeave')}
-                </Link>
-                <SignOutMenuItem />
-              </>
-            }
-          />
-        }
-        topRegion={
-          // Phase 7.5 — project nameplate dropped (Spine carries it).
-          // Top region now reads as: SpecialistTeam md-size + full
-          // Astrolabe with drag-to-scrub. The Spine handles "where am
-          // I" identity; this row handles "where am I in the journey
-          // visually."
-          hasMessages && !isMobile ? (
-            <div className="flex items-start justify-between gap-6">
-              <SpecialistTeam
-                active={progress.recentSpecialist}
-                spoken={progress.spokenSpecialists}
-                contributions={contributions}
-                size="md"
-                onSigilClick={handleSigilClick}
-              />
-              <Astrolabe
-                percent={progress.percent}
-                currentTurn={progress.currentTurn}
-                totalEstimate={progress.totalEstimate}
-                currentSpecialist={progress.recentSpecialist}
-                spokenSpecialists={progress.spokenSpecialists}
-                size="full"
-                onClick={onAstrolabeOpen}
-                onSigilClick={handleSigilClick}
-                onScrubTo={handleScrubTo}
-                ariaLabel={t('chat.chamber.astrolabeLabel', { percent: progress.percent })}
-              />
-            </div>
+          // Phase 7.8 §2.2 — ConversationStrip replaces
+          // AstrolabeStickyHeader on the chat surface. The full
+          // 132 px Astrolabe + SpecialistTeam strip + overflow menu
+          // are dropped; mobile project context lives in the
+          // SpineMobileTrigger (tap to open drawer); the StandUp
+          // launcher migrates to the input zone footer (•••).
+          hasMessages ? (
+            <ConversationStrip
+              percent={progress.percent}
+              currentSpecialist={progress.recentSpecialist}
+            />
           ) : null
         }
         thread={
@@ -440,13 +300,6 @@ export function ChatWorkspacePage() {
               project={project}
               messages={messages ?? []}
               progress={progress}
-            />
-            <MobileAstrolabeSheet
-              open={mobileAstroOpen}
-              onOpenChange={setMobileAstroOpen}
-              project={project}
-              progress={progress}
-              summary={ledger}
             />
             <SpineDebugPanel
               project={project}
@@ -541,18 +394,4 @@ function useAugmentedMessages(
   }, [messages, project, t, i18n.resolvedLanguage, mountTime])
 }
 
-function SignOutMenuItem() {
-  const { t } = useTranslation()
-  const { signOut } = useAuth()
-  return (
-    <button
-      type="button"
-      role="menuitem"
-      onClick={() => void signOut()}
-      className="w-full text-left px-3 py-2 text-[13px] text-ink/85 hover:bg-[hsl(var(--clay)/0.08)] rounded-md"
-    >
-      {t('chat.chamber.stickyHeaderSignOut')}
-    </button>
-  )
-}
 
