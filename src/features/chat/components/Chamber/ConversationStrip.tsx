@@ -1,27 +1,17 @@
 // Phase 7.8 §2.2 — ConversationStrip (Manuscript direction).
+// Phase 7.9 §2.4 — single-line composition. The previous build
+// stacked an italic Georgia "X · speaking now" sub-line beneath the
+// caps eyebrow; the prototype carries one label only:
 //
-// A sticky, top-right band inside the conversation column. It replaces
-// the killed `topRegion` (full Astrolabe + 7-sigil row) and the
-// AstrolabeStickyHeader on the conversation surface.
+//   {SPECIALIST_SHORT} · LIVE                       ◯ 82
 //
-// Composition (left → right):
-//   eyebrow (caps)  {SPECIALIST_SHORT} · LIVE   (font-mono 10 px clay)
-//   sub             italic Georgia 11 px clay — display name "speaking now"
-//   compact dial    38 px CompactAstrolabe with italic % number
+// And no hairline-bottom — the strip floats invisibly on the paper,
+// kept legible by a paper-92% bg + 8 px backdrop-blur over the
+// scrolled content.
 //
-// Geometry:
-//   - 56 px height
-//   - paper-92% bg + 8 px backdrop-blur for a frosted page feel
-//   - 0.5 px hairline-bottom border (--hairline)
-//   - position: sticky; top: 0 (sticks inside the chamber-main scroll
-//     context — Phase 7.6 viewport-grid already ensures the page body
-//     itself doesn't scroll)
-//
-// What it deliberately omits, vs. AstrolabeStickyHeader:
-//   - wordmark, project name, plot suffix (those live in Spine /
-//     <AppHeader>)
-//   - SpecialistTeam strip (killed in §2.4)
-//   - overflow menu (kept on AstrolabeStickyHeader for mobile only)
+// The 38 px CompactAstrolabe is now a button: tap → StandUp opens
+// (re-establishes the access path that the killed AstrolabeStickyHeader
+// used to provide).
 
 import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
@@ -31,12 +21,14 @@ import { CompactAstrolabe } from './CompactAstrolabe'
 interface Props {
   percent: number
   currentSpecialist: Specialist | null
+  onDialClick?: () => void
   className?: string
 }
 
 export function ConversationStrip({
   percent,
   currentSpecialist,
+  onDialClick,
   className,
 }: Props) {
   const { t } = useTranslation()
@@ -44,15 +36,12 @@ export function ConversationStrip({
   const specialistShort = currentSpecialist
     ? t(`chat.chamber.specialistShort.${currentSpecialist}`)
     : null
-  const specialistDisplay = currentSpecialist
-    ? t(`chat.chamber.specialistDisplay.${currentSpecialist}`)
-    : null
 
   return (
     <div
       className={cn(
-        'sticky top-0 z-20 flex items-center justify-end gap-3 px-4 md:px-6 h-14',
-        'border-b border-[var(--hairline,rgba(26,22,18,0.10))]',
+        'sticky top-0 z-20 flex items-center justify-end gap-3',
+        'px-4 md:px-8 py-[14px]',
         className,
       )}
       style={{
@@ -61,31 +50,16 @@ export function ConversationStrip({
         WebkitBackdropFilter: 'blur(8px)',
       }}
     >
-      <div className="flex flex-col items-end gap-0.5 min-w-0">
-        {specialistShort ? (
-          <p className="font-mono text-[10px] uppercase tracking-[0.20em] text-clay leading-none whitespace-nowrap">
-            {t('chat.chamber.strip.speaking', { specialist: specialistShort })}
-          </p>
-        ) : (
-          <p className="font-mono text-[10px] uppercase tracking-[0.20em] text-clay leading-none whitespace-nowrap">
-            {t('chat.chamber.atTopReady')}
-          </p>
-        )}
-        {specialistDisplay && (
-          // Hide the sub-line below sm to keep the strip on a single
-          // line at 375 px viewports; eyebrow + 38 px dial stay.
-          <p
-            className="hidden sm:block text-[11px] italic text-clay leading-tight whitespace-nowrap"
-            style={{ fontFamily: "Georgia, 'Instrument Serif', serif" }}
-          >
-            {specialistDisplay} · {t('chat.chamber.stage.speakingNow')}
-          </p>
-        )}
-      </div>
+      <p className="font-mono text-[10px] uppercase tracking-[0.20em] text-clay leading-none whitespace-nowrap">
+        {specialistShort
+          ? t('chat.chamber.strip.speaking', { specialist: specialistShort })
+          : t('chat.chamber.atTopReady')}
+      </p>
 
       <CompactAstrolabe
         percent={percent}
         ariaLabel={t('chat.chamber.astrolabeLabel', { percent })}
+        onClick={onDialClick}
       />
     </div>
   )

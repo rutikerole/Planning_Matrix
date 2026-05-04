@@ -25,9 +25,12 @@ interface Props {
   ariaLabel?: string
   /** Override the size if a different host needs it. Default 38 px. */
   size?: number
+  /** Phase 7.9 §2.4 — when provided, the dial renders as a button
+   *  and tapping it opens the StandUp overlay. */
+  onClick?: () => void
 }
 
-export function CompactAstrolabe({ percent, ariaLabel, size = 38 }: Props) {
+export function CompactAstrolabe({ percent, ariaLabel, size = 38, onClick }: Props) {
   const reduced = useReducedMotion()
 
   const clamped = Math.max(0, Math.min(100, percent))
@@ -48,11 +51,23 @@ export function CompactAstrolabe({ percent, ariaLabel, size = 38 }: Props) {
         ? `M ${cx} ${cy - r} A ${r} ${r} 0 1 1 ${cx - 0.001} ${cy - r}`
         : `M ${cx} ${cy - r} A ${r} ${r} 0 ${largeArc} 1 ${endX} ${endY}`
 
+  const Wrapper = onClick ? 'button' : 'div'
+  const wrapperProps = onClick
+    ? {
+        type: 'button' as const,
+        onClick,
+        'aria-label': ariaLabel ?? `${clamped}%`,
+      }
+    : { role: 'img' as const, 'aria-label': ariaLabel ?? `${clamped}%` }
+
   return (
-    <div
-      role="img"
-      aria-label={ariaLabel ?? `${clamped}%`}
-      className="relative shrink-0 select-none"
+    <Wrapper
+      {...wrapperProps}
+      className={
+        onClick
+          ? 'relative shrink-0 select-none rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/55 focus-visible:ring-offset-2 focus-visible:ring-offset-paper transition-transform duration-150 motion-safe:hover:scale-[1.04] motion-safe:active:scale-[0.96]'
+          : 'relative shrink-0 select-none'
+      }
       style={{ width: size, height: size }}
     >
       <svg
@@ -97,6 +112,6 @@ export function CompactAstrolabe({ percent, ariaLabel, size = 38 }: Props) {
       >
         {clamped}
       </span>
-    </div>
+    </Wrapper>
   )
 }

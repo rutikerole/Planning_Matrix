@@ -250,6 +250,7 @@ export function ChatWorkspacePage() {
             <ConversationStrip
               percent={progress.percent}
               currentSpecialist={progress.recentSpecialist}
+              onDialClick={() => setStandUpOpen(true)}
             />
           ) : null
         }
