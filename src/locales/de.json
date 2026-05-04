@@ -862,7 +862,11 @@
     }
   },
   "chat": {
-    "jumpToLatest": "Zum neuesten Beitrag",
+    "jumpToLatest": {
+      "label": "Zum neuesten Beitrag",
+      "newCount_one": "{{count}} neue Nachricht",
+      "newCount_other": "{{count}} neue Nachrichten"
+    },
     "contextSheet": {
       "title": "Nachrichtenoptionen",
       "fromYou": "Sie",

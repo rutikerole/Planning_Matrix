@@ -54,19 +54,31 @@ function continueText(lang: 'de' | 'en'): string {
 // card, and the absolutely-positioned <JumpToLatestFab /> all align
 // to the same focused 768 px column. Mobile (<768 px) still fills the
 // available width via min(w-full, max-w-3xl).
-function EmbeddedShell({ children }: { children: ReactNode }) {
+function EmbeddedShell({
+  children,
+  latestAssistantId,
+}: {
+  children: ReactNode
+  latestAssistantId: string | null
+}) {
   return (
     <div
       className="relative w-full max-w-3xl mx-auto"
       data-pm-input-bar="embedded"
     >
       <div className="w-full flex flex-col gap-2">{children}</div>
-      <JumpToLatestFab />
+      <JumpToLatestFab latestAssistantId={latestAssistantId} />
     </div>
   )
 }
 
-function StandaloneShell({ children }: { children: ReactNode }) {
+function StandaloneShell({
+  children,
+  latestAssistantId,
+}: {
+  children: ReactNode
+  latestAssistantId: string | null
+}) {
   return (
     <div
       className="sticky bottom-0 z-20 bg-paper/95 backdrop-blur-[2px] border-t border-border-strong/25"
@@ -80,7 +92,7 @@ function StandaloneShell({ children }: { children: ReactNode }) {
           }}
         >
           {children}
-          <JumpToLatestFab />
+          <JumpToLatestFab latestAssistantId={latestAssistantId} />
         </div>
       </div>
     </div>
@@ -243,9 +255,15 @@ export function InputBar({
   // on the parent. We render only the inner stack: chips + attachments
   // + textarea card + helper row.
   const Shell = embedded ? EmbeddedShell : StandaloneShell
+  // Phase 7 Move 6 — JumpToLatestFab uses the latest persisted
+  // assistant message's spec-tag as its anchor for both the
+  // scrolled-away threshold and the jump target. Falls back to the
+  // legacy "scroll to bottom" path when no anchor is available
+  // (initial render before any assistant turn lands).
+  const latestAssistantId = lastAssistant?.id ?? null
 
   return (
-    <Shell>
+    <Shell latestAssistantId={latestAssistantId}>
           {/* Suggestion chips above the bar — yesno / select / multi /
             * address / reply / Continue variants. The Continue case is
             * handled by SuggestionChips → ContinueRow (see Phase 4.1.11

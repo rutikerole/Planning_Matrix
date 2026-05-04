@@ -37,10 +37,18 @@ export function Thread({ messages }: Props) {
   // during-render pattern that the React 19 Hooks plugin flags.
   const [initialIds] = useState<Set<string>>(() => new Set(messages.map((m) => m.id)))
 
-  // Auto-scroll on new messages — Phase 4.1.6: <JumpToLatestFab /> now
-  // owns its own scrolled-away detection (rendered inside InputBar) so
-  // we just call this for the side-effect, no return values consumed.
-  useAutoScroll([messages.length, isThinking])
+  // Phase 7 Move 6 — smart auto-scroll: place the latest assistant
+  // turn's spec-tag at viewport-top:90 instead of dumping the user
+  // at the bottom of a long body. JumpToLatestFab (rendered inside
+  // InputBar) owns the matching pause/jump UI independently.
+  let latestAssistantId: string | null = null
+  for (let i = messages.length - 1; i >= 0; i--) {
+    if (messages[i].role === 'assistant') {
+      latestAssistantId = messages[i].id
+      break
+    }
+  }
+  useAutoScroll({ latestAssistantId, topOffset: 90 })
 
   // Phase 7 Move 4 — chapter detection. Map by startIdx for O(1)
   // lookup in the render loop. Index is 1-based so the divider's
