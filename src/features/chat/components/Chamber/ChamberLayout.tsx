@@ -22,7 +22,6 @@ import {
   type ReactNode,
   type RefObject,
 } from 'react'
-import { BlueprintSubstrate } from '@/components/shared/BlueprintSubstrate'
 import { CursorParallax } from './CursorParallax'
 
 interface Props {
@@ -82,11 +81,13 @@ export function ChamberLayout({
          * whole chamber regardless of any scroll context underneath.
          *
          * Phase 7.8 §2.7 — AmbientTint dropped from the mount + props.
-         * The Manuscript direction wants the page bg to read as plain
-         * paper warmth (#F5EFDF), not a specialist-keyed hue wash. The
-         * AmbientTint component file stays in src/ for future re-use. */}
+         * Phase 7.9 §2.7 — BlueprintSubstrate dropped from the chat
+         * surface. The prototype shows zero visible grid behind the
+         * conversation; the substrate's 4 % alpha was reading on
+         * scroll. CursorParallax + grain stay (subliminal). The
+         * substrate component continues to render on dashboard /
+         * wizard / result / loader. */}
         <CursorParallax />
-        <BlueprintSubstrate />
         <div aria-hidden="true" className="grain-overlay-fixed" />
 
         {/* Banners — fixed at the very top of the chamber surface. */}
