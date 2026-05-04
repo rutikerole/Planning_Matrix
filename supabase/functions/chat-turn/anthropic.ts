@@ -45,7 +45,10 @@ import {
 const MAX_TOKENS = 1280
 const ABORT_TIMEOUT_MS = 50_000
 
-// Sonnet 4.5 pricing in USD per million tokens (April 2026).
+// Sonnet 4.6 pricing in USD per million tokens (March 2026 — identical
+// to the prior 4.5 schedule per Anthropic's announcement). If pricing
+// drifts in a future Sonnet release, update both here and the cost
+// ticker breakdown in CostTicker.tsx.
 const COST_INPUT_PER_MTOK = 3.0
 const COST_OUTPUT_PER_MTOK = 15.0
 const COST_CACHE_WRITE_PER_MTOK = 3.75

@@ -17,12 +17,14 @@
 //     close eye on the diff in PRs.
 // ───────────────────────────────────────────────────────────────────────
 
-// Model — Sonnet 4.5 locked for v1 per the brief.
+// Model — Sonnet 4.6 (released 17 February 2026, same pricing as 4.5,
+// stronger instruction-following + better tool-use schema adherence,
+// 1M context window standard). Drop-in upgrade from 4.5 — same Messages
+// API, same forced tool_choice flow, same prompt-caching headers.
 //
-// TODO(model-upgrade): evaluate claude-sonnet-4-6 in Phase 3.5 — same
-// pricing, reportedly stronger reasoning. Don't ship the upgrade until
-// we have real conversation transcripts to A/B against.
-export const MODEL = 'claude-sonnet-4-5' as const
+// Rollback path: revert to 'claude-sonnet-4-5' below. Both strings are
+// kept in commit history for fast bisecting if a 4.6 regression appears.
+export const MODEL = 'claude-sonnet-4-6' as const
 
 export const RESPOND_TOOL_NAME = 'respond' as const
 
