@@ -1195,11 +1195,8 @@
       "idk": {
         "label": "Weiß ich nicht",
         "research": "Recherche durchführen lassen",
-        "researchExplain": "Wir prüfen verfügbare Quellen und markieren das Ergebnis als Annahme.",
         "assume": "Als Annahme markieren",
-        "assumeExplain": "Wir gehen vorerst von einer typischen Konstellation aus und können später korrigieren.",
-        "skip": "Zurückstellen",
-        "skipExplain": "Diese Frage parken wir; sie blockiert nichts Wesentliches."
+        "skip": "Zurückstellen"
       }
     },
     "atTheTableEmpty": "Noch keine Fachperson aktiv.",

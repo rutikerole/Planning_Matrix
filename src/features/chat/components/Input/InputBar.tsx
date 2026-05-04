@@ -35,6 +35,7 @@ import { SuggestionChips } from './SuggestionChips'
 import { AttachmentChip } from './AttachmentChip'
 import { AttachmentPicker } from './AttachmentPicker'
 import { SendButton } from './SendButton'
+import { IdkChips, type IdkMode } from './IdkChips'
 import { JumpToLatestFab } from '../JumpToLatestFab'
 
 /** Resolve the send-now text for the Continue button. */
@@ -106,8 +107,15 @@ interface Props {
     userAnswer: UserAnswer
     attachmentIds: string[]
   }) => void
-  /** Render the IDK trigger if `allow_idk` on the last assistant turn. */
-  onIdkClick?: () => void
+  /**
+   * Phase 7 Move 7 — IdkChips replace IdkPopover. Receives the mode
+   * directly (research / assume / skip) and submits the same
+   * `{ kind: 'idk', mode }` payload the popover used to. Renders
+   * inline above the textarea when `allow_idk` is set on the last
+   * assistant turn; the legacy bottom-row "Weiß ich nicht" link is
+   * removed.
+   */
+  onIdkChoose?: (mode: IdkMode) => void
   /** Optional override (e.g. while a turn is in flight). */
   forceDisabled?: boolean
   /**
@@ -136,7 +144,7 @@ const MAX_LENGTH = 4000
 export function InputBar({
   lastAssistant,
   onSubmit,
-  onIdkClick,
+  onIdkChoose,
   forceDisabled,
   embedded,
 }: Props) {
@@ -286,6 +294,18 @@ export function InputBar({
             />
           )}
 
+          {/* Phase 7 Move 7 — IDK chips. Render only when the latest
+            * assistant turn allows it AND the parent supplied a handler.
+            * Each chip submits the same { kind: 'idk', mode } payload
+            * the legacy IdkPopover did. */}
+          {onIdkChoose && (
+            <IdkChips
+              visible={allowIdk && !disabled}
+              disabled={disabled}
+              onChoose={onIdkChoose}
+            />
+          )}
+
           {/* Attachment chips — always above the textarea, never replace. */}
           {attachments.length > 0 && (
             <ul
@@ -388,8 +408,9 @@ export function InputBar({
             <SendButton isEmpty={isEmpty} disabled={disabled} onSend={handleSubmit} />
           </div>
 
-          {/* Bottom row — IDK link + tiny helper hint. */}
-          <div className="flex items-center justify-between gap-3 px-1">
+          {/* Bottom row — tiny helper hint only. The legacy "Weiß ich
+            * nicht" link moved to IdkChips above (Phase 7 Move 7). */}
+          <div className="flex items-center justify-start gap-3 px-1">
             <p
               className={cn(
                 'text-[11px] italic leading-relaxed transition-opacity duration-soft',
@@ -401,18 +422,6 @@ export function InputBar({
                 defaultValue: 'Sie können auch frei antworten.',
               })}
             </p>
-            {allowIdk && !disabled && onIdkClick ? (
-              <button
-                type="button"
-                onClick={onIdkClick}
-                aria-label={t('chat.input.idk.label')}
-                className="text-[11px] text-ink/65 hover:text-ink underline underline-offset-4 decoration-clay/55 transition-colors duration-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm"
-              >
-                {t('chat.input.idk.label')}
-              </button>
-            ) : (
-              <span aria-hidden="true" />
-            )}
           </div>
     </Shell>
   )

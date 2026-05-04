@@ -10,7 +10,6 @@ import { LeftRail } from '../components/LeftRail'
 import { RightRail } from '../components/RightRail'
 import { Thread } from '../components/Thread'
 import { InputBar } from '../components/Input'
-import { IdkPopover } from '../components/Input/IdkPopover'
 import { OfflineBanner } from '../components/Banners'
 import { ErrorBanner } from '../components/ErrorBanner'
 import { MobileTopBar } from '../components/MobileTopBar'
@@ -158,7 +157,6 @@ export function ChatWorkspacePage() {
       .reverse()
       .find((m) => m.role === 'assistant') ?? null
 
-  const [idkOpen, setIdkOpen] = useState(false)
   const chatTurn = useChatTurn(projectId)
   const isThinking = useChatStore((s) => s.isAssistantThinking)
   const reduced = useReducedMotion()
@@ -258,7 +256,7 @@ export function ChatWorkspacePage() {
     <InputBar
       lastAssistant={lastAssistant}
       onSubmit={handleSubmit}
-      onIdkClick={() => setIdkOpen(true)}
+      onIdkChoose={handleIdkChoose}
       forceDisabled={isThinking || queueFull}
       embedded
     />
@@ -351,12 +349,6 @@ export function ChatWorkspacePage() {
         </>
       )}
       <ConversationCursor />
-
-      <IdkPopover
-        open={idkOpen}
-        onClose={() => setIdkOpen(false)}
-        onChoose={handleIdkChoose}
-      />
 
       <MobileRailDrawer
         open={leftOpen}

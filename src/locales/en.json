@@ -1189,11 +1189,8 @@
       "idk": {
         "label": "I'm not sure",
         "research": "Research it for me",
-        "researchExplain": "We check available sources and mark the result as an assumption.",
         "assume": "Mark as assumption",
-        "assumeExplain": "We start with a typical case and can correct it later.",
-        "skip": "Set aside",
-        "skipExplain": "We park this question; it doesn't block anything essential."
+        "skip": "Set aside"
       }
     },
     "atTheTableEmpty": "No specialist active yet.",
