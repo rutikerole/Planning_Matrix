@@ -23,33 +23,34 @@ export function SpineHeader({ projectName, plotAddress, percent, round, totalEst
 
   return (
     <header className="sticky top-0 bg-paper-card px-4 pt-4 pb-3.5 border-b border-[var(--hairline,rgba(26,22,18,0.08))] z-[1]">
-      {/* Project name (wordmark moved to <AppHeader> in commit 3) */}
+      {/* Project name (wordmark moved to <AppHeader> in commit 3).
+        * Phase 7.6 §1.5 — 12.5 → 14 px, plot 10 → 11 px, round 9 → 10.5 px. */}
       <p
-        className="text-[12.5px] font-medium text-ink leading-[1.3] line-clamp-2"
+        className="text-[14px] font-medium text-ink leading-[1.3] line-clamp-2"
         title={projectName}
       >
         {cleanName}
       </p>
       {fallbackStreet && (
-        <p className="text-[12.5px] font-medium text-ink leading-[1.3]" title={plotAddress ?? ''}>
+        <p className="text-[14px] font-medium text-ink leading-[1.3]" title={plotAddress ?? ''}>
           {fallbackStreet}
         </p>
       )}
 
       {/* Plot suffix line */}
       {plot && plot !== plotAddress && (
-        <p className="mt-1 text-[10px] text-clay leading-tight tabular-figures">
+        <p className="mt-1 text-[11px] text-clay leading-tight tabular-figures">
           {plot}
         </p>
       )}
 
       {/* Round + percent */}
-      <div className="mt-3 flex items-baseline justify-between gap-2">
-        <p className="font-mono text-[9px] uppercase tracking-[0.18em] text-clay leading-none">
+      <div className="mt-3.5 flex items-baseline justify-between gap-2">
+        <p className="font-mono text-[10.5px] uppercase tracking-[0.18em] text-clay leading-none">
           {t('chat.spine.header.round', { current: round, total: totalEstimate })}
         </p>
-        <p className="font-serif italic text-[12px] text-ink tabular-figures leading-none">
-          {percent}<span className="text-[10px] text-ink/55">%</span>
+        <p className="font-serif italic text-[13px] text-ink tabular-figures leading-none">
+          {percent}<span className="text-[11px] text-ink/55">%</span>
         </p>
       </div>
 

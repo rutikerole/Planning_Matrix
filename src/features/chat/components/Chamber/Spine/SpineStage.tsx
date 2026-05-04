@@ -76,12 +76,15 @@ export function SpineStage({ stage, onClick }: Props) {
         )}
       </span>
 
-      {/* Content column */}
-      <div className="relative flex flex-col gap-0.5 py-1 pr-3 min-w-0">
+      {/* Content column — Phase 7.6 §1.5 typography bump:
+        * title 11→13, sub 9→11, snippet 9→11. Line-height stays
+        * 1.35 to keep three lines in the live row from overflowing
+        * the 240 px column. */}
+      <div className="relative flex flex-col gap-1 py-1 pr-3 min-w-0">
         <span
           id={titleId}
           className={cn(
-            'text-[11px] leading-[1.3] text-ink',
+            'text-[13px] leading-[1.35] text-ink',
             stage.status === 'live' ? 'font-medium' : 'font-normal',
           )}
         >
@@ -89,7 +92,7 @@ export function SpineStage({ stage, onClick }: Props) {
         </span>
         {showSub && (
           <span
-            className="text-[9px] text-clay leading-tight"
+            className="text-[11px] text-clay leading-tight"
             style={{ letterSpacing: '0.04em' }}
           >
             {t(subKey, { defaultValue: stage.specialistName })}
@@ -98,7 +101,7 @@ export function SpineStage({ stage, onClick }: Props) {
         {showSnippet && (
           <span
             id={tooltipId}
-            className="text-[9px] italic text-clay/85 font-serif leading-tight truncate"
+            className="text-[11px] italic text-clay/85 font-serif leading-snug line-clamp-2"
             title={stage.snippet ?? ''}
           >
             {stage.snippet}
@@ -111,7 +114,7 @@ export function SpineStage({ stage, onClick }: Props) {
             id={tooltipId}
             data-spine-tooltip="true"
             role="tooltip"
-            className="absolute left-0 right-0 top-full mt-0.5 text-[9px] italic text-clay/85 font-serif leading-tight truncate"
+            className="absolute left-0 right-0 top-full mt-0.5 text-[11px] italic text-clay/85 font-serif leading-snug line-clamp-2"
             title={stage.snippet}
           >
             {t('chat.spine.tooltip.donePrefix')} {stage.snippet}
