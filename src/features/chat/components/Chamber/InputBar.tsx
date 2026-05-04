@@ -160,15 +160,20 @@ export function InputBar({
 
   return (
     <div className="relative flex flex-col gap-3">
-      {/* Smart chips */}
-      <SmartChips
-        lastAssistant={lastAssistant}
-        disabled={disabled}
-        onPick={(a) => applySuggestion(suggestionFromAnswer(a))}
-        onContinue={handleContinue}
-        onIdkOpen={() => setLongPressOpen(true)}
-        showIdk={showIdk}
-      />
+      {/* Smart chips. Phase 7.9 §2.5 — 56 px left-indent so the
+        * chip row aligns with the chapter-heading body indent and
+        * reads as a continuation of the conversation, not a chrome
+        * detail of the input bar. */}
+      <div className="pl-14">
+        <SmartChips
+          lastAssistant={lastAssistant}
+          disabled={disabled}
+          onPick={(a) => applySuggestion(suggestionFromAnswer(a))}
+          onContinue={handleContinue}
+          onIdkOpen={() => setLongPressOpen(true)}
+          showIdk={showIdk}
+        />
+      </div>
 
       {/* Attachment chips */}
       {attachments.length > 0 && (
