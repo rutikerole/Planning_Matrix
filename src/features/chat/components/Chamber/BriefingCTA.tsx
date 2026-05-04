@@ -30,9 +30,13 @@ interface Props {
     | 'ready_for_review'
     | 'blocked'
     | null
+  /** Phase 7.5 — when "sidebar", render a full-width compact pill in
+   *  ink + paper inside the SpineFooter; ignore the gate's
+   *  prominence (the Spine button is always visible). */
+  variant?: 'inline' | 'sidebar'
 }
 
-export function BriefingCTA({ projectId, gate, signal }: Props) {
+export function BriefingCTA({ projectId, gate, signal, variant = 'inline' }: Props) {
   const { t } = useTranslation()
   const reduced = useReducedMotion()
 
@@ -43,6 +47,41 @@ export function BriefingCTA({ projectId, gate, signal }: Props) {
       return () => window.clearTimeout(id)
     }
   }, [gate])
+
+  // Phase 7.5 sidebar variant — always visible, full-width pill in
+  // ink/paper. Gate's prominence is ignored except for the "ready"
+  // halo + pulse, which transfer over.
+  if (variant === 'sidebar') {
+    const isReady =
+      signal === 'ready_for_review' ||
+      gate.prominence === 'ready' ||
+      gate.prominence === 'hero'
+    return (
+      <m.div
+        initial={false}
+        animate={
+          gate.shouldPulse && !reduced ? { scale: [1, 1.04, 1] } : { scale: 1 }
+        }
+        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+        className="w-full"
+      >
+        <Link
+          to={`/projects/${projectId}/result`}
+          aria-label={t('chat.spine.footer.openBriefing')}
+          className={cn(
+            'group inline-flex w-full items-center justify-center gap-2 px-3 py-2.5 rounded-lg',
+            'bg-ink text-paper text-[12px] font-medium tracking-[0.04em]',
+            'transition-[background-color,transform] duration-200 hover:bg-[hsl(220_16%_16%)] motion-safe:active:scale-[0.98]',
+            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink focus-visible:ring-offset-2 focus-visible:ring-offset-paper-card',
+            isReady && 'border border-clay shadow-[0_0_0_4px_var(--spine-stage-halo)]',
+          )}
+        >
+          <span>{t('chat.spine.footer.openBriefing')}</span>
+          <ArrowUpRight aria-hidden="true" className="size-[14px] motion-safe:group-hover:translate-x-0.5 transition-transform duration-200" />
+        </Link>
+      </m.div>
+    )
+  }
 
   if (!gate.visible) return null
 

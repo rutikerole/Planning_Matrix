@@ -41,19 +41,21 @@ export interface CompletionGate {
 export function useCompletionGate(input: CompletionGateInput): CompletionGate {
   const [pulseFired, setPulseFired] = useState(false)
 
-  // Determine the steady-state prominence.
+  // Phase 7.5 — inline thread-end variant collapses its early stages
+  // because the Spine sidebar carries a full-volume CTA from turn 1:
+  //   < 60 %                                    → hidden
+  //   60–94 %                                   → outlined
+  //   ≥ 95 % OR completionSignal=ready_for_review → hero (+ ready pulse)
+  // The BriefingCTA's variant="sidebar" path ignores this and stays
+  // always-prominent.
   let prominence: BriefingProminence = 'hidden'
   if (input.hasMessages) {
     if (input.completionSignal === 'ready_for_review' || input.percent >= 95) {
       prominence = 'hero'
-    } else if (input.percent >= 85) {
-      prominence = 'hero'
     } else if (input.percent >= 60) {
       prominence = 'outlined'
-    } else if (input.percent >= 30) {
-      prominence = 'badge'
     } else {
-      prominence = 'whisper'
+      prominence = 'hidden'
     }
   }
 
