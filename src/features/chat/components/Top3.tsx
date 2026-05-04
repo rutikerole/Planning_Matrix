@@ -1,6 +1,9 @@
+import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import { AnimatePresence, m, useReducedMotion } from 'framer-motion'
+import { cn } from '@/lib/utils'
 import type { Recommendation } from '@/types/projectState'
+import { useFreshSet } from '../lib/useFreshSet'
 
 interface Props {
   recommendations: Recommendation[]
@@ -28,6 +31,12 @@ export function Top3({ recommendations }: Props) {
   const lang = (i18n.resolvedLanguage ?? 'de') as 'de' | 'en'
 
   const top = recommendations.slice().sort((a, b) => a.rank - b.rank).slice(0, 3)
+
+  // Phase 7 Move 10a — flag newly-arriving recommendations for the
+  // 2.4 s clay edge-bar fade. First-mount items are seeded as seen,
+  // so existing top-3 entries don't pulse on initial render.
+  const getRecId = useCallback((r: Recommendation) => r.id, [])
+  const freshIds = useFreshSet(top, getRecId)
 
   return (
     <div className="flex flex-col gap-3">
@@ -65,13 +74,30 @@ export function Top3({ recommendations }: Props) {
                 transition={{ layout: { duration: reduced ? 0 : 0.32, ease: [0.16, 1, 0.3, 1] } }}
                 className="flex flex-col gap-2"
               >
-                <article className="relative flex flex-col gap-2 border border-border-strong/30 rounded-sm bg-paper px-5 py-6">
+                <article
+                  className={cn(
+                    'relative flex flex-col gap-2 border rounded-sm bg-paper px-5 py-6',
+                    freshIds.has(rec.id)
+                      ? 'border-clay-soft'
+                      : 'border-border-strong/30',
+                  )}
+                >
                   {/* Drafting-blue hairline running full-height down the
                    * left edge of the card. */}
                   <span
                     aria-hidden="true"
                     className="absolute left-0 top-0 bottom-0 w-px bg-drafting-blue/35"
                   />
+                  {/* Phase 7 Move 10a — clay 2 px edge bar that fades
+                   * over 2.4 s when this rec was just added. Sits over
+                   * the drafting-blue hairline so the freshness reads
+                   * regardless of card content. */}
+                  {freshIds.has(rec.id) && (
+                    <span
+                      aria-hidden="true"
+                      className="absolute -left-px top-0 bottom-0 w-[2px] bg-clay rounded-l-[2px] pm-fresh-edge"
+                    />
+                  )}
                   <p className="font-display leading-snug text-ink display-tight">
                     <span className="font-serif italic text-[28px] text-clay-deep tabular-figures mr-2.5 align-baseline">
                       {idx + 1}.

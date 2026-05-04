@@ -448,6 +448,35 @@
     );
   }
 
+  /* Phase 7 Move 10 — right-rail liveness motion utilities.
+   *
+   * `pm-fresh-edge` — a clay 2 px left bar that holds visible for the
+   *   first 60 % of the 2.4 s window then fades to 0. Applied to the
+   *   absolute span inside Top3 and EckdatenPanel rows when the item
+   *   was newly added (tracked by useFreshSet).
+   *
+   * `pm-area-pulse` — a clay 2 px left bar that loops a 1.4 s opacity
+   *   pulse forever while the corresponding area is "live" (the latest
+   *   assistant specialist maps to it). Applied to the BereichePlanSection
+   *   legend row that matches the live area.
+   *
+   * Both are reduced-motion-aware via the global *::after rule above.
+   */
+  @keyframes pmFreshEdgeFade {
+    0%, 60% { opacity: 1; }
+    100%    { opacity: 0; }
+  }
+  .pm-fresh-edge {
+    animation: pmFreshEdgeFade 2400ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+  @keyframes pmAreaPulse {
+    0%, 100% { opacity: 1; }
+    50%      { opacity: 0.4; }
+  }
+  .pm-area-pulse {
+    animation: pmAreaPulse 1.4s cubic-bezier(0.32, 0.72, 0, 1) infinite;
+  }
+
   /* Phase 3.2 #36 — italic running head used as a "voice" label below
    * specialist tags, on completion interstitials, and on overview headers. */
   .role-running-head {

@@ -1,10 +1,20 @@
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useReducedMotion } from 'framer-motion'
+import { cn } from '@/lib/utils'
 import type { AreaState, ProjectState } from '@/types/projectState'
 
 interface Props {
   state: Partial<ProjectState>
+  /**
+   * Phase 7 Move 10c — when the latest assistant specialist maps to
+   * an area (planungsrecht → A, bauordnungsrecht → B,
+   * sonstige_vorgaben → C), the corresponding legend row gets a 2 px
+   * clay left bar that pulses 1.4 s ease-soft infinite. Other
+   * specialists (moderator / verfahren / beteiligte / synthesizer)
+   * map to null — no live indicator.
+   */
+  liveArea?: 'A' | 'B' | 'C' | null
 }
 
 /**
@@ -24,7 +34,7 @@ interface Props {
  * The diagram reads as a section-cut through three jurisdictional layers
  * — each band is a strip of the project being inspected.
  */
-export function BereichePlanSection({ state }: Props) {
+export function BereichePlanSection({ state, liveArea = null }: Props) {
   const { t } = useTranslation()
   const reduced = useReducedMotion()
   const areas = state.areas ?? {
@@ -288,9 +298,20 @@ export function BereichePlanSection({ state }: Props) {
         {bands.map((band) => (
           <li
             key={band.key}
-            className="flex items-baseline gap-3 text-[12px]"
+            className={cn(
+              'relative flex items-baseline gap-3 text-[12px] pl-2',
+              liveArea === band.key && 'text-ink',
+            )}
             title={band.reason ?? ''}
           >
+            {/* Phase 7 Move 10c — pulsing live bar on the area whose
+              * specialist is currently speaking. */}
+            {liveArea === band.key && (
+              <span
+                aria-hidden="true"
+                className="absolute left-0 top-0 bottom-0 w-[2px] bg-clay rounded-[2px] pm-area-pulse"
+              />
+            )}
             <span className="font-serif italic text-[11px] text-clay-deep tabular-figures w-3 shrink-0">
               {band.key}
             </span>

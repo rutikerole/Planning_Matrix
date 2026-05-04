@@ -1,9 +1,12 @@
+import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import { AnimatePresence, m, useReducedMotion } from 'framer-motion'
+import { cn } from '@/lib/utils'
 import type { Fact } from '@/types/projectState'
 import type { ProjectRow } from '@/types/db'
 import { factLabel, factValueWithUnit } from '@/lib/factLabel'
 import { INTENT_TO_I18N } from '@/features/wizard/lib/selectTemplate'
+import { useFreshSet } from '../lib/useFreshSet'
 
 interface Props {
   project: ProjectRow
@@ -71,6 +74,12 @@ export function EckdatenPanel({ project, facts }: Props) {
 
   const all = [...derived, ...fromState].slice(0, 6)
 
+  // Phase 7 Move 10b — flag newly-arriving fact rows for the 2.4 s
+  // clay edge-bar fade. First-mount items are seeded as seen, so
+  // existing facts don't pulse on initial render.
+  const getRowId = useCallback((row: RailFact) => row.id, [])
+  const freshIds = useFreshSet(all, getRowId)
+
   return (
     <div className="flex flex-col gap-3 border-t border-border/40 pt-6">
       <div className="flex items-baseline justify-between">
@@ -90,11 +99,20 @@ export function EckdatenPanel({ project, facts }: Props) {
               animate={{ opacity: 1, y: 0 }}
               exit={reduced ? { opacity: 0 } : { opacity: 0, y: -4 }}
               transition={{ duration: reduced ? 0 : 0.24, ease: [0.16, 1, 0.3, 1] }}
-              className={`grid grid-cols-[24px_1fr] gap-x-3 py-3 ${
-                idx > 0 ? 'border-t border-border/30' : ''
-              }`}
+              className={cn(
+                'relative grid grid-cols-[24px_1fr] gap-x-3 py-3',
+                idx > 0 && 'border-t border-border/30',
+              )}
               title={row.evidence ?? ''}
             >
+              {/* Phase 7 Move 10b — clay 2 px edge bar that fades
+                * over 2.4 s when this fact was just added. */}
+              {freshIds.has(row.id) && (
+                <span
+                  aria-hidden="true"
+                  className="absolute -left-1 top-1 bottom-1 w-[2px] bg-clay rounded-[2px] pm-fresh-edge"
+                />
+              )}
               {/* Roman numeral column with right-edge hairline */}
               <span className="font-serif italic text-[12px] text-clay-deep tabular-figures leading-none pt-1 border-r border-border/40 pr-2 text-center">
                 {ROMAN[idx] ?? String(idx + 1)}

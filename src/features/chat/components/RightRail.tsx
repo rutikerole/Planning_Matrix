@@ -14,6 +14,30 @@ interface Props {
   messages: MessageRow[]
 }
 
+// Phase 7 Move 10c — derive the live area from the latest assistant
+// specialist. Only the three "area-owning" specialists map to A/B/C;
+// moderator / verfahren / beteiligte / synthesizer cover work that
+// spans areas, so we render no live indicator while they speak.
+function liveAreaFromMessages(
+  messages: MessageRow[],
+): 'A' | 'B' | 'C' | null {
+  for (let i = messages.length - 1; i >= 0; i--) {
+    const m = messages[i]
+    if (m.role !== 'assistant' || !m.specialist) continue
+    switch (m.specialist) {
+      case 'planungsrecht':
+        return 'A'
+      case 'bauordnungsrecht':
+        return 'B'
+      case 'sonstige_vorgaben':
+        return 'C'
+      default:
+        return null
+    }
+  }
+  return null
+}
+
 /**
  * Phase 3.2 #40 — right rail rebuilt as an architectural project
  * sidebar. Reads top-to-bottom like the cover sheet of a Bauantrag:
@@ -28,10 +52,11 @@ interface Props {
  *   6. Overview link
  *   7. Cost ticker as scale-bar flourish
  */
-export function RightRail({ project }: Props) {
+export function RightRail({ project, messages }: Props) {
   const state = (project.state ?? {}) as Partial<ProjectState>
   const recommendations = state.recommendations ?? []
   const facts = (state.facts ?? []).slice(-5).reverse()
+  const liveArea = liveAreaFromMessages(messages)
 
   return (
     <div className="w-full flex flex-col px-5 py-7 gap-7">
@@ -44,8 +69,10 @@ export function RightRail({ project }: Props) {
       {/* 2. TOP-3 cards */}
       <Top3 recommendations={recommendations} />
 
-      {/* 3. BEREICHE plan-section */}
-      <BereichePlanSection state={state} />
+      {/* 3. BEREICHE plan-section. Phase 7 Move 10c — live area
+        * derived from latest assistant specialist drives a pulsing
+        * legend bar on A/B/C. */}
+      <BereichePlanSection state={state} liveArea={liveArea} />
 
       {/* 4. ECKDATEN schedule */}
       <EckdatenPanel project={project} facts={facts} />
