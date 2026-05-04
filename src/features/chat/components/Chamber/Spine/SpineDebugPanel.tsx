@@ -32,21 +32,38 @@ export function SpineDebugPanel({ project, messages, stages, progress }: Props) 
     () => (state.facts ?? []).map((f) => f.key),
     [state.facts],
   )
-  const areas = state.areas ?? { A: { state: 'PENDING' }, B: { state: 'PENDING' }, C: { state: 'PENDING' } }
-  const counts = {
-    facts: state.facts?.length ?? 0,
-    procedures: state.procedures?.length ?? 0,
-    documents: state.documents?.length ?? 0,
-    roles: state.roles?.length ?? 0,
-    recommendations: state.recommendations?.length ?? 0,
-    messages: messages.length,
-    assistants: messages.filter((m) => m.role === 'assistant').length,
-  }
+  const areas = useMemo(
+    () =>
+      state.areas ?? {
+        A: { state: 'PENDING' as const },
+        B: { state: 'PENDING' as const },
+        C: { state: 'PENDING' as const },
+      },
+    [state.areas],
+  )
+  const counts = useMemo(
+    () => ({
+      facts: state.facts?.length ?? 0,
+      procedures: state.procedures?.length ?? 0,
+      documents: state.documents?.length ?? 0,
+      roles: state.roles?.length ?? 0,
+      recommendations: state.recommendations?.length ?? 0,
+      messages: messages.length,
+      assistants: messages.filter((m) => m.role === 'assistant').length,
+    }),
+    [
+      state.facts?.length,
+      state.procedures?.length,
+      state.documents?.length,
+      state.roles?.length,
+      state.recommendations?.length,
+      messages,
+    ],
+  )
 
   // Echo to console.table for copy-paste.
   useEffect(() => {
     if (!enabled) return
-    /* eslint-disable no-console */
     console.groupCollapsed('%c[spine debug]', 'color:#7a5232; font-weight:600')
     console.log('progress', progress)
     console.log('counts', counts)
@@ -61,7 +78,6 @@ export function SpineDebugPanel({ project, messages, stages, progress }: Props) 
       firstMsgIdx: s.firstMessageIndex,
     })))
     console.groupEnd()
-    /* eslint-enable no-console */
   }, [enabled, stages, progress, factKeys, counts, areas])
 
   if (!enabled) return null

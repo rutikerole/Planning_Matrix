@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 // Phase 7 Chamber — top-level shell.
 //
 // Phase 7.6 §1.1 — replaced document-level scroll with a viewport-
