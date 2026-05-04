@@ -265,8 +265,9 @@
     --max-content:  1480px;
 
     /* ── Phase 7 Chamber tokens ────────────────────────────────
-     * Single-column conversation, ambient tinting, no rails. */
-    --chamber-col-max:        720px;
+     * Single-column conversation, ambient tinting, no rails.
+     * Phase 7.9 §2.5 — col-max 720 → 820 px (Manuscript reach). */
+    --chamber-col-max:        820px;
     --chamber-col-px-desktop: 32px;
     --chamber-col-px-tablet:  24px;
     --chamber-col-px-mobile:  16px;
