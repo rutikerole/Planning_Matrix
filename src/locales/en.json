@@ -1385,6 +1385,74 @@
       "completionContinueHint": "You can keep asking or open the briefing.",
       "errorRetry": "Try again",
       "errorDismiss": "Dismiss"
+    },
+    "spine": {
+      "header": {
+        "round": "Round {{current}} · ~ {{total}}",
+        "percent": "{{percent}} %"
+      },
+      "stages": {
+        "project_intent": {
+          "title": "Project intent",
+          "subDone": "moderator · done",
+          "subLive": "moderator · live",
+          "subNext": "next"
+        },
+        "plot_address": {
+          "title": "Plot & address",
+          "subDone": "moderator · done",
+          "subDoneNoPlot": "no plot · acknowledged",
+          "subLive": "moderator · live",
+          "subNext": "next"
+        },
+        "planungsrecht": {
+          "title": "Planungsrecht profile",
+          "subDone": "planungsrecht · done",
+          "subLive": "planungsrecht · live",
+          "subNext": "next"
+        },
+        "bauordnungsrecht": {
+          "title": "Bauordnungsrecht",
+          "subDone": "bauordnungsrecht · done",
+          "subLive": "bauordnungsrecht · live",
+          "subNext": "next · BayBO"
+        },
+        "sonstige_vorgaben": {
+          "title": "Sonstige Vorgaben",
+          "subDone": "sonstige · done",
+          "subLive": "sonstige · live",
+          "subNext": "next"
+        },
+        "verfahren": {
+          "title": "Verfahren synthesis",
+          "subDone": "verfahren · synthesised",
+          "subLive": "verfahren · live",
+          "subNext": "next"
+        },
+        "beteiligte": {
+          "title": "Beteiligte & roles",
+          "subDone": "beteiligte · done",
+          "subLive": "beteiligte · live",
+          "subNext": "next"
+        },
+        "final_synthesis": {
+          "title": "Final synthesis",
+          "subDone": "complete",
+          "subLive": "synthesis · live",
+          "subNext": "last"
+        }
+      },
+      "mobile": {
+        "trigger": "{{done}} of 8 · {{current}}",
+        "drawerTitle": "Project journey"
+      },
+      "footer": {
+        "openBriefing": "Open briefing"
+      },
+      "tooltip": {
+        "donePrefix": "Captured:",
+        "snippetEmpty": "—"
+      }
     }
   },
   "cockpit": {

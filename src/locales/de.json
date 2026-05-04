@@ -1385,6 +1385,74 @@
       "completionContinueHint": "Sie können weiter fragen oder das Briefing öffnen.",
       "errorRetry": "Erneut versuchen",
       "errorDismiss": "Schließen"
+    },
+    "spine": {
+      "header": {
+        "round": "Runde {{current}} · ~ {{total}}",
+        "percent": "{{percent}} %"
+      },
+      "stages": {
+        "project_intent": {
+          "title": "Vorhaben",
+          "subDone": "Moderator · erfasst",
+          "subLive": "Moderator · live",
+          "subNext": "als Nächstes"
+        },
+        "plot_address": {
+          "title": "Grundstück",
+          "subDone": "Moderator · erfasst",
+          "subDoneNoPlot": "ohne Grundstück · zur Kenntnis genommen",
+          "subLive": "Moderator · live",
+          "subNext": "als Nächstes"
+        },
+        "planungsrecht": {
+          "title": "Planungsrecht",
+          "subDone": "Planungsrecht · erfasst",
+          "subLive": "Planungsrecht · live",
+          "subNext": "als Nächstes"
+        },
+        "bauordnungsrecht": {
+          "title": "Bauordnungsrecht",
+          "subDone": "Bauordnungsrecht · erfasst",
+          "subLive": "Bauordnungsrecht · live",
+          "subNext": "als Nächstes · BayBO"
+        },
+        "sonstige_vorgaben": {
+          "title": "Sonstige Vorgaben",
+          "subDone": "Sonstige · erfasst",
+          "subLive": "Sonstige · live",
+          "subNext": "als Nächstes"
+        },
+        "verfahren": {
+          "title": "Verfahren",
+          "subDone": "Verfahren · synthetisiert",
+          "subLive": "Verfahren · live",
+          "subNext": "als Nächstes"
+        },
+        "beteiligte": {
+          "title": "Beteiligte",
+          "subDone": "Beteiligte · erfasst",
+          "subLive": "Beteiligte · live",
+          "subNext": "als Nächstes"
+        },
+        "final_synthesis": {
+          "title": "Abschluss",
+          "subDone": "abgeschlossen",
+          "subLive": "Synthese · live",
+          "subNext": "als Letztes"
+        }
+      },
+      "mobile": {
+        "trigger": "{{done}} von 8 · {{current}}",
+        "drawerTitle": "Projektreise"
+      },
+      "footer": {
+        "openBriefing": "Briefing öffnen"
+      },
+      "tooltip": {
+        "donePrefix": "Erfasst:",
+        "snippetEmpty": "—"
+      }
     }
   },
   "cockpit": {
