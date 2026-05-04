@@ -914,6 +914,15 @@
       "label": "Aktueller Gesprächskontext",
       "backToLive": "zurück zum Live-Stand"
     },
+    "chapters": {
+      "moderator":         { "inProgress": "Eröffnung · läuft",          "resolved": "Eröffnung · geklärt" },
+      "planungsrecht":     { "inProgress": "Planungsrecht · läuft",      "resolved": "Planungsrecht · geklärt" },
+      "bauordnungsrecht":  { "inProgress": "Bauordnungsrecht · läuft",   "resolved": "Bauordnungsrecht · geklärt" },
+      "sonstige_vorgaben": { "inProgress": "Sonstige Vorgaben · läuft",  "resolved": "Sonstige Vorgaben · geklärt" },
+      "verfahren":         { "inProgress": "Verfahren · läuft",          "resolved": "Verfahren · geklärt" },
+      "beteiligte":        { "inProgress": "Beteiligte · läuft",         "resolved": "Beteiligte · geklärt" },
+      "synthesizer":       { "inProgress": "Synthese · läuft",           "resolved": "Synthese · geklärt" }
+    },
     "export": {
       "menuLabel": "Exportieren",
       "eyebrow": "Exportieren",

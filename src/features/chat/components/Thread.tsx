@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { MessageUser } from './MessageUser'
 import { MessageAssistant } from './MessageAssistant'
@@ -6,8 +6,10 @@ import { MessageSystem } from './MessageSystem'
 import { ThinkingIndicator } from './ThinkingIndicator'
 import { StreamingAssistantBubble } from './StreamingAssistantBubble'
 import { CompletionInterstitial } from './CompletionInterstitial'
+import { ChapterDivider } from './ChapterDivider'
 import { useChatStore } from '@/stores/chatStore'
 import { useAutoScroll } from '../hooks/useAutoScroll'
+import { detectChapters } from '../lib/detectChapters'
 import type { MessageRow } from '@/types/db'
 
 interface Props {
@@ -40,11 +42,22 @@ export function Thread({ messages }: Props) {
   // we just call this for the side-effect, no return values consumed.
   useAutoScroll([messages.length, isThinking])
 
+  // Phase 7 Move 4 — chapter detection. Map by startIdx for O(1)
+  // lookup in the render loop. Index is 1-based so the divider's
+  // Roman numeral reads naturally (I, II, III, …).
+  const chapters = useMemo(() => detectChapters(messages), [messages])
+  const chapterAt = useMemo(() => {
+    const map = new Map<number, { chapter: (typeof chapters)[number]; index: number }>()
+    chapters.forEach((c, i) => map.set(c.startIdx, { chapter: c, index: i + 1 }))
+    return map
+  }, [chapters])
+
   return (
     <ol className="flex flex-col gap-8">
       {messages.map((row, idx) => {
         const isHistory = initialIds.has(row.id)
-        const showDivider = idx > 0 && idx % 6 === 0
+        const chapterEntry = chapterAt.get(idx)
+        const showDivider = idx > 0 && idx % 6 === 0 && !chapterEntry
         // Find the previous assistant message for match-cut detection.
         let previousSpecialist: string | null = null
         for (let j = idx - 1; j >= 0; j--) {
@@ -61,6 +74,12 @@ export function Thread({ messages }: Props) {
           !messages.slice(0, idx).some((m) => m.role === 'assistant')
         return (
           <li key={row.id} className="flex flex-col gap-8">
+            {chapterEntry && (
+              <ChapterDivider
+                chapter={chapterEntry.chapter}
+                index={chapterEntry.index}
+              />
+            )}
             {showDivider && (
               <span aria-hidden="true" className="block h-px bg-border-strong/30 my-2" />
             )}

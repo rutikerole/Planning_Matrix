@@ -914,6 +914,15 @@
       "label": "Current discussion context",
       "backToLive": "back to live"
     },
+    "chapters": {
+      "moderator":         { "inProgress": "Opening · in progress",          "resolved": "Opening · resolved" },
+      "planungsrecht":     { "inProgress": "Planning law · in progress",     "resolved": "Planning law · resolved" },
+      "bauordnungsrecht":  { "inProgress": "Building code · in progress",    "resolved": "Building code · resolved" },
+      "sonstige_vorgaben": { "inProgress": "Additional rules · in progress", "resolved": "Additional rules · resolved" },
+      "verfahren":         { "inProgress": "Procedure · in progress",        "resolved": "Procedure · resolved" },
+      "beteiligte":        { "inProgress": "Specialists · in progress",      "resolved": "Specialists · resolved" },
+      "synthesizer":       { "inProgress": "Synthesis · in progress",        "resolved": "Synthesis · resolved" }
+    },
     "export": {
       "menuLabel": "Export",
       "eyebrow": "Export",
