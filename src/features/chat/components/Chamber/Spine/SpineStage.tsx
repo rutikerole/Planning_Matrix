@@ -77,7 +77,7 @@ export function SpineStage({ stage, onClick }: Props) {
       </span>
 
       {/* Content column */}
-      <div className="flex flex-col gap-0.5 py-1 pr-3 min-w-0">
+      <div className="relative flex flex-col gap-0.5 py-1 pr-3 min-w-0">
         <span
           id={titleId}
           className={cn(
@@ -102,6 +102,19 @@ export function SpineStage({ stage, onClick }: Props) {
             title={stage.snippet ?? ''}
           >
             {stage.snippet}
+          </span>
+        )}
+        {/* Done-stage hover snippet — revealed via the
+          * [data-spine-status='done']:hover rule in globals.css. */}
+        {stage.status === 'done' && stage.snippet && (
+          <span
+            id={tooltipId}
+            data-spine-tooltip="true"
+            role="tooltip"
+            className="absolute left-0 right-0 top-full mt-0.5 text-[9px] italic text-clay/85 font-serif leading-tight truncate"
+            title={stage.snippet}
+          >
+            {t('chat.spine.tooltip.donePrefix')} {stage.snippet}
           </span>
         )}
       </div>

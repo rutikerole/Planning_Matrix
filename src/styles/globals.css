@@ -585,6 +585,27 @@
   .spine-glow { animation: spineGlow 2.4s ease-in-out infinite; }
   @media (prefers-reduced-motion: reduce) { .spine-glow { animation: none; } }
 
+  /* Phase 7.5 — Spine snippet hover-reveal. Mounted on the row;
+   * picks up a tooltip child within when hovered. */
+  @keyframes spineSnippetIn {
+    0%   { opacity: 0; transform: translateY(-4px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+  [data-spine-status='done'] [data-spine-tooltip] {
+    opacity: 0;
+    transform: translateY(-4px);
+    transition: opacity 240ms ease-out, transform 240ms ease-out;
+    pointer-events: none;
+  }
+  [data-spine-status='done']:hover [data-spine-tooltip],
+  [data-spine-status='done']:focus-within [data-spine-tooltip] {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    [data-spine-status='done'] [data-spine-tooltip] { transition: none; }
+  }
+
   /* Top + bottom mask so the rail fades into the paper at edges. */
   .spine-rail-mask {
     -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 12%, black 88%, transparent 100%);
