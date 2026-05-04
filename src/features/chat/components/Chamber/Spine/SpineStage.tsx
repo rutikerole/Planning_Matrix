@@ -110,8 +110,21 @@ export function SpineStage({ stage, onClick }: Props) {
         </span>
         {showSub && (
           <span
-            className="text-[11px] text-clay leading-tight"
-            style={{ letterSpacing: '0.04em' }}
+            className={cn(
+              'text-[11px] leading-tight',
+              // Phase 7.7 §1.3 — live row's sub-line is italic-serif
+              // marginalia ("Moderator · spricht / · speaking") to
+              // give the live focal point character. Done / next stay
+              // sans clay caps so the live row reads as the moment.
+              stage.status === 'live'
+                ? 'font-serif italic text-clay'
+                : 'text-clay',
+            )}
+            style={
+              stage.status === 'live'
+                ? { letterSpacing: '0' }
+                : { letterSpacing: '0.04em' }
+            }
           >
             {t(subKey, { defaultValue: stage.specialistName })}
           </span>
@@ -160,14 +173,10 @@ export function SpineStage({ stage, onClick }: Props) {
         stage.status === 'next' && 'opacity-100',
       )}
     >
-      {/* Live-stage left bar */}
-      {stage.status === 'live' && (
-        <span
-          aria-hidden="true"
-          className="absolute left-0 top-0 bottom-0 w-[2px]"
-          style={{ background: 'var(--spine-stage-live-bar)' }}
-        />
-      )}
+      {/* Live-stage left bar comes from globals.css ::before pseudo
+        * (commit 5 — soft 4 px clay-tint shadow). The previous
+        * inline absolute span is gone; the pseudo-element renders the
+        * 2 px clay bar with `box-shadow: 4px 0 8px -2px rgba(...)`. */}
       {/* Live-stage soft bg */}
       {stage.status === 'live' && (
         <span
@@ -178,6 +187,19 @@ export function SpineStage({ stage, onClick }: Props) {
               'linear-gradient(to right, var(--spine-stage-halo-soft) 0%, transparent 60%)',
           }}
         />
+      )}
+
+      {/* Phase 7.7 §1.3 — Roman numeral on done stages. Echoes the
+        * architect's checklist register. 11 px italic Georgia clay,
+        * right-aligned to the row edge. */}
+      {stage.status === 'done' && (
+        <span
+          aria-hidden="true"
+          className="absolute right-3 top-1.5 font-serif italic text-clay/72 leading-none"
+          style={{ fontSize: '11px' }}
+        >
+          {romanNumeral(stage.index)}
+        </span>
       )}
       {isClickable ? (
         <button
@@ -201,4 +223,9 @@ function SigilFor({ stageId, size }: { stageId: string; size: number }) {
   const def = SPINE_STAGES.find((s) => s.id === stageId)
   const spec = def?.ownerSpecialist ?? 'moderator'
   return <ChamberSigil specialist={spec} size={size} />
+}
+
+const ROMAN_NUMERALS = ['', 'i', 'ii', 'iii', 'iv', 'v', 'vi', 'vii', 'viii']
+function romanNumeral(index: number): string {
+  return ROMAN_NUMERALS[index] ?? String(index)
 }

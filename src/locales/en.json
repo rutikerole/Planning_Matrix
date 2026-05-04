@@ -1400,50 +1400,50 @@
         "project_intent": {
           "title": "Project intent",
           "subDone": "moderator · done",
-          "subLive": "moderator · live",
+          "subLive": "moderator · speaking",
           "subNext": "next"
         },
         "plot_address": {
           "title": "Plot & address",
           "subDone": "moderator · done",
           "subDoneNoPlot": "no plot · acknowledged",
-          "subLive": "moderator · live",
+          "subLive": "moderator · speaking",
           "subNext": "next"
         },
         "planungsrecht": {
           "title": "Zoning law",
           "subDone": "zoning · done",
-          "subLive": "zoning · live",
+          "subLive": "zoning · speaking",
           "subNext": "next"
         },
         "bauordnungsrecht": {
           "title": "Building code",
           "subDone": "building code · done",
-          "subLive": "building code · live",
+          "subLive": "building code · speaking",
           "subNext": "next · BayBO"
         },
         "sonstige_vorgaben": {
           "title": "Other regulations",
           "subDone": "other regs · done",
-          "subLive": "other regs · live",
+          "subLive": "other regs · speaking",
           "subNext": "next"
         },
         "verfahren": {
           "title": "Procedure synthesis",
           "subDone": "procedure · done",
-          "subLive": "procedure · live",
+          "subLive": "procedure · speaking",
           "subNext": "next"
         },
         "beteiligte": {
           "title": "Stakeholders & roles",
           "subDone": "stakeholders · done",
-          "subLive": "stakeholders · live",
+          "subLive": "stakeholders · speaking",
           "subNext": "next"
         },
         "final_synthesis": {
           "title": "Final synthesis",
           "subDone": "complete",
-          "subLive": "synthesis · live",
+          "subLive": "synthesis · speaking",
           "subNext": "last"
         }
       },

@@ -1400,50 +1400,50 @@
         "project_intent": {
           "title": "Vorhaben",
           "subDone": "Moderator · erfasst",
-          "subLive": "Moderator · live",
+          "subLive": "Moderator · spricht",
           "subNext": "als Nächstes"
         },
         "plot_address": {
           "title": "Grundstück",
           "subDone": "Moderator · erfasst",
           "subDoneNoPlot": "ohne Grundstück · zur Kenntnis genommen",
-          "subLive": "Moderator · live",
+          "subLive": "Moderator · spricht",
           "subNext": "als Nächstes"
         },
         "planungsrecht": {
           "title": "Planungsrecht",
           "subDone": "Planungsrecht · erfasst",
-          "subLive": "Planungsrecht · live",
+          "subLive": "Planungsrecht · spricht",
           "subNext": "als Nächstes"
         },
         "bauordnungsrecht": {
           "title": "Bauordnungsrecht",
           "subDone": "Bauordnungsrecht · erfasst",
-          "subLive": "Bauordnungsrecht · live",
+          "subLive": "Bauordnungsrecht · spricht",
           "subNext": "als Nächstes · BayBO"
         },
         "sonstige_vorgaben": {
           "title": "Sonstige Vorgaben",
           "subDone": "Sonstige · erfasst",
-          "subLive": "Sonstige · live",
+          "subLive": "Sonstige · spricht",
           "subNext": "als Nächstes"
         },
         "verfahren": {
           "title": "Verfahren",
           "subDone": "Verfahren · synthetisiert",
-          "subLive": "Verfahren · live",
+          "subLive": "Verfahren · spricht",
           "subNext": "als Nächstes"
         },
         "beteiligte": {
           "title": "Beteiligte",
           "subDone": "Beteiligte · erfasst",
-          "subLive": "Beteiligte · live",
+          "subLive": "Beteiligte · spricht",
           "subNext": "als Nächstes"
         },
         "final_synthesis": {
           "title": "Abschluss",
           "subDone": "abgeschlossen",
-          "subLive": "Synthese · live",
+          "subLive": "Synthese · spricht",
           "subNext": "als Letztes"
         }
       },
