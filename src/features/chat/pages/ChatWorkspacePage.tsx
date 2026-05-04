@@ -253,11 +253,24 @@ export function ChatWorkspacePage() {
   // (`isMobile` itself is read above the `!project` return — see hooks
   // ordering note there — so we just use the value here.)
 
+  // Phase 7 Pass 2 — Stand Up trigger lives inline in InputBar's
+  // chip row, not as a floating FAB. The button itself self-gates
+  // on ≥ 4 assistant turns; it returns null otherwise.
+  const standUpTrigger = hasMessages ? (
+    <StandUpButton
+      project={project}
+      messages={messages ?? []}
+      events={events ?? []}
+      variant="link"
+    />
+  ) : null
+
   const inputBarNode = hasMessages ? (
     <InputBar
       lastAssistant={lastAssistant}
       onSubmit={handleSubmit}
       onIdkChoose={handleIdkChoose}
+      standUp={standUpTrigger}
       forceDisabled={isThinking || queueFull}
       embedded
     />
@@ -350,15 +363,6 @@ export function ChatWorkspacePage() {
         </>
       )}
       <ConversationCursor />
-
-      {/* Phase 7 Move 11 — pause-and-orient surface. Hidden under
-        * 4 assistant turns; mounted alongside the layout so the
-        * fixed-position button works in both mobile + desktop. */}
-      <StandUpButton
-        project={project}
-        messages={messages ?? []}
-        events={events ?? []}
-      />
 
       <MobileRailDrawer
         open={leftOpen}

@@ -116,6 +116,14 @@ interface Props {
    * removed.
    */
   onIdkChoose?: (mode: IdkMode) => void
+  /**
+   * Phase 7 Pass 2 — Stand-up trigger rendered at the right end of
+   * the chip row (replaces the floating FAB that overlapped thread
+   * content). Caller decides what to render — typically
+   * `<StandUpButton variant="link" project={...} messages={...}
+   * events={...} />`.
+   */
+  standUp?: ReactNode
   /** Optional override (e.g. while a turn is in flight). */
   forceDisabled?: boolean
   /**
@@ -145,6 +153,7 @@ export function InputBar({
   lastAssistant,
   onSubmit,
   onIdkChoose,
+  standUp,
   forceDisabled,
   embedded,
 }: Props) {
@@ -297,14 +306,26 @@ export function InputBar({
           {/* Phase 7 Move 7 — IDK chips. Render only when the latest
             * assistant turn allows it AND the parent supplied a handler.
             * Each chip submits the same { kind: 'idk', mode } payload
-            * the legacy IdkPopover did. */}
-          {onIdkChoose && (
-            <IdkChips
-              visible={allowIdk && !disabled}
-              disabled={disabled}
-              onChoose={onIdkChoose}
-            />
-          )}
+            * the legacy IdkPopover did.
+            *
+            * Pass 2 — when a Stand Up trigger is supplied, render it
+            * at the right end of the row (replaces the floating FAB
+            * that overlapped thread content). justify-between holds
+            * each side regardless of which is present. */}
+          {(onIdkChoose && allowIdk && !disabled) || standUp ? (
+            <div className="flex items-center justify-between gap-3 flex-wrap">
+              {onIdkChoose && allowIdk && !disabled ? (
+                <IdkChips
+                  visible
+                  disabled={disabled}
+                  onChoose={onIdkChoose}
+                />
+              ) : (
+                <span aria-hidden="true" />
+              )}
+              {standUp}
+            </div>
+          ) : null}
 
           {/* Attachment chips — always above the textarea, never replace. */}
           {attachments.length > 0 && (

@@ -48,6 +48,18 @@ export function UnifiedFooter({ project, messages, events, inputBar }: Props) {
         paddingBottom: 'max(env(safe-area-inset-bottom, 0px), 0.5rem)',
       }}
     >
+      {/* Phase 7 Pass 2 — 80 px paper-fade gradient extending above the
+        * footer so the last assistant message dissolves into the
+        * input zone instead of being hard-cropped under the chips.
+        * Pointer-events-none so it doesn't intercept thread clicks. */}
+      <div
+        aria-hidden="true"
+        className="absolute -top-20 left-0 right-0 h-20 pointer-events-none"
+        style={{
+          backgroundImage:
+            'linear-gradient(180deg, hsl(var(--paper) / 0) 0%, hsl(var(--paper)) 100%)',
+        }}
+      />
       {/* Desktop band — three sub-columns mirroring the grid above. */}
       <div className="hidden lg:block">
         <div className="mx-auto w-full max-w-[1440px] grid lg:grid-cols-[280px_minmax(0,1fr)_360px] gap-x-4 px-4 sm:px-6 lg:px-8 pt-3 pb-2">

@@ -47,11 +47,24 @@ interface Props {
   project: ProjectRow
   messages: MessageRow[]
   events: ProjectEventRow[]
+  /**
+   * Phase 7 Pass 2 — `link` renders a small mono-caps text link for
+   * inline mounting inside InputBar's IDK row (Pass 2 item 8 — the
+   * floating FAB overlapped thread content). `fab` is the legacy
+   * floating pill, kept available for any remaining caller. Default
+   * `link` since the floating pill is no longer mounted.
+   */
+  variant?: 'fab' | 'link'
 }
 
 const SHOW_AT_TURNS = 4
 
-export function StandUpButton({ project, messages, events }: Props) {
+export function StandUpButton({
+  project,
+  messages,
+  events,
+  variant = 'link',
+}: Props) {
   const { t } = useTranslation()
   const [open, setOpen] = useState(false)
 
@@ -63,29 +76,51 @@ export function StandUpButton({ project, messages, events }: Props) {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <button
-        type="button"
-        onClick={() => setOpen(true)}
-        aria-label={t('chat.standup.button', {
-          defaultValue: 'Stand up & look around',
-        })}
-        className="
-          fixed bottom-20 right-4 z-30
-          lg:bottom-6 lg:right-[calc(var(--rail-r)+24px)]
-          inline-flex items-center gap-2 px-3.5 py-2.5
-          bg-paper-card border border-hairline-strong rounded-full
-          font-mono text-[10px] tracking-[0.14em] uppercase text-ink-soft
-          shadow-[0_1px_0_rgba(26,22,18,0.04),0_8px_28px_-10px_rgba(26,22,18,0.16)]
-          transition-[border-color,color,transform] duration-[220ms] ease-ease
-          hover:border-clay hover:text-clay motion-safe:hover:-translate-y-px
-          focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/55 focus-visible:ring-offset-2 focus-visible:ring-offset-paper
-        "
-      >
-        <StandUpIcon />
-        {t('chat.standup.button', {
-          defaultValue: 'Stand up & look around',
-        })}
-      </button>
+      {variant === 'fab' ? (
+        <button
+          type="button"
+          onClick={() => setOpen(true)}
+          aria-label={t('chat.standup.button', {
+            defaultValue: 'Stand up & look around',
+          })}
+          className="
+            fixed bottom-20 right-4 z-30
+            lg:bottom-6 lg:right-[calc(var(--rail-r)+24px)]
+            inline-flex items-center gap-2 px-3.5 py-2.5
+            bg-paper-card border border-hairline-strong rounded-full
+            font-mono text-[10px] tracking-[0.14em] uppercase text-ink-soft
+            shadow-[0_1px_0_rgba(26,22,18,0.04),0_8px_28px_-10px_rgba(26,22,18,0.16)]
+            transition-[border-color,color,transform] duration-[220ms] ease-ease
+            hover:border-clay hover:text-clay motion-safe:hover:-translate-y-px
+            focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/55 focus-visible:ring-offset-2 focus-visible:ring-offset-paper
+          "
+        >
+          <StandUpIcon />
+          {t('chat.standup.button', {
+            defaultValue: 'Stand up & look around',
+          })}
+        </button>
+      ) : (
+        <button
+          type="button"
+          onClick={() => setOpen(true)}
+          aria-label={t('chat.standup.button', {
+            defaultValue: 'Stand up & look around',
+          })}
+          className="
+            inline-flex items-center gap-1.5 px-1.5 py-1
+            font-mono text-[10px] tracking-[0.14em] uppercase text-ink-mute
+            transition-colors duration-[180ms] ease-ease
+            hover:text-clay
+            focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/55 focus-visible:ring-offset-2 focus-visible:ring-offset-paper rounded-sm
+          "
+        >
+          <span aria-hidden="true">↗</span>
+          {t('chat.standup.button', {
+            defaultValue: 'Stand up & look around',
+          })}
+        </button>
+      )}
       <StandUpDialog
         project={project}
         messages={messages}
