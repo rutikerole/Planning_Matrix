@@ -14,6 +14,8 @@
 import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import type { ResolvedSpineStage } from '../../../hooks/useSpineStages'
+import { SPINE_STAGES } from '../../../lib/spineStageDefinitions'
+import { ChamberSigil } from '../../../lib/specialistSigils'
 
 interface Props {
   stage: ResolvedSpineStage
@@ -42,32 +44,43 @@ export function SpineStage({ stage, onClick }: Props) {
 
   const Inner = (
     <>
-      {/* Indicator column */}
+      {/* Indicator column. Phase 7.6 §3.2 — done stages get the
+        * owner specialist's sigil (clay-tint disc + glyph), giving
+        * the rail real domain identity instead of a generic dot.
+        * Live keeps the halo + filled clay disc as the dominant
+        * focal point. Next + future stay simple geometric markers. */}
       <span
         aria-hidden="true"
-        className="relative grid place-items-center w-[56px] pt-1.5"
+        className="relative grid place-items-center w-[56px] pt-1"
       >
         {stage.status === 'live' ? (
           <span className="relative grid place-items-center">
             <span
-              className="absolute inset-[-6px] rounded-full spine-glow"
+              className="absolute inset-[-7px] rounded-full spine-glow"
               style={{ background: 'var(--spine-stage-halo)' }}
             />
             <span
-              className="relative size-3 rounded-full"
-              style={{ background: 'hsl(var(--clay))' }}
-            />
+              className="relative grid place-items-center size-[22px] rounded-full"
+              style={{ background: 'hsl(var(--clay))', color: 'hsl(var(--paper))' }}
+            >
+              <SigilFor stageId={stage.id} size={12} />
+            </span>
           </span>
         ) : stage.status === 'next' ? (
           <span
-            className="size-[7px] rounded-full border"
+            className="size-[8px] rounded-full border"
             style={{ borderColor: 'hsl(var(--clay))', background: 'transparent' }}
           />
         ) : stage.status === 'done' ? (
           <span
-            className="size-2 rounded-full"
-            style={{ background: 'hsl(var(--clay))' }}
-          />
+            className="grid place-items-center size-[18px] rounded-full"
+            style={{
+              background: 'var(--spine-stage-halo-soft, rgba(123,92,63,0.08))',
+              color: 'hsl(var(--clay))',
+            }}
+          >
+            <SigilFor stageId={stage.id} size={10} />
+          </span>
         ) : (
           <span
             className="size-1.5 rounded-full"
@@ -171,4 +184,12 @@ export function SpineStage({ stage, onClick }: Props) {
       <span className="contents relative z-[1]">{Inner}</span>
     </li>
   )
+}
+
+/** Render the stage's owner-specialist sigil. Falls back to a moderator
+ *  glyph if a stage id is somehow not registered. */
+function SigilFor({ stageId, size }: { stageId: string; size: number }) {
+  const def = SPINE_STAGES.find((s) => s.id === stageId)
+  const spec = def?.ownerSpecialist ?? 'moderator'
+  return <ChamberSigil specialist={spec} size={size} />
 }
