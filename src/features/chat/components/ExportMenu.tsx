@@ -40,6 +40,15 @@ interface Props {
   /** Visual variant — 'ghost' fits the LeftRail footer, 'primary' is the
    *  Overview-modal header CTA, 'icon' is the mobile MobileTopBar tab. */
   variant?: 'ghost' | 'primary' | 'icon'
+  /**
+   * Phase 7 Pass 6 — desktop popover anchor side. 'bottom' (default)
+   * opens below the trigger; 'top' opens above. UnifiedFooter sits
+   * at the very bottom of the viewport so its Export menu would be
+   * clipped off-screen with the default 'bottom'; FooterLeftColumn
+   * passes 'top' to flip it upward. The mobile vaul drawer path
+   * isn't affected.
+   */
+  placement?: 'top' | 'bottom'
 }
 
 /**
@@ -57,7 +66,13 @@ interface ExportError {
   stack: string | null
 }
 
-export function ExportMenu({ project, messages, events, variant = 'ghost' }: Props) {
+export function ExportMenu({
+  project,
+  messages,
+  events,
+  variant = 'ghost',
+  placement = 'bottom',
+}: Props) {
   const { t, i18n } = useTranslation()
   const lang = (i18n.resolvedLanguage ?? 'de') as 'de' | 'en'
   const [open, setOpen] = useState(false)
@@ -175,7 +190,11 @@ export function ExportMenu({ project, messages, events, variant = 'ghost' }: Pro
           <div
             role="menu"
             aria-label={t('chat.export.menuLabel', { defaultValue: 'Exportieren' })}
-            className="absolute right-0 top-full mt-2 w-[320px] z-30 bg-paper border border-ink/15 rounded-[2px] shadow-[0_8px_32px_-12px_hsl(220_15%_11%/0.22)] p-5 flex flex-col gap-4"
+            className={
+              placement === 'top'
+                ? 'absolute right-0 bottom-full mb-2 w-[320px] z-30 bg-paper border border-ink/15 rounded-[2px] shadow-[0_-8px_32px_-12px_hsl(220_15%_11%/0.22)] p-5 flex flex-col gap-4'
+                : 'absolute right-0 top-full mt-2 w-[320px] z-30 bg-paper border border-ink/15 rounded-[2px] shadow-[0_8px_32px_-12px_hsl(220_15%_11%/0.22)] p-5 flex flex-col gap-4'
+            }
           >
             <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-clay/85">
               {t('chat.export.eyebrow', { defaultValue: 'Exportieren' })}

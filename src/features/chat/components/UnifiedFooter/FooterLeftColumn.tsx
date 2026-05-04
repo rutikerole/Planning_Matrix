@@ -47,6 +47,7 @@ export function FooterLeftColumn({ project, messages, events }: Props) {
         messages={messages}
         events={events}
         variant="ghost"
+        placement="top"
       />
       <Sep />
       <Link to="/dashboard" className={LINK_CLS}>
