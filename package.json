@@ -6,8 +6,9 @@
   "scripts": {
     "dev": "vite",
     "verify:locales": "node scripts/verify-locale-parity.mjs",
+    "verify:hardcoded-de": "node scripts/grep-hardcoded-de.mjs",
     "verify:bundle": "node scripts/verify-bundle-size.mjs",
-    "prebuild": "npm run verify:locales",
+    "prebuild": "npm run verify:locales && npm run verify:hardcoded-de",
     "build": "tsc -b && vite build && npm run verify:bundle",
     "lint": "eslint .",
     "preview": "vite preview",

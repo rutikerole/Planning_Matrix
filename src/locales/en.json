@@ -1411,33 +1411,33 @@
           "subNext": "next"
         },
         "planungsrecht": {
-          "title": "Planungsrecht profile",
-          "subDone": "planungsrecht · done",
-          "subLive": "planungsrecht · live",
+          "title": "Zoning law",
+          "subDone": "zoning · done",
+          "subLive": "zoning · live",
           "subNext": "next"
         },
         "bauordnungsrecht": {
-          "title": "Bauordnungsrecht",
-          "subDone": "bauordnungsrecht · done",
-          "subLive": "bauordnungsrecht · live",
+          "title": "Building code",
+          "subDone": "building code · done",
+          "subLive": "building code · live",
           "subNext": "next · BayBO"
         },
         "sonstige_vorgaben": {
-          "title": "Sonstige Vorgaben",
-          "subDone": "sonstige · done",
-          "subLive": "sonstige · live",
+          "title": "Other regulations",
+          "subDone": "other regs · done",
+          "subLive": "other regs · live",
           "subNext": "next"
         },
         "verfahren": {
-          "title": "Verfahren synthesis",
-          "subDone": "verfahren · synthesised",
-          "subLive": "verfahren · live",
+          "title": "Procedure synthesis",
+          "subDone": "procedure · done",
+          "subLive": "procedure · live",
           "subNext": "next"
         },
         "beteiligte": {
-          "title": "Beteiligte & roles",
-          "subDone": "beteiligte · done",
-          "subLive": "beteiligte · live",
+          "title": "Stakeholders & roles",
+          "subDone": "stakeholders · done",
+          "subLive": "stakeholders · live",
           "subNext": "next"
         },
         "final_synthesis": {
