@@ -529,18 +529,21 @@
   /* ─────────────────────────────────────────────────────────────────
    * Phase 7 Chamber — past-turn fade + magnetic focus
    * Single observer drives `data-focus="true"` on the message nearest
-   * the viewport center; CSS does the rest. The fade rule reads from
-   * `--chamber-distance` set per message in JS (0..N).
+   * the viewport center; CSS does the rest.
+   *
+   * Phase 7.9 §2.6 — past turns settle at a flat 0.5 opacity (was a
+   * distance-driven curve floored at 0.32). The latest turn (distance
+   * 0) renders at full opacity; everything older snaps to 0.5.
+   * Hover or magnetic-focus still re-illuminates to 1.
    * ────────────────────────────────────────────────────────────────── */
   [data-chamber-message] {
     --chamber-distance: 0;
-    opacity: clamp(0.32, calc(1 - var(--chamber-distance) * 0.18), 1);
-    transform: scale(calc(1 - var(--chamber-distance) * 0.008));
-    filter: saturate(calc(1 - var(--chamber-distance) * 0.05));
+    opacity: 0.5;
     transition:
-      opacity 320ms var(--chamber-ease, cubic-bezier(0.16,1,0.3,1)),
-      transform 320ms var(--chamber-ease, cubic-bezier(0.16,1,0.3,1)),
-      filter 320ms var(--chamber-ease, cubic-bezier(0.16,1,0.3,1));
+      opacity 320ms var(--chamber-ease, cubic-bezier(0.16,1,0.3,1));
+  }
+  [data-chamber-message][data-chamber-active='true'] {
+    opacity: 1;
   }
   [data-chamber-message]:hover,
   [data-chamber-message][data-focus='true'] {

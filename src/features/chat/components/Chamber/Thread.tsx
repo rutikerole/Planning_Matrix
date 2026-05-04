@@ -75,6 +75,7 @@ export function Thread({ messages }: Props) {
           <li
             key={row.id}
             data-chamber-message="true"
+            data-chamber-active={distance === 0 ? 'true' : undefined}
             data-message-id={row.id}
             style={{ ['--chamber-distance' as string]: distance }}
           >
