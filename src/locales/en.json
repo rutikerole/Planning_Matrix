@@ -953,7 +953,44 @@
       "label": "Auto-saved"
     },
     "thinking": {
-      "staticLabel": "thinking…"
+      "staticLabel": "thinking…",
+      "actions": {
+        "moderator": [
+          "The team is conferring.",
+          "One moment, we're aligning.",
+          "We're reviewing the next step."
+        ],
+        "planungsrecht": [
+          "Planning law is reviewing the zoning.",
+          "Consulting BauGB §§ 30 ff.",
+          "Comparing against the development plan."
+        ],
+        "bauordnungsrecht": [
+          "Building code is reviewing the procedure.",
+          "Consulting BayBO.",
+          "Deriving the building class."
+        ],
+        "sonstige_vorgaben": [
+          "Reviewing additional requirements.",
+          "Heritage and nature protection are being checked.",
+          "Consulting municipal ordinances."
+        ],
+        "verfahren": [
+          "Synthesising the procedure.",
+          "Aligning across domains.",
+          "Deriving the permit path."
+        ],
+        "beteiligte": [
+          "Identifying specialists.",
+          "Reviewing structural and fire-safety needs.",
+          "Checking submission authority."
+        ],
+        "synthesizer": [
+          "Deriving the next three steps.",
+          "Distilling the findings.",
+          "Preparing the recommendations."
+        ]
+      }
     },
     "cost": {
       "breakdown": "Breakdown",

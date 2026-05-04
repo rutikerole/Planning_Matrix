@@ -953,7 +953,44 @@
       "label": "Automatisch gespeichert"
     },
     "thinking": {
-      "staticLabel": "denkt nach…"
+      "staticLabel": "denkt nach…",
+      "actions": {
+        "moderator": [
+          "Das Team berät sich.",
+          "Einen Moment, wir stimmen uns ab.",
+          "Wir prüfen den nächsten Schritt."
+        ],
+        "planungsrecht": [
+          "Planungsrecht prüft die Festsetzungen.",
+          "Wir konsultieren §§ 30 ff. BauGB.",
+          "Wir vergleichen mit dem Bebauungsplan."
+        ],
+        "bauordnungsrecht": [
+          "Bauordnung prüft die Verfahrenspflicht.",
+          "Wir konsultieren die BayBO.",
+          "Wir leiten die Gebäudeklasse ab."
+        ],
+        "sonstige_vorgaben": [
+          "Wir prüfen weitere Vorgaben.",
+          "Denkmal- und Naturschutz werden geprüft.",
+          "Wir konsultieren kommunale Satzungen."
+        ],
+        "verfahren": [
+          "Wir synthetisieren die Verfahren.",
+          "Wir stimmen die Domänen ab.",
+          "Wir leiten den Genehmigungsweg ab."
+        ],
+        "beteiligte": [
+          "Wir leiten Fachplaner ab.",
+          "Tragwerks- und Brandschutzbedarf wird geprüft.",
+          "Wir prüfen Bauvorlageberechtigung."
+        ],
+        "synthesizer": [
+          "Wir leiten die nächsten drei Schritte ab.",
+          "Wir verdichten die Erkenntnisse.",
+          "Wir bereiten die Empfehlungen vor."
+        ]
+      }
     },
     "cost": {
       "breakdown": "Aufschlüsselung",
