@@ -167,7 +167,7 @@ function OverflowMenu({ trigger, children }: { trigger: ReactNode; children?: Re
           />
           <div
             role="menu"
-            className="absolute right-0 top-full mt-2 z-50 w-[260px] bg-paper border border-[var(--hairline-strong,rgba(26,22,18,0.18))] rounded-md shadow-[0_10px_36px_-8px_rgba(26,22,18,0.18)] py-2"
+            className="absolute right-0 top-full mt-2 z-50 w-[260px] bg-paper border border-[var(--hairline-strong,rgba(26,22,18,0.18))] rounded-md py-2"
           >
             {children}
           </div>

@@ -90,7 +90,7 @@ export function LongPressMenu({ open, onOpenChange, onChoose }: Props) {
       <div
         role="dialog"
         aria-label={t('chat.chamber.longPressTitle')}
-        className="absolute right-0 bottom-full mb-3 z-50 w-[320px] bg-paper border border-[var(--hairline-strong)] rounded-md shadow-[0_10px_36px_-8px_rgba(26,22,18,0.18)] p-3"
+        className="absolute right-0 bottom-full mb-3 z-50 w-[320px] bg-paper border border-[var(--hairline-strong)] rounded-md p-3"
       >
         <p className="font-serif italic text-[15px] text-ink mb-2 px-1">
           {t('chat.chamber.longPressTitle')}

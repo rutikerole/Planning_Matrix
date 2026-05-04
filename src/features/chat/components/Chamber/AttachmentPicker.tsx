@@ -38,7 +38,7 @@ export function AttachmentPicker({ open, onOpenChange }: Props) {
       <div
         role="dialog"
         aria-label={t('chat.input.attachment.title', { defaultValue: 'Datei anhängen' })}
-        className="absolute left-0 bottom-full mb-3 z-50 w-[280px] bg-paper border border-[var(--hairline-strong)] rounded-md shadow-[0_10px_36px_-8px_rgba(26,22,18,0.18)] p-3"
+        className="absolute left-0 bottom-full mb-3 z-50 w-[280px] bg-paper border border-[var(--hairline-strong)] rounded-md p-3"
       >
         <p className="font-serif italic text-[14px] text-ink mb-2 px-1">
           {t('chat.input.attachment.title', { defaultValue: 'Datei anhängen' })}

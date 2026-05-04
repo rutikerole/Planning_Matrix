@@ -81,7 +81,7 @@ export function CapturedToast({ facts, lang }: Props) {
             onClick={() =>
               setStack((prev) => prev.filter((e) => e.id !== entry.id))
             }
-            className="pointer-events-auto cursor-pointer max-w-[260px] bg-paper border border-[var(--hairline-strong)] rounded-md shadow-[0_8px_24px_-8px_rgba(26,22,18,0.18)] px-3.5 py-2"
+            className="pointer-events-auto cursor-pointer max-w-[260px] bg-paper border border-[var(--hairline-strong)] rounded-md px-3.5 py-2"
           >
             <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-clay leading-none mb-1">
               ✓

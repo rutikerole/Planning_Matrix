@@ -86,7 +86,7 @@ export function SpineDebugPanel({ project, messages, stages, progress }: Props) 
     <aside
       role="complementary"
       aria-label="Spine debug panel"
-      className="fixed top-14 right-4 z-[60] w-[340px] max-h-[80vh] overflow-y-auto bg-paper border border-clay/40 rounded-md shadow-[0_10px_36px_-8px_rgba(26,22,18,0.32)] p-3 font-mono text-[11px] leading-tight"
+      className="fixed top-14 right-4 z-[60] w-[340px] max-h-[80vh] overflow-y-auto bg-paper border border-clay/40 rounded-md p-3 font-mono text-[11px] leading-tight"
     >
       <header className="flex items-baseline justify-between mb-2">
         <p className="text-[10px] uppercase tracking-[0.18em] text-clay-deep font-medium">
