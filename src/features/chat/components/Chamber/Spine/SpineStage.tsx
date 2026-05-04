@@ -31,7 +31,12 @@ export function SpineStage({ stage, onClick }: Props) {
 
   const subKey = `chat.spine.stages.${stage.id}.${
     stage.status === 'done'
-      ? 'subDone'
+      ? // Phase 7.6 — no-plot path swaps to subDoneNoPlot when the
+        // stage carries the snippet sentinel that ResolvedSpineStage
+        // emits for areas.A === 'VOID' on the plot_address row.
+        stage.id === 'plot_address' && stage.snippet === '__no_plot__'
+        ? 'subDoneNoPlot'
+        : 'subDone'
       : stage.status === 'live'
         ? 'subLive'
         : 'subNext'
@@ -121,18 +126,22 @@ export function SpineStage({ stage, onClick }: Props) {
           </span>
         )}
         {/* Done-stage hover snippet — revealed via the
-          * [data-spine-status='done']:hover rule in globals.css. */}
-        {stage.status === 'done' && stage.snippet && (
-          <span
-            id={tooltipId}
-            data-spine-tooltip="true"
-            role="tooltip"
-            className="absolute left-0 right-0 top-full mt-0.5 text-[11px] italic text-clay/85 font-serif leading-snug line-clamp-2"
-            title={stage.snippet}
-          >
-            {t('chat.spine.tooltip.donePrefix')} {stage.snippet}
-          </span>
-        )}
+          * [data-spine-status='done']:hover rule in globals.css.
+          * Suppressed for the __no_plot__ sentinel: the subDoneNoPlot
+          * sub-line already says everything. */}
+        {stage.status === 'done' &&
+          stage.snippet &&
+          stage.snippet !== '__no_plot__' && (
+            <span
+              id={tooltipId}
+              data-spine-tooltip="true"
+              role="tooltip"
+              className="absolute left-0 right-0 top-full mt-0.5 text-[11px] italic text-clay/85 font-serif leading-snug line-clamp-2"
+              title={stage.snippet}
+            >
+              {t('chat.spine.tooltip.donePrefix')} {stage.snippet}
+            </span>
+          )}
       </div>
     </>
   )

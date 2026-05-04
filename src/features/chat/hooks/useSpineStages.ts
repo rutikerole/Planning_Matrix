@@ -103,6 +103,15 @@ export function useSpineStages(
         } catch {
           snippet = null
         }
+      } else if (
+        // Phase 7.6 — sentinel for no-plot path so SpineStage picks
+        // the subDoneNoPlot copy. Only fires on the plot_address row
+        // when areas.A is explicitly VOID (user said "no plot").
+        status === 'done' &&
+        s.id === 'plot_address' &&
+        state.areas?.A?.state === 'VOID'
+      ) {
+        snippet = '__no_plot__'
       }
 
       let firstIdx: number | null
