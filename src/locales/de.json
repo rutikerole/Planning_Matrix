@@ -32,10 +32,10 @@
         "row2Val": "GK 3",
         "row2Tag": "LEGAL · CALC",
         "row3Key": "Stellplätze",
-        "row3Val": "2 erf.",
-        "row3Tag": "CLIENT · ASSUMED",
+        "row3Val": "1 erf.",
+        "row3Tag": "LEGAL · CALC",
         "topThree": "TOP 3 SCHRITTE",
-        "rec1": "Vorabstimmung Bauamt",
+        "rec1": "Vorabstimmung mit der LBK München",
         "rec2": "Statik beauftragen",
         "rec3": "Stellplatznachweis"
       }
@@ -57,7 +57,7 @@
         "l2": "mit dem ganzen Team."
       },
       "sub": "Kein Chatbot. Ein Roundtable von Fachpersonen — Planungsrecht, Bauordnung, sonstige Vorgaben — die genau dann sprechen, wenn ihre Domäne relevant ist.",
-      "title": "Bauamt-Akte · 2026-04 · Erlangen",
+      "title": "Bauakte · 2026-04 · München",
       "input": {
         "placeholder": "Antworten Sie hier — oder sagen Sie „Weiß ich nicht\""
       },

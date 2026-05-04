@@ -8,6 +8,12 @@
  *   adds 2nd + 3rd recs → Moderator wraps → pause 3s → restart.
  *
  * Sie register, technical, restrained. No exclamation marks. No softening.
+ *
+ * Phase 5 — pivoted from Erlangen to München (Altstadt-Lehel, 80331).
+ * Anchors match the system prompt's München content: LBK München with
+ * Sub-Bauamt routing (Mitte for Stadtbezirk 1), Stellplatzsatzung
+ * StPlS 926 (1 Stp/WE for Wohnen, not the historical 2), Erhaltungs-
+ * satzungen acknowledged.
  */
 
 export type Specialist =
@@ -37,7 +43,7 @@ const scriptDe: Step[] = [
     role: 'assistant',
     delayMs: 0,
     text:
-      'Guten Tag. Sie planen ein Einfamilienhaus auf der Hauptstraße 12 in Erlangen. Wir gehen die rechtliche Einordnung gemeinsam durch.',
+      'Guten Tag. Sie planen ein Einfamilienhaus auf der Zweibrückenstraße 12 in München. Wir gehen die rechtliche Einordnung gemeinsam durch.',
   },
   { kind: 'pause', ms: 1400 },
   { kind: 'typing', specialist: 'planungsrecht', durationMs: 900 },
@@ -64,8 +70,8 @@ const scriptDe: Step[] = [
   {
     kind: 'rec',
     id: 'r1',
-    title: 'Vorabstimmung Bauamt Erlangen',
-    detail: 'Termin zur Verfahrensklärung mit Sachbearbeitung.',
+    title: 'Vorabstimmung mit der LBK München',
+    detail: 'Termin mit der Begutachtung Bezirk Mitte (Stadtbezirk 1).',
   },
   { kind: 'pause', ms: 1500 },
   { kind: 'typing', specialist: 'sonstige', durationMs: 900 },
@@ -75,14 +81,14 @@ const scriptDe: Step[] = [
     role: 'assistant',
     delayMs: 0,
     text:
-      'Die Erlanger Stellplatzsatzung verlangt zwei Stellplätze. Baulasten sind im Grundbuch nicht eingetragen.',
+      'Die Münchner Stellplatzsatzung StPlS 926 verlangt einen Stellplatz pro Wohneinheit. Lage in Altstadt-Lehel — Erhaltungssatzungen sind zu prüfen.',
   },
   { kind: 'area', area: 'C', state: 'ACTIVE' },
   {
     kind: 'rec',
     id: 'r2',
     title: 'Stellplatznachweis',
-    detail: 'Zwei Stellplätze gemäß örtlicher Satzung.',
+    detail: 'Ein KFZ-Stellplatz nach Münchner StPlS 926 (Anlage 1 Nr. 1.1).',
   },
   { kind: 'pause', ms: 1500 },
   { kind: 'typing', specialist: 'verfahren', durationMs: 900 },
@@ -91,7 +97,8 @@ const scriptDe: Step[] = [
     specialist: 'verfahren',
     role: 'assistant',
     delayMs: 0,
-    text: 'Empfehlung: vereinfachtes Verfahren, Bauantrag mit neun Pflichtdokumenten.',
+    text:
+      'Empfehlung: vereinfachtes Verfahren, Bauantrag mit neun Pflichtdokumenten direkt bei der LBK München.',
   },
   {
     kind: 'rec',
@@ -120,7 +127,7 @@ const scriptEn: Step[] = [
     role: 'assistant',
     delayMs: 0,
     text:
-      'Good day. You are planning a single-family house at Hauptstraße 12 in Erlangen. We will walk through the legal classification together.',
+      'Good day. You are planning a single-family house at Zweibrückenstraße 12 in Munich. We will walk through the legal classification together.',
   },
   { kind: 'pause', ms: 1400 },
   { kind: 'typing', specialist: 'planungsrecht', durationMs: 900 },
@@ -147,8 +154,8 @@ const scriptEn: Step[] = [
   {
     kind: 'rec',
     id: 'r1',
-    title: 'Pre-meeting with Erlangen permit office',
-    detail: 'Schedule a procedure-clarification meeting with the case officer.',
+    title: 'Pre-meeting with LBK München',
+    detail: 'Schedule with the Begutachtung Bezirk Mitte (Stadtbezirk 1).',
   },
   { kind: 'pause', ms: 1500 },
   { kind: 'typing', specialist: 'sonstige', durationMs: 900 },
@@ -158,14 +165,14 @@ const scriptEn: Step[] = [
     role: 'assistant',
     delayMs: 0,
     text:
-      'Erlangen parking ordinance requires two parking spaces. No encumbrances are recorded in the land register.',
+      'The Munich parking ordinance StPlS 926 requires one parking space per dwelling. Site in Altstadt-Lehel — preservation ordinances are to be reviewed.',
   },
   { kind: 'area', area: 'C', state: 'ACTIVE' },
   {
     kind: 'rec',
     id: 'r2',
     title: 'Parking-space documentation',
-    detail: 'Two parking spaces per local ordinance.',
+    detail: 'One car space per Munich StPlS 926 (Annex 1 No. 1.1).',
   },
   { kind: 'pause', ms: 1500 },
   { kind: 'typing', specialist: 'verfahren', durationMs: 900 },
@@ -174,7 +181,7 @@ const scriptEn: Step[] = [
     specialist: 'verfahren',
     role: 'assistant',
     delayMs: 0,
-    text: 'Recommendation: simplified procedure, building application with nine mandatory documents.',
+    text: 'Recommendation: simplified procedure, building application with nine mandatory documents filed directly with the LBK München.',
   },
   {
     kind: 'rec',

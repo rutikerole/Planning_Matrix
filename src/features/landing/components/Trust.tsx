@@ -18,7 +18,7 @@ const AUDIT_LOG = [
   '[2026-04-27 14:33:04]  area_state         B → ACTIVE        BayBO Art. 58',
   '[2026-04-27 14:33:18]  rec_upserted       R-03              rank 3',
   '[2026-04-27 14:33:31]  fact_added         stellplatz.req    AUTHORITY/VERIFIED',
-  '[2026-04-27 14:33:47]  area_state         C → ACTIVE        Erlangen StPS',
+  '[2026-04-27 14:33:47]  area_state         C → ACTIVE        München StPlS 926',
 ] as const
 
 export function Trust() {

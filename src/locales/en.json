@@ -32,10 +32,10 @@
         "row2Val": "GK 3",
         "row2Tag": "LEGAL · CALC",
         "row3Key": "Parking spaces",
-        "row3Val": "2 req.",
-        "row3Tag": "CLIENT · ASSUMED",
+        "row3Val": "1 req.",
+        "row3Tag": "LEGAL · CALC",
         "topThree": "TOP 3 STEPS",
-        "rec1": "Pre-meeting with permit office",
+        "rec1": "Pre-meeting with LBK München",
         "rec2": "Commission structural design",
         "rec3": "Parking-space documentation"
       }
@@ -57,7 +57,7 @@
         "l2": "with the whole team."
       },
       "sub": "Not a chatbot. A roundtable of specialists — planning law, building code, additional requirements — speaking exactly when their domain is relevant.",
-      "title": "Permit file · 2026-04 · Erlangen",
+      "title": "Permit file · 2026-04 · München",
       "input": {
         "placeholder": "Reply here — or say \"I don't know\""
       },
