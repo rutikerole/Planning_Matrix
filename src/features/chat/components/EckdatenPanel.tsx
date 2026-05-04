@@ -117,9 +117,24 @@ export function EckdatenPanel({ project, facts }: Props) {
               <span className="font-serif italic text-[12px] text-clay-deep tabular-figures leading-none pt-1 border-r border-border/40 pr-2 text-center">
                 {ROMAN[idx] ?? String(idx + 1)}
               </span>
-              {/* Body block — label / value / qualifier */}
-              <div className="flex flex-col gap-1">
-                <span className="text-[11px] text-clay/85 uppercase tracking-[0.18em]">
+              {/* Body block — label / value / qualifier.
+                * Pass 4 — long mono labels (e.g. "BAUMSCHUTZVERORDNUNG
+                * PRUEFUNG ERFORDERLICH" / "STELLPLAETZE KFZ ANZAHL
+                * NACHGEWIESEN") used to wrap to 3 lines with the
+                * default 0.18em tracking. Drop tracking to 0.08em
+                * past 24 chars; clamp to 2 lines on every label so
+                * the qualifier badge below never gets pushed off
+                * grid. word-break stays at the CSS default so wraps
+                * happen on word boundaries only. */}
+              <div className="flex flex-col gap-1 min-w-0">
+                <span
+                  className={cn(
+                    'text-[11px] text-clay/85 uppercase leading-[1.25] line-clamp-2',
+                    row.key.length > 24
+                      ? 'tracking-[0.08em]'
+                      : 'tracking-[0.18em]',
+                  )}
+                >
                   {row.key}
                 </span>
                 <span className="text-[13px] font-medium text-ink leading-[1.35] break-words">
