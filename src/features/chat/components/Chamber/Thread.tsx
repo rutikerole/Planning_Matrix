@@ -13,10 +13,8 @@ import { useEffect, useMemo, useState } from 'react'
 import { useChatStore } from '@/stores/chatStore'
 import type { MessageRow } from '@/types/db'
 import { useMagneticFocus } from '../../hooks/useMagneticFocus'
-import {
-  defaultScrollToMessage,
-  useThreadController,
-} from './ThreadContext'
+import { useThreadController } from './ThreadContext'
+import { defaultScrollToMessage } from './threadScrollHelpers'
 import { MessageAssistant } from './MessageAssistant'
 import { MessageUser } from './MessageUser'
 import { MessageSystem } from './MessageSystem'

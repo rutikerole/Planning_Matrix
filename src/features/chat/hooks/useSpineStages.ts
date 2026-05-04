@@ -105,7 +105,7 @@ export function useSpineStages(
         }
       }
 
-      let firstIdx: number | null = null
+      let firstIdx: number | null
       try {
         firstIdx = s.getFirstMessageIndex(list)
       } catch {

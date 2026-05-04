@@ -29,10 +29,8 @@ import { useAutoScroll } from '../hooks/useAutoScroll'
 import { useSpineStages } from '../hooks/useSpineStages'
 import { buildUserMessageText, buildUserMessageTextEn } from '../lib/userAnswerHelpers'
 import { ChamberLayout } from '../components/Chamber/ChamberLayout'
-import {
-  ThreadContextProvider,
-  defaultScrollToMessage,
-} from '../components/Chamber/ThreadContext'
+import { ThreadContextProvider } from '../components/Chamber/ThreadContext'
+import { defaultScrollToMessage } from '../components/Chamber/threadScrollHelpers'
 import { Thread } from '../components/Chamber/Thread'
 import { Spine } from '../components/Chamber/Spine/Spine'
 import { SpineHeader } from '../components/Chamber/Spine/SpineHeader'
@@ -220,6 +218,11 @@ export function ChatWorkspacePage() {
     return out
   }, [messages])
 
+  // Phase 7.5 — useSpineStages must be called unconditionally; hook
+  // tolerates project=null and returns 8 future-status rows in that
+  // case, so it's safe above the early-return.
+  const spineStages = useSpineStages(project, messages)
+
   if (!project) return null
 
   const lang = (i18n.resolvedLanguage ?? 'de') as 'de' | 'en'
@@ -240,9 +243,8 @@ export function ChatWorkspacePage() {
   )
 
   // Phase 7.5 — Spine + mobile trigger slots. Both consume the same
-  // useSpineStages output so the desktop sidebar and the mobile
-  // trigger label can never disagree.
-  const spineStages = useSpineStages(project, messages)
+  // useSpineStages output (hoisted above the early-return) so the
+  // desktop sidebar and the mobile trigger label can never disagree.
   const handleStageClick = (stageId: string) => {
     const stage = spineStages.find((s) => s.id === stageId)
     if (!stage || stage.firstMessageIndex == null) return
