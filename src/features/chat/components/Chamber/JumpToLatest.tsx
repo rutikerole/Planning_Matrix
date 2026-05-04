@@ -104,18 +104,22 @@ export function JumpToLatest({ latestAssistantId }: Props) {
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={reduced ? { opacity: 0 } : { opacity: 0, y: 4, scale: 0.92 }}
           transition={{ duration: reduced ? 0 : 0.2, ease: [0.16, 1, 0.3, 1] }}
-          className="pointer-events-none absolute -top-12 left-1/2 -translate-x-1/2 z-10"
+          className="pointer-events-none absolute -top-9 left-1/2 -translate-x-1/2 z-10"
         >
+          {/* Phase 7.7 §1.8 — pill, not a circle. The previous round
+            * gray button read as a loading spinner. */}
           <button
             type="button"
             onClick={onJump}
             aria-label={label}
             title={label}
-            className="pointer-events-auto inline-flex items-center justify-center gap-2 h-10 min-w-10 px-4 bg-paper-card border border-[var(--hairline-strong)] rounded-full text-ink/85 shadow-[0_4px_16px_-4px_rgba(26,22,18,0.22)] hover:bg-ink hover:text-paper motion-safe:hover:scale-[1.05] transition-[background-color,color,transform] duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/40 focus-visible:ring-offset-2 focus-visible:ring-offset-paper"
+            className="pointer-events-auto inline-flex items-center gap-1.5 h-7 px-3.5 bg-paper-card border border-clay/55 rounded-full text-ink text-[11.5px] leading-none transition-colors duration-150 hover:bg-[hsl(var(--clay)/0.10)] hover:border-clay focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/55 focus-visible:ring-offset-2 focus-visible:ring-offset-paper"
+            style={{ letterSpacing: '0.04em' }}
           >
-            <ArrowDown aria-hidden="true" className="size-[16px]" />
+            <ArrowDown aria-hidden="true" className="size-[12px] text-clay" />
+            <span>{label}</span>
             {newCount > 0 && (
-              <span className="font-mono text-[10.5px] tracking-[0.06em] tabular-nums">
+              <span className="font-mono text-[10px] tracking-[0.06em] tabular-nums text-clay/85 ml-0.5">
                 {newCount}
               </span>
             )}
