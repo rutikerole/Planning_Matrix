@@ -3,7 +3,6 @@ import { cn } from '@/lib/utils'
 import { Wordmark } from '@/components/shared/Wordmark'
 import type { AreaState } from '@/types/projectState'
 import type { MessageRow, ProjectRow } from '@/types/db'
-import { SpecialistSigil } from './SpecialistSigils'
 import { ProgressMeter } from './ProgressMeter'
 import { VerlaufMap } from './VerlaufMap'
 import { AutoSavedIndicator } from './AutoSavedIndicator'
@@ -181,67 +180,74 @@ const SPECIALIST_LABEL_KEYS: Record<string, string> = {
   synthesizer: 'chat.specialists.synthesizer',
 }
 
+// Phase 7 Move 12 — show ALL 7 specialists always (the full team is at
+// the table; subdued ones are waiting their turn, not absent). Active
+// row gets a clay-pulse dot + ink text; others stay clay-soft + ink-soft.
+const SPECIALIST_ORDER = [
+  'moderator',
+  'planungsrecht',
+  'bauordnungsrecht',
+  'sonstige_vorgaben',
+  'verfahren',
+  'beteiligte',
+  'synthesizer',
+] as const
+
 function SpecialistsAtTheTable({ messages }: { messages: MessageRow[] }) {
   const { t } = useTranslation()
 
-  // Count per-specialist turns; preserve order by most-recent appearance.
-  const order: string[] = []
-  const counts = new Map<string, number>()
-  const sortedRecent = messages.filter((m) => m.role === 'assistant' && m.specialist)
-  for (const m of sortedRecent) {
-    const s = m.specialist!
-    if (!counts.has(s)) order.unshift(s)
-    counts.set(s, (counts.get(s) ?? 0) + 1)
-  }
-  // Take last 6 distinct specialists by recency.
-  const distinctRecent = [...new Set(sortedRecent.slice(-6).reverse().map((m) => m.specialist!))]
-
   // Identify the currently-speaking specialist (the latest assistant turn).
-  const latest = sortedRecent[sortedRecent.length - 1]?.specialist ?? null
+  let latest: string | null = null
+  for (let i = messages.length - 1; i >= 0; i--) {
+    const m = messages[i]
+    if (m.role === 'assistant' && m.specialist) {
+      latest = m.specialist
+      break
+    }
+  }
 
   return (
     <div className="flex flex-col gap-3">
       <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-foreground/60">
         {t('chat.atTheTable')}
       </p>
-      {distinctRecent.length === 0 ? (
-        <p className="font-serif italic text-[12px] text-clay/70 leading-relaxed">
-          {t('chat.atTheTableEmpty')}
-        </p>
-      ) : (
-        <ul className="flex flex-col gap-2">
-          {distinctRecent.map((spec) => {
-            const turns = counts.get(spec) ?? 0
-            const isActive = spec === latest
-            return (
-              <li
-                key={spec}
-                className="flex items-center gap-2.5 text-[12px]"
-              >
-                <SpecialistSigil specialist={spec} className="text-drafting-blue/75" />
-                <span
-                  className={cn(
-                    'uppercase tracking-[0.04em] flex-1 truncate transition-colors duration-soft',
-                    isActive ? 'text-ink' : 'text-ink/65',
-                  )}
-                >
-                  {t(SPECIALIST_LABEL_KEYS[spec] ?? `chat.specialists.${spec}`)}
-                </span>
-                <span className="font-serif italic text-[11px] text-clay tabular-figures">
-                  {turns}
-                </span>
-                {isActive && (
-                  <span
-                    aria-hidden="true"
-                    className="absolute h-px bg-drafting-blue/60"
-                    style={{ left: 0, right: 0, bottom: -2, marginInline: '0 4rem' }}
-                  />
+      <ul className="flex flex-col gap-1.5">
+        {SPECIALIST_ORDER.map((spec) => {
+          const isLive = spec === latest
+          return (
+            <li
+              key={spec}
+              className={cn(
+                'flex items-center gap-2 text-[12px] leading-snug transition-colors duration-soft',
+                isLive ? 'text-ink' : 'text-ink-soft',
+              )}
+            >
+              <span
+                aria-hidden="true"
+                className={cn(
+                  'block w-1.5 h-1.5 rounded-full shrink-0',
+                  isLive ? 'bg-clay pm-table-pulse' : 'bg-clay-soft',
                 )}
-              </li>
-            )
-          })}
-        </ul>
-      )}
+              />
+              <span className="truncate">
+                {t(SPECIALIST_LABEL_KEYS[spec] ?? `chat.specialists.${spec}`)}
+              </span>
+            </li>
+          )
+        })}
+      </ul>
+      <style>{`
+        @keyframes pmTablePulse {
+          0%, 100% { opacity: 1; transform: scale(1); }
+          50%      { opacity: 0.6; transform: scale(0.85); }
+        }
+        .pm-table-pulse {
+          animation: pmTablePulse 1.4s cubic-bezier(0.32, 0.72, 0, 1) infinite;
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .pm-table-pulse { animation: none; }
+        }
+      `}</style>
     </div>
   )
 }
