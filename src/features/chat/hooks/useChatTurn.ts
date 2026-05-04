@@ -10,6 +10,8 @@ import {
   linkFilesToMessage,
 } from '@/lib/uploadApi'
 import { useChatStore, OFFLINE_QUEUE_CAP } from '@/stores/chatStore'
+import { useAuthStore } from '@/stores/authStore'
+import { isAdminEmail } from '@/lib/cn-feature-flags'
 import { thinkingLabelToSection } from '../lib/thinkingLabelToSection'
 import type { MessageRow, ProjectRow } from '@/types/db'
 import type { ChatTurnRequest, ChatTurnResponse, UserAnswer } from '@/types/chatTurn'
@@ -262,6 +264,13 @@ export function useChatTurn(projectId: string) {
       }
 
       const { response, clientRequestId, attachmentIds } = settled
+
+      // Phase 7 Chamber — cost ticker removed from the user surface.
+      // Admin emails (Rutik) still see per-turn cost in the console.
+      if (isAdminEmail(useAuthStore.getState().user?.email)) {
+        // eslint-disable-next-line no-console
+        console.log('[pm-cost]', response.costInfo)
+      }
 
       // Append the persisted assistant message to cache.
       const current =

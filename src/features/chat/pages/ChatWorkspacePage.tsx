@@ -11,10 +11,8 @@ import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 import { SEO } from '@/components/SEO'
 import { useChatStore, OFFLINE_QUEUE_CAP } from '@/stores/chatStore'
-import { useAuthStore } from '@/stores/authStore'
 import { useViewport } from '@/lib/useViewport'
 import { useAuth } from '@/hooks/useAuth'
-import { isAdminEmail } from '@/lib/cn-feature-flags'
 import type { MessageRow } from '@/types/db'
 import type { Specialist, ProjectState } from '@/types/projectState'
 import type { UserAnswer } from '@/types/chatTurn'
@@ -496,7 +494,3 @@ function SignOutMenuItem() {
   )
 }
 
-// Touch-bind so unused imports stay available for the cost-ticker
-// hook landing in commit 27.
-void useAuthStore
-void isAdminEmail
