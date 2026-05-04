@@ -33,18 +33,28 @@ export function LedgerPeek({ projectId, projectName, summary, variant = 'anchore
   return (
     <div
       className={cn(
-        'flex flex-col gap-5 bg-paper-card border border-[var(--hairline-strong,rgba(26,22,18,0.18))]',
+        // Phase 7.7 §1.6 — paper-pinned-card character. No drop shadow.
+        // 0.5 px hairline on left/top/bottom (right is the viewport
+        // edge). 12 px radius on the visible left corners only. A
+        // single-pixel clay glow on the left edge gives the
+        // "pinned-to-the-board" feel without elevation.
+        'flex flex-col gap-5 bg-paper-card',
         variant === 'anchored'
-          ? 'rounded-l-2xl shadow-[0_10px_36px_-8px_rgba(26,22,18,0.18)] p-5 w-[300px]'
+          ? 'p-5 w-[300px] border-y border-l border-[var(--hairline,rgba(26,22,18,0.10))] rounded-l-xl shadow-[-1px_0_0_0_rgba(123,92,63,0.18)]'
           : 'p-5',
         className,
       )}
     >
-      <header className="flex flex-col gap-1">
+      <header className="flex flex-col gap-1.5">
         <p className="font-mono text-[10.5px] uppercase tracking-[0.20em] text-clay leading-none">
           {t('chat.chamber.ledgerEyebrow')}
         </p>
-        <p className="font-serif italic text-[14px] text-ink/82 leading-tight truncate" title={projectName}>
+        {/* Phase 7.7 §1.6 — italic Georgia 14 px ink, not 82 % alpha. */}
+        <p
+          className="font-serif italic text-[14px] text-ink leading-tight truncate"
+          title={projectName}
+          style={{ fontFamily: "Georgia, 'Instrument Serif', serif" }}
+        >
           {projectName.split('·')[0]?.trim() ?? projectName}
         </p>
       </header>
@@ -65,13 +75,21 @@ export function LedgerPeek({ projectId, projectName, summary, variant = 'anchore
                 <li key={key} className="flex items-center justify-between gap-3 text-[12.5px]">
                   <span className="font-serif italic text-clay-deep">{key}</span>
                   <span className="flex-1 truncate text-ink/85">{t(`chat.areas.${key}`)}</span>
+                  {/* Phase 7.7 §1.6 — small-caps with tracking
+                    * 0.16em rather than mono caps. Reads as a
+                    * margin annotation. */}
                   <span
                     className={cn(
-                      'font-mono text-[9px] uppercase tracking-[0.14em] px-1.5 py-px rounded-[2px]',
+                      'text-[10px] px-2 py-[2px] rounded-[2px]',
+                      'lowercase',
                       state === 'ACTIVE' && 'bg-[hsl(var(--clay)/0.12)] text-clay-deep',
                       state === 'PENDING' && 'bg-paper-deep text-ink/55',
                       state === 'VOID' && 'border border-dashed border-[var(--hairline-strong)] text-ink/40',
                     )}
+                    style={{
+                      fontVariant: 'small-caps',
+                      letterSpacing: '0.16em',
+                    }}
                   >
                     {t(`chat.areas.state.${state.toLowerCase()}`)}
                   </span>
