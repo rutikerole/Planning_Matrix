@@ -20,6 +20,7 @@ import { PaperCard } from '../components/PaperCard'
 import { ConversationCursor } from '../components/ConversationCursor'
 import { ChatDropZone } from '../components/ChatDropZone'
 import { ChatProgressBar } from '../components/Progress/ChatProgressBar'
+import { StickyContext } from '../components/StickyContext'
 import { UnifiedFooter } from '../components/UnifiedFooter/UnifiedFooter'
 import { RateLimitBanner } from '../components/RateLimitBanner'
 import { useProjectEvents } from '../hooks/useProjectEvents'
@@ -334,6 +335,11 @@ export function ChatWorkspacePage() {
                 <div className="hidden lg:block -mt-12 mb-6 lg:-mt-16">
                   <ChatProgressBar messages={messages ?? []} />
                 </div>
+                {/* Phase 7 Move 2 — sticky context header surfaces only when
+                  * the user has scrolled past the latest assistant turn's
+                  * spec-tag. Desktop-only (mobile renders via
+                  * MobileChatWorkspace, separate scroll context). */}
+                <StickyContext messages={messages ?? []} />
                 <PaperCard project={project}>
                   <Thread messages={augmentedMessages} />
                 </PaperCard>

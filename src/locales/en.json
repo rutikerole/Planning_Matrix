@@ -910,6 +910,10 @@
         "synthesizer": "Docs"
       }
     },
+    "stickyCtx": {
+      "label": "Current discussion context",
+      "backToLive": "back to live"
+    },
     "export": {
       "menuLabel": "Export",
       "eyebrow": "Export",

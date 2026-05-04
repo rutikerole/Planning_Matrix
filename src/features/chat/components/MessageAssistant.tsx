@@ -68,6 +68,13 @@ export function MessageAssistant({
 
   return (
     <article
+      // Phase 7 Move 2/Move 6 — `spec-tag-<id>` is the live anchor that
+      // StickyContext (IntersectionObserver) and useAutoScroll
+      // (scrollIntoView) target as the "live edge" of the conversation.
+      // The id sits on the article wrapper because the spec-tag div is
+      // its first in-flow child, so article.top === spec-tag.top within
+      // a few pixels — close enough for the 90 px viewport-offset logic.
+      id={`spec-tag-${message.id}`}
       className="relative flex flex-col gap-5"
       aria-label={`Specialist: ${message.specialist ?? 'unknown'}`}
       data-message-id={message.id}

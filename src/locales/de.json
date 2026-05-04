@@ -910,6 +910,10 @@
         "synthesizer": "Synth."
       }
     },
+    "stickyCtx": {
+      "label": "Aktueller Gesprächskontext",
+      "backToLive": "zurück zum Live-Stand"
+    },
     "export": {
       "menuLabel": "Exportieren",
       "eyebrow": "Exportieren",
