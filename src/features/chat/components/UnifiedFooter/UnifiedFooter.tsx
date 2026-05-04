@@ -62,7 +62,7 @@ export function UnifiedFooter({ project, messages, events, inputBar }: Props) {
       />
       {/* Desktop band — three sub-columns mirroring the grid above. */}
       <div className="hidden lg:block">
-        <div className="mx-auto w-full max-w-[1440px] grid lg:grid-cols-[280px_minmax(0,1fr)_360px] gap-x-4 px-4 sm:px-6 lg:px-8 pt-3 pb-2">
+        <div className="mx-auto w-full max-w-[1440px] grid lg:grid-cols-[220px_minmax(0,1fr)_300px] gap-x-4 px-4 sm:px-6 lg:px-8 pt-3 pb-2">
           <div className="min-w-0">
             <FooterLeftColumn
               project={project}

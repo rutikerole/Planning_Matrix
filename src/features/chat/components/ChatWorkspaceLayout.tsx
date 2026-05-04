@@ -50,9 +50,14 @@ export function ChatWorkspaceLayout({
       {/* Phase 3.7 #75 — bottom padding compensates for the fixed
         * unified footer. Desktop reserves ~180 px (input + secondary
         * actions stacked). Mobile reserves ~110 px (single bar). */}
+      {/* Phase 7 Pass 2 — rails narrowed (260→220 left, 340→300
+        * right) and message column clamped to 720 px so the chat
+        * reads as a document instead of an instant-messenger column.
+        * Net effect: more whitespace beside the message column,
+        * tighter line lengths inside it. */}
       <div
         className={
-          'mx-auto w-full max-w-[1440px] grid lg:grid-cols-[280px_minmax(0,1fr)_360px] grid-cols-1 ' +
+          'mx-auto w-full max-w-[1440px] grid lg:grid-cols-[220px_minmax(0,1fr)_300px] grid-cols-1 ' +
           (unifiedFooter ? 'pb-[120px] lg:pb-[180px]' : '')
         }
       >
@@ -62,7 +67,7 @@ export function ChatWorkspaceLayout({
 
         <main className="relative min-h-dvh flex flex-col">
           <div className="flex-1 flex justify-center px-6 sm:px-10 lg:px-14">
-            <div className="w-full max-w-3xl py-16 lg:py-20">{children}</div>
+            <div className="w-full max-w-[720px] py-16 lg:py-20">{children}</div>
           </div>
         </main>
 
