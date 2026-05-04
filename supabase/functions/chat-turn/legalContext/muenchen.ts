@@ -248,6 +248,51 @@ adressgenau abrufbar. Im Zweifel beim zuständigen Sub-Bauamt
 anfragen — niemals raten, ob eine Erhaltungssatzung greift.
 
 ══════════════════════════════════════════════════════════════════════════
+DENKMAL-/ERHALTUNGSSATZUNGS-AUSLÖSER — proaktive Pflicht
+══════════════════════════════════════════════════════════════════════════
+
+INVARIANTE — wenn ALLE drei Bedingungen erfüllt sind:
+  (1) Vorhaben-Typ ist Ersatzneubau, Sanierung, Umbau oder Aufstockung
+      (also kein Neubau auf einem zuvor unbebauten Grundstück);
+  (2) Bestandsgebäude-Baujahr liegt vor 1950 — ODER der Baujahr ist
+      unbekannt UND das Grundstück liegt in einem denkmalrelevanten
+      Stadtbezirk (Maxvorstadt, Schwabing-West, Schwabing-Freimann,
+      Lehel, Altstadt-Lehel, Au-Haidhausen, Glockenbachviertel,
+      Isarvorstadt, Sendling, Neuhausen-Nymphenburg, Bogenhausen);
+  (3) Denkmalschutz und Erhaltungssatzung wurden im Gespräch noch
+      nicht adressiert (kein passender Eintrag in `questionsAsked`).
+
+DANN MUSS Sonstige_Vorgaben im NÄCHSTEN Dialog-Block beide Themen —
+Denkmalschutz (BayDSchG Art. 6, Bayerischer Denkmal-Atlas via BLfD)
+und Erhaltungssatzung (BauGB § 172) — als zentrale Prüfpunkte
+einführen, BEVOR weitere bauordnungsrechtliche Detailfragen gestellt
+werden. Beispielformulierung:
+
+  „Bevor wir die Bauordnung im Detail prüfen, müssen wir zwei
+   Schichten oberhalb der BayBO klären: Denkmalschutz nach BayDSchG
+   Art. 6 (Eintrag in der Bayerischen Denkmalliste?) und
+   Erhaltungssatzung nach BauGB § 172 (Geltungsbereich? In
+   Maxvorstadt sind beide möglich). Beides würde zusätzliche
+   Genehmigungsspuren neben der Baugenehmigung auslösen — und
+   beim Ersatzneubau eines Bestandsgebäudes oft die größte Hürde
+   darstellen."
+
+Diese Prüfung ist NICHT optional, NICHT vom Bauherrn-Prompt
+abhängig, und MUSS spätestens nach Klärung des Bestandsgebäude-
+Baujahrs angesprochen werden. Beim Setzen einer Empfehlung
+`rec-heritage-check` mit Verweis auf die Bayerische Denkmalliste
+(BLfD-Online: https://geoportal.bayern.de/denkmalatlas) und das
+zuständige Sub-Bauamt der LBK München (Mitte / Ost / West).
+
+EDGE CASES:
+  • Baujahr unbekannt, Adresse außerhalb denkmalrelevanter
+    Stadtbezirke: BayDSchG-Prüfung weiterhin proaktiv (universell);
+    Erhaltungssatzungs-Framing entfällt mangels Trigger.
+  • Neubau auf unbebautem Grundstück: Denkmal-/Erhaltungs-Trigger
+    entfällt — kein Bestand zu schützen. Bei Bodendenkmal-Verdacht
+    (Altstadt-Nähe) noch einmal prüfen.
+
+══════════════════════════════════════════════════════════════════════════
 DENKMALSCHUTZ — Bayerische Denkmalliste München
 ══════════════════════════════════════════════════════════════════════════
 
