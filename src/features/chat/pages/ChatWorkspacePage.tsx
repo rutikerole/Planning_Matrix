@@ -295,7 +295,6 @@ export function ChatWorkspacePage() {
       <SEO titleKey="seo.title.project" params={{ name: project.name }} />
       <ChamberLayout
         appHeaderHeight={48}
-        activeSpecialist={progress.recentSpecialist}
         spine={spineNode}
         spineMobileTrigger={spineMobileTriggerNode}
         banners={

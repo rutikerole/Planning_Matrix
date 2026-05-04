@@ -22,14 +22,10 @@ import {
   type ReactNode,
   type RefObject,
 } from 'react'
-import type { Specialist } from '@/types/projectState'
 import { BlueprintSubstrate } from '@/components/shared/BlueprintSubstrate'
-import { AmbientTint } from './AmbientTint'
 import { CursorParallax } from './CursorParallax'
 
 interface Props {
-  /** Active specialist drives the AmbientTint cross-fade. */
-  activeSpecialist: Specialist | null
   /** Phase 7.5 — left Spine sidebar (desktop only, ≥ 1024 px). */
   spine?: ReactNode
   /** Phase 7.5 — collapsed Spine trigger strip (< 1024 px). */
@@ -63,7 +59,6 @@ export function useChamberMainRef(): RefObject<HTMLElement | null> | null {
 }
 
 export function ChamberLayout({
-  activeSpecialist,
   spine,
   spineMobileTrigger,
   stickyHeader,
@@ -91,8 +86,12 @@ export function ChamberLayout({
         }}
       >
         {/* z-0 background stack — fixed to viewport, paint across the
-         * whole chamber regardless of any scroll context underneath. */}
-        <AmbientTint specialist={activeSpecialist} />
+         * whole chamber regardless of any scroll context underneath.
+         *
+         * Phase 7.8 §2.7 — AmbientTint dropped from the mount + props.
+         * The Manuscript direction wants the page bg to read as plain
+         * paper warmth (#F5EFDF), not a specialist-keyed hue wash. The
+         * AmbientTint component file stays in src/ for future re-use. */}
         <CursorParallax />
         <BlueprintSubstrate />
         <div aria-hidden="true" className="grain-overlay-fixed" />
