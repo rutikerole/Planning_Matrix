@@ -897,6 +897,19 @@
       "nearEnd": "Approaching the end.",
       "expand": "Show progress"
     },
+    "compass": {
+      "journey": "Journey",
+      "turn": "Turn",
+      "station": {
+        "moderator": "Init",
+        "planungsrecht": "Plot",
+        "bauordnungsrecht": "Code",
+        "sonstige_vorgaben": "Adj",
+        "verfahren": "Proc",
+        "beteiligte": "Team",
+        "synthesizer": "Docs"
+      }
+    },
     "export": {
       "menuLabel": "Export",
       "eyebrow": "Export",

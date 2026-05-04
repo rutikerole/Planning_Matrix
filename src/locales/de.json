@@ -897,6 +897,19 @@
       "nearEnd": "Wir nähern uns dem Ende.",
       "expand": "Fortschritt anzeigen"
     },
+    "compass": {
+      "journey": "Pfad",
+      "turn": "Runde",
+      "station": {
+        "moderator": "Start",
+        "planungsrecht": "Plan.",
+        "bauordnungsrecht": "Bauord.",
+        "sonstige_vorgaben": "Sonst.",
+        "verfahren": "Verf.",
+        "beteiligte": "Bet.",
+        "synthesizer": "Synth."
+      }
+    },
     "export": {
       "menuLabel": "Exportieren",
       "eyebrow": "Exportieren",
