@@ -376,6 +376,53 @@ export function applyAreasUpdate(
   return { ...state, areas }
 }
 
+// ── Ledger summary (Phase 7 Chamber) ───────────────────────────────────
+
+/**
+ * Pure reader. Selects the bits the Chamber's LedgerPeek + StandUp
+ * overlay surface: the three areas with their state, the 5 most recent
+ * facts, and the top-3 recommendations by rank. No side effects.
+ */
+export interface LedgerSummary {
+  areas: { key: 'A' | 'B' | 'C'; state: 'ACTIVE' | 'PENDING' | 'VOID' }[]
+  facts: Fact[]
+  topRecs: Recommendation[]
+  factCount: number
+  recCount: number
+}
+
+export function extractLedgerSummary(state: ProjectState | undefined): LedgerSummary {
+  if (!state) {
+    return {
+      areas: [
+        { key: 'A', state: 'PENDING' },
+        { key: 'B', state: 'PENDING' },
+        { key: 'C', state: 'PENDING' },
+      ],
+      facts: [],
+      topRecs: [],
+      factCount: 0,
+      recCount: 0,
+    }
+  }
+  const areas = (['A', 'B', 'C'] as const).map((key) => ({
+    key,
+    state: state.areas[key]?.state ?? ('PENDING' as const),
+  }))
+  const facts = (state.facts ?? []).slice(-5).reverse()
+  const topRecs = (state.recommendations ?? [])
+    .slice()
+    .sort((a, b) => a.rank - b.rank)
+    .slice(0, 3)
+  return {
+    areas,
+    facts,
+    topRecs,
+    factCount: state.facts?.length ?? 0,
+    recCount: state.recommendations?.length ?? 0,
+  }
+}
+
 // ── Composite turn application ─────────────────────────────────────────
 
 /**

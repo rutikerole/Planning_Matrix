@@ -26,7 +26,7 @@ const SPECIALIST_PROGRESS: Record<Specialist, number> = {
   synthesizer: 0.98,
 }
 
-const TYPICAL_TURN_COUNT = 18
+const TYPICAL_TURN_COUNT = 22
 const TURN_COUNT_CEILING = 0.95
 
 export function estimateProgress(
