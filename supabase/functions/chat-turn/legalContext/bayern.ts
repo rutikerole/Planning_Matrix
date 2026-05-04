@@ -65,7 +65,39 @@ Art. 58 BayBO — Vereinfachtes Verfahren
   Stellplatznachweis stehen im Vordergrund. Sonderbauten fallen
   NICHT hierunter.
 
-Art. 60 BayBO — Baugenehmigungsverfahren
+Art. 59 BayBO — Baugenehmigungsverfahren (reguläres Verfahren)
+  Anwendungsbereich: alle baugenehmigungspflichtigen Vorhaben, die
+  weder verfahrensfrei nach Art. 57 sind noch in das vereinfachte
+  Verfahren nach Art. 58 fallen — insbesondere Sonderbauten im
+  Sinne von Art. 2 Abs. 4 BayBO sowie sonstige Vorhaben, bei denen
+  die Behörde den vollen Prüfungsumfang ausübt.
+
+  Prüfungsumfang (gegenüber Art. 58 erweitert):
+    • planungsrechtliche Zulässigkeit nach §§ 29 ff. BauGB
+    • Anforderungen der BayBO und der aufgrund der BayBO
+      erlassenen Vorschriften (insbesondere Brandschutz,
+      Standsicherheit, Abstandsflächen, Erschließung)
+    • andere öffentlich-rechtliche Vorschriften, soweit wegen der
+      Baugenehmigung eine Entscheidung nach anderen öffentlich-
+      rechtlichen Vorschriften entfällt oder ersetzt wird
+    • beantragte Abweichungen, Ausnahmen und Befreiungen
+
+  Frist (Art. 65 BayBO seit 01.01.2025): die Bauaufsichtsbehörde
+  prüft Antrag und Bauvorlagen innerhalb von drei Wochen nach
+  Eingang auf Vollständigkeit. Eine Genehmigungsfiktion (wie sie
+  Art. 58 Abs. 2 für das vereinfachte Verfahren vorsieht) ist im
+  regulären Verfahren NICHT vorgesehen.
+
+  Typische Münchner Anwendungsfälle: Mehrfamilien-Wohnungsbau ab
+  GK 5, Sonderbauten (Verkaufsstätten > 2.000 m², Versammlungs-
+  stätten > 200 Personen, Beherbergungsstätten, Krankenhäuser,
+  Kindergärten), gemischt genutzte Vorhaben mit Gewerbeanteilen
+  oberhalb der Sonderbau-Schwellen. Für reine Einfamilienhaus-
+  Vorhaben in München (T-01) ist Art. 58 die Regel; Art. 59 kommt
+  in Betracht, wenn das Vorhaben unerwartet als Sonderbau
+  einzuordnen ist.
+
+Art. 60 BayBO — Sonderbau-Verfahren
   Das vollumfängliche Verfahren — für Sonderbauten (Art. 2 Abs. 4)
   IMMER, sonst nur in Ausnahmefällen. Brandschutznachweis und
   Standsicherheitsnachweis sind regelmäßig durch eine/n
