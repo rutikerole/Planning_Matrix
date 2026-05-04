@@ -65,19 +65,27 @@ export function BriefingCTA({ projectId, gate, signal, variant = 'inline' }: Pro
         transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
         className="w-full"
       >
+        {/* Phase 7.7 §1.9 — paper-on-paper pill, NOT black. The
+          * Phase 7.5 spec called for "paper-card bg, 0.5 px clay
+          * border, ink text, italic-serif Georgia 13 px"; Phase 7.5
+          * commit 6 shipped the opposite. This commit closes the
+          * regression. */}
         <Link
           to={`/projects/${projectId}/result`}
           aria-label={t('chat.spine.footer.openBriefing')}
           className={cn(
             'group inline-flex w-full items-center justify-center gap-2 px-3 py-2.5 rounded-lg',
-            'bg-ink text-paper text-[12px] font-medium tracking-[0.04em]',
-            'transition-[background-color,transform] duration-200 hover:bg-[hsl(220_16%_16%)] motion-safe:active:scale-[0.98]',
-            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink focus-visible:ring-offset-2 focus-visible:ring-offset-paper-card',
-            isReady && 'border border-clay shadow-[0_0_0_4px_var(--spine-stage-halo)]',
+            'bg-paper-card border border-clay/55 text-ink',
+            'font-serif italic text-[13px]',
+            'transition-[background-color,border-color] duration-200',
+            'hover:bg-[hsl(var(--clay)/0.10)] hover:border-clay',
+            'motion-safe:active:scale-[0.98]',
+            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/55 focus-visible:ring-offset-2 focus-visible:ring-offset-paper-card',
+            isReady && 'border-clay shadow-[0_0_0_4px_var(--spine-stage-halo)]',
           )}
         >
           <span>{t('chat.spine.footer.openBriefing')}</span>
-          <ArrowUpRight aria-hidden="true" className="size-[14px] motion-safe:group-hover:translate-x-0.5 transition-transform duration-200" />
+          <ArrowUpRight aria-hidden="true" className="size-[14px] text-clay motion-safe:group-hover:translate-x-0.5 transition-transform duration-200" />
         </Link>
       </m.div>
     )
@@ -169,14 +177,18 @@ export function BriefingCTA({ projectId, gate, signal, variant = 'inline' }: Pro
           {...linkProps}
           className={cn(
             'group inline-flex items-center gap-2.5 px-7 py-4 rounded-2xl',
-            'bg-clay text-paper text-[18px] font-serif italic',
-            'transition-transform duration-200 hover:bg-clay-deep motion-safe:hover:-translate-y-px',
+            // Phase 7.7 §1.9 — hero inline CTA stays paper/clay/ink,
+            // never filled black/clay. The chamber-cta-halo + the
+            // ready-state border + the one-shot pulse already give
+            // the moment its weight; we don't need a black pill.
+            'bg-paper-card border border-clay text-ink text-[18px] font-serif italic',
+            'transition-[background-color,transform] duration-200 hover:bg-[hsl(var(--clay)/0.10)] motion-safe:hover:-translate-y-px',
             'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay focus-visible:ring-offset-4 focus-visible:ring-offset-paper',
             'chamber-cta-halo',
           )}
         >
           <span>{label}</span>
-          <ArrowUpRight aria-hidden="true" className="size-[18px] motion-safe:group-hover:translate-x-0.5 transition-transform duration-200" />
+          <ArrowUpRight aria-hidden="true" className="size-[18px] text-clay motion-safe:group-hover:translate-x-0.5 transition-transform duration-200" />
         </Link>
       </m.div>
     </div>
