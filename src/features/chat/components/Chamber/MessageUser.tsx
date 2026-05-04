@@ -2,6 +2,12 @@
 //
 // Right-aligned. Soft paper-warm bg, rounded-2xl, italic-serif
 // timestamp footer. Long-press on mobile opens MessageContextSheet.
+//
+// Phase 7.8 §2.2 — outer wrapper gains ml-14 so the user-pill column
+// shares the 56 px gutter with the assistant body indent. On wide
+// viewports the visual change is small (the pill still hugs the
+// right edge); on narrower viewports the pill stops butting against
+// the left margin and respects the manuscript rhythm.
 
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -35,7 +41,7 @@ export function MessageUser({ message }: Props) {
   })
 
   return (
-    <div className="flex justify-end">
+    <div className="flex justify-end ml-14">
       <article
         className={cn(
           'relative flex flex-col gap-2 max-w-[min(72%,540px)] px-5 py-4',
