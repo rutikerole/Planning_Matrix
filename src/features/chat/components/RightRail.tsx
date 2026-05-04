@@ -5,8 +5,7 @@ import { ProceduresPanel } from './ProceduresPanel'
 import { DocumentsPanel } from './DocumentsPanel'
 import { RolesPanel } from './RolesPanel'
 import { EckdatenPanel } from './EckdatenPanel'
-import { IntentAxonometric } from './IntentAxonometric'
-import { BereichePlanSection } from './BereichePlanSection'
+import { ProjectPortrait } from './ProjectPortrait'
 import { FactTicker } from './FactTicker'
 
 interface Props {
@@ -60,19 +59,19 @@ export function RightRail({ project, messages }: Props) {
 
   return (
     <div className="w-full flex flex-col px-5 py-7 gap-7">
-      {/* 1. Axonometric drawing of the active intent. Phase 7 Move 9
-        * passes state so the EFH variant layers reactive annotations
-        * (wall height, storey line, GK badge) on top of the existing
-        * 6-variant gallery. Other intents render unchanged. */}
-      <IntentAxonometric intent={project.intent} state={state} />
+      {/* 1. Project portrait — Phase 7 Pass 2 merges what used to be
+        * two separate blocks (IntentAxonometric + BereichePlanSection)
+        * into a single drawing-with-legend card. Live-area pulse
+        * still drives the band whose specialist is currently
+        * speaking. */}
+      <ProjectPortrait
+        intent={project.intent}
+        state={state}
+        liveArea={liveArea}
+      />
 
-      {/* 2. TOP-3 cards */}
+      {/* 2. TOP-3 cards — hidden when empty (Pass 2 Move 4). */}
       <Top3 recommendations={recommendations} />
-
-      {/* 3. BEREICHE plan-section. Phase 7 Move 10c — live area
-        * derived from latest assistant specialist drives a pulsing
-        * legend bar on A/B/C. */}
-      <BereichePlanSection state={state} liveArea={liveArea} />
 
       {/* 4. ECKDATEN schedule */}
       <EckdatenPanel project={project} facts={facts} />

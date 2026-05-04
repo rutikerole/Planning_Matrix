@@ -38,6 +38,12 @@ export function Top3({ recommendations }: Props) {
   const getRecId = useCallback((r: Recommendation) => r.id, [])
   const freshIds = useFreshSet(top, getRecId)
 
+  // Phase 7 Pass 2 — hide the entire block when there's nothing to
+  // show. The previous v1 placeholder ("00 / 03 — Recommendations
+  // appear here once there's enough information.") was visual noise
+  // that didn't help the user.
+  if (top.length === 0) return null
+
   return (
     <div className="flex flex-col gap-3">
       <div className="flex items-baseline justify-between">
@@ -49,14 +55,9 @@ export function Top3({ recommendations }: Props) {
         </span>
       </div>
 
-      {top.length === 0 ? (
-        <p className="font-serif italic text-[12px] text-clay/70 leading-relaxed">
-          {t('chat.rail.empty')}
-        </p>
-      ) : (
-        <ol className="flex flex-col gap-6">
-          <AnimatePresence initial={false}>
-            {top.map((rec, idx) => (
+      <ol className="flex flex-col gap-6">
+        <AnimatePresence initial={false}>
+          {top.map((rec, idx) => (
               <m.li
                 key={rec.id}
                 layout="position"
@@ -118,11 +119,10 @@ export function Top3({ recommendations }: Props) {
                     {t('chat.preliminaryFooter')}
                   </p>
                 </div>
-              </m.li>
-            ))}
-          </AnimatePresence>
-        </ol>
-      )}
+            </m.li>
+          ))}
+        </AnimatePresence>
+      </ol>
     </div>
   )
 }
