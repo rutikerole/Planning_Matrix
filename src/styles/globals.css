@@ -211,6 +211,53 @@
   }
 
   /* ─────────────────────────────────────────────────────────────────
+   * Phase 7 — Living Drafting Table tokens.
+   * Additive raw-value tokens used by the chat workspace's compass
+   * arc, sticky context, citation chips, project portrait, and
+   * stand-up modal. The atelier HSL tokens above (--paper, --ink,
+   * --clay, --clay-soft, --clay-light, --clay-deep, --drafting-blue)
+   * are unchanged; these layer the deeper paper hierarchy + hairline
+   * weights + motion curves + layout vars from the chat-redesign
+   * prototype on top, so Phase 7 components match the prototype's
+   * exact CSS variable names verbatim.
+   * ────────────────────────────────────────────────────────────────── */
+  :root {
+    /* Paper hierarchy */
+    --paper-deep:   #ECE5D5;
+    --paper-card:   #FBF7EE;
+    --paper-soft:   #F8F2E5;
+
+    /* Ink hierarchy (additive; existing HSL --ink stays primary). */
+    --ink-soft:     #3A322A;
+    --ink-mute:     #6B5F50;
+    --ink-faint:    #8E8270;
+
+    /* Clay hierarchy (additive; existing HSL --clay stays primary). */
+    --clay-tint:    rgba(142, 106, 71, 0.10);
+    --clay-glow:    rgba(142, 106, 71, 0.18);
+
+    /* Hairlines (raw rgba; existing --border / --border-strong stay
+     * for HSL-form sites). */
+    --line:         rgba(26, 22, 18, 0.10);
+    --line-strong:  rgba(26, 22, 18, 0.18);
+    --line-faint:   rgba(26, 22, 18, 0.05);
+
+    /* Motion. --ease matches the existing transition-calm curve;
+     * --ease-soft is the new fast-but-soft curve used for pulses
+     * and the sticky-context slide. */
+    --ease:         cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-soft:    cubic-bezier(0.32, 0.72, 0, 1);
+
+    /* Layout (rail widths / max content) — vocabulary tokens for the
+     * Phase 7 standup-modal positioning + bounding boxes. The chat
+     * workspace itself still uses Tailwind's grid template literals;
+     * these vars are additive design references. */
+    --rail-l:       260px;
+    --rail-r:       340px;
+    --max-content:  1480px;
+  }
+
+  /* ─────────────────────────────────────────────────────────────────
    * Phase 3.8 #83 — Viewport-aware tokens.
    * The third dimension on top of mode (deliverable / operating). When
    * <html data-pm-viewport="mobile">, mobile-scaled tokens activate.

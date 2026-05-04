@@ -168,10 +168,29 @@ export default {
         'pm-dark-mute':    'var(--pm-dark-mute)',
         'pm-dark-mute2':   'var(--pm-dark-mute2)',
         'pm-dark-hair':    'var(--pm-dark-hair)',
+
+        /* ── Phase 7 — Living Drafting Table tokens (chat workspace) ── */
+        'paper-deep':   'var(--paper-deep)',
+        'paper-card':   'var(--paper-card)',
+        'paper-soft':   'var(--paper-soft)',
+        'ink-soft':     'var(--ink-soft)',
+        'ink-mute':     'var(--ink-mute)',
+        'ink-faint':    'var(--ink-faint)',
+        'clay-tint':    'var(--clay-tint)',
+        'clay-glow':    'var(--clay-glow)',
+        hairline:           'var(--line)',
+        'hairline-strong':  'var(--line-strong)',
+        'hairline-faint':   'var(--line-faint)',
       },
       transitionTimingFunction: {
         calm: 'cubic-bezier(0.16, 1, 0.3, 1)',
         soft: 'cubic-bezier(0.4, 0, 0.2, 1)',
+        /* Phase 7 — Living Drafting Table motion curves. `ease` matches
+         * --ease (same curve as `calm` but offered under the brief's
+         * vocabulary so prototype CSS reads verbatim). `ease-soft`
+         * is the new fast-but-soft curve used for pulses + slide-ins. */
+        ease:        'cubic-bezier(0.16, 1, 0.3, 1)',
+        'ease-soft': 'cubic-bezier(0.32, 0.72, 0, 1)',
       },
       transitionDuration: {
         calm: '700ms',
