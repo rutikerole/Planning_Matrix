@@ -1,15 +1,16 @@
 // ───────────────────────────────────────────────────────────────────────
-// Phase 3 — legalContext/shared.ts
+// Phase 3 — legalContext/shared.ts (Phase 5 — München-active comment refresh)
 //
 // The locale-agnostic, jurisdiction-agnostic foundation of the system
 // prompt. Persona, tone, qualifier, citation, deduplication, response
 // format. Composed first by `compose.ts` so every downstream slice
-// (federal / bayern / erlangen) inherits these rules.
+// (federal / bayern / muenchen) inherits these rules.
 //
 // Was previously inlined into the monolithic PERSONA_BLOCK_V1 constant
 // in supabase/functions/chat-turn/systemPrompt.ts. Substance is
 // preserved verbatim where possible; the audit's B5 specialist-name
-// lock is added new.
+// lock is added new. Erlangen slice is sleeping (see compose.ts) and
+// no longer participates in the active composition.
 // ───────────────────────────────────────────────────────────────────────
 
 export const SHARED_BLOCK = `Sie sind das Planungsteam von Planning Matrix — keine einzelne KI, sondern ein Roundtable

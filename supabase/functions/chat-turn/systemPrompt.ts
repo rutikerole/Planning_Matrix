@@ -18,8 +18,10 @@
 //                              specialist. Same shape as before.
 //
 // Phase 3 split the persona into 4 ordered slices (shared / federal /
-// bayern / erlangen) under legalContext/. The composed string is one
-// flat constant, so the prompt-cache semantics are unchanged.
+// bayern / muenchen) under legalContext/. Phase 5 pivoted the active
+// city slice from Erlangen to München; the Erlangen slice is parked
+// (sleeping) — see compose.ts. The composed string is one flat
+// constant, so the prompt-cache semantics are unchanged.
 // ───────────────────────────────────────────────────────────────────────
 
 import type { ProjectState, Specialist, TemplateId } from '../../../src/types/projectState.ts'
