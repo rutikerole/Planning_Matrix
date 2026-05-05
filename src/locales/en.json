@@ -1782,6 +1782,16 @@
         "stakeholdersEyebrow": "Stakeholders",
         "effortLabel": "Effort"
       },
+      "cost": {
+        "costEyebrow": "Cost range",
+        "confidence": "Estimate confidence: ±25%",
+        "totalEstimated": "Total (estimated)",
+        "caveat": "Orientation values from typical Bayern HOAI fees · not binding quotes.",
+        "timelineEyebrow": "Procedure duration",
+        "totalDuration": "Total",
+        "totalDurationValue": "~ 4–6 months",
+        "subjectToWorkload": "subject to authority workload"
+      },
       "procedure": {
         "pickEyebrow": "Procedure pick",
         "noRationale": "Rationale follows once the consultation has gathered more data.",

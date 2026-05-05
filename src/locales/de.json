@@ -1782,6 +1782,16 @@
         "stakeholdersEyebrow": "Beteiligte",
         "effortLabel": "Aufwand"
       },
+      "cost": {
+        "costEyebrow": "Kostenrahmen",
+        "confidence": "Sicherheit der Schätzung: ±25 %",
+        "totalEstimated": "Summe (geschätzt)",
+        "caveat": "Orientierungswerte basierend auf typischen Bayern-Honoraren · keine verbindlichen Quoten.",
+        "timelineEyebrow": "Verfahrensdauer",
+        "totalDuration": "Gesamt",
+        "totalDurationValue": "ca. 4–6 Monate",
+        "subjectToWorkload": "abhängig von der Auslastung der Genehmigungsbehörde"
+      },
       "procedure": {
         "pickEyebrow": "Verfahrenswahl",
         "noRationale": "Begründung folgt sobald die Beratung weiter fortgeschritten ist.",

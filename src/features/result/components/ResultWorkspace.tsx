@@ -9,6 +9,7 @@ import { ResultTabs } from './ResultTabs'
 import { LegalLandscapeTab } from './tabs/LegalLandscapeTab'
 import { OverviewTab } from './tabs/OverviewTab'
 import { ProcedureDocumentsTab } from './tabs/ProcedureDocumentsTab'
+import { CostTimelineTab } from './tabs/CostTimelineTab'
 import { TeamTab } from './tabs/TeamTab'
 
 interface ProjectEventRow {
@@ -68,10 +69,12 @@ export function ResultWorkspace({ project, messages, events, source }: Props) {
             <ProcedureDocumentsTab project={project} state={state} />
           )}
           {active === 'team' && <TeamTab state={state} />}
+          {active === 'cost' && <CostTimelineTab state={state} />}
           {active !== 'overview' &&
             active !== 'legal' &&
             active !== 'procedure' &&
-            active !== 'team' && (
+            active !== 'team' &&
+            active !== 'cost' && (
               <Placeholder
                 id={active}
                 project={project}
