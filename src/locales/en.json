@@ -1726,6 +1726,10 @@
         "noInterpretation": "Interpretation follows as the consultation progresses.",
         "readOfficial": "Open the official text"
       },
+      "comparableProjects": {
+        "eyebrow": "Comparable projects",
+        "placeholder": "Comparable projects coming soon — we'll surface anonymized neighbourhood precedents to help you benchmark cost and timeline."
+      },
       "inspectDataFlow": {
         "linkLabel": "How was this computed?",
         "modalTitle": "Data flow · {{tab}}",

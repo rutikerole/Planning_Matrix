@@ -3,6 +3,7 @@ import type { ProjectState } from '@/types/projectState'
 import { ExecutiveRead } from '../Cards/ExecutiveRead'
 import { AtAGlance } from '../Cards/AtAGlance'
 import { ActionCards } from '../Cards/ActionCards'
+import { ComparableProjectsSlot } from '../Cards/ComparableProjectsSlot'
 
 interface Props {
   project: ProjectRow
@@ -24,6 +25,7 @@ export function OverviewTab({ project, state }: Props) {
         <AtAGlance project={project} state={state} />
       </div>
       <ActionCards project={project} state={state} />
+      <ComparableProjectsSlot />
     </div>
   )
 }

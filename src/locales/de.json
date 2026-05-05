@@ -1726,6 +1726,10 @@
         "noInterpretation": "Auslegung folgt sobald die Beratung weiter ist.",
         "readOfficial": "Offiziellen Text öffnen"
       },
+      "comparableProjects": {
+        "eyebrow": "Vergleichbare Vorhaben",
+        "placeholder": "Vergleichbare Vorhaben folgen — wir machen anonymisierte Nachbarschaftsfälle sichtbar, damit Sie Kosten und Zeit zueinander einordnen können."
+      },
       "inspectDataFlow": {
         "linkLabel": "Wie wurde das berechnet?",
         "modalTitle": "Datenfluss · {{tab}}",
