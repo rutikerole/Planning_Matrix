@@ -46,13 +46,34 @@ export interface CostBreakdown {
   total: CostBucket
 }
 
+/**
+ * Phase 8.5 (A.5) — recalibrated to München-realistic practitioner
+ * ranges. The previous baseline (€13.6k–24.5k total) was below market
+ * for a typical EFH at construction value €750k+. New ranges reflect:
+ *
+ *   - HOAI 2021 § 35 Zone III architect LP 1-4 fees for München at
+ *     typical EFH Anrechenbare Kosten ~€500k–800k.
+ *   - München practitioner +15-25% premium over Bayern average,
+ *     documented at gehaltsvergleich.com / architektenkammer Bayern
+ *     market data.
+ *   - Authority fees scaled to München LHM kostensatzung typical
+ *     residential review.
+ *
+ * verifyBeforePublicLaunch — same caveat. These are orientation ranges
+ * sourced from practitioner observation; for binding quotes the
+ * Bauherr engages an Architekt directly.
+ *
+ * For non-München Bundesländer the engine still falls through to
+ * REGION_MULT (Bayern = 1.0), but the BASE itself is München-tuned.
+ * Phase 9 expansion will introduce per-Bundesland BASE tables.
+ */
 const BASE: CostBreakdown = {
-  architekt: { min: 8_000, max: 14_000 },
-  tragwerksplanung: { min: 2_500, max: 4_500 },
-  vermessung: { min: 800, max: 1_500 },
-  energieberatung: { min: 1_500, max: 2_500 },
-  behoerdengebuehren: { min: 800, max: 2_000 },
-  total: { min: 13_600, max: 24_500 },
+  architekt: { min: 15_000, max: 28_000 },
+  tragwerksplanung: { min: 4_500, max: 8_000 },
+  vermessung: { min: 1_200, max: 2_200 },
+  energieberatung: { min: 2_500, max: 4_500 },
+  behoerdengebuehren: { min: 1_500, max: 3_500 },
+  total: { min: 24_700, max: 46_200 },
 }
 
 const PROCEDURE_MULT: Record<ProcedureType, number> = {
