@@ -98,14 +98,19 @@ export function WizardShell({ step, children }: Props) {
         </div>
       </header>
 
-      <main className="relative z-10 flex flex-1 items-start justify-center px-6 py-16">
+      {/* Phase 8.7 — viewport-fit discipline. <main> is now
+          flex-1 + min-h-0 so the wizard step content can claim
+          the remaining viewport height (header + progress already
+          consume their own slot above). Vertical padding tightens
+          on shorter viewports so step 1 fits 1280×800 without
+          scroll. The inner wrapper passes flex-col + min-h-full
+          down so QuestionIntent can use mt-auto to anchor its
+          action row at the bottom of the lane. */}
+      <main className="relative z-10 flex flex-1 min-h-0 flex-col items-stretch px-6 py-6 md:py-8 lg:py-10">
         <div
           className={cn(
-            'w-full',
-            // Q2 needs a wider canvas so the 30/70 grid + ~820px map
-            // fill most of the page; Q1 keeps the calmer 3xl reading
-            // width since the sketch cards don't need extra room.
-            step === 2 ? 'max-w-[1400px]' : 'max-w-3xl',
+            'mx-auto flex w-full flex-1 min-h-0 flex-col',
+            step === 2 ? 'max-w-[1400px]' : 'max-w-5xl',
           )}
         >
           {children}

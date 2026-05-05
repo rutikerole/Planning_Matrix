@@ -143,3 +143,57 @@
     transition: none;
   }
 }
+
+/* Phase 8.7 — secondary "chip" variant of .sketch. Used by
+   QuestionIntent step 1 for the four tail-case intents
+   (Demolition · Storey addition · Side extension · Something else)
+   that should not visually compete with the four primary tiles.
+   Compact horizontal layout (label left, code right), no SVG. */
+.sketch.chip {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 14px;
+  min-height: 44px;
+}
+
+.sketch.chip:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+.sketch.chip::before {
+  display: none;
+}
+
+.sketch.chip.on::after {
+  left: 10px;
+  top: 50%;
+  margin-top: -3px;
+}
+
+.sketch.chip .label {
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+  gap: 10px;
+  text-align: left;
+  width: 100%;
+  padding-left: 14px;
+}
+
+.sketch.chip.on .label {
+  padding-left: 18px;
+}
+
+.sketch.chip .label .name {
+  font-size: 13px;
+  line-height: 1.2;
+}
+
+.sketch.chip .label .code {
+  font-size: 9px;
+  margin-top: 0;
+  margin-left: auto;
+}

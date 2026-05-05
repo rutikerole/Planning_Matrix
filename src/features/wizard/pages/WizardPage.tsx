@@ -52,6 +52,9 @@ export function WizardPage() {
 
   return (
     <WizardShell step={step}>
+      {/* Phase 8.7 — the wrapper m.div now claims flex-1 + min-h-0
+          so the step's flex-col layout can chain mt-auto to the
+          bottom of the lane (sticky action row in step 1). */}
       <AnimatePresence mode="wait" initial={false}>
         <m.div
           key={step}
@@ -59,6 +62,7 @@ export function WizardPage() {
           animate={{ opacity: 1, y: 0 }}
           exit={reduced ? { opacity: 0 } : { opacity: 0, y: -8 }}
           transition={{ duration: reduced ? 0 : 0.3, ease: [0.16, 1, 0.3, 1] }}
+          className="flex flex-1 min-h-0 flex-col"
         >
           {step === 1 ? (
             <QuestionIntent />
