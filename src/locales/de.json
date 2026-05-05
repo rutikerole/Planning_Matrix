@@ -1744,6 +1744,7 @@
         "verifyEyebrow": "Mit Architekt:in verifizieren",
         "verifyCount_one": "{{count}} Punkt",
         "verifyCount_other": "{{count}} Punkte",
+        "verifyTopOf": "Top {{top}} von {{of}} offen",
         "dataQualityEyebrow": "Datengüte",
         "dataQualityCount_one": "{{count}} Datenpunkt",
         "dataQualityCount_other": "{{count}} Datenpunkte",

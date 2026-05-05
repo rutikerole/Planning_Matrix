@@ -51,6 +51,9 @@ const ALLOWLIST = [
   // qualifier reasons. Same canonical-bilingual pattern.
   'src/features/result/lib/deriveBaselineRoles.ts',
   'src/features/result/lib/deriveBaselineProcedure.ts',
+  // Phase 8.1 — open-items composer renders area names in DE/EN
+  // inline (canonical Planungsrecht / Bauordnungsrecht / Sonstige).
+  'src/features/result/lib/computeOpenItems.ts',
   // Phase 8 — heuristic legal-domain composer. Bilingual citation
   // copy (Planungsrecht / Bauordnungsrecht / etc.); same pattern.
   'src/features/result/lib/composeLegalDomains.ts',

@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import type { ProjectRow } from '@/types/db'
 import type { ProjectState, Recommendation } from '@/types/projectState'
 import { aggregateQualifiers } from '../../lib/qualifierAggregate'
+import { computeOpenItems } from '../../lib/computeOpenItems'
 import { DataQualityDonut } from './DataQualityDonut'
 
 interface Props {
@@ -25,16 +26,7 @@ export function ActionCards({ project, state }: Props) {
     .sort((a, b) => a.rank - b.rank)
     .slice(0, 3)
 
-  const assumed = (state.facts ?? []).filter(
-    (f) => f.qualifier?.quality === 'ASSUMED',
-  )
-  const verifyItems = assumed.slice(0, 4).map((f) => ({
-    id: `f-${f.key}`,
-    label:
-      f.evidence ??
-      `${f.key}${typeof f.value === 'string' ? `: ${f.value}` : ''}`,
-  }))
-
+  const open = computeOpenItems(state, lang, 4)
   const aggregate = aggregateQualifiers(state)
 
   return (
@@ -56,15 +48,22 @@ export function ActionCards({ project, state }: Props) {
 
       <ActionCard
         eyebrow={t('result.workspace.actions.verifyEyebrow')}
-        countLabel={t('result.workspace.actions.verifyCount', {
-          count: verifyItems.length,
-        })}
+        countLabel={
+          open.count > open.topPriority.length
+            ? t('result.workspace.actions.verifyTopOf', {
+                top: open.topPriority.length,
+                of: open.count,
+              })
+            : t('result.workspace.actions.verifyCount', {
+                count: open.topPriority.length,
+              })
+        }
       >
-        {verifyItems.length === 0 ? (
+        {open.topPriority.length === 0 ? (
           <EmptyHint projectId={project.id} />
         ) : (
           <ul className="flex flex-col gap-1.5">
-            {verifyItems.map((item) => (
+            {open.topPriority.map((item) => (
               <li
                 key={item.id}
                 className="flex items-start gap-2 text-[11.5px] leading-snug"

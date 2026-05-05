@@ -9,6 +9,7 @@ import {
 } from '../../lib/costNormsMuenchen'
 import { useResolvedRoles } from '../../hooks/useResolvedRoles'
 import { useResolvedProcedures } from '../../hooks/useResolvedProcedures'
+import { computeOpenItems } from '../../lib/computeOpenItems'
 
 interface Props {
   project: ProjectRow
@@ -28,7 +29,7 @@ export function AtAGlance({ project, state }: Props) {
   const resolvedProc = useResolvedProcedures(project, state)
 
   const facts = state.facts ?? []
-  const areas = state.areas
+  const open = computeOpenItems(state, lang)
 
   const primaryProcedure =
     resolvedProc.procedures.find((p) => p.status === 'erforderlich') ??
@@ -72,13 +73,7 @@ export function AtAGlance({ project, state }: Props) {
         : lang === 'en' ? '~ 4–6 months' : '~ 4–6 Monate'
 
   const specialistsCount = resolved.roles.filter((r) => r.needed).length
-  const assumedCount = facts.filter((f) => f.qualifier?.quality === 'ASSUMED').length
-  const pendingAreas = areas
-    ? (['A', 'B', 'C'] as const).filter(
-        (k) => areas[k]?.state === 'PENDING',
-      ).length
-    : 0
-  const openQuestions = assumedCount + pendingAreas
+  const openQuestions = open.count
 
   const rows: Array<{ label: string; value: string }> = [
     { label: t('result.workspace.ataglance.procedure'), value: procedureLabel },
