@@ -41,16 +41,11 @@ const ALLOWLIST = [
   'src/features/landing/lib/chatScript.ts',
   'src/features/landing/lib/addresses.ts',
   'src/features/legal/',
-  // Activity ticker + cost timeline + result page render DE strings
-  // alongside EN via inline lang === 'de' branches; canonical bilingual.
+  // Activity ticker renders DE strings alongside EN via inline
+  // lang === 'de' branches; canonical bilingual.
   'src/features/dashboard/lib/recentActivity.ts',
-  'src/features/result/components/CostTimelinePanel.tsx',
-  'src/features/result/components/LegalLandscape.tsx',
-  'src/features/result/components/SpecialistsRequired.tsx',
-  'src/features/result/components/Cockpit/',
   // Phase 8 — locale-aware paragraph composer for the workspace's
-  // executive read. Bilingual by branch, same allowlist pattern as
-  // the components above.
+  // executive read. Bilingual by branch, same allowlist pattern.
   'src/features/result/lib/composeExecutiveRead.ts',
   // Phase 8 — heuristic legal-domain composer. Bilingual citation
   // copy (Planungsrecht / Bauordnungsrecht / etc.); same pattern.

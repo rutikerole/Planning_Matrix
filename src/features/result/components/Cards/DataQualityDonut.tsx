@@ -13,8 +13,8 @@ const CIRC = 2 * Math.PI * RADIUS
 
 /**
  * Phase 8 — small donut chart for the Overview "Data quality" action
- * card. Reuses the existing `aggregateQualifiers` engine so this and
- * the legacy ConfidenceDashboard read from the same maths.
+ * card. Reuses the `aggregateQualifiers` engine so the donut and the
+ * header confidence percent stay derived from the same maths.
  *
  * Three concentric arcs (decided / calculated / assumed) sized by
  * count. Legend rendered alongside as 3 rows, color dot + label +
