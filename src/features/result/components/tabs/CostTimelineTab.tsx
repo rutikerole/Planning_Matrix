@@ -12,6 +12,8 @@ import {
   type CostBreakdown,
 } from '../../lib/costNormsMuenchen'
 import { PROCEDURE_PHASES, totalPhaseWeight } from '../../lib/composeTimeline'
+import { findCostRationale } from '@/data/costRationales'
+import { findTimelineAnnotation } from '@/data/timelineAnnotations'
 
 interface Props {
   project: ProjectRow
@@ -100,20 +102,31 @@ export function CostTimelineTab({ project, state }: Props) {
             const bucket = cost[line.key]
             const startPct = (bucket.min / maxBar) * 100
             const widthPct = ((bucket.max - bucket.min) / maxBar) * 100
+            const rationale =
+              line.key !== 'total' ? findCostRationale(line.key) : undefined
             return (
               <div
                 key={line.key}
-                className="grid grid-cols-1 sm:grid-cols-[170px_1fr_auto] sm:items-center gap-1.5 sm:gap-3 text-[12.5px]"
+                className="grid grid-cols-1 sm:grid-cols-[170px_1fr_auto] sm:items-start gap-1.5 sm:gap-3 text-[12.5px]"
                 title={t('result.workspace.cost.computedFromTooltip', {
                   inputs: inputsLabel,
                 })}
               >
-                <span className="text-ink/85 leading-snug">
-                  {lang === 'en' ? line.labelEn : line.labelDe}
-                </span>
+                <div className="flex flex-col gap-0.5">
+                  <span className="text-ink/85 leading-snug">
+                    {lang === 'en' ? line.labelEn : line.labelDe}
+                  </span>
+                  {rationale && (
+                    <span className="font-serif italic text-[10.5px] text-clay/85 leading-snug">
+                      {lang === 'en'
+                        ? rationale.rationaleEn
+                        : rationale.rationaleDe}
+                    </span>
+                  )}
+                </div>
                 <div
                   aria-hidden="true"
-                  className="relative h-2 bg-ink/8 rounded-[1px] overflow-hidden"
+                  className="relative h-2 bg-ink/8 rounded-[1px] overflow-hidden mt-1.5"
                 >
                   <span
                     className="absolute top-0 h-2 bg-clay/55 rounded-[1px]"
@@ -123,7 +136,7 @@ export function CostTimelineTab({ project, state }: Props) {
                     }}
                   />
                 </div>
-                <span className="font-serif italic text-clay-deep tabular-nums whitespace-nowrap text-right">
+                <span className="font-serif italic text-clay-deep tabular-nums whitespace-nowrap text-right mt-1">
                   {formatEurRange(bucket, lang)}
                 </span>
               </div>
@@ -158,27 +171,42 @@ export function CostTimelineTab({ project, state }: Props) {
         <div className="border border-ink/12 rounded-[10px] bg-paper-card p-4 sm:p-5 flex flex-col gap-3">
           {PROCEDURE_PHASES.map((phase, idx) => {
             const widthPct = Math.round((phase.weight / totalWeight) * 100)
+            const note = findTimelineAnnotation(
+              phase.key as
+                | 'preparation'
+                | 'submission'
+                | 'review'
+                | 'corrections'
+                | 'approval',
+            )
             return (
               <div
                 key={phase.key}
-                className="flex flex-col gap-1.5 sm:grid sm:grid-cols-[140px_1fr_auto] sm:items-center sm:gap-3 text-[12.5px]"
+                className="flex flex-col gap-1.5 sm:grid sm:grid-cols-[160px_1fr_auto] sm:items-start sm:gap-3 text-[12.5px]"
               >
-                <div className="flex items-baseline justify-between gap-3 sm:contents">
-                  <span className="text-ink/85">
-                    <span className="font-serif italic text-clay-deep mr-2 tabular-nums">
-                      {idx + 1}
+                <div className="flex flex-col gap-0.5">
+                  <div className="flex items-baseline justify-between gap-3">
+                    <span className="text-ink/85">
+                      <span className="font-serif italic text-clay-deep mr-2 tabular-nums">
+                        {idx + 1}
+                      </span>
+                      {lang === 'en' ? phase.labelEn : phase.labelDe}
                     </span>
-                    {lang === 'en' ? phase.labelEn : phase.labelDe}
-                  </span>
-                  <span className="sm:order-3 font-serif italic text-clay-deep tabular-nums whitespace-nowrap text-right">
-                    {lang === 'en' ? phase.rangeEn : phase.rangeDe}
-                  </span>
+                  </div>
+                  {note && (
+                    <span className="font-serif italic text-[10.5px] text-clay/85 leading-snug max-w-[260px]">
+                      {lang === 'en' ? note.annotationEn : note.annotationDe}
+                    </span>
+                  )}
                 </div>
                 <span
                   aria-hidden="true"
-                  className="block h-2 bg-clay/45 rounded-[1px] sm:order-2"
+                  className="block h-2 bg-clay/45 rounded-[1px] mt-1.5"
                   style={{ width: `${widthPct}%`, minWidth: '8px' }}
                 />
+                <span className="font-serif italic text-clay-deep tabular-nums whitespace-nowrap text-right mt-1">
+                  {lang === 'en' ? phase.rangeEn : phase.rangeDe}
+                </span>
               </div>
             )
           })}

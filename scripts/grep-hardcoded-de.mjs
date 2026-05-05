@@ -60,6 +60,9 @@ const ALLOWLIST = [
   // Phase 8.1 — legal rule snippets are hand-curated DE/EN
   // interpretations of canonical statutes; both branches present.
   'src/data/legalRuleSnippets.ts',
+  // Phase 8.2 — bilingual cost-row + timeline-phase rationales.
+  'src/data/costRationales.ts',
+  'src/data/timelineAnnotations.ts',
   // Phase 8 — heuristic legal-domain composer. Bilingual citation
   // copy (Planungsrecht / Bauordnungsrecht / etc.); same pattern.
   'src/features/result/lib/composeLegalDomains.ts',
