@@ -91,11 +91,19 @@ export function composeExecutiveRead({
   const flagWords = lang === 'en' ? 'flags' : 'Punkte'
   const flagWordSingular = lang === 'en' ? 'flag' : 'Punkt'
 
-  // Statute + gating condition
+  // Statute + gating condition.
+  // Phase 8.5 (C.8): the previous read used `planungsrechtFact?.evidence`
+  // directly, which leaks raw user quotes ("User input: 'proceed on
+  // the assumption of § 34 BauGB'") into the executive prose. Now we
+  // extract only the clean citation token (e.g. "§ 34 BauGB", "Art. 58
+  // BayBO") via regex against either the fact's structured value or
+  // the evidence string. If no clean citation can be extracted, we
+  // pass null and the composer falls back to the gating-condition
+  // copy. Quotes belong in the audit log, not analyst prose.
   const planungsrechtFact = facts.find((f) =>
     /baugb|baunvo|planungsrecht/i.test(`${f.key} ${f.evidence ?? ''}`),
   )
-  const statuteCite = planungsrechtFact?.evidence ?? null
+  const statuteCite = extractStatuteCite(planungsrechtFact)
   const hasArea = state.areas?.A?.state === 'ACTIVE'
   const gatingCondition = hasArea
     ? null
@@ -340,4 +348,45 @@ function truncate(s: string | undefined | null, max: number): string {
   if (!s) return ''
   if (s.length <= max) return s
   return `${s.slice(0, max - 1).trimEnd()}…`
+}
+
+/**
+ * Phase 8.5 (C.8) — extract a clean statute citation from a fact.
+ * Checks the structured value first (if it's already a citation
+ * string), then scans the evidence text with a citation-pattern regex.
+ * Returns null when no clean citation can be extracted; the composer
+ * uses that to fall back to the no-statute copy rather than
+ * interpolating the user's literal quote.
+ */
+const CITATION_RE =
+  /(§\s*\d+(?:\s*[a-z])?\s+(?:BauGB|BauNVO|GEG))|((?:Art\.?|art\.?)\s*\d+(?:\s*[a-z])?\s*BayBO)|BauNVO|BayDSchG/i
+
+function extractStatuteCite(fact: Fact | undefined): string | null {
+  if (!fact) return null
+  // 1. Structured value first.
+  if (typeof fact.value === 'string' && CITATION_RE.test(fact.value)) {
+    return normaliseCite(fact.value.match(CITATION_RE)?.[0] ?? null)
+  }
+  // 2. Evidence text — extract only the cite token, drop the surrounding
+  //    user-quote framing.
+  if (fact.evidence) {
+    const m = fact.evidence.match(CITATION_RE)
+    if (m) return normaliseCite(m[0])
+  }
+  return null
+}
+
+function normaliseCite(raw: string | null): string | null {
+  if (!raw) return null
+  const trimmed = raw.trim()
+  // Normalise "art. 58 baybo" → "Art. 58 BayBO" without enforcing strict
+  // formatting; the executive read templates already wrap with prose
+  // around it ("falls under {cite} — meaning ...").
+  return trimmed
+    .replace(/^art\.?/i, 'Art.')
+    .replace(/baugb/i, 'BauGB')
+    .replace(/baybo/i, 'BayBO')
+    .replace(/baunvo/i, 'BauNVO')
+    .replace(/baydschg/i, 'BayDSchG')
+    .replace(/\s+/g, ' ')
 }
