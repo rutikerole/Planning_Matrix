@@ -32,15 +32,17 @@ interface Props {
 }
 
 /**
- * v3 Q2 — plot question. Phase 7.10: 30/70 grid on lg+ with the
- * question lane on the left and the map on the right.
- * Phase 7.10d: the Location profile is no longer drawn inline;
- * the map gets the full right column (taller, lg:h-[920px]) and
- * a small "Location profile" button in the left column opens the
- * profile in a Dialog on demand. Below lg the same button + dialog
- * pattern applies, so the map is never visually overlaid by the
- * card. Out-of-coverage addresses surface as a soft note rather
- * than a hard error.
+ * v3 Q2 — plot question. 30/70 grid on lg+ with the question lane
+ * on the left and the map on the right. The Location profile is
+ * not drawn inline — a small "Location profile" button in the
+ * left column opens it in a Dialog on demand. Below lg the same
+ * button + dialog pattern applies, so the map is never visually
+ * overlaid. Phase 7.10e — map height tightened to lg:h-[680px] to
+ * fit typical viewports without dead space, and the prototype's
+ * static SVG illustration overlay + hardcoded FLST/scale chips
+ * were removed so real CARTO Voyager tiles + Stadt München's WMS
+ * B-Plan zones read as the actual map. Out-of-coverage addresses
+ * surface as a soft note rather than a hard error.
  */
 export function QuestionPlot({ onSubmit, submitError }: Props) {
   const { t } = useTranslation()
@@ -284,7 +286,7 @@ export function QuestionPlot({ onSubmit, submitError }: Props) {
           * column, so the map surface is never overlaid by a card. */}
         <div className="lg:border-l lg:border-pm-hair lg:p-6">
           {showMap ? (
-            <div className="h-[460px] lg:h-[920px]">
+            <div className="h-[460px] lg:h-[680px]">
               <Suspense
                 fallback={
                   <div className="pm-plotmap-empty">Karte wird geladen…</div>

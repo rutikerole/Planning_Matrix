@@ -18,7 +18,7 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { MapContainer, Marker, useMap, useMapEvents, ZoomControl } from 'react-leaflet'
+import { MapContainer, Marker, ScaleControl, useMap, useMapEvents, ZoomControl } from 'react-leaflet'
 import L from 'leaflet'
 import { MapTileLayer, BplanWmsLayer } from './tileLayer'
 import {
@@ -28,8 +28,6 @@ import {
   type GeocodeResult,
 } from './geocode'
 import { useBplanLookup } from '../../hooks/useBplanLookup'
-import { PlotMapOverlay } from '../PlotMapOverlay'
-import { MapCorners } from '../MapCorners'
 import { ScanLine } from '../ScanLine'
 import type { BplanLookupResult } from '@/types/bplan'
 import './styles.css'
@@ -276,18 +274,23 @@ export function PlotMap({
         >
           <MapTileLayer />
           <BplanWmsLayer />
-          {/* v3 fix #3 — zoom buttons live bottom-right so the FLST
-              label and north arrow at the top corners stay legible. */}
+          {/* Phase 7.10e — real Leaflet scale that updates with
+              zoom (replaces the previous static "M 1:500 / 25 m"
+              chip from MapCorners). */}
+          <ScaleControl position="bottomleft" imperial={false} />
+          {/* Zoom buttons in bottom-right; attribution is bottom-right
+              by Leaflet default and styled in styles.css. */}
           <ZoomControl position="bottomright" />
           <MapClickHandler onPick={handlePick} onOutOfBounds={handleOutOfBounds} />
           {coords ? <Marker position={[coords.lat, coords.lng]} icon={pin} /> : null}
           <FlyToOnResolve flyTarget={flyTarget} />
         </MapContainer>
-        {/* v3 architectural overlays. Stacked above the leaflet panes
-            via z-index 401–403. All `pointer-events: none` so the
-            map underneath stays draggable + clickable. */}
-        <PlotMapOverlay />
-        <MapCorners lat={coords?.lat} lng={coords?.lng} />
+        {/* Phase 7.10e — sweep animation on address change kept; the
+            static SVG illustration overlay (PlotMapOverlay) and the
+            hardcoded FLST/scale chips (MapCorners) were prototype
+            artifacts that drew the same fake parcel on every map
+            view. Removed so the real CARTO Voyager tiles + WMS
+            B-Plan zones read as the actual map. */}
         <ScanLine trigger={scanTrigger} />
         {outOfBoundsNotice ? (
           <div

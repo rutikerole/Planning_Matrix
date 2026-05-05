@@ -12,12 +12,12 @@
   background: hsl(var(--paper));
 }
 
-/* v3 — sepia filter on the leaflet container so tiles read like
-   warmed-up cartography against the paper background. Verbatim
-   filter chain from the prototype. */
-.pm-plotmap-container .leaflet-container {
-  filter: sepia(0.18) saturate(0.62) brightness(0.99) contrast(1.04);
-}
+/* Phase 7.10e — sepia/desaturate filter removed. The previous
+   chain (sepia 0.18, saturate 0.62) made CARTO Voyager's
+   already-soft palette wash out into the paper tone, hiding
+   street names and making the tiles feel like a static
+   illustration rather than a real map. Voyager's default palette
+   is intentionally muted by CARTO already, no extra warming. */
 
 /* v3 — scan-line that sweeps left → right on address change.
    Verbatim keyframes + class from the prototype's `<style>`. */
@@ -89,6 +89,24 @@
 
 .pm-plotmap-container .leaflet-control-zoom a:hover {
   background: hsl(var(--clay) / 0.06);
+}
+
+/* Phase 7.10e — real Leaflet scale (replaces the static
+   "M 1:500 / 25 m" chip from the deleted MapCorners). Matches
+   the project's mono font + paper-tinted chip styling. */
+.pm-plotmap-container .leaflet-control-scale {
+  margin: 12px 14px;
+}
+.pm-plotmap-container .leaflet-control-scale-line {
+  background: hsl(var(--paper) / 0.92);
+  border: 1px solid hsl(var(--border));
+  border-top: none;
+  color: hsl(var(--ink));
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  padding: 2px 6px;
+  line-height: 1.2;
 }
 
 /* Marker — clay-coloured pin (we render a custom DivIcon, this

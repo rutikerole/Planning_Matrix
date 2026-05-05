@@ -30,12 +30,16 @@
 
 import { TileLayer, WMSTileLayer } from 'react-leaflet'
 
-// v3 — switched from CARTO Voyager to light_nolabels so the
-// architectural overlay reads cleanly. The sepia filter on the
-// container warms the tiles toward the paper tone.
-const LIGHT_TILES =
-  'https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png'
-const LIGHT_SUBDOMAINS = 'abcd'
+// Phase 7.10e — back to labeled CARTO Voyager. The previous
+// `light_nolabels` variant rendered as featureless gray shapes
+// with no street names, which combined with the container sepia
+// filter made the tiles blend into the paper background and read
+// as a stylized illustration rather than a real map. Voyager
+// keeps the soft cartographic tone but ships labels, so users can
+// recognize streets and orient themselves.
+const VOYAGER_TILES =
+  'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png'
+const VOYAGER_SUBDOMAINS = 'abcd'
 
 const BASEMAP_ATTRIBUTION =
   '© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">OpenStreetMap</a> contributors · ' +
@@ -44,8 +48,8 @@ const BASEMAP_ATTRIBUTION =
 export function MapTileLayer() {
   return (
     <TileLayer
-      url={LIGHT_TILES}
-      subdomains={LIGHT_SUBDOMAINS}
+      url={VOYAGER_TILES}
+      subdomains={VOYAGER_SUBDOMAINS}
       attribution={BASEMAP_ATTRIBUTION}
       maxZoom={19}
     />
