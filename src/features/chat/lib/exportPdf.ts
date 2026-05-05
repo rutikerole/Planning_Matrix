@@ -107,9 +107,17 @@ export async function buildExportPdf({
   }
 
   // ── Schedule sections ──────────────────────────────────────────
-  const procs = state.procedures ?? []
+  // Phase 8.5 (A.3): read through the resolve* helpers so PDF + result
+  // page show the same data. Without this, the PDF Section IV printed
+  // "None recorded" while the result page rendered the resolved
+  // baseline (§ 58 BayBO etc.) — a contradiction the bauherr noticed.
+  const { resolveProcedures } = await import('@/features/result/lib/resolveProcedures')
+  const { resolveRoles } = await import('@/features/result/lib/resolveRoles')
+  const resolvedProcs = resolveProcedures(project, state as ProjectState)
+  const resolvedRoles = resolveRoles(project, state as ProjectState)
+  const procs = resolvedProcs.procedures
   const docs = state.documents ?? []
-  const roles = state.roles ?? []
+  const roles = resolvedRoles.roles
   const facts = state.facts ?? []
 
   if (procs.length + docs.length + roles.length + facts.length > 0) {
