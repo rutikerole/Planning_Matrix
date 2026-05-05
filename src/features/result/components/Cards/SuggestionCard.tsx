@@ -6,7 +6,10 @@ import { cn } from '@/lib/utils'
 import { supabase } from '@/lib/supabase'
 import type { ProjectRow } from '@/types/db'
 import type { ProjectState, Recommendation } from '@/types/projectState'
-import type { SmartSuggestion } from '@/data/smartSuggestionsMuenchen'
+import type {
+  SmartSuggestion,
+  SuggestionCategory,
+} from '@/data/smartSuggestionsMuenchen'
 
 interface Props {
   project: ProjectRow
@@ -20,13 +23,7 @@ interface Props {
   onDismissed: (id: string) => void
 }
 
-export type SuggestionCategory =
-  | 'insurance'
-  | 'energy'
-  | 'tooling'
-  | 'precedent'
-  | 'regulation'
-  | 'risk'
+export type { SuggestionCategory }
 
 /**
  * Phase 8 — single suggestion card on Tab 6. Derives a category from
@@ -53,7 +50,9 @@ export function SuggestionCard({
 
   const title = lang === 'en' ? suggestion.titleEn : suggestion.titleDe
   const body = lang === 'en' ? suggestion.bodyEn : suggestion.bodyDe
-  const category = inferCategory(suggestion.id)
+  const reasoning =
+    lang === 'en' ? suggestion.reasoningEn : suggestion.reasoningDe
+  const category = suggestion.category
 
   const handleAdd = async () => {
     if (busy || added) return
@@ -129,13 +128,20 @@ export function SuggestionCard({
         {body}
       </p>
 
+      <p className="font-serif italic text-[11.5px] text-clay leading-snug max-w-prose">
+        <span className="not-italic font-medium uppercase tracking-[0.16em] text-clay/72 text-[9.5px] mr-1.5">
+          {t('result.workspace.suggestions.reasoningPrefix')}
+        </span>
+        {reasoning}
+      </p>
+
       {open && (
         <div className="border-t border-ink/12 pt-3 flex flex-col gap-1.5">
           <p className="text-[10px] font-medium uppercase tracking-[0.18em] text-clay">
-            {t('result.workspace.suggestions.reasoning')}
+            {t('result.workspace.suggestions.matchedFilters')}
           </p>
           <p className="text-[12px] italic text-clay/85 leading-relaxed">
-            {reasoningFor(suggestion, lang)}
+            {filtersFor(suggestion, lang)}
           </p>
         </div>
       )}
@@ -181,20 +187,7 @@ export function SuggestionCard({
   )
 }
 
-function inferCategory(id: string): SuggestionCategory {
-  // Heuristic mapping by suggestion id. Adjust as the data file grows.
-  const lower = id.toLowerCase()
-  if (/versicher|haftpflicht|insurance/.test(lower)) return 'insurance'
-  if (/pv|geg|energie|kfw|foerd|sanier|energy/.test(lower)) return 'energy'
-  if (/bim|allplan|archicad|tool/.test(lower)) return 'tooling'
-  if (/denkmal|baulast|stellplatz|lärm|naturschutz|baumschutz|regulation/.test(lower))
-    return 'regulation'
-  if (/risiko|risk|haftung|hochwasser/.test(lower)) return 'risk'
-  return 'precedent'
-}
-
-function reasoningFor(s: SmartSuggestion, lang: 'de' | 'en'): string {
-  // Lightweight justification surfaced from the matcher's filter shape.
+function filtersFor(s: SmartSuggestion, lang: 'de' | 'en'): string {
   const filters: string[] = []
   if (s.intents && s.intents.length > 0) {
     filters.push(

@@ -1777,7 +1777,8 @@
         "empty": "No suggestions yet — we'll surface some once the consultation has gathered more data.",
         "eyebrow": "Suggestions",
         "intro": "Based on your profile we recommend the following steps. Add relevant items to your checklist or dismiss them for this project.",
-        "reasoning": "Why we suggest this",
+        "reasoningPrefix": "Why",
+        "matchedFilters": "Matched filters",
         "category": {
           "insurance": "Insurance",
           "energy": "Energy",
