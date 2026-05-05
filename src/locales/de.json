@@ -1726,6 +1726,19 @@
         "noInterpretation": "Auslegung folgt sobald die Beratung weiter ist.",
         "readOfficial": "Offiziellen Text öffnen"
       },
+      "sendToArchitect": {
+        "modalTitle": "Briefing an Architekt:in senden",
+        "intro": "Senden Sie das vollständige Briefing per E-Mail mit einem 30-tägigen Lese-Link, oder kopieren Sie nur den Link.",
+        "emailLabel": "E-Mail der Architekt:in",
+        "emailPlaceholder": "name@architekt.de",
+        "subject": "Planning-Matrix-Briefing für {{name}}",
+        "defaultMessage": "Sehr geehrte:r Architekt:in,\n\nich bin für mein Vorhaben am Standort {{plotAddress}} eine Planung-Matrix-Beratung durchgegangen. Das vollständige Briefing finden Sie hier:\n\n{{shareLink}}\n\nÜber Ihr Feedback freue ich mich, bevor wir den nächsten Schritt gehen.\n\nMit freundlichen Grüßen",
+        "sendCta": "Im E-Mail-Programm öffnen",
+        "copyLinkCta": "Oder Link kopieren",
+        "linkCopied": "Link kopiert",
+        "recentSent": "Zuletzt gesendet:",
+        "close": "Schließen"
+      },
       "footer": {
         "back": "↩ Zurück zur Beratung",
         "sendToArchitect": "An Architekt:in senden",

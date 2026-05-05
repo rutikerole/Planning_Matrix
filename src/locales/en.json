@@ -1726,6 +1726,19 @@
         "noInterpretation": "Interpretation follows as the consultation progresses.",
         "readOfficial": "Open the official text"
       },
+      "sendToArchitect": {
+        "modalTitle": "Send briefing to your architect",
+        "intro": "Send the full briefing by email with a 30-day read-only link, or just copy the link.",
+        "emailLabel": "Architect's email",
+        "emailPlaceholder": "name@architekt.de",
+        "subject": "Planning Matrix briefing for {{name}}",
+        "defaultMessage": "Dear architect,\n\nI've been working through a Planning Matrix consultation for the project at {{plotAddress}}. The full briefing is here:\n\n{{shareLink}}\n\nI'd appreciate your feedback before we proceed.\n\nBest regards",
+        "sendCta": "Open in mail client",
+        "copyLinkCta": "Or copy share link",
+        "linkCopied": "Link copied",
+        "recentSent": "Recently sent to:",
+        "close": "Close"
+      },
       "footer": {
         "back": "↩ Back to consultation",
         "sendToArchitect": "Send to architect",

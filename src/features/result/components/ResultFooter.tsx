@@ -5,6 +5,7 @@ import { ArrowLeft } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type { MessageRow, ProjectRow } from '@/types/db'
 import { ExportMenu } from './ExportMenu'
+import { SendToArchitectModal } from './SendToArchitectModal'
 import type { ResultSource } from './ResultWorkspace'
 
 interface ProjectEventRow {
@@ -41,6 +42,7 @@ export function ResultFooter({ project, messages, events, source }: Props) {
   const { t } = useTranslation()
   const [params, setParams] = useSearchParams()
   const [toast, setToast] = useState<string | null>(null)
+  const [sendOpen, setSendOpen] = useState(false)
 
   useEffect(() => {
     if (!toast) return
@@ -94,9 +96,8 @@ export function ResultFooter({ project, messages, events, source }: Props) {
             </Link>
             <button
               type="button"
-              disabled
-              className="hidden sm:inline-flex items-center gap-1.5 h-9 px-3 bg-paper border border-dashed border-clay/55 rounded-full text-[12px] italic font-serif text-clay/85 cursor-not-allowed"
-              title={t('result.export.email.cta')}
+              onClick={() => setSendOpen(true)}
+              className="hidden sm:inline-flex items-center gap-1.5 h-9 px-3 bg-paper border border-dashed border-clay/55 rounded-full text-[12px] italic font-serif text-clay hover:text-ink hover:border-clay transition-colors duration-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/35 focus-visible:ring-offset-2 focus-visible:ring-offset-paper-card"
             >
               {t('result.workspace.footer.sendToArchitect')}
             </button>
@@ -113,6 +114,11 @@ export function ResultFooter({ project, messages, events, source }: Props) {
           </div>
         </div>
       </footer>
+      <SendToArchitectModal
+        project={project}
+        open={sendOpen}
+        onOpenChange={setSendOpen}
+      />
     </>
   )
 }
