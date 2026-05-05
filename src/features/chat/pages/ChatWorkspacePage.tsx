@@ -169,6 +169,20 @@ export function ChatWorkspacePage() {
   const factsForToast = (project.state as ProjectState | undefined)?.facts ?? []
   const hasMessages = (messages?.length ?? 0) > 0
 
+  // Phase 7.10g — workspace render gate. The populated layout
+  // (Thread + Spine + ledger consumers) depends on a fully-hydrated
+  // ProjectState. The wizard's cache seed and Supabase's first
+  // refetch can arrive without `state.areas` populated (e.g., the
+  // priming turn finished but the response shape didn't include
+  // areas yet). When that happens, hold the populated workspace and
+  // show the "Das Team versammelt sich" EmptyState until all three
+  // — project, messages, and state.areas — are present. Combined
+  // with the defensive `?.` in extractLedgerSummary, this prevents
+  // the navigate-from-wizard blank-screen race documented in 7.10g.
+  const isStateHydrated =
+    !!(project.state as ProjectState | undefined)?.areas
+  const isWorkspaceReady = hasMessages && isStateHydrated
+
   // Phase 7.10 (revised) — Stand-up link reverted to a quiet
   // text affordance. Wrapping it in a paper-card pill made it
   // visually equal in weight to JumpToLatest (a primary pill
@@ -263,7 +277,7 @@ export function ChatWorkspacePage() {
           // are dropped; mobile project context lives in the
           // SpineMobileTrigger (tap to open drawer); the StandUp
           // launcher migrates to the input zone footer (•••).
-          hasMessages ? (
+          isWorkspaceReady ? (
             <ConversationStrip
               percent={progress.percent}
               currentSpecialist={progress.recentSpecialist}
@@ -272,7 +286,7 @@ export function ChatWorkspacePage() {
           ) : null
         }
         thread={
-          hasMessages ? (
+          isWorkspaceReady ? (
             <>
               <Thread messages={augmentedMessages} />
               <RecoveryBanner
@@ -294,7 +308,7 @@ export function ChatWorkspacePage() {
           )
         }
         inputZone={
-          hasMessages ? (
+          isWorkspaceReady ? (
             // Phase 7.10 — Stand-up link is no longer inside the
             // input zone. It moves to ChamberLayout's bottomRightSlot
             // (rendered OUTSIDE the centered column wrapper) so it
@@ -312,9 +326,9 @@ export function ChatWorkspacePage() {
             </div>
           ) : null
         }
-        bottomRightSlot={hasMessages ? standUpLink : null}
+        bottomRightSlot={isWorkspaceReady ? standUpLink : null}
         ledger={
-          hasMessages ? (
+          isWorkspaceReady ? (
             <LedgerTab
               projectId={project.id}
               projectName={project.name}

@@ -368,10 +368,16 @@ export function applyAreasUpdate(
   update: RespondToolInput['areas_update'] | undefined,
 ): ProjectState {
   if (!update) return state
+  // Phase 7.10g — defensive `?.` against partially-hydrated state.
+  // Edge Function paths always pass a state hydrated through
+  // `initialProjectState` so areas IS populated, but the SPA reduces
+  // through this helper with whatever shape the cache holds. Falling
+  // back to PENDING per area on a partial state matches the
+  // initialProjectState shape, so no caller sees a "missing key" hole.
   const areas: Areas = {
-    A: update.A ?? state.areas.A,
-    B: update.B ?? state.areas.B,
-    C: update.C ?? state.areas.C,
+    A: update.A ?? state.areas?.A ?? { state: 'PENDING' },
+    B: update.B ?? state.areas?.B ?? { state: 'PENDING' },
+    C: update.C ?? state.areas?.C ?? { state: 'PENDING' },
   }
   return { ...state, areas }
 }
@@ -405,9 +411,17 @@ export function extractLedgerSummary(state: ProjectState | undefined): LedgerSum
       recCount: 0,
     }
   }
+  // Phase 7.10g — `state.areas?.[key]` (not just `state.areas[key]`).
+  // The earlier `if (!state)` guard catches null/undefined state but
+  // does NOT catch a state object whose `areas` key is missing — and
+  // the cache seed from useCreateProject (after a successful priming
+  // turn) does NOT always include `areas`. Without this `?.`, the
+  // bracket access on undefined throws "Cannot read properties of
+  // undefined (reading 'A')" inside the .map() callback, crashing
+  // the workspace on first navigate from the wizard.
   const areas = (['A', 'B', 'C'] as const).map((key) => ({
     key,
-    state: state.areas[key]?.state ?? ('PENDING' as const),
+    state: state.areas?.[key]?.state ?? ('PENDING' as const),
   }))
   const facts = (state.facts ?? []).slice(-5).reverse()
   const topRecs = (state.recommendations ?? [])
