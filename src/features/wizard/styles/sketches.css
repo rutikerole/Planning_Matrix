@@ -8,7 +8,10 @@
   position: relative;
   background: var(--pm-paper);
   border: 1px solid var(--pm-hair);
-  padding: 24px 20px 20px;
+  /* Phase 8.7.1 — tile padding tightened (was 24 20 20) so all 8
+     tiles fit a 4×2 grid inside the wizard's viewport budget at
+     1280×800 without scroll. */
+  padding: 16px 16px 14px;
   cursor: pointer;
   border-radius: 1px;
   transition: all 280ms cubic-bezier(0.16, 1, 0.3, 1);
@@ -16,7 +19,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 14px;
+  gap: 10px;
 }
 
 .sketch::before {
@@ -54,8 +57,10 @@
 }
 
 .sketch svg {
-  width: 120px;
-  height: 80px;
+  /* Phase 8.7.1 — SVG ramp tightened (was 120×80) so the 4×2 grid
+     of full-iconed tiles fits inside the wizard viewport. */
+  width: 96px;
+  height: 64px;
   position: relative;
 }
 
@@ -142,58 +147,4 @@
   .sketch.on svg .sec-fill {
     transition: none;
   }
-}
-
-/* Phase 8.7 — secondary "chip" variant of .sketch. Used by
-   QuestionIntent step 1 for the four tail-case intents
-   (Demolition · Storey addition · Side extension · Something else)
-   that should not visually compete with the four primary tiles.
-   Compact horizontal layout (label left, code right), no SVG. */
-.sketch.chip {
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 10px 14px;
-  min-height: 44px;
-}
-
-.sketch.chip:hover {
-  transform: none;
-  box-shadow: none;
-}
-
-.sketch.chip::before {
-  display: none;
-}
-
-.sketch.chip.on::after {
-  left: 10px;
-  top: 50%;
-  margin-top: -3px;
-}
-
-.sketch.chip .label {
-  display: flex;
-  flex-direction: row;
-  align-items: baseline;
-  gap: 10px;
-  text-align: left;
-  width: 100%;
-  padding-left: 14px;
-}
-
-.sketch.chip.on .label {
-  padding-left: 18px;
-}
-
-.sketch.chip .label .name {
-  font-size: 13px;
-  line-height: 1.2;
-}
-
-.sketch.chip .label .code {
-  font-size: 9px;
-  margin-top: 0;
-  margin-left: auto;
 }

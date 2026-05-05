@@ -3,34 +3,24 @@ import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import { splitBold } from '@/lib/text'
 import { useWizardState } from '../hooks/useWizardState'
-import {
-  INTENT_TO_I18N,
-  INTENT_VALUES_V3,
-  selectTemplate,
-  type Intent,
-} from '../lib/selectTemplate'
+import { INTENT_VALUES_V3, selectTemplate } from '../lib/selectTemplate'
 import { SketchCard } from './SketchCard'
 import './../styles/sketches.css'
 
-// Phase 8.7 — split the eight intents into a primary row of four
-// (the high-volume project types) and a secondary row of four
-// chips (tail cases). The split mirrors live wizard usage: New SFH /
-// MFH / Renovation / Change-of-use account for the overwhelming
-// majority of starts; Demolition · Storey addition · Side extension
-// · Something else are the tail.
-const PRIMARY_INTENTS: ReadonlyArray<Intent> = INTENT_VALUES_V3.slice(0, 4)
-const SECONDARY_INTENTS: ReadonlyArray<Intent> = INTENT_VALUES_V3.slice(4)
-
 /**
- * Phase 8.7 — Q1 reflowed for one-screen viewport-fit.
+ * Phase 8.7.1 — Q1 restores tile parity. All 8 intents render in a
+ * single 4×2 grid as full SketchCards (icon + label + T-XX code).
+ * Phase 8.7 had split them into "4 primary tiles + 4 label-only
+ * chips" which created an unintended tier-1/tier-2 hierarchy;
+ * Demolition / Storey addition / Side extension / Something else
+ * are real project types and warrant the same visual class.
  *
- *   • 4 primary tiles, full SketchCard treatment (SVG + label + code).
- *   • 4 secondary chips, compact horizontal pill (label + code).
- *   • Action row anchored to the bottom of the lane via mt-auto so
- *     it stays in viewport at 1280×800 without scroll.
+ * Viewport-fit is preserved by tightening the .sketch base metrics
+ * in sketches.css (padding 24→16, SVG 120×80 → 96×64) so two rows
+ * of 8 fit inside the WizardShell's flex lane at 1280×800.
  *
  * Selection still does NOT auto-advance. Continue button or Enter
- * on a focused tile/chip moves to Q2.
+ * on a focused tile moves to Q2.
  */
 export function QuestionIntent() {
   const { t } = useTranslation()
@@ -85,57 +75,21 @@ export function QuestionIntent() {
       <div
         role="radiogroup"
         aria-labelledby="q1-headline"
-        className="flex flex-col gap-3"
+        className="grid grid-cols-2 gap-3 lg:grid-cols-4"
       >
-        {/* Primary row — 4 large sketch tiles. */}
-        <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-          {PRIMARY_INTENTS.map((value, idx) => (
-            <SketchCard
-              key={value}
-              ref={(el) => {
-                cardRefs.current[idx] = el
-              }}
-              intent={value}
-              templateCode={selectTemplate(value)}
-              selected={intent === value}
-              onSelect={() => setIntent(value)}
-              onKeyDown={(e) => handleKey(e, idx)}
-            />
-          ))}
-        </div>
-
-        {/* Secondary row — 4 compact chips, single line on lg, wrap
-            on mobile. The .sketch.chip CSS variant collapses the
-            SketchCard layout to a horizontal label + code chip. */}
-        <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-          {SECONDARY_INTENTS.map((value, i) => {
-            const idx = PRIMARY_INTENTS.length + i
-            const slug = INTENT_TO_I18N[value]
-            const selected = intent === value
-            return (
-              <button
-                key={value}
-                ref={(el) => {
-                  cardRefs.current[idx] = el
-                }}
-                type="button"
-                role="radio"
-                aria-checked={selected}
-                onClick={() => setIntent(value)}
-                onKeyDown={(e) => handleKey(e, idx)}
-                className={cn(
-                  'sketch chip focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pm-clay focus-visible:ring-offset-2 focus-visible:ring-offset-pm-paper',
-                  selected && 'on',
-                )}
-              >
-                <div className="label">
-                  <div className="name">{t(`wizard.q1.options.${slug}.label`)}</div>
-                  <div className="code">{selectTemplate(value)}</div>
-                </div>
-              </button>
-            )
-          })}
-        </div>
+        {INTENT_VALUES_V3.map((value, idx) => (
+          <SketchCard
+            key={value}
+            ref={(el) => {
+              cardRefs.current[idx] = el
+            }}
+            intent={value}
+            templateCode={selectTemplate(value)}
+            selected={intent === value}
+            onSelect={() => setIntent(value)}
+            onKeyDown={(e) => handleKey(e, idx)}
+          />
+        ))}
       </div>
 
       <button
