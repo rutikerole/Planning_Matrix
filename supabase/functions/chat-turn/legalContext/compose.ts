@@ -21,6 +21,7 @@ import { SHARED_BLOCK } from './shared.ts'
 import { FEDERAL_BLOCK } from './federal.ts'
 import { BAYERN_BLOCK } from './bayern.ts'
 import { MUENCHEN_BLOCK } from './muenchen.ts'
+import { PERSONA_BEHAVIOURAL_RULES } from './personaBehaviour.ts'
 // import { ERLANGEN_BLOCK } from './erlangen.ts'  // sleeping — re-enable when adding city #2
 
 const SLICE_SEPARATOR = '\n\n---\n\n'
@@ -42,6 +43,7 @@ export const COMPOSED_LEGAL_CONTEXT = [
   FEDERAL_BLOCK,
   BAYERN_BLOCK,
   MUENCHEN_BLOCK,
+  PERSONA_BEHAVIOURAL_RULES,
 ].join(SLICE_SEPARATOR) +
   // Tail: PROJEKTKONTEXT marker — the dynamic state block follows in
   // the multi-block system array. The model expects this label so it
