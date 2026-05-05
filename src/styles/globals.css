@@ -243,7 +243,7 @@
     --line-faint:   rgba(26, 22, 18, 0.05);
 
     /* ── Phase 7.5 Spine sidebar tokens ───────────────────────────── */
-    --spine-width:                252px;
+    --spine-width:                272px;
     --spine-rail-color:           rgba(123, 92, 63, 0.32);
     --spine-stage-done-opacity:   0.42;
     --spine-stage-future-opacity: 0.55;
