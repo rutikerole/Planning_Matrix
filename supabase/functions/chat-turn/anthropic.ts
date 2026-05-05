@@ -236,39 +236,82 @@ function mapSdkError(err: unknown): never {
   throw err
 }
 
+import {
+  MAX_ATTEMPTS,
+  backoffMsFor,
+  isRetryable,
+  sleep,
+} from './retryPolicy.ts'
+
+const SCHEMA_REMINDER = {
+  type: 'text' as const,
+  text:
+    'KORREKTUR: Ihre vorherige Antwort hat das Werkzeug `respond` nicht im erwarteten Format aufgerufen. ' +
+    'Pflichtfelder sind: `specialist`, `message_de`, `message_en`, `input_type`. ' +
+    'Bei `recommendations_delta`, `procedures_delta`, `documents_delta` und `roles_delta` muss jedes Element zusätzlich `op` (`upsert` oder `remove`) und `id` enthalten. ' +
+    'Bitte rufen Sie das Werkzeug erneut auf, ausschließlich mit zulässigen Feldern.',
+}
+
 /**
- * Wrap callAnthropic with a single retry on UpstreamError('invalid_response').
- * The retry appends a stricter system reminder so the model knows to
- * re-emit the tool call with the correct shape. If the second attempt
- * also fails, the error bubbles to index.ts which translates it into
- * a model_response_invalid envelope for the SPA.
- *
- * Note: 429 / 529 / 5xx / timeout are NOT retried here — those signal
- * upstream load and need backoff at the SPA layer, not an immediate
- * second hit.
+ * Inner wrapper: retry ONCE on UpstreamError('invalid_response') with
+ * a stricter system reminder. This is the schema-recovery layer that
+ * has shipped since Phase 3 (extracted into a named function in
+ * Phase 8.6 so the outer backoff layer can compose around it cleanly).
  */
-export async function callAnthropicWithRetry(
+async function callAnthropicWithSchemaReminder(
   args: CallAnthropicArgs,
 ): Promise<CallAnthropicResult> {
   try {
     return await callAnthropic(args)
   } catch (err) {
     if (err instanceof UpstreamError && err.code === 'invalid_response') {
-      const reminder = {
-        type: 'text' as const,
-        text:
-          'KORREKTUR: Ihre vorherige Antwort hat das Werkzeug `respond` nicht im erwarteten Format aufgerufen. ' +
-          'Pflichtfelder sind: `specialist`, `message_de`, `message_en`, `input_type`. ' +
-          'Bei `recommendations_delta`, `procedures_delta`, `documents_delta` und `roles_delta` muss jedes Element zusätzlich `op` (`upsert` oder `remove`) und `id` enthalten. ' +
-          'Bitte rufen Sie das Werkzeug erneut auf, ausschließlich mit zulässigen Feldern.',
-      }
       return await callAnthropic({
         ...args,
-        systemBlocks: [...args.systemBlocks, reminder],
+        systemBlocks: [...args.systemBlocks, SCHEMA_REMINDER],
       })
     }
     throw err
   }
+}
+
+/**
+ * Public entry: schema-reminder retry (inner) wrapped in transient-
+ * upstream backoff retry (outer). Phase 8.6 (B.1) added the outer
+ * layer; the inner schema-reminder layer has shipped since Phase 3.
+ *
+ * Retry policy:
+ *   • invalid_response → 1 retry with reminder (inner). If the second
+ *     attempt also fails, bubbles up to index.ts which surfaces
+ *     model_response_invalid + an auto_retry_in_ms hint for the SPA.
+ *   • rate_limit / overloaded / server / timeout → up to 3 attempts
+ *     total with 0s / 2s / 6s backoff. Honours retryAfterMs (Anthropic
+ *     Retry-After header) when set.
+ *   • Other 4xx (non-429) → no retry, bubbles up.
+ *
+ * The outer retry is bound by the function's wall clock (150s); each
+ * attempt has its own 50s ABORT_TIMEOUT. Worst case: 50s + 2s + 50s +
+ * 6s + 50s = 158s. Slightly over the wall clock; the platform abort
+ * is the floor and we'd rather try than abort early.
+ */
+export async function callAnthropicWithRetry(
+  args: CallAnthropicArgs,
+): Promise<CallAnthropicResult> {
+  let lastErr: unknown
+  for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+    try {
+      return await callAnthropicWithSchemaReminder(args)
+    } catch (err) {
+      lastErr = err
+      if (!isRetryable(err)) throw err
+      if (attempt >= MAX_ATTEMPTS) break
+      const wait = backoffMsFor(attempt + 1, err)
+      console.log(
+        `[chat-turn] upstream ${err.code} on attempt ${attempt}/${MAX_ATTEMPTS}; backing off ${wait}ms`,
+      )
+      await sleep(wait)
+    }
+  }
+  throw lastErr
 }
 
 /**
