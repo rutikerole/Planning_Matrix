@@ -43,6 +43,8 @@ import {
 } from '../../../src/types/respondTool.ts'
 import type { ProjectState } from '../../../src/types/projectState.ts'
 import type { AssistantMessageRow } from '../../../src/types/chatTurn.ts'
+import type { Span, Tracer } from './tracer.ts'
+import type { TraceStatus } from '../../../src/types/observability.ts'
 
 const MAX_TOKENS = 1280
 const ABORT_TIMEOUT_MS = 50_000
@@ -59,6 +61,11 @@ interface StreamingTurnArgs {
   /** Phase 8.6 (B.3) — propagated to commit_chat_turn for replay
    *  detection. */
   clientRequestId: string
+  /** Phase 9 — tracer handed off from index.ts. The streaming pipeline
+   *  takes ownership and finalizes when the stream closes (success or
+   *  error). The rootSpan is the parent for every span emitted here. */
+  tracer: Tracer
+  rootSpan: Span
 }
 
 /**
@@ -70,7 +77,8 @@ interface StreamingTurnArgs {
  */
 export function runStreamingTurn(args: StreamingTurnArgs): Response {
   const encoder = new TextEncoder()
-  const { corsHeaders } = args
+  const { corsHeaders, tracer, rootSpan } = args
+  let traceStatus: TraceStatus = 'ok'
 
   const stream = new ReadableStream<Uint8Array>({
     async start(controller) {
@@ -82,6 +90,14 @@ export function runStreamingTurn(args: StreamingTurnArgs): Response {
         () => abort.abort(new Error('upstream_timeout')),
         ABORT_TIMEOUT_MS,
       )
+
+      const callSpan = tracer.startSpan('anthropic.stream', rootSpan.span_id)
+      callSpan.setAttributes({
+        model: MODEL,
+        max_tokens: MAX_TOKENS,
+        messages_count: args.messages.length,
+        system_blocks_count: args.systemBlocks.length,
+      })
 
       try {
         const client = new Anthropic({ apiKey: args.apiKey, maxRetries: 0 })
@@ -129,6 +145,8 @@ export function runStreamingTurn(args: StreamingTurnArgs): Response {
           } => b.type === 'tool_use',
         )
         if (!toolUse) {
+          callSpan.setError('no_tool_use_block')
+          callSpan.end('error')
           throw new UpstreamError(
             'invalid_response',
             null,
@@ -137,6 +155,12 @@ export function runStreamingTurn(args: StreamingTurnArgs): Response {
         }
         const parsed = respondToolInputSchema.safeParse(toolUse.input)
         if (!parsed.success) {
+          callSpan.setAttributes({
+            validation_result: 'zod_failure',
+            validation_error: parsed.error.message,
+          })
+          callSpan.setError('zod_validation_failed')
+          callSpan.end('error')
           throw new UpstreamError(
             'invalid_response',
             null,
@@ -156,25 +180,52 @@ export function runStreamingTurn(args: StreamingTurnArgs): Response {
               .cache_creation_input_tokens ?? 0,
         }
 
+        callSpan.setAttributes({
+          anthropic_request_id: (finalMessage as { id?: string }).id ?? null,
+          stop_reason: finalMessage.stop_reason,
+          input_tokens: usage.inputTokens,
+          output_tokens: usage.outputTokens,
+          cache_read_tokens: usage.cacheReadTokens,
+          cache_creation_tokens: usage.cacheWriteTokens,
+          latency_ms: latencyMs,
+          validation_result: 'ok',
+        })
+        callSpan.end('ok')
+        tracer.setTokens({
+          input_tokens: usage.inputTokens,
+          output_tokens: usage.outputTokens,
+          cache_read_input_tokens: usage.cacheReadTokens,
+          cache_creation_input_tokens: usage.cacheWriteTokens,
+        })
+
         // ── Phase 8.6 (D.4) — fact-plausibility validation ─────────
-        // Same logic as the JSON path in index.ts: downgrades
-        // out-of-bounds qualifiers to ASSUMED before
-        // applyToolInputToState reads the toolInput, and surfaces
-        // warnings via plausibilityEvents inside the same transaction.
+        const plausibilitySpan = tracer.startSpan('plausibility.check', rootSpan.span_id)
         const plausibility = validateFactPlausibility(toolInput)
+        plausibilitySpan.setAttributes({
+          facts_checked: toolInput.extracted_facts?.length ?? 0,
+          downgraded_count: plausibility.downgraded,
+          warnings: plausibility.warnings,
+        })
+        plausibilitySpan.end()
         if (plausibility.downgraded > 0) {
           console.log(
             `[chat-turn] [${args.requestId}] plausibility (streaming): ${plausibility.downgraded} fact(s) downgraded to ASSUMED`,
           )
         }
 
-        // ── Persistence pipeline ───────────────────────────────────
-        // Phase 8.6 (B.3 + D.4) — single transactional commit replaces
-        // the sequential insertAssistantMessage + updateProjectState +
-        // logTurnEvent trio AND carries plausibility warnings into the
-        // same transaction.
-        const newState = applyToolInputToState(args.currentState, toolInput)
+        // ── Capture persona snapshot (Phase 9) ─────────────────────
+        tracer.capturePersonaSnapshot({
+          system_prompt_full: args.systemBlocks.map((b) => b.text).join('\n\n──\n\n'),
+          state_block_full:
+            args.systemBlocks[args.systemBlocks.length - 1]?.text ?? '',
+          messages_full: args.messages,
+          tool_use_response_raw: toolInput,
+          tool_use_response_validated: toolInput,
+        })
 
+        // ── Persistence pipeline ───────────────────────────────────
+        const newState = applyToolInputToState(args.currentState, toolInput)
+        const commitSpan = tracer.startSpan('rpc.commit_chat_turn', rootSpan.span_id)
         const commitResult = await commitChatTurnAtomic(args.supabase, {
           projectId: args.projectId,
           toolInput,
@@ -186,8 +237,13 @@ export function runStreamingTurn(args: StreamingTurnArgs): Response {
           clientRequestId: args.clientRequestId,
           plausibilityEvents:
             plausibility.warnings.length > 0 ? plausibility.warnings : null,
+          traceId: tracer.trace_id,
         })
         if (!commitResult.ok) {
+          commitSpan.setError(commitResult.error.message)
+          commitSpan.end('error')
+          tracer.setError(commitResult.error.code, commitResult.error.message)
+          traceStatus = 'error'
           send({
             type: 'error',
             code: commitResult.error.code,
@@ -197,6 +253,12 @@ export function runStreamingTurn(args: StreamingTurnArgs): Response {
           controller.close()
           return
         }
+        commitSpan.setAttributes({
+          idempotency_replay: !!commitResult.replayed,
+          plausibility_events_count: plausibility.warnings.length,
+        })
+        commitSpan.end()
+        if (commitResult.replayed) traceStatus = 'idempotent_replay'
 
         // ── Final complete frame ───────────────────────────────────
         send({
@@ -216,6 +278,15 @@ export function runStreamingTurn(args: StreamingTurnArgs): Response {
         })
         controller.close()
       } catch (err) {
+        // Ensure callSpan is closed if we threw before we could close it.
+        // (.end() is idempotent.)
+        callSpan.end('error')
+        traceStatus = 'error'
+        const errMsg = err instanceof Error ? err.message : String(err)
+        tracer.setError(
+          err instanceof UpstreamError ? `upstream_${err.code}` : 'streaming_failed',
+          errMsg,
+        )
         clearTimeout(timeoutId)
         if (err instanceof UpstreamError) {
           send({
@@ -246,6 +317,24 @@ export function runStreamingTurn(args: StreamingTurnArgs): Response {
           })
         }
         controller.close()
+      } finally {
+        // ── Tracer finalize (Phase 9) ────────────────────────────
+        // Always runs whether the stream completed normally, errored,
+        // or was cancelled mid-flight. Wrapped in its own try/catch
+        // because finalize() must not throw out of this handler.
+        try {
+          rootSpan.end(
+            traceStatus === 'ok' || traceStatus === 'idempotent_replay'
+              ? 'ok'
+              : 'error',
+          )
+          await tracer.finalize(traceStatus)
+        } catch (finalizeErr) {
+          console.warn(
+            `[chat-turn] [${args.requestId}] streaming tracer finalize threw`,
+            finalizeErr,
+          )
+        }
       }
     },
 
@@ -253,6 +342,9 @@ export function runStreamingTurn(args: StreamingTurnArgs): Response {
       // Client closed the stream early. Anthropic call already aborted
       // via the AbortController; persistence may have already happened
       // and the next mount will see the persisted assistant message.
+      // Mark the trace as partial so the Live Stream can flag cancelled
+      // turns separately from errors.
+      if (traceStatus === 'ok') traceStatus = 'partial'
     },
   })
 

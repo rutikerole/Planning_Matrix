@@ -90,6 +90,13 @@ export interface CreateTracerOpts {
   region?: string
   function_version?: string
   request_size_bytes?: number
+  /**
+   * Optional externally-generated UUID. When provided, used as
+   * trace_id directly — useful for keeping the existing requestId
+   * (already in stdout logs) and the trace identity in lock-step.
+   * If absent, a fresh UUID is generated.
+   */
+  trace_id?: string
 }
 
 export interface PersonaSnapshotInput {
@@ -143,7 +150,7 @@ export function createTracer(opts: CreateTracerOpts): Tracer {
   const client = getServiceClient()
   if (!client) return noopTracer()
 
-  const trace_id = crypto.randomUUID()
+  const trace_id = opts.trace_id ?? crypto.randomUUID()
   const started_at = new Date().toISOString()
   const start_perf = performance.now()
   const spans: InternalSpan[] = []

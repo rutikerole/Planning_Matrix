@@ -347,6 +347,9 @@ interface CommitChatTurnAtomicArgs {
   /** Phase 8.6 (D.4) — plausibility-warning events to append in the
    *  same transaction. Null when no warnings. */
   plausibilityEvents?: Array<{ event_type: string; reason: string }> | null
+  /** Phase 9 — propagated to project_events.trace_id so audit rows
+   *  join cleanly back to logs.traces. Null when tracer is disabled. */
+  traceId?: string | null
 }
 
 /**
@@ -389,7 +392,12 @@ export async function commitChatTurnAtomic(
     latency_ms: args.latencyMs,
   }
 
-  const { data, error } = await supabase.rpc('commit_chat_turn', {
+  // Build the RPC payload conditionally — `p_trace_id` is only
+  // sent when a real trace id is available AND we believe migration
+  // 0016 is applied. Sending it against the pre-0016 7-arg signature
+  // would fail with "function ... does not exist". Conservative path:
+  // omit when null, so the RPC resolves on either schema.
+  const rpcArgs: Record<string, unknown> = {
     p_project_id: args.projectId,
     p_assistant_row: assistantRow,
     p_new_state: args.newState,
@@ -397,7 +405,12 @@ export async function commitChatTurnAtomic(
     p_event_reason: t.completion_signal ?? 'continue',
     p_event_payload: args.plausibilityEvents ?? null,
     p_client_request_id: args.clientRequestId,
-  })
+  }
+  if (args.traceId) {
+    rpcArgs.p_trace_id = args.traceId
+  }
+
+  const { data, error } = await supabase.rpc('commit_chat_turn', rpcArgs)
 
   if (error) {
     return {

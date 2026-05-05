@@ -53,6 +53,8 @@ import {
   type AssistantMessageRow,
 } from '../../../src/types/chatTurn.ts'
 import type { ProjectState, Specialist, TemplateId } from '../../../src/types/projectState.ts'
+import { createTracer } from './tracer.ts'
+import type { TraceStatus } from '../../../src/types/observability.ts'
 
 Deno.serve(async (req: Request) => {
   const requestId = crypto.randomUUID()
@@ -126,6 +128,28 @@ Deno.serve(async (req: Request) => {
     `[chat-turn] [${requestId}] user=${userData.user.id} project=${projectId}`,
   )
 
+  // ── Tracer (Phase 9) ─────────────────────────────────────────────
+  // Created once per turn, identity bound to requestId so existing
+  // stdout logs and the trace row share an ID. Streaming branch hands
+  // the tracer off to runStreamingTurn (it finalizes on stream close);
+  // JSON branch finalizes in the finally below.
+  const isStreaming = acceptsStream(req)
+  const tracer = createTracer({
+    project_id: projectId,
+    user_id: userData.user.id,
+    client_request_id: clientRequestId ?? null,
+    kind: isStreaming ? 'chat_turn_streaming' : 'chat_turn_json',
+    model: MODEL,
+    region: Deno.env.get('SB_REGION') ?? Deno.env.get('AWS_REGION') ?? undefined,
+    function_version: Deno.env.get('FUNCTION_VERSION') ?? undefined,
+    trace_id: requestId,
+  })
+  const rootSpan = tracer.startSpan('chat_turn.root')
+  let traceStatus: TraceStatus = 'ok'
+  let tracerHandedOff = false
+
+  try {
+
   // ── Rate limit ───────────────────────────────────────────────────
   // Phase 4.1 #125 — guard the Anthropic credit budget. The RPC is
   // SECURITY DEFINER and atomic (insert ... on conflict ... do update);
@@ -134,11 +158,16 @@ Deno.serve(async (req: Request) => {
   // to a 500 — we don't want to silently bypass the limiter on infra
   // hiccups.
   const RATE_LIMIT_PER_HOUR = 50
+  const rateLimitSpan = tracer.startSpan('rate_limit.check', rootSpan.span_id)
   const { data: rateRows, error: rateErr } = await supabase.rpc(
     'increment_chat_turn_rate_limit',
     { p_user_id: userData.user.id, p_max_per_hour: RATE_LIMIT_PER_HOUR },
   )
   if (rateErr) {
+    rateLimitSpan.setError(rateErr.message)
+    rateLimitSpan.end('error')
+    tracer.setError('rate_limit_check_failed', rateErr.message)
+    traceStatus = 'error'
     console.error(`[chat-turn] [${requestId}] rate-limit RPC failed:`, rateErr)
     return respond(
       { code: 'internal', message: 'Rate-limit check failed' },
@@ -146,7 +175,15 @@ Deno.serve(async (req: Request) => {
     )
   }
   const rateRow = Array.isArray(rateRows) ? rateRows[0] : rateRows
+  rateLimitSpan.setAttributes({
+    current_count: rateRow?.current_count ?? null,
+    max_count: rateRow?.max_count ?? null,
+    allowed: rateRow?.allowed ?? null,
+  })
+  rateLimitSpan.end()
   if (rateRow && !rateRow.allowed) {
+    tracer.setError('rate_limit_exceeded', `${rateRow.current_count}/${rateRow.max_count}`)
+    traceStatus = 'error'
     console.log(
       `[chat-turn] [${requestId}] rate limit exceeded: ${rateRow.current_count}/${rateRow.max_count}`,
     )
@@ -165,17 +202,29 @@ Deno.serve(async (req: Request) => {
   }
 
   // ── Load project + messages ──────────────────────────────────────
+  const loadSpan = tracer.startSpan('state.load', rootSpan.span_id)
   const loadResult = await loadProjectAndMessages(supabase, projectId)
   if (!loadResult.ok) {
+    loadSpan.setError(loadResult.error.message)
+    loadSpan.end('error')
+    tracer.setError(loadResult.error.code, loadResult.error.message)
+    traceStatus = 'error'
     return respond(loadResult.error, loadResult.status)
   }
   const { project, messages: history } = loadResult
+  loadSpan.setAttributes({
+    messages_loaded: history.length,
+    template_id: project.template_id,
+    bundesland: project.bundesland,
+  })
+  loadSpan.end()
   const templateId = project.template_id as TemplateId
   const currentState = hydrateProjectState(project.state, templateId)
 
   // ── Insert user message (with idempotency) ───────────────────────
   const allRows: MessageRow[] = [...history]
   if (userMessage) {
+    const userSpan = tracer.startSpan('user_message.insert', rootSpan.span_id)
     const userInsert = await insertUserMessageOrFetchExisting(supabase, {
       projectId,
       content: userMessage,
@@ -184,9 +233,15 @@ Deno.serve(async (req: Request) => {
       clientRequestId,
     })
     if (!userInsert.ok) {
+      userSpan.setError(userInsert.error.message)
+      userSpan.end('error')
+      tracer.setError(userInsert.error.code, userInsert.error.message)
+      traceStatus = 'error'
       return respond(userInsert.error, userInsert.error.code === 'idempotency_replay' ? 409 : 500)
     }
     const userRow = userInsert.row
+    userSpan.setAttributes({ replayed: userInsert.replayed })
+    userSpan.end()
 
     // Idempotency short-circuit: same client_request_id, prior turn
     // already produced an assistant response. Return the cached pair
@@ -201,6 +256,7 @@ Deno.serve(async (req: Request) => {
         console.log(
           `[chat-turn] [${requestId}] idempotent replay — returning cached assistant ${cachedAssistant.id}`,
         )
+        traceStatus = 'idempotent_replay'
         return respondSuccess(
           cachedAssistant as unknown as AssistantMessageRow,
           currentState,
@@ -253,8 +309,9 @@ Deno.serve(async (req: Request) => {
   // If the caller asked for SSE, hand off to the streaming pipeline.
   // The streaming variant runs the same persistence work after Anthropic
   // signals message_stop, so the persisted artefacts are identical.
-  if (acceptsStream(req)) {
+  if (isStreaming) {
     console.log(`[chat-turn] [${requestId}] streaming path locale=${locale ?? 'de'}`)
+    tracerHandedOff = true  // streaming pipeline will finalize
     return runStreamingTurn({
       apiKey,
       systemBlocks: buildSystemBlocks(liveStateText, locale),
@@ -265,30 +322,42 @@ Deno.serve(async (req: Request) => {
       corsHeaders,
       requestId,
       clientRequestId,
+      tracer,
+      rootSpan,
     })
   }
 
   // ── Anthropic call (with one retry on malformed tool input) ──────
+  const callSpan = tracer.startSpan('anthropic.call', rootSpan.span_id)
   let anthropicResult
   try {
     anthropicResult = await callAnthropicWithRetry({
       apiKey,
       systemBlocks: buildSystemBlocks(liveStateText, locale),
       messages: anthropicMessages,
+      tracer,
+      parentSpan: callSpan,
     })
+    callSpan.end()
   } catch (err) {
+    callSpan.setError(err instanceof Error ? err.message : String(err))
+    callSpan.end('error')
+    tracer.setError('anthropic_call_failed', err instanceof Error ? err.message : String(err))
+    traceStatus = 'error'
     console.error(`[chat-turn] [${requestId}] upstream error`, err)
     return respond(translateUpstream(err), upstreamStatus(err))
   }
   const { toolInput, usage, latencyMs } = anthropicResult
 
   // ── Phase 8.6 (D.4) — fact-plausibility validation ──────────────
-  // Walk extracted_facts; downgrade DECIDED/VERIFIED → ASSUMED for any
-  // value out of plausibility bounds (numeric) or outside its enum
-  // (categorical). Mutates toolInput in place so applyToolInputToState
-  // sees the downgraded qualifier. Warnings get committed in the same
-  // transaction as the assistant + state via plausibilityEvents.
+  const plausibilitySpan = tracer.startSpan('plausibility.check', rootSpan.span_id)
   const plausibility = validateFactPlausibility(toolInput)
+  plausibilitySpan.setAttributes({
+    facts_checked: toolInput.extracted_facts?.length ?? 0,
+    downgraded_count: plausibility.downgraded,
+    warnings: plausibility.warnings,
+  })
+  plausibilitySpan.end()
   if (plausibility.downgraded > 0) {
     console.log(
       `[chat-turn] [${requestId}] plausibility: ${plausibility.downgraded} fact(s) downgraded to ASSUMED`,
@@ -298,12 +367,21 @@ Deno.serve(async (req: Request) => {
   // ── Apply mutations ──────────────────────────────────────────────
   const newState = applyToolInputToState(currentState, toolInput)
 
-  // ── Atomic commit (Phase 8.6 B.3 + D.4) ─────────────────────────
-  // Single transactional call: assistant message + state update +
-  // audit event + plausibility warnings. Fixes the gap from commit 5
-  // (e1890cd): the JSON-fallback path had still been using the
-  // sequential insertAssistantMessage + updateProjectState +
-  // logTurnEvent trio; the streaming path was already converted.
+  // ── Capture persona snapshot (Phase 9 — replay artifact) ────────
+  // Materializes "what the model saw and what it said" so a turn can
+  // be reconstructed for debugging. Sampled inside the tracer:
+  // always-store on non-ok, 1-in-50 on ok. Hash always stored.
+  const systemBlocksFinal = buildSystemBlocks(liveStateText, locale)
+  tracer.capturePersonaSnapshot({
+    system_prompt_full: systemBlocksFinal.map((b) => b.text).join('\n\n──\n\n'),
+    state_block_full: liveStateText,
+    messages_full: anthropicMessages,
+    tool_use_response_raw: toolInput,
+    tool_use_response_validated: toolInput,
+  })
+
+  // ── Atomic commit (Phase 8.6 B.3 + D.4 + Phase 9 trace_id) ──────
+  const commitSpan = tracer.startSpan('rpc.commit_chat_turn', rootSpan.span_id)
   const commitResult = await commitChatTurnAtomic(supabase, {
     projectId,
     toolInput,
@@ -315,9 +393,23 @@ Deno.serve(async (req: Request) => {
     clientRequestId,
     plausibilityEvents:
       plausibility.warnings.length > 0 ? plausibility.warnings : null,
+    traceId: tracer.trace_id,
   })
   if (!commitResult.ok) {
+    commitSpan.setError(commitResult.error.message)
+    commitSpan.end('error')
+    tracer.setError(commitResult.error.code, commitResult.error.message)
+    traceStatus = 'error'
     return respond(commitResult.error, 500)
+  }
+  commitSpan.setAttributes({
+    idempotency_replay: !!commitResult.replayed,
+    plausibility_events_count: plausibility.warnings.length,
+  })
+  commitSpan.end()
+
+  if (commitResult.replayed) {
+    traceStatus = 'idempotent_replay'
   }
 
   console.log(
@@ -332,6 +424,22 @@ Deno.serve(async (req: Request) => {
     toolInput.completion_signal ?? 'continue',
     corsHeaders,
   )
+  } finally {
+    // ── Tracer finalize (Phase 9) ───────────────────────────────────
+    // For the JSON path: every return above hits this finally before
+    // the Response leaves the function. For the streaming path: the
+    // tracer was handed to runStreamingTurn (which finalizes when the
+    // stream closes), so we skip here.
+    if (!tracerHandedOff) {
+      try {
+        rootSpan.end(traceStatus === 'ok' || traceStatus === 'idempotent_replay' ? 'ok' : 'error')
+        await tracer.finalize(traceStatus)
+      } catch (err) {
+        // Tracer must never throw into the user path. Log + swallow.
+        console.warn(`[chat-turn] [${requestId}] tracer finalize threw`, err)
+      }
+    }
+  }
 })
 
 // ── Helpers ──────────────────────────────────────────────────────────

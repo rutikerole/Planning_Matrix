@@ -33,6 +33,7 @@ import {
   respondToolInputSchema,
   type RespondToolInput,
 } from '../../../src/types/respondTool.ts'
+import type { Span, Tracer } from './tracer.ts'
 
 // ── Configuration ──────────────────────────────────────────────────────
 // Phase 3.1 #33: dropped from 2048 → 1280 based on batch-4 telemetry
@@ -66,6 +67,13 @@ export interface CallAnthropicArgs {
   messages: ConversationMessage[]
   /** Optional caller signal — chained into the internal timeout. */
   signal?: AbortSignal
+  /** Phase 9 — observability handles. When provided, each attempt
+   *  emits a child span with token usage attributes. */
+  tracer?: Tracer
+  parentSpan?: Span
+  /** Internal — set by callAnthropicWithRetry / WithSchemaReminder
+   *  so the leaf span name reflects the attempt position. */
+  attemptLabel?: string
 }
 
 export interface AnthropicUsage {
@@ -113,11 +121,36 @@ export class UpstreamError extends Error {
  * Call Anthropic with a forced `respond` tool call. Validates the model's
  * output against the Zod schema before returning; throws UpstreamError
  * for known upstream failure modes and lets unexpected errors bubble.
+ *
+ * Phase 9: when `tracer` + `parentSpan` are passed, this emits an
+ *   `anthropic.attempt_<label>` span with input/output/cache token
+ *   attributes and the Anthropic request id. Tokens accumulate on the
+ *   parent trace via tracer.setTokens.
  */
 export async function callAnthropic(
   args: CallAnthropicArgs,
 ): Promise<CallAnthropicResult> {
-  const { apiKey, systemBlocks, messages, signal: externalSignal } = args
+  const {
+    apiKey,
+    systemBlocks,
+    messages,
+    signal: externalSignal,
+    tracer,
+    parentSpan,
+    attemptLabel,
+  } = args
+
+  const span = tracer?.startSpan(
+    `anthropic.attempt_${attemptLabel ?? '1'}`,
+    parentSpan?.span_id ?? null,
+  )
+  span?.setAttributes({
+    model: MODEL,
+    max_tokens: MAX_TOKENS,
+    messages_count: messages.length,
+    system_blocks_count: systemBlocks.length,
+    tool_choice: 'respond',
+  })
 
   const controller = new AbortController()
   const timeoutId = setTimeout(
@@ -154,12 +187,16 @@ export async function callAnthropic(
   } catch (err) {
     clearTimeout(timeoutId)
     if (controller.signal.aborted) {
+      span?.setError('upstream_timeout')
+      span?.end('error')
       throw new UpstreamError(
         'timeout',
         null,
         'Anthropic request timed out (50s)',
       )
     }
+    span?.setError(err instanceof Error ? err.message : String(err))
+    span?.end('error')
     throw mapSdkError(err)
   }
   clearTimeout(timeoutId)
@@ -172,6 +209,8 @@ export async function callAnthropic(
       b.type === 'tool_use',
   )
   if (!toolUse) {
+    span?.setError('no_tool_use_block')
+    span?.end('error')
     throw new UpstreamError(
       'invalid_response',
       null,
@@ -179,6 +218,8 @@ export async function callAnthropic(
     )
   }
   if (toolUse.name !== 'respond') {
+    span?.setError(`unexpected_tool_name:${toolUse.name}`)
+    span?.end('error')
     throw new UpstreamError(
       'invalid_response',
       null,
@@ -188,6 +229,12 @@ export async function callAnthropic(
 
   const parsed = respondToolInputSchema.safeParse(toolUse.input)
   if (!parsed.success) {
+    span?.setAttributes({
+      validation_result: 'zod_failure',
+      validation_error: parsed.error.message,
+    })
+    span?.setError('zod_validation_failed')
+    span?.end('error')
     // Index.ts is expected to retry once with a stricter system reminder
     // before surfacing this to the SPA — see commit 7.
     throw new UpstreamError(
@@ -207,6 +254,29 @@ export async function callAnthropic(
       (response.usage as { cache_creation_input_tokens?: number })
         .cache_creation_input_tokens ?? 0,
   }
+
+  // Final attributes — token counts + Anthropic request id. The
+  // request id is the field to grep for when escalating to support.
+  span?.setAttributes({
+    anthropic_request_id: (response as { id?: string }).id ?? null,
+    stop_reason: response.stop_reason,
+    input_tokens: usage.inputTokens,
+    output_tokens: usage.outputTokens,
+    cache_read_tokens: usage.cacheReadTokens,
+    cache_creation_tokens: usage.cacheWriteTokens,
+    latency_ms: latencyMs,
+    validation_result: 'ok',
+  })
+  span?.end('ok')
+
+  // Accumulate on the trace so the trace row's totals reflect every
+  // attempt (schema-reminder retry + outer backoff retry both feed in).
+  tracer?.setTokens({
+    input_tokens: usage.inputTokens,
+    output_tokens: usage.outputTokens,
+    cache_read_input_tokens: usage.cacheReadTokens,
+    cache_creation_input_tokens: usage.cacheWriteTokens,
+  })
 
   return { toolInput: parsed.data, usage, latencyMs }
 }
@@ -262,12 +332,19 @@ async function callAnthropicWithSchemaReminder(
   args: CallAnthropicArgs,
 ): Promise<CallAnthropicResult> {
   try {
-    return await callAnthropic(args)
+    return await callAnthropic({ ...args, attemptLabel: args.attemptLabel ?? '1' })
   } catch (err) {
     if (err instanceof UpstreamError && err.code === 'invalid_response') {
+      // Phase 9 — second attempt gets its own span via attemptLabel.
+      // Parent span tag flips so the timeline distinguishes the
+      // schema-reminder retry from a fresh first attempt.
+      args.parentSpan?.addEvent('schema_reminder_retry', {
+        previous_error: err.message,
+      })
       return await callAnthropic({
         ...args,
         systemBlocks: [...args.systemBlocks, SCHEMA_REMINDER],
+        attemptLabel: `${args.attemptLabel ?? '1'}_reminder`,
       })
     }
     throw err
@@ -299,12 +376,23 @@ export async function callAnthropicWithRetry(
   let lastErr: unknown
   for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
     try {
-      return await callAnthropicWithSchemaReminder(args)
+      return await callAnthropicWithSchemaReminder({
+        ...args,
+        attemptLabel: String(attempt),
+      })
     } catch (err) {
       lastErr = err
       if (!isRetryable(err)) throw err
       if (attempt >= MAX_ATTEMPTS) break
       const wait = backoffMsFor(attempt + 1, err)
+      // Phase 9 — record the retry decision as an event on the
+      // outer parent span, so the Gantt visualization shows the gap.
+      args.parentSpan?.addEvent('anthropic.retry', {
+        trigger: (err as { code?: string }).code ?? 'unknown',
+        previous_attempt: attempt,
+        backoff_ms: wait,
+        previous_status_code: (err as { status?: number }).status ?? null,
+      })
       console.log(
         `[chat-turn] upstream ${err.code} on attempt ${attempt}/${MAX_ATTEMPTS}; backing off ${wait}ms`,
       )
