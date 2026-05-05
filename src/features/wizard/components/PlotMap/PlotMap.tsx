@@ -264,7 +264,7 @@ export function PlotMap({
 
   return (
     <div className="flex flex-col">
-      <div className="pm-plotmap-container relative" style={{ height: 460 }}>
+      <div className="pm-plotmap-container relative h-full min-h-[460px]">
         {isGeocoding ? <div className="pm-plotmap-progress" aria-hidden="true" /> : null}
         <MapContainer
           center={initialCenter}

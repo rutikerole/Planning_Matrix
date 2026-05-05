@@ -31,8 +31,11 @@ interface Props {
 }
 
 /**
- * v3 Q2 — plot question. Two-column layout (map left, sidebar
- * right) on lg+; stacked on mobile. Out-of-coverage addresses
+ * v3 Q2 — plot question. Phase 7.10: 30/70 grid on lg+ with the
+ * question lane on the left and a full-bleed map on the right; the
+ * Location profile floats absolutely inside the map's top-right
+ * corner. Below lg the layout collapses to a single stacked column
+ * (question → map → profile card). Out-of-coverage addresses
  * surface as a soft note rather than a hard error.
  */
 export function QuestionPlot({ onSubmit, submitError }: Props) {
@@ -119,132 +122,164 @@ export function QuestionPlot({ onSubmit, submitError }: Props) {
     }
   }
 
+  // Phase 7.10 — gate the right-column map render on the same
+  // condition the previous full-width layout used: an active "yes"
+  // path with at least 6 chars typed. Below that threshold the right
+  // column collapses (mobile) or sits empty (lg+), preserving the
+  // existing "type something first" flow.
+  const showMap = hasPlot === true && plotAddress.trim().length >= 6
+
   return (
     <div className="flex flex-col gap-7">
-      <header className="flex flex-col gap-5">
-        <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-pm-clay">
-          {t('wizard.q2.eyebrow')}
-        </p>
-        <h1
-          id="q2-headline"
-          className="font-serif text-[clamp(2.5rem,6vw,4rem)] leading-[1.05] -tracking-[0.02em] text-pm-ink"
-        >
-          {t('wizard.q2.h').replace(/[?]\s*$/, '')}
-          <span className="text-pm-clay">?</span>
-        </h1>
-        <p className="font-sans text-[17px] italic leading-relaxed text-pm-ink-mid max-w-[36rem]">
-          {t('wizard.q2.sub')}
-        </p>
-      </header>
-
-      <div role="radiogroup" aria-labelledby="q2-headline" className="flex gap-3">
-        {[true, false].map((value) => {
-          const isSelected = hasPlot === value
-          return (
-            <button
-              key={String(value)}
-              type="button"
-              role="radio"
-              aria-checked={isSelected}
-              onClick={() => {
-                setPlotChoice(value)
-                if (value === false) setTouched(false)
-              }}
-              className={cn(
-                'group relative inline-flex items-center gap-2 border bg-pm-paper px-6 py-3 font-sans text-[14px] tracking-tight transition-colors duration-soft ease-soft',
-                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pm-clay focus-visible:ring-offset-2 focus-visible:ring-offset-pm-paper',
-                isSelected
-                  ? 'border-pm-clay-soft bg-pm-paper-tint text-pm-ink'
-                  : 'border-pm-hair text-pm-ink-mid hover:border-pm-hair-strong hover:text-pm-ink',
-              )}
+      {/* Phase 7.10 — 30/70 grid on lg+, single column below.
+        * The grid wraps the question lane (left) and the map +
+        * floating profile (right); form-level notices and the
+        * back/submit row sit below the grid in page flow. */}
+      <div className="grid grid-cols-1 gap-8 lg:grid-cols-[30%_70%] lg:gap-0">
+        {/* LEFT COLUMN — question lane.
+          * Generous top/bottom padding plus a calmer right gutter
+          * so the H1 wraps word-by-word against the divider. Left
+          * padding stays light because the WizardShell already
+          * supplies the page-edge gutter. */}
+        <div className="flex flex-col gap-7 lg:gap-7 lg:pt-12 lg:pb-10 lg:pl-0 lg:pr-9">
+          <header className="flex flex-col gap-5">
+            <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-pm-clay">
+              {t('wizard.q2.eyebrow')}
+            </p>
+            <h1
+              id="q2-headline"
+              className="font-serif text-[clamp(2.5rem,6vw,4rem)] leading-[1.05] -tracking-[0.02em] text-pm-ink lg:text-[44px] lg:leading-[1.05]"
             >
-              {isSelected ? (
-                <span aria-hidden="true" className="block size-1.5 rounded-full bg-pm-clay" />
-              ) : null}
-              <span>{t(value ? 'wizard.q2.yes' : 'wizard.q2.no')}</span>
-            </button>
-          )
-        })}
-      </div>
+              {t('wizard.q2.h').replace(/[?]\s*$/, '')}
+              <span className="text-pm-clay">?</span>
+            </h1>
+            <p className="font-sans text-[17px] italic leading-relaxed text-pm-ink-mid max-w-[36rem] lg:max-w-[15rem] lg:font-serif">
+              {t('wizard.q2.sub')}
+            </p>
+          </header>
 
-      <AnimatePresence initial={false}>
-        {hasPlot === true ? (
-          <m.div
-            key="yes"
-            initial={reduced ? { opacity: 1 } : { opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={reduced ? { opacity: 0 } : { opacity: 0, height: 0 }}
-            transition={{ duration: reduced ? 0 : 0.3, ease: [0.16, 1, 0.3, 1] }}
-            className="overflow-hidden"
-          >
-            <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1fr_320px] items-start">
-              <div className="flex flex-col gap-4">
-                <div className="flex flex-col gap-2">
-                  <label
-                    htmlFor="plot-address"
-                    className="font-mono text-[11px] uppercase tracking-[0.16em] text-pm-clay"
-                  >
-                    {t('wizard.q2.addressLabel')}
-                  </label>
-                  <input
-                    id="plot-address"
-                    ref={addressInputRef}
-                    type="text"
-                    inputMode="text"
-                    autoComplete="street-address"
-                    placeholder={t('wizard.q2.placeholder')}
-                    value={plotAddress}
-                    onChange={(e) => setPlotAddress(e.target.value)}
-                    onBlur={() => setTouched(true)}
-                    onKeyDown={handleAddressKey}
-                    aria-invalid={showFormatError || undefined}
-                    aria-describedby="plot-address-helper"
-                    className={cn(
-                      'w-full border-0 border-b bg-transparent py-2 font-sans text-[18px] text-pm-ink transition-colors duration-soft placeholder:text-pm-ink-mute2',
-                      'focus:outline-none focus:ring-0',
-                      showFormatError
-                        ? 'border-pm-clay-deep/70 focus:border-pm-clay-deep'
-                        : 'border-pm-hair-strong focus:border-pm-clay',
-                    )}
-                  />
-                  <p id="plot-address-helper" className="font-serif text-[13px] italic leading-relaxed text-pm-clay">
-                    {t('wizard.q2.helper')}
-                  </p>
-                  <p className="font-mono text-[11px] leading-relaxed text-pm-ink-mute2">
-                    {t('wizard.q2.coverage')}
-                  </p>
-                </div>
+          <div role="radiogroup" aria-labelledby="q2-headline" className="flex gap-3">
+            {[true, false].map((value) => {
+              const isSelected = hasPlot === value
+              return (
+                <button
+                  key={String(value)}
+                  type="button"
+                  role="radio"
+                  aria-checked={isSelected}
+                  onClick={() => {
+                    setPlotChoice(value)
+                    if (value === false) setTouched(false)
+                  }}
+                  className={cn(
+                    'group relative inline-flex items-center gap-2 border bg-pm-paper px-6 py-3 font-sans text-[14px] tracking-tight transition-colors duration-soft ease-soft',
+                    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pm-clay focus-visible:ring-offset-2 focus-visible:ring-offset-pm-paper',
+                    isSelected
+                      ? 'border-pm-clay-soft bg-pm-paper-tint text-pm-ink'
+                      : 'border-pm-hair text-pm-ink-mid hover:border-pm-hair-strong hover:text-pm-ink',
+                  )}
+                >
+                  {isSelected ? (
+                    <span aria-hidden="true" className="block size-1.5 rounded-full bg-pm-clay" />
+                  ) : null}
+                  <span>{t(value ? 'wizard.q2.yes' : 'wizard.q2.no')}</span>
+                </button>
+              )
+            })}
+          </div>
 
-                {plotAddress.trim().length >= 6 ? (
-                  <BPlanCheck result={bplanResult} isLoading={bplanLoading} />
-                ) : null}
+          <AnimatePresence initial={false}>
+            {hasPlot === true ? (
+              <m.div
+                key="yes-left"
+                initial={reduced ? { opacity: 1 } : { opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={reduced ? { opacity: 0 } : { opacity: 0, height: 0 }}
+                transition={{ duration: reduced ? 0 : 0.3, ease: [0.16, 1, 0.3, 1] }}
+                className="overflow-hidden"
+              >
+                <div className="flex flex-col gap-4">
+                  <div className="flex flex-col gap-2">
+                    <label
+                      htmlFor="plot-address"
+                      className="font-mono text-[11px] uppercase tracking-[0.16em] text-pm-clay"
+                    >
+                      {t('wizard.q2.addressLabel')}
+                    </label>
+                    <input
+                      id="plot-address"
+                      ref={addressInputRef}
+                      type="text"
+                      inputMode="text"
+                      autoComplete="street-address"
+                      placeholder={t('wizard.q2.placeholder')}
+                      value={plotAddress}
+                      onChange={(e) => setPlotAddress(e.target.value)}
+                      onBlur={() => setTouched(true)}
+                      onKeyDown={handleAddressKey}
+                      aria-invalid={showFormatError || undefined}
+                      aria-describedby="plot-address-helper"
+                      className={cn(
+                        'w-full border-0 border-b bg-transparent py-2 font-sans text-[18px] text-pm-ink transition-colors duration-soft placeholder:text-pm-ink-mute2',
+                        'focus:outline-none focus:ring-0',
+                        showFormatError
+                          ? 'border-pm-clay-deep/70 focus:border-pm-clay-deep'
+                          : 'border-pm-hair-strong focus:border-pm-clay',
+                      )}
+                    />
+                    <p id="plot-address-helper" className="font-serif text-[13px] italic leading-relaxed text-pm-clay">
+                      {t('wizard.q2.helper')}
+                    </p>
+                    <p className="font-mono text-[11px] leading-relaxed text-pm-ink-mute2">
+                      {t('wizard.q2.coverage')}
+                    </p>
+                  </div>
 
-                {plotAddress.trim().length >= 6 ? (
-                  <>
+                  {showMap ? (
+                    <BPlanCheck result={bplanResult} isLoading={bplanLoading} />
+                  ) : null}
+
+                  {showMap ? (
                     <p className="font-serif text-[13px] italic leading-relaxed text-pm-ink-mid">
                       {t('wizard.q2.mapHint')}
                     </p>
-                    <Suspense
-                      fallback={
-                        <div className="pm-plotmap-empty">Karte wird geladen…</div>
-                      }
-                    >
-                      <PlotMap
-                        address={plotAddress}
-                        onAddressChange={setPlotAddress}
-                        onBplanResolved={setBplanResult}
-                        onBplanLoadingChange={setBplanLoading}
-                      />
-                    </Suspense>
-                  </>
-                ) : null}
-              </div>
+                  ) : null}
+                </div>
+              </m.div>
+            ) : null}
+          </AnimatePresence>
+        </div>
 
-              <PlotSidebar profile={profile} suggestedName={suggestedName} />
+        {/* RIGHT COLUMN — map lane (lg+ adds vertical hairline divider) */}
+        <div className="relative lg:border-l lg:border-pm-hair lg:p-6">
+          {showMap ? (
+            <div className="relative">
+              {/* Responsive height — mobile parity with the
+                * pre-redesign 460px, expand to ~700px on lg+ to
+                * match the 30/70 mockup. PlotMap fills its parent. */}
+              <div className="h-[460px] lg:h-[700px]">
+                <Suspense
+                  fallback={
+                    <div className="pm-plotmap-empty">Karte wird geladen…</div>
+                  }
+                >
+                  <PlotMap
+                    address={plotAddress}
+                    onAddressChange={setPlotAddress}
+                    onBplanResolved={setBplanResult}
+                    onBplanLoadingChange={setBplanLoading}
+                  />
+                </Suspense>
+              </div>
+              {/* Floating Location profile — absolute on lg+ inside
+                * the map area; on mobile it stacks below the map. */}
+              <div className="mt-6 lg:absolute lg:right-[46px] lg:top-[46px] lg:z-[450] lg:mt-0 lg:w-[248px]">
+                <PlotSidebar profile={profile} suggestedName={suggestedName} />
+              </div>
             </div>
-          </m.div>
-        ) : null}
-      </AnimatePresence>
+          ) : null}
+        </div>
+      </div>
 
       <AnimatePresence initial={false}>
         {hasPlot === false ? (
