@@ -64,8 +64,8 @@ export function ResultTabs({ active, onChange, expert, badges = {} }: Props) {
   return (
     <div
       role="tablist"
-      aria-label={t('result.workspace.tabs.aria', { defaultValue: 'Briefing-Bereiche' })}
-      className="sticky top-0 z-20 bg-paper-card/95 backdrop-blur-[6px] border-b border-ink/15 px-4 sm:px-6 lg:px-8 overflow-x-auto"
+      aria-label={t('result.workspace.tabs.aria')}
+      className="bg-paper-card/95 backdrop-blur-[6px] border-b border-ink/15 px-4 sm:px-6 lg:px-8 overflow-x-auto"
       data-no-print="true"
     >
       <div className="flex items-stretch gap-0 min-w-max">
