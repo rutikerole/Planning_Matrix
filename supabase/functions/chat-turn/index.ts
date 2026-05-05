@@ -35,13 +35,12 @@ import { MODEL } from './toolSchema.ts'
 import {
   loadProjectAndMessages,
   insertUserMessageOrFetchExisting,
-  insertAssistantMessage,
-  updateProjectState,
+  commitChatTurnAtomic,
   mapMessagesForAnthropic,
   findAssistantAfter,
-  logTurnEvent,
   type MessageRow,
 } from './persistence.ts'
+import { validateFactPlausibility } from './factPlausibility.ts'
 import { runStreamingTurn, acceptsStream } from './streaming.ts'
 import {
   hydrateProjectState,
@@ -283,41 +282,50 @@ Deno.serve(async (req: Request) => {
   }
   const { toolInput, usage, latencyMs } = anthropicResult
 
+  // ── Phase 8.6 (D.4) — fact-plausibility validation ──────────────
+  // Walk extracted_facts; downgrade DECIDED/VERIFIED → ASSUMED for any
+  // value out of plausibility bounds (numeric) or outside its enum
+  // (categorical). Mutates toolInput in place so applyToolInputToState
+  // sees the downgraded qualifier. Warnings get committed in the same
+  // transaction as the assistant + state via plausibilityEvents.
+  const plausibility = validateFactPlausibility(toolInput)
+  if (plausibility.downgraded > 0) {
+    console.log(
+      `[chat-turn] [${requestId}] plausibility: ${plausibility.downgraded} fact(s) downgraded to ASSUMED`,
+    )
+  }
+
   // ── Apply mutations ──────────────────────────────────────────────
   const newState = applyToolInputToState(currentState, toolInput)
 
-  // ── Insert assistant message ─────────────────────────────────────
-  const assistantInsert = await insertAssistantMessage(supabase, {
+  // ── Atomic commit (Phase 8.6 B.3 + D.4) ─────────────────────────
+  // Single transactional call: assistant message + state update +
+  // audit event + plausibility warnings. Fixes the gap from commit 5
+  // (e1890cd): the JSON-fallback path had still been using the
+  // sequential insertAssistantMessage + updateProjectState +
+  // logTurnEvent trio; the streaming path was already converted.
+  const commitResult = await commitChatTurnAtomic(supabase, {
     projectId,
     toolInput,
     model: MODEL,
     usage,
     latencyMs,
-  })
-  if (!assistantInsert.ok) {
-    return respond(assistantInsert.error, 500)
-  }
-
-  // ── Persist state ────────────────────────────────────────────────
-  const stateUpdate = await updateProjectState(supabase, projectId, newState)
-  if (!stateUpdate.ok) {
-    return respond(stateUpdate.error, 500)
-  }
-
-  // ── Audit (best-effort, never blocks the response) ───────────────
-  await logTurnEvent(supabase, {
-    projectId,
     beforeState: currentState,
-    afterState: newState,
-    reason: toolInput.completion_signal ?? null,
+    newState,
+    clientRequestId,
+    plausibilityEvents:
+      plausibility.warnings.length > 0 ? plausibility.warnings : null,
   })
+  if (!commitResult.ok) {
+    return respond(commitResult.error, 500)
+  }
 
   console.log(
-    `[chat-turn] [${requestId}] ok specialist=${toolInput.specialist} latency=${latencyMs}ms tokens(in/out/cR/cW)=${usage.inputTokens}/${usage.outputTokens}/${usage.cacheReadTokens}/${usage.cacheWriteTokens}`,
+    `[chat-turn] [${requestId}] ok specialist=${toolInput.specialist} latency=${latencyMs}ms tokens(in/out/cR/cW)=${usage.inputTokens}/${usage.outputTokens}/${usage.cacheReadTokens}/${usage.cacheWriteTokens}${commitResult.replayed ? ' (replayed)' : ''}`,
   )
 
   return respondSuccess(
-    assistantInsert.row,
+    commitResult.row,
     newState,
     usage,
     latencyMs,

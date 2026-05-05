@@ -35,6 +35,7 @@ import { buildSystemBlocks } from './systemPrompt.ts'
 import { MODEL, respondToolDefinition, respondToolChoice } from './toolSchema.ts'
 import { estimateCostUsd, UpstreamError, type AnthropicUsage } from './anthropic.ts'
 import { commitChatTurnAtomic } from './persistence.ts'
+import { validateFactPlausibility } from './factPlausibility.ts'
 import { applyToolInputToState } from '../../../src/lib/projectStateHelpers.ts'
 import {
   respondToolInputSchema,
@@ -155,11 +156,23 @@ export function runStreamingTurn(args: StreamingTurnArgs): Response {
               .cache_creation_input_tokens ?? 0,
         }
 
+        // ── Phase 8.6 (D.4) — fact-plausibility validation ─────────
+        // Same logic as the JSON path in index.ts: downgrades
+        // out-of-bounds qualifiers to ASSUMED before
+        // applyToolInputToState reads the toolInput, and surfaces
+        // warnings via plausibilityEvents inside the same transaction.
+        const plausibility = validateFactPlausibility(toolInput)
+        if (plausibility.downgraded > 0) {
+          console.log(
+            `[chat-turn] [${args.requestId}] plausibility (streaming): ${plausibility.downgraded} fact(s) downgraded to ASSUMED`,
+          )
+        }
+
         // ── Persistence pipeline ───────────────────────────────────
-        // Phase 8.6 (B.3) — single transactional commit replaces the
-        // sequential insertAssistantMessage + updateProjectState +
-        // logTurnEvent trio. A network failure between sub-steps no
-        // longer leaves stale state.
+        // Phase 8.6 (B.3 + D.4) — single transactional commit replaces
+        // the sequential insertAssistantMessage + updateProjectState +
+        // logTurnEvent trio AND carries plausibility warnings into the
+        // same transaction.
         const newState = applyToolInputToState(args.currentState, toolInput)
 
         const commitResult = await commitChatTurnAtomic(args.supabase, {
@@ -171,6 +184,8 @@ export function runStreamingTurn(args: StreamingTurnArgs): Response {
           beforeState: args.currentState,
           newState,
           clientRequestId: args.clientRequestId,
+          plausibilityEvents:
+            plausibility.warnings.length > 0 ? plausibility.warnings : null,
         })
         if (!commitResult.ok) {
           send({
