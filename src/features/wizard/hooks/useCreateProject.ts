@@ -91,9 +91,9 @@ function bplanToFacts(result: BplanLookupResult, nowIso: string): Fact[] {
  * Wizard submission orchestrator.
  *
  * The hook does not navigate. Its job is to drive the INSERT + priming
- * pipeline and expose the resulting state; the LoaderScreen owns the
- * visual handoff and calls navigate() once the perceived-effort floor
- * has been honoured.
+ * pipeline and expose the resulting state; the AtelierOpening transition
+ * owns the visual handoff and calls navigate() once both the visual
+ * floor (5 s) and `primed` are met.
  */
 export function useCreateProject() {
   const { t } = useTranslation()
