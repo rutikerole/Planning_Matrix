@@ -1774,6 +1774,23 @@
       "empty": {
         "tab": "Noch nicht genug Informationen — setzen Sie die Beratung fort, um diesen Abschnitt zu vervollständigen.",
         "continue": "Beratung fortsetzen →"
+      },
+      "procedure": {
+        "pickEyebrow": "Verfahrenswahl",
+        "noRationale": "Begründung folgt sobald die Beratung weiter fortgeschritten ist.",
+        "docsEyebrow": "Unterlagen",
+        "docsCount_one": "{{count}} Dokument",
+        "docsCount_other": "{{count}} Dokumente",
+        "filter": {
+          "all": "Alle",
+          "erforderlich": "Erforderlich",
+          "liegt_vor": "Liegt vor",
+          "eingereicht": "Eingereicht",
+          "genehmigt": "Genehmigt"
+        },
+        "filterEmpty": "Keine Dokumente in dieser Kategorie.",
+        "requiredFor": "Erforderlich für",
+        "timelineEyebrow": "Verfahrensdauer"
       }
     }
   },

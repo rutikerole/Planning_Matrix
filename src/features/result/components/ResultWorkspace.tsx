@@ -8,6 +8,7 @@ import { ResultHeader } from './ResultHeader'
 import { ResultTabs } from './ResultTabs'
 import { LegalLandscapeTab } from './tabs/LegalLandscapeTab'
 import { OverviewTab } from './tabs/OverviewTab'
+import { ProcedureDocumentsTab } from './tabs/ProcedureDocumentsTab'
 
 interface ProjectEventRow {
   id: string
@@ -62,16 +63,21 @@ export function ResultWorkspace({ project, messages, events, source }: Props) {
           {active === 'legal' && (
             <LegalLandscapeTab project={project} state={state} />
           )}
-          {active !== 'overview' && active !== 'legal' && (
-            <Placeholder
-              id={active}
-              project={project}
-              state={state}
-              messages={messages}
-              events={events}
-              source={source}
-            />
+          {active === 'procedure' && (
+            <ProcedureDocumentsTab project={project} state={state} />
           )}
+          {active !== 'overview' &&
+            active !== 'legal' &&
+            active !== 'procedure' && (
+              <Placeholder
+                id={active}
+                project={project}
+                state={state}
+                messages={messages}
+                events={events}
+                source={source}
+              />
+            )}
         </TabPanel>
       </main>
 

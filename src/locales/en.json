@@ -1774,6 +1774,23 @@
       "empty": {
         "tab": "Not enough information yet — continue the consultation to build out this section.",
         "continue": "Continue consultation →"
+      },
+      "procedure": {
+        "pickEyebrow": "Procedure pick",
+        "noRationale": "Rationale follows once the consultation has gathered more data.",
+        "docsEyebrow": "Documents",
+        "docsCount_one": "{{count}} document",
+        "docsCount_other": "{{count}} documents",
+        "filter": {
+          "all": "All",
+          "erforderlich": "Required",
+          "liegt_vor": "Drafted",
+          "eingereicht": "Submitted",
+          "genehmigt": "Approved"
+        },
+        "filterEmpty": "No documents in this category.",
+        "requiredFor": "Required for",
+        "timelineEyebrow": "Procedure duration"
       }
     }
   },
