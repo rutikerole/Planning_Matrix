@@ -1,5 +1,5 @@
 import type { ProjectState } from '@/types/projectState'
-import { factLabel, factValueWithUnit } from '@/lib/factLabel'
+import { humanizeFact } from './humanizeFact'
 
 export interface OpenItem {
   /** Stable id for routing (`?focus={id}`) and React keys. */
@@ -50,9 +50,14 @@ export function computeOpenItems(
       /(PLANUNGSRECHT|BAUORDNUNG|STATUTE|PROCEDURE|GEBAEUDEKLASSE|VERFAHREN|GEB_KLASSE|GK_)/.test(
         key,
       )
-    const label =
-      f.evidence ??
-      `${factLabel(f.key, lang).label}: ${factValueWithUnit(f.key, f.value, lang)}`
+    // Phase 8.5 (C.4 + C.8): humanizeFact replaces the previous
+    // f.evidence ?? "${key}: ${value}" fallback. The evidence field
+    // carried raw user quotes ("Bauherr: 'approximately 1925'") into
+    // the Verify card AND the Executive Read flag summary; the key
+    // fallback rendered DB shapes ("Ensemble Schwabing Geprueft: false").
+    // humanizeFact uses curated locale templates with algorithmic
+    // fallback for unmapped keys.
+    const label = humanizeFact(f, lang)
     items.push({
       id: `f-${f.key}`,
       label,

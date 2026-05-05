@@ -67,6 +67,9 @@ const ALLOWLIST = [
   'src/data/riskCatalog.ts',
   // Phase 8.3 — Authority calendar reasons (Weihnachts-/Sommer-Reduktion).
   'src/data/muenchenAuthorityCalendar.ts',
+  // Phase 8.5 — humanizeFact templates carry bilingual canonical
+  // legal terminology (Bebauungsplan / Verfahren / Gebäudeklasse).
+  'src/features/result/lib/humanizeFact.ts',
   // Phase 8 — heuristic legal-domain composer. Bilingual citation
   // copy (Planungsrecht / Bauordnungsrecht / etc.); same pattern.
   'src/features/result/lib/composeLegalDomains.ts',
