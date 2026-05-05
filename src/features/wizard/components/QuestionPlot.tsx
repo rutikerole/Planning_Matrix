@@ -9,6 +9,7 @@ import { BPlanCheck } from './BPlanCheck'
 import { PlotSidebar } from './PlotSidebar'
 import { usePlotProfile } from '../hooks/usePlotProfile'
 import { suggestProjectName } from '@/features/dashboard/lib/projectName'
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog'
 import type { BplanLookupResult } from '@/types/bplan'
 
 const PlotMap = lazy(() =>
@@ -32,11 +33,14 @@ interface Props {
 
 /**
  * v3 Q2 — plot question. Phase 7.10: 30/70 grid on lg+ with the
- * question lane on the left and a full-bleed map on the right; the
- * Location profile floats absolutely inside the map's top-right
- * corner. Below lg the layout collapses to a single stacked column
- * (question → map → profile card). Out-of-coverage addresses
- * surface as a soft note rather than a hard error.
+ * question lane on the left and the map on the right.
+ * Phase 7.10d: the Location profile is no longer drawn inline;
+ * the map gets the full right column (taller, lg:h-[920px]) and
+ * a small "Location profile" button in the left column opens the
+ * profile in a Dialog on demand. Below lg the same button + dialog
+ * pattern applies, so the map is never visually overlaid by the
+ * card. Out-of-coverage addresses surface as a soft note rather
+ * than a hard error.
  */
 export function QuestionPlot({ onSubmit, submitError }: Props) {
   const { t } = useTranslation()
@@ -60,6 +64,10 @@ export function QuestionPlot({ onSubmit, submitError }: Props) {
   // persisted as a CLIENT/DECIDED fact so the system prompt can adjust
   // its honesty disclaimers downstream.
   const [outsideMunichConfirmed, setOutsideMunichConfirmed] = useState(false)
+  // Phase 7.10d — the Location profile is opened on demand via a
+  // button in the left column. Local-only state; no persistence
+  // needed (it's a transient inspection panel).
+  const [profileOpen, setProfileOpen] = useState(false)
 
   useEffect(() => {
     if (hasPlot === true && !plotAddress) {
@@ -239,6 +247,26 @@ export function QuestionPlot({ onSubmit, submitError }: Props) {
                     <BPlanCheck result={bplanResult} isLoading={bplanLoading} />
                   ) : null}
 
+                  {/* Phase 7.10d — opens the Location profile in a
+                    * dialog instead of rendering it inline beside or
+                    * over the map. Mirrors the calm chip style used
+                    * by BPlanCheck so the two reveal-buttons read as
+                    * a pair under the address inputs. */}
+                  {showMap ? (
+                    <button
+                      type="button"
+                      onClick={() => setProfileOpen(true)}
+                      className="group inline-flex items-center justify-between gap-3 border border-pm-hair-strong bg-pm-paper px-3 py-2 text-left text-pm-ink-soft transition-colors duration-soft hover:bg-pm-paper-tint focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pm-clay focus-visible:ring-offset-2 focus-visible:ring-offset-pm-paper"
+                    >
+                      <span className="font-serif text-[13px] italic leading-snug">
+                        {t('wizard.q2.plot.head')}
+                      </span>
+                      <span aria-hidden className="font-sans text-[11px] tracking-tight text-pm-clay/70">
+                        →
+                      </span>
+                    </button>
+                  ) : null}
+
                   {showMap ? (
                     <p className="font-serif text-[13px] italic leading-relaxed text-pm-ink-mid">
                       {t('wizard.q2.mapHint')}
@@ -250,34 +278,25 @@ export function QuestionPlot({ onSubmit, submitError }: Props) {
           </AnimatePresence>
         </div>
 
-        {/* RIGHT COLUMN — map lane (lg+ adds vertical hairline divider) */}
-        <div className="relative lg:border-l lg:border-pm-hair lg:p-6">
+        {/* RIGHT COLUMN — map lane (lg+ adds vertical hairline divider).
+          * Phase 7.10d — the map gets the full right column; the
+          * Location profile lives in a dialog opened from the left
+          * column, so the map surface is never overlaid by a card. */}
+        <div className="lg:border-l lg:border-pm-hair lg:p-6">
           {showMap ? (
-            <div className="relative">
-              {/* Responsive height — mobile parity with the
-                * pre-redesign 460px, expand to ~820px on lg+ so the
-                * floating Location profile (~600–660px tall in DE
-                * with long district names) clears the map's bottom
-                * edge with breathing room. PlotMap fills its parent. */}
-              <div className="h-[460px] lg:h-[820px]">
-                <Suspense
-                  fallback={
-                    <div className="pm-plotmap-empty">Karte wird geladen…</div>
-                  }
-                >
-                  <PlotMap
-                    address={plotAddress}
-                    onAddressChange={setPlotAddress}
-                    onBplanResolved={setBplanResult}
-                    onBplanLoadingChange={setBplanLoading}
-                  />
-                </Suspense>
-              </div>
-              {/* Floating Location profile — absolute on lg+ inside
-                * the map area; on mobile it stacks below the map. */}
-              <div className="mt-6 lg:absolute lg:right-[46px] lg:top-[46px] lg:z-[450] lg:mt-0 lg:w-[268px]">
-                <PlotSidebar profile={profile} suggestedName={suggestedName} />
-              </div>
+            <div className="h-[460px] lg:h-[920px]">
+              <Suspense
+                fallback={
+                  <div className="pm-plotmap-empty">Karte wird geladen…</div>
+                }
+              >
+                <PlotMap
+                  address={plotAddress}
+                  onAddressChange={setPlotAddress}
+                  onBplanResolved={setBplanResult}
+                  onBplanLoadingChange={setBplanLoading}
+                />
+              </Suspense>
             </div>
           ) : null}
         </div>
@@ -383,6 +402,19 @@ export function QuestionPlot({ onSubmit, submitError }: Props) {
           </button>
         </div>
       </div>
+
+      {/* Phase 7.10d — on-demand Location profile. PlotSidebar
+        * already renders its own visible "Location profile" header,
+        * so the DialogTitle here is sr-only just to satisfy the
+        * Radix accessibility contract. */}
+      <Dialog open={profileOpen} onOpenChange={setProfileOpen}>
+        <DialogContent className="max-w-md p-0">
+          <DialogTitle className="sr-only">
+            {t('wizard.q2.plot.head')}
+          </DialogTitle>
+          <PlotSidebar profile={profile} suggestedName={suggestedName} />
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
