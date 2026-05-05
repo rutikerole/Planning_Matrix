@@ -1,3 +1,4 @@
+import { lazy, Suspense } from 'react'
 import { Navigate, Route, Routes, useLocation, useParams } from 'react-router-dom'
 import { AnimatePresence } from 'framer-motion'
 import { LandingPage } from '@/features/landing/LandingPage'
@@ -21,9 +22,25 @@ import { ResultPage } from '@/features/result/pages/ResultPage'
 import { SharedResultPage } from '@/features/result/pages/SharedResultPage'
 import { SEO } from '@/components/SEO'
 
+// Phase 9 — Atelier Console. Lazy-loaded so the entire /admin/* tree
+// (guard, layout, pages, Recharts in commit 11, JsonViewer/highlight.js
+// in commit 9) ships in a separate Vite chunk and never inflates the
+// main bundle for non-admin users.
+const AdminRoutes = lazy(() => import('@/features/admin/AdminRoutes'))
+
 function OverviewRedirect() {
   const { id } = useParams<{ id: string }>()
   return <Navigate to={`/projects/${id}/result?tab=overview`} replace />
+}
+
+function AdminLoadingFallback() {
+  return (
+    <div className="grid min-h-screen place-items-center bg-[hsl(var(--paper))]">
+      <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-[hsl(var(--ink))]/45">
+        loading console
+      </p>
+    </div>
+  )
 }
 
 export function AppRouter() {
@@ -133,6 +150,20 @@ export function AppRouter() {
         {/* Phase 3.5 #65 — Public read-only share view. No auth required.
           * SEO with project name lives inside SharedResultPage. */}
         <Route path="/result/share/:token" element={<SharedResultPage />} />
+
+        {/* Phase 9 — Atelier Console. Wildcard so AdminRoutes can mount
+          * its own nested router. Guarded inside AdminRoutes (admin RLS
+          * check) — non-admins land on a friendly 403, anonymous users
+          * are redirected to /sign-in?next=<admin path>. */}
+        <Route
+          path="/admin/*"
+          element={
+            <Suspense fallback={<AdminLoadingFallback />}>
+              <SEO titleKey="seo.title.admin" />
+              <AdminRoutes />
+            </Suspense>
+          }
+        />
 
         {/* Phase 8 — full legal pages (replaces Phase 1's
           * LegalPlaceholder). Required for German B2B launch. */}
