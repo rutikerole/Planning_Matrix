@@ -1,4 +1,3 @@
-import { useTranslation } from 'react-i18next'
 import { BlueprintSubstrate } from '@/components/shared/BlueprintSubstrate'
 import type { MessageRow, ProjectRow } from '@/types/db'
 import type { ProjectState } from '@/types/projectState'
@@ -10,6 +9,7 @@ import { LegalLandscapeTab } from './tabs/LegalLandscapeTab'
 import { OverviewTab } from './tabs/OverviewTab'
 import { ProcedureDocumentsTab } from './tabs/ProcedureDocumentsTab'
 import { CostTimelineTab } from './tabs/CostTimelineTab'
+import { ExpertTab } from './tabs/ExpertTab'
 import { SuggestionsTab } from './tabs/SuggestionsTab'
 import { TeamTab } from './tabs/TeamTab'
 
@@ -74,21 +74,14 @@ export function ResultWorkspace({ project, messages, events, source }: Props) {
           {active === 'suggestions' && (
             <SuggestionsTab project={project} state={state} />
           )}
-          {active !== 'overview' &&
-            active !== 'legal' &&
-            active !== 'procedure' &&
-            active !== 'team' &&
-            active !== 'cost' &&
-            active !== 'suggestions' && (
-              <Placeholder
-                id={active}
-                project={project}
-                state={state}
-                messages={messages}
-                events={events}
-                source={source}
-              />
-            )}
+          {active === 'expert' && expert && (
+            <ExpertTab
+              project={project}
+              state={state}
+              events={events}
+              messages={messages}
+            />
+          )}
         </TabPanel>
       </main>
 
@@ -121,39 +114,3 @@ function TabPanel({ id, children }: TabPanelProps) {
   )
 }
 
-/**
- * Phase 8 — placeholder body. Each tab's real content lands in its own
- * commit (5–10). Until then, render the eyebrow + a calm "this section
- * is being built" line so the workspace still feels intentional.
- */
-function Placeholder({ id }: {
-  id: WorkspaceTabId
-  project: ProjectRow
-  state: Partial<ProjectState>
-  messages: MessageRow[]
-  events: ProjectEventRow[]
-  source: ResultSource
-}) {
-  const { t } = useTranslation()
-  return (
-    <section aria-labelledby={`result-tabpanel-${id}-title`} className="flex flex-col gap-4 max-w-2xl py-8">
-      <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-clay">
-        {t(`result.workspace.tabs.${id}`, { defaultValue: id })}
-      </p>
-      <h2
-        id={`result-tabpanel-${id}-title`}
-        className="font-serif italic text-[28px] text-ink leading-[1.1] -tracking-[0.01em]"
-      >
-        {t('result.workspace.placeholder.title', {
-          defaultValue: 'Dieser Bereich wird gerade gebaut.',
-        })}
-      </h2>
-      <p className="font-serif italic text-[14px] text-clay leading-relaxed">
-        {t('result.workspace.placeholder.body', {
-          defaultValue:
-            'In Kürze finden Sie hier den vollständigen Inhalt — strukturiert, zitiert, prüfbar.',
-        })}
-      </p>
-    </section>
-  )
-}

@@ -1776,7 +1776,13 @@
       "expert": {
         "eyebrow": "Datenfluss · Audit",
         "intro": "Diese Ansicht ist für die Architekt:in oder Auditprüfung gedacht. Sie zeigt die Auditspur, den rohen Projektstatus und die Quelle jeder Aussage.",
-        "emptyEvents": "Noch keine Audit-Ereignisse aufgezeichnet."
+        "emptyEvents": "Noch keine Audit-Ereignisse aufgezeichnet.",
+        "projectId": "Projekt-ID",
+        "template": "Vorlage",
+        "messages": "Nachrichten",
+        "events": "Ereignisse",
+        "auditEyebrow": "Auditspur",
+        "rawStateToggle": "Rohen Projektstatus anzeigen"
       },
       "placeholder": {
         "title": "Dieser Bereich wird gerade gebaut.",

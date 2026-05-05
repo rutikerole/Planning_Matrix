@@ -1776,7 +1776,13 @@
       "expert": {
         "eyebrow": "Data flow · audit",
         "intro": "This view is intended for the architect or auditor. It shows the audit trail, the raw project state, and the source of every claim.",
-        "emptyEvents": "No audit events yet."
+        "emptyEvents": "No audit events yet.",
+        "projectId": "Project ID",
+        "template": "Template",
+        "messages": "Messages",
+        "events": "Events",
+        "auditEyebrow": "Audit trail",
+        "rawStateToggle": "Show raw project state"
       },
       "placeholder": {
         "title": "This section is under construction.",
