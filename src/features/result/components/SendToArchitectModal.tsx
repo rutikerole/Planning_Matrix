@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Mail, Link2, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -42,9 +42,11 @@ export function SendToArchitectModal({ project, open, onOpenChange }: Props) {
   const [linkCopied, setLinkCopied] = useState(false)
   const [recent, setRecent] = useState<string[]>(() => readRecent())
 
-  // Reset on close so the modal opens clean each time.
-  useEffect(() => {
-    if (!open) {
+  // Reset state on close + refresh recents on open. Done via the
+  // onOpenChange handler so it stays out of an effect (which would
+  // cascade renders under React 19's strict effect rules).
+  const handleOpenChange = (next: boolean) => {
+    if (!next) {
       setEmail('')
       setBusy(false)
       setShareLink(null)
@@ -52,7 +54,8 @@ export function SendToArchitectModal({ project, open, onOpenChange }: Props) {
     } else {
       setRecent(readRecent())
     }
-  }, [open])
+    onOpenChange(next)
+  }
 
   const ensureShareLink = async (): Promise<string | null> => {
     if (shareLink) return shareLink
@@ -107,7 +110,7 @@ export function SendToArchitectModal({ project, open, onOpenChange }: Props) {
   const validEmail = /\S+@\S+\.\S+/.test(email)
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent
         className="bg-paper border border-ink/15 rounded-[10px] p-6 max-w-[460px] flex flex-col gap-4"
         aria-describedby="send-architect-desc"
