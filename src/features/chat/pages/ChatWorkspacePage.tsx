@@ -277,6 +277,15 @@ export function ChatWorkspacePage() {
         }
         inputZone={
           hasMessages ? (
+            // Phase 7.10 — Stand-up link is now positioned to the
+            // right of the centered input pill (absolute right-2,
+            // anchored to the bottom of the relative wrapper so it
+            // aligns with the pill's vertical center). Previous build
+            // stacked it below right; the pill bg dropped that affordance
+            // out of sight against the bleed-through. With the pill
+            // centered to max-w 680 and the column at 820, the right
+            // gutter has ~70 px on lg viewports — enough for the
+            // italic Georgia link to sit cleanly.
             <div className="relative">
               <JumpToLatest latestAssistantId={latestAssistantId} />
               <InputBar
@@ -286,7 +295,12 @@ export function ChatWorkspacePage() {
                 forceDisabled={isThinking || queueFull}
                 textareaRef={inputRef as React.RefObject<HTMLTextAreaElement>}
               />
-              <div className="flex items-center justify-end mt-1 px-1">
+              <div className="hidden md:flex absolute right-0 bottom-3.5 z-10 items-center">
+                {standUpLink}
+              </div>
+              {/* Mobile fallback — link below right since the pill +
+                * gutter math doesn't leave room for inline placement. */}
+              <div className="md:hidden flex items-center justify-end mt-2 px-1">
                 {standUpLink}
               </div>
             </div>

@@ -194,65 +194,71 @@ export function InputBar({
         </ul>
       )}
 
-      {/* Phase 7.7 §1.5 — textarea row, edge-to-edge, no card. The
-        * sticky-bottom ChamberLayout band already carries the
-        * single hairline top-border; this row provides only the
-        * input affordances. No rounded corners, no shadow, no
-        * focus-within ring. The textarea inside keeps its
-        * leading and the focus state is communicated by the
-        * SendButton enabling, not by the wrapper. */}
-      <div
-        className={cn(
-          'flex items-end gap-2 px-1 py-1',
-          'transition-colors duration-150',
-          disabled && 'opacity-95',
-        )}
-      >
-        {/* Paperclip */}
-        <div className="relative shrink-0 self-end pb-1">
-          <button
-            type="button"
-            onClick={() => setPickerOpen((v) => !v)}
+      {/* Phase 7.7 §1.5 — textarea row.
+        * Phase 7.10 — wrapped as a centered cylindrical pill
+        * (rounded-full, solid paper-card bg, hairline clay border,
+        * soft shadow). Max-width 680 px so the input reads as a
+        * "modern chat capsule" instead of an edge-to-edge band; the
+        * sticky-bottom band's transparent bg is dropped in
+        * ChamberLayout so message content cannot bleed behind. */}
+      <div className="mx-auto w-full max-w-[680px]">
+        <div
+          className={cn(
+            'flex items-end gap-1 px-2 py-1.5',
+            'rounded-full bg-paper-card',
+            'border border-[rgba(123,92,63,0.28)]',
+            'shadow-[0_1px_2px_rgba(26,22,18,0.04),0_4px_18px_-8px_rgba(26,22,18,0.10)]',
+            'transition-[border-color,box-shadow] duration-150',
+            'focus-within:border-clay/55 focus-within:shadow-[0_1px_2px_rgba(26,22,18,0.05),0_6px_22px_-8px_rgba(26,22,18,0.14)]',
+            disabled && 'opacity-95',
+          )}
+        >
+          {/* Paperclip */}
+          <div className="relative shrink-0 self-end pb-0.5">
+            <button
+              type="button"
+              onClick={() => setPickerOpen((v) => !v)}
+              disabled={disabled}
+              aria-label={t('chat.input.attachment.title', { defaultValue: 'Datei anhängen' })}
+              aria-haspopup="dialog"
+              aria-expanded={pickerOpen}
+              className={cn(
+                'inline-flex items-center justify-center size-9 rounded-full',
+                'text-ink/55 hover:text-ink hover:bg-ink/[0.04] transition-colors duration-150',
+                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/40 focus-visible:ring-offset-2 focus-visible:ring-offset-paper-card',
+                attachments.length > 0 && 'text-clay hover:text-clay-deep',
+                disabled && 'pointer-events-none',
+              )}
+            >
+              <Paperclip aria-hidden="true" className="size-[18px]" />
+            </button>
+            <AttachmentPicker open={pickerOpen} onOpenChange={setPickerOpen} />
+          </div>
+
+          {/* Textarea */}
+          <textarea
+            ref={textareaRef}
+            value={text}
+            onChange={(e) => {
+              setText(e.target.value)
+              if (activeSuggestion && e.target.value.trim().length === 0) {
+                clearSuggestion()
+              }
+            }}
+            onKeyDown={handleKeyDown}
+            rows={1}
+            maxLength={MAX_LENGTH + 200}
+            placeholder={t(placeholderKey)}
+            aria-label={t('chat.input.text.label', { defaultValue: 'Ihre Antwort' })}
             disabled={disabled}
-            aria-label={t('chat.input.attachment.title', { defaultValue: 'Datei anhängen' })}
-            aria-haspopup="dialog"
-            aria-expanded={pickerOpen}
-            className={cn(
-              'inline-flex items-center justify-center size-10 rounded-full',
-              'text-ink/55 hover:text-ink hover:bg-ink/[0.04] transition-colors duration-150',
-              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/40 focus-visible:ring-offset-2 focus-visible:ring-offset-paper',
-              attachments.length > 0 && 'text-clay hover:text-clay-deep',
-              disabled && 'pointer-events-none',
-            )}
-          >
-            <Paperclip aria-hidden="true" className="size-[18px]" />
-          </button>
-          <AttachmentPicker open={pickerOpen} onOpenChange={setPickerOpen} />
-        </div>
+            className="flex-1 min-w-0 bg-transparent border-0 px-1 py-2 text-[16px] md:text-[16.5px] leading-[1.55] text-ink placeholder:text-ink/40 resize-none focus:outline-none"
+            style={{ letterSpacing: 'var(--pm-tracking-body)' }}
+            {...longPressBind}
+          />
 
-        {/* Textarea */}
-        <textarea
-          ref={textareaRef}
-          value={text}
-          onChange={(e) => {
-            setText(e.target.value)
-            if (activeSuggestion && e.target.value.trim().length === 0) {
-              clearSuggestion()
-            }
-          }}
-          onKeyDown={handleKeyDown}
-          rows={1}
-          maxLength={MAX_LENGTH + 200}
-          placeholder={t(placeholderKey)}
-          aria-label={t('chat.input.text.label', { defaultValue: 'Ihre Antwort' })}
-          disabled={disabled}
-          className="flex-1 min-w-0 bg-transparent border-0 py-2 text-[16px] md:text-[17px] leading-[1.55] text-ink placeholder:text-ink/40 resize-none focus:outline-none"
-          style={{ letterSpacing: 'var(--pm-tracking-body)' }}
-          {...longPressBind}
-        />
-
-        <div className="self-end pb-0.5">
-          <SendButton isEmpty={isEmpty} disabled={disabled} onSend={handleSubmit} />
+          <div className="self-end pb-0.5">
+            <SendButton isEmpty={isEmpty} disabled={disabled} onSend={handleSubmit} />
+          </div>
         </div>
       </div>
 

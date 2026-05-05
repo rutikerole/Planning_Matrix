@@ -137,7 +137,11 @@ export function ChamberLayout({
                     'linear-gradient(180deg, hsl(var(--paper) / 0) 0%, hsl(var(--paper) / 0.92) 100%)',
                 }}
               />
-              <div className="mx-auto w-full max-w-[var(--chamber-col-max)] px-[var(--chamber-col-px-mobile)] md:px-[var(--chamber-col-px-tablet)] lg:px-[var(--chamber-col-px-desktop)] pt-3 pb-3 bg-[hsl(var(--paper)/0.92)] backdrop-blur-[3px] border-t border-[var(--hairline,rgba(26,22,18,0.10))]">
+              {/* Phase 7.10 — solid paper bg + no border-top + no
+                * backdrop-blur. The previous transparent-with-blur
+                * band was letting message text ghost through; the
+                * input pill now sits on a clean paper floor instead. */}
+              <div className="mx-auto w-full max-w-[var(--chamber-col-max)] px-[var(--chamber-col-px-mobile)] md:px-[var(--chamber-col-px-tablet)] lg:px-[var(--chamber-col-px-desktop)] pt-3 pb-3 bg-paper">
                 {inputZone}
               </div>
             </div>
