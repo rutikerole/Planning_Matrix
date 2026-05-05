@@ -170,14 +170,27 @@ function composeP3({
   return `${flagCount} ${flagCount === 1 ? 'Punkt benötigt' : 'Punkte benötigen'} die Bestätigung durch die Architekt:in${primaryConcern ? `; vorrangig: ${primaryConcern}` : ''}.`
 }
 
+/**
+ * Phase 8.1 — keys here MUST be the DB enum values stored in
+ * `projects.intent` (see selectTemplate.ts INTENT_VALUES_V3), not the
+ * shorter i18n slugs. Earlier the map keyed off `neubau_efh` / `neubau_mfh`
+ * which never matched, so every EFH/MFH project fell through to "Bauvorhaben".
+ */
 function describeIntent(intent: string, lang: 'de' | 'en'): string {
   const map: Record<string, { de: string; en: string }> = {
-    neubau_efh: { de: 'Neubau eines Einfamilienhauses', en: 'new single-family home' },
-    neubau_mfh: { de: 'Neubau eines Mehrfamilienhauses', en: 'new multi-family building' },
-    neubau_gewerbe: { de: 'Neubau eines Gewerbeobjekts', en: 'new commercial building' },
-    sanierung: { de: 'Sanierungsvorhaben', en: 'renovation' },
-    umnutzung: { de: 'Umnutzung', en: 'change-of-use project' },
+    neubau_einfamilienhaus: {
+      de: 'Neubau eines Einfamilienhauses',
+      en: 'new single-family home',
+    },
+    neubau_mehrfamilienhaus: {
+      de: 'Neubau eines Mehrfamilienhauses',
+      en: 'new multi-family building',
+    },
+    sanierung: { de: 'Sanierungsvorhaben', en: 'renovation project' },
+    umnutzung: { de: 'Umnutzungsvorhaben', en: 'change-of-use project' },
     abbruch: { de: 'Abbruchvorhaben', en: 'demolition project' },
+    aufstockung: { de: 'Aufstockungsvorhaben', en: 'storey-addition project' },
+    anbau: { de: 'Anbauvorhaben', en: 'extension project' },
     sonstige: { de: 'Bauvorhaben', en: 'construction project' },
   }
   const entry = map[intent] ?? map.sonstige
