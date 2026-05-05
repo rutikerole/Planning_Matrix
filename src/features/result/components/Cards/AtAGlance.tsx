@@ -45,15 +45,15 @@ export function AtAGlance({ project, state }: Props) {
       ? `${baseLabel} · ${t('result.workspace.team.likelyBadge')}`
       : baseLabel
 
-  const klasseFact = facts.find((f) =>
-    /gebaeudeklasse|geb_klasse/i.test(f.key),
-  )
-  const klasseValue =
-    typeof klasseFact?.value === 'string'
-      ? klasseFact.value
-      : klasseFact?.value
-        ? String(klasseFact.value)
-        : t('result.workspace.ataglance.tbd')
+  // Phase 8.5 (C.5): the live Tengstraße project showed "Building
+  // class: —" despite the conversation explicitly establishing
+  // GK 3. The persona may emit any of several keys
+  // (gebaeudeklasse_geplant / gebaeudeklasse_hypothese / geb_klasse_…),
+  // or describe it only in message_de without emitting a fact at all.
+  // We try the explicit keys first, then fall back to deriving from
+  // storey count + building height (BayBO Art. 2(3) thresholds).
+  const klasseValue = resolveBuildingClass(facts, lang) ??
+    t('result.workspace.ataglance.tbd')
 
   // Cost — reuse the München heuristic engine, now with area + zone +
   // region inputs flowing through (A.4).
@@ -122,4 +122,90 @@ export function AtAGlance({ project, state }: Props) {
       </ul>
     </section>
   )
+}
+
+/**
+ * Phase 8.5 (C.5) — try several explicit fact keys for building class,
+ * then derive from BayBO Art. 2(3) thresholds (height + storeys) when
+ * no explicit fact is present.
+ */
+function resolveBuildingClass(
+  facts: { key: string; value: unknown }[],
+  lang: 'de' | 'en',
+): string | null {
+  // 1. Explicit keys, in priority order. Persona may emit any of these.
+  const KEYS = [
+    'gebaeudeklasse_geplant',
+    'gebaeudeklasse_hypothese',
+    'geb_klasse',
+    'gk_geplant',
+    'gebaeudeklasse',
+  ]
+  for (const k of KEYS) {
+    const f = facts.find((x) => x.key.toLowerCase() === k)
+    if (!f) continue
+    if (typeof f.value === 'string' && f.value.trim().length > 0) {
+      return prettyClass(f.value)
+    }
+    if (typeof f.value === 'number') return `GK ${f.value}`
+  }
+
+  // 2. Generic regex fallback for any key containing "klasse".
+  const regexHit = facts.find((f) =>
+    /gebaeudeklasse|geb_klasse|gk_/i.test(f.key),
+  )
+  if (regexHit && typeof regexHit.value === 'string') {
+    return prettyClass(regexHit.value)
+  }
+
+  // 3. Derive from height + storeys per BayBO Art. 2(3).
+  const heightFact = facts.find((f) =>
+    /bauwerks_hoehe_m|gebaeude_hoehe_m|height_m/i.test(f.key),
+  )
+  const storeyFact = facts.find((f) =>
+    /vollgeschosse_oberirdisch|geschoss(zahl)?|storeys/i.test(f.key),
+  )
+  const height = numericValue(heightFact?.value)
+  const storeys = numericValue(storeyFact?.value)
+  const derived = deriveGkFromGeometry(height, storeys)
+  if (derived) {
+    const note = lang === 'en' ? 'derived' : 'abgeleitet'
+    return `${derived} · ${note}`
+  }
+  return null
+}
+
+function deriveGkFromGeometry(
+  heightM: number | null,
+  storeys: number | null,
+): string | null {
+  if (heightM != null && heightM > 13) return 'GK 5'
+  if (heightM != null && heightM > 7) return 'GK 4'
+  if (storeys != null && storeys >= 4) return 'GK 4'
+  if (storeys != null && storeys >= 3) return 'GK 3'
+  if (storeys != null && storeys === 2) return 'GK 2'
+  if (storeys != null && storeys === 1) return 'GK 1'
+  return null
+}
+
+function prettyClass(raw: string): string {
+  // Persona may emit "GK 3", "Gebäudeklasse 3", "GK3", "3" etc.
+  const trimmed = raw.trim()
+  if (/^gk\s*\d/i.test(trimmed)) {
+    return trimmed.replace(/^gk\s*/i, 'GK ')
+  }
+  if (/^geb(ä|ae)udeklasse\s*\d/i.test(trimmed)) {
+    return trimmed.replace(/^geb(ä|ae)udeklasse\s*/i, 'GK ')
+  }
+  if (/^\d+$/.test(trimmed)) return `GK ${trimmed}`
+  return trimmed
+}
+
+function numericValue(value: unknown): number | null {
+  if (typeof value === 'number') return value
+  if (typeof value === 'string') {
+    const n = parseFloat(value.replace(',', '.'))
+    return Number.isFinite(n) ? n : null
+  }
+  return null
 }
