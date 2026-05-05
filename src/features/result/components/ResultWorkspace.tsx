@@ -3,6 +3,7 @@ import { BlueprintSubstrate } from '@/components/shared/BlueprintSubstrate'
 import type { MessageRow, ProjectRow } from '@/types/db'
 import type { ProjectState } from '@/types/projectState'
 import { useTabState, type WorkspaceTabId } from '../hooks/useTabState'
+import { ResultFooter } from './ResultFooter'
 import { ResultHeader } from './ResultHeader'
 import { ResultTabs } from './ResultTabs'
 
@@ -63,6 +64,13 @@ export function ResultWorkspace({ project, messages, events, source }: Props) {
           />
         </TabPanel>
       </main>
+
+      <ResultFooter
+        project={project}
+        messages={messages}
+        events={events}
+        source={source}
+      />
     </div>
   )
 }
