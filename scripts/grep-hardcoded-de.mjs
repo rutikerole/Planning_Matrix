@@ -52,6 +52,9 @@ const ALLOWLIST = [
   // executive read. Bilingual by branch, same allowlist pattern as
   // the components above.
   'src/features/result/lib/composeExecutiveRead.ts',
+  // Phase 8 — heuristic legal-domain composer. Bilingual citation
+  // copy (Planungsrecht / Bauordnungsrecht / etc.); same pattern.
+  'src/features/result/lib/composeLegalDomains.ts',
   // Wizard B-Plan detail dialog renders canonical German Bauamt
   // language alongside EN; map is bilingual already.
   'src/features/wizard/components/BPlanDetailDialog.tsx',

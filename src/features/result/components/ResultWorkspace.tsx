@@ -6,6 +6,7 @@ import { useTabState, type WorkspaceTabId } from '../hooks/useTabState'
 import { ResultFooter } from './ResultFooter'
 import { ResultHeader } from './ResultHeader'
 import { ResultTabs } from './ResultTabs'
+import { LegalLandscapeTab } from './tabs/LegalLandscapeTab'
 import { OverviewTab } from './tabs/OverviewTab'
 
 interface ProjectEventRow {
@@ -58,7 +59,10 @@ export function ResultWorkspace({ project, messages, events, source }: Props) {
           {active === 'overview' && (
             <OverviewTab project={project} state={state} />
           )}
-          {active !== 'overview' && (
+          {active === 'legal' && (
+            <LegalLandscapeTab project={project} state={state} />
+          )}
+          {active !== 'overview' && active !== 'legal' && (
             <Placeholder
               id={active}
               project={project}
