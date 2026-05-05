@@ -255,9 +255,11 @@ export function QuestionPlot({ onSubmit, submitError }: Props) {
           {showMap ? (
             <div className="relative">
               {/* Responsive height — mobile parity with the
-                * pre-redesign 460px, expand to ~700px on lg+ to
-                * match the 30/70 mockup. PlotMap fills its parent. */}
-              <div className="h-[460px] lg:h-[700px]">
+                * pre-redesign 460px, expand to ~820px on lg+ so the
+                * floating Location profile (~600–660px tall in DE
+                * with long district names) clears the map's bottom
+                * edge with breathing room. PlotMap fills its parent. */}
+              <div className="h-[460px] lg:h-[820px]">
                 <Suspense
                   fallback={
                     <div className="pm-plotmap-empty">Karte wird geladen…</div>
@@ -273,7 +275,7 @@ export function QuestionPlot({ onSubmit, submitError }: Props) {
               </div>
               {/* Floating Location profile — absolute on lg+ inside
                 * the map area; on mobile it stacks below the map. */}
-              <div className="mt-6 lg:absolute lg:right-[46px] lg:top-[46px] lg:z-[450] lg:mt-0 lg:w-[248px]">
+              <div className="mt-6 lg:absolute lg:right-[46px] lg:top-[46px] lg:z-[450] lg:mt-0 lg:w-[268px]">
                 <PlotSidebar profile={profile} suggestedName={suggestedName} />
               </div>
             </div>

@@ -2,6 +2,7 @@ import { useEffect, useState, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import { m, useReducedMotion } from 'framer-motion'
+import { cn } from '@/lib/utils'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -98,7 +99,17 @@ export function WizardShell({ step, children }: Props) {
       </header>
 
       <main className="relative z-10 flex flex-1 items-start justify-center px-6 py-16">
-        <div className="w-full max-w-3xl">{children}</div>
+        <div
+          className={cn(
+            'w-full',
+            // Q2 needs a wider canvas so the 30/70 grid + ~820px map
+            // fill most of the page; Q1 keeps the calmer 3xl reading
+            // width since the sketch cards don't need extra room.
+            step === 2 ? 'max-w-[1400px]' : 'max-w-3xl',
+          )}
+        >
+          {children}
+        </div>
       </main>
     </m.div>
   )
