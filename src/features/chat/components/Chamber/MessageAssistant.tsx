@@ -30,6 +30,7 @@ import { MessageContextSheet } from '../MessageContextSheet'
 import { MessageAttachment } from '../MessageAttachment'
 import { Typewriter } from './Typewriter'
 import { MatchCut } from './MatchCut'
+import { renderMarkdown } from '../../lib/renderMarkdown'
 
 interface Props {
   message: MessageRow
@@ -134,9 +135,19 @@ export function MessageAssistant({
         )}
       </header>
 
-      {/* Body — 56 px left-indent (ml-14) per Manuscript direction. */}
+      {/* Body — 56 px left-indent (ml-14) per Manuscript direction.
+        * Phase 8.5 (C.3): past-turn (history) bodies render through the
+        * markdown whitelist so **bold** + lists + line breaks display
+        * correctly. Active turns keep the typewriter typing the raw
+        * text — markdown takes effect once the row settles into history
+        * (the next render after typewriter completion treats it as
+        * isHistory). */}
       <div className="text-[16px] md:text-[18px] text-ink leading-[1.7] ml-14">
-        <Typewriter text={text} instant={isHistory} messageId={message.id} />
+        {isHistory ? (
+          <div className="markdown-body">{renderMarkdown(text)}</div>
+        ) : (
+          <Typewriter text={text} instant={isHistory} messageId={message.id} />
+        )}
       </div>
 
       {/* Attachments — when the row already has a persisted id */}
