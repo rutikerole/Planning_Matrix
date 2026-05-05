@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { Info } from 'lucide-react'
 import type { ProjectRow } from '@/types/db'
 import type { ProjectState } from '@/types/projectState'
 import { findCitation } from '../../lib/legalCitations'
@@ -10,6 +11,7 @@ import {
   type LegalDomain,
   type LegalRelevance,
 } from '../../lib/composeLegalDomains'
+import { findRuleSnippet } from '@/data/legalRuleSnippets'
 
 interface Props {
   project: ProjectRow
@@ -100,56 +102,70 @@ function DomainBand({
         <ul className="flex flex-col">
           {domain.rows.map((row, idx) => {
             const cite = findCitation(row.label)
+            const snippet = findRuleSnippet(row.label)
             const rowKey = `${domain.key}-${idx}`
             const open = openCitation === rowKey
+            const interpretation = snippet
+              ? lang === 'en'
+                ? snippet.interpretationEn
+                : snippet.interpretationDe
+              : null
             return (
               <li
                 key={rowKey}
                 className={
-                  'px-5 py-3 grid grid-cols-1 sm:grid-cols-[140px_1fr_auto] sm:gap-4 sm:items-center ' +
+                  'px-5 py-3 grid grid-cols-1 sm:grid-cols-[140px_1fr_auto] sm:gap-4 sm:items-start ' +
                   (idx > 0 ? 'border-t border-ink/12' : '')
                 }
               >
-                <button
-                  type="button"
-                  disabled={!cite}
-                  aria-expanded={open}
-                  onClick={() => onOpenCitation(open ? null : rowKey)}
-                  className={
-                    'text-left text-[12.5px] leading-snug font-medium ' +
-                    (cite
-                      ? 'text-ink hover:text-drafting-blue transition-colors duration-soft underline-offset-4 hover:underline decoration-clay/55'
-                      : 'text-ink/85 cursor-default')
-                  }
-                >
-                  {row.label}
-                </button>
-                <RelevanceBar relevance={row.relevance} />
-                <span className="text-[11px] italic text-clay leading-snug truncate text-right">
+                <div className="flex items-baseline gap-1.5">
+                  <span className="text-[12.5px] leading-snug font-medium text-ink">
+                    {row.label}
+                  </span>
+                  {snippet && (
+                    <button
+                      type="button"
+                      onClick={() => onOpenCitation(open ? null : rowKey)}
+                      aria-expanded={open}
+                      aria-label={t('result.workspace.legal.toggleSource')}
+                      className="inline-flex items-center justify-center size-4 rounded-full text-clay/65 hover:text-ink hover:bg-ink/[0.06] transition-colors duration-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/35 focus-visible:ring-offset-2 focus-visible:ring-offset-paper-card"
+                    >
+                      <Info aria-hidden="true" className="size-3" />
+                    </button>
+                  )}
+                </div>
+                <p className="text-[12px] text-ink/85 leading-[1.55] max-w-prose">
+                  {interpretation ?? (
+                    <span className="italic text-clay/65">
+                      {t('result.workspace.legal.noInterpretation')}
+                    </span>
+                  )}
+                </p>
+                <span className="text-[11px] italic text-clay leading-snug whitespace-nowrap text-right">
                   {row.status}
                 </span>
-                {open && cite && (
+                {open && (
                   <div
                     role="region"
-                    aria-label={cite.label}
+                    aria-label={cite?.label ?? row.label}
                     className="sm:col-span-3 mt-2 px-3 py-3 bg-drafting-blue/[0.04] border border-drafting-blue/15 rounded-[6px] flex flex-col gap-1.5"
                   >
                     <p className="text-[10px] font-medium uppercase tracking-[0.20em] text-clay/85 leading-none">
                       {t('result.legal.sourceEyebrow')}
                     </p>
                     <p className="font-serif italic text-[13px] text-ink leading-snug">
-                      {cite.label}
+                      {cite?.label ?? row.label}
                     </p>
                     <p className="text-[12px] text-ink/75 leading-relaxed">
                       {t('result.legal.whyHint')}
                     </p>
                     <a
-                      href={cite.href}
+                      href={snippet?.externalUrl ?? cite?.href ?? '#'}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-[11.5px] text-drafting-blue hover:text-ink underline underline-offset-4 decoration-drafting-blue/55 transition-colors duration-soft self-start"
                     >
-                      {cite.href.replace(/^https?:\/\//, '')} →
+                      {t('result.workspace.legal.readOfficial')} →
                     </a>
                   </div>
                 )}
@@ -159,35 +175,6 @@ function DomainBand({
         </ul>
       )}
     </article>
-  )
-}
-
-function RelevanceBar({ relevance }: { relevance: LegalRelevance }) {
-  if (relevance === 'NONE') {
-    return (
-      <span
-        aria-hidden="true"
-        className="hidden sm:block h-[3px] w-full max-w-[180px] border-t border-dashed border-ink/25"
-      />
-    )
-  }
-  const fillPct = relevance === 'HIGH' ? 100 : 50
-  const cellColor = relevance === 'HIGH' ? 'bg-clay' : 'bg-clay/40'
-  return (
-    <div
-      aria-hidden="true"
-      className="hidden sm:flex items-center gap-px h-1 w-full max-w-[180px]"
-    >
-      {Array.from({ length: 12 }, (_, i) => {
-        const filled = (i + 1) * (100 / 12) <= fillPct
-        return (
-          <span
-            key={i}
-            className={'block h-1 flex-1 ' + (filled ? cellColor : 'bg-ink/12')}
-          />
-        )
-      })}
-    </div>
   )
 }
 

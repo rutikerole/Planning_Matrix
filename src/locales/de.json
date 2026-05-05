@@ -1721,6 +1721,11 @@
         "fromOpenItems": "Verifizierung erforderlich",
         "fromBaseline": "Standard für vergleichbare Vorhaben"
       },
+      "legal": {
+        "toggleSource": "Öffentliche Quelle einblenden",
+        "noInterpretation": "Auslegung folgt sobald die Beratung weiter ist.",
+        "readOfficial": "Offiziellen Text öffnen"
+      },
       "footer": {
         "back": "↩ Zurück zur Beratung",
         "sendToArchitect": "An Architekt:in senden",

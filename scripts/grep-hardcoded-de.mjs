@@ -57,6 +57,9 @@ const ALLOWLIST = [
   // Phase 8.1 — Do-next composer carries bilingual baseline steps
   // for each intent (Bebauungsplan / GEG / BayDSchG language).
   'src/features/result/lib/composeDoNext.ts',
+  // Phase 8.1 — legal rule snippets are hand-curated DE/EN
+  // interpretations of canonical statutes; both branches present.
+  'src/data/legalRuleSnippets.ts',
   // Phase 8 — heuristic legal-domain composer. Bilingual citation
   // copy (Planungsrecht / Bauordnungsrecht / etc.); same pattern.
   'src/features/result/lib/composeLegalDomains.ts',

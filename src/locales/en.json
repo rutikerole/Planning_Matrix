@@ -1721,6 +1721,11 @@
         "fromOpenItems": "follow-up needed",
         "fromBaseline": "standard for projects like yours"
       },
+      "legal": {
+        "toggleSource": "Show official source",
+        "noInterpretation": "Interpretation follows as the consultation progresses.",
+        "readOfficial": "Open the official text"
+      },
       "footer": {
         "back": "↩ Back to consultation",
         "sendToArchitect": "Send to architect",
