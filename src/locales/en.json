@@ -1775,6 +1775,13 @@
         "tab": "Not enough information yet — continue the consultation to build out this section.",
         "continue": "Continue consultation →"
       },
+      "team": {
+        "eyebrow": "Team needed",
+        "count_one": "{{count}} specialist",
+        "count_other": "{{count}} specialists",
+        "stakeholdersEyebrow": "Stakeholders",
+        "effortLabel": "Effort"
+      },
       "procedure": {
         "pickEyebrow": "Procedure pick",
         "noRationale": "Rationale follows once the consultation has gathered more data.",

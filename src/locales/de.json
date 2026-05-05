@@ -1775,6 +1775,13 @@
         "tab": "Noch nicht genug Informationen — setzen Sie die Beratung fort, um diesen Abschnitt zu vervollständigen.",
         "continue": "Beratung fortsetzen →"
       },
+      "team": {
+        "eyebrow": "Benötigtes Team",
+        "count_one": "{{count}} Fachperson",
+        "count_other": "{{count}} Fachpersonen",
+        "stakeholdersEyebrow": "Beteiligte",
+        "effortLabel": "Aufwand"
+      },
       "procedure": {
         "pickEyebrow": "Verfahrenswahl",
         "noRationale": "Begründung folgt sobald die Beratung weiter fortgeschritten ist.",

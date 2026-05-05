@@ -58,6 +58,9 @@ const ALLOWLIST = [
   // Phase 8 — Procedure & documents tab; bilingual phase labels and
   // ItemStatus → DE/EN map mirror CostTimelinePanel's pattern.
   'src/features/result/components/tabs/ProcedureDocumentsTab.tsx',
+  // Phase 8 — Team tab carries a canonical 4-stakeholder DE/EN map
+  // (Bauherr / Architekt:in / Fachplaner / Bauamt). Same pattern.
+  'src/features/result/components/tabs/TeamTab.tsx',
   // Wizard B-Plan detail dialog renders canonical German Bauamt
   // language alongside EN; map is bilingual already.
   'src/features/wizard/components/BPlanDetailDialog.tsx',
