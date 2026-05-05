@@ -1,10 +1,13 @@
 import { useTranslation } from 'react-i18next'
+import type { ProjectRow } from '@/types/db'
 import type { ProjectState, Role } from '@/types/projectState'
 import { RoleGlyph } from '../RoleGlyphs'
 import { inferRoleGlyphKey } from '../RoleGlyphs.helpers'
 import { ROLE_EFFORT_LOOKUP, type RoleKey } from '../../lib/roleEffortLookup'
+import { useResolvedRoles } from '../../hooks/useResolvedRoles'
 
 interface Props {
+  project: ProjectRow
   state: Partial<ProjectState>
 }
 
@@ -54,10 +57,11 @@ const STAKEHOLDERS: StakeholderRow[] = [
  * Stakeholders section below (Bauherr / Architekt / Fachplaner /
  * Bauamt — the four-actor mental model).
  */
-export function TeamTab({ state }: Props) {
+export function TeamTab({ project, state }: Props) {
   const { t, i18n } = useTranslation()
   const lang = (i18n.resolvedLanguage ?? 'de') as 'de' | 'en'
-  const roles = (state.roles ?? []).filter((r) => r.needed)
+  const resolved = useResolvedRoles(project, state)
+  const roles = resolved.roles.filter((r) => r.needed)
 
   return (
     <div className="flex flex-col gap-10 max-w-[1100px]">
@@ -74,6 +78,11 @@ export function TeamTab({ state }: Props) {
             {t('result.workspace.team.count', { count: roles.length })}
           </span>
         </header>
+        {!resolved.isFromState && roles.length > 0 && (
+          <p className="text-[11px] italic text-clay/85 leading-snug">
+            {t('result.workspace.team.baselineNote')}
+          </p>
+        )}
         {roles.length === 0 ? (
           <p className="text-[12.5px] italic text-clay/85 leading-relaxed">
             {t('result.workspace.empty.tab')}
@@ -81,7 +90,12 @@ export function TeamTab({ state }: Props) {
         ) : (
           <ul className="grid grid-cols-1 lg:grid-cols-2 gap-3">
             {roles.map((role) => (
-              <RoleCard key={role.id} role={role} lang={lang} />
+              <RoleCard
+                key={role.id}
+                role={role}
+                lang={lang}
+                isBaseline={!resolved.isFromState}
+              />
             ))}
           </ul>
         )}
@@ -115,7 +129,15 @@ export function TeamTab({ state }: Props) {
   )
 }
 
-function RoleCard({ role, lang }: { role: Role; lang: 'de' | 'en' }) {
+function RoleCard({
+  role,
+  lang,
+  isBaseline,
+}: {
+  role: Role
+  lang: 'de' | 'en'
+  isBaseline: boolean
+}) {
   const { t } = useTranslation()
   const glyphKey = inferRoleGlyphKey(role.title_de)
   const lookup = ROLE_EFFORT_LOOKUP[glyphKey as RoleKey]
@@ -132,11 +154,16 @@ function RoleCard({ role, lang }: { role: Role; lang: 'de' | 'en' }) {
   const showEffort = lookup?.rangeHours && lookup.rangeHours !== '—'
   return (
     <li className="border border-ink/12 rounded-[10px] bg-paper-card p-4 flex flex-col gap-2.5">
-      <div className="flex items-center gap-2.5">
+      <div className="flex items-center gap-2.5 flex-wrap">
         <RoleGlyph role={glyphKey} />
         <span className="text-[11.5px] font-medium uppercase tracking-[0.18em] text-clay leading-none">
           {title}
         </span>
+        {isBaseline && (
+          <span className="text-[10px] italic font-serif text-clay/72 leading-none">
+            · {t('result.workspace.team.likelyBadge')}
+          </span>
+        )}
       </div>
       {qualification && (
         <p className="font-serif italic text-[12.5px] text-clay/85 leading-snug">

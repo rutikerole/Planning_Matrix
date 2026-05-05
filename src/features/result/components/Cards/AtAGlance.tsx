@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next'
+import type { ProjectRow } from '@/types/db'
 import type { ProjectState } from '@/types/projectState'
 import {
   buildCostBreakdown,
@@ -6,8 +7,10 @@ import {
   detectProcedure,
   formatEurRange,
 } from '../../lib/costNormsMuenchen'
+import { useResolvedRoles } from '../../hooks/useResolvedRoles'
 
 interface Props {
+  project: ProjectRow
   state: Partial<ProjectState>
 }
 
@@ -17,13 +20,13 @@ interface Props {
  * questions. Each row is label + value with a hairline divider; values
  * fall back to em-dash when the underlying state isn't there yet.
  */
-export function AtAGlance({ state }: Props) {
+export function AtAGlance({ project, state }: Props) {
   const { t, i18n } = useTranslation()
   const lang = (i18n.resolvedLanguage ?? 'de') as 'de' | 'en'
+  const resolved = useResolvedRoles(project, state)
 
   const procedures = state.procedures ?? []
   const facts = state.facts ?? []
-  const roles = state.roles ?? []
   const areas = state.areas
 
   const primaryProcedure =
@@ -62,7 +65,7 @@ export function AtAGlance({ state }: Props) {
         ? lang === 'en' ? '~ 6–9 months' : '~ 6–9 Monate'
         : lang === 'en' ? '~ 4–6 months' : '~ 4–6 Monate'
 
-  const specialistsCount = roles.filter((r) => r.needed).length
+  const specialistsCount = resolved.roles.filter((r) => r.needed).length
   const assumedCount = facts.filter((f) => f.qualifier?.quality === 'ASSUMED').length
   const pendingAreas = areas
     ? (['A', 'B', 'C'] as const).filter(

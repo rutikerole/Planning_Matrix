@@ -1797,7 +1797,9 @@
         "count_one": "{{count}} specialist",
         "count_other": "{{count}} specialists",
         "stakeholdersEyebrow": "Stakeholders",
-        "effortLabel": "Effort"
+        "effortLabel": "Effort",
+        "baselineNote": "Suggested standard for projects of this type — overwritten by concrete consultant recommendations.",
+        "likelyBadge": "likely"
       },
       "cost": {
         "costEyebrow": "Cost range",
