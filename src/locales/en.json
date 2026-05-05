@@ -878,6 +878,34 @@
       "body": "Your responses will be lost.",
       "ok": "Discard",
       "cancel": "Keep editing"
+    },
+    "atelier": {
+      "eyebrow": "PLANNING MATRIX · ATELIER OPENING",
+      "headline": "The team is taking their seats.",
+      "caption": {
+        "1of7": "1 of 7 seated · the team is gathering",
+        "2of7": "2 of 7 seated · Zoning law reading § 34 BauGB",
+        "3of7": "3 of 7 seated · Building code checking BayBO",
+        "4of7": "4 of 7 seated · Other regulations reviewing local rules",
+        "5of7": "5 of 7 seated · Procedure composing the path",
+        "6of7": "6 of 7 seated · Stakeholders mapping required specialists",
+        "allSeated": "All seated · opening the workspace",
+        "oneMoreTouch": "All seated · one last touch …"
+      },
+      "specialist": {
+        "moderator": "Moderator",
+        "planungsrecht": "Zoning law",
+        "bauordnungsrecht": "Building code",
+        "sonstige": "Other regulations",
+        "verfahren": "Procedure",
+        "beteiligte": "Stakeholders",
+        "synthese": "Synthesis"
+      },
+      "fail": {
+        "h": "We could not set the table.",
+        "sub": "Something went wrong on our side. Please try again.",
+        "back": "Back to the wizard"
+      }
     }
   },
   "chat": {
@@ -1947,31 +1975,6 @@
       "signIn": "Sign in to Planning Matrix to continue your projects.",
       "signUp": "Create your Planning Matrix account and map the approval path for your project.",
       "share": "Briefing for the project \"{{name}}\", shared via Planning Matrix."
-    }
-  },
-  "loader": {
-    "eyebrow": "PLANNING MATRIX · PREPARING",
-    "h": "Setting the table.",
-    "steps": {
-      "s1": "Selecting template — {{template}}…",
-      "s2": "Briefing planning law — § 34 BauGB for {{street}}…",
-      "s3": "Briefing building code — BayBO Art. {{article}}, class {{class}}…",
-      "s4": "Drafting other requirements — parking ordinance {{city}}…",
-      "s5": "Initialising the matrix — three lenses, one picture…",
-      "s6": "Briefing the moderator — ready for your conversation."
-    },
-    "cancel": "Cancel",
-    "cancelConfirm": {
-      "h": "Cancel this run?",
-      "body": "The project will not be created.",
-      "ok": "Cancel",
-      "back": "Continue"
-    },
-    "fail": {
-      "h": "We could not set the table.",
-      "sub": "Something went wrong on our side. Your project is saved.",
-      "open": "Open project",
-      "back": "Back to dashboard"
     }
   }
 }

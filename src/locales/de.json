@@ -878,6 +878,34 @@
       "body": "Ihre Antworten gehen verloren.",
       "ok": "Verwerfen",
       "cancel": "Weiter bearbeiten"
+    },
+    "atelier": {
+      "eyebrow": "PLANNING MATRIX · ATELIER OPENING",
+      "headline": "Das Team nimmt Platz.",
+      "caption": {
+        "1of7": "1 von 7 sitzt · das Team versammelt sich",
+        "2of7": "2 von 7 sitzen · Planungsrecht liest § 34 BauGB",
+        "3of7": "3 von 7 sitzen · Bauordnungsrecht prüft BayBO",
+        "4of7": "4 von 7 sitzen · Sonstige Vorgaben prüft örtliche Regeln",
+        "5of7": "5 von 7 sitzen · Verfahren stellt den Weg zusammen",
+        "6of7": "6 von 7 sitzen · Beteiligte ermittelt nötige Fachplaner",
+        "allSeated": "Alle sitzen · der Arbeitsraum wird geöffnet",
+        "oneMoreTouch": "Alle sitzen · letzter Feinschliff …"
+      },
+      "specialist": {
+        "moderator": "Moderator",
+        "planungsrecht": "Planungsrecht",
+        "bauordnungsrecht": "Bauordnungsrecht",
+        "sonstige": "Sonstige Vorgaben",
+        "verfahren": "Verfahren",
+        "beteiligte": "Beteiligte",
+        "synthese": "Synthese"
+      },
+      "fail": {
+        "h": "Wir konnten den Tisch nicht decken.",
+        "sub": "Auf unserer Seite ist etwas schiefgelaufen. Bitte versuchen Sie es erneut.",
+        "back": "Zurück zum Wizard"
+      }
     }
   },
   "chat": {
@@ -1947,31 +1975,6 @@
       "signIn": "Melden Sie sich bei Planning Matrix an, um Ihre Bauvorhaben fortzuführen.",
       "signUp": "Erstellen Sie Ihr Planning-Matrix-Konto und kartieren Sie den Genehmigungsweg für Ihr Vorhaben.",
       "share": "Briefing zum Bauvorhaben „{{name}}\", geteilt über Planning Matrix."
-    }
-  },
-  "loader": {
-    "eyebrow": "PLANNING MATRIX · VORBEREITUNG",
-    "h": "Tisch decken.",
-    "steps": {
-      "s1": "Vorlage wählen — {{template}}…",
-      "s2": "Briefing Planungsrecht — § 34 BauGB für {{street}}…",
-      "s3": "Briefing Bauordnungsrecht — BayBO Art. {{article}}, GK {{class}}…",
-      "s4": "Sonstige Vorgaben anlegen — Stellplatzsatzung {{city}}…",
-      "s5": "Matrix initialisieren — drei Brillen, ein Bild…",
-      "s6": "Moderator briefen — bereit für Ihr Gespräch."
-    },
-    "cancel": "Abbrechen",
-    "cancelConfirm": {
-      "h": "Vorgang abbrechen?",
-      "body": "Das Projekt wird nicht erstellt.",
-      "ok": "Abbrechen",
-      "back": "Weiter"
-    },
-    "fail": {
-      "h": "Wir konnten den Tisch nicht decken.",
-      "sub": "Ein Problem auf unserer Seite. Ihr Projekt ist gespeichert.",
-      "open": "Projekt öffnen",
-      "back": "Zur Übersicht"
     }
   }
 }
