@@ -48,6 +48,14 @@ export function pickSmartSuggestions({
     (state.recommendations ?? []).map((r) => r.id),
   )
 
+  // Phase 8.5 (D.1) — evidence-fact gate. A template with declared
+  // evidenceFacts only fires when ALL its requirements are satisfied
+  // by state.facts. Each satisfied requirement also bumps the score.
+  const factsByKey = new Map<string, unknown>()
+  for (const f of state.facts ?? []) {
+    factsByKey.set(f.key, f.value)
+  }
+
   const scored: Array<{ s: SmartSuggestion; score: number }> = []
   for (const s of SMART_SUGGESTIONS_MUENCHEN) {
     if (existingRecIds.has(`smart-${s.id}`)) continue
@@ -55,11 +63,20 @@ export function pickSmartSuggestions({
     if (s.bundeslaender && !s.bundeslaender.includes(project.bundesland))
       continue
     if (s.scopeMatch && !s.scopeMatch.test(corpus)) continue
+    if (s.evidenceFacts && s.evidenceFacts.length > 0) {
+      const allMatch = s.evidenceFacts.every((req) => {
+        if (!factsByKey.has(req.key)) return false
+        if (req.expectedValue === undefined) return true
+        return factsByKey.get(req.key) === req.expectedValue
+      })
+      if (!allMatch) continue
+    }
 
     let score = 1.0
     if (s.intents?.includes(project.intent)) score += 1.5
     if (s.bundeslaender?.includes(project.bundesland)) score += 1.0
     if (s.scopeMatch?.test(corpus)) score += 2.0
+    if (s.evidenceFacts) score += s.evidenceFacts.length * 2.0
     score *= s.relevanceWeight ?? 1.0
 
     scored.push({ s, score })

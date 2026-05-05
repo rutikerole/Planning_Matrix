@@ -31,6 +31,21 @@ export type SuggestionCategory =
   | 'regulation'
   | 'risk'
 
+/**
+ * Phase 8.5 (D.1) — evidence-fact filter. A template "passes" the
+ * evidence check when, for every entry in its evidenceFacts list,
+ * the project state contains a fact with the matching key (and, if
+ * `expectedValue` is given, that exact value). Each evidence-fact
+ * hit also bumps the matcher's relevance score so cards with
+ * project-specific signals jump the queue.
+ */
+export interface EvidenceFactRequirement {
+  key: string
+  /** When set, the fact's value must equal this. When omitted, mere
+   *  presence of the key in state.facts is enough. */
+  expectedValue?: unknown
+}
+
 export interface SmartSuggestion {
   id: string
   /** Category controls the eyebrow + grouping in the Suggestions tab. */
@@ -52,6 +67,13 @@ export interface SmartSuggestion {
   bundeslaender?: string[]
   /** Optional regex run against the project corpus (facts + procedures). */
   scopeMatch?: RegExp
+  /**
+   * Phase 8.5 (D.1) — evidence-fact filter. ALL entries must match
+   * for the template to fire (in addition to intent / bundesland /
+   * scope filters). Each match also adds +2.0 to the relevance score
+   * in the matcher.
+   */
+  evidenceFacts?: EvidenceFactRequirement[]
   /**
    * Phase 8.1 — base relevance weight (1 = standard). Bump above 1
    * for suggestions that should jump the queue regardless of how many
@@ -190,6 +212,157 @@ export const SMART_SUGGESTIONS_MUENCHEN: SmartSuggestion[] = [
     reasoningDe: 'BayBO Art. 66 gibt Nachbarn ein Widerspruchsrecht — Vorabinformation entschärft.',
     reasoningEn: 'BayBO Art. 66 grants neighbours an objection right — early notice defuses it.',
     bundeslaender: ['Bayern'],
+    verifyBeforePublicLaunch: true,
+  },
+
+  // ── Phase 8.5 (D.1) — project-specific München templates ──────────────
+  {
+    id: 'baumgutachten',
+    category: 'regulation',
+    titleDe: 'Baumkartierung vor Einreichung beauftragen',
+    titleEn: 'Commission a tree survey before submission',
+    bodyDe:
+      'Eine Baumkartierung dokumentiert den Schutzradius jedes erfassten Baums (Stammumfang ≥ 60 cm) und beugt Streit in der Bauphase vor. Wer früh kartiert, kann Schutzauflagen in den Lageplan einarbeiten statt später nachzubessern.',
+    bodyEn:
+      'A tree survey documents the protection radius of each covered tree (trunk circumference ≥ 60 cm) and prevents disputes during the construction phase. Surveying early lets you bake protective requirements into the site plan rather than retrofitting later.',
+    reasoningDe:
+      'Baumschutzverordnung 901 gilt seit 12/2025 für jeden Baum mit ≥ 60 cm Umfang — Kartierung sollte vor LP 4 fertig sein.',
+    reasoningEn:
+      "Munich's Baumschutzverordnung 901 (effective Dec 2025) covers every tree with ≥ 60 cm circumference — survey should complete before LP 4.",
+    bundeslaender: ['Bayern'],
+    evidenceFacts: [{ key: 'baumschutz_betroffen' }],
+    relevanceWeight: 1.4,
+    verifyBeforePublicLaunch: true,
+  },
+  {
+    id: 'ensemble-blfd',
+    category: 'regulation',
+    titleDe: 'BLfD-Anfrage zum Ensemble-Schutz absetzen',
+    titleEn: 'File a BLfD enquiry on ensemble protection',
+    bodyDe:
+      'In Schwabing, Maxvorstadt und Lehel gelten Ensemble-Schutz-Eintragungen, die zusätzlich zur Baugenehmigung eine BayDSchG-Erlaubnis erfordern. Die BLfD-Antwort dauert typisch 4–6 Wochen — vor LP 3 abschicken, sonst schiebt sich der Zeitplan.',
+    bodyEn:
+      "Schwabing, Maxvorstadt and Lehel carry ensemble-protection entries that require an additional BayDSchG permit alongside the building permit. The BLfD's response typically takes 4–6 weeks — file before LP 3 to avoid timeline slippage.",
+    reasoningDe:
+      'Ensemble-Status entscheidet über Pflichtdokumente und Verfahrensart — späte Klärung verzögert das gesamte Verfahren.',
+    reasoningEn:
+      'Ensemble status determines required documents and procedure type — late clarification delays the whole process.',
+    bundeslaender: ['Bayern'],
+    evidenceFacts: [
+      { key: 'ensemble_schwabing_geprueft', expectedValue: false },
+    ],
+    relevanceWeight: 1.6,
+    verifyBeforePublicLaunch: true,
+  },
+  {
+    id: 'pv-konzept-baybo44a',
+    category: 'energy',
+    titleDe: 'PV-Konzept nach Art. 44a BayBO dokumentieren',
+    titleEn: 'Document the PV concept per BayBO Art. 44a',
+    bodyDe:
+      'Bayerns PV-Pflicht (Art. 44a BayBO) verlangt im Bauantrag ein dokumentiertes PV-Konzept — typischerweise 1 kWp je 35–50 m² Dachfläche. Das Konzept muss Anlagenleistung, Montage, Anschluss und Eigenverbrauchsstrategie umreißen.',
+    bodyEn:
+      'Bavaria PV requirement (Art. 44a BayBO) requires a documented PV concept in the application — typically 1 kWp per 35–50 m² of roof area. The concept must outline capacity, mounting, grid connection, and self-consumption strategy.',
+    reasoningDe:
+      'PV-Konzept ist Pflichtbestandteil — fehlt es, gilt der Antrag als unvollständig.',
+    reasoningEn:
+      "PV concept is a required component — missing it makes the application incomplete.",
+    intents: ['neubau_einfamilienhaus', 'neubau_mehrfamilienhaus'],
+    bundeslaender: ['Bayern'],
+    relevanceWeight: 1.3,
+    verifyBeforePublicLaunch: true,
+  },
+  {
+    id: 'lageplan-amtlich',
+    category: 'tooling',
+    titleDe: 'Amtlichen Lageplan (M = 1:500) beauftragen',
+    titleEn: 'Commission an official site plan (M = 1:500)',
+    bodyDe:
+      'Bauanträge in München erfordern einen amtlichen Lageplan im Maßstab 1:500. Vermesser:in in LP 3 binden, sonst staut sich die Antragstellung. Liegt ein älterer Plan vor: vom Vermesser auf Aktualität prüfen lassen.',
+    bodyEn:
+      'Munich permit applications require an official site plan at scale 1:500. Engage the surveyor in LP 3 — otherwise the application backs up. If an older plan exists, have the surveyor verify currency.',
+    reasoningDe:
+      'Ohne aktuellen Lageplan keine vollständige Antragstellung — typische Verzögerungsursache.',
+    reasoningEn:
+      'No current site plan = incomplete application — classic source of delay.',
+    bundeslaender: ['Bayern'],
+    intents: [
+      'neubau_einfamilienhaus',
+      'neubau_mehrfamilienhaus',
+      'aufstockung',
+      'anbau',
+    ],
+    verifyBeforePublicLaunch: true,
+  },
+  {
+    id: 'abbruch-anzeige',
+    category: 'regulation',
+    titleDe: 'Abbruchanzeige nach BayBO Art. 57 vorbereiten',
+    titleEn: 'Prepare a demolition notification per BayBO Art. 57',
+    bodyDe:
+      'Wird ein Bestand abgerissen oder rückgebaut, ist eine separate Abbruchanzeige bei der Unteren Bauaufsichtsbehörde erforderlich — typisch 4 Wochen vor Baufeldfreimachung. Entsorgungskonzept (KrWG) gehört dazu.',
+    bodyEn:
+      'When existing structures are demolished or removed, a separate demolition notification at the lower building authority is required — typically 4 weeks before site clearance. A waste-management concept (KrWG) accompanies it.',
+    reasoningDe:
+      'Abbruchanzeige ist verfahrensseitig vom Bauantrag getrennt — nicht vergessen einreichen.',
+    reasoningEn:
+      'Demolition notification is procedurally separate from the building permit — easy to forget.',
+    intents: ['neubau_einfamilienhaus', 'neubau_mehrfamilienhaus', 'umnutzung'],
+    bundeslaender: ['Bayern'],
+    evidenceFacts: [{ key: 'bestandsgebaeude_abbruch_geplant' }],
+    relevanceWeight: 1.4,
+    verifyBeforePublicLaunch: true,
+  },
+  {
+    id: 'kfw-40-foerderung',
+    category: 'energy',
+    titleDe: 'KfW-Effizienzhaus-40-Antrag VOR Auftragsvergabe',
+    titleEn: 'File KfW Efficiency-House-40 application BEFORE contract award',
+    bodyDe:
+      'KfW-Effizienzhaus-40-Förderung muss zwingend VOR Auftragsvergabe an die Bauleistung beantragt werden. Spätantrag verfällt — klassischer Stichtag-Fehler in der LP-6-Phase.',
+    bodyEn:
+      'KfW Efficiency-House-40 funding must be applied for BEFORE awarding construction contracts. Late applications expire — classic LP 6 deadline pitfall.',
+    reasoningDe:
+      'Antragsfrist liegt vor Vergabe — Reihenfolge stimmen mit dem Energieberater ab.',
+    reasoningEn:
+      'Application deadline precedes contract award — coordinate the sequence with the energy consultant.',
+    scopeMatch: /kfw\s*40|kfw-40|effizienzhaus|effizienz-haus/i,
+    relevanceWeight: 1.3,
+    verifyBeforePublicLaunch: true,
+  },
+  {
+    id: 'bauherren-haftpflicht-bind',
+    category: 'insurance',
+    titleDe: 'Bauherrenhaftpflicht VOR Baubeginn binden',
+    titleEn: 'Bind builder liability insurance BEFORE site work',
+    bodyDe:
+      'Bauherrenhaftpflicht muss VOR jedem Baubeginn — auch vor Vermessung oder Probeschachtungen — abgeschlossen sein. Schäden vor Versicherungsbeginn bleiben am Bauherrn hängen.',
+    bodyEn:
+      "Builder liability insurance must be in force BEFORE any site work — even surveying or test excavations. Damages occurring before policy start fall on the owner.",
+    reasoningDe:
+      'Versicherungsbeginn vor Spatenstich verhindert Deckungslücken in der Anlaufphase.',
+    reasoningEn:
+      'Policy start before ground-breaking prevents coverage gaps during the kickoff phase.',
+    bundeslaender: ['Bayern'],
+    relevanceWeight: 1.1,
+    verifyBeforePublicLaunch: true,
+  },
+  {
+    id: 'stellplatz-nachweis-doku',
+    category: 'regulation',
+    titleDe: 'Stellplatznachweis schriftlich dem Antrag beilegen',
+    titleEn: 'Append a written parking proof to the application',
+    bodyDe:
+      'Münchens StPlS 926 verlangt einen schriftlichen Stellplatznachweis als Antragsbestandteil. Auch wenn die geplante Anzahl die Mindestpflicht übersteigt, muss die Dokumentation eindeutig sein — sonst Rückfragen vom Bauamt.',
+    bodyEn:
+      "Munich's StPlS 926 requires a written parking proof as part of the application. Even when the planned count exceeds the minimum, documentation must be unambiguous — otherwise expect Bauamt follow-ups.",
+    reasoningDe:
+      'StPlS 926 ist seit 10/2025 in Kraft — Format des Nachweises ist neu, Bauamt prüft strikt.',
+    reasoningEn:
+      'StPlS 926 has been in force since 10/2025 — the proof format is new and the Bauamt reviews strictly.',
+    bundeslaender: ['Bayern'],
+    evidenceFacts: [{ key: 'stellplatz_anzahl_geplant' }],
+    relevanceWeight: 1.2,
     verifyBeforePublicLaunch: true,
   },
 ]
