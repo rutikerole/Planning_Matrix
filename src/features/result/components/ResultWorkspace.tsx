@@ -57,7 +57,7 @@ export function ResultWorkspace({ project, messages, events, source }: Props) {
       <BlueprintSubstrate lensRadius={260} breathing={false} driftPx={0} />
 
       <div className="sticky top-0 z-30">
-        <ResultHeader project={project} source={source} />
+        <ResultHeader project={project} source={source} events={events} />
         <ResultTabs active={active} onChange={setActive} expert={expert} />
       </div>
 

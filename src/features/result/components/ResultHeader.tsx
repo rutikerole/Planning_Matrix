@@ -5,11 +5,23 @@ import type { ProjectRow } from '@/types/db'
 import type { ProjectState } from '@/types/projectState'
 import { buildDocumentNumber } from '../lib/documentNumber'
 import { computeConfidenceBreakdown } from '../lib/computeConfidence'
+import { composeLastViewedDiff } from '../lib/composeLastViewedDiff'
+import { useLastViewed } from '../hooks/useLastViewed'
+import { SinceLastViewPill } from './Cards/SinceLastViewPill'
 import type { ResultSource } from './ResultWorkspace'
+
+interface ProjectEventRow {
+  id: string
+  created_at: string
+  triggered_by: string
+  event_type: string
+  reason?: string | null
+}
 
 interface Props {
   project: ProjectRow
   source: ResultSource
+  events: ProjectEventRow[]
 }
 
 /**
@@ -23,11 +35,18 @@ interface Props {
  * The header sits above the tab bar in the workspace stack; both are
  * sticky. Padding matches the brief: 22px top / 16px bottom.
  */
-export function ResultHeader({ project, source }: Props) {
+export function ResultHeader({ project, source, events }: Props) {
   const { t, i18n } = useTranslation()
   const lang = (i18n.resolvedLanguage ?? 'de') as 'de' | 'en'
   const isShared = source.kind === 'shared'
   const state = (project.state ?? {}) as Partial<ProjectState>
+  const { lastViewedAt } = useLastViewed(project.id)
+  const diff = composeLastViewedDiff({
+    state,
+    events,
+    lastViewedAt: isShared ? null : lastViewedAt,
+    lang,
+  })
 
   const docNo = buildDocumentNumber(project.id)
   const conf = computeConfidenceBreakdown(state)
@@ -74,16 +93,19 @@ export function ResultHeader({ project, source }: Props) {
           </p>
         )}
 
-        {!isShared && (
-          <Link
-            to={`/projects/${project.id}`}
-            data-no-print="true"
-            className="inline-flex items-center gap-1.5 h-8 px-3 bg-paper-card border border-ink/15 rounded-full text-[11.5px] text-ink/75 hover:text-ink hover:border-ink/30 transition-colors duration-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/35 focus-visible:ring-offset-2 focus-visible:ring-offset-paper"
-          >
-            <ArrowLeft aria-hidden="true" className="size-3" />
-            <span>{t('result.workspace.header.backToConsultation')}</span>
-          </Link>
-        )}
+        <div className="flex items-center gap-2">
+          {!isShared && <SinceLastViewPill diff={diff} lang={lang} />}
+          {!isShared && (
+            <Link
+              to={`/projects/${project.id}`}
+              data-no-print="true"
+              className="inline-flex items-center gap-1.5 h-8 px-3 bg-paper-card border border-ink/15 rounded-full text-[11.5px] text-ink/75 hover:text-ink hover:border-ink/30 transition-colors duration-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/35 focus-visible:ring-offset-2 focus-visible:ring-offset-paper"
+            >
+              <ArrowLeft aria-hidden="true" className="size-3" />
+              <span>{t('result.workspace.header.backToConsultation')}</span>
+            </Link>
+          )}
+        </div>
       </div>
 
       {/* Title + confidence row */}

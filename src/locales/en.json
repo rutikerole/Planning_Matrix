@@ -1730,6 +1730,21 @@
         "ifSubmitBy": "If you submit by {{targetDate}}, expected approval is around {{expectedDate}}.",
         "deadline": "If you miss {{deadlineDate}}, target slips to {{fallbackDate}} because of {{reason}}."
       },
+      "sinceLastView": {
+        "firstView": "First view",
+        "summaryFactsAdded_one": "{{count}} new fact",
+        "summaryFactsAdded_other": "{{count}} new facts",
+        "summaryFactsUpgraded_one": "{{count}} confirmed",
+        "summaryFactsUpgraded_other": "{{count}} confirmed",
+        "summaryProceduresAdded_one": "{{count}} procedure",
+        "summaryProceduresAdded_other": "{{count}} procedures",
+        "summaryRecommendationsAdded_one": "{{count}} recommendation",
+        "summaryRecommendationsAdded_other": "{{count}} recommendations",
+        "modalTitle": "What changed since your last view",
+        "modalSubtitle": "Last visit: {{relativeTime}}",
+        "noEvents": "No events recorded since your last visit yet.",
+        "close": "Close"
+      },
       "risks": {
         "eyebrow": "Risk register",
         "count_one": "{{count}} flag",

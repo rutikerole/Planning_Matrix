@@ -1730,6 +1730,21 @@
         "ifSubmitBy": "Reichen Sie bis {{targetDate}} ein, ist mit der Genehmigung um {{expectedDate}} zu rechnen.",
         "deadline": "Verpassen Sie {{deadlineDate}}, verschiebt sich der Stichtag auf {{fallbackDate}} wegen {{reason}}."
       },
+      "sinceLastView": {
+        "firstView": "Erstmals geöffnet",
+        "summaryFactsAdded_one": "{{count}} neuer Fakt",
+        "summaryFactsAdded_other": "{{count}} neue Fakten",
+        "summaryFactsUpgraded_one": "{{count}} bestätigt",
+        "summaryFactsUpgraded_other": "{{count}} bestätigt",
+        "summaryProceduresAdded_one": "{{count}} Verfahren",
+        "summaryProceduresAdded_other": "{{count}} Verfahren",
+        "summaryRecommendationsAdded_one": "{{count}} Empfehlung",
+        "summaryRecommendationsAdded_other": "{{count}} Empfehlungen",
+        "modalTitle": "Was sich seit Ihrem letzten Besuch geändert hat",
+        "modalSubtitle": "Letzte Sitzung: {{relativeTime}}",
+        "noEvents": "Noch keine Ereignisse seit Ihrer letzten Sitzung erfasst.",
+        "close": "Schließen"
+      },
       "risks": {
         "eyebrow": "Risiken",
         "count_one": "{{count}} Risiko",
