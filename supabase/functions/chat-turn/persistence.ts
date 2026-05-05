@@ -328,6 +328,126 @@ export async function updateProjectState(
   return { ok: true }
 }
 
+// ── Phase 8.6 (B.3): atomic commit ─────────────────────────────────────
+
+interface CommitChatTurnAtomicArgs {
+  projectId: string
+  toolInput: RespondToolInput
+  model: string
+  usage: {
+    inputTokens: number
+    outputTokens: number
+    cacheReadTokens: number
+    cacheWriteTokens: number
+  }
+  latencyMs: number
+  beforeState: ProjectState
+  newState: ProjectState
+  clientRequestId: string | null
+  /** Phase 8.6 (D.4) — plausibility-warning events to append in the
+   *  same transaction. Null when no warnings. */
+  plausibilityEvents?: Array<{ event_type: string; reason: string }> | null
+}
+
+/**
+ * Phase 8.6 (B.3) — atomic replacement for the
+ * insertAssistantMessage + updateProjectState + logTurnEvent trio.
+ * Calls the `commit_chat_turn` Postgres function (added in migration
+ * 0013) which runs all three writes inside a single transaction.
+ *
+ * After the RPC returns, fetches the inserted (or replayed) assistant
+ * row so callers continue to receive the full AssistantMessageRow
+ * shape they did pre-RPC. The extra SELECT round-trip is cheap and
+ * keeps the public API of this module stable.
+ *
+ * If the migration hasn't been applied yet, the RPC raises a
+ * `function ... does not exist` error which we map to
+ * `persistence_failed`. The Edge Function continues to deploy
+ * cleanly even before the SQL is applied — the first turn will fail
+ * with a clear error pointing at the missing migration.
+ */
+export async function commitChatTurnAtomic(
+  supabase: SupabaseClient,
+  args: CommitChatTurnAtomicArgs,
+): Promise<InsertResult<AssistantMessageRow> & { replayed?: boolean }> {
+  const t = args.toolInput
+  const assistantRow = {
+    specialist: t.specialist,
+    content_de: t.message_de,
+    content_en: t.message_en,
+    input_type: t.input_type,
+    input_options: t.input_options ?? null,
+    allow_idk: t.allow_idk ?? true,
+    thinking_label_de: t.thinking_label_de ?? null,
+    likely_user_replies: t.likely_user_replies ?? null,
+    tool_input: t,
+    model: args.model,
+    input_tokens: args.usage.inputTokens,
+    output_tokens: args.usage.outputTokens,
+    cache_read_tokens: args.usage.cacheReadTokens,
+    cache_write_tokens: args.usage.cacheWriteTokens,
+    latency_ms: args.latencyMs,
+  }
+
+  const { data, error } = await supabase.rpc('commit_chat_turn', {
+    p_project_id: args.projectId,
+    p_assistant_row: assistantRow,
+    p_new_state: args.newState,
+    p_before_state: args.beforeState,
+    p_event_reason: t.completion_signal ?? 'continue',
+    p_event_payload: args.plausibilityEvents ?? null,
+    p_client_request_id: args.clientRequestId,
+  })
+
+  if (error) {
+    return {
+      ok: false,
+      error: {
+        code: 'persistence_failed',
+        message: `commit_chat_turn rpc: ${error.message}`,
+      },
+    }
+  }
+
+  const result = data as
+    | { assistant_id: string; replayed: boolean; state: ProjectState }
+    | null
+  if (!result?.assistant_id) {
+    return {
+      ok: false,
+      error: {
+        code: 'persistence_failed',
+        message: 'commit_chat_turn returned no assistant_id',
+      },
+    }
+  }
+
+  // Fetch the full row so callers continue to receive the same shape
+  // insertAssistantMessage returned pre-RPC. RLS allows the owner to
+  // SELECT their own messages.
+  const { data: row, error: fetchErr } = await supabase
+    .from('messages')
+    .select('*')
+    .eq('id', result.assistant_id)
+    .single()
+
+  if (fetchErr || !row) {
+    return {
+      ok: false,
+      error: {
+        code: 'persistence_failed',
+        message: `commit_chat_turn fetch: ${fetchErr?.message ?? 'no row'}`,
+      },
+    }
+  }
+
+  return {
+    ok: true,
+    row: row as unknown as AssistantMessageRow,
+    replayed: result.replayed,
+  }
+}
+
 // ── Audit log: project_events ──────────────────────────────────────────
 
 /**

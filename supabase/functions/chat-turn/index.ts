@@ -265,6 +265,7 @@ Deno.serve(async (req: Request) => {
       currentState,
       corsHeaders,
       requestId,
+      clientRequestId,
     })
   }
 

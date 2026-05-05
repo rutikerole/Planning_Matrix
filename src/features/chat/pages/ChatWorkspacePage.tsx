@@ -17,6 +17,7 @@ import { useProject } from '../hooks/useProject'
 import { useMessages } from '../hooks/useMessages'
 import { useProjectEvents } from '../hooks/useProjectEvents'
 import { useChatTurn } from '../hooks/useChatTurn'
+import { RecoveryBanner } from '../components/Chamber/RecoveryBanner'
 import { useOfflineQueueDrain } from '../hooks/useOfflineQueueDrain'
 import { useChamberProgress } from '../hooks/useChamberProgress'
 import { useLedgerSummary } from '../hooks/useLedgerSummary'
@@ -274,6 +275,18 @@ export function ChatWorkspacePage() {
           hasMessages ? (
             <>
               <Thread messages={augmentedMessages} />
+              <RecoveryBanner
+                messages={messages}
+                isStreaming={isThinking}
+                onRetry={(payload) =>
+                  chatTurn.mutate({
+                    userMessage: payload.userMessage,
+                    userMessageEn: payload.userMessageEn,
+                    userAnswer: payload.userAnswer,
+                    clientRequestId: payload.clientRequestId,
+                  })
+                }
+              />
               <BriefingCTA projectId={project.id} gate={gate} signal={completionSignal} />
             </>
           ) : (

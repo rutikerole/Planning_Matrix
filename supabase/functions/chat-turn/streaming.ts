@@ -34,11 +34,7 @@ import type { SupabaseClient } from '@supabase/supabase-js'
 import { buildSystemBlocks } from './systemPrompt.ts'
 import { MODEL, respondToolDefinition, respondToolChoice } from './toolSchema.ts'
 import { estimateCostUsd, UpstreamError, type AnthropicUsage } from './anthropic.ts'
-import {
-  insertAssistantMessage,
-  updateProjectState,
-  logTurnEvent,
-} from './persistence.ts'
+import { commitChatTurnAtomic } from './persistence.ts'
 import { applyToolInputToState } from '../../../src/lib/projectStateHelpers.ts'
 import {
   respondToolInputSchema,
@@ -59,6 +55,9 @@ interface StreamingTurnArgs {
   currentState: ProjectState
   corsHeaders: Record<string, string>
   requestId: string
+  /** Phase 8.6 (B.3) — propagated to commit_chat_turn for replay
+   *  detection. */
+  clientRequestId: string
 }
 
 /**
@@ -157,53 +156,37 @@ export function runStreamingTurn(args: StreamingTurnArgs): Response {
         }
 
         // ── Persistence pipeline ───────────────────────────────────
+        // Phase 8.6 (B.3) — single transactional commit replaces the
+        // sequential insertAssistantMessage + updateProjectState +
+        // logTurnEvent trio. A network failure between sub-steps no
+        // longer leaves stale state.
         const newState = applyToolInputToState(args.currentState, toolInput)
 
-        const assistantInsert = await insertAssistantMessage(args.supabase, {
+        const commitResult = await commitChatTurnAtomic(args.supabase, {
           projectId: args.projectId,
           toolInput,
           model: MODEL,
           usage,
           latencyMs,
-        })
-        if (!assistantInsert.ok) {
-          send({
-            type: 'error',
-            code: assistantInsert.error.code,
-            message: assistantInsert.error.message,
-            requestId: args.requestId,
-          })
-          controller.close()
-          return
-        }
-
-        const stateUpdate = await updateProjectState(
-          args.supabase,
-          args.projectId,
-          newState,
-        )
-        if (!stateUpdate.ok) {
-          send({
-            type: 'error',
-            code: stateUpdate.error.code,
-            message: stateUpdate.error.message,
-            requestId: args.requestId,
-          })
-          controller.close()
-          return
-        }
-
-        await logTurnEvent(args.supabase, {
-          projectId: args.projectId,
           beforeState: args.currentState,
-          afterState: newState,
-          reason: toolInput.completion_signal ?? null,
+          newState,
+          clientRequestId: args.clientRequestId,
         })
+        if (!commitResult.ok) {
+          send({
+            type: 'error',
+            code: commitResult.error.code,
+            message: commitResult.error.message,
+            requestId: args.requestId,
+          })
+          controller.close()
+          return
+        }
 
         // ── Final complete frame ───────────────────────────────────
         send({
           type: 'complete',
-          assistantMessage: assistantInsert.row as unknown as AssistantMessageRow,
+          assistantMessage: commitResult.row as unknown as AssistantMessageRow,
           projectState: newState,
           completionSignal: toolInput.completion_signal ?? 'continue',
           costInfo: {

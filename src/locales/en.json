@@ -1896,6 +1896,13 @@
       }
     }
   },
+  "chatRecovery": {
+    "title": "Last request didn't complete",
+    "body": "Your message was sent but the planning team didn't reply. Try again?",
+    "retry": "Try again",
+    "dismiss": "Dismiss",
+    "close": "Close"
+  },
   "legal": {
     "placeholder": {
       "back": "Back to home"

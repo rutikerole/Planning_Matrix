@@ -1896,6 +1896,13 @@
       }
     }
   },
+  "chatRecovery": {
+    "title": "Letzte Anfrage nicht abgeschlossen",
+    "body": "Die letzte Nachricht wurde gesendet, aber das Planungsteam hat nicht geantwortet. Erneut versuchen?",
+    "retry": "Erneut versuchen",
+    "dismiss": "Ausblenden",
+    "close": "Schließen"
+  },
   "legal": {
     "placeholder": {
       "back": "Zurück zur Startseite"
