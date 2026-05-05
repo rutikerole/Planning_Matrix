@@ -747,22 +747,35 @@
    * border/divider hairlines.*/
   body::before,
   .grain-overlay-fixed,
-  [data-print-target="result-page"] .fixed {
+  [data-print-target="result-page"] .fixed,
+  [data-print-target="result-workspace"] .fixed {
     display: none !important;
   }
 
-  [data-print-target="result-page"] {
+  [data-print-target="result-page"],
+  [data-print-target="result-workspace"] {
     background: white !important;
+  }
+
+  /* Phase 8 — sticky header + tabs + footer should not paint when
+   * printing the workspace. The PDF export covers the "all six tabs
+   * as one linear document" case; the printable surface is just the
+   * active tab body, clean. */
+  [data-print-target="result-workspace"] [role="tablist"],
+  [data-print-target="result-workspace"] header[data-print-target="result-header"] {
+    display: none !important;
   }
 
   /* One section per page. The cover hero gets its own; the rest
    * page-break naturally. `page-break-inside: avoid` keeps cards
    * intact across page boundaries. */
-  [data-print-target="result-page"] section {
+  [data-print-target="result-page"] section,
+  [data-print-target="result-workspace"] section {
     page-break-after: always;
     page-break-inside: avoid;
   }
-  [data-print-target="result-page"] section:last-child {
+  [data-print-target="result-page"] section:last-child,
+  [data-print-target="result-workspace"] section:last-child {
     page-break-after: auto;
   }
 

@@ -1,3 +1,4 @@
+import { AnimatePresence, m, useReducedMotion } from 'framer-motion'
 import { BlueprintSubstrate } from '@/components/shared/BlueprintSubstrate'
 import type { MessageRow, ProjectRow } from '@/types/db'
 import type { ProjectState } from '@/types/projectState'
@@ -44,6 +45,7 @@ interface Props {
 export function ResultWorkspace({ project, messages, events, source }: Props) {
   const { active, setActive, expert } = useTabState()
   const state = (project.state ?? {}) as Partial<ProjectState>
+  const reduced = useReducedMotion()
 
   return (
     <div
@@ -59,30 +61,40 @@ export function ResultWorkspace({ project, messages, events, source }: Props) {
       </div>
 
       <main className="flex-1 px-6 sm:px-8 lg:px-10 py-7 sm:py-9 max-w-[1200px] mx-auto w-full">
-        <TabPanel id={active}>
-          {active === 'overview' && (
-            <OverviewTab project={project} state={state} />
-          )}
-          {active === 'legal' && (
-            <LegalLandscapeTab project={project} state={state} />
-          )}
-          {active === 'procedure' && (
-            <ProcedureDocumentsTab project={project} state={state} />
-          )}
-          {active === 'team' && <TeamTab state={state} />}
-          {active === 'cost' && <CostTimelineTab state={state} />}
-          {active === 'suggestions' && (
-            <SuggestionsTab project={project} state={state} />
-          )}
-          {active === 'expert' && expert && (
-            <ExpertTab
-              project={project}
-              state={state}
-              events={events}
-              messages={messages}
-            />
-          )}
-        </TabPanel>
+        <AnimatePresence mode="wait" initial={false}>
+          <m.div
+            key={active}
+            initial={reduced ? false : { opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={reduced ? { opacity: 1 } : { opacity: 0 }}
+            transition={{ duration: reduced ? 0 : 0.2, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <TabPanel id={active}>
+              {active === 'overview' && (
+                <OverviewTab project={project} state={state} />
+              )}
+              {active === 'legal' && (
+                <LegalLandscapeTab project={project} state={state} />
+              )}
+              {active === 'procedure' && (
+                <ProcedureDocumentsTab project={project} state={state} />
+              )}
+              {active === 'team' && <TeamTab state={state} />}
+              {active === 'cost' && <CostTimelineTab state={state} />}
+              {active === 'suggestions' && (
+                <SuggestionsTab project={project} state={state} />
+              )}
+              {active === 'expert' && expert && (
+                <ExpertTab
+                  project={project}
+                  state={state}
+                  events={events}
+                  messages={messages}
+                />
+              )}
+            </TabPanel>
+          </m.div>
+        </AnimatePresence>
       </main>
 
       <ResultFooter
