@@ -3,6 +3,7 @@ import type { ProjectRow } from '@/types/db'
 import type { ProjectState } from '@/types/projectState'
 import {
   buildCostBreakdown,
+  detectAreaSqm,
   detectKlasse,
   detectProcedure,
   formatEurRange,
@@ -54,14 +55,19 @@ export function AtAGlance({ project, state }: Props) {
         ? String(klasseFact.value)
         : t('result.workspace.ataglance.tbd')
 
-  // Cost — reuse the existing München heuristic engine.
+  // Cost — reuse the München heuristic engine, now with area + zone +
+  // region inputs flowing through (A.4).
   const corpus = facts
     .map((f) => `${f.key} ${typeof f.value === 'string' ? f.value : ''}`)
     .join(' ')
     .toLowerCase()
   const procedureType = detectProcedure(primaryProcedure?.rationale_de ?? '')
   const klasseDetected = detectKlasse(corpus)
-  const cost = buildCostBreakdown(procedureType, klasseDetected)
+  const areaSqm = detectAreaSqm(corpus)
+  const cost = buildCostBreakdown(procedureType, klasseDetected, {
+    areaSqm,
+    bundesland: project.bundesland,
+  })
   const costLabel = facts.length > 0 ? formatEurRange(cost.total, lang) : t('result.workspace.ataglance.tbd')
 
   // Timeline — coarse range from procedure type.

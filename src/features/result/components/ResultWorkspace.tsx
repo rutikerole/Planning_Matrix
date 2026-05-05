@@ -81,7 +81,9 @@ export function ResultWorkspace({ project, messages, events, source }: Props) {
                 <ProcedureDocumentsTab project={project} state={state} />
               )}
               {active === 'team' && <TeamTab project={project} state={state} />}
-              {active === 'cost' && <CostTimelineTab state={state} />}
+              {active === 'cost' && (
+                <CostTimelineTab project={project} state={state} />
+              )}
               {active === 'suggestions' && (
                 <SuggestionsTab
                   project={project}

@@ -1807,6 +1807,7 @@
         "confidence": "Estimate confidence: ±25%",
         "totalEstimated": "Total (estimated)",
         "caveat": "Orientation values from typical Bayern HOAI fees · not binding quotes.",
+        "computedFromTooltip": "Computed from: {{inputs}}",
         "timelineEyebrow": "Procedure duration",
         "totalDuration": "Total",
         "totalDurationValue": "~ 4–6 months",

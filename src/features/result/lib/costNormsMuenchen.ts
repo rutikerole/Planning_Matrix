@@ -71,6 +71,63 @@ const KLASSE_MULT: Record<Gebaeudeklasse, number> = {
   unknown: 1.0,
 }
 
+/**
+ * Phase 8.1 (A.4) — HOAI Honorarzone factors. Zone I = simplest, V =
+ * most complex; residential is typically Zone III. Values are
+ * orientation-grade ratios off the Zone III baseline, NOT exact
+ * § 35 HOAI percentages.
+ */
+export type Honorarzone = 'I' | 'II' | 'III' | 'IV' | 'V'
+
+const ZONE_MULT: Record<Honorarzone, number> = {
+  I: 0.85,
+  II: 0.95,
+  III: 1.0,
+  IV: 1.1,
+  V: 1.2,
+}
+
+/**
+ * Phase 8.1 (A.4) — Bundesland-level rate factor. Only Bayern in v1;
+ * future Länder slot in here without changing the engine signature.
+ */
+const REGION_MULT: Record<string, number> = {
+  Bayern: 1.0,
+}
+
+const BASE_AREA_SQM = 180
+
+/**
+ * Phase 8.1 (A.4) — area-based scaling. Anrechenbare Kosten under
+ * HOAI scale roughly with built area; this is a coarse linear
+ * approximation clamped to keep extreme values reasonable. 180 m² is
+ * the default EFH baseline.
+ */
+function areaFactor(areaSqm: number | undefined): number {
+  if (!areaSqm || areaSqm <= 0) return 1.0
+  const f = areaSqm / BASE_AREA_SQM
+  return Math.max(0.5, Math.min(2.5, f))
+}
+
+export interface BuildOptions {
+  /** Floor area in m². Defaults to BASE_AREA_SQM (180) when missing. */
+  areaSqm?: number
+  /** HOAI Honorarzone (I-V). Defaults to III (typical residential). */
+  honorarzone?: Honorarzone
+  /** Bundesland identifier; defaults to 'Bayern' (the only region in v1). */
+  bundesland?: string
+}
+
+export interface CostInputs {
+  areaSqm: number
+  honorarzone: Honorarzone
+  bundesland: string
+  procedure: ProcedureType
+  klasse: Gebaeudeklasse
+  /** The composite multiplier applied off BASE — useful for tooltips. */
+  multiplier: number
+}
+
 /** Re-scales a CostBucket by a multiplier, rounded to nearest €100. */
 function scale(b: CostBucket, mult: number): CostBucket {
   return {
@@ -79,11 +136,18 @@ function scale(b: CostBucket, mult: number): CostBucket {
   }
 }
 
+/**
+ * Phase 8.1 (A.4) — extended call signature. The 2-arg form keeps
+ * existing callers working unchanged; passing `opts` enables the
+ * area + Honorarzone + region inputs the brief asks for.
+ */
 export function buildCostBreakdown(
   procedure: ProcedureType,
   klasse: Gebaeudeklasse,
+  opts: BuildOptions = {},
 ): CostBreakdown {
-  const m = PROCEDURE_MULT[procedure] * KLASSE_MULT[klasse]
+  const inputs = resolveInputs(procedure, klasse, opts)
+  const m = inputs.multiplier
   return {
     architekt: scale(BASE.architekt, m),
     tragwerksplanung: scale(BASE.tragwerksplanung, m),
@@ -92,6 +156,70 @@ export function buildCostBreakdown(
     behoerdengebuehren: scale(BASE.behoerdengebuehren, m),
     total: scale(BASE.total, m),
   }
+}
+
+/**
+ * Phase 8.1 (A.4) — surface the inputs that produced a cost. Used
+ * by the cost-row tooltip ("Computed from: 180 m² × HOAI Zone III ×
+ * Bayern factor 1.0").
+ */
+export function resolveInputs(
+  procedure: ProcedureType,
+  klasse: Gebaeudeklasse,
+  opts: BuildOptions = {},
+): CostInputs {
+  const areaSqm = opts.areaSqm ?? BASE_AREA_SQM
+  const honorarzone = opts.honorarzone ?? 'III'
+  const bundesland = opts.bundesland ?? 'Bayern'
+  const region = REGION_MULT[bundesland] ?? 1.0
+  const multiplier =
+    PROCEDURE_MULT[procedure] *
+    KLASSE_MULT[klasse] *
+    ZONE_MULT[honorarzone] *
+    areaFactor(areaSqm) *
+    region
+  return { areaSqm, honorarzone, bundesland, procedure, klasse, multiplier }
+}
+
+/**
+ * Phase 8.1 (A.4) — compact human-readable string of the inputs that
+ * produced a cost row. Locale-aware; rendered inside the tooltip.
+ */
+export function describeCostInputs(
+  inputs: CostInputs,
+  lang: 'de' | 'en',
+): string {
+  const parts: string[] = []
+  parts.push(`${inputs.areaSqm} m²`)
+  parts.push(
+    lang === 'en'
+      ? `HOAI Zone ${inputs.honorarzone}`
+      : `HOAI-Zone ${inputs.honorarzone}`,
+  )
+  parts.push(
+    lang === 'en'
+      ? `${inputs.bundesland} factor`
+      : `Bundesland-Faktor ${inputs.bundesland}`,
+  )
+  if (inputs.klasse !== 'unknown') {
+    parts.push(
+      lang === 'en' ? `building class ${inputs.klasse}` : `GK ${inputs.klasse}`,
+    )
+  }
+  return parts.join(' · ')
+}
+
+/**
+ * Phase 8.1 (A.4) — best-effort area lookup from project facts.
+ * Returns undefined when no area fact is present so callers fall
+ * back to the BASE_AREA_SQM default.
+ */
+export function detectAreaSqm(corpus: string): number | undefined {
+  const m = corpus.match(/(\d{2,4})\s*(?:m²|m2|qm|sqm|quadratmeter)/i)
+  if (!m) return undefined
+  const n = parseInt(m[1], 10)
+  if (Number.isNaN(n) || n < 20 || n > 5000) return undefined
+  return n
 }
 
 /** Format a EUR range like "€ 8.000 – 14.000" (DE) or "€8,000 – 14,000" (EN). */

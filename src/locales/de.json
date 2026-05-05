@@ -1807,6 +1807,7 @@
         "confidence": "Sicherheit der Schätzung: ±25 %",
         "totalEstimated": "Summe (geschätzt)",
         "caveat": "Orientierungswerte basierend auf typischen Bayern-Honoraren · keine verbindlichen Quoten.",
+        "computedFromTooltip": "Berechnet aus: {{inputs}}",
         "timelineEyebrow": "Verfahrensdauer",
         "totalDuration": "Gesamt",
         "totalDurationValue": "ca. 4–6 Monate",

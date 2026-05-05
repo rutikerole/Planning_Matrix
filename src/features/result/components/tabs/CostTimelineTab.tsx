@@ -1,15 +1,20 @@
 import { useTranslation } from 'react-i18next'
+import type { ProjectRow } from '@/types/db'
 import type { ProjectState } from '@/types/projectState'
 import {
   buildCostBreakdown,
+  describeCostInputs,
+  detectAreaSqm,
   detectKlasse,
   detectProcedure,
   formatEurRange,
+  resolveInputs,
   type CostBreakdown,
 } from '../../lib/costNormsMuenchen'
 import { PROCEDURE_PHASES, totalPhaseWeight } from '../../lib/composeTimeline'
 
 interface Props {
+  project: ProjectRow
   state: Partial<ProjectState>
 }
 
@@ -51,7 +56,7 @@ const COST_LINES: Array<{
  * client-side sliders; for v1 we surface the heuristic as-is and
  * expose the underlying engine via the JSON export.
  */
-export function CostTimelineTab({ state }: Props) {
+export function CostTimelineTab({ project, state }: Props) {
   const { t, i18n } = useTranslation()
   const lang = (i18n.resolvedLanguage ?? 'de') as 'de' | 'en'
 
@@ -66,7 +71,11 @@ export function CostTimelineTab({ state }: Props) {
     .join(' ')
     .toLowerCase()
   const klasse = detectKlasse(corpus)
-  const cost = buildCostBreakdown(procedure, klasse)
+  const areaSqm = detectAreaSqm(corpus)
+  const opts = { areaSqm, bundesland: project.bundesland }
+  const cost = buildCostBreakdown(procedure, klasse, opts)
+  const inputs = resolveInputs(procedure, klasse, opts)
+  const inputsLabel = describeCostInputs(inputs, lang)
 
   const totalWeight = totalPhaseWeight()
   const maxBar = Math.max(...COST_LINES.map((l) => cost[l.key].max), 1)
@@ -95,6 +104,9 @@ export function CostTimelineTab({ state }: Props) {
               <div
                 key={line.key}
                 className="grid grid-cols-1 sm:grid-cols-[170px_1fr_auto] sm:items-center gap-1.5 sm:gap-3 text-[12.5px]"
+                title={t('result.workspace.cost.computedFromTooltip', {
+                  inputs: inputsLabel,
+                })}
               >
                 <span className="text-ink/85 leading-snug">
                   {lang === 'en' ? line.labelEn : line.labelDe}
@@ -129,6 +141,8 @@ export function CostTimelineTab({ state }: Props) {
           </div>
         </div>
         <p className="text-[11px] italic text-clay leading-relaxed border-l border-clay/35 pl-3">
+          {t('result.workspace.cost.computedFromTooltip', { inputs: inputsLabel })}
+          <br />
           {t('result.workspace.cost.caveat')}
         </p>
       </section>
