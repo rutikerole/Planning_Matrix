@@ -1716,6 +1716,11 @@
       "confidence": {
         "tooltip": "Computed from {{factWeight}}% fact-quality mix ({{factScore}}%) + {{sectionWeight}}% section completeness ({{sectionScore}}%) = {{total}}%"
       },
+      "doNext": {
+        "fromRecommendations": "from your consultation",
+        "fromOpenItems": "follow-up needed",
+        "fromBaseline": "standard for projects like yours"
+      },
       "footer": {
         "back": "↩ Back to consultation",
         "sendToArchitect": "Send to architect",

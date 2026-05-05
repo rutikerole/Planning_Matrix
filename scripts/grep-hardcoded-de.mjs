@@ -54,6 +54,9 @@ const ALLOWLIST = [
   // Phase 8.1 — open-items composer renders area names in DE/EN
   // inline (canonical Planungsrecht / Bauordnungsrecht / Sonstige).
   'src/features/result/lib/computeOpenItems.ts',
+  // Phase 8.1 — Do-next composer carries bilingual baseline steps
+  // for each intent (Bebauungsplan / GEG / BayDSchG language).
+  'src/features/result/lib/composeDoNext.ts',
   // Phase 8 — heuristic legal-domain composer. Bilingual citation
   // copy (Planungsrecht / Bauordnungsrecht / etc.); same pattern.
   'src/features/result/lib/composeLegalDomains.ts',

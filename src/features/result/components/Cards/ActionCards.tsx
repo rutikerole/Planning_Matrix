@@ -1,9 +1,10 @@
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import type { ProjectRow } from '@/types/db'
-import type { ProjectState, Recommendation } from '@/types/projectState'
+import type { ProjectState } from '@/types/projectState'
 import { aggregateQualifiers } from '../../lib/qualifierAggregate'
 import { computeOpenItems } from '../../lib/computeOpenItems'
+import { composeDoNext, type DoNextItem } from '../../lib/composeDoNext'
 import { DataQualityDonut } from './DataQualityDonut'
 
 interface Props {
@@ -21,10 +22,7 @@ export function ActionCards({ project, state }: Props) {
   const { t, i18n } = useTranslation()
   const lang = (i18n.resolvedLanguage ?? 'de') as 'de' | 'en'
 
-  const recs = (state.recommendations ?? [])
-    .slice()
-    .sort((a, b) => a.rank - b.rank)
-    .slice(0, 3)
+  const doNext = composeDoNext({ project, state, lang, limit: 3 })
 
   const open = computeOpenItems(state, lang, 4)
   const aggregate = aggregateQualifiers(state)
@@ -33,14 +31,14 @@ export function ActionCards({ project, state }: Props) {
     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
       <ActionCard
         eyebrow={t('result.workspace.actions.doNextEyebrow')}
-        countLabel={t('result.workspace.actions.doNextCount', { count: recs.length })}
+        countLabel={t('result.workspace.actions.doNextCount', { count: doNext.length })}
       >
-        {recs.length === 0 ? (
+        {doNext.length === 0 ? (
           <EmptyHint projectId={project.id} />
         ) : (
           <ol className="flex flex-col gap-2.5">
-            {recs.map((rec, idx) => (
-              <DoNextRow key={rec.id} rec={rec} idx={idx + 1} lang={lang} />
+            {doNext.map((item, idx) => (
+              <DoNextRow key={item.id} item={item} idx={idx + 1} />
             ))}
           </ol>
         )}
@@ -118,18 +116,15 @@ function ActionCard({
   )
 }
 
-function DoNextRow({
-  rec,
-  idx,
-  lang,
-}: {
-  rec: Recommendation
-  idx: number
-  lang: 'de' | 'en'
-}) {
+function DoNextRow({ item, idx }: { item: DoNextItem; idx: number }) {
+  const { t } = useTranslation()
   const numerals = ['i.', 'ii.', 'iii.']
-  const title = lang === 'en' ? rec.title_en : rec.title_de
-  const detail = lang === 'en' ? rec.detail_en : rec.detail_de
+  const sourceLabelKey =
+    item.source === 'recommendation'
+      ? 'result.workspace.doNext.fromRecommendations'
+      : item.source === 'openItem'
+        ? 'result.workspace.doNext.fromOpenItems'
+        : 'result.workspace.doNext.fromBaseline'
   return (
     <li className="grid grid-cols-[18px_1fr] gap-x-2 items-baseline">
       <span className="font-serif italic text-[11px] text-clay/85 tabular-nums">
@@ -137,10 +132,13 @@ function DoNextRow({
       </span>
       <div className="flex flex-col gap-0.5 min-w-0">
         <p className="text-[12.5px] font-medium text-ink leading-snug">
-          {title}
+          {item.title}
         </p>
-        <p className="text-[10.5px] text-clay leading-snug truncate" title={detail}>
-          {truncate(detail, 80)}
+        <p className="text-[10.5px] text-clay leading-snug" title={item.detail}>
+          {truncate(item.detail, 80)}
+        </p>
+        <p className="text-[9.5px] italic font-serif text-clay/65 leading-none mt-0.5">
+          {t(sourceLabelKey)}
         </p>
       </div>
     </li>

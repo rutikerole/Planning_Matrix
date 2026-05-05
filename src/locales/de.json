@@ -1716,6 +1716,11 @@
       "confidence": {
         "tooltip": "Berechnet aus {{factWeight}} % Datenqualität ({{factScore}} %) + {{sectionWeight}} % Abschnitt-Vollständigkeit ({{sectionScore}} %) = {{total}} %"
       },
+      "doNext": {
+        "fromRecommendations": "aus Ihrer Beratung",
+        "fromOpenItems": "Verifizierung erforderlich",
+        "fromBaseline": "Standard für vergleichbare Vorhaben"
+      },
       "footer": {
         "back": "↩ Zurück zur Beratung",
         "sendToArchitect": "An Architekt:in senden",
