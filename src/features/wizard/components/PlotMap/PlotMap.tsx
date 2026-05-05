@@ -33,7 +33,11 @@ import type { BplanLookupResult } from '@/types/bplan'
 import './styles.css'
 
 const MUENCHEN_CENTER: [number, number] = [48.1374, 11.5755]
-const DEFAULT_ZOOM = 11
+// Phase 7.10f — DEFAULT_ZOOM bumped 11 → 13 so the always-on map
+// (rendered as soon as Yes is selected, before any address is
+// typed) frames central München at a useful inspection scale
+// instead of an empty regional zoom.
+const DEFAULT_ZOOM = 13
 const RESOLVED_ZOOM = 17
 const GEOCODE_DEBOUNCE_MS = 250
 const BOUNDS_NOTICE_MS = 3000
@@ -72,6 +76,35 @@ function FlyToOnResolve({ flyTarget }: { flyTarget: GeocodeResult | null }) {
 interface ClickHandlerProps {
   onPick: (lat: number, lng: number) => void
   onOutOfBounds: () => void
+}
+
+// Phase 7.10f — Bug 1 fix: when the Leaflet container is mounted
+// inside a CSS grid whose height is determined by the row's other
+// cell (left column content), the container's measured height at
+// initial paint can be 0, which makes Leaflet skip the first round
+// of tile requests. Once the row settles, Leaflet does NOT auto-
+// recalc unless `map.invalidateSize()` runs.
+//
+// This guard wires a ResizeObserver on the map container plus a
+// belt-and-braces invalidate on the next animation frame after
+// mount. It's a pure side-effect child — renders no DOM.
+function MapInvalidationGuard() {
+  const map = useMap()
+  useEffect(() => {
+    const container = map.getContainer()
+    // First-paint kick — gives the grid one frame to lay out
+    // before we ask Leaflet to remeasure.
+    const raf = requestAnimationFrame(() => map.invalidateSize())
+    // Long-term safety — viewport resizes, lg breakpoint cross,
+    // grid-row reflow when left column content grows/shrinks.
+    const observer = new ResizeObserver(() => map.invalidateSize())
+    observer.observe(container)
+    return () => {
+      cancelAnimationFrame(raf)
+      observer.disconnect()
+    }
+  }, [map])
+  return null
 }
 
 // Internal: registers a Leaflet `click` event (already filters
@@ -261,30 +294,36 @@ export function PlotMap({
   const scanTrigger = address.length
 
   return (
-    <div className="flex flex-col">
-      <div className="pm-plotmap-container relative h-full min-h-[460px]">
-        {isGeocoding ? <div className="pm-plotmap-progress" aria-hidden="true" /> : null}
-        <MapContainer
-          center={initialCenter}
-          zoom={initialZoom}
-          scrollWheelZoom={false}
-          zoomControl={false}
-          style={{ height: '100%', width: '100%' }}
-          attributionControl={true}
-        >
-          <MapTileLayer />
-          <BplanWmsLayer />
-          {/* Phase 7.10e — real Leaflet scale that updates with
-              zoom (replaces the previous static "M 1:500 / 25 m"
-              chip from MapCorners). */}
-          <ScaleControl position="bottomleft" imperial={false} />
-          {/* Zoom buttons in bottom-right; attribution is bottom-right
-              by Leaflet default and styled in styles.css. */}
-          <ZoomControl position="bottomright" />
-          <MapClickHandler onPick={handlePick} onOutOfBounds={handleOutOfBounds} />
-          {coords ? <Marker position={[coords.lat, coords.lng]} icon={pin} /> : null}
-          <FlyToOnResolve flyTarget={flyTarget} />
-        </MapContainer>
+    // Phase 7.10f — dropped the redundant outer `<div className="flex
+    // flex-col">` wrapper. Its `height: auto` was breaking the
+    // chain between the wizard's grid-row height and the
+    // MapContainer's `height: 100%`, leaving Leaflet at 0×0 on
+    // first paint. The pm-plotmap-container is now a direct child
+    // of the wizard's height-defining wrapper.
+    <div className="pm-plotmap-container relative h-full min-h-[460px]">
+      {isGeocoding ? <div className="pm-plotmap-progress" aria-hidden="true" /> : null}
+      <MapContainer
+        center={initialCenter}
+        zoom={initialZoom}
+        scrollWheelZoom={false}
+        zoomControl={false}
+        style={{ height: '100%', width: '100%' }}
+        attributionControl={true}
+      >
+        <MapTileLayer />
+        <BplanWmsLayer />
+        {/* Phase 7.10e — real Leaflet scale that updates with
+            zoom (replaces the previous static "M 1:500 / 25 m"
+            chip from MapCorners). */}
+        <ScaleControl position="bottomleft" imperial={false} />
+        {/* Zoom buttons in bottom-right; attribution is bottom-right
+            by Leaflet default and styled in styles.css. */}
+        <ZoomControl position="bottomright" />
+        <MapClickHandler onPick={handlePick} onOutOfBounds={handleOutOfBounds} />
+        {coords ? <Marker position={[coords.lat, coords.lng]} icon={pin} /> : null}
+        <FlyToOnResolve flyTarget={flyTarget} />
+        <MapInvalidationGuard />
+      </MapContainer>
         {/* Phase 7.10e — sweep animation on address change kept; the
             static SVG illustration overlay (PlotMapOverlay) and the
             hardcoded FLST/scale chips (MapCorners) were prototype
@@ -323,7 +362,6 @@ export function PlotMap({
             {t('wizard.q2.mapReverseLoading')}
           </div>
         ) : null}
-      </div>
     </div>
   )
 }

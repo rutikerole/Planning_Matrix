@@ -9,7 +9,6 @@ import { BPlanCheck } from './BPlanCheck'
 import { PlotSidebar } from './PlotSidebar'
 import { usePlotProfile } from '../hooks/usePlotProfile'
 import { suggestProjectName } from '@/features/dashboard/lib/projectName'
-import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog'
 import type { BplanLookupResult } from '@/types/bplan'
 
 const PlotMap = lazy(() =>
@@ -33,16 +32,27 @@ interface Props {
 
 /**
  * v3 Q2 — plot question. 30/70 grid on lg+ with the question lane
- * on the left and the map on the right. The Location profile is
- * not drawn inline — a small "Location profile" button in the
- * left column opens it in a Dialog on demand. Below lg the same
- * button + dialog pattern applies, so the map is never visually
- * overlaid. Phase 7.10e — map height tightened to lg:h-[680px] to
- * fit typical viewports without dead space, and the prototype's
- * static SVG illustration overlay + hardcoded FLST/scale chips
- * were removed so real CARTO Voyager tiles + Stadt München's WMS
- * B-Plan zones read as the actual map. Out-of-coverage addresses
- * surface as a soft note rather than a hard error.
+ * on the left and the map on the right; single column below lg.
+ *
+ * Phase 7.10f layout contract:
+ *   • Map renders as soon as Yes is selected (no address required).
+ *     With no coords yet it sits at München zoom 13, no pin, no
+ *     flyTo. Once address ≥ 6 chars resolves, pin + WMS overlay +
+ *     flyTo zoom 17 kick in.
+ *   • Location profile floats absolutely top-right inside the map
+ *     column on lg+ (top:46 right:46 w-248 z-450), stacks below the
+ *     map on mobile. Renders only once the address is geocodable
+ *     (the panel has nothing to show otherwise).
+ *   • Map column height clamps to [460, 720] via grid-row minmax
+ *     when Yes is selected, so left and right columns share the
+ *     same row height and there is no dead paper at the bottom of
+ *     either side.
+ *   • Map fills its column via h-full; the height chain reaches
+ *     Leaflet through the grid row, and a ResizeObserver inside
+ *     PlotMap calls invalidateSize() so tiles always render.
+ *
+ * Out-of-coverage (non-München) addresses surface as a soft note
+ * rather than a hard error.
  */
 export function QuestionPlot({ onSubmit, submitError }: Props) {
   const { t } = useTranslation()
@@ -66,10 +76,6 @@ export function QuestionPlot({ onSubmit, submitError }: Props) {
   // persisted as a CLIENT/DECIDED fact so the system prompt can adjust
   // its honesty disclaimers downstream.
   const [outsideMunichConfirmed, setOutsideMunichConfirmed] = useState(false)
-  // Phase 7.10d — the Location profile is opened on demand via a
-  // button in the left column. Local-only state; no persistence
-  // needed (it's a transient inspection panel).
-  const [profileOpen, setProfileOpen] = useState(false)
 
   useEffect(() => {
     if (hasPlot === true && !plotAddress) {
@@ -132,20 +138,36 @@ export function QuestionPlot({ onSubmit, submitError }: Props) {
     }
   }
 
-  // Phase 7.10 — gate the right-column map render on the same
-  // condition the previous full-width layout used: an active "yes"
-  // path with at least 6 chars typed. Below that threshold the right
-  // column collapses (mobile) or sits empty (lg+), preserving the
-  // existing "type something first" flow.
-  const showMap = hasPlot === true && plotAddress.trim().length >= 6
+  // Phase 7.10f — Bug 2 fix: the map renders as soon as Yes is
+  // selected, before any address is typed. With no coords yet it
+  // sits at München zoom 13 with no pin, so the user can drag /
+  // zoom / click-to-select even before typing.
+  const showMap = hasPlot === true
+  // Sub-gate for things that only make sense once an address is
+  // typed and geocodable: the BPlanCheck pill (driven by the
+  // Edge Function lookup against resolved coords), the mapHint
+  // ("click on the map to inspect..."), and the floating Location
+  // profile panel (whose data is derived from the address text).
+  const hasGeocodableAddress = plotAddress.trim().length >= 6
+  const showAddressDerived = hasPlot === true && hasGeocodableAddress
 
   return (
     <div className="flex flex-col gap-7">
-      {/* Phase 7.10 — 30/70 grid on lg+, single column below.
-        * The grid wraps the question lane (left) and the map +
-        * floating profile (right); form-level notices and the
-        * back/submit row sit below the grid in page flow. */}
-      <div className="grid grid-cols-1 gap-8 lg:grid-cols-[30%_70%] lg:gap-0">
+      {/* Phase 7.10f — 30/70 grid on lg+, single column below.
+        * When Yes is selected, the grid row clamps to [460, 720]
+        * so both columns share the same height — left col has no
+        * dead paper at the bottom and the map column has a
+        * concrete numeric height for Leaflet to render against
+        * (this is what fixed the Bug 1 empty-tiles regression).
+        * When Yes is NOT selected the row auto-sizes to left col
+        * content so the empty right column doesn't push 460px of
+        * blank paper into view. */}
+      <div
+        className={cn(
+          'grid grid-cols-1 gap-8 lg:grid-cols-[30%_70%] lg:gap-0',
+          hasPlot === true && 'lg:grid-rows-[minmax(460px,720px)]',
+        )}
+      >
         {/* LEFT COLUMN — question lane.
           * Generous top/bottom padding plus a calmer right gutter
           * so the H1 wraps word-by-word against the divider. Left
@@ -245,31 +267,18 @@ export function QuestionPlot({ onSubmit, submitError }: Props) {
                     </p>
                   </div>
 
-                  {showMap ? (
+                  {/* BPlanCheck pill is driven by the resolved-
+                    * coords B-Plan lookup, so it only renders once
+                    * the address is geocodable. */}
+                  {showAddressDerived ? (
                     <BPlanCheck result={bplanResult} isLoading={bplanLoading} />
                   ) : null}
 
-                  {/* Phase 7.10d — opens the Location profile in a
-                    * dialog instead of rendering it inline beside or
-                    * over the map. Mirrors the calm chip style used
-                    * by BPlanCheck so the two reveal-buttons read as
-                    * a pair under the address inputs. */}
-                  {showMap ? (
-                    <button
-                      type="button"
-                      onClick={() => setProfileOpen(true)}
-                      className="group inline-flex items-center justify-between gap-3 border border-pm-hair-strong bg-pm-paper px-3 py-2 text-left text-pm-ink-soft transition-colors duration-soft hover:bg-pm-paper-tint focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pm-clay focus-visible:ring-offset-2 focus-visible:ring-offset-pm-paper"
-                    >
-                      <span className="font-serif text-[13px] italic leading-snug">
-                        {t('wizard.q2.plot.head')}
-                      </span>
-                      <span aria-hidden className="font-sans text-[11px] tracking-tight text-pm-clay/70">
-                        →
-                      </span>
-                    </button>
-                  ) : null}
-
-                  {showMap ? (
+                  {/* Phase 7.10f — same gate as BPlanCheck. The
+                    * mapHint guides the user to click an
+                    * already-rendered pin location, which only
+                    * applies once a pin exists. */}
+                  {showAddressDerived ? (
                     <p className="font-serif text-[13px] italic leading-relaxed text-pm-ink-mid">
                       {t('wizard.q2.mapHint')}
                     </p>
@@ -280,13 +289,15 @@ export function QuestionPlot({ onSubmit, submitError }: Props) {
           </AnimatePresence>
         </div>
 
-        {/* RIGHT COLUMN — map lane (lg+ adds vertical hairline divider).
-          * Phase 7.10d — the map gets the full right column; the
-          * Location profile lives in a dialog opened from the left
-          * column, so the map surface is never overlaid by a card. */}
+        {/* RIGHT COLUMN — map lane (lg+ adds vertical hairline
+          * divider). On lg+ this cell is stretched to the
+          * grid-row height (clamped to [460, 720] when Yes is
+          * selected, see grid-rows-[minmax(...)] above). On mobile
+          * the inner wrapper has an explicit 460px height because
+          * there's no row stretch in the single-column layout. */}
         <div className="lg:border-l lg:border-pm-hair lg:p-6">
           {showMap ? (
-            <div className="h-[460px] lg:h-[680px]">
+            <div className="relative h-[460px] lg:h-full">
               <Suspense
                 fallback={
                   <div className="pm-plotmap-empty">Karte wird geladen…</div>
@@ -299,6 +310,17 @@ export function QuestionPlot({ onSubmit, submitError }: Props) {
                   onBplanLoadingChange={setBplanLoading}
                 />
               </Suspense>
+              {/* Floating Location profile — restored from the
+                * Phase 7.10 prototype. Only renders once the
+                * address is geocodable (panel has nothing to show
+                * otherwise). On lg+ it floats absolutely inside
+                * the map column at top:46 right:46, w-248. On
+                * mobile it stacks below the map in flow. */}
+              {showAddressDerived ? (
+                <div className="mt-6 lg:absolute lg:right-[46px] lg:top-[46px] lg:z-[450] lg:mt-0 lg:w-[248px]">
+                  <PlotSidebar profile={profile} suggestedName={suggestedName} />
+                </div>
+              ) : null}
             </div>
           ) : null}
         </div>
@@ -404,19 +426,6 @@ export function QuestionPlot({ onSubmit, submitError }: Props) {
           </button>
         </div>
       </div>
-
-      {/* Phase 7.10d — on-demand Location profile. PlotSidebar
-        * already renders its own visible "Location profile" header,
-        * so the DialogTitle here is sr-only just to satisfy the
-        * Radix accessibility contract. */}
-      <Dialog open={profileOpen} onOpenChange={setProfileOpen}>
-        <DialogContent className="max-w-md p-0">
-          <DialogTitle className="sr-only">
-            {t('wizard.q2.plot.head')}
-          </DialogTitle>
-          <PlotSidebar profile={profile} suggestedName={suggestedName} />
-        </DialogContent>
-      </Dialog>
     </div>
   )
 }
