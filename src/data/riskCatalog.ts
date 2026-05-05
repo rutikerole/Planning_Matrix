@@ -168,4 +168,118 @@ export const RISK_CATALOG: RiskCatalogEntry[] = [
       'Plan realistic buffer time; complete documents speed up the review.',
     verifyBeforePublicLaunch: true,
   },
+
+  // ── Phase 8.5 (D.3) — München-specific risks ──────────────────────────
+  {
+    id: 'risk-schwabing-ensemble',
+    titleDe: 'Schwabing-Ensemble-Schutz',
+    titleEn: 'Schwabing ensemble protection',
+    baseLikelihood: 1,
+    impact: 3,
+    evidencePattern: /ensemble|schwabing|maxvorstadt|lehel/i,
+    bumpedLikelihood: 3,
+    unriskDe:
+      'BLfD-Anfrage zum Ensemble-Schutz absetzen, bevor LP 3 startet — die Antwort braucht 4–6 Wochen.',
+    unriskEn:
+      'File a BLfD enquiry on ensemble protection before LP 3 starts — the response takes 4–6 weeks.',
+    verifyBeforePublicLaunch: true,
+  },
+  {
+    id: 'risk-baumschutz-fussabdruck',
+    titleDe: 'Baumschutz im Footprint',
+    titleEn: 'Tree protection inside the footprint',
+    baseLikelihood: 2,
+    impact: 2,
+    evidencePattern: /baum|baumschutz|baumkartier|baumgutachten/i,
+    bumpedLikelihood: 3,
+    unriskDe:
+      'Baumkartierung vor Lageplan-Erstellung; Schutzradius in den Antrag eintragen, ggf. Ausnahmegenehmigung beantragen.',
+    unriskEn:
+      'Tree survey before site-plan drafting; record protection radii in the application; apply for exemptions if needed.',
+    verifyBeforePublicLaunch: true,
+  },
+  {
+    id: 'risk-stps926-novellation',
+    titleDe: 'StPlS-926-Auslegungs­änderungen',
+    titleEn: 'StPlS 926 interpretation changes',
+    baseLikelihood: 1,
+    impact: 2,
+    evidencePattern: /stellplatz|stpls|926|gbs|u-bahn|öpnv|oepnv/i,
+    bumpedLikelihood: 3,
+    unriskDe:
+      'Stellplatznachweis nach StPlS 926 (Stand Oktober 2025) erstellen; ÖPNV-Reduktion explizit dokumentieren.',
+    unriskEn:
+      "Prepare a parking proof per StPlS 926 (October 2025 edition); document any public-transit reduction explicitly.",
+    verifyBeforePublicLaunch: true,
+  },
+  {
+    id: 'risk-bauamt-sommer-rotation',
+    titleDe: 'Bauamt-Sommerrotation München',
+    titleEn: "Munich Bauamt summer rotation",
+    baseLikelihood: 2,
+    impact: 1,
+    unriskDe:
+      'Einreichung außerhalb der Sommer-Reduktion (15.07–01.09) planen; sonst Pufferzeiten verdoppeln.',
+    unriskEn:
+      'Schedule submission outside the summer slowdown (15 Jul – 1 Sep); otherwise double the buffer time.',
+    verifyBeforePublicLaunch: true,
+  },
+  {
+    id: 'risk-pv-pflicht-vollzug',
+    titleDe: 'PV-Pflicht-Vollzugsrisiko',
+    titleEn: 'PV requirement enforcement risk',
+    baseLikelihood: 2,
+    impact: 2,
+    evidencePattern: /pv|photovoltaik|art\.?\s*44a|44 a/i,
+    bumpedLikelihood: 3,
+    unriskDe:
+      'PV-Konzept im Antrag dokumentieren — Anlagen­leistung, Montagekonzept, Anschlussart. Späte Korrekturen kosten Zeit.',
+    unriskEn:
+      'Document the PV concept in the application — capacity, mounting, grid connection. Late corrections cost time.',
+    intents: ['neubau_einfamilienhaus', 'neubau_mehrfamilienhaus'],
+    verifyBeforePublicLaunch: true,
+  },
+  {
+    id: 'risk-maxvorstadt-dichte',
+    titleDe: 'Maxvorstadt-Nachbar­widerspruch',
+    titleEn: 'Maxvorstadt neighbour objection',
+    baseLikelihood: 2,
+    impact: 2,
+    evidencePattern: /§\s*34|innenbereich|maxvorstadt|lehel|schwabing-west/i,
+    bumpedLikelihood: 3,
+    unriskDe:
+      'Nachbarn vor Antragstellung informieren (Vorgespräch + Unterschriften). § 34 BauGB triggert dichte Stadtteile zuverlässig zu Widerspruchsverfahren.',
+    unriskEn:
+      'Brief neighbours before filing (pre-meeting + signatures). § 34 BauGB reliably triggers objection proceedings in dense districts.',
+    bundeslaender: ['Bayern'],
+    verifyBeforePublicLaunch: true,
+  },
+  {
+    id: 'risk-geg-nachweis-fehlend',
+    titleDe: 'GEG-Nachweis fehlt bei Einreichung',
+    titleEn: 'Missing GEG certificate at submission',
+    baseLikelihood: 2,
+    impact: 2,
+    evidencePattern: /geg|energieausweis|w(ä|ae)rmeschutz/i,
+    bumpedLikelihood: 3,
+    unriskDe:
+      'Energieberater:in vor LP 4 binden; Wärmeschutznachweis ist Pflicht­bestandteil — Bauamt verweigert die Antragsannahme ohne.',
+    unriskEn:
+      'Engage the energy consultant before LP 4; thermal-protection certificate is required — the Bauamt rejects incomplete applications.',
+    verifyBeforePublicLaunch: true,
+  },
+  {
+    id: 'risk-vorbescheid-versaeumt',
+    titleDe: 'Vorbescheid versäumt',
+    titleEn: 'Pre-decision missed',
+    baseLikelihood: 1,
+    impact: 3,
+    evidencePattern: /§\s*34|innenbereich|nicht.{0,8}qualifiziert|grenzwert/i,
+    bumpedLikelihood: 2,
+    unriskDe:
+      'Bauvoranfrage nach BauGB § 34(1) vor LP 3 stellen — Klärung des Einfügungsgebots verhindert Komplettablehnung später.',
+    unriskEn:
+      "Request a pre-decision per BauGB § 34(1) before LP 3 — clarifying the Einfügungsgebot prevents full rejection later.",
+    verifyBeforePublicLaunch: true,
+  },
 ]
