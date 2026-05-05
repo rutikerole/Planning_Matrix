@@ -1726,6 +1726,14 @@
         "noInterpretation": "Interpretation follows as the consultation progresses.",
         "readOfficial": "Open the official text"
       },
+      "risks": {
+        "eyebrow": "Risk register",
+        "count_one": "{{count}} flag",
+        "count_other": "{{count}} flags",
+        "unrisksThisPrefix": "What un-risks this:",
+        "showMore": "+ {{count}} more →",
+        "empty": "No specific risks flagged."
+      },
       "sendToArchitect": {
         "modalTitle": "Send briefing to your architect",
         "intro": "Send the full briefing by email with a 30-day read-only link, or just copy the link.",

@@ -6,6 +6,7 @@ import { aggregateQualifiers } from '../../lib/qualifierAggregate'
 import { computeOpenItems } from '../../lib/computeOpenItems'
 import { composeDoNext, type DoNextItem } from '../../lib/composeDoNext'
 import { DataQualityDonut } from './DataQualityDonut'
+import { RiskRegisterCard } from './RiskRegisterCard'
 
 interface Props {
   project: ProjectRow
@@ -28,7 +29,7 @@ export function ActionCards({ project, state }: Props) {
   const aggregate = aggregateQualifiers(state)
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
       <ActionCard
         eyebrow={t('result.workspace.actions.doNextEyebrow')}
         countLabel={t('result.workspace.actions.doNextCount', { count: doNext.length })}
@@ -88,6 +89,8 @@ export function ActionCards({ project, state }: Props) {
       >
         <DataQualityDonut state={state} />
       </ActionCard>
+
+      <RiskRegisterCard project={project} state={state} />
     </div>
   )
 }

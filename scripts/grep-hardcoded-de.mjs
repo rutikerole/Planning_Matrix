@@ -63,6 +63,8 @@ const ALLOWLIST = [
   // Phase 8.2 — bilingual cost-row + timeline-phase rationales.
   'src/data/costRationales.ts',
   'src/data/timelineAnnotations.ts',
+  // Phase 8.3 — risk catalog carries bilingual title + un-risk notes.
+  'src/data/riskCatalog.ts',
   // Phase 8 — heuristic legal-domain composer. Bilingual citation
   // copy (Planungsrecht / Bauordnungsrecht / etc.); same pattern.
   'src/features/result/lib/composeLegalDomains.ts',
