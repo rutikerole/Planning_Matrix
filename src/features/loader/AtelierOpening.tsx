@@ -63,14 +63,20 @@ const SEAT_GEOM: Record<
   SeatId,
   { angle: number; x: number; y: number; letter: string; labelPlacement: LabelPlacement }
 > = (() => {
+  // Phase 8.7.2 hotfix — angles locked per the visual repair brief.
+  // Previous values 165° / 195° gave only 30° of arc between
+  // SONSTIGE and VERFAHREN at the bottom of the ellipse, where y is
+  // identical for both — seats overlapped and labels collided into
+  // "PROCEDURE OTHER REGULATIONS." 155° / 205° = 50° arc puts edges
+  // ~141 px apart at this geometry, breathing room for labels.
   const angles: Record<SeatId, number> = {
     moderator: 0,
-    planungsrecht: 60,
-    bauordnungsrecht: 120,
-    sonstige: 165,
-    verfahren: 195,
-    beteiligte: 240,
-    synthese: 300,
+    planungsrecht: 51,
+    bauordnungsrecht: 129,
+    sonstige: 155,
+    verfahren: 205,
+    beteiligte: 231,
+    synthese: 309,
   }
   const letters: Record<SeatId, string> = {
     moderator: 'M',
@@ -220,14 +226,17 @@ export function AtelierOpening({
         duration: reduced ? 0 : phase === 'fading' ? 0.3 : 0.32,
         ease: [0.16, 1, 0.3, 1],
       }}
-      className="relative isolate flex h-dvh w-full flex-col items-center justify-between overflow-hidden bg-pm-paper px-6 py-8 lg:py-10"
+      className="relative isolate flex h-dvh w-full flex-col items-center overflow-hidden bg-pm-paper px-6 pb-[8vh] pt-[14vh]"
       role="status"
       aria-live="polite"
       aria-busy={phase === 'animating'}
     >
       <BlueprintSubstrate lensRadius={220} breathing={false} driftPx={0} />
 
-      {/* Top zone — eyebrow + headline + sub-line */}
+      {/* Top zone — eyebrow + headline + sub-line.
+          Phase 8.7.2 hotfix — pulled the page top padding down to
+          14vh and the gap to the SVG to clamp(80, 12vh, 120)px so
+          the table center sits at ~58 % of viewport (was ~75 %). */}
       <div className="relative z-10 flex w-full max-w-[680px] flex-col items-center gap-3 text-center">
         <m.p
           initial={reduced ? false : { opacity: 0 }}
@@ -256,7 +265,10 @@ export function AtelierOpening({
       </div>
 
       {/* Middle zone — SVG roundtable */}
-      <div className="relative z-10 flex w-full max-w-[680px] items-center justify-center">
+      <div
+        className="relative z-10 flex w-full max-w-[640px] items-center justify-center"
+        style={{ marginTop: 'clamp(60px, 11vh, 120px)' }}
+      >
         <svg
           viewBox={`0 0 ${VB_W} ${VB_H}`}
           width="100%"
@@ -265,44 +277,56 @@ export function AtelierOpening({
           role="img"
           aria-label={t('wizard.atelier.headline')}
         >
-          {/* Outer dashed ellipse — table edge */}
+          {/* Outer dashed ellipse — table edge.
+              Phase 8.7.2 hotfix: Tailwind alpha modifiers don't
+              attach to hex CSS variables (pm-ink resolves to a
+              hex literal, not three HSL channels), so the
+              `/<alpha>` form silently dropped. Hardcoded the HSL
+              with explicit alpha here to bypass the Tailwind
+              color pipeline entirely. */}
           <ellipse
             cx={CX}
             cy={CY}
             rx={RX}
             ry={RY}
             fill="none"
-            stroke="currentColor"
+            stroke="hsl(220 16% 11% / 0.15)"
             strokeWidth={0.5}
-            strokeDasharray="4 6"
-            className="text-pm-ink/30"
+            strokeDasharray="3 3"
           />
-          {/* Inner faded ellipse — table fill */}
+          {/* Inner faded ellipse — table fill. A whisper of warm
+              clay tint (4 % alpha) over the paper substrate; the
+              grid pattern stays visible through it. */}
           <ellipse
             cx={CX}
             cy={CY}
             rx={RX - 18}
             ry={RY - 12}
-            className="fill-pm-ink/[0.025]"
+            fill="hsl(25 30% 38% / 0.04)"
+            stroke="hsl(220 16% 11% / 0.08)"
+            strokeWidth={0.5}
           />
 
-          {/* Center pulsing ring (paused on reduced-motion) */}
+          {/* Center pulsing ring (paused on reduced-motion).
+              Phase 8.7.2 hotfix scales the ring to match the
+              larger 6 px center dot — was r 14 → 28, now r 18 → 36. */}
           {!reduced ? (
             <m.circle
               cx={CX}
               cy={CY}
-              r={14}
+              r={18}
               fill="none"
-              stroke="currentColor"
+              stroke="hsl(25 30% 38%)"
               strokeWidth={0.5}
-              className="text-pm-clay"
-              initial={{ r: 14, opacity: 0.6 }}
-              animate={{ r: 28, opacity: 0 }}
+              initial={{ r: 18, opacity: 0.6 }}
+              animate={{ r: 36, opacity: 0 }}
               transition={{ duration: 2.4, ease: 'easeOut', repeat: Infinity }}
             />
           ) : null}
-          {/* Center dot — always visible */}
-          <circle cx={CX} cy={CY} r={3} className="fill-pm-clay" />
+          {/* Center dot — always visible. Phase 8.7.2 hotfix
+              bumped r 3 → 6 (was buried under the broken black
+              fill; now visible against the warm whisper). */}
+          <circle cx={CX} cy={CY} r={6} fill="hsl(25 30% 38%)" />
 
           {/* Seven seats */}
           {SEAT_ORDER.map((id) => {
@@ -325,8 +349,11 @@ export function AtelierOpening({
         </svg>
       </div>
 
-      {/* Bottom zone — caption + progress hairline */}
-      <div className="relative z-10 flex w-full max-w-[680px] flex-col items-center gap-3">
+      {/* Bottom zone — caption + progress hairline.
+          mt-auto pushes this to the bottom of the lane now that
+          the outer flex no longer uses justify-between (Phase 8.7.2
+          hotfix vertical-rhythm rewrite). */}
+      <div className="relative z-10 mt-auto flex w-full max-w-[680px] flex-col items-center gap-3">
         <div className="relative h-5 w-full text-center">
           <AnimatePresence mode="wait" initial={false}>
             <m.p
@@ -369,18 +396,20 @@ interface SeatProps {
 }
 
 function Seat({ x, y, letter, placement, lit, label, reduced }: SeatProps) {
-  // Label offsets per quadrant. Numbers picked to keep labels clear of
-  // adjacent seats at both desktop and mobile scales.
+  // Phase 8.7.2 hotfix — side label dx bumped from SEAT_R+8 (30 px,
+  // labels hugging the seat edge) to SEAT_R+18 (40 px, 18 px outside
+  // the seat edge). SYNTHESIS used to crash the ellipse at the old
+  // value; comfortable now.
   const labelOffset = useMemo(() => {
     switch (placement) {
       case 'top':
         return { dx: 0, dy: -SEAT_R - 14, anchor: 'middle' as const }
       case 'right':
-        return { dx: SEAT_R + 8, dy: 4, anchor: 'start' as const }
+        return { dx: SEAT_R + 18, dy: 4, anchor: 'start' as const }
       case 'bottom':
         return { dx: 0, dy: SEAT_R + 18, anchor: 'middle' as const }
       case 'left':
-        return { dx: -(SEAT_R + 8), dy: 4, anchor: 'end' as const }
+        return { dx: -(SEAT_R + 18), dy: 4, anchor: 'end' as const }
     }
   }, [placement])
 
