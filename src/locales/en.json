@@ -886,9 +886,9 @@
         "1of7": "1 of 7 seated · the team is gathering",
         "2of7": "2 of 7 seated · Zoning law reading § 34 BauGB",
         "3of7": "3 of 7 seated · Building code checking BayBO",
-        "4of7": "4 of 7 seated · Other regulations reviewing local rules",
+        "4of7": "4 of 7 seated · Other rules reviewing local context",
         "5of7": "5 of 7 seated · Procedure composing the path",
-        "6of7": "6 of 7 seated · Stakeholders mapping required specialists",
+        "6of7": "6 of 7 seated · Team mapping required specialists",
         "allSeated": "All seated · opening the workspace",
         "oneMoreTouch": "All seated · one last touch …"
       },
@@ -896,9 +896,9 @@
         "moderator": "Moderator",
         "planungsrecht": "Zoning law",
         "bauordnungsrecht": "Building code",
-        "sonstige": "Other regulations",
+        "sonstige": "Other rules",
         "verfahren": "Procedure",
-        "beteiligte": "Stakeholders",
+        "beteiligte": "Team",
         "synthese": "Synthesis"
       },
       "fail": {
