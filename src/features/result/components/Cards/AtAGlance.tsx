@@ -8,6 +8,7 @@ import {
   formatEurRange,
 } from '../../lib/costNormsMuenchen'
 import { useResolvedRoles } from '../../hooks/useResolvedRoles'
+import { useResolvedProcedures } from '../../hooks/useResolvedProcedures'
 
 interface Props {
   project: ProjectRow
@@ -24,18 +25,23 @@ export function AtAGlance({ project, state }: Props) {
   const { t, i18n } = useTranslation()
   const lang = (i18n.resolvedLanguage ?? 'de') as 'de' | 'en'
   const resolved = useResolvedRoles(project, state)
+  const resolvedProc = useResolvedProcedures(project, state)
 
-  const procedures = state.procedures ?? []
   const facts = state.facts ?? []
   const areas = state.areas
 
   const primaryProcedure =
-    procedures.find((p) => p.status === 'erforderlich') ?? procedures[0]
-  const procedureLabel = primaryProcedure
+    resolvedProc.procedures.find((p) => p.status === 'erforderlich') ??
+    resolvedProc.procedures[0]
+  const baseLabel = primaryProcedure
     ? lang === 'en'
       ? primaryProcedure.title_en
       : primaryProcedure.title_de
     : t('result.workspace.ataglance.inProgress')
+  const procedureLabel =
+    primaryProcedure && !resolvedProc.isFromState
+      ? `${baseLabel} · ${t('result.workspace.team.likelyBadge')}`
+      : baseLabel
 
   const klasseFact = facts.find((f) =>
     /gebaeudeklasse|geb_klasse/i.test(f.key),

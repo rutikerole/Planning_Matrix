@@ -1813,6 +1813,7 @@
       },
       "procedure": {
         "pickEyebrow": "Verfahrenswahl",
+        "fallback": "Fallback: {{title}}.",
         "noRationale": "Begründung folgt sobald die Beratung weiter fortgeschritten ist.",
         "docsEyebrow": "Unterlagen",
         "docsCount_one": "{{count}} Dokument",

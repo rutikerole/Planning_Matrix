@@ -9,6 +9,7 @@ import type {
   ProjectState,
 } from '@/types/projectState'
 import { PROCEDURE_PHASES, totalPhaseWeight } from '../../lib/composeTimeline'
+import { useResolvedProcedures } from '../../hooks/useResolvedProcedures'
 
 interface Props {
   project: ProjectRow
@@ -27,16 +28,18 @@ type DocFilter = 'all' | 'erforderlich' | 'liegt_vor' | 'eingereicht' | 'genehmi
  * persistence interactions live in DocumentChecklist (orphaned in
  * commit 13).
  */
-export function ProcedureDocumentsTab({ state }: Props) {
+export function ProcedureDocumentsTab({ project, state }: Props) {
   const { t, i18n } = useTranslation()
   const lang = (i18n.resolvedLanguage ?? 'de') as 'de' | 'en'
   const [filter, setFilter] = useState<DocFilter>('all')
   const [openDocId, setOpenDocId] = useState<string | null>(null)
 
-  const procedures = (state.procedures ?? []).slice()
+  const resolved = useResolvedProcedures(project, state)
   const documents = useMemo(() => state.documents ?? [], [state.documents])
   const primary =
-    procedures.find((p) => p.status === 'erforderlich') ?? procedures[0]
+    resolved.procedures.find((p) => p.status === 'erforderlich') ??
+    resolved.procedures[0]
+  const fallback = resolved.procedures.find((p) => p.id !== primary?.id)
 
   const filtered = useMemo(() => {
     if (filter === 'all') return documents
@@ -57,9 +60,16 @@ export function ProcedureDocumentsTab({ state }: Props) {
         </p>
         {primary ? (
           <article className="border border-ink/12 rounded-[10px] bg-paper-card p-5 sm:p-6 flex flex-col gap-3">
-            <h2 className="font-serif italic text-[22px] sm:text-[26px] text-ink leading-[1.1] -tracking-[0.01em]">
-              {lang === 'en' ? primary.title_en : primary.title_de}
-            </h2>
+            <div className="flex items-baseline justify-between gap-3 flex-wrap">
+              <h2 className="font-serif italic text-[22px] sm:text-[26px] text-ink leading-[1.1] -tracking-[0.01em]">
+                {lang === 'en' ? primary.title_en : primary.title_de}
+              </h2>
+              {!resolved.isFromState && (
+                <span className="text-[10px] italic font-serif text-clay/85 leading-none whitespace-nowrap">
+                  {t('result.workspace.team.likelyBadge')}
+                </span>
+              )}
+            </div>
             <p className="text-[14px] text-ink/85 leading-[1.6] max-w-prose">
               {(lang === 'en' ? primary.rationale_en : primary.rationale_de) ||
                 t('result.workspace.procedure.noRationale')}
@@ -71,6 +81,13 @@ export function ProcedureDocumentsTab({ state }: Props) {
                 {primary.qualifier?.quality ?? '—'}
               </Tag>
             </div>
+            {fallback && (
+              <p className="text-[12px] italic text-clay/85 leading-snug border-t border-ink/12 pt-3 mt-1">
+                {t('result.workspace.procedure.fallback', {
+                  title: lang === 'en' ? fallback.title_en : fallback.title_de,
+                })}
+              </p>
+            )}
           </article>
         ) : (
           <article className="border border-dashed border-ink/15 rounded-[10px] bg-paper-card p-5 flex flex-col gap-2">

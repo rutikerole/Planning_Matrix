@@ -47,6 +47,10 @@ const ALLOWLIST = [
   // Phase 8 — locale-aware paragraph composer for the workspace's
   // executive read. Bilingual by branch, same allowlist pattern.
   'src/features/result/lib/composeExecutiveRead.ts',
+  // Phase 8.1 — baseline derivers carry bilingual rationale + DE
+  // qualifier reasons. Same canonical-bilingual pattern.
+  'src/features/result/lib/deriveBaselineRoles.ts',
+  'src/features/result/lib/deriveBaselineProcedure.ts',
   // Phase 8 — heuristic legal-domain composer. Bilingual citation
   // copy (Planungsrecht / Bauordnungsrecht / etc.); same pattern.
   'src/features/result/lib/composeLegalDomains.ts',

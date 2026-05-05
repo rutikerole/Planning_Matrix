@@ -1813,6 +1813,7 @@
       },
       "procedure": {
         "pickEyebrow": "Procedure pick",
+        "fallback": "Fallback: {{title}}.",
         "noRationale": "Rationale follows once the consultation has gathered more data.",
         "docsEyebrow": "Documents",
         "docsCount_one": "{{count}} document",
