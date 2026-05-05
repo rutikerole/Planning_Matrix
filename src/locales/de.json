@@ -445,7 +445,15 @@
   "appHeader": {
     "openMenu": "Konto-Menü öffnen",
     "signOut": "Abmelden",
-    "myProfile": "Mein Profil"
+    "myProfile": "Mein Profil",
+    "legal": {
+      "section": "Rechtliches",
+      "impressum": "Impressum",
+      "privacy": "Datenschutz",
+      "terms": "AGB",
+      "cookies": "Cookies",
+      "cookieSettings": "Cookie-Einstellungen"
+    }
   },
   "a11y": {
     "skipToMain": "Zum Hauptinhalt springen"
@@ -826,6 +834,7 @@
       "helper": "Wir nutzen die Adresse zur Recherche von Bebauungsplan und örtlichen Satzungen.",
       "coverage": "Aktuell aktiv: München (PLZ 80331–81929). Weitere Regionen folgen.",
       "mapHint": "Klicken Sie in die Karte, um eine andere Lage zu prüfen.",
+      "mapWithoutPlot": "Ohne Grundstück arbeiten wir mit Annahmen.",
       "noPlot": "Ohne Grundstück können Bereich A (Planungsrecht) und C (sonstige Vorgaben) noch nicht ermittelt werden. Wir arbeiten mit Annahmen und markieren die Lücke.",
       "bplan": {
         "loading": "Bebauungsplan wird geprüft…",

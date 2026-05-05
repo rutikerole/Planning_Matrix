@@ -22,6 +22,7 @@ import { Wordmark } from '@/components/shared/Wordmark'
 import { LanguageSwitcher } from '@/components/shared/LanguageSwitcher'
 import { useAuth } from '@/hooks/useAuth'
 import { useAuthStore } from '@/stores/authStore'
+import { CookieBanner } from '@/features/cookies/CookieBanner'
 
 export const APP_HEADER_HEIGHT = 48
 
@@ -67,6 +68,11 @@ export function UserMenu() {
   const { signOut } = useAuth()
   const user = useAuthStore((s) => s.user)
   const [open, setOpen] = useState(false)
+  // Phase 8.7 — Legal section reopen banner state. The footer no
+  // longer renders inside focused workspaces (wizard / chat /
+  // result), so cookie settings need a path through the avatar
+  // dropdown for users mid-flow.
+  const [reopenBanner, setReopenBanner] = useState(false)
   const wrapperRef = useRef<HTMLDivElement | null>(null)
 
   // Close on outside click / Esc.
@@ -114,13 +120,64 @@ export function UserMenu() {
       {open && (
         <div
           role="menu"
-          className="absolute right-0 top-full mt-2 w-[220px] bg-paper border border-[var(--hairline-strong,rgba(26,22,18,0.18))] rounded-md shadow-[0_10px_36px_-8px_rgba(26,22,18,0.18)] py-1.5 z-50"
+          className="absolute right-0 top-full mt-2 w-[240px] bg-paper border border-[var(--hairline-strong,rgba(26,22,18,0.18))] rounded-md shadow-[0_10px_36px_-8px_rgba(26,22,18,0.18)] py-1.5 z-50"
         >
           {user?.email && (
             <p className="px-3 py-1.5 text-[11px] text-ink/55 truncate" title={user.email}>
               {user.email}
             </p>
           )}
+          <span aria-hidden="true" className="block h-px bg-[var(--hairline,rgba(26,22,18,0.10))] my-1" />
+          {/* Phase 8.7 — Legal section. The marketing footer is no
+              longer rendered inside the wizard / chat / result
+              workspaces, so the four legal links + cookie reopen
+              live here for users who need them mid-flow. */}
+          <p className="px-3 pt-1 pb-0.5 font-mono text-[10px] uppercase tracking-[0.16em] text-ink/45">
+            {t('appHeader.legal.section')}
+          </p>
+          <Link
+            to="/impressum"
+            role="menuitem"
+            onClick={() => setOpen(false)}
+            className="block px-3 py-1.5 text-[12px] text-ink/85 hover:bg-[hsl(var(--clay)/0.08)] transition-colors duration-150"
+          >
+            {t('appHeader.legal.impressum')}
+          </Link>
+          <Link
+            to="/datenschutz"
+            role="menuitem"
+            onClick={() => setOpen(false)}
+            className="block px-3 py-1.5 text-[12px] text-ink/85 hover:bg-[hsl(var(--clay)/0.08)] transition-colors duration-150"
+          >
+            {t('appHeader.legal.privacy')}
+          </Link>
+          <Link
+            to="/agb"
+            role="menuitem"
+            onClick={() => setOpen(false)}
+            className="block px-3 py-1.5 text-[12px] text-ink/85 hover:bg-[hsl(var(--clay)/0.08)] transition-colors duration-150"
+          >
+            {t('appHeader.legal.terms')}
+          </Link>
+          <Link
+            to="/cookies"
+            role="menuitem"
+            onClick={() => setOpen(false)}
+            className="block px-3 py-1.5 text-[12px] text-ink/85 hover:bg-[hsl(var(--clay)/0.08)] transition-colors duration-150"
+          >
+            {t('appHeader.legal.cookies')}
+          </Link>
+          <button
+            type="button"
+            role="menuitem"
+            onClick={() => {
+              setOpen(false)
+              setReopenBanner(true)
+            }}
+            className="w-full text-left px-3 py-1.5 text-[12px] text-ink/85 hover:bg-[hsl(var(--clay)/0.08)] transition-colors duration-150"
+          >
+            {t('appHeader.legal.cookieSettings')}
+          </button>
           <span aria-hidden="true" className="block h-px bg-[var(--hairline,rgba(26,22,18,0.10))] my-1" />
           <button
             type="button"
@@ -133,6 +190,9 @@ export function UserMenu() {
           </button>
         </div>
       )}
+      {reopenBanner ? (
+        <CookieBanner forceOpen onClose={() => setReopenBanner(false)} />
+      ) : null}
     </div>
   )
 }

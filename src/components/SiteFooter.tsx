@@ -1,10 +1,12 @@
 // Phase 8 — site-wide footer with legal links + cookie reopen.
 //
-// Rendered on every public + dashboard route EXCEPT the chat
-// workspace (chat is a focused experience; footer would feel
-// intrusive). Visibility is determined by route in the LandingPage
-// already; this component is mounted by the layout shell that wraps
-// most routes — chat opts out by not including it.
+// Phase 8.7 — visibility is now an explicit allowlist instead of the
+// chat-workspace denylist that leaked the footer onto the wizard +
+// result + share routes. Footer renders only on public-marketing,
+// dashboard, auth, and the standalone legal pages. Focused workspace
+// surfaces (wizard, chat, result, public share) opt out; legal links
+// are reachable from inside those surfaces via the user-avatar
+// dropdown's Legal section (see AppHeader.tsx → UserMenu).
 
 import { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
@@ -13,9 +15,29 @@ import { CookieBanner } from '@/features/cookies/CookieBanner'
 
 const APP_VERSION = '1.0'
 
+// Allowlist of routes that render the footer. Anything else returns
+// null. The auth flow shows the footer on each step so the legal
+// links sit one click away during sign-up. The standalone legal
+// pages keep their footer for cross-link navigation between
+// Impressum / Datenschutz / AGB / Cookies.
+const FOOTER_ALLOWLIST: ReadonlyArray<string> = [
+  '/',
+  '/dashboard',
+  '/sign-up',
+  '/sign-in',
+  '/forgot-password',
+  '/reset-password',
+  '/check-email',
+  '/verify-email',
+  '/impressum',
+  '/datenschutz',
+  '/agb',
+  '/cookies',
+]
+
 interface Props {
-  /** When true, render even on routes that normally hide the footer
-   *  (mainly the chat workspace). */
+  /** When true, render even on routes that aren't in the allowlist.
+   *  Reserved for one-off marketing surfaces; not used today. */
   force?: boolean
 }
 
@@ -25,12 +47,7 @@ export function SiteFooter({ force = false }: Props) {
   const { pathname } = useLocation()
   const [reopenBanner, setReopenBanner] = useState(false)
 
-  // Hide on chat workspace + result pages so the focused experience
-  // isn't broken by an always-visible footer. Force via prop if needed.
-  const isFocusedRoute =
-    /^\/projects\/[0-9a-f-]+(\/.*)?$/i.test(pathname) ||
-    pathname.startsWith('/result/share/')
-  if (isFocusedRoute && !force) return null
+  if (!force && !FOOTER_ALLOWLIST.includes(pathname)) return null
 
   return (
     <>

@@ -445,7 +445,15 @@
   "appHeader": {
     "openMenu": "Open account menu",
     "signOut": "Sign out",
-    "myProfile": "My profile"
+    "myProfile": "My profile",
+    "legal": {
+      "section": "Legal",
+      "impressum": "Imprint",
+      "privacy": "Privacy",
+      "terms": "Terms",
+      "cookies": "Cookies",
+      "cookieSettings": "Cookie settings"
+    }
   },
   "a11y": {
     "skipToMain": "Skip to main content"
@@ -826,6 +834,7 @@
       "helper": "We use the address to research the development plan and local ordinances.",
       "coverage": "Currently active: München (postal codes 80331–81929). Other regions follow.",
       "mapHint": "Click on the map to inspect a different location.",
+      "mapWithoutPlot": "Without a plot, we proceed with assumptions.",
       "noPlot": "Without a plot, areas A (planning law) and C (further requirements) cannot yet be assessed. We work with assumptions and flag the gap.",
       "bplan": {
         "loading": "Checking the development plan…",
