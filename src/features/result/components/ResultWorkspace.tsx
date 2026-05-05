@@ -6,6 +6,7 @@ import { useTabState, type WorkspaceTabId } from '../hooks/useTabState'
 import { ResultFooter } from './ResultFooter'
 import { ResultHeader } from './ResultHeader'
 import { ResultTabs } from './ResultTabs'
+import { OverviewTab } from './tabs/OverviewTab'
 
 interface ProjectEventRow {
   id: string
@@ -54,14 +55,19 @@ export function ResultWorkspace({ project, messages, events, source }: Props) {
 
       <main className="flex-1 px-6 sm:px-8 lg:px-10 py-7 sm:py-9 max-w-[1200px] mx-auto w-full">
         <TabPanel id={active}>
-          <Placeholder
-            id={active}
-            project={project}
-            state={state}
-            messages={messages}
-            events={events}
-            source={source}
-          />
+          {active === 'overview' && (
+            <OverviewTab project={project} state={state} />
+          )}
+          {active !== 'overview' && (
+            <Placeholder
+              id={active}
+              project={project}
+              state={state}
+              messages={messages}
+              events={events}
+              source={source}
+            />
+          )}
         </TabPanel>
       </main>
 

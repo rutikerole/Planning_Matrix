@@ -48,6 +48,10 @@ const ALLOWLIST = [
   'src/features/result/components/LegalLandscape.tsx',
   'src/features/result/components/SpecialistsRequired.tsx',
   'src/features/result/components/Cockpit/',
+  // Phase 8 — locale-aware paragraph composer for the workspace's
+  // executive read. Bilingual by branch, same allowlist pattern as
+  // the components above.
+  'src/features/result/lib/composeExecutiveRead.ts',
   // Wizard B-Plan detail dialog renders canonical German Bauamt
   // language alongside EN; map is bilingual already.
   'src/features/wizard/components/BPlanDetailDialog.tsx',
