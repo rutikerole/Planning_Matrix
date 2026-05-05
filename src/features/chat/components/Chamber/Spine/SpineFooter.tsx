@@ -35,7 +35,7 @@ export function SpineFooter({ projectId, gate, signal }: Props) {
             'linear-gradient(to bottom, hsl(38 30% 96% / 0) 0%, hsl(38 30% 96% / 1) 100%)',
         }}
       />
-      <div className="border-t border-[var(--hairline,rgba(26,22,18,0.10))] px-3.5 py-3 flex flex-col gap-2">
+      <div className="border-t border-[var(--hairline,rgba(26,22,18,0.10))] px-5 py-3.5 flex flex-col gap-2.5">
         <BriefingCTA
           projectId={projectId}
           gate={gate}

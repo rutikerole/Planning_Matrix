@@ -47,10 +47,10 @@ export function SpineStage({ stage, onClick }: Props) {
       aria-current={ariaCurrent}
       aria-labelledby={titleId}
       className={cn(
-        'relative grid grid-cols-[20px_1fr] items-center gap-3 transition-[opacity,background-color] duration-[240ms] ease-[cubic-bezier(0.16,1,0.3,1)]',
+        'relative grid grid-cols-[24px_1fr] items-center gap-3 transition-[opacity,background-color] duration-[240ms] ease-[cubic-bezier(0.16,1,0.3,1)]',
         stage.status === 'live'
-          ? 'py-1.5 -mx-2 px-2 rounded-[3px]'
-          : 'py-1',
+          ? 'py-2 -mx-2 px-2 rounded-[3px]'
+          : 'py-[5px]',
         stage.status === 'done' && 'opacity-100 hover:opacity-90 cursor-pointer',
         stage.status === 'next' && 'opacity-100',
         stage.status === 'future' && 'opacity-100',
@@ -61,10 +61,10 @@ export function SpineStage({ stage, onClick }: Props) {
           : undefined
       }
     >
-      {/* Sigil column — 14×14 disc, status-keyed fill / glyph color. */}
+      {/* Sigil column — 16×16 disc, status-keyed fill / glyph color. */}
       <span
         aria-hidden="true"
-        className="relative grid place-items-center w-5 h-5"
+        className="relative grid place-items-center w-6 h-6"
       >
         <SigilDisc owner={owner} status={stage.status} />
       </span>
@@ -76,10 +76,10 @@ export function SpineStage({ stage, onClick }: Props) {
           className={cn(
             'leading-[1.3] text-ink',
             stage.status === 'live'
-              ? 'text-[13px] font-medium'
+              ? 'text-[14px] font-medium'
               : stage.status === 'future'
-                ? 'text-[12.5px] font-normal text-ink/55'
-                : 'text-[12.5px] font-normal',
+                ? 'text-[13.5px] font-normal text-ink/55'
+                : 'text-[13.5px] font-normal',
             stage.status === 'done' && 'opacity-45',
           )}
           style={
@@ -97,7 +97,7 @@ export function SpineStage({ stage, onClick }: Props) {
 
         {stage.status === 'live' && (
           <span
-            className="text-[11px] italic text-clay leading-tight"
+            className="text-[12px] italic text-clay leading-tight"
             style={{ fontFamily: "Georgia, 'Instrument Serif', serif" }}
           >
             {t('chat.chamber.stage.speakingNow')}
@@ -114,7 +114,7 @@ export function SpineStage({ stage, onClick }: Props) {
               id={tooltipId}
               data-spine-tooltip="true"
               role="tooltip"
-              className="absolute left-0 right-0 top-full mt-0.5 text-[11px] italic text-clay/85 font-serif leading-snug line-clamp-2"
+              className="absolute left-0 right-0 top-full mt-0.5 text-[12px] italic text-clay/85 font-serif leading-snug line-clamp-2"
               title={stage.snippet}
             >
               {t('chat.spine.tooltip.donePrefix')} {stage.snippet}
@@ -154,8 +154,8 @@ function SigilDisc({
   owner: Owner
   status: ResolvedSpineStage['status']
 }) {
-  const size = 14
-  const inner = 9
+  const size = 16
+  const inner = 10
 
   if (status === 'live') {
     return (

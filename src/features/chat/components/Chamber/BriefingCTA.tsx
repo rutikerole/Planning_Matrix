@@ -74,9 +74,9 @@ export function BriefingCTA({ projectId, gate, signal, variant = 'inline' }: Pro
           to={`/projects/${projectId}/result`}
           aria-label={t('chat.spine.footer.openBriefing')}
           className={cn(
-            'group inline-flex w-full items-center justify-center gap-2 px-3 py-2.5 rounded-[6px]',
+            'group inline-flex w-full items-center justify-center gap-2 px-3.5 py-3 rounded-[6px]',
             'bg-paper-card border border-clay/55 text-ink',
-            'font-serif italic text-[13px]',
+            'font-serif italic text-[14px]',
             'transition-[background-color,border-color] duration-200',
             'hover:bg-[hsl(var(--clay)/0.10)] hover:border-clay',
             'motion-safe:active:scale-[0.98]',
@@ -85,7 +85,7 @@ export function BriefingCTA({ projectId, gate, signal, variant = 'inline' }: Pro
           )}
         >
           <span>{t('chat.spine.footer.openBriefing')}</span>
-          <ArrowUpRight aria-hidden="true" className="size-[14px] text-clay motion-safe:group-hover:translate-x-0.5 transition-transform duration-200" />
+          <ArrowUpRight aria-hidden="true" className="size-[15px] text-clay motion-safe:group-hover:translate-x-0.5 transition-transform duration-200" />
         </Link>
       </m.div>
     )

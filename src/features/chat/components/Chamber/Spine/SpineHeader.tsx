@@ -38,44 +38,44 @@ export function SpineHeader({ projectName, plotAddress, percent, round, totalEst
         * matches the prototype rhythm. */}
       <Link
         to="/dashboard"
-        className="flex items-center px-[18px] pt-[18px] pb-[14px] border-b border-[rgba(26,22,18,0.06)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/55 focus-visible:ring-offset-1"
+        className="flex items-center px-5 pt-5 pb-4 border-b border-[rgba(26,22,18,0.06)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/55 focus-visible:ring-offset-1"
       >
-        <Wordmark size="sm" asLink={false} />
+        <Wordmark size="md" asLink={false} />
       </Link>
 
-      <div className="px-4 pt-4 pb-3.5 border-b border-[var(--hairline,rgba(26,22,18,0.08))]">
-        {/* Project name (wordmark moved to <AppHeader> in commit 3).
-          * Phase 7.6 §1.5 — 12.5 → 14 px, plot 10 → 11 px, round 9 → 10.5 px.
-          * Phase 7.8 §2.1 — Reading Room scale: name 14 → 14.5 px,
-          * plot 11 → 12 px, round caps 10.5 → 10 px tracking 0.20em. */}
+      <div className="px-5 pt-5 pb-4 border-b border-[var(--hairline,rgba(26,22,18,0.08))]">
+        {/* Phase 7.6 §1.5 — 12.5 → 14 px, plot 10 → 11 px.
+          * Phase 7.8 §2.1 — Reading Room: name 14.5 px, plot 12 px,
+          * round caps 10 px / 0.20em.
+          * Phase 7.9 §2.8 — round caps 9.5 px / 0.22em.
+          * Width-300 bump — name 14.5 → 16, plot 12 → 13.5, caps
+          * 9.5 → 10.5, percent 13 → 14.5, % glyph 11 → 12. */}
         <p
-          className="text-[14.5px] font-medium text-ink leading-[1.3] line-clamp-2"
+          className="text-[16px] font-medium text-ink leading-[1.3] line-clamp-2"
           title={projectName}
         >
           {cleanName}
         </p>
         {fallbackStreet && (
-          <p className="text-[14.5px] font-medium text-ink leading-[1.3]" title={plotAddress ?? ''}>
+          <p className="text-[16px] font-medium text-ink leading-[1.3]" title={plotAddress ?? ''}>
             {fallbackStreet}
           </p>
         )}
 
         {/* Plot suffix line */}
         {plot && plot !== plotAddress && (
-          <p className="mt-1 text-[12px] text-clay leading-tight tabular-figures">
+          <p className="mt-1.5 text-[13.5px] text-clay leading-tight tabular-figures">
             {plot}
           </p>
         )}
 
-        {/* Round + percent. Phase 7.9 §2.8 — caps 10 → 9.5 px,
-          * tracking 0.20em → 0.22em (closer to the prototype's
-          * sparse rhythm). */}
-        <div className="mt-3.5 flex items-baseline justify-between gap-2">
-          <p className="font-mono text-[9.5px] uppercase tracking-[0.22em] text-clay font-medium leading-none">
+        {/* Round + percent */}
+        <div className="mt-4 flex items-baseline justify-between gap-2">
+          <p className="font-mono text-[10.5px] uppercase tracking-[0.22em] text-clay font-medium leading-none">
             {t('chat.spine.header.round', { current: round, total: totalEstimate })}
           </p>
-          <p className="font-serif italic text-[13px] text-ink tabular-figures leading-none">
-            {percent}<span className="text-[11px] text-ink/55">%</span>
+          <p className="font-serif italic text-[14.5px] text-ink tabular-figures leading-none">
+            {percent}<span className="text-[12px] text-ink/55">%</span>
           </p>
         </div>
 
