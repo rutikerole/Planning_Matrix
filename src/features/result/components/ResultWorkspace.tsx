@@ -10,6 +10,7 @@ import { LegalLandscapeTab } from './tabs/LegalLandscapeTab'
 import { OverviewTab } from './tabs/OverviewTab'
 import { ProcedureDocumentsTab } from './tabs/ProcedureDocumentsTab'
 import { CostTimelineTab } from './tabs/CostTimelineTab'
+import { SuggestionsTab } from './tabs/SuggestionsTab'
 import { TeamTab } from './tabs/TeamTab'
 
 interface ProjectEventRow {
@@ -70,11 +71,15 @@ export function ResultWorkspace({ project, messages, events, source }: Props) {
           )}
           {active === 'team' && <TeamTab state={state} />}
           {active === 'cost' && <CostTimelineTab state={state} />}
+          {active === 'suggestions' && (
+            <SuggestionsTab project={project} state={state} />
+          )}
           {active !== 'overview' &&
             active !== 'legal' &&
             active !== 'procedure' &&
             active !== 'team' &&
-            active !== 'cost' && (
+            active !== 'cost' &&
+            active !== 'suggestions' && (
               <Placeholder
                 id={active}
                 project={project}

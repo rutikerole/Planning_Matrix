@@ -64,6 +64,9 @@ const ALLOWLIST = [
   // Phase 8 — Cost & timeline tab; bilingual phase + cost-line maps
   // mirror the legacy CostTimelinePanel.
   'src/features/result/components/tabs/CostTimelineTab.tsx',
+  // Phase 8 — Suggestion card surfaces matcher's bilingual filter
+  // copy as the "why we suggest this" reasoning.
+  'src/features/result/components/Cards/SuggestionCard.tsx',
   // Wizard B-Plan detail dialog renders canonical German Bauamt
   // language alongside EN; map is bilingual already.
   'src/features/wizard/components/BPlanDetailDialog.tsx',

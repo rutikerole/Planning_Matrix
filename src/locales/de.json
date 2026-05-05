@@ -1760,7 +1760,18 @@
         "dismiss": "Verwerfen",
         "tellMeMore": "Mehr erfahren",
         "added": "✓ Hinzugefügt",
-        "empty": "Noch keine Vorschläge — wir schlagen welche vor, sobald die Beratung mehr Daten enthält."
+        "empty": "Noch keine Vorschläge — wir schlagen welche vor, sobald die Beratung mehr Daten enthält.",
+        "eyebrow": "Vorschläge",
+        "intro": "Auf Basis Ihres Profils empfehlen wir die folgenden Schritte. Fügen Sie passende Punkte zur Checkliste hinzu oder verwerfen Sie sie für dieses Projekt.",
+        "reasoning": "Warum wir das vorschlagen",
+        "category": {
+          "insurance": "Versicherung",
+          "energy": "Energie",
+          "tooling": "Werkzeuge",
+          "precedent": "Praxis",
+          "regulation": "Regulatorik",
+          "risk": "Risiko"
+        }
       },
       "expert": {
         "eyebrow": "Datenfluss · Audit",

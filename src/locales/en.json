@@ -1760,7 +1760,18 @@
         "dismiss": "Dismiss",
         "tellMeMore": "Tell me more",
         "added": "✓ Added",
-        "empty": "No suggestions yet — we'll surface some once the consultation has gathered more data."
+        "empty": "No suggestions yet — we'll surface some once the consultation has gathered more data.",
+        "eyebrow": "Suggestions",
+        "intro": "Based on your profile we recommend the following steps. Add relevant items to your checklist or dismiss them for this project.",
+        "reasoning": "Why we suggest this",
+        "category": {
+          "insurance": "Insurance",
+          "energy": "Energy",
+          "tooling": "Tooling",
+          "precedent": "Precedent",
+          "regulation": "Regulation",
+          "risk": "Risk"
+        }
       },
       "expert": {
         "eyebrow": "Data flow · audit",
