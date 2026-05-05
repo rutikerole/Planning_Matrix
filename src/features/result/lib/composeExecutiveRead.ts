@@ -1,5 +1,15 @@
 import type { ProjectRow } from '@/types/db'
-import type { ProjectState } from '@/types/projectState'
+import type { Fact, ProjectState } from '@/types/projectState'
+import { deriveBaselineProcedure } from './deriveBaselineProcedure'
+import { computeOpenItems } from './computeOpenItems'
+import { approximateTotalWeeks } from './composeTimeline'
+import {
+  buildCostBreakdown,
+  detectAreaSqm,
+  detectKlasse,
+  detectProcedure,
+  formatEurRange,
+} from './costNormsMuenchen'
 
 interface Args {
   project: ProjectRow
@@ -14,16 +24,25 @@ export interface ExecutiveRead {
 }
 
 /**
- * Phase 8 — pure-function composer for the Overview tab's executive
- * read. Two to three paragraphs synthesised from project state, no
- * LLM call, locale-aware.
+ * Phase 8.2 (B.1) — synthesis composer for the Overview tab's
+ * executive read. Three short paragraphs:
  *
- * The shape of each paragraph follows a slot-template: project type
- * + plot anchor + primary statute → procedure pick + building class +
- * fallback → flag count + verification summary. When the input is too
- * sparse we return `isPopulated: false` so the caller can render a
- * calm "continue consultation" empty state instead of half-empty
- * boilerplate.
+ *   1. STAKES — what the project is, what statute likely governs it,
+ *      and the gating condition that resolves the uncertainty.
+ *   2. OUTCOME — likely procedure + conditions + fallback + cost +
+ *      timeline. Conditional language throughout ("if", "likely").
+ *   3. ACTION — open-items summary cast as professional follow-up
+ *      with named next-actor.
+ *
+ * No LLM call. The composer reads facts, procedures, areas + the
+ * baseline-derivers from A.1 / A.3 so it never reads as recap on
+ * fresh projects: even a just-created München EFH gets useful prose
+ * because the baselines fill in the blanks (and are clearly labelled
+ * "likely").
+ *
+ * Returns isPopulated: false only when literally nothing is known
+ * (no plot, no facts, no project intent we recognise). The caller
+ * renders an empty-state CTA in that case.
  */
 export function composeExecutiveRead({
   project,
@@ -31,62 +50,84 @@ export function composeExecutiveRead({
   lang,
 }: Args): ExecutiveRead {
   const facts = state.facts ?? []
-  const procedures = state.procedures ?? []
   const recommendations = state.recommendations ?? []
-
-  // Project type from intent
-  const intentLabel = describeIntent(project.intent, lang)
+  const intent = project.intent
+  const intentLabel = describeIntent(intent, lang)
   const plotLine = project.plot_address ?? null
 
-  // Primary statute = first DOMAIN-A-related fact's evidence cite, else generic
-  const planungsrechtFact = facts.find((f) =>
-    /baugb|baunvo|planungsrecht/i.test(`${f.key} ${f.evidence ?? ''}`),
-  )
-  const statuteCite =
-    planungsrechtFact?.evidence ??
-    (facts.find((f) => /§\s*\d+/.test(f.evidence ?? ''))?.evidence ?? null)
-
-  // Procedure pick (first 'erforderlich', else first present)
-  const primary =
-    procedures.find((p) => p.status === 'erforderlich') ?? procedures[0]
-  const fallback = procedures.find((p) => p !== primary)
-
-  // Building class
-  const klasseFact = facts.find((f) => /gebaeudeklasse|geb_klasse|gk_/i.test(f.key))
-  const klasseValue =
-    typeof klasseFact?.value === 'string'
-      ? klasseFact.value
-      : klasseFact?.value
-        ? String(klasseFact.value)
-        : null
-
-  // Flag counts
-  const assumedFacts = facts.filter((f) => f.qualifier?.quality === 'ASSUMED')
-  const flagCount = assumedFacts.length
-
-  // Sparse: no procedures, no recommendations, no plot.
-  const isPopulated =
-    procedures.length > 0 || recommendations.length > 0 || facts.length >= 4
+  const isPopulated = !!intentLabel && (!!plotLine || facts.length > 0 || recommendations.length > 0)
 
   if (!isPopulated) {
     return { paragraphs: [], isPopulated: false }
   }
 
-  // Locale-templated paragraphs — keep the slots aligned with the
-  // brief's example template. Anything missing collapses gracefully:
-  // empty-string slots flatten the surrounding sentence.
-  const p1 = composeP1({ intentLabel, plotLine, statuteCite, lang })
-  const p2 = composeP2({
-    klasse: klasseValue,
-    primaryTitle:
-      primary?.[lang === 'en' ? 'title_en' : 'title_de'] ?? null,
-    fallbackTitle:
-      fallback?.[lang === 'en' ? 'title_en' : 'title_de'] ?? null,
+  // Resolve procedures (persona or baseline)
+  const procs = state.procedures && state.procedures.length > 0
+    ? state.procedures
+    : deriveBaselineProcedure({ intent, bundesland: project.bundesland })
+  const isBaselineProc = !state.procedures || state.procedures.length === 0
+  const primary =
+    procs.find((p) => p.status === 'erforderlich') ?? procs[0]
+  const fallback = procs.find((p) => p.id !== primary?.id)
+
+  // Cost + timeline
+  const corpus = facts
+    .map((f) => `${f.key} ${typeof f.value === 'string' ? f.value : ''}`)
+    .join(' ')
+    .toLowerCase()
+  const procedureType = detectProcedure(primary?.rationale_de ?? '')
+  const klasse = detectKlasse(corpus)
+  const areaSqm = detectAreaSqm(corpus)
+  const cost = buildCostBreakdown(procedureType, klasse, {
+    areaSqm,
+    bundesland: project.bundesland,
+  })
+  const weeks = approximateTotalWeeks()
+  const months = Math.round((weeks.min + weeks.max) / 2 / 4)
+
+  // Open-items summary
+  const open = computeOpenItems(state, lang, 4)
+  const flagCount = open.count
+  const flagWords = lang === 'en' ? 'flags' : 'Punkte'
+  const flagWordSingular = lang === 'en' ? 'flag' : 'Punkt'
+
+  // Statute + gating condition
+  const planungsrechtFact = facts.find((f) =>
+    /baugb|baunvo|planungsrecht/i.test(`${f.key} ${f.evidence ?? ''}`),
+  )
+  const statuteCite = planungsrechtFact?.evidence ?? null
+  const hasArea = state.areas?.A?.state === 'ACTIVE'
+  const gatingCondition = hasArea
+    ? null
+    : lang === 'en'
+      ? 'the Bebauungsplan check returns'
+      : 'die Bebauungsplan-Prüfung vorliegt'
+
+  // Compose
+  const p1 = composeP1({
+    intentLabel,
+    plotLine,
+    statuteCite,
+    statuteImplication: statuteImplicationFor(statuteCite, lang),
+    gatingCondition,
     lang,
   })
+
+  const p2 = composeP2({
+    primary,
+    fallback,
+    isBaselineProc,
+    costRange: formatEurRange(cost.total, lang),
+    timelineMonths: months,
+    intent,
+    lang,
+  })
+
   const p3 = composeP3({
     flagCount,
-    primaryConcern: assumedFacts[0]?.evidence ?? null,
+    flagWord: flagCount === 1 ? flagWordSingular : flagWords,
+    primaryFlag: flagSummary(open.topPriority, lang),
+    nextActor: namedActor(facts, lang),
     lang,
   })
 
@@ -100,99 +141,203 @@ function composeP1({
   intentLabel,
   plotLine,
   statuteCite,
+  statuteImplication,
+  gatingCondition,
   lang,
 }: {
   intentLabel: string
   plotLine: string | null
   statuteCite: string | null
+  statuteImplication: string
+  gatingCondition: string | null
   lang: 'de' | 'en'
 }): string {
   if (lang === 'en') {
-    const a = `A ${intentLabel.toLowerCase()}${plotLine ? ` at ${plotLine}` : ''}.`
+    const a = `You're planning a ${intentLabel.toLowerCase()}${plotLine ? ` at ${plotLine}` : ''}.`
     const b = statuteCite
-      ? ` Planning law currently maps to ${statuteCite}; the architect confirms before submission.`
-      : ` Planning law remains under assessment until the plot${'’'}s Bebauungsplan situation is verified.`
-    return a + b
+      ? ` The plot likely falls under ${statuteCite} — ${statuteImplication}`
+      : ` Planning law for the plot is still being narrowed down — ${statuteImplication}`
+    const c = gatingCondition
+      ? ` Until ${gatingCondition}, the procedure path is uncertain.`
+      : ''
+    return a + b + c
   }
-  const a = `Ein ${intentLabel}${plotLine ? ` auf ${plotLine}` : ''}.`
+  const a = `Sie planen ${intentLabel}${plotLine ? ` am Standort ${plotLine}` : ''}.`
   const b = statuteCite
-    ? ` Das Planungsrecht stützt sich derzeit auf ${statuteCite}; bestätigt durch die Architekt:in vor Einreichung.`
-    : ' Das Planungsrecht wird weiter eingeordnet, sobald die Bebauungsplan-Situation des Grundstücks geprüft ist.'
-  return a + b
+    ? ` Das Grundstück fällt voraussichtlich unter ${statuteCite} — ${statuteImplication}`
+    : ` Das Planungsrecht für das Grundstück wird noch eingeordnet — ${statuteImplication}`
+  const c = gatingCondition
+    ? ` Bis ${gatingCondition}, ist der Verfahrensweg nicht endgültig.`
+    : ''
+  return a + b + c
 }
 
 function composeP2({
-  klasse,
-  primaryTitle,
-  fallbackTitle,
+  primary,
+  fallback,
+  isBaselineProc,
+  costRange,
+  timelineMonths,
+  intent,
   lang,
 }: {
-  klasse: string | null
-  primaryTitle: string | null
-  fallbackTitle: string | null
+  primary: { title_de: string; title_en: string } | undefined
+  fallback: { title_de: string; title_en: string } | undefined
+  isBaselineProc: boolean
+  costRange: string
+  timelineMonths: number
+  intent: string
   lang: 'de' | 'en'
 }): string {
+  const primaryTitle = primary
+    ? lang === 'en'
+      ? primary.title_en
+      : primary.title_de
+    : null
+  const fallbackTitle = fallback
+    ? lang === 'en'
+      ? fallback.title_en
+      : fallback.title_de
+    : null
+  const conditions = conditionsFor(intent, lang)
+
   if (lang === 'en') {
-    const a = klasse
-      ? `Building law maps to building class ${klasse}.`
-      : 'Building class is still being narrowed down.'
-    const b = primaryTitle
-      ? ` The likely procedure is ${primaryTitle}${fallbackTitle ? `, with ${fallbackTitle} as a fallback` : ''}.`
-      : ' Procedure assignment depends on the Bebauungsplan check.'
-    return a + b
+    const head = primaryTitle
+      ? `Most likely outcome: ${primaryTitle}${isBaselineProc ? ' (preliminary)' : ''} if ${conditions}.`
+      : 'Procedure path opens once the consultation has more data.'
+    const fb = fallbackTitle
+      ? ` Fallback: ${fallbackTitle} if any condition fails.`
+      : ''
+    const tail = ` Estimated total fees: ${costRange}, timeline ~${timelineMonths} months.`
+    return head + fb + tail
   }
-  const a = klasse
-    ? `Das Bauordnungsrecht ordnet sich aktuell der Gebäudeklasse ${klasse} zu.`
-    : 'Die Gebäudeklasse wird noch eingegrenzt.'
-  const b = primaryTitle
-    ? ` Wahrscheinliches Verfahren: ${primaryTitle}${fallbackTitle ? `, fallback ${fallbackTitle}` : ''}.`
-    : ' Die Verfahrenswahl hängt von der Bebauungsplan-Prüfung ab.'
-  return a + b
+  const head = primaryTitle
+    ? `Wahrscheinlicher Verfahrensweg: ${primaryTitle}${isBaselineProc ? ' (vorläufig)' : ''} sofern ${conditions}.`
+    : 'Der Verfahrensweg öffnet sich, sobald die Beratung weiter ist.'
+  const fb = fallbackTitle ? ` Fallback: ${fallbackTitle} bei Abweichung.` : ''
+  const tail = ` Geschätzte Honorare: ${costRange}, Zeitrahmen ca. ${timelineMonths} Monate.`
+  return head + fb + tail
 }
 
 function composeP3({
   flagCount,
-  primaryConcern,
+  flagWord,
+  primaryFlag,
+  nextActor,
   lang,
 }: {
   flagCount: number
-  primaryConcern: string | null
+  flagWord: string
+  primaryFlag: string | null
+  nextActor: string
   lang: 'de' | 'en'
 }): string {
   if (flagCount === 0) {
     return lang === 'en'
-      ? 'No open assumptions flagged at this time. Continue with the architect to firm up details before submission.'
-      : 'Aktuell keine offenen Annahmen markiert. Setzen Sie die Beratung mit der Architekt:in fort, um die Details vor der Einreichung zu festigen.'
+      ? `No assumptions flagged yet. Continue the consultation; the architect (${nextActor}) confirms before submission.`
+      : `Aktuell keine offenen Annahmen markiert. Setzen Sie die Beratung fort; die Architekt:in (${nextActor}) bestätigt vor Einreichung.`
   }
   if (lang === 'en') {
-    return `${flagCount} ${flagCount === 1 ? 'point requires' : 'points require'} architect verification${primaryConcern ? `; foremost: ${primaryConcern}` : ''}.`
+    const a = `${flagCount} ${flagWord} need professional eyes`
+    const b = primaryFlag ? `: ${primaryFlag}.` : '.'
+    const c = ` Named next actor: ${nextActor}.`
+    return a + b + c
   }
-  return `${flagCount} ${flagCount === 1 ? 'Punkt benötigt' : 'Punkte benötigen'} die Bestätigung durch die Architekt:in${primaryConcern ? `; vorrangig: ${primaryConcern}` : ''}.`
+  const a = `${flagCount} ${flagWord} bedürfen professioneller Prüfung`
+  const b = primaryFlag ? `: ${primaryFlag}.` : '.'
+  const c = ` Verantwortlich: ${nextActor}.`
+  return a + b + c
 }
 
 /**
  * Phase 8.1 — keys here MUST be the DB enum values stored in
- * `projects.intent` (see selectTemplate.ts INTENT_VALUES_V3), not the
- * shorter i18n slugs. Earlier the map keyed off `neubau_efh` / `neubau_mfh`
- * which never matched, so every EFH/MFH project fell through to "Bauvorhaben".
+ * `projects.intent`. See selectTemplate.ts INTENT_VALUES_V3.
  */
 function describeIntent(intent: string, lang: 'de' | 'en'): string {
   const map: Record<string, { de: string; en: string }> = {
     neubau_einfamilienhaus: {
-      de: 'Neubau eines Einfamilienhauses',
+      de: 'einen Neubau eines Einfamilienhauses',
       en: 'new single-family home',
     },
     neubau_mehrfamilienhaus: {
-      de: 'Neubau eines Mehrfamilienhauses',
+      de: 'einen Neubau eines Mehrfamilienhauses',
       en: 'new multi-family building',
     },
-    sanierung: { de: 'Sanierungsvorhaben', en: 'renovation project' },
-    umnutzung: { de: 'Umnutzungsvorhaben', en: 'change-of-use project' },
-    abbruch: { de: 'Abbruchvorhaben', en: 'demolition project' },
-    aufstockung: { de: 'Aufstockungsvorhaben', en: 'storey-addition project' },
-    anbau: { de: 'Anbauvorhaben', en: 'extension project' },
-    sonstige: { de: 'Bauvorhaben', en: 'construction project' },
+    sanierung: { de: 'ein Sanierungsvorhaben', en: 'renovation project' },
+    umnutzung: { de: 'eine Umnutzung', en: 'change-of-use project' },
+    abbruch: { de: 'einen Abbruch', en: 'demolition project' },
+    aufstockung: { de: 'eine Aufstockung', en: 'storey-addition project' },
+    anbau: { de: 'einen Anbau', en: 'extension project' },
+    sonstige: { de: 'ein Bauvorhaben', en: 'construction project' },
   }
   const entry = map[intent] ?? map.sonstige
   return entry[lang]
+}
+
+function statuteImplicationFor(
+  cite: string | null,
+  lang: 'de' | 'en',
+): string {
+  if (!cite) {
+    return lang === 'en'
+      ? 'the inner-area / outer-area / qualified-plan classification opens after the Bebauungsplan inquiry.'
+      : 'die Innen-/Außen-/B-Plan-Einordnung folgt aus der Bebauungsplan-Anfrage.'
+  }
+  if (/§\s*30/.test(cite)) {
+    return lang === 'en'
+      ? 'a binding development plan governs; the project must conform to its provisions.'
+      : 'ein qualifizierter Bebauungsplan greift; das Vorhaben muss dessen Festsetzungen einhalten.'
+  }
+  if (/§\s*34/.test(cite)) {
+    return lang === 'en'
+      ? 'the plot is in an unplanned but built-up area; the project must fit the surrounding character.'
+      : 'das Grundstück liegt im unbeplanten Innenbereich; das Vorhaben muss sich einfügen.'
+  }
+  if (/§\s*35/.test(cite)) {
+    return lang === 'en'
+      ? 'outer area — building is restricted to privileged exceptions only.'
+      : 'Außenbereich — Bauen ist nur in privilegierten Ausnahmen zulässig.'
+  }
+  return lang === 'en'
+    ? 'the cited provision shapes the procedure path.'
+    : 'die genannte Vorschrift bestimmt den Verfahrensweg.'
+}
+
+function conditionsFor(intent: string, lang: 'de' | 'en'): string {
+  const isNew = intent.startsWith('neubau_') || intent === 'aufstockung' || intent === 'anbau'
+  if (isNew) {
+    return lang === 'en'
+      ? 'the plot is in a built-up area, no Sonderbau scope, and Gebäudeklasse 1–3'
+      : 'Innenbereich vorliegt, kein Sonderbau und Gebäudeklasse 1–3'
+  }
+  if (intent === 'sanierung' || intent === 'umnutzung') {
+    return lang === 'en'
+      ? 'the structural envelope stays largely intact and no heritage protection applies'
+      : 'die Tragstruktur weitgehend erhalten bleibt und kein Denkmalschutz greift'
+  }
+  if (intent === 'abbruch') {
+    return lang === 'en'
+      ? 'the enclosed volume stays under 300 m³'
+      : 'der umbaute Raum unter 300 m³ bleibt'
+  }
+  return lang === 'en' ? 'standard conditions apply' : 'Standardbedingungen gelten'
+}
+
+function flagSummary(items: { label: string }[], lang: 'de' | 'en'): string | null {
+  void lang
+  if (items.length === 0) return null
+  return items.slice(0, 2).map((it) => truncate(it.label, 60)).join('; ')
+}
+
+function namedActor(facts: Fact[], lang: 'de' | 'en'): string {
+  // Heuristic: if there are open Planungsrecht items, primary actor is
+  // the architect (B-Plan inquiry). Otherwise architect for now.
+  void facts
+  return lang === 'en' ? 'architect' : 'Architekt:in'
+}
+
+function truncate(s: string | undefined | null, max: number): string {
+  if (!s) return ''
+  if (s.length <= max) return s
+  return `${s.slice(0, max - 1).trimEnd()}…`
 }
