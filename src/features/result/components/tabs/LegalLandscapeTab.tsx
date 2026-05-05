@@ -12,6 +12,7 @@ import {
   type LegalRelevance,
 } from '../../lib/composeLegalDomains'
 import { findRuleSnippet } from '@/data/legalRuleSnippets'
+import { resolveAreas } from '../../lib/resolveAreas'
 
 interface Props {
   project: ProjectRow
@@ -29,7 +30,15 @@ export function LegalLandscapeTab({ project, state }: Props) {
   const { t, i18n } = useTranslation()
   const lang = (i18n.resolvedLanguage ?? 'de') as 'de' | 'en'
   const [openCitation, setOpenCitation] = useState<string | null>(null)
-  const domains = composeLegalDomains(state, lang)
+  // Phase 8.5 (A.2): resolveAreas auto-flips PENDING → ACTIVE for
+  // domains with ≥3 substantive facts. Pass the resolved view to the
+  // composer so domain-band relevance reflects the consultation, not
+  // just the persona's areas_update emit completeness.
+  const resolvedAreas = resolveAreas(state)
+  const domains = composeLegalDomains(
+    { ...state, areas: resolvedAreas.areas },
+    lang,
+  )
 
   return (
     <div className="flex flex-col gap-5 max-w-[1100px]">

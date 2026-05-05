@@ -1,5 +1,6 @@
 import type { ProjectState } from '@/types/projectState'
 import { humanizeFact } from './humanizeFact'
+import { resolveAreas } from './resolveAreas'
 
 export interface OpenItem {
   /** Stable id for routing (`?focus={id}`) and React keys. */
@@ -39,7 +40,11 @@ export function computeOpenItems(
   topN = 4,
 ): OpenItems {
   const facts = state.facts ?? []
-  const areas = state.areas
+  // Phase 8.5 (A.2): use the resolved Areas (auto-flips to ACTIVE
+  // when ≥3 domain-matching facts with non-assumed quality exist).
+  // Without this, legacy projects with a complete consultation but
+  // missing areas_update emits double-count their open items.
+  const { areas } = resolveAreas(state)
 
   const items: OpenItem[] = []
 
