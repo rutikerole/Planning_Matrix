@@ -1,18 +1,36 @@
 import { useState } from 'react'
+import { useAuthStore } from '@/stores/authStore'
 import { useLiveStream, DEFAULT_FILTERS, type LiveStreamFilters } from '../hooks/useLiveStream'
 import { TraceCard } from '../components/TraceCard'
+import { exportTracesJsonl } from '../lib/exportBundle'
 
 export function LiveStream() {
   const [filters, setFilters] = useState<LiveStreamFilters>(DEFAULT_FILTERS)
   const { data, isLoading, error, dataUpdatedAt } = useLiveStream(filters)
+  const adminEmail = useAuthStore((s) => s.user?.email ?? 'unknown@planning-matrix')
+
+  const handleExport = () => {
+    if (!data || data.length === 0) return
+    exportTracesJsonl({ traces: data, adminEmail, filename: `live-${Date.now()}.jsonl` })
+  }
 
   return (
     <div className="space-y-5">
-      <header className="space-y-1">
-        <h1 className="text-2xl tracking-tight text-[hsl(var(--ink))]">Live stream</h1>
-        <p className="text-sm text-[hsl(var(--ink))]/60">
-          Recent traces across every project. Polls every 5 seconds (paused when this tab is in background).
-        </p>
+      <header className="flex items-end justify-between">
+        <div className="space-y-1">
+          <h1 className="text-2xl tracking-tight text-[hsl(var(--ink))]">Live stream</h1>
+          <p className="text-sm text-[hsl(var(--ink))]/60">
+            Recent traces across every project. Polls every 5 seconds (paused when this tab is in background).
+          </p>
+        </div>
+        <button
+          type="button"
+          onClick={handleExport}
+          disabled={!data || data.length === 0}
+          className="rounded border border-[hsl(var(--ink))]/20 px-3 py-1 font-mono text-[11px] uppercase tracking-[0.18em] text-[hsl(var(--ink))]/65 hover:text-[hsl(var(--ink))] disabled:opacity-30"
+        >
+          ↓ export jsonl
+        </button>
       </header>
 
       {/* Filter chips */}

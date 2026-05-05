@@ -2,10 +2,12 @@ import { useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import * as Collapsible from '@radix-ui/react-collapsible'
 import type { TraceRow } from '@/types/observability'
+import { useAuthStore } from '@/stores/authStore'
 import { useTraceDetail } from '../hooks/useTraceDetail'
 import { SpanGantt } from '../components/SpanGantt'
 import { JsonViewer } from '../components/JsonViewer'
 import { StatusPill } from '../components/StatusPill'
+import { exportTraceBundle } from '../lib/exportBundle'
 import {
   centsToUsd,
   formatDuration,
@@ -25,6 +27,7 @@ import {
 export function TurnDeepDive() {
   const { projectId, traceId } = useParams<{ projectId: string; traceId: string }>()
   const { data, isLoading, error } = useTraceDetail(traceId)
+  const adminEmail = useAuthStore((s) => s.user?.email ?? 'unknown@planning-matrix')
 
   if (isLoading) {
     return (
@@ -53,13 +56,30 @@ export function TurnDeepDive() {
 
   return (
     <div className="space-y-6">
-      {/* Back link */}
-      <Link
-        to={`/admin/logs/projects/${projectId}`}
-        className="font-mono text-[11px] uppercase tracking-[0.18em] text-[hsl(var(--ink))]/55 hover:text-[hsl(var(--ink))]"
-      >
-        ← back to project
-      </Link>
+      {/* Back link + export */}
+      <div className="flex items-center justify-between">
+        <Link
+          to={`/admin/logs/projects/${projectId}`}
+          className="font-mono text-[11px] uppercase tracking-[0.18em] text-[hsl(var(--ink))]/55 hover:text-[hsl(var(--ink))]"
+        >
+          ← back to project
+        </Link>
+        <button
+          type="button"
+          onClick={() =>
+            exportTraceBundle({
+              trace,
+              spans,
+              snapshot,
+              events,
+              adminEmail,
+            })
+          }
+          className="rounded border border-[hsl(var(--ink))]/20 px-3 py-1 font-mono text-[11px] uppercase tracking-[0.18em] text-[hsl(var(--ink))]/65 hover:text-[hsl(var(--ink))]"
+        >
+          ↓ export bundle
+        </button>
+      </div>
 
       <Section title="overview" defaultOpen>
         <TraceOverview trace={trace} />

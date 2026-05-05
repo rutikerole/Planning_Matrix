@@ -1,9 +1,11 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import { useAuthStore } from '@/stores/authStore'
 import { useCostMetrics } from '../hooks/useCostMetrics'
 import { CostKpi } from '../components/CostKpi'
 import { StackedBarChart } from '../components/StackedBarChart'
 import { RatioLineChart } from '../components/RatioLineChart'
+import { exportCostCsv } from '../lib/exportBundle'
 import { centsToUsd, formatPercent, formatTokens, truncateUuid } from '../lib/format'
 import type { LeaderboardEntry } from '../hooks/useCostMetrics'
 
@@ -12,17 +14,28 @@ type Window = 1 | 7 | 30
 export function CostDashboard() {
   const [windowDays, setWindowDays] = useState<Window>(30)
   const { data, isLoading, error } = useCostMetrics(windowDays)
+  const adminEmail = useAuthStore((s) => s.user?.email ?? 'unknown@planning-matrix')
 
   return (
     <div className="space-y-6">
-      <header className="flex items-end justify-between">
+      <header className="flex items-end justify-between gap-4">
         <div>
           <h1 className="text-2xl tracking-tight text-[hsl(var(--ink))]">Cost</h1>
           <p className="text-sm text-[hsl(var(--ink))]/60">
             Token spend, cache savings, and per-project rollups.
           </p>
         </div>
-        <WindowToggle value={windowDays} onChange={setWindowDays} />
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            disabled={!data}
+            onClick={() => data && exportCostCsv({ buckets: data.daily, adminEmail })}
+            className="rounded border border-[hsl(var(--ink))]/20 px-3 py-1 font-mono text-[11px] uppercase tracking-[0.18em] text-[hsl(var(--ink))]/65 hover:text-[hsl(var(--ink))] disabled:opacity-30"
+          >
+            ↓ csv
+          </button>
+          <WindowToggle value={windowDays} onChange={setWindowDays} />
+        </div>
       </header>
 
       {isLoading || !data ? (
