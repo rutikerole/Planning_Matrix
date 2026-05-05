@@ -93,7 +93,7 @@ export function AppRouter() {
           element={
             <>
               <SEO titleKey="seo.title.wizard" />
-              <ProtectedRoute>
+              <ProtectedRoute hideAppHeader>
                 <WizardPage />
               </ProtectedRoute>
             </>
