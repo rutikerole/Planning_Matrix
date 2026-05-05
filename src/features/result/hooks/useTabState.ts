@@ -19,22 +19,28 @@ const BASE_TAB_IDS: WorkspaceTabId[] = [
   'suggestions',
 ]
 
+interface Options {
+  /** Whether the caller is in owner-mode (gates the `expert` flag —
+   *  shared-link viewers cannot see raw state JSON via ?expert=true). */
+  ownerMode: boolean
+}
+
 /**
  * Phase 8 — URL-synced tab state for `/projects/:id/result?tab=…`.
  *
  * Source of truth is the `tab` search param. The hook mirrors it as
- * React state via `useSearchParams`, which keeps the back/forward
- * buttons coherent (each tab change pushes a history entry by default;
- * we use `{ replace: true }` to avoid noisy history during fast tab
- * scrubbing).
+ * React state via `useSearchParams`. Tab clicks push a new history
+ * entry (replace: false) so browser back/forward navigates between
+ * tabs as the brief specifies (§10.6).
  *
  * The 7th `expert` tab is only available when `?expert=true` is
- * present. An `?expert=true` URL with no `tab` param defaults to
- * `expert`; otherwise unknown tab ids fall back to `overview`.
+ * present AND the caller is in owner-mode. Shared-link viewers
+ * cannot escalate to the audit log + raw state by tampering with
+ * the URL. Unknown tab ids fall back to `overview`.
  */
-export function useTabState() {
+export function useTabState({ ownerMode }: Options = { ownerMode: true }) {
   const [params, setParams] = useSearchParams()
-  const expert = params.get('expert') === 'true'
+  const expert = ownerMode && params.get('expert') === 'true'
   const requested = params.get('tab') as WorkspaceTabId | null
 
   const allowed: WorkspaceTabId[] = useMemo(
@@ -51,7 +57,7 @@ export function useTabState() {
     (next: WorkspaceTabId) => {
       const nextParams = new URLSearchParams(params)
       nextParams.set('tab', next)
-      setParams(nextParams, { replace: true })
+      setParams(nextParams, { replace: false })
     },
     [params, setParams],
   )

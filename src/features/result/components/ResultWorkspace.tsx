@@ -43,7 +43,8 @@ interface Props {
  * cleanly and the URL-sync round-trips through every tab.
  */
 export function ResultWorkspace({ project, messages, events, source }: Props) {
-  const { active, setActive, expert } = useTabState()
+  const ownerMode = source.kind === 'owned'
+  const { active, setActive, expert } = useTabState({ ownerMode })
   const state = (project.state ?? {}) as Partial<ProjectState>
   const reduced = useReducedMotion()
 
@@ -82,7 +83,11 @@ export function ResultWorkspace({ project, messages, events, source }: Props) {
               {active === 'team' && <TeamTab state={state} />}
               {active === 'cost' && <CostTimelineTab state={state} />}
               {active === 'suggestions' && (
-                <SuggestionsTab project={project} state={state} />
+                <SuggestionsTab
+                  project={project}
+                  state={state}
+                  ownerMode={ownerMode}
+                />
               )}
               {active === 'expert' && expert && (
                 <ExpertTab

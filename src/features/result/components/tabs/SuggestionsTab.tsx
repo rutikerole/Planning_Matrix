@@ -8,6 +8,7 @@ import { SuggestionCard } from '../Cards/SuggestionCard'
 interface Props {
   project: ProjectRow
   state: Partial<ProjectState>
+  ownerMode: boolean
 }
 
 const DISMISS_KEY = (projectId: string) => `pm:dismissed-suggestions:${projectId}`
@@ -19,7 +20,7 @@ const DISMISS_KEY = (projectId: string) => `pm:dismissed-suggestions:${projectId
  * persists in localStorage scoped to the project id; Add wires through
  * the same path SmartSuggestions used in the legacy section.
  */
-export function SuggestionsTab({ project, state }: Props) {
+export function SuggestionsTab({ project, state, ownerMode }: Props) {
   const { t } = useTranslation()
   const [dismissed, setDismissed] = useState<Set<string>>(() => {
     if (typeof window === 'undefined') return new Set()
@@ -89,6 +90,7 @@ export function SuggestionsTab({ project, state }: Props) {
                 project={project}
                 state={state}
                 suggestion={s}
+                ownerMode={ownerMode}
                 onAdded={handleAdded}
                 onDismissed={handleDismissed}
               />

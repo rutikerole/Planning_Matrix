@@ -12,6 +12,10 @@ interface Props {
   project: ProjectRow
   state: Partial<ProjectState>
   suggestion: SmartSuggestion
+  /** Owner mode — gates the supabase write on Add-to-checklist. In
+   *  shared mode the Add button is hidden (recipients can't mutate
+   *  the project; supabase RLS would silently fail anyway). */
+  ownerMode: boolean
   onAdded: (id: string) => void
   onDismissed: (id: string) => void
 }
@@ -36,6 +40,7 @@ export function SuggestionCard({
   project,
   state,
   suggestion,
+  ownerMode,
   onAdded,
   onDismissed,
 }: Props) {
@@ -151,24 +156,26 @@ export function SuggestionCard({
             )}
           />
         </button>
-        <button
-          type="button"
-          onClick={() => void handleAdd()}
-          disabled={busy || added}
-          className={cn(
-            'inline-flex items-center h-8 px-3 rounded-full text-[11.5px] font-medium transition-colors duration-soft',
-            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink focus-visible:ring-offset-2 focus-visible:ring-offset-paper-card',
-            added
-              ? 'bg-paper border border-ink/15 text-ink/65 cursor-default'
-              : busy
-                ? 'bg-ink/15 border border-ink/15 text-ink/40 cursor-wait'
-                : 'bg-ink text-paper hover:bg-ink/92',
-          )}
-        >
-          {added
-            ? t('result.workspace.suggestions.added')
-            : t('result.workspace.suggestions.addToChecklist')}
-        </button>
+        {ownerMode && (
+          <button
+            type="button"
+            onClick={() => void handleAdd()}
+            disabled={busy || added}
+            className={cn(
+              'inline-flex items-center h-8 px-3 rounded-full text-[11.5px] font-medium transition-colors duration-soft',
+              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink focus-visible:ring-offset-2 focus-visible:ring-offset-paper-card',
+              added
+                ? 'bg-paper border border-ink/15 text-ink/65 cursor-default'
+                : busy
+                  ? 'bg-ink/15 border border-ink/15 text-ink/40 cursor-wait'
+                  : 'bg-ink text-paper hover:bg-ink/92',
+            )}
+          >
+            {added
+              ? t('result.workspace.suggestions.added')
+              : t('result.workspace.suggestions.addToChecklist')}
+          </button>
+        )}
       </div>
     </article>
   )
