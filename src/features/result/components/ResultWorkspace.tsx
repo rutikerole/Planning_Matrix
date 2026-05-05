@@ -1,3 +1,5 @@
+import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { AnimatePresence, m, useReducedMotion } from 'framer-motion'
 import { BlueprintSubstrate } from '@/components/shared/BlueprintSubstrate'
 import type { MessageRow, ProjectRow } from '@/types/db'
@@ -6,6 +8,7 @@ import { useTabState, type WorkspaceTabId } from '../hooks/useTabState'
 import { ResultFooter } from './ResultFooter'
 import { ResultHeader } from './ResultHeader'
 import { ResultTabs } from './ResultTabs'
+import { InspectDataFlowModal } from './InspectDataFlowModal'
 import { LegalLandscapeTab } from './tabs/LegalLandscapeTab'
 import { OverviewTab } from './tabs/OverviewTab'
 import { ProcedureDocumentsTab } from './tabs/ProcedureDocumentsTab'
@@ -47,6 +50,8 @@ export function ResultWorkspace({ project, messages, events, source }: Props) {
   const { active, setActive, expert } = useTabState({ ownerMode })
   const state = (project.state ?? {}) as Partial<ProjectState>
   const reduced = useReducedMotion()
+  const { t } = useTranslation()
+  const [inspectOpen, setInspectOpen] = useState(false)
 
   return (
     <div
@@ -99,10 +104,32 @@ export function ResultWorkspace({ project, messages, events, source }: Props) {
                   messages={messages}
                 />
               )}
+
+              {active !== 'expert' && (
+                <div className="mt-10 pt-4 border-t border-ink/10">
+                  <button
+                    type="button"
+                    onClick={() => setInspectOpen(true)}
+                    className="text-[11.5px] italic font-serif text-clay/85 hover:text-ink underline underline-offset-4 decoration-clay/55 transition-colors duration-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/35 focus-visible:ring-offset-2 focus-visible:ring-offset-paper rounded-sm"
+                  >
+                    ↗ {t('result.workspace.inspectDataFlow.linkLabel')}
+                  </button>
+                </div>
+              )}
             </TabPanel>
           </m.div>
         </AnimatePresence>
       </main>
+
+      <InspectDataFlowModal
+        project={project}
+        state={state}
+        events={events}
+        messages={messages}
+        tabId={active}
+        open={inspectOpen}
+        onOpenChange={setInspectOpen}
+      />
 
       <ResultFooter
         project={project}

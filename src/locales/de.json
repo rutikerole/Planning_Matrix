@@ -1726,6 +1726,11 @@
         "noInterpretation": "Auslegung folgt sobald die Beratung weiter ist.",
         "readOfficial": "Offiziellen Text öffnen"
       },
+      "inspectDataFlow": {
+        "linkLabel": "Wie wurde das berechnet?",
+        "modalTitle": "Datenfluss · {{tab}}",
+        "close": "Schließen"
+      },
       "calendar": {
         "ifSubmitBy": "Reichen Sie bis {{targetDate}} ein, ist mit der Genehmigung um {{expectedDate}} zu rechnen.",
         "deadline": "Verpassen Sie {{deadlineDate}}, verschiebt sich der Stichtag auf {{fallbackDate}} wegen {{reason}}."
