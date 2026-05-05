@@ -237,11 +237,14 @@ export function QuestionPlot({ onSubmit, submitError }: Props) {
     }
   }
 
-  // Phase 7.10f — Bug 2 fix: the map renders as soon as Yes is
-  // selected, before any address is typed. With no coords yet it
-  // sits at München zoom 13 with no pin, so the user can drag /
-  // zoom / click-to-select even before typing.
-  const showMap = hasPlot === true
+  // Phase 8.7 — Bug 3 fix: the map renders from the moment Q2
+  // mounts, regardless of hasPlot state. With no coords yet it
+  // sits at München zoom 13 with no pin, so the visual frame is
+  // anchored by the city map even before the user makes a choice.
+  // The `dimmedMap` flag fades the map slightly when the user
+  // explicitly chose No, signalling the location no longer
+  // drives the system but the map remains informative.
+  const dimmedMap = hasPlot === false
   // Sub-gate for things that only make sense once an address is
   // typed and geocodable: the BPlanCheck pill (driven by the
   // Edge Function lookup against resolved coords), the mapHint
@@ -251,40 +254,37 @@ export function QuestionPlot({ onSubmit, submitError }: Props) {
   const showAddressDerived = hasPlot === true && hasGeocodableAddress
 
   return (
-    <div className="flex flex-col gap-7">
-      {/* Phase 7.10f — 30/70 grid on lg+, single column below.
-        * When Yes is selected, the grid row clamps to [460, 720]
-        * so both columns share the same height — left col has no
-        * dead paper at the bottom and the map column has a
-        * concrete numeric height for Leaflet to render against
-        * (this is what fixed the Bug 1 empty-tiles regression).
-        * When Yes is NOT selected the row auto-sizes to left col
-        * content so the empty right column doesn't push 460px of
-        * blank paper into view. */}
+    <div className="flex min-h-0 flex-1 flex-col gap-5">
+      {/* Phase 8.7 — 2-column 30/70 grid is now permanent. The
+        * map mounts from page load (München zoom 13, no pin),
+        * so the visual frame is alive from the moment Q2
+        * appears. The grid row tracks the viewport via
+        * dvh-arithmetic so step 2 fits 1280×800 without scroll
+        * (~260px reserved for header + progress + main padding +
+        * action row + extras under the grid). */}
       <div
         className={cn(
-          'grid grid-cols-1 gap-8 lg:grid-cols-[30%_70%] lg:gap-0',
-          hasPlot === true && 'lg:grid-rows-[minmax(460px,720px)]',
+          'grid min-h-0 flex-1 grid-cols-1 gap-8 lg:grid-cols-[30%_70%] lg:gap-0',
+          'lg:grid-rows-[minmax(420px,calc(100dvh-280px))]',
         )}
       >
-        {/* LEFT COLUMN — question lane.
-          * Generous top/bottom padding plus a calmer right gutter
-          * so the H1 wraps word-by-word against the divider. Left
-          * padding stays light because the WizardShell already
-          * supplies the page-edge gutter. */}
-        <div className="flex flex-col gap-7 lg:gap-7 lg:pt-12 lg:pb-10 lg:pl-0 lg:pr-9">
-          <header className="flex flex-col gap-5">
+        {/* LEFT COLUMN — question lane. Phase 8.7 trims the
+          * vertical padding (was lg:pt-12 lg:pb-10) and the
+          * headline ramp (was clamp(2.5rem, 6vw, 4rem) / 44px)
+          * to keep step 2 inside 1280×800. */}
+        <div className="flex flex-col gap-5 lg:pt-4 lg:pb-4 lg:pl-0 lg:pr-9">
+          <header className="flex flex-col gap-3">
             <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-pm-clay">
               {t('wizard.q2.eyebrow')}
             </p>
             <h1
               id="q2-headline"
-              className="font-serif text-[clamp(2.5rem,6vw,4rem)] leading-[1.05] -tracking-[0.02em] text-pm-ink lg:text-[44px] lg:leading-[1.05]"
+              className="font-serif text-[clamp(2rem,4.4vw,3rem)] leading-[1.05] -tracking-[0.02em] text-pm-ink lg:text-[36px] lg:leading-[1.05]"
             >
               {t('wizard.q2.h').replace(/[?]\s*$/, '')}
               <span className="text-pm-clay">?</span>
             </h1>
-            <p className="font-sans text-[17px] italic leading-relaxed text-pm-ink-mid max-w-[36rem] lg:max-w-[15rem] lg:font-serif">
+            <p className="font-sans text-[15px] italic leading-relaxed text-pm-ink-mid max-w-[36rem] lg:max-w-[15rem] lg:font-serif">
               {t('wizard.q2.sub')}
             </p>
           </header>
@@ -389,59 +389,75 @@ export function QuestionPlot({ onSubmit, submitError }: Props) {
         </div>
 
         {/* RIGHT COLUMN — map lane (lg+ adds vertical hairline
-          * divider). On lg+ this cell is stretched to the
-          * grid-row height (clamped to [460, 720] when Yes is
-          * selected, see grid-rows-[minmax(...)] above). On mobile
-          * the inner wrapper has an explicit 460px height because
-          * there's no row stretch in the single-column layout.
+          * divider). The map is mounted from initial render so
+          * the visual frame is alive from page load even before
+          * the user picks Yes/No. On No, the map dims to opacity
+          * 0.7 and a clay-tinted badge overlays the top edge to
+          * signal that the location is no longer driving research.
           *
           * The ref captures clicks on map+popover so the
           * document-level mousedown handler can leave them alone
           * (a map click drops a new pin and the auto-open effect
           * re-opens the popover with the new data). */}
         <div ref={rightColumnRef} className="lg:border-l lg:border-pm-hair lg:p-6">
-          {showMap ? (
-            <div className="relative h-[460px] lg:h-full">
-              <Suspense
-                fallback={
-                  <div className="pm-plotmap-empty">Karte wird geladen…</div>
-                }
+          <div
+            className={cn(
+              'relative h-[420px] lg:h-full',
+              dimmedMap && 'transition-opacity duration-soft',
+            )}
+            style={dimmedMap ? { opacity: 0.7 } : undefined}
+          >
+            <Suspense
+              fallback={
+                <div className="pm-plotmap-empty">Karte wird geladen…</div>
+              }
+            >
+              <PlotMap
+                address={plotAddress}
+                onAddressChange={setPlotAddress}
+                onCoordinatesResolved={setCoords}
+                onBplanResolved={setBplanResult}
+                onBplanLoadingChange={setBplanLoading}
+              />
+            </Suspense>
+            {/* Phase 8.7 — No-state badge. Sits over the dimmed
+              * map's top-left, signals that the location is
+              * informative but no longer drives the research. */}
+            {dimmedMap ? (
+              <div
+                role="status"
+                aria-live="polite"
+                className="absolute left-[14px] top-[14px] z-[450] max-w-[280px] border-l-2 border-pm-clay/55 bg-pm-paper/92 px-3 py-1.5 font-serif text-[12px] italic leading-snug text-pm-ink-mid backdrop-blur-sm"
               >
-                <PlotMap
-                  address={plotAddress}
-                  onAddressChange={setPlotAddress}
-                  onCoordinatesResolved={setCoords}
-                  onBplanResolved={setBplanResult}
-                  onBplanLoadingChange={setBplanLoading}
-                />
-              </Suspense>
-              {/* Phase 7.10g — click-toggle Location profile. Hidden
-                * by default; opens via the auto-open effect
-                * whenever a pin appears (geocode resolves OR map
-                * click drops a pin). Closes on × / Esc / click
-                * outside the right column. AnimatePresence keys on
-                * coord identity so a new pin smoothly fades in. */}
-              <AnimatePresence initial={false}>
-                {popoverOpen && coords && showAddressDerived ? (
-                  <m.div
-                    key={`profile-${coords.lat.toFixed(5)}-${coords.lng.toFixed(5)}`}
-                    initial={reduced ? { opacity: 1 } : { opacity: 0, y: -4 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={reduced ? { opacity: 0 } : { opacity: 0, y: -4 }}
-                    transition={{ duration: reduced ? 0 : 0.18, ease: [0.16, 1, 0.3, 1] }}
-                    className="mt-6 lg:absolute lg:right-[46px] lg:top-[46px] lg:z-[450] lg:mt-0 lg:w-[248px]"
-                  >
-                    <PlotSidebar
-                      district={district}
-                      planningLawDisplay={planningLawDisplay}
-                      suggestedName={suggestedName}
-                      onClose={() => setPopoverOpen(false)}
-                    />
-                  </m.div>
-                ) : null}
-              </AnimatePresence>
-            </div>
-          ) : null}
+                {t('wizard.q2.mapWithoutPlot')}
+              </div>
+            ) : null}
+            {/* Phase 7.10g — click-toggle Location profile. Hidden
+              * by default; opens via the auto-open effect
+              * whenever a pin appears (geocode resolves OR map
+              * click drops a pin). Closes on × / Esc / click
+              * outside the right column. AnimatePresence keys on
+              * coord identity so a new pin smoothly fades in. */}
+            <AnimatePresence initial={false}>
+              {popoverOpen && coords && showAddressDerived ? (
+                <m.div
+                  key={`profile-${coords.lat.toFixed(5)}-${coords.lng.toFixed(5)}`}
+                  initial={reduced ? { opacity: 1 } : { opacity: 0, y: -4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={reduced ? { opacity: 0 } : { opacity: 0, y: -4 }}
+                  transition={{ duration: reduced ? 0 : 0.18, ease: [0.16, 1, 0.3, 1] }}
+                  className="mt-6 lg:absolute lg:right-[46px] lg:top-[46px] lg:z-[450] lg:mt-0 lg:w-[248px]"
+                >
+                  <PlotSidebar
+                    district={district}
+                    planningLawDisplay={planningLawDisplay}
+                    suggestedName={suggestedName}
+                    onClose={() => setPopoverOpen(false)}
+                  />
+                </m.div>
+              ) : null}
+            </AnimatePresence>
+          </div>
         </div>
       </div>
 
@@ -513,7 +529,7 @@ export function QuestionPlot({ onSubmit, submitError }: Props) {
         </p>
       ) : null}
 
-      <div className="mt-12 flex items-center justify-between gap-4">
+      <div className="mt-auto flex items-center justify-between gap-4 pt-6">
         <button
           type="button"
           onClick={goBackToQ1}
