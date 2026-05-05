@@ -324,6 +324,17 @@ export function PlotMap({
         <FlyToOnResolve flyTarget={flyTarget} />
         <MapInvalidationGuard />
       </MapContainer>
+      {/* Phase 7.10g — empty-state hint shown only while there's no
+          pin yet. The Location profile popover is hidden by default
+          in this state, so the hint is the user's only nudge to
+          either click the map or type an address. Top-left chip,
+          paper-tinted, italic serif to match the project's tone.
+          Hides as soon as a pin lands. */}
+      {!coords ? (
+        <div className="absolute left-[14px] top-[14px] z-[402] max-w-[260px] bg-pm-paper/92 px-3 py-1.5 font-serif text-[12px] italic leading-snug text-pm-ink-mid backdrop-blur-sm">
+          {t('wizard.q2.plot.popoverEmptyHint')}
+        </div>
+      ) : null}
         {/* Phase 7.10e — sweep animation on address change kept; the
             static SVG illustration overlay (PlotMapOverlay) and the
             hardcoded FLST/scale chips (MapCorners) were prototype

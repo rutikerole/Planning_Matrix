@@ -853,7 +853,11 @@
         "heritageDistance": "Heritage proximity",
         "suggestedName": "Suggested name",
         "editLater": "You can change this later.",
-        "outsideRegion": "Data not yet available for this region."
+        "outsideRegion": "Data not yet available for this region.",
+        "popoverEmptyHint": "Click on the map or type an address to inspect a location.",
+        "popoverClose": "Close",
+        "planningLawFound": "B-Plan {{number}} — {{name}}",
+        "planningLawFoundNumber": "B-Plan {{number}}"
       }
     },
     "back": "Back",

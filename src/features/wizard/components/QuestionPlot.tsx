@@ -7,9 +7,43 @@ import { isPlotAddressValid, isMuenchenAddress } from '../lib/plotValidation'
 import type { Intent } from '../lib/selectTemplate'
 import { BPlanCheck } from './BPlanCheck'
 import { PlotSidebar } from './PlotSidebar'
-import { usePlotProfile } from '../hooks/usePlotProfile'
 import { suggestProjectName } from '@/features/dashboard/lib/projectName'
+import { districtFromAddress } from '@/data/muenchenPlzDistricts'
 import type { BplanLookupResult } from '@/types/bplan'
+import type { GeocodeResult } from './PlotMap/geocode'
+
+/**
+ * Phase 7.10g — derive the popover's "PLANNING LAW" string from the
+ * live B-Plan WMS lookup. Updates per pin pick (the lookup runs on
+ * resolved coords). `null` when there is nothing useful to show
+ * (loading, upstream WMS error, etc.).
+ *
+ * `t` and `fallback` are passed in so this helper stays a pure
+ * function of the input — no useTranslation calls outside of the
+ * component body.
+ */
+function formatPlanningLaw(
+  result: BplanLookupResult | null,
+  t: (key: string, opts?: Record<string, unknown>) => string,
+  fallback: string,
+): string | null {
+  if (!result) return null
+  if (result.status === 'upstream_error') return null
+  if (result.status === 'no_plan_found') return fallback
+  // status === 'found'
+  if (result.plan_number && result.plan_name_de) {
+    return t('wizard.q2.plot.planningLawFound', {
+      number: result.plan_number,
+      name: result.plan_name_de,
+    })
+  }
+  if (result.plan_number) {
+    return t('wizard.q2.plot.planningLawFoundNumber', {
+      number: result.plan_number,
+    })
+  }
+  return fallback
+}
 
 const PlotMap = lazy(() =>
   import('./PlotMap/PlotMap').then((mod) => ({ default: mod.PlotMap })),
@@ -34,22 +68,29 @@ interface Props {
  * v3 Q2 — plot question. 30/70 grid on lg+ with the question lane
  * on the left and the map on the right; single column below lg.
  *
- * Phase 7.10f layout contract:
- *   • Map renders as soon as Yes is selected (no address required).
- *     With no coords yet it sits at München zoom 13, no pin, no
- *     flyTo. Once address ≥ 6 chars resolves, pin + WMS overlay +
- *     flyTo zoom 17 kick in.
- *   • Location profile floats absolutely top-right inside the map
- *     column on lg+ (top:46 right:46 w-248 z-450), stacks below the
- *     map on mobile. Renders only once the address is geocodable
- *     (the panel has nothing to show otherwise).
- *   • Map column height clamps to [460, 720] via grid-row minmax
- *     when Yes is selected, so left and right columns share the
- *     same row height and there is no dead paper at the bottom of
- *     either side.
- *   • Map fills its column via h-full; the height chain reaches
- *     Leaflet through the grid row, and a ResizeObserver inside
- *     PlotMap calls invalidateSize() so tiles always render.
+ * Phase 7.10g — Location profile is now a CLICK-TOGGLE POPOVER
+ * (was always-visible in 7.10f). Behaviour:
+ *   • Hidden by default. Map renders München zoom 13 with no pin,
+ *     no popover. A small italic empty-state hint sits in the
+ *     map's top-left chip slot.
+ *   • A pin lands when the address is typed (geocode resolves) OR
+ *     when the user clicks a point on the map (reverse-geocode).
+ *     The popover auto-opens with that location's data.
+ *   • Clicking a different point updates the popover (smooth fade
+ *     keyed on coord identity).
+ *   • Closes on × button, Esc, or click anywhere outside the
+ *     right column (left column / page background). Map clicks
+ *     stay inside the right column and just drop a new pin.
+ *
+ * Phase 7.10g — popover fields are limited to the THREE that
+ * actually update per click:
+ *   • DISTRICT       — PLZ → Stadtbezirk via curated lookup
+ *   • PLANNING LAW   — derived from the live WMS B-Plan lookup
+ *   • SUGGESTED NAME — derived from intent + address
+ * The four mocked rows from earlier phases (estimated area,
+ * buildable area, character, heritage proximity) are no longer
+ * surfaced; their data computation paths in usePlotProfile.ts are
+ * preserved as a future-Phase TODO.
  *
  * Out-of-coverage (non-München) addresses surface as a soft note
  * rather than a hard error.
@@ -97,8 +138,66 @@ export function QuestionPlot({ onSubmit, submitError }: Props) {
   }, [plotAddress])
   /* eslint-enable react-hooks/set-state-in-effect */
 
-  const profile = usePlotProfile(plotAddress)
+  // Phase 7.10g — popover data sources (each updates per pin pick):
+  //   • district: PLZ → Stadtbezirk via curated lookup table
+  //   • planningLawDisplay: from the live WMS B-Plan lookup
+  //   • suggestedName: from intent + address
+  const district = districtFromAddress(plotAddress)
+  const planningLawDisplay = formatPlanningLaw(
+    bplanResult,
+    t,
+    'Innenbereich, § 34 BauGB',
+  )
   const suggestedName = intent ? suggestProjectName(intent, plotAddress) : null
+
+  // Phase 7.10g — Location profile is a click-toggle popover. Opens
+  // whenever a pin appears (geocode resolves OR map click); closes
+  // on × / Esc / click anywhere outside the right column. Coords
+  // are mirrored from PlotMap via onCoordinatesResolved so we can
+  // trigger the open on coord identity change.
+  const [coords, setCoords] = useState<GeocodeResult | null>(null)
+  const [popoverOpen, setPopoverOpen] = useState(false)
+  const rightColumnRef = useRef<HTMLDivElement>(null)
+
+  // Auto-open whenever a NEW pin lands (coords transition by
+  // value, not reference — same lat/lng must NOT re-open after a
+  // user dismiss). When coords clear (address < 6 chars), close.
+  /* eslint-disable react-hooks/set-state-in-effect, react-hooks/exhaustive-deps */
+  useEffect(() => {
+    if (coords) setPopoverOpen(true)
+    else setPopoverOpen(false)
+  }, [coords?.lat, coords?.lng])
+  /* eslint-enable react-hooks/set-state-in-effect, react-hooks/exhaustive-deps */
+
+  // Esc key closes the popover (document-level so it works even when
+  // focus has not entered the popover yet).
+  useEffect(() => {
+    if (!popoverOpen) return
+    const handleKey = (e: KeyboardEvent<Document> | globalThis.KeyboardEvent) => {
+      if ((e as globalThis.KeyboardEvent).key === 'Escape') {
+        setPopoverOpen(false)
+      }
+    }
+    document.addEventListener('keydown', handleKey as EventListener)
+    return () => document.removeEventListener('keydown', handleKey as EventListener)
+  }, [popoverOpen])
+
+  // Click anywhere outside the right column (which contains both
+  // the map and the popover) closes the popover. Clicks INSIDE the
+  // right column — including on the map itself — don't close,
+  // because a map click drops a new pin and the auto-open effect
+  // re-opens the popover with the new data.
+  useEffect(() => {
+    if (!popoverOpen) return
+    const handleMouseDown = (e: MouseEvent) => {
+      const node = rightColumnRef.current
+      if (node && !node.contains(e.target as Node)) {
+        setPopoverOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleMouseDown)
+    return () => document.removeEventListener('mousedown', handleMouseDown)
+  }, [popoverOpen])
 
   const addressValid = isPlotAddressValid(plotAddress)
   const isMunich = addressValid && isMuenchenAddress(plotAddress)
@@ -294,8 +393,13 @@ export function QuestionPlot({ onSubmit, submitError }: Props) {
           * grid-row height (clamped to [460, 720] when Yes is
           * selected, see grid-rows-[minmax(...)] above). On mobile
           * the inner wrapper has an explicit 460px height because
-          * there's no row stretch in the single-column layout. */}
-        <div className="lg:border-l lg:border-pm-hair lg:p-6">
+          * there's no row stretch in the single-column layout.
+          *
+          * The ref captures clicks on map+popover so the
+          * document-level mousedown handler can leave them alone
+          * (a map click drops a new pin and the auto-open effect
+          * re-opens the popover with the new data). */}
+        <div ref={rightColumnRef} className="lg:border-l lg:border-pm-hair lg:p-6">
           {showMap ? (
             <div className="relative h-[460px] lg:h-full">
               <Suspense
@@ -306,21 +410,36 @@ export function QuestionPlot({ onSubmit, submitError }: Props) {
                 <PlotMap
                   address={plotAddress}
                   onAddressChange={setPlotAddress}
+                  onCoordinatesResolved={setCoords}
                   onBplanResolved={setBplanResult}
                   onBplanLoadingChange={setBplanLoading}
                 />
               </Suspense>
-              {/* Floating Location profile — restored from the
-                * Phase 7.10 prototype. Only renders once the
-                * address is geocodable (panel has nothing to show
-                * otherwise). On lg+ it floats absolutely inside
-                * the map column at top:46 right:46, w-248. On
-                * mobile it stacks below the map in flow. */}
-              {showAddressDerived ? (
-                <div className="mt-6 lg:absolute lg:right-[46px] lg:top-[46px] lg:z-[450] lg:mt-0 lg:w-[248px]">
-                  <PlotSidebar profile={profile} suggestedName={suggestedName} />
-                </div>
-              ) : null}
+              {/* Phase 7.10g — click-toggle Location profile. Hidden
+                * by default; opens via the auto-open effect
+                * whenever a pin appears (geocode resolves OR map
+                * click drops a pin). Closes on × / Esc / click
+                * outside the right column. AnimatePresence keys on
+                * coord identity so a new pin smoothly fades in. */}
+              <AnimatePresence initial={false}>
+                {popoverOpen && coords && showAddressDerived ? (
+                  <m.div
+                    key={`profile-${coords.lat.toFixed(5)}-${coords.lng.toFixed(5)}`}
+                    initial={reduced ? { opacity: 1 } : { opacity: 0, y: -4 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={reduced ? { opacity: 0 } : { opacity: 0, y: -4 }}
+                    transition={{ duration: reduced ? 0 : 0.18, ease: [0.16, 1, 0.3, 1] }}
+                    className="mt-6 lg:absolute lg:right-[46px] lg:top-[46px] lg:z-[450] lg:mt-0 lg:w-[248px]"
+                  >
+                    <PlotSidebar
+                      district={district}
+                      planningLawDisplay={planningLawDisplay}
+                      suggestedName={suggestedName}
+                      onClose={() => setPopoverOpen(false)}
+                    />
+                  </m.div>
+                ) : null}
+              </AnimatePresence>
             </div>
           ) : null}
         </div>

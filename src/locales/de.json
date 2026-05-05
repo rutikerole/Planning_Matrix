@@ -853,7 +853,11 @@
         "heritageDistance": "Denkmal-Nähe",
         "suggestedName": "Vorgeschlagener Name",
         "editLater": "Sie können dies später ändern.",
-        "outsideRegion": "Daten noch nicht verfügbar für diese Region."
+        "outsideRegion": "Daten noch nicht verfügbar für diese Region.",
+        "popoverEmptyHint": "Klicken Sie auf die Karte oder geben Sie eine Adresse ein, um einen Ort zu prüfen.",
+        "popoverClose": "Schließen",
+        "planningLawFound": "B-Plan {{number}} — {{name}}",
+        "planningLawFoundNumber": "B-Plan {{number}}"
       }
     },
     "back": "Zurück",
