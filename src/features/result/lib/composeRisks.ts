@@ -41,6 +41,8 @@ export function composeRisks({ project, state, limit = 3 }: Args): {
   const scored: ScoredRisk[] = []
   for (const entry of RISK_CATALOG) {
     if (entry.intents && !entry.intents.includes(project.intent)) continue
+    if (entry.bundeslaender && !entry.bundeslaender.includes(project.bundesland))
+      continue
 
     let likelihood: 1 | 2 | 3 = entry.baseLikelihood
     if (entry.evidencePattern && entry.bumpedLikelihood) {

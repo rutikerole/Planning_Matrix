@@ -27,6 +27,9 @@ export interface RiskCatalogEntry {
   bumpedLikelihood?: 1 | 2 | 3
   /** Optional intent filter (most renovations carry statics-surprise risk; demos don't). */
   intents?: string[]
+  /** Phase 8.5 (D.3) — optional Bundesland filter. Only fires when
+   *  the project's bundesland appears in the array. */
+  bundeslaender?: string[]
   unriskDe: string
   unriskEn: string
   verifyBeforePublicLaunch: true
