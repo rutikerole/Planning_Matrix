@@ -168,25 +168,24 @@ export function ChatWorkspacePage() {
   const factsForToast = (project.state as ProjectState | undefined)?.facts ?? []
   const hasMessages = (messages?.length ?? 0) > 0
 
-  // Phase 7.9 §3 (table) — Stand-up link restyled from caps mono
-  // to italic Georgia clay 11.5 px with a dotted under-decoration,
-  // per the prototype.
+  // Phase 7.10 — Stand-up link redesigned as a paper-card pill
+  // button. Same family as the JumpToLatest pill (paper-card +
+  // clay hairline + italic Georgia) so the two affordances read
+  // as siblings, not as a pill + an underlined link.
   const standUpLink = (
     <button
       type="button"
       onClick={() => setStandUpOpen(true)}
-      className="inline-flex items-center gap-1.5 px-1 py-1 text-clay/85 hover:text-clay-deep transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/55 rounded-sm"
+      className="inline-flex items-center gap-1.5 h-8 px-3.5 rounded-full bg-paper-card border border-clay/35 text-clay-deep hover:bg-[hsl(var(--clay)/0.08)] hover:border-clay/55 transition-[background-color,border-color] duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/55 focus-visible:ring-offset-2 focus-visible:ring-offset-paper"
       style={{
         fontFamily: "Georgia, 'Instrument Serif', serif",
         fontStyle: 'italic',
-        fontSize: 11.5,
-        textDecoration: 'underline dotted',
-        textDecorationColor: 'rgba(123,92,63,0.55)',
-        textUnderlineOffset: 3,
+        fontSize: 12.5,
+        letterSpacing: '0.005em',
       }}
     >
-      <span aria-hidden="true">↗</span>
-      {t('chat.chamber.inputStandUpLink')}
+      <span aria-hidden="true" className="text-clay">↗</span>
+      <span>{t('chat.chamber.inputStandUpLink')}</span>
     </button>
   )
 

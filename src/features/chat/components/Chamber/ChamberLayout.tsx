@@ -22,7 +22,6 @@ import {
   type ReactNode,
   type RefObject,
 } from 'react'
-import { CursorParallax } from './CursorParallax'
 
 interface Props {
   /** Phase 7.5 — left Spine sidebar (desktop only, ≥ 1024 px). */
@@ -77,17 +76,15 @@ export function ChamberLayout({
           height: '100dvh',
         }}
       >
-        {/* z-0 background stack — fixed to viewport, paint across the
-         * whole chamber regardless of any scroll context underneath.
+        {/* z-0 background stack.
          *
-         * Phase 7.8 §2.7 — AmbientTint dropped from the mount + props.
-         * Phase 7.9 §2.7 — BlueprintSubstrate dropped from the chat
-         * surface. The prototype shows zero visible grid behind the
-         * conversation; the substrate's 4 % alpha was reading on
-         * scroll. CursorParallax + grain stay (subliminal). The
-         * substrate component continues to render on dashboard /
-         * wizard / result / loader. */}
-        <CursorParallax />
+         * Phase 7.8 §2.7 — AmbientTint dropped (no specialist hue wash).
+         * Phase 7.9 §2.7 — BlueprintSubstrate dropped (no grid).
+         * Phase 7.10 — CursorParallax dropped. It was painting two
+         * radial gradients with different hues (warm at 18%/22%,
+         * cooler at 78%/78%), which made the right side of the page
+         * read visibly grayer than the left. Single uniform paper
+         * warmth now — only the grain texture remains as ambient. */}
         <div aria-hidden="true" className="grain-overlay-fixed" />
 
         {/* Banners — fixed at the very top of the chamber surface. */}
