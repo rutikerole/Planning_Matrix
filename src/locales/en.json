@@ -1713,6 +1713,9 @@
         "backToConsultation": "↩ Back to consultation",
         "breadcrumbDashboard": "Dashboard"
       },
+      "confidence": {
+        "tooltip": "Computed from {{factWeight}}% fact-quality mix ({{factScore}}%) + {{sectionWeight}}% section completeness ({{sectionScore}}%) = {{total}}%"
+      },
       "footer": {
         "back": "↩ Back to consultation",
         "sendToArchitect": "Send to architect",

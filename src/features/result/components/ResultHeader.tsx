@@ -4,7 +4,7 @@ import { ArrowLeft } from 'lucide-react'
 import type { ProjectRow } from '@/types/db'
 import type { ProjectState } from '@/types/projectState'
 import { buildDocumentNumber } from '../lib/documentNumber'
-import { computeConfidence } from '../lib/computeConfidence'
+import { computeConfidenceBreakdown } from '../lib/computeConfidence'
 import type { ResultSource } from './ResultWorkspace'
 
 interface Props {
@@ -30,8 +30,15 @@ export function ResultHeader({ project, source }: Props) {
   const state = (project.state ?? {}) as Partial<ProjectState>
 
   const docNo = buildDocumentNumber(project.id)
-  const confidence = computeConfidence(state)
+  const conf = computeConfidenceBreakdown(state)
   const plotLine = project.plot_address ?? ''
+  const confTooltip = t('result.workspace.confidence.tooltip', {
+    factWeight: conf.factWeight,
+    factScore: conf.factScore,
+    sectionWeight: conf.sectionWeight,
+    sectionScore: conf.sectionScore,
+    total: conf.total,
+  })
 
   const expiresLong = isShared
     ? new Date(source.expiresAt).toLocaleDateString(
@@ -98,12 +105,16 @@ export function ResultHeader({ project, source }: Props) {
           )}
         </div>
 
-        <div className="flex flex-col items-end gap-0.5 shrink-0">
+        <div
+          className="flex flex-col items-end gap-0.5 shrink-0"
+          title={confTooltip}
+          aria-label={confTooltip}
+        >
           <p className="text-[10px] font-medium uppercase tracking-[0.22em] text-clay leading-none">
             {t('result.workspace.header.confidence')}
           </p>
-          <p className="font-serif italic text-[24px] text-ink leading-none tabular-nums">
-            {confidence > 0 ? `${confidence}%` : '—'}
+          <p className="font-serif italic text-[24px] text-ink leading-none tabular-nums cursor-help">
+            {conf.total > 0 ? `${conf.total}%` : '—'}
           </p>
           <p className="font-serif italic text-[10px] text-clay leading-snug whitespace-nowrap">
             {t('result.workspace.header.preliminary')}

@@ -1713,6 +1713,9 @@
         "backToConsultation": "↩ Zurück zur Beratung",
         "breadcrumbDashboard": "Dashboard"
       },
+      "confidence": {
+        "tooltip": "Berechnet aus {{factWeight}} % Datenqualität ({{factScore}} %) + {{sectionWeight}} % Abschnitt-Vollständigkeit ({{sectionScore}} %) = {{total}} %"
+      },
       "footer": {
         "back": "↩ Zurück zur Beratung",
         "sendToArchitect": "An Architekt:in senden",
