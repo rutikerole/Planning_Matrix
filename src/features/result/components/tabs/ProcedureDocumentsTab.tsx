@@ -8,6 +8,7 @@ import type {
   ItemStatus,
   ProjectState,
 } from '@/types/projectState'
+import { PROCEDURE_PHASES, totalPhaseWeight } from '../../lib/composeTimeline'
 
 interface Props {
   project: ProjectRow
@@ -15,58 +16,6 @@ interface Props {
 }
 
 type DocFilter = 'all' | 'erforderlich' | 'liegt_vor' | 'eingereicht' | 'genehmigt'
-
-interface PhaseSpec {
-  key: string
-  labelDe: string
-  labelEn: string
-  weight: number
-  rangeDe: string
-  rangeEn: string
-}
-
-const PHASES: PhaseSpec[] = [
-  {
-    key: 'preparation',
-    labelDe: 'Vorbereitung',
-    labelEn: 'Preparation',
-    weight: 11,
-    rangeDe: 'ca. 8–14 Wochen',
-    rangeEn: 'approx. 8–14 weeks',
-  },
-  {
-    key: 'submission',
-    labelDe: 'Einreichung',
-    labelEn: 'Submission',
-    weight: 1,
-    rangeDe: 'ca. 1 Woche',
-    rangeEn: 'approx. 1 week',
-  },
-  {
-    key: 'review',
-    labelDe: 'Prüfung',
-    labelEn: 'Review',
-    weight: 8,
-    rangeDe: 'ca. 6–10 Wochen',
-    rangeEn: 'approx. 6–10 weeks',
-  },
-  {
-    key: 'corrections',
-    labelDe: 'Korrekturen',
-    labelEn: 'Corrections',
-    weight: 4,
-    rangeDe: 'ca. 2 Wochen',
-    rangeEn: 'approx. 2 weeks',
-  },
-  {
-    key: 'approval',
-    labelDe: 'Genehmigung',
-    labelEn: 'Approval',
-    weight: 1,
-    rangeDe: 'Stichtag',
-    rangeEn: 'milestone',
-  },
-]
 
 /**
  * Phase 8 — Tab 3 Procedure & documents.
@@ -94,7 +43,7 @@ export function ProcedureDocumentsTab({ state }: Props) {
     return documents.filter((d) => d.status === filter)
   }, [documents, filter])
 
-  const totalWeight = PHASES.reduce((sum, p) => sum + p.weight, 0)
+  const totalWeight = totalPhaseWeight()
 
   return (
     <div className="flex flex-col gap-10 max-w-[1100px]">
@@ -189,7 +138,7 @@ export function ProcedureDocumentsTab({ state }: Props) {
           {t('result.workspace.procedure.timelineEyebrow')}
         </p>
         <div className="border border-ink/12 rounded-[10px] bg-paper-card p-4 sm:p-5 flex flex-col gap-3">
-          {PHASES.map((phase) => {
+          {PROCEDURE_PHASES.map((phase) => {
             const widthPct = Math.round((phase.weight / totalWeight) * 100)
             return (
               <div

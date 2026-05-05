@@ -7,54 +7,11 @@ import {
   formatEurRange,
   type CostBreakdown,
 } from '../../lib/costNormsMuenchen'
+import { PROCEDURE_PHASES, totalPhaseWeight } from '../../lib/composeTimeline'
 
 interface Props {
   state: Partial<ProjectState>
 }
-
-interface PhaseSpec {
-  key: string
-  labelDe: string
-  labelEn: string
-  weight: number
-  rangeDe: string
-  rangeEn: string
-}
-
-const PHASES: PhaseSpec[] = [
-  {
-    key: 'preparation',
-    labelDe: 'Vorbereitung',
-    labelEn: 'Preparation',
-    weight: 11,
-    rangeDe: 'ca. 8–14 Wochen',
-    rangeEn: 'approx. 8–14 weeks',
-  },
-  {
-    key: 'submission',
-    labelDe: 'Einreichung',
-    labelEn: 'Submission',
-    weight: 1,
-    rangeDe: 'ca. 1 Woche',
-    rangeEn: 'approx. 1 week',
-  },
-  {
-    key: 'review',
-    labelDe: 'Prüfung',
-    labelEn: 'Review',
-    weight: 8,
-    rangeDe: 'ca. 6–10 Wochen',
-    rangeEn: 'approx. 6–10 weeks',
-  },
-  {
-    key: 'corrections',
-    labelDe: 'Korrekturen',
-    labelEn: 'Corrections',
-    weight: 4,
-    rangeDe: 'ca. 2 Wochen',
-    rangeEn: 'approx. 2 weeks',
-  },
-]
 
 const COST_LINES: Array<{
   key: keyof CostBreakdown
@@ -111,7 +68,7 @@ export function CostTimelineTab({ state }: Props) {
   const klasse = detectKlasse(corpus)
   const cost = buildCostBreakdown(procedure, klasse)
 
-  const totalWeight = PHASES.reduce((sum, p) => sum + p.weight, 0)
+  const totalWeight = totalPhaseWeight()
   const maxBar = Math.max(...COST_LINES.map((l) => cost[l.key].max), 1)
 
   return (
@@ -185,7 +142,7 @@ export function CostTimelineTab({ state }: Props) {
           {t('result.workspace.cost.timelineEyebrow')}
         </p>
         <div className="border border-ink/12 rounded-[10px] bg-paper-card p-4 sm:p-5 flex flex-col gap-3">
-          {PHASES.map((phase, idx) => {
+          {PROCEDURE_PHASES.map((phase, idx) => {
             const widthPct = Math.round((phase.weight / totalWeight) * 100)
             return (
               <div
