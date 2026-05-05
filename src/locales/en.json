@@ -1694,6 +1694,87 @@
         "body": "Email with briefing link",
         "cta": "Coming soon"
       }
+    },
+    "workspace": {
+      "tabs": {
+        "aria": "Briefing sections",
+        "overview": "Overview",
+        "legal": "Legal landscape",
+        "procedure": "Procedure & documents",
+        "team": "Team",
+        "cost": "Cost & timeline",
+        "suggestions": "Suggestions",
+        "expert": "Data flow"
+      },
+      "header": {
+        "eyebrow": "Project briefing · {{shortId}}",
+        "confidence": "Confidence",
+        "preliminary": "preliminary · pending architect confirmation",
+        "backToConsultation": "↩ Back to consultation",
+        "breadcrumbDashboard": "Dashboard"
+      },
+      "footer": {
+        "back": "↩ Back to consultation",
+        "sendToArchitect": "Send to architect",
+        "pdf": "PDF",
+        "shareLink": "Share link",
+        "takeItHome": "Take it home",
+        "moreActions": "More actions",
+        "inspectDataFlow": "Inspect data flow"
+      },
+      "exec": {
+        "eyebrow": "Executive read",
+        "empty": "Once the consultation is further along, we'll summarise the state here in two to three paragraphs."
+      },
+      "ataglance": {
+        "eyebrow": "At a glance",
+        "procedure": "Procedure",
+        "buildingClass": "Building class",
+        "estimatedCost": "Estimated cost",
+        "timeline": "Timeline",
+        "specialists": "Specialists needed",
+        "openQuestions": "Open questions",
+        "inProgress": "In progress",
+        "tbd": "—"
+      },
+      "actions": {
+        "doNextEyebrow": "Do next",
+        "doNextCount_one": "{{count}} action",
+        "doNextCount_other": "{{count}} actions",
+        "verifyEyebrow": "Verify with architect",
+        "verifyCount_one": "{{count}} point",
+        "verifyCount_other": "{{count}} points",
+        "dataQualityEyebrow": "Data quality",
+        "dataQualityCount_one": "{{count}} fact",
+        "dataQualityCount_other": "{{count}} facts",
+        "decided": "Decided",
+        "calculated": "Calculated",
+        "assumed": "Assumed"
+      },
+      "share": {
+        "linkCopied": "Link copied · valid for 30 days",
+        "watermark": "Shared briefing · valid until {{date}}"
+      },
+      "suggestions": {
+        "addToChecklist": "Add to checklist",
+        "dismiss": "Dismiss",
+        "tellMeMore": "Tell me more",
+        "added": "✓ Added",
+        "empty": "No suggestions yet — we'll surface some once the consultation has gathered more data."
+      },
+      "expert": {
+        "eyebrow": "Data flow · audit",
+        "intro": "This view is intended for the architect or auditor. It shows the audit trail, the raw project state, and the source of every claim.",
+        "emptyEvents": "No audit events yet."
+      },
+      "placeholder": {
+        "title": "This section is under construction.",
+        "body": "Soon you'll find the full content here — structured, cited, verifiable."
+      },
+      "empty": {
+        "tab": "Not enough information yet — continue the consultation to build out this section.",
+        "continue": "Continue consultation →"
+      }
     }
   },
   "legal": {

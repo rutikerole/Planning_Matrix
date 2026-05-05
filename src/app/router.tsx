@@ -1,4 +1,4 @@
-import { Route, Routes, useLocation } from 'react-router-dom'
+import { Navigate, Route, Routes, useLocation, useParams } from 'react-router-dom'
 import { AnimatePresence } from 'framer-motion'
 import { LandingPage } from '@/features/landing/LandingPage'
 import { NotFoundPage } from '@/features/not-found/NotFoundPage'
@@ -17,10 +17,14 @@ import { ProtectedRoute } from '@/components/shared/ProtectedRoute'
 import { ProjectGuard } from '@/components/shared/ProjectGuard'
 import { WizardPage } from '@/features/wizard'
 import { ChatWorkspacePage } from '@/features/chat/pages/ChatWorkspacePage'
-import { OverviewPage } from '@/features/chat/pages/OverviewPage'
 import { ResultPage } from '@/features/result/pages/ResultPage'
 import { SharedResultPage } from '@/features/result/pages/SharedResultPage'
 import { SEO } from '@/components/SEO'
+
+function OverviewRedirect() {
+  const { id } = useParams<{ id: string }>()
+  return <Navigate to={`/projects/${id}/result?tab=overview`} replace />
+}
 
 export function AppRouter() {
   const location = useLocation()
@@ -107,15 +111,13 @@ export function AppRouter() {
             </ProtectedRoute>
           }
         />
+        {/* Phase 8 — /overview is now folded into the Result Workspace.
+          * Preserve any bookmarks by redirecting to the same page with
+          * ?tab=overview. Auth still enforced via the destination
+          * route. */}
         <Route
           path="/projects/:id/overview"
-          element={
-            <ProtectedRoute>
-              <ProjectGuard>
-                <OverviewPage />
-              </ProjectGuard>
-            </ProtectedRoute>
-          }
+          element={<OverviewRedirect />}
         />
         <Route
           path="/projects/:id/result"

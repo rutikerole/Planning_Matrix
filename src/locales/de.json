@@ -1694,6 +1694,87 @@
         "body": "E-Mail mit Briefing-Link",
         "cta": "Bald verfügbar"
       }
+    },
+    "workspace": {
+      "tabs": {
+        "aria": "Briefing-Bereiche",
+        "overview": "Übersicht",
+        "legal": "Rechtsrahmen",
+        "procedure": "Verfahren & Unterlagen",
+        "team": "Team",
+        "cost": "Kosten & Zeitplan",
+        "suggestions": "Vorschläge",
+        "expert": "Datenfluss"
+      },
+      "header": {
+        "eyebrow": "Projekt-Briefing · {{shortId}}",
+        "confidence": "Sicherheit",
+        "preliminary": "vorläufig · Bestätigung durch Architekt:in",
+        "backToConsultation": "↩ Zurück zur Beratung",
+        "breadcrumbDashboard": "Dashboard"
+      },
+      "footer": {
+        "back": "↩ Zurück zur Beratung",
+        "sendToArchitect": "An Architekt:in senden",
+        "pdf": "PDF",
+        "shareLink": "Link teilen",
+        "takeItHome": "Mitnehmen",
+        "moreActions": "Weitere Aktionen",
+        "inspectDataFlow": "Datenfluss prüfen"
+      },
+      "exec": {
+        "eyebrow": "Executive Read",
+        "empty": "Sobald die Beratung weiter fortgeschritten ist, fassen wir hier den Stand in zwei bis drei Absätzen zusammen."
+      },
+      "ataglance": {
+        "eyebrow": "Auf einen Blick",
+        "procedure": "Verfahren",
+        "buildingClass": "Gebäudeklasse",
+        "estimatedCost": "Kostenrahmen",
+        "timeline": "Zeitplan",
+        "specialists": "Fachpersonen",
+        "openQuestions": "Offene Fragen",
+        "inProgress": "In Klärung",
+        "tbd": "—"
+      },
+      "actions": {
+        "doNextEyebrow": "Nächste Schritte",
+        "doNextCount_one": "{{count}} Schritt",
+        "doNextCount_other": "{{count}} Schritte",
+        "verifyEyebrow": "Mit Architekt:in verifizieren",
+        "verifyCount_one": "{{count}} Punkt",
+        "verifyCount_other": "{{count}} Punkte",
+        "dataQualityEyebrow": "Datengüte",
+        "dataQualityCount_one": "{{count}} Datenpunkt",
+        "dataQualityCount_other": "{{count}} Datenpunkte",
+        "decided": "Entschieden",
+        "calculated": "Abgeleitet",
+        "assumed": "Angenommen"
+      },
+      "share": {
+        "linkCopied": "Link kopiert · 30 Tage gültig",
+        "watermark": "Geteiltes Briefing · gültig bis {{date}}"
+      },
+      "suggestions": {
+        "addToChecklist": "Zur Checkliste hinzufügen",
+        "dismiss": "Verwerfen",
+        "tellMeMore": "Mehr erfahren",
+        "added": "✓ Hinzugefügt",
+        "empty": "Noch keine Vorschläge — wir schlagen welche vor, sobald die Beratung mehr Daten enthält."
+      },
+      "expert": {
+        "eyebrow": "Datenfluss · Audit",
+        "intro": "Diese Ansicht ist für die Architekt:in oder Auditprüfung gedacht. Sie zeigt die Auditspur, den rohen Projektstatus und die Quelle jeder Aussage.",
+        "emptyEvents": "Noch keine Audit-Ereignisse aufgezeichnet."
+      },
+      "placeholder": {
+        "title": "Dieser Bereich wird gerade gebaut.",
+        "body": "In Kürze finden Sie hier den vollständigen Inhalt — strukturiert, zitiert, prüfbar."
+      },
+      "empty": {
+        "tab": "Noch nicht genug Informationen — setzen Sie die Beratung fort, um diesen Abschnitt zu vervollständigen.",
+        "continue": "Beratung fortsetzen →"
+      }
     }
   },
   "legal": {
