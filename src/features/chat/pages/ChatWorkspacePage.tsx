@@ -168,23 +168,29 @@ export function ChatWorkspacePage() {
   const factsForToast = (project.state as ProjectState | undefined)?.facts ?? []
   const hasMessages = (messages?.length ?? 0) > 0
 
-  // Phase 7.10 — Stand-up link redesigned as a paper-card pill
-  // button. Same family as the JumpToLatest pill (paper-card +
-  // clay hairline + italic Georgia) so the two affordances read
-  // as siblings, not as a pill + an underlined link.
+  // Phase 7.10 (revised) — Stand-up link reverted to a quiet
+  // text affordance. Wrapping it in a paper-card pill made it
+  // visually equal in weight to JumpToLatest (a primary pill
+  // above the input) and to the input pill itself — three pills
+  // stacked at the bottom is too much chrome for what is a
+  // meta-secondary action ("step out of the conversation"). The
+  // dotted underline is gone (it read as a hyperlink); the pill
+  // chrome is gone (it competed with Jump-to-live). What's left
+  // is the bare italic Georgia label with a subtle clay arrow
+  // and a hover lift to clay-deep.
   const standUpLink = (
     <button
       type="button"
       onClick={() => setStandUpOpen(true)}
-      className="inline-flex items-center gap-1.5 h-8 px-3.5 rounded-full bg-paper-card border border-clay/35 text-clay-deep hover:bg-[hsl(var(--clay)/0.08)] hover:border-clay/55 transition-[background-color,border-color] duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/55 focus-visible:ring-offset-2 focus-visible:ring-offset-paper"
+      className="inline-flex items-center gap-1.5 px-2 py-1 text-clay/72 hover:text-clay-deep transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/55 focus-visible:ring-offset-2 focus-visible:ring-offset-paper rounded-sm"
       style={{
         fontFamily: "Georgia, 'Instrument Serif', serif",
         fontStyle: 'italic',
-        fontSize: 12.5,
+        fontSize: 12,
         letterSpacing: '0.005em',
       }}
     >
-      <span aria-hidden="true" className="text-clay">↗</span>
+      <span aria-hidden="true" className="text-clay/80">↗</span>
       <span>{t('chat.chamber.inputStandUpLink')}</span>
     </button>
   )
@@ -276,11 +282,11 @@ export function ChatWorkspacePage() {
         }
         inputZone={
           hasMessages ? (
-            // Phase 7.10 — Stand-up link sits in its own row below
-            // the input pill, right-aligned. The earlier inline-right
-            // attempt overlapped the SendButton at the pill's right
-            // edge; below-right keeps it clearly visible and out of
-            // the pill's affordance area.
+            // Phase 7.10 — Stand-up link is no longer inside the
+            // input zone. It moves to ChamberLayout's bottomRightSlot
+            // (rendered OUTSIDE the centered column wrapper) so it
+            // sits in the right gutter of the chat surface,
+            // independent of the input pill.
             <div className="relative">
               <JumpToLatest latestAssistantId={latestAssistantId} />
               <InputBar
@@ -290,12 +296,10 @@ export function ChatWorkspacePage() {
                 forceDisabled={isThinking || queueFull}
                 textareaRef={inputRef as React.RefObject<HTMLTextAreaElement>}
               />
-              <div className="flex items-center justify-end mt-2.5 pr-1">
-                {standUpLink}
-              </div>
             </div>
           ) : null
         }
+        bottomRightSlot={hasMessages ? standUpLink : null}
         ledger={
           hasMessages ? (
             <LedgerTab

@@ -82,21 +82,29 @@ export function LedgerTab({ projectId, projectName, summary, pulseKey = 0 }: Pro
   }
 
   // Desktop hover-reveal.
+  // Phase 7.10 fix — items-stretch on the wrapper was forcing the
+  // tab handle to grow to the LedgerPeek panel's content height
+  // (~600 px when fully populated), which read as a tall paper-card
+  // "gray bar" stuck to the right edge of the viewport. The peek
+  // is now absolute-positioned relative to the wrapper; only the
+  // tab handle drives the wrapper's natural size.
   return (
     <div
-      className="fixed right-0 top-1/2 -translate-y-1/2 z-[15] flex items-stretch"
+      className="fixed right-0 top-1/2 -translate-y-1/2 z-[15]"
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       onFocus={() => setHovered(true)}
       onBlur={() => setHovered(false)}
     >
-      {/* Peek panel — slides out to the left of the tab */}
+      {/* Peek panel — absolute, slides into view from the right. */}
       <div
         aria-hidden={!hovered}
         className={cn(
-          'transition-transform duration-[320ms] ease-[cubic-bezier(0.16,1,0.3,1)]',
-          'origin-right',
-          hovered ? 'translate-x-0' : 'translate-x-full pointer-events-none',
+          'absolute right-full top-1/2 -translate-y-1/2',
+          'transition-[opacity,transform] duration-[320ms] ease-[cubic-bezier(0.16,1,0.3,1)]',
+          hovered
+            ? 'opacity-100 translate-x-0 pointer-events-auto'
+            : 'opacity-0 translate-x-3 pointer-events-none',
         )}
       >
         <LedgerPeek
@@ -105,7 +113,7 @@ export function LedgerTab({ projectId, projectName, summary, pulseKey = 0 }: Pro
           summary={summary}
         />
       </div>
-      {/* Tab handle */}
+      {/* Tab handle — natural size. */}
       <button
         type="button"
         aria-label={t('chat.chamber.ledgerTabLabel') + ` · ${count}`}
@@ -116,7 +124,6 @@ export function LedgerTab({ projectId, projectName, summary, pulseKey = 0 }: Pro
           'transition-shadow duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/55',
           pulsed && 'shadow-[0_0_0_4px_hsl(var(--clay)/0.18)]',
         )}
-        style={{ alignSelf: 'center' }}
       >
         <span className="[writing-mode:vertical-rl] rotate-180 leading-none">
           {t('chat.chamber.ledgerTabLabel')}

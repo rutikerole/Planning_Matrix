@@ -42,6 +42,11 @@ interface Props {
   banners?: ReactNode
   /** Modals / overlays (StandUp). */
   overlays?: ReactNode
+  /** Phase 7.10 — bottom-right slot rendered OUTSIDE the input
+   *  column wrapper. Used for the Stand-up affordance so it sits
+   *  in the right gutter of the chat surface, independent of the
+   *  centered input pill. */
+  bottomRightSlot?: ReactNode
 }
 
 // Phase 7.6 — main scroll container ref exposed via context so
@@ -61,6 +66,7 @@ export function ChamberLayout({
   ledger,
   banners,
   overlays,
+  bottomRightSlot,
 }: Props) {
   const mainRef = useRef<HTMLElement | null>(null)
   return (
@@ -141,6 +147,17 @@ export function ChamberLayout({
               <div className="mx-auto w-full max-w-[var(--chamber-col-max)] px-[var(--chamber-col-px-mobile)] md:px-[var(--chamber-col-px-tablet)] lg:px-[var(--chamber-col-px-desktop)] pt-3 pb-3 bg-paper">
                 {inputZone}
               </div>
+              {/* Phase 7.10 — bottom-right slot. Lives OUTSIDE the
+                * column wrapper so the Stand-up affordance can sit
+                * in the right gutter of the chat surface, independent
+                * of the centered input pill. Reserved 24 px from the
+                * viewport right so it doesn't overlap the LedgerTab
+                * (vertically centered, not at the bottom). */}
+              {bottomRightSlot && (
+                <div className="absolute right-6 bottom-3 z-10 pointer-events-auto">
+                  {bottomRightSlot}
+                </div>
+              )}
             </div>
           </main>
         </div>
