@@ -65,6 +65,8 @@ const ALLOWLIST = [
   'src/data/timelineAnnotations.ts',
   // Phase 8.3 — risk catalog carries bilingual title + un-risk notes.
   'src/data/riskCatalog.ts',
+  // Phase 8.3 — Authority calendar reasons (Weihnachts-/Sommer-Reduktion).
+  'src/data/muenchenAuthorityCalendar.ts',
   // Phase 8 — heuristic legal-domain composer. Bilingual citation
   // copy (Planungsrecht / Bauordnungsrecht / etc.); same pattern.
   'src/features/result/lib/composeLegalDomains.ts',

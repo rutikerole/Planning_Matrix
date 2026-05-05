@@ -1726,6 +1726,10 @@
         "noInterpretation": "Interpretation follows as the consultation progresses.",
         "readOfficial": "Open the official text"
       },
+      "calendar": {
+        "ifSubmitBy": "If you submit by {{targetDate}}, expected approval is around {{expectedDate}}.",
+        "deadline": "If you miss {{deadlineDate}}, target slips to {{fallbackDate}} because of {{reason}}."
+      },
       "risks": {
         "eyebrow": "Risk register",
         "count_one": "{{count}} flag",

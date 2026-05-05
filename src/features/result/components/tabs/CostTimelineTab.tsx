@@ -14,6 +14,7 @@ import {
 import { PROCEDURE_PHASES, totalPhaseWeight } from '../../lib/composeTimeline'
 import { findCostRationale } from '@/data/costRationales'
 import { findTimelineAnnotation } from '@/data/timelineAnnotations'
+import { composeCalendar, formatCalendarDate } from '../../lib/composeCalendar'
 
 interface Props {
   project: ProjectRow
@@ -223,7 +224,44 @@ export function CostTimelineTab({ project, state }: Props) {
             {t('result.workspace.cost.subjectToWorkload')}
           </p>
         </div>
+
+        {/* C.3 calendar narrator note. */}
+        <CalendarNarrator lang={lang} />
       </section>
     </div>
+  )
+}
+
+function CalendarNarrator({ lang }: { lang: 'de' | 'en' }) {
+  const { t } = useTranslation()
+  const cal = composeCalendar()
+  const targetLong = formatCalendarDate(cal.targetDate, lang)
+  const expectedLong = formatCalendarDate(cal.expectedDate, lang)
+  const fallbackLong = cal.fallbackDate
+    ? formatCalendarDate(cal.fallbackDate, lang)
+    : null
+  const reason = cal.closureHit
+    ? lang === 'en'
+      ? cal.closureHit.reasonEn
+      : cal.closureHit.reasonDe
+    : null
+
+  return (
+    <p className="font-serif italic text-[13px] text-ink leading-relaxed border-l border-clay/35 pl-4 max-w-[640px]">
+      {t('result.workspace.calendar.ifSubmitBy', {
+        targetDate: targetLong,
+        expectedDate: expectedLong,
+      })}
+      {fallbackLong && reason && (
+        <>
+          {' '}
+          {t('result.workspace.calendar.deadline', {
+            deadlineDate: targetLong,
+            fallbackDate: fallbackLong,
+            reason,
+          })}
+        </>
+      )}
+    </p>
   )
 }
