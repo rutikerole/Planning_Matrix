@@ -387,7 +387,19 @@ function findLastSpecialist(
 function translateUpstream(err: unknown): ChatTurnError {
   if (err instanceof UpstreamError) {
     if (err.code === 'invalid_response') {
-      return { code: 'model_response_invalid', message: err.message }
+      // Phase 8.6 (B.2) — server already attempted schema-reminder retry
+      // inside callAnthropicWithSchemaReminder (anthropic.ts). If we
+      // still landed here, both attempts failed. Hint the SPA to
+      // auto-retry the whole turn (with the same clientRequestId — the
+      // user-message idempotency makes this safe). User sees the
+      // existing thinking indicator hang on longer instead of an
+      // immediate error toast for what's effectively a transient
+      // model-output glitch.
+      return {
+        code: 'model_response_invalid',
+        message: err.message,
+        autoRetryInMs: 3000,
+      }
     }
     if (err.code === 'timeout') {
       return { code: 'upstream_timeout', message: err.message }

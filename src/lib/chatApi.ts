@@ -44,6 +44,9 @@ export class ChatTurnError extends Error {
   readonly httpStatus: number
   /** Phase 4.1 #125 — populated when code === 'rate_limit_exceeded'. */
   readonly rateLimit: RateLimitInfo | null
+  /** Phase 8.6 (B.2) — populated when code === 'model_response_invalid'.
+   *  Hints the SPA to auto-retry the same turn after this delay. */
+  readonly autoRetryInMs: number | null
 
   constructor(
     code: ChatApiErrorCode,
@@ -52,6 +55,7 @@ export class ChatTurnError extends Error {
     httpStatus: number,
     message: string,
     rateLimit: RateLimitInfo | null = null,
+    autoRetryInMs: number | null = null,
   ) {
     super(message)
     this.name = 'ChatTurnError'
@@ -60,6 +64,7 @@ export class ChatTurnError extends Error {
     this.requestId = requestId
     this.httpStatus = httpStatus
     this.rateLimit = rateLimit
+    this.autoRetryInMs = autoRetryInMs
   }
 }
 
@@ -158,6 +163,7 @@ export async function postChatTurn(
       response.status,
       body.error.message,
       body.error.rateLimit ?? null,
+      body.error.autoRetryInMs ?? null,
     )
   }
 

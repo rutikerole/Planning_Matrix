@@ -5,6 +5,7 @@ import {
   postChatTurnStreaming,
   ChatTurnError,
 } from '@/lib/chatApi'
+import { MODEL_INVALID_AUTO_RETRIES } from '@/types/chatTurn'
 import {
   fetchPersistedUserMessageId,
   linkFilesToMessage,
@@ -141,43 +142,92 @@ export function useChatTurn(projectId: string) {
       const streamingId = `streaming-${clientRequestId}`
       openStreamingMessage(streamingId, seedSpecialist)
 
-      const response = await new Promise<
-        Extract<ChatTurnResponse, { ok: true }>
-      >((resolve, reject) => {
-        let textArrived = false
-        let resolved = false
+      // Phase 8.6 (B.2) — auto-retry loop around the streaming attempt.
+      // When the Edge Function returns model_response_invalid with an
+      // autoRetryInMs hint (i.e., its own server-side schema-reminder
+      // retry already failed), we re-submit the same turn (same
+      // clientRequestId — idempotent on the messages partial unique
+      // index) up to MODEL_INVALID_AUTO_RETRIES times before letting
+      // the error fall through to onError. The user sees the existing
+      // thinking indicator hang on longer (3-6s extra) instead of a
+      // disruptive error toast for what's effectively a transient
+      // model-output glitch.
+      let autoRetriesUsed = 0
+      let response: Extract<ChatTurnResponse, { ok: true }> | undefined
 
-        postChatTurnStreaming(
-          request,
-          lang,
-          {
-            onTextDelta: (delta) => {
-              textArrived = true
-              appendStreamingText(delta)
-            },
-            onComplete: (env) => {
-              if (resolved) return
-              resolved = true
-              resolve(env)
-            },
-            onError: async (err) => {
-              if (resolved) return
-              resolved = true
-              if (textArrived) {
-                reject(err)
-                return
-              }
-              try {
-                const fallback = await postChatTurn(request, abortController.signal)
-                resolve(fallback)
-              } catch (fallbackErr) {
-                reject(fallbackErr)
-              }
-            },
-          },
-          abortController.signal,
-        ).catch(reject)
-      })
+      while (response === undefined) {
+        try {
+          const attempt = await new Promise<
+            Extract<ChatTurnResponse, { ok: true }>
+          >((resolve, reject) => {
+            let textArrived = false
+            let resolved = false
+
+            postChatTurnStreaming(
+              request,
+              lang,
+              {
+                onTextDelta: (delta) => {
+                  textArrived = true
+                  appendStreamingText(delta)
+                },
+                onComplete: (env) => {
+                  if (resolved) return
+                  resolved = true
+                  resolve(env)
+                },
+                onError: async (err) => {
+                  if (resolved) return
+                  resolved = true
+                  if (textArrived) {
+                    reject(err)
+                    return
+                  }
+                  try {
+                    const fallback = await postChatTurn(request, abortController.signal)
+                    resolve(fallback)
+                  } catch (fallbackErr) {
+                    reject(fallbackErr)
+                  }
+                },
+              },
+              abortController.signal,
+            ).catch(reject)
+          })
+          response = attempt
+        } catch (err) {
+          if (
+            err instanceof ChatTurnError &&
+            err.code === 'model_response_invalid' &&
+            typeof err.autoRetryInMs === 'number' &&
+            autoRetriesUsed < MODEL_INVALID_AUTO_RETRIES
+          ) {
+            autoRetriesUsed += 1
+            if (import.meta.env.DEV) {
+              console.log(
+                `[chat-turn] model_response_invalid; client auto-retry ${autoRetriesUsed}/${MODEL_INVALID_AUTO_RETRIES} in ${err.autoRetryInMs}ms`,
+              )
+            }
+            await new Promise((r) =>
+              setTimeout(r, err.autoRetryInMs as number),
+            )
+            continue
+          }
+          throw err
+        }
+      }
+
+      if (!response) {
+        // Defensive — TS narrows `response` to non-null after `break`,
+        // but the loop's structure makes this impossible at runtime.
+        throw new ChatTurnError(
+          'model_response_invalid',
+          null,
+          null,
+          500,
+          'Auto-retry loop exited without a response',
+        )
+      }
 
       return {
         kind: 'sent',

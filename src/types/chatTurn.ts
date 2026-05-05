@@ -96,7 +96,21 @@ export interface ChatTurnError {
     /** ISO timestamp when the bucket resets. */
     resetAt: string
   }
+  /**
+   * Phase 8.6 (B.2) — populated when code === 'model_response_invalid'
+   * after the server-side schema-reminder retry has already failed.
+   * The client should auto-retry the same chat turn (with the same
+   * clientRequestId) after this delay, up to MODEL_INVALID_AUTO_RETRIES
+   * times. The user sees a calmer "reformulating" placeholder during
+   * the auto-retry window rather than an immediate error toast.
+   */
+  autoRetryInMs?: number
 }
+
+/** Phase 8.6 (B.2) — client-side cap on auto-retries for
+ *  model_response_invalid. After this many auto-retries, fall through
+ *  to the user-facing error toast. */
+export const MODEL_INVALID_AUTO_RETRIES = 2
 
 // ── Response ───────────────────────────────────────────────────────────
 export interface CostInfo {
