@@ -63,6 +63,10 @@ const ALLOWLIST = [
   // Phase 8.2 — bilingual cost-row + timeline-phase rationales.
   'src/data/costRationales.ts',
   'src/data/timelineAnnotations.ts',
+  // Phase 10 — per-template cost bands carry basisDe / basisEn pair.
+  // The DE strings are canonical legal-domain descriptions paired
+  // with the EN mirror — same allowlist pattern as composeExecutiveRead.
+  'src/features/result/lib/costNormsMuenchen.ts',
   // Phase 8.3 — risk catalog carries bilingual title + un-risk notes.
   'src/data/riskCatalog.ts',
   // Phase 8.3 — Authority calendar reasons (Weihnachts-/Sommer-Reduktion).
