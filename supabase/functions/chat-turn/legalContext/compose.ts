@@ -1,6 +1,15 @@
 // ───────────────────────────────────────────────────────────────────────
 // Phase 5 — legalContext/compose.ts (München-active)
 //
+// Cache-Bust marker — Phase-10.1 (2026-05-06).
+// bayern.ts + personaBehaviour.ts + every T-01..T-08 tail were
+// rewritten to remove the "Anlage 1 BayBO" anchor and add the
+// Bundesland-Disziplin block. Anthropic's prompt cache hashes the
+// prefix content, so changing those strings naturally invalidates
+// every prior cache entry — no separate cache-busting payload is
+// needed. This marker exists so future prefix-debugging ("which
+// commit changed the cached prefix?") can grep for it.
+//
 // Single composition point for the four ordered slices. The composed
 // prefix is what carries `cache_control: { type: 'ephemeral' }` in
 // systemPrompt.ts → buildSystemBlocks. Live state still lives AFTER
