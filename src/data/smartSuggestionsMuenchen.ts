@@ -65,6 +65,24 @@ export interface SmartSuggestion {
   intents?: string[]
   /** Optional bundesland filter — only show when project.bundesland matches. */
   bundeslaender?: string[]
+  /**
+   * Phase 10 commit 11 — applicableTemplates filter. When set, the
+   * suggestion fires only for projects whose templateId is in this
+   * list. Decoupled from `intents` because intents are wizard slugs;
+   * templateIds are post-routing identifiers (Phase 10 explicitly
+   * makes the project-shape semantic the authoritative filter).
+   *
+   * Suppression matrix (cross-references brief §1):
+   *   - T-03 (Sanierung) loses Stellplatz, PV-Neubau, Baumschutz,
+   *     Lageplan, Gebäudeklasse-Diskussion (GK bleibt, BayBO Art.
+   *     46 Abs. 6 indirekt)
+   *   - T-06 (Aufstockung) loses ALL Stellplatz-related suggestions
+   *     (BayBO Art. 81 Abs. 1 Nr. 4 b Privileg seit 01.10.2025) +
+   *     PV-Neubau (Art. 44a gilt nur Wohn-NEUBAU)
+   *   - T-08 (Sonstiges) starts empty — restraint until sub-category
+   *     elicited
+   */
+  applicableTemplates?: import('@/types/projectState').TemplateId[]
   /** Optional regex run against the project corpus (facts + procedures). */
   scopeMatch?: RegExp
   /**
@@ -86,6 +104,7 @@ export interface SmartSuggestion {
 export const SMART_SUGGESTIONS_MUENCHEN: SmartSuggestion[] = [
   {
     id: 'pv-pflicht',
+    applicableTemplates: ['T-01', 'T-02'],
     category: 'energy',
     titleDe: 'Photovoltaikanlage einplanen',
     titleEn: 'Plan a photovoltaic system',
@@ -102,6 +121,7 @@ export const SMART_SUGGESTIONS_MUENCHEN: SmartSuggestion[] = [
   },
   {
     id: 'bauherrenversicherung',
+    applicableTemplates: ['T-01', 'T-02', 'T-06', 'T-07'],
     category: 'insurance',
     titleDe: 'Versicherungsangebote vergleichen',
     titleEn: 'Compare insurance offers',
@@ -115,6 +135,7 @@ export const SMART_SUGGESTIONS_MUENCHEN: SmartSuggestion[] = [
   },
   {
     id: 'kfw-foerderung',
+    applicableTemplates: ['T-01', 'T-02', 'T-03', 'T-06'],
     category: 'energy',
     titleDe: 'Förderprogramme prüfen (KfW)',
     titleEn: 'Check funding programs (KfW)',
@@ -129,6 +150,7 @@ export const SMART_SUGGESTIONS_MUENCHEN: SmartSuggestion[] = [
   },
   {
     id: 'denkmal-pruefen',
+    applicableTemplates: ['T-03', 'T-04', 'T-05'],
     category: 'regulation',
     titleDe: 'Denkmalrechtliche Erlaubnis prüfen',
     titleEn: 'Check heritage-law permits',
@@ -145,6 +167,7 @@ export const SMART_SUGGESTIONS_MUENCHEN: SmartSuggestion[] = [
   },
   {
     id: 'baulasten',
+    applicableTemplates: ['T-01', 'T-02', 'T-06', 'T-07'],
     category: 'risk',
     titleDe: 'Baulastenverzeichnis einsehen',
     titleEn: 'Inspect the land charges register',
@@ -159,6 +182,7 @@ export const SMART_SUGGESTIONS_MUENCHEN: SmartSuggestion[] = [
   },
   {
     id: 'stellplatzsatzung-muenchen',
+    applicableTemplates: ['T-01', 'T-02'],
     category: 'regulation',
     titleDe: 'Münchner Stellplatzsatzung StPlS 926 prüfen',
     titleEn: "Check Munich's StPlS 926 parking ordinance",
@@ -173,6 +197,7 @@ export const SMART_SUGGESTIONS_MUENCHEN: SmartSuggestion[] = [
   },
   {
     id: 'baumschutz-muenchen',
+    applicableTemplates: ['T-01', 'T-02', 'T-05', 'T-07'],
     category: 'regulation',
     titleDe: 'Münchner Baumschutzverordnung 901 beachten',
     titleEn: "Check Munich's tree-protection ordinance (901)",
@@ -187,6 +212,7 @@ export const SMART_SUGGESTIONS_MUENCHEN: SmartSuggestion[] = [
   },
   {
     id: 'energieausweis',
+    applicableTemplates: ['T-01', 'T-02', 'T-03', 'T-06'],
     category: 'energy',
     titleDe: 'Energieausweis frühzeitig planen',
     titleEn: 'Plan the energy certificate early',
@@ -202,6 +228,7 @@ export const SMART_SUGGESTIONS_MUENCHEN: SmartSuggestion[] = [
   },
   {
     id: 'nachbarschaft',
+    applicableTemplates: ['T-01', 'T-02', 'T-04', 'T-06', 'T-07'],
     category: 'risk',
     titleDe: 'Nachbarschaft frühzeitig informieren',
     titleEn: 'Inform neighbours early',
@@ -218,6 +245,7 @@ export const SMART_SUGGESTIONS_MUENCHEN: SmartSuggestion[] = [
   // ── Phase 8.5 (D.1) — project-specific München templates ──────────────
   {
     id: 'baumgutachten',
+    applicableTemplates: ['T-01', 'T-02', 'T-05', 'T-07'],
     category: 'regulation',
     titleDe: 'Baumkartierung vor Einreichung beauftragen',
     titleEn: 'Commission a tree survey before submission',
@@ -236,6 +264,7 @@ export const SMART_SUGGESTIONS_MUENCHEN: SmartSuggestion[] = [
   },
   {
     id: 'ensemble-blfd',
+    applicableTemplates: ['T-01', 'T-02', 'T-03', 'T-04', 'T-05', 'T-06', 'T-07'],
     category: 'regulation',
     titleDe: 'BLfD-Anfrage zum Ensemble-Schutz absetzen',
     titleEn: 'File a BLfD enquiry on ensemble protection',
@@ -256,6 +285,7 @@ export const SMART_SUGGESTIONS_MUENCHEN: SmartSuggestion[] = [
   },
   {
     id: 'pv-konzept-baybo44a',
+    applicableTemplates: ['T-01', 'T-02'],
     category: 'energy',
     titleDe: 'PV-Konzept nach Art. 44a BayBO dokumentieren',
     titleEn: 'Document the PV concept per BayBO Art. 44a',
@@ -274,6 +304,7 @@ export const SMART_SUGGESTIONS_MUENCHEN: SmartSuggestion[] = [
   },
   {
     id: 'lageplan-amtlich',
+    applicableTemplates: ['T-01', 'T-02', 'T-06', 'T-07'],
     category: 'tooling',
     titleDe: 'Amtlichen Lageplan (M = 1:500) beauftragen',
     titleEn: 'Commission an official site plan (M = 1:500)',
@@ -296,6 +327,7 @@ export const SMART_SUGGESTIONS_MUENCHEN: SmartSuggestion[] = [
   },
   {
     id: 'abbruch-anzeige',
+    applicableTemplates: ['T-01', 'T-02', 'T-04', 'T-05'],
     category: 'regulation',
     titleDe: 'Abbruchanzeige nach BayBO Art. 57 vorbereiten',
     titleEn: 'Prepare a demolition notification per BayBO Art. 57',
@@ -315,6 +347,7 @@ export const SMART_SUGGESTIONS_MUENCHEN: SmartSuggestion[] = [
   },
   {
     id: 'kfw-40-foerderung',
+    applicableTemplates: ['T-01', 'T-02', 'T-03', 'T-06'],
     category: 'energy',
     titleDe: 'KfW-Effizienzhaus-40-Antrag VOR Auftragsvergabe',
     titleEn: 'File KfW Efficiency-House-40 application BEFORE contract award',
@@ -332,6 +365,7 @@ export const SMART_SUGGESTIONS_MUENCHEN: SmartSuggestion[] = [
   },
   {
     id: 'bauherren-haftpflicht-bind',
+    applicableTemplates: ['T-01', 'T-02', 'T-06', 'T-07'],
     category: 'insurance',
     titleDe: 'Bauherrenhaftpflicht VOR Baubeginn binden',
     titleEn: 'Bind builder liability insurance BEFORE site work',
@@ -349,6 +383,7 @@ export const SMART_SUGGESTIONS_MUENCHEN: SmartSuggestion[] = [
   },
   {
     id: 'stellplatz-nachweis-doku',
+    applicableTemplates: ['T-01', 'T-02'],
     category: 'regulation',
     titleDe: 'Stellplatznachweis schriftlich dem Antrag beilegen',
     titleEn: 'Append a written parking proof to the application',

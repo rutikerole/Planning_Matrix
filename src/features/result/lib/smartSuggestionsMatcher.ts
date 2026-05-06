@@ -62,6 +62,17 @@ export function pickSmartSuggestions({
     if (s.intents && !s.intents.includes(project.intent)) continue
     if (s.bundeslaender && !s.bundeslaender.includes(project.bundesland))
       continue
+    // Phase 10 commit 11 — applicableTemplates filter. When set, the
+    // suggestion fires only for projects whose templateId is in the
+    // list. Specifically suppresses Stellplatz-related suggestions on
+    // T-06 (BayBO Art. 81 Abs. 1 Nr. 4 b Privileg seit 01.10.2025) and
+    // GK-Diskussion on T-03 (Sanierung — GK bleibt unverändert).
+    if (
+      s.applicableTemplates &&
+      !s.applicableTemplates.includes(project.template_id)
+    ) {
+      continue
+    }
     if (s.scopeMatch && !s.scopeMatch.test(corpus)) continue
     if (s.evidenceFacts && s.evidenceFacts.length > 0) {
       const allMatch = s.evidenceFacts.every((req) => {
@@ -75,6 +86,7 @@ export function pickSmartSuggestions({
     let score = 1.0
     if (s.intents?.includes(project.intent)) score += 1.5
     if (s.bundeslaender?.includes(project.bundesland)) score += 1.0
+    if (s.applicableTemplates?.includes(project.template_id)) score += 1.0
     if (s.scopeMatch?.test(corpus)) score += 2.0
     if (s.evidenceFacts) score += s.evidenceFacts.length * 2.0
     score *= s.relevanceWeight ?? 1.0
