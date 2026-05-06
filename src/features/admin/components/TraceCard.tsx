@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { cn } from '@/lib/utils'
 import type { TraceRow } from '@/types/observability'
 import { StatusPill } from './StatusPill'
 import {
@@ -12,20 +13,71 @@ import {
 /**
  * Phase 9 — shared trace summary card.
  *
- * Used by Live Stream and Search views. One row per trace. Status
- * pill + timestamp + kind + project link + duration/tokens/cost
- * inline. Click-through goes to /admin/logs/projects/:projectId/turns/:traceId.
+ * Used by Live Stream, Search, and (Phase 9.1) the inline admin
+ * drawer. The visual shell + the inner content are decoupled:
+ *
+ *   * `<TraceCard>` wraps content in a react-router <Link> for
+ *     standalone-console navigation.
+ *
+ *   * `<TraceCardButton>` wraps content in a <button> for inline
+ *     expand/collapse UX (the inline drawer doesn't change URL).
+ *
+ *   * `<TraceCardContent>` renders the layout-agnostic body so a
+ *     future caller can wrap with anything else.
  */
+
+const TRACE_CARD_BASE_CLASS =
+  'grid grid-cols-1 gap-2 rounded border border-[hsl(var(--ink))]/10 bg-[hsl(var(--paper))] px-3 py-2.5 text-sm transition-colors hover:border-[hsl(var(--ink))]/25 hover:bg-[hsl(var(--ink))]/[0.02] md:grid-cols-[5.5rem_minmax(0,1fr)_auto_auto_auto] md:items-center md:gap-3'
+
 export function TraceCard({ trace }: { trace: TraceRow }) {
+  const href = trace.project_id
+    ? `/admin/logs/projects/${trace.project_id}/turns/${trace.trace_id}`
+    : '#'
+  return (
+    <Link to={href} className={TRACE_CARD_BASE_CLASS}>
+      <TraceCardContent trace={trace} showProjectId />
+    </Link>
+  )
+}
+
+interface ButtonProps {
+  trace: TraceRow
+  onClick: () => void
+  expanded?: boolean
+  /** Hide the project_id sub-line — pointless when the drawer is
+   *  already scoped to a known project. */
+  hideProjectId?: boolean
+}
+
+export function TraceCardButton({ trace, onClick, expanded, hideProjectId }: ButtonProps) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-expanded={expanded ?? undefined}
+      className={cn(
+        TRACE_CARD_BASE_CLASS,
+        'w-full text-left',
+        expanded && 'border-[hsl(var(--ink))]/40 bg-[hsl(var(--ink))]/[0.03]',
+      )}
+    >
+      <TraceCardContent trace={trace} showProjectId={!hideProjectId} />
+    </button>
+  )
+}
+
+function TraceCardContent({
+  trace,
+  showProjectId,
+}: {
+  trace: TraceRow
+  showProjectId: boolean
+}) {
   const tokens =
     (trace.total_input_tokens ?? 0) +
     (trace.total_output_tokens ?? 0) +
     (trace.total_cache_read_tokens ?? 0) +
     (trace.total_cache_creation_tokens ?? 0)
-
-  const href = trace.project_id
-    ? `/admin/logs/projects/${trace.project_id}/turns/${trace.trace_id}`
-    : '#'
 
   const kindLabel =
     trace.kind === 'chat_turn_streaming'
@@ -35,10 +87,7 @@ export function TraceCard({ trace }: { trace: TraceRow }) {
         : 'json'
 
   return (
-    <Link
-      to={href}
-      className="grid grid-cols-1 gap-2 rounded border border-[hsl(var(--ink))]/10 bg-[hsl(var(--paper))] px-3 py-2.5 text-sm hover:border-[hsl(var(--ink))]/25 hover:bg-[hsl(var(--ink))]/[0.02] md:grid-cols-[5.5rem_minmax(0,1fr)_auto_auto_auto] md:items-center md:gap-3"
-    >
+    <>
       <div className="flex items-center gap-2">
         <StatusPill status={trace.status} />
         <span className="font-mono text-[10px] text-[hsl(var(--ink))]/55">
@@ -54,7 +103,8 @@ export function TraceCard({ trace }: { trace: TraceRow }) {
           ) : null}
         </p>
         <p className="font-mono text-[10px] text-[hsl(var(--ink))]/45">
-          {formatRelativeTime(trace.started_at)} · project {truncateUuid(trace.project_id)}
+          {formatRelativeTime(trace.started_at)}
+          {showProjectId ? ` · project ${truncateUuid(trace.project_id)}` : null}
         </p>
       </div>
 
@@ -67,6 +117,6 @@ export function TraceCard({ trace }: { trace: TraceRow }) {
       <span className="font-mono text-[11px] text-[hsl(var(--ink))] text-right">
         {centsToUsd(trace.total_cost_cents ?? 0)}
       </span>
-    </Link>
+    </>
   )
 }
