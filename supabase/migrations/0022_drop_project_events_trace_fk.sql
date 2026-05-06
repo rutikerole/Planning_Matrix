@@ -1,0 +1,55 @@
+-- ───────────────────────────────────────────────────────────────────────
+-- 0022_drop_project_events_trace_fk.sql
+--
+-- Drops the FK that 0018 added on public.project_events.trace_id →
+-- logs.traces.trace_id.
+--
+-- WHY:
+--   The chat-turn edge function's tracer writes the parent trace row
+--   at `tracer.finalize()`, which runs at the END of the request.
+--   But `commit_chat_turn` — which writes child rows into
+--   public.project_events with that same trace_id — runs in the
+--   MIDDLE of the request, before finalize. The two writes happen
+--   in separate transactions (the RPC commits its own writes when
+--   it returns), so deferring the constraint within a transaction
+--   would not help.
+--
+--   Net effect since 0018 went live: every Phase-9-aware assistant
+--   turn fails with
+--
+--     insert or update on table "project_events" violates foreign
+--     key constraint "project_events_trace_id_fkey"
+--
+--   tearing down the wizard's first-turn priming and stranding
+--   users on the atelier-opening loader.
+--
+--   The persistence layer already guards against the noop-tracer's
+--   all-zeroes UUID for this exact reason (see
+--   supabase/functions/chat-turn/persistence.ts:401-406), but the
+--   guard does not extend to the real tracer because, by the time
+--   the RPC fires, the real trace row genuinely does not exist yet.
+--
+-- WHAT THIS RESTORES:
+--   The pre-0018 state. `project_events.trace_id` becomes a nullable
+--   informational pointer with no DB-level referential integrity.
+--   When the 90-day reaper prunes trace rows, audit rows stay (they
+--   were never going to be cascade-deleted anyway — 0018 used
+--   ON DELETE SET NULL). When a turn writes a trace_id that points
+--   to a future row, that row eventually lands; readers should
+--   defensively LEFT JOIN logs.traces and treat null as "no trace".
+--
+-- FUTURE WORK (not part of this migration):
+--   The "correct" fix is to insert a trace stub when the tracer is
+--   created and UPDATE it at finalize, restoring the parent-before-
+--   child ordering and letting the FK be re-added. That is a wider
+--   change to tracer.ts and out of scope for unblocking the chat.
+--
+-- Apply path: Supabase Dashboard → SQL Editor → paste → Run.
+-- Idempotent: drop constraint if exists.
+--
+-- Rollback: re-apply 0018's FK block. Not recommended until the
+-- tracer ordering refactor is in.
+-- ───────────────────────────────────────────────────────────────────────
+
+alter table public.project_events
+  drop constraint if exists project_events_trace_id_fkey;
