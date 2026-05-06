@@ -267,3 +267,92 @@ export function detectKlasse(corpus: string): Gebaeudeklasse {
   if (m) return m[2] as Gebaeudeklasse
   return 'unknown'
 }
+
+// ─── Phase 10 commit 12 — per-template cost bands ───────────────────────
+
+import type { TemplateId } from '@/types/projectState'
+
+export interface CostBandPerTemplate {
+  /** EUR lower bound (typical-case minimum). */
+  lower: number
+  /** EUR upper bound (typical-case maximum). */
+  upper: number
+  /** Short German explanation of the basis (surfaced in the UI tooltip
+   *  / "What this includes" line). */
+  basisDe: string
+  /** Short English explanation. */
+  basisEn: string
+}
+
+/**
+ * Phase 10 — per-template headline cost bands. Read by the result
+ * page's Cost tab via `state.templateId`. The BASE breakdown above
+ * stays for the per-category bars (architekt / tragwerk / vermessung /
+ * energieberatung / behörde) on T-01; non-T-01 templates use the
+ * headline only until per-template breakdowns ship.
+ *
+ * Numbers cross-referenced to brief §1 + each template's TYPISCHE
+ * KOSTENRAHMEN section. T-01 matches BASE.total exactly. Other 7 are
+ * München-tuned per the brief's content review.
+ *
+ * Verify before public launch: same caveat as BASE — these are
+ * orientation ranges sourced from practitioner observation; for
+ * binding quotes the Bauherr engages an Architekt:in directly.
+ */
+export const COST_BANDS_BY_TEMPLATE: Record<TemplateId, CostBandPerTemplate> = {
+  'T-01': {
+    lower: 17_300,
+    upper: 32_300,
+    basisDe: 'EFH Neubau, München, ~150 m² Wohnfläche, vereinfachtes Verfahren',
+    basisEn: 'Single-family new build, Munich, ~150 m² living space, simplified procedure',
+  },
+  'T-02': {
+    lower: 28_000,
+    upper: 55_000,
+    basisDe: 'MFH ab 4 WE, München, mit Brandschutz/Schallschutz/Statik-Prüfung',
+    basisEn: 'Multi-family ≥ 4 units, Munich, including fire/sound/structural review',
+  },
+  'T-03': {
+    lower:  8_000,
+    upper: 22_000,
+    basisDe: 'Sanierung verfahrensfrei (Anzeige nach Art. 57 Abs. 7 BayBO), München',
+    basisEn: 'Renovation procedure-exempt (notification per Art. 57 Abs. 7 BayBO), Munich',
+  },
+  'T-04': {
+    lower:  6_000,
+    upper: 18_000,
+    basisDe: 'Umnutzung verfahrensfrei (Anzeige nach Art. 57 Abs. 4 BayBO), München',
+    basisEn: 'Change of use procedure-exempt (notification per Art. 57 Abs. 4), Munich',
+  },
+  'T-05': {
+    lower:  4_500,
+    upper: 12_000,
+    basisDe: 'Abbruch anzeigepflichtig + Standsicherheits­bescheinigung Nachbar, München',
+    basisEn: 'Demolition with notification + neighbour structural certification, Munich',
+  },
+  'T-06': {
+    lower: 14_000,
+    upper: 28_000,
+    basisDe: 'Aufstockung mit Tragwerksprüfung + GEG-Nachweis, München',
+    basisEn: 'Storey addition with structural review + GEG certificate, Munich',
+  },
+  'T-07': {
+    lower:  4_500,
+    upper: 18_000,
+    basisDe: 'Anbau (klein verfahrensfrei bis groß genehmigungspflichtig)',
+    basisEn: 'Extension (small procedure-exempt to large permit-required)',
+  },
+  'T-08': {
+    lower:  2_000,
+    upper: 15_000,
+    basisDe: 'Sonstige Vorhaben — Sub-Kategorie bestimmt die Spanne',
+    basisEn: 'Other projects — sub-category determines the range',
+  },
+}
+
+/** Convenience accessor used by the Cost tab. Falls back to T-01 (and
+ *  surfaces an empty-state hint upstream) if templateId is somehow
+ *  missing from a project row. */
+export function costBandFor(templateId: TemplateId | undefined | null): CostBandPerTemplate {
+  return COST_BANDS_BY_TEMPLATE[templateId ?? 'T-01'] ?? COST_BANDS_BY_TEMPLATE['T-01']
+}
