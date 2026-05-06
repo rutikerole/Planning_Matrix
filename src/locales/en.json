@@ -1998,5 +1998,47 @@
       "signUp": "Create your Planning Matrix account and map the approval path for your project.",
       "share": "Briefing for the project \"{{name}}\", shared via Planning Matrix."
     }
+  },
+  "templates": {
+    "T-01": {
+      "name": "New single-family home",
+      "shortName": "SFH",
+      "description": "New single-family build, typically building class 1 under simplified procedure or procedure exemption."
+    },
+    "T-02": {
+      "name": "New multi-family home",
+      "shortName": "MFH",
+      "description": "Multi-family new build with fire safety, sound insulation and parking as central concerns."
+    },
+    "T-03": {
+      "name": "Renovation",
+      "shortName": "Renovation",
+      "description": "Renovation of existing building — since 01.01.2025 often procedure-exempt with notification (BayBO Art. 57 Abs. 3 Nr. 3 / Abs. 1 Nr. 18)."
+    },
+    "T-04": {
+      "name": "Change of use",
+      "shortName": "Use change",
+      "description": "Use change — since 01.01.2025 procedure-exempt with notification when no stricter requirements are triggered."
+    },
+    "T-05": {
+      "name": "Demolition",
+      "shortName": "Demolition",
+      "description": "Full or partial demolition of an existing building; notification under BayBO Art. 57 Abs. 5."
+    },
+    "T-06": {
+      "name": "Storey addition",
+      "shortName": "Storey addition",
+      "description": "Single-storey addition for new living space — privilege under BayBO Art. 46 Abs. 6 + parking privilege since 01.10.2025."
+    },
+    "T-07": {
+      "name": "Extension",
+      "shortName": "Extension",
+      "description": "Horizontal extension of existing building; procedure-exempt up to 75 m³ gross volume within built-up areas."
+    },
+    "T-08": {
+      "name": "Other",
+      "shortName": "Project",
+      "description": "Other projects (garage, pool, advertising, PV, mobile mast) — sub-category determined during the conversation."
+    }
   }
 }

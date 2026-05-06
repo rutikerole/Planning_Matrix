@@ -1998,5 +1998,47 @@
       "signUp": "Erstellen Sie Ihr Planning-Matrix-Konto und kartieren Sie den Genehmigungsweg für Ihr Vorhaben.",
       "share": "Briefing zum Bauvorhaben „{{name}}\", geteilt über Planning Matrix."
     }
+  },
+  "templates": {
+    "T-01": {
+      "name": "Neubau Einfamilienhaus",
+      "shortName": "EFH",
+      "description": "Neubau eines Einfamilienhauses, in der Regel GK 1 mit vereinfachtem Verfahren oder Genehmigungsfreistellung."
+    },
+    "T-02": {
+      "name": "Neubau Mehrfamilienhaus",
+      "shortName": "MFH",
+      "description": "Mehrfamilienhaus-Neubau mit Brandschutz, Schallschutz und Stellplatz als zentrale Themen."
+    },
+    "T-03": {
+      "name": "Sanierung",
+      "shortName": "Sanierung",
+      "description": "Bestandsmodernisierung — seit 01.01.2025 oft verfahrensfrei mit Anzeige (BayBO Art. 57 Abs. 3 Nr. 3 / Abs. 1 Nr. 18)."
+    },
+    "T-04": {
+      "name": "Umnutzung",
+      "shortName": "Umnutzung",
+      "description": "Nutzungsänderung — seit 01.01.2025 verfahrensfrei mit Anzeige, wenn keine strengeren Anforderungen ausgelöst werden."
+    },
+    "T-05": {
+      "name": "Abbruch",
+      "shortName": "Abbruch",
+      "description": "Vollabbruch oder Teilabbruch eines Bestandsgebäudes; Anzeige nach BayBO Art. 57 Abs. 5."
+    },
+    "T-06": {
+      "name": "Aufstockung",
+      "shortName": "Aufstockung",
+      "description": "Eingeschossige Aufstockung zur Wohnraumschaffung — Privileg nach BayBO Art. 46 Abs. 6 + Stellplatz-Privileg ab 01.10.2025."
+    },
+    "T-07": {
+      "name": "Anbau",
+      "shortName": "Anbau",
+      "description": "Horizontale Erweiterung des Bestands; verfahrensfrei bis 75 m³ Brutto-Rauminhalt im Innenbereich."
+    },
+    "T-08": {
+      "name": "Sonstiges",
+      "shortName": "Projekt",
+      "description": "Andere Vorhaben (Garage, Pool, Werbeanlage, PV, Mobilfunkmast) — Sub-Kategorie wird im Gespräch ermittelt."
+    }
   }
 }
