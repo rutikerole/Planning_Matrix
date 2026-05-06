@@ -139,8 +139,8 @@ export function CookieBanner({ forceOpen = false, onClose }: Props) {
               label={isEn ? 'Functional' : 'Funktional'}
               description={
                 isEn
-                  ? 'Stores your consent choices and language preference.'
-                  : 'Speichert Ihre Einwilligungs-Entscheidungen und Sprachauswahl.'
+                  ? 'Stores your consent choices, language preference, and Sentry EU error reports (no addresses, no PII).'
+                  : 'Speichert Einwilligung, Sprachauswahl und Sentry-EU-Fehlerberichte (keine Adressen, keine PII).'
               }
               checked={functionalToggle}
               disabled={false}
