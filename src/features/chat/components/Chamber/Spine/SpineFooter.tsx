@@ -16,14 +16,17 @@ import type { CompletionSignal } from '@/types/chatTurn'
 import { BriefingCTA } from '../BriefingCTA'
 import { LanguageSwitcher } from '@/components/shared/LanguageSwitcher'
 import { UserMenu } from '@/components/shared/AppHeader'
+import { InlineLogsButton } from '@/features/admin/components/InlineLogsButton'
 
 interface Props {
   projectId: string
+  /** Phase 9.1 — surfaced to the admin Logs drawer header. */
+  projectName: string
   gate: CompletionGate
   signal: CompletionSignal | null
 }
 
-export function SpineFooter({ projectId, gate, signal }: Props) {
+export function SpineFooter({ projectId, projectName, gate, signal }: Props) {
   return (
     <footer className="sticky bottom-0 bg-paper-card relative">
       {/* 24 px upper gradient mask */}
@@ -40,6 +43,13 @@ export function SpineFooter({ projectId, gate, signal }: Props) {
           projectId={projectId}
           gate={gate}
           signal={signal}
+          variant="sidebar"
+        />
+        {/* Phase 9.1 — admin-only Logs button. Renders nothing for
+         *  non-admins so the rhythm of the footer is preserved. */}
+        <InlineLogsButton
+          projectId={projectId}
+          projectName={projectName}
           variant="sidebar"
         />
         {/* Phase 7.9 §2.3 — auth zone. */}

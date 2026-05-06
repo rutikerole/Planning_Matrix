@@ -7,6 +7,7 @@ import type { MessageRow, ProjectRow } from '@/types/db'
 import { ExportMenu } from './ExportMenu'
 import { SendToArchitectModal } from './SendToArchitectModal'
 import type { ResultSource } from './ResultWorkspace'
+import { InlineLogsButton } from '@/features/admin/components/InlineLogsButton'
 
 interface ProjectEventRow {
   id: string
@@ -101,6 +102,15 @@ export function ResultFooter({ project, messages, events, source }: Props) {
             >
               {t('result.workspace.footer.sendToArchitect')}
             </button>
+            {/* Phase 9.1 — admin-only Logs button. Renders nothing
+             *  for non-admins, so the action bar rhythm is unchanged
+             *  for the typical Bauherren user. */}
+            <InlineLogsButton
+              projectId={project.id}
+              projectName={project.name}
+              variant="pill"
+              className="hidden sm:inline-flex"
+            />
           </div>
 
           <div className="flex items-center gap-3">

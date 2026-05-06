@@ -232,7 +232,12 @@ export function ChatWorkspacePage() {
     />
   )
   const spineFooterNode = (
-    <SpineFooter projectId={project.id} gate={gate} signal={completionSignal} />
+    <SpineFooter
+      projectId={project.id}
+      projectName={project.name}
+      gate={gate}
+      signal={completionSignal}
+    />
   )
   const spineNode = (
     <Spine
