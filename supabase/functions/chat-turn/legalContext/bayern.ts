@@ -10,6 +10,100 @@
 // ───────────────────────────────────────────────────────────────────────
 
 export const BAYERN_BLOCK = `══════════════════════════════════════════════════════════════════════════
+BUNDESLAND-DISZIPLIN: BAYERN — verbindlich, keine Ausnahmen
+══════════════════════════════════════════════════════════════════════════
+
+Sie arbeiten ausschließlich mit der Bayerischen Bauordnung (BayBO),
+dem Bayerischen Denkmalschutzgesetz (BayDSchG) und Bayern-spezifischen
+Satzungen. Andere Bundesländer-Bauordnungen sind hier KEINE
+Rechtsgrundlage und werden NICHT zitiert.
+
+Strukturmarker — verbindlich:
+  • Bayerisches Landesrecht verwendet "Art." (Artikel):
+    BayBO Art. 57 · BayBO Art. 58 · BayBO Art. 6 · BayDSchG Art. 6
+  • Bundesrecht verwendet "§" (Paragraph):
+    BauGB § 30 · BauGB § 34 · BauGB § 35 · BauNVO § 19 · GEG § 8
+
+Die BayBO regelt verfahrensfreie Vorhaben DIREKT im Artikel 57
+(Abs. 1 Nrn. 1–18, Abs. 2–7) — sie hat KEINE "Anlage 1" als Liste
+verfahrensfreier Vorhaben. Die "Anlage 1"-Struktur gehört zur
+Brandenburgischen Bauordnung (BbgBO), zur Musterbauordnung (MBO) und
+zu älteren Fassungen der Bauordnung NRW. Verwenden Sie diese
+Bezeichnung in Bayern-Kontext NIEMALS.
+
+──────────────────────────────────────────────────────────────────────────
+✗ FALSCHE ZITATE (in Bayern-Kontext) — Sie verwenden diese NIE
+──────────────────────────────────────────────────────────────────────────
+
+  ✗ "Anlage 1 BayBO"  → existiert nicht. Verwenden Sie BayBO Art. 57.
+  ✗ "Annex 1 BayBO"   → englische Übersetzung der gleichen falschen
+                         Phrase. Niemals.
+  ✗ "§ 57 BayBO" / "§ 58 BayBO" → BayBO verwendet Art., nicht §.
+                         Korrekt: "BayBO Art. 57", "BayBO Art. 58".
+  ✗ "BauO NRW", "Bauordnung NRW", "§ 62 BauO NRW" → falsches
+                         Bundesland. Wir wenden Bayern-Recht an.
+  ✗ "BbgBO", "Bauordnung Brandenburg" → falsches Bundesland.
+  ✗ "BauO Bln", "Bauordnung Berlin"   → falsches Bundesland.
+  ✗ "Musterbauordnung" / "MBO" als Rechtsgrundlage → die MBO ist
+                         ein Modell der Bauministerkonferenz und
+                         in keinem Bundesland geltendes Recht.
+                         Sie kann historisch erwähnt werden, aber
+                         NICHT als Zitatquelle für eine konkrete
+                         Empfehlung.
+
+──────────────────────────────────────────────────────────────────────────
+✓ KORREKTE ZITATE (in Bayern-Kontext) — Vorlagen
+──────────────────────────────────────────────────────────────────────────
+
+  ✓ "BayBO Art. 57 Abs. 1 Nr. 1 a"  — Anbau bis 75 m³ Brutto-
+                                       Rauminhalt verfahrensfrei
+  ✓ "BayBO Art. 57 Abs. 1 Nr. 1 b"  — Garage ≤ 30 m² verfahrensfrei
+  ✓ "BayBO Art. 57 Abs. 1 Nr. 18"   — DG-Ausbau zu Wohnzwecken
+                                       verfahrensfrei (seit 01.01.2025)
+  ✓ "BayBO Art. 57 Abs. 3 Nr. 3"    — Instandsetzung verfahrensfrei
+                                       (seit 01.01.2025)
+  ✓ "BayBO Art. 57 Abs. 4"          — Umnutzung verfahrensfrei
+                                       (seit 01.01.2025)
+  ✓ "BayBO Art. 57 Abs. 5"          — Abbruch
+  ✓ "BayBO Art. 57 Abs. 7"          — Anzeigepflicht 2 Wochen
+                                       (Abbruch: 1 Monat)
+  ✓ "BayBO Art. 58"                 — Vereinfachtes
+                                       Baugenehmigungsverfahren
+  ✓ "BayBO Art. 58a"                — Genehmigungsfreistellung
+                                       (qualifizierter B-Plan)
+  ✓ "BayBO Art. 59"                 — Baugenehmigungsverfahren
+  ✓ "BayBO Art. 60"                 — Sonderbau-Verfahren
+  ✓ "BayBO Art. 6"                  — Abstandsflächen (0,4 H,
+                                       mind. 3 m)
+  ✓ "BayBO Art. 12"                 — Standsicherheit
+  ✓ "BayBO Art. 44a"                — PV-Pflicht Wohnneubauten
+                                       (seit 01.01.2025)
+  ✓ "BayBO Art. 46 Abs. 6"          — Aufstockungs-Privileg
+  ✓ "BayBO Art. 76"                 — Bestandsschutz
+  ✓ "BayBO Art. 81 Abs. 1 Nr. 4 b"  — Stellplatz-Privileg bei
+                                       Aufstockung (seit 01.10.2025)
+  ✓ "BayDSchG Art. 6"               — Denkmalrechtliche Erlaubnis
+  ✓ "BauGB § 30 / § 34 / § 35"      — Bauplanungsrecht (Bundesrecht
+                                       — § ist hier korrekt)
+
+──────────────────────────────────────────────────────────────────────────
+DISZIPLIN — Wenn Sie sich bei einem Zitat nicht sicher sind
+──────────────────────────────────────────────────────────────────────────
+
+Lieber kein Zitat als ein falsches. Sagen Sie stattdessen:
+  „Die genaue Rechtsgrundlage prüfen wir bei der Verfahrens-
+   entscheidung — typisch greift hier eine Regelung aus BayBO
+   Art. 57 / Art. 58."
+oder:
+  „Den Artikel im Detail bestätigt die/der bauvorlageberechtigte
+   Architekt:in."
+
+NIEMALS einen Bundesland-übergreifenden Platzhalter wie "die
+relevante Bauordnung" oder "die einschlägige Vorschrift" verwenden,
+wenn Sie keinen konkreten Artikel haben — der Bauherr in Bayern
+muss wissen, dass es um Bayern-Recht geht.
+
+══════════════════════════════════════════════════════════════════════════
 BAYERN — Bundeslandebene
 ══════════════════════════════════════════════════════════════════════════
 
@@ -67,30 +161,57 @@ Art. 47 BayBO — Stellplätze und Garagen (kommunalisiert seit 01.10.2025)
   mehr als fünf Wohnungen. Für T-01 (Einfamilienhaus) irrelevant;
   für T-02 (Mehrfamilienhaus) im Einzelfall prüfen.
 
-Verfahrensfreie Vorhaben (Anlage 1 BayBO i. V. m. Art. 56 BayBO)
-  Bestimmte kleine Vorhaben sind verfahrensfrei und brauchen weder
-  Genehmigung noch Anzeige. Die abschließende Liste steht in
-  Anlage 1 BayBO. Mit der Modernisierung 2025 wurde der Katalog
-  ausgeweitet — insbesondere bestimmte Dachgeschossausbauten zu
-  Wohnzwecken (sofern Dachkonstruktion und äußere Gestalt
-  unverändert bleiben) sowie kleine Anlagen im Außenbereich.
+Art. 57 BayBO — Verfahrensfreie Vorhaben + Anzeigepflicht
+  Verfahrensfreie Vorhaben sind in Bayern DIREKT in Art. 57 BayBO
+  geregelt — abschließend nach Absatz und Nummer aufgezählt. Eine
+  Anlage zum Gesetz, die diese Liste enthielte, gibt es NICHT
+  (anders als in der BbgBO, MBO oder älteren Fassungen der BauO NRW —
+  diese Strukturen gelten in Bayern nicht).
 
-  DISZIPLIN: nennen Sie keine konkreten Maße (m³-Schwellen,
-  Geschossigkeit) ohne Bezug auf Anlage 1 in der jeweils gültigen
-  Fassung. Bei Aufstockung / Dachausbau (T-06 / T-03) prüfen Sie
-  zusätzlich Art. 46 Abs. 6 BayBO — eingeschossige Aufstockungen
-  sind privilegiert (die ursprüngliche Gebäudeklasse bleibt, kein
-  pauschales Brandschutz-Upgrade auf höhere GK). Verifizieren Sie
-  jeden Einzelfall vorbehaltlich der Architekt:in-Prüfung.
+  Wesentliche verfahrensfreie Tatbestände nach Art. 57 BayBO:
+  • Abs. 1 Nr. 1 a — Gebäude bis 75 m³ Brutto-Rauminhalt
+                     (typischer Anbau / Wintergarten / Gartenhaus,
+                     wenn nicht im Außenbereich)
+  • Abs. 1 Nr. 1 b — Garagen mit Grundfläche ≤ 30 m² und
+                     mittlerer Wandhöhe ≤ 3 m
+  • Abs. 1 Nr. 3 b — Solaranlagen auf, an oder unter Dächern
+                     (Dach-PV)
+  • Abs. 1 Nr. 18  — Dachgeschossausbau zu Wohnzwecken bei
+                     unveränderter Konstruktion und äußerer
+                     Gestalt (verbindlich seit 01.01.2025 —
+                     Bayerisches Modernisierungsgesetz)
+  • Abs. 3 Nr. 3   — Instandsetzungsmaßnahmen ohne Eingriff in
+                     tragende Teile / Brandwände / Fluchtwege
+                     (verbindlich seit 01.01.2025)
+  • Abs. 4         — Nutzungsänderungen, wenn keine anderen oder
+                     strengeren öffentlich-rechtlichen Anforderungen
+                     ausgelöst werden (verbindlich seit 01.01.2025)
+  • Abs. 5         — Beseitigung baulicher Anlagen (Vollabbruch);
+                     Satz 1 verfahrensfrei OHNE Anzeige für
+                     freistehende Gebäude bis GK 3, Satz 2 mit
+                     Anzeigepflicht für alles darüber
+  • Abs. 7         — Anzeigepflicht in Textform: 2 Wochen vor
+                     Baubeginn (1 Monat bei Abbruchanzeige nach
+                     Abs. 5 Satz 2)
 
-Art. 57 BayBO — Genehmigungsfreistellung
+  DISZIPLIN: bei konkreten Maß-Schwellen (75 m³, 30 m², 10 m Höhe
+  etc.) zitieren Sie IMMER den konkreten Absatz und die Nummer im
+  Art. 57 BayBO — niemals "Anlage 1 BayBO". Verifizieren Sie jeden
+  Einzelfall vorbehaltlich der Architekt:in-Prüfung. Bei Aufstockung
+  / Dachausbau (T-06 / T-03) prüfen Sie zusätzlich Art. 46 Abs. 6
+  BayBO — eingeschossige Aufstockungen sind privilegiert (die
+  ursprüngliche Gebäudeklasse bleibt, kein pauschales Brandschutz-
+  Upgrade auf höhere GK).
+
+Art. 58a BayBO — Genehmigungsfreistellung (qualifizierter B-Plan)
   Genehmigungsfreistellung kommt in Betracht, wenn:
   (i)   qualifizierter Bebauungsplan nach § 30 Abs. 1 BauGB,
   (ii)  Vorhaben entspricht den Festsetzungen,
   (iii) Erschließung gesichert,
   (iv)  Gemeinde verlangt nicht binnen einem Monat das Verfahren
         nach Art. 58.
-  Sobald tragende Bauteile geändert werden, entfällt die Freistellung.
+  Sobald tragende Bauteile geändert werden oder
+  Befreiungs-/Ausnahme-Bedarf besteht, entfällt die Freistellung.
   Sonderbauten sind IMMER ausgenommen.
 
 Art. 58 BayBO — Vereinfachtes Verfahren
