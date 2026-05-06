@@ -1,0 +1,73 @@
+-- ───────────────────────────────────────────────────────────────────────
+-- 0023_messages_idempotency_role_scoped.sql
+--
+-- Re-scopes the messages idempotency unique index to include `role`.
+--
+-- WHY:
+--   The original index (0003) was
+--
+--     create unique index messages_idempotency_idx
+--       on public.messages (project_id, client_request_id)
+--       where client_request_id is not null;
+--
+--   That was correct when assistant rows always left client_request_id
+--   null (per the comment in 0003: "Assistant rows always leave
+--   client_request_id null."). Phase 8.6 / migration 0013's
+--   `commit_chat_turn` then started writing the SAME client_request_id
+--   on the assistant row as a forensic pointer back to the originating
+--   user message. The constraint was never relaxed.
+--
+--   The result: every non-priming chat turn fails with SQLSTATE 23505
+--   on the assistant insert because the user insert already claimed
+--   the (project_id, client_request_id) slot. The Edge Function maps
+--   the failure to `persistence_failed` and the SPA shows "Storage
+--   error. Your input has not yet been saved permanently."
+--
+--   Priming masks the bug because userMessage is null at priming, so
+--   the assistant row is the only one with that request_id and the
+--   slot is free.
+--
+-- WHAT THIS DOES:
+--   Adds `role` to the unique index columns. Now (project_id,
+--   client_request_id, 'user') and (project_id, client_request_id,
+--   'assistant') are independent slots — a user row and an assistant
+--   row tagged with the same client_request_id can coexist.
+--
+--   Per-role idempotency is preserved:
+--     - User retry with the same client_request_id still hits the
+--       (proj, req, 'user') slot and surfaces 23505 to the Edge
+--       Function, which fetches the existing row and replays.
+--     - commit_chat_turn's own pre-check still short-circuits
+--       assistant retries via the same key.
+--
+--   The new index is strictly more permissive than the old, so all
+--   existing rows satisfy it; CREATE INDEX cannot fail on existing
+--   data.
+--
+-- Apply path: Supabase Dashboard → SQL Editor → paste → Run.
+-- Idempotent: IF NOT EXISTS on create, IF EXISTS on drop.
+--
+-- Rollback: re-create the old index and drop the new one. Not
+-- recommended — restores the broken state.
+-- ───────────────────────────────────────────────────────────────────────
+
+-- Create the role-scoped index FIRST so there is never a moment with
+-- no idempotency constraint at all. Briefly, both indexes will be
+-- enforcing — that is fine because the new one is strictly more
+-- permissive than the old, so no in-flight write can pass the new
+-- but fail the old in a way that breaks correctness.
+create unique index if not exists messages_idempotency_role_idx
+  on public.messages (project_id, client_request_id, role)
+  where client_request_id is not null;
+
+-- Drop the old (role-blind) index. From this point on, user and
+-- assistant rows with the same client_request_id can coexist.
+drop index if exists public.messages_idempotency_idx;
+
+-- ───────────────────────────────────────────────────────────────────────
+-- Verification (post-apply):
+--   1. \d public.messages   -- expect messages_idempotency_role_idx,
+--                              not messages_idempotency_idx.
+--   2. Send a normal (non-priming) chat turn. The assistant insert
+--      should commit cleanly. No 23505 on commit_chat_turn.
+-- ───────────────────────────────────────────────────────────────────────
