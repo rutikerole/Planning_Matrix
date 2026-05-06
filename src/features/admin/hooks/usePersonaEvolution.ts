@@ -74,44 +74,50 @@ export function usePersonaEvolution(projectId: string | undefined) {
         })
       }
 
-      // Aggregate per hash.
-      const buckets = new Map<string, PersonaVersion>()
+      // Aggregate per hash. Use a separate accumulator type so the
+      // running sums don't pollute the public PersonaVersion shape.
+      interface Accumulator {
+        hash: string
+        first_seen: string
+        last_seen: string
+        trace_count: number
+        ok_count: number
+        error_count: number
+        sum_input: number
+        sum_cache_read: number
+        sum_cache_create: number
+        sum_latency: number
+        total_cost_cents: number
+        has_full_prompt: boolean
+      }
+      const buckets = new Map<string, Accumulator>()
       for (const t of traces) {
         const meta = hashByTrace.get(t.trace_id)
-        if (!meta) continue  // no snapshot recorded for this trace
+        if (!meta) continue
         const hash = meta.hash
         const cur =
           buckets.get(hash) ??
           ({
             hash,
-            hash_short: hash.slice(0, 8),
             first_seen: t.started_at,
             last_seen: t.started_at,
             trace_count: 0,
             ok_count: 0,
             error_count: 0,
-            cache_hit_ratio: 0,
-            avg_input_tokens: 0,
-            avg_latency_ms: 0,
+            sum_input: 0,
+            sum_cache_read: 0,
+            sum_cache_create: 0,
+            sum_latency: 0,
             total_cost_cents: 0,
             has_full_prompt: false,
-            __sumInput: 0,
-            __sumCacheRead: 0,
-            __sumCacheCreate: 0,
-            __sumLatency: 0,
-          } as PersonaVersion & {
-            __sumInput: number
-            __sumCacheRead: number
-            __sumCacheCreate: number
-            __sumLatency: number
-          })
+          } satisfies Accumulator)
         cur.trace_count++
         if (t.status === 'ok' || t.status === 'idempotent_replay') cur.ok_count++
         else cur.error_count++
-        ;(cur as { __sumInput: number }).__sumInput += t.total_input_tokens ?? 0
-        ;(cur as { __sumCacheRead: number }).__sumCacheRead += t.total_cache_read_tokens ?? 0
-        ;(cur as { __sumCacheCreate: number }).__sumCacheCreate += t.total_cache_creation_tokens ?? 0
-        ;(cur as { __sumLatency: number }).__sumLatency += t.duration_ms ?? 0
+        cur.sum_input += t.total_input_tokens ?? 0
+        cur.sum_cache_read += t.total_cache_read_tokens ?? 0
+        cur.sum_cache_create += t.total_cache_creation_tokens ?? 0
+        cur.sum_latency += t.duration_ms ?? 0
         cur.total_cost_cents += t.total_cost_cents ?? 0
         if (t.started_at < cur.first_seen) cur.first_seen = t.started_at
         if (t.started_at > cur.last_seen) cur.last_seen = t.started_at
@@ -119,33 +125,26 @@ export function usePersonaEvolution(projectId: string | undefined) {
         buckets.set(hash, cur)
       }
 
-      const versions = Array.from(buckets.values())
+      const versions: PersonaVersion[] = Array.from(buckets.values())
         .sort((a, b) => a.first_seen.localeCompare(b.first_seen))
-        .map((v): PersonaVersion => {
-          const totals = v as PersonaVersion & {
-            __sumInput: number
-            __sumCacheRead: number
-            __sumCacheCreate: number
-            __sumLatency: number
-          }
-          const inputPlusCache =
-            totals.__sumInput + totals.__sumCacheRead + totals.__sumCacheCreate
+        .map((acc) => {
+          const inputPlusCache = acc.sum_input + acc.sum_cache_read + acc.sum_cache_create
           return {
-            hash: v.hash,
-            hash_short: v.hash_short,
-            first_seen: v.first_seen,
-            last_seen: v.last_seen,
-            trace_count: v.trace_count,
-            ok_count: v.ok_count,
-            error_count: v.error_count,
+            hash: acc.hash,
+            hash_short: acc.hash.slice(0, 8),
+            first_seen: acc.first_seen,
+            last_seen: acc.last_seen,
+            trace_count: acc.trace_count,
+            ok_count: acc.ok_count,
+            error_count: acc.error_count,
             cache_hit_ratio:
-              inputPlusCache > 0 ? totals.__sumCacheRead / inputPlusCache : 0,
+              inputPlusCache > 0 ? acc.sum_cache_read / inputPlusCache : 0,
             avg_input_tokens:
-              v.trace_count > 0 ? totals.__sumInput / v.trace_count : 0,
+              acc.trace_count > 0 ? acc.sum_input / acc.trace_count : 0,
             avg_latency_ms:
-              v.trace_count > 0 ? totals.__sumLatency / v.trace_count : 0,
-            total_cost_cents: v.total_cost_cents,
-            has_full_prompt: v.has_full_prompt,
+              acc.trace_count > 0 ? acc.sum_latency / acc.trace_count : 0,
+            total_cost_cents: acc.total_cost_cents,
+            has_full_prompt: acc.has_full_prompt,
           }
         })
 
