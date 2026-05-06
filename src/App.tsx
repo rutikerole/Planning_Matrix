@@ -2,6 +2,7 @@ import { Providers } from '@/app/providers'
 import { AppRouter } from '@/app/router'
 import { CookieBanner } from '@/features/cookies/CookieBanner'
 import { AnalyticsLifecycle } from '@/features/cookies/AnalyticsLifecycle'
+import { SentryLifecycle } from '@/features/cookies/SentryLifecycle'
 import { ErrorBoundary } from '@/lib/errorTracking'
 import { SiteFooter } from '@/components/SiteFooter'
 
@@ -18,6 +19,10 @@ function App() {
         <AppRouter />
         <SiteFooter />
         <CookieBanner />
+        {/* Phase 9.2 — both lifecycles bridge consent state to their
+            respective SDKs. Sentry on state.functional, PostHog on
+            state.analytics. Reject = neither loads. */}
+        <SentryLifecycle />
         <AnalyticsLifecycle />
       </Providers>
     </ErrorBoundary>

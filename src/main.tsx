@@ -3,12 +3,11 @@ import { createRoot } from 'react-dom/client'
 import './styles/globals.css'
 import './features/landing/styles/tokens.css'
 import App from './App.tsx'
-import { initSentry } from './lib/errorTracking'
 
-// Phase 8 — boot Sentry before React renders so unhandled errors
-// during the initial render are captured. Sentry init is a no-op
-// when VITE_SENTRY_DSN is unset (dev / preview environments).
-initSentry()
+// Phase 9.2 — Sentry init moved out of main.tsx into
+// SentryLifecycle.tsx (consent-gated). This entry stays minimal so
+// the SDK only loads when the user clicks Accept All / Customize +
+// Functional. See src/features/cookies/SentryLifecycle.tsx.
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
