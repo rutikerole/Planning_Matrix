@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react'
 import { AnimatePresence, m, useReducedMotion } from 'framer-motion'
 import { WizardShell } from '../components/WizardShell'
 import { QuestionIntent } from '../components/QuestionIntent'
@@ -6,6 +7,7 @@ import { AtelierOpening } from '@/features/loader/AtelierOpening'
 import { useWizardState } from '../hooks/useWizardState'
 import { useCreateProject } from '../hooks/useCreateProject'
 import { selectTemplate } from '../lib/selectTemplate'
+import { useEventEmitter } from '@/hooks/useEventEmitter'
 
 /**
  * Wizard root. Three visual states:
@@ -33,6 +35,39 @@ export function WizardPage() {
     projectId,
     error,
   } = useCreateProject()
+  const emit = useEventEmitter('wizard')
+
+  // Phase 9.2 — wizard.opened fires once on mount.
+  const openedFired = useRef(false)
+  useEffect(() => {
+    if (openedFired.current) return
+    openedFired.current = true
+    emit('opened')
+  }, [emit])
+
+  // Phase 9.2 — submit_succeeded fires when projectId resolves.
+  const succeededFired = useRef(false)
+  useEffect(() => {
+    if (projectId && !succeededFired.current) {
+      succeededFired.current = true
+      emit('submit_succeeded', {
+        project_id: projectId,
+        template_id: intent ? selectTemplate(intent) : null,
+      })
+    }
+  }, [projectId, intent, emit])
+
+  // Phase 9.2 — submit_failed when useCreateProject reports failure.
+  const failedFired = useRef(false)
+  useEffect(() => {
+    if (failed && !failedFired.current) {
+      failedFired.current = true
+      emit('submit_failed', {
+        error_class: (error as { code?: string } | null)?.code ?? 'unknown',
+        error_message: (error as Error | null)?.message ?? null,
+      })
+    }
+  }, [failed, error, emit])
 
   if (isInFlight) {
     const templateId = intent ? selectTemplate(intent) : 'T-01'
@@ -45,6 +80,7 @@ export function WizardPage() {
         intent={intent}
         plotAddress={plotAddress}
         onCancel={async () => {
+          emit('cancel_clicked', { project_id: projectId, primed, failed })
           await cancelInFlight()
           reset()
         }}

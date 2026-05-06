@@ -5,6 +5,7 @@ import { splitBold } from '@/lib/text'
 import { useWizardState } from '../hooks/useWizardState'
 import { INTENT_VALUES_V3, selectTemplate } from '../lib/selectTemplate'
 import { SketchCard } from './SketchCard'
+import { useEventEmitter } from '@/hooks/useEventEmitter'
 import './../styles/sketches.css'
 
 /**
@@ -29,9 +30,22 @@ export function QuestionIntent() {
   const setStep = useWizardState((s) => s.setStep)
   const [helpOpen, setHelpOpen] = useState(false)
   const cardRefs = useRef<Array<HTMLButtonElement | null>>([])
+  const emit = useEventEmitter('wizard')
+
+  const handleIntentSelect = (value: typeof INTENT_VALUES_V3[number]) => {
+    emit(intent === null ? 'intent_selected' : 'intent_changed', {
+      from: intent,
+      to: value,
+      template_id: selectTemplate(value),
+    })
+    setIntent(value)
+  }
 
   const advance = () => {
-    if (intent !== null) setStep(2)
+    if (intent !== null) {
+      emit('continue_clicked', { intent, template_id: selectTemplate(intent) })
+      setStep(2)
+    }
   }
 
   const handleKey = (e: React.KeyboardEvent<HTMLButtonElement>, idx: number) => {
@@ -46,8 +60,17 @@ export function QuestionIntent() {
     } else if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault()
       const target = INTENT_VALUES_V3[idx]
+      emit(intent === null ? 'intent_selected' : 'intent_changed', {
+        from: intent,
+        to: target,
+        template_id: selectTemplate(target),
+        via: 'keyboard',
+      })
       setIntent(target)
-      setTimeout(() => setStep(2), 0)
+      setTimeout(() => {
+        emit('continue_clicked', { intent: target, template_id: selectTemplate(target), via: 'keyboard' })
+        setStep(2)
+      }, 0)
     }
   }
 
@@ -86,7 +109,7 @@ export function QuestionIntent() {
             intent={value}
             templateCode={selectTemplate(value)}
             selected={intent === value}
-            onSelect={() => setIntent(value)}
+            onSelect={() => handleIntentSelect(value)}
             onKeyDown={(e) => handleKey(e, idx)}
           />
         ))}
@@ -94,7 +117,14 @@ export function QuestionIntent() {
 
       <button
         type="button"
-        onClick={() => setHelpOpen((v) => !v)}
+        onClick={() => {
+          setHelpOpen((v) => {
+            // Only emit when opening, not when closing — closing is
+            // a navigation-back gesture, not a research signal.
+            if (!v) emit('unsure_link_clicked')
+            return !v
+          })
+        }}
         aria-expanded={helpOpen}
         className="self-start rounded-sm font-serif text-[13px] italic text-pm-clay underline underline-offset-4 decoration-pm-clay/40 transition-colors hover:text-pm-clay-deep hover:decoration-pm-clay focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pm-clay focus-visible:ring-offset-2 focus-visible:ring-offset-pm-paper"
       >

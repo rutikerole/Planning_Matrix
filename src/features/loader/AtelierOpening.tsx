@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import { AnimatePresence, m, useReducedMotion, type Transition } from 'framer-motion'
@@ -6,6 +6,7 @@ import { BlueprintSubstrate } from '@/components/shared/BlueprintSubstrate'
 import { extractStreetName, extractCity } from '@/lib/addressParse'
 import { INTENT_LABELS, type Intent } from '@/features/wizard/lib/selectTemplate'
 import type { TemplateId } from '@/types/projectState'
+import { useEventEmitter } from '@/hooks/useEventEmitter'
 import {
   SEAT_ORDER,
   useAtelierSequence,
@@ -128,6 +129,7 @@ function shortAddressLine(plotAddress: string | null | undefined): string | null
   return plotAddress
 }
 
+
 export function AtelierOpening({
   projectId,
   primed,
@@ -141,6 +143,32 @@ export function AtelierOpening({
   const navigate = useNavigate()
   const reduced = useReducedMotion() ?? false
   const [phase, setPhase] = useState<'animating' | 'fading' | 'done'>('animating')
+  const emit = useEventEmitter('wizard')
+
+  // Phase 9.2 — atelier_opened on first mount, atelier_completed
+  // when the cross-fade finishes (phase === 'done'). Track mount
+  // time so completed carries duration_ms.
+  const mountTime = useRef(Date.now())
+  const openedFired = useRef(false)
+  const completedFired = useRef(false)
+  useEffect(() => {
+    if (openedFired.current) return
+    openedFired.current = true
+    emit('atelier_opened', {
+      template_id: templateId,
+      intent: intent ?? null,
+      project_id_known: !!projectId,
+    })
+  }, [emit, templateId, intent, projectId])
+  useEffect(() => {
+    if (phase === 'done' && !completedFired.current && projectId) {
+      completedFired.current = true
+      emit('atelier_completed', {
+        project_id: projectId,
+        duration_ms: Date.now() - mountTime.current,
+      })
+    }
+  }, [phase, projectId, emit])
 
   // True INSERT failure (no projectId) — render FailState. When the
   // INSERT succeeded but priming errored, we still hand off; the chat

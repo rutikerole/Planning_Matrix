@@ -11,6 +11,7 @@ import { suggestProjectName } from '@/features/dashboard/lib/projectName'
 import { districtFromAddress } from '@/data/muenchenPlzDistricts'
 import type { BplanLookupResult } from '@/types/bplan'
 import type { GeocodeResult } from './PlotMap/geocode'
+import { useEventEmitter } from '@/hooks/useEventEmitter'
 
 /**
  * Phase 7.10g — derive the popover's "PLANNING LAW" string from the
@@ -108,6 +109,8 @@ export function QuestionPlot({ onSubmit, submitError }: Props) {
 
   const addressInputRef = useRef<HTMLInputElement>(null)
   const [touched, setTouched] = useState(false)
+  const emit = useEventEmitter('wizard')
+  const addressFirstKeystrokeFired = useRef(false)
   const [bplanResult, setBplanResult] = useState<BplanLookupResult | null>(null)
   const [bplanLoading, setBplanLoading] = useState(false)
   // Phase 5 — Mode B PLZ gate: when the address is structurally valid
@@ -216,9 +219,26 @@ export function QuestionPlot({ onSubmit, submitError }: Props) {
   const handleSubmit = () => {
     if (!intent) return
     if (!canSubmit) {
+      emit('submit_blocked', {
+        intent,
+        has_plot: hasPlot,
+        address_length: plotAddress.length,
+        address_valid: addressValid,
+        is_munich: isMunich,
+        outside_munich_confirmed: outsideMunichConfirmed,
+      })
       setTouched(true)
       return
     }
+    emit('submit_clicked', {
+      intent,
+      template_id: intent ? null : null,  // template id derived in WizardPage; emit there too
+      has_plot: hasPlot === true,
+      address_length: hasPlot === true ? plotAddress.trim().length : 0,
+      bplan_resolved: !!bplanResult,
+      outside_munich_acknowledged:
+        hasPlot === true && addressValid && !isMunich && outsideMunichConfirmed,
+    })
     void onSubmit({
       intent,
       hasPlot: hasPlot === true,
@@ -299,6 +319,7 @@ export function QuestionPlot({ onSubmit, submitError }: Props) {
                   role="radio"
                   aria-checked={isSelected}
                   onClick={() => {
+                    emit(value ? 'plot_yes_selected' : 'plot_no_selected')
                     setPlotChoice(value)
                     if (value === false) setTouched(false)
                   }}
@@ -345,8 +366,30 @@ export function QuestionPlot({ onSubmit, submitError }: Props) {
                       autoComplete="street-address"
                       placeholder={t('wizard.q2.placeholder')}
                       value={plotAddress}
-                      onChange={(e) => setPlotAddress(e.target.value)}
-                      onBlur={() => setTouched(true)}
+                      onChange={(e) => {
+                        // Privacy: emit only on first keystroke (signal that
+                        // user engaged with the field) — never the string
+                        // itself, never per-keystroke noise. Final length
+                        // captured via onBlur below.
+                        if (
+                          !addressFirstKeystrokeFired.current &&
+                          e.target.value.length > 0
+                        ) {
+                          addressFirstKeystrokeFired.current = true
+                          emit('address_typing_started')
+                        }
+                        setPlotAddress(e.target.value)
+                      }}
+                      onBlur={() => {
+                        if (plotAddress.length > 0) {
+                          emit('address_typed', {
+                            length: plotAddress.length,
+                            looks_valid: addressValid,
+                            is_munich: isMunich,
+                          })
+                        }
+                        setTouched(true)
+                      }}
                       onKeyDown={handleAddressKey}
                       aria-invalid={showFormatError || undefined}
                       aria-describedby="plot-address-helper"

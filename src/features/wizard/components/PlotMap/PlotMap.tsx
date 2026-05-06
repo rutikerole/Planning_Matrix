@@ -30,6 +30,7 @@ import {
 import { useBplanLookup } from '../../hooks/useBplanLookup'
 import { ScanLine } from '../ScanLine'
 import type { BplanLookupResult } from '@/types/bplan'
+import { useEventEmitter } from '@/hooks/useEventEmitter'
 import './styles.css'
 
 const MUENCHEN_CENTER: [number, number] = [48.1374, 11.5755]
@@ -133,6 +134,7 @@ export function PlotMap({
   onBplanLoadingChange,
 }: Props) {
   const { t } = useTranslation()
+  const emit = useEventEmitter('wizard')
   const [coords, setCoords] = useState<GeocodeResult | null>(null)
   const [flyTarget, setFlyTarget] = useState<GeocodeResult | null>(null)
   const [isGeocoding, setIsGeocoding] = useState(false)
@@ -208,10 +210,16 @@ export function PlotMap({
   }, [address])
   /* eslint-enable react-hooks/set-state-in-effect */
 
-  // Notify parent when coords settle (resolved OR cleared).
+  // Notify parent when coords settle (resolved OR cleared). Also
+  // emit address_geocoded when forward geocoding produces a hit
+  // (we know it's forward-geocoded if lastClickedAddressRef is null
+  // — clicks set the ref before the optimistic pin update).
   useEffect(() => {
     onCoordinatesResolved?.(coords)
-  }, [coords, onCoordinatesResolved])
+    if (coords && lastClickedAddressRef.current === null) {
+      emit('address_geocoded', { lat: coords.lat, lng: coords.lng, source: 'forward' })
+    }
+  }, [coords, onCoordinatesResolved, emit])
 
   // Phase 6a — once coordinates resolve, fire the B-Plan lookup
   // through the Edge Function. The hook handles its own
@@ -233,6 +241,10 @@ export function PlotMap({
 
   // ─── Click-to-select ─────────────────────────────────────────────
   function handlePick(lat: number, lng: number) {
+    // Phase 9.2 — emit BEFORE state update so the event log captures
+    // the click intent even if the reverse-geocode times out and we
+    // never reach the resolved state.
+    emit('map_clicked', { lat, lng, source: 'click' })
     // Optimistic pin move — no waiting for the geocode roundtrip.
     setCoords({ lat, lng })
     // Click does NOT trigger a fly — keep the user's chosen viewport.
