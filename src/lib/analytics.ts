@@ -65,10 +65,10 @@ export function shutdownPostHog(): void {
   initialised = false
 }
 
-// ─── Allowlisted event capture ──────────────────────────────────────────
+// ─── Allowlisted event capture (Phase 8 — narrow set) ──────────────────
 
-/** Subset of events explicitly tracked. Adding events requires editing
- *  this enum + the docs/launch-checklist.md analytics section. */
+/** Phase 8 legacy event names. Phase 9.2 keeps these working unchanged
+ *  while adding a broader namespaced surface via captureNamespaced(). */
 export type AnalyticsEvent =
   | 'landing_viewed'
   | 'wizard_q1_completed'
@@ -79,14 +79,15 @@ export type AnalyticsEvent =
   | 'legal_page_viewed'
 
 interface EventProps {
-  intent?: string // wizard_q1_completed
-  hasPlot?: boolean // wizard_q2_completed
-  templateId?: string // project_created
-  turnCount?: number // chat_turn_completed
-  page?: string // legal_page_viewed
+  intent?: string
+  hasPlot?: boolean
+  templateId?: string
+  turnCount?: number
+  page?: string
 }
 
-/** Allowlisted capture. Anything outside EventProps is ignored. */
+/** Phase 8 narrow capture. Kept for backwards compat with existing
+ *  call sites. Anything outside EventProps is ignored. */
 export function track(event: AnalyticsEvent, props?: EventProps): void {
   if (!initialised) return
   const safe: Record<string, unknown> = {}
@@ -96,6 +97,85 @@ export function track(event: AnalyticsEvent, props?: EventProps): void {
   if (typeof props?.turnCount === 'number') safe.turnCount = props.turnCount
   if (props?.page) safe.page = props.page
   posthog.capture(event, safe)
+}
+
+// ─── Phase 9.2 — namespaced bridge from eventBus ────────────────────────
+//
+// The first-party event_log is the source of truth. PostHog is the
+// product-team analytics view. Both receive the same emit calls so
+// the vocabulary stays in sync and admin debugging questions ("what
+// did THIS user do?") can pivot into product questions ("how many
+// users do X?") without re-instrumentation.
+//
+// Privacy: PII_KEYS are stripped, every string value is run through
+// the EMAIL/POSTCODE redactor, depth-limited to defend against object
+// cycles and pathological nesting.
+
+const PII_KEYS = new Set([
+  'plot_address', 'plotAddress', 'plot.address', 'plot.postcode',
+  'plot.city', 'email', 'password', 'phone', 'phone_general',
+  'message_de', 'message_en', 'content_de', 'content_en', 'body',
+])
+const EMAIL_RE = /[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi
+const POSTCODE_RE = /\b\d{5}\b/g
+
+function scrubString(s: string): string {
+  return s.replace(EMAIL_RE, '[REDACTED_EMAIL]').replace(POSTCODE_RE, '[REDACTED_PLZ]')
+}
+
+function scrubAttrs(obj: unknown, depth = 0): unknown {
+  if (depth > 6) return '[DEPTH_LIMIT]'
+  if (obj === null || obj === undefined) return obj
+  if (typeof obj === 'string') return scrubString(obj)
+  if (typeof obj !== 'object') return obj
+  if (Array.isArray(obj)) return obj.map((v) => scrubAttrs(v, depth + 1))
+  const out: Record<string, unknown> = {}
+  for (const [k, v] of Object.entries(obj as Record<string, unknown>)) {
+    if (PII_KEYS.has(k)) {
+      out[k] = '[REDACTED]'
+    } else {
+      out[k] = scrubAttrs(v, depth + 1)
+    }
+  }
+  return out
+}
+
+/**
+ * Phase 9.2 — bridge for eventBus → PostHog.
+ *
+ * Called by `eventBus.emit` on every event when PostHog is initialised
+ * (consent given). Event name is namespaced: `${source}.${name}`,
+ * matching the event_log convention. Properties are scrubbed via the
+ * same PII rules as Sentry's beforeSend.
+ *
+ * If PostHog isn't initialised (consent not granted, or DSN missing,
+ * or DEV mode), this is a silent no-op — eventBus continues writing
+ * to event_log unaffected.
+ */
+export function captureNamespaced(
+  source: string,
+  name: string,
+  attrs?: Record<string, unknown>,
+): void {
+  if (!initialised) return
+  const eventName = `${source}.${name}`
+  const safe = attrs ? (scrubAttrs(attrs) as Record<string, unknown>) : {}
+  try {
+    posthog.capture(eventName, safe)
+  } catch {
+    // Never throw out of analytics — the bridge is best-effort.
+  }
+}
+
+/** Phase 9.2 — call after sign-in so PostHog can join sessions to a
+ *  stable distinct_id. Email NEVER passed (cookieless, anonymised). */
+export function identifyUser(userId: string): void {
+  if (!initialised) return
+  try {
+    posthog.identify(userId)
+  } catch {
+    // ignore
+  }
 }
 
 // ─── Helpers ────────────────────────────────────────────────────────────

@@ -39,6 +39,7 @@
 
 import { supabase } from './supabase'
 import { getOrCreateSessionId } from './sessionId'
+import { captureNamespaced } from './analytics'
 import { useAuthStore } from '@/stores/authStore'
 
 export type EventSource =
@@ -86,6 +87,10 @@ class EventBus {
       } else {
         this.scheduleFlush()
       }
+      // Phase 9.2 — mirror to PostHog when consent allows. Bridge is
+      // a no-op if not initialised (consent not granted, DEV mode,
+      // missing DSN). PII scrubbed inside the bridge.
+      captureNamespaced(source, name, attributes)
     } catch (err) {
       // Logging must never break the app. Swallow and warn in dev.
       if (import.meta.env.DEV) {
