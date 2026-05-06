@@ -283,12 +283,17 @@ Deno.serve(async (req: Request) => {
   // ── Build messages array for Anthropic ───────────────────────────
   const anthropicMessages = mapMessagesForAnthropic(allRows)
   if (anthropicMessages.length === 0) {
-    // First-turn priming — synthesize a kickoff "user" turn so the API
-    // has the required leading user role. Never persisted.
+    // Phase 10 commit 13 — per-template first-turn priming. Synthesizes
+    // a kickoff USER turn so the API has the required leading user
+    // role. Never persisted. The content is template-specific so the
+    // persona's first message names the right specialists for the
+    // right project shape (T-03 → Energieberatung+Tragwerk; T-05 →
+    // Vollabbruch-vs-Teilabbruch question; T-06 → Art. 46 Abs. 6
+    // Privileg invocation; T-08 → eliciting opener with no assumed
+    // structure; etc.).
     anthropicMessages.push({
       role: 'user',
-      content:
-        'Eröffnen Sie das Gespräch mit dem Bauherrn. Begrüßen Sie kurz, fassen Sie die bekannten Eckdaten (Vorhaben, Grundstück) in einem Satz zusammen, und stellen Sie die erste substantielle Verständnisfrage.',
+      content: firstTurnPrimer(templateId),
     })
   }
 
@@ -475,6 +480,40 @@ function respondSuccess(
     status: 200,
     headers: { 'Content-Type': 'application/json', ...corsHeaders },
   })
+}
+
+/**
+ * Phase 10 commit 13 — per-template first-turn opener directives.
+ *
+ * Returns a one-line German instruction the persona reads as the
+ * synthesized kickoff "user" turn. The persona's resulting first
+ * assistant message reflects the template's project-shape:
+ *   - T-03 mentions Sanierung verfahrensfreie Tier upfront
+ *   - T-05 asks Vollabbruch vs Teilabbruch + Denkmal
+ *   - T-06 invokes Art. 46 Abs. 6 Privileg as the value-prop
+ *   - T-08 elicits sub-category before any procedure logic
+ */
+function firstTurnPrimer(templateId: TemplateId): string {
+  const opener =
+    'Eröffnen Sie das Gespräch mit dem Bauherrn. Begrüßen Sie kurz und fassen Sie die bekannten Eckdaten (Vorhaben, Grundstück) in einem Satz zusammen.'
+  switch (templateId) {
+    case 'T-01':
+      return `${opener} Stellen Sie dann die erste Bauplanungsrechtliche Verständnisfrage (B-Plan / § 34 / § 35) für diesen Neubau.`
+    case 'T-02':
+      return `${opener} Setzen Sie Brandschutz und Schallschutz früh als Pflicht-Spezialisten am Tisch — bei einem Mehrfamilienhaus sind sie tragend. Klären Sie die Gebäudeklasse-Hypothese (3, 4 oder 5) als erste Frage.`
+    case 'T-03':
+      return `${opener} Setzen Sie Energieberatung und Tragwerk explizit an den Tisch (Sanierungs-Pflicht-Spezialisten). Erklären Sie kurz, dass Sanierungen seit 01.01.2025 oft verfahrensfrei sind (BayBO Art. 57 Abs. 3 Nr. 3) und stellen Sie als erste Frage: Werden tragende Teile, Brandwände oder Fluchtwege berührt?`
+    case 'T-04':
+      return `${opener} Klären Sie zuerst die Use-Change-Matrix: welche Nutzung war es, welche soll es werden? Ohne diese Paarung ist keine Verfahrenseinordnung möglich.`
+    case 'T-05':
+      return `${opener} Setzen Sie Tragwerk und Schadstoffgutachter:in als Pflicht-Spezialisten an den Tisch. Stellen Sie als ERSTE Frage zwei verbundene Punkte: Vollabbruch oder Teilabbruch? Steht das Gebäude unter Denkmalschutz?`
+    case 'T-06':
+      return `${opener} Benennen Sie das zentrale Privileg dieser Maßnahme: BayBO Art. 46 Abs. 6 — bei eingeschossiger Aufstockung zur Schaffung von Wohnraum gelten die Anforderungen der bisherigen Gebäudeklasse weiter, der Bestand muss nicht auf neue Brandschutz-Anforderungen ertüchtigt werden. Seit 01.10.2025 darf die Gemeinde zudem keine zusätzlichen Stellplätze verlangen (Art. 81 Abs. 1 Nr. 4 b). Stellen Sie als erste Frage die Bestandsstatik / Tragfähigkeit der vorhandenen Decke.`
+    case 'T-07':
+      return `${opener} Prüfen Sie zuerst die zwei Schwellen, die das Verfahren bestimmen: Brutto-Rauminhalt des Anbaus (≤ 75 m³ ist verfahrensfrei nach Art. 57 Abs. 1 Nr. 1 a) UND die Lage (Innen- oder Außenbereich). Stellen Sie genau diese zwei Fragen.`
+    case 'T-08':
+      return `${opener} ACHTUNG: Sie wissen NICHT um welche Art Bauwerk es sich handelt. Stellen Sie als erste und einzige Frage: „Welche Art von Bauwerk oder Anlage planen Sie? Garage, Pool, Werbeanlage, Photovoltaik, Mobilfunkmast oder etwas anderes?" Treffen Sie KEINE Annahmen über Verfahrensart, Spezialisten oder Dokumente, bevor die Sub-Kategorie steht.`
+  }
 }
 
 function jsonResponse(
