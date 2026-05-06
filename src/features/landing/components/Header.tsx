@@ -31,7 +31,7 @@ export function Header() {
       className={`fixed left-0 right-0 top-0 z-40 transition-all duration-300 ${
         condensed
           ? 'h-14 border-b border-pm-hair bg-pm-paper/85 backdrop-blur-sm'
-          : 'h-20 bg-pm-paper'
+          : 'h-20 bg-transparent'
       }`}
     >
       <div className="mx-auto flex h-full max-w-7xl items-center justify-between px-6">
@@ -93,16 +93,16 @@ export function Header() {
             </button>
           </div>
           <Link
-            to="/sign-in"
+            to="/sign-up"
             className="font-sans text-sm text-pm-ink-mid transition-colors hover:text-pm-ink"
           >
-            {t('common.ctaLogin')}
+            {t('landing.nav.cta')}
           </Link>
           <Link
-            to="/sign-up"
+            to="/sign-in"
             className="border border-pm-clay bg-pm-clay px-5 py-2 font-sans text-sm text-pm-paper transition-colors hover:bg-pm-clay-deep"
           >
-            {t('landing.nav.cta')}
+            {t('common.ctaLogin')}
           </Link>
         </div>
 
@@ -171,19 +171,19 @@ export function Header() {
                     </button>
                   </div>
                   <Link
-                    to="/sign-in"
+                    to="/sign-up"
                     onClick={() => setOpen(false)}
                     className="font-sans text-sm text-pm-ink-mid"
                   >
-                    {t('common.ctaLogin')}
+                    {t('landing.nav.cta')}
                   </Link>
                 </div>
                 <Link
-                  to="/sign-up"
+                  to="/sign-in"
                   onClick={() => setOpen(false)}
                   className="border border-pm-clay bg-pm-clay px-5 py-3 text-center font-sans text-sm text-pm-paper"
                 >
-                  {t('landing.nav.cta')}
+                  {t('common.ctaLogin')}
                 </Link>
               </div>
             </Drawer.Content>

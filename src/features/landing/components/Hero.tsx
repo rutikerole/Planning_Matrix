@@ -18,17 +18,6 @@ export function Hero() {
       className="relative overflow-hidden bg-pm-paper pb-32 pt-32 sm:pb-40 sm:pt-36"
     >
       <BlueprintGrid />
-      {/* Atmospheric warm-clay bloom (CSS only) */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute -top-40 left-1/4 h-[640px] w-[640px] rounded-full opacity-40 blur-3xl"
-        style={{
-          background:
-            'radial-gradient(circle, var(--pm-clay-bloom) 0%, transparent 60%)',
-          mixBlendMode: 'multiply',
-          animation: reduce ? 'none' : 'pm-bloom-drift 14s ease-in-out infinite',
-        }}
-      />
       <CursorBloom scope="hero" />
 
       <div className="relative mx-auto max-w-7xl px-6">

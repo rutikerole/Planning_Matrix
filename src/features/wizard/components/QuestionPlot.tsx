@@ -341,6 +341,27 @@ export function QuestionPlot({ onSubmit, submitError }: Props) {
           </div>
 
           <AnimatePresence initial={false}>
+            {hasPlot === false ? (
+              <m.div
+                key="no-left"
+                initial={reduced ? { opacity: 1 } : { opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={reduced ? { opacity: 0 } : { opacity: 0, height: 0 }}
+                transition={{ duration: reduced ? 0 : 0.3, ease: [0.16, 1, 0.3, 1] }}
+                className="overflow-hidden"
+                role="status"
+                aria-live="polite"
+              >
+                <div className="border-l-2 border-pm-clay/45 bg-pm-paper-tint/70 py-2 pl-3.5 pr-3">
+                  <p className="font-sans text-[13px] leading-relaxed text-pm-ink-mid">
+                    {t('wizard.q2.noPlot')}
+                  </p>
+                </div>
+              </m.div>
+            ) : null}
+          </AnimatePresence>
+
+          <AnimatePresence initial={false}>
             {hasPlot === true ? (
               <m.div
                 key="yes-left"
@@ -504,25 +525,6 @@ export function QuestionPlot({ onSubmit, submitError }: Props) {
         </div>
       </div>
 
-      <AnimatePresence initial={false}>
-        {hasPlot === false ? (
-          <m.div
-            key="no"
-            initial={reduced ? { opacity: 1 } : { opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={reduced ? { opacity: 0 } : { opacity: 0, height: 0 }}
-            transition={{ duration: reduced ? 0 : 0.3, ease: [0.16, 1, 0.3, 1] }}
-            className="overflow-hidden"
-          >
-            <div className="mt-2 max-w-[34rem] border border-pm-hair bg-pm-paper-tint p-4">
-              <p className="font-sans text-[14px] leading-relaxed text-pm-ink-mid">
-                {t('wizard.q2.noPlot')}
-              </p>
-            </div>
-          </m.div>
-        ) : null}
-      </AnimatePresence>
-
       {/* Phase 5 — soft outside-München warning. Renders when the
         * address is structurally valid but the PLZ isn't in the
         * München Stadtgebiet set. The user can either correct the
@@ -576,9 +578,9 @@ export function QuestionPlot({ onSubmit, submitError }: Props) {
         <button
           type="button"
           onClick={goBackToQ1}
-          className="rounded-sm font-serif text-[13px] italic text-pm-clay underline underline-offset-4 decoration-pm-clay/40 transition-colors hover:text-pm-clay-deep focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pm-clay focus-visible:ring-offset-2 focus-visible:ring-offset-pm-paper"
+          className="inline-flex items-center gap-1.5 rounded-sm font-serif text-[15px] italic text-pm-clay-deep underline underline-offset-4 decoration-pm-clay-deep/65 transition-colors hover:text-pm-ink hover:decoration-pm-ink/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pm-clay focus-visible:ring-offset-2 focus-visible:ring-offset-pm-paper"
         >
-          ← {t('wizard.back')}
+          <span aria-hidden="true">←</span> {t('wizard.back')}
         </button>
 
         <div className="flex items-center gap-4">

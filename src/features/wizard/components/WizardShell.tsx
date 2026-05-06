@@ -53,7 +53,7 @@ export function WizardShell({ step, children }: Props) {
 
       <header className="relative z-10 px-4 pt-safe sm:px-10 lg:px-14 xl:px-20">
         <div className="flex h-16 items-center justify-between gap-3 md:h-[72px]">
-          <Wordmark />
+          <Wordmark to="/dashboard" />
           <div className="flex items-center gap-3 sm:gap-5">
             <LanguageSwitcher />
             <span aria-hidden="true" className="hidden h-4 w-px bg-pm-ink/20 sm:block" />

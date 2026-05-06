@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import { cn } from '@/lib/utils'
 
 interface Props {
@@ -13,8 +14,12 @@ interface Props {
    *  sell the atelier register immediately). The wordmark text stays
    *  ink in both cases. */
   tone?: 'ink' | 'drafting-blue'
-  /** When true (default), wraps the lockup in an anchor to `/`. */
+  /** When true (default), wraps the lockup in a router link. */
   asLink?: boolean
+  /** Link target. Defaults to `/` (landing). Pass `/dashboard` on
+   *  post-login surfaces so the logo never bounces an authed user
+   *  back to marketing. */
+  to?: string
 }
 
 const SIZE: Record<NonNullable<Props['size']>, { glyph: number; text: string }> = {
@@ -82,6 +87,7 @@ export function Wordmark({
   size = 'md',
   tone = 'ink',
   asLink = true,
+  to = '/',
 }: Props) {
   const dims = SIZE[size]
   const inner = (
@@ -107,12 +113,12 @@ export function Wordmark({
 
   if (asLink) {
     return (
-      <a
-        href="/"
+      <Link
+        to={to}
         className="inline-flex items-center rounded-sm transition-colors duration-soft hover:text-ink/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink focus-visible:ring-offset-4 focus-visible:ring-offset-background"
       >
         {inner}
-      </a>
+      </Link>
     )
   }
   return inner
