@@ -7,12 +7,15 @@ import { useTraceDetail } from '../hooks/useTraceDetail'
 import { SpanGantt } from './SpanGantt'
 import { JsonViewer } from './JsonViewer'
 import { TraceCardButton } from './TraceCard'
+import { EventsTab } from './EventsTab'
 import {
   centsToUsd,
   formatPercent,
   formatRelativeTime,
   formatTimestamp,
 } from '../lib/format'
+
+type DrawerTab = 'traces' | 'events' | 'persona'
 
 interface Props {
   projectId: string
@@ -43,6 +46,7 @@ export default function InlineLogsDrawer({
 }: Props) {
   const { data, isLoading, error } = useProjectTraces(projectId)
   const [expandedTraceId, setExpandedTraceId] = useState<string | null>(null)
+  const [tab, setTab] = useState<DrawerTab>('traces')
 
   const traces = data?.traces ?? []
   const stats = useMemo(() => computeStats(traces), [traces])
@@ -94,41 +98,60 @@ export default function InlineLogsDrawer({
             />
           </div>
 
+          {/* Tab strip */}
+          <div className="flex items-center gap-1 border-b border-[hsl(var(--ink))]/10 px-4 py-2 md:px-5">
+            <TabButton active={tab === 'traces'} onClick={() => setTab('traces')}>
+              traces
+            </TabButton>
+            <TabButton active={tab === 'events'} onClick={() => setTab('events')}>
+              events
+            </TabButton>
+            <TabButton active={tab === 'persona'} onClick={() => setTab('persona')}>
+              persona
+            </TabButton>
+          </div>
+
           {/* Body */}
           <div className="flex-1 overflow-y-auto px-4 py-3 md:px-5">
-            {isLoading ? (
-              <Empty label="loading traces…" />
-            ) : error ? (
-              <Empty label={`load failed: ${(error as Error).message}`} tone="error" />
-            ) : traces.length === 0 ? (
-              <Empty label="no traces yet — send a chat turn to see logs populate" />
+            {tab === 'traces' ? (
+              isLoading ? (
+                <Empty label="loading traces…" />
+              ) : error ? (
+                <Empty label={`load failed: ${(error as Error).message}`} tone="error" />
+              ) : traces.length === 0 ? (
+                <Empty label="no traces yet — send a chat turn to see logs populate" />
+              ) : (
+                <ol className="space-y-1.5">
+                  {traces.slice(0, 50).map((t) => (
+                    <li key={t.trace_id}>
+                      <TraceCardButton
+                        trace={t}
+                        expanded={expandedTraceId === t.trace_id}
+                        hideProjectId
+                        onClick={() =>
+                          setExpandedTraceId((cur) =>
+                            cur === t.trace_id ? null : t.trace_id,
+                          )
+                        }
+                      />
+                      {expandedTraceId === t.trace_id ? (
+                        <div className="mt-2 mb-3 rounded border border-[hsl(var(--ink))]/10 bg-[hsl(var(--ink))]/[0.02] p-3">
+                          <TraceDetailPanel traceId={t.trace_id} />
+                        </div>
+                      ) : null}
+                    </li>
+                  ))}
+                  {traces.length > 50 ? (
+                    <li className="pt-2 text-center font-mono text-[10px] uppercase tracking-[0.18em] text-[hsl(var(--ink))]/45">
+                      showing 50 of {traces.length} · use /admin/logs for the full history
+                    </li>
+                  ) : null}
+                </ol>
+              )
+            ) : tab === 'events' ? (
+              <EventsTab projectId={projectId} />
             ) : (
-              <ol className="space-y-1.5">
-                {traces.slice(0, 50).map((t) => (
-                  <li key={t.trace_id}>
-                    <TraceCardButton
-                      trace={t}
-                      expanded={expandedTraceId === t.trace_id}
-                      hideProjectId
-                      onClick={() =>
-                        setExpandedTraceId((cur) =>
-                          cur === t.trace_id ? null : t.trace_id,
-                        )
-                      }
-                    />
-                    {expandedTraceId === t.trace_id ? (
-                      <div className="mt-2 mb-3 rounded border border-[hsl(var(--ink))]/10 bg-[hsl(var(--ink))]/[0.02] p-3">
-                        <TraceDetailPanel traceId={t.trace_id} />
-                      </div>
-                    ) : null}
-                  </li>
-                ))}
-                {traces.length > 50 ? (
-                  <li className="pt-2 text-center font-mono text-[10px] uppercase tracking-[0.18em] text-[hsl(var(--ink))]/45">
-                    showing 50 of {traces.length} · use /admin/logs for the full history
-                  </li>
-                ) : null}
-              </ol>
+              <Empty label="persona evolution arrives in commit 11" />
             )}
           </div>
         </Drawer.Content>
@@ -159,6 +182,30 @@ function Stat({
         {value}
       </p>
     </div>
+  )
+}
+
+function TabButton({
+  active,
+  onClick,
+  children,
+}: {
+  active: boolean
+  onClick: () => void
+  children: React.ReactNode
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`rounded px-2.5 py-1 font-mono text-[11px] uppercase tracking-[0.16em] transition-colors ${
+        active
+          ? 'bg-[hsl(var(--ink))] text-[hsl(var(--paper))]'
+          : 'text-[hsl(var(--ink))]/55 hover:bg-[hsl(var(--ink))]/[0.06] hover:text-[hsl(var(--ink))]'
+      }`}
+    >
+      {children}
+    </button>
   )
 }
 
