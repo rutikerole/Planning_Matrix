@@ -8,6 +8,7 @@ import { SpanGantt } from './SpanGantt'
 import { JsonViewer } from './JsonViewer'
 import { TraceCardButton } from './TraceCard'
 import { EventsTab } from './EventsTab'
+import { PersonaEvolutionTab } from './PersonaEvolutionTab'
 import {
   centsToUsd,
   formatPercent,
@@ -151,7 +152,7 @@ export default function InlineLogsDrawer({
             ) : tab === 'events' ? (
               <EventsTab projectId={projectId} />
             ) : (
-              <Empty label="persona evolution arrives in commit 11" />
+              <PersonaEvolutionTab projectId={projectId} />
             )}
           </div>
         </Drawer.Content>

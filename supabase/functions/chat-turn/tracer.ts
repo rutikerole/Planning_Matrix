@@ -141,7 +141,14 @@ interface InternalSpan {
   events: SpanEvent[]
 }
 
-const PERSONA_SAMPLE_RATE = 1 / 50         // 1-in-50 on success
+// Phase 9.2 — bumped from 1/50 to 1/10. The Persona evolution tab
+// in the inline drawer (commit 11) groups traces by system_prompt_hash
+// to spot prompt changes that broke cache or increased errors. At
+// 1/50 the per-hash sample size was too sparse for projects with
+// fewer than 50 turns. 1/10 keeps storage growth modest (still
+// ≤10 % of turns get the full prompt) while making per-version
+// metrics stable enough to be actionable. Errors still always-store.
+const PERSONA_SAMPLE_RATE = 1 / 10
 const SYSTEM_PROMPT_TRUNCATE_BYTES = 10_240
 
 // ── Factory ─────────────────────────────────────────────────────────────
