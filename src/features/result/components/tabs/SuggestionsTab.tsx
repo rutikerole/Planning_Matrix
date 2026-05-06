@@ -4,6 +4,7 @@ import type { ProjectRow } from '@/types/db'
 import type { ProjectState } from '@/types/projectState'
 import { pickSmartSuggestions } from '../../lib/smartSuggestionsMatcher'
 import { SuggestionCard } from '../Cards/SuggestionCard'
+import { useEventEmitter } from '@/hooks/useEventEmitter'
 
 interface Props {
   project: ProjectRow
@@ -22,6 +23,7 @@ const DISMISS_KEY = (projectId: string) => `pm:dismissed-suggestions:${projectId
  */
 export function SuggestionsTab({ project, state, ownerMode }: Props) {
   const { t } = useTranslation()
+  const resultEmit = useEventEmitter('result')
   const [dismissed, setDismissed] = useState<Set<string>>(() => {
     if (typeof window === 'undefined') return new Set()
     try {
@@ -56,6 +58,7 @@ export function SuggestionsTab({ project, state, ownerMode }: Props) {
   )
 
   const handleAdded = (id: string) => {
+    resultEmit('suggestion_added', { suggestion_id: id })
     setAddedIds((prev) => {
       const next = new Set(prev)
       next.add(id)
@@ -63,6 +66,7 @@ export function SuggestionsTab({ project, state, ownerMode }: Props) {
     })
   }
   const handleDismissed = (id: string) => {
+    resultEmit('suggestion_dismissed', { suggestion_id: id })
     setDismissed((prev) => {
       const next = new Set(prev)
       next.add(id)

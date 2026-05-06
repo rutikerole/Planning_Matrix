@@ -14,6 +14,7 @@ import { buildExportMarkdown } from '@/lib/export/exportMarkdown'
 import { buildExportJson } from '@/lib/export/exportJson'
 import type { MessageRow, ProjectRow } from '@/types/db'
 import { createShareToken } from '../lib/shareTokenApi'
+import { useEventEmitter } from '@/hooks/useEventEmitter'
 
 interface ProjectEventRow {
   id: string
@@ -53,10 +54,16 @@ export function ExportMenu({
   const { t, i18n } = useTranslation()
   const lang = (i18n.resolvedLanguage ?? 'de') as 'de' | 'en'
   const [busy, setBusy] = useState<Action | null>(null)
+  const resultEmit = useEventEmitter('result')
 
   const trigger = async (action: Action) => {
     if (busy) return
+    // Phase 9.2 — emit click before the async work so the click is
+    // captured even if the user navigates away while the export
+    // computes (PDF can take a few seconds).
+    resultEmit(`export_${action}_clicked`, { action })
     setBusy(action)
+    const startedAt = Date.now()
     try {
       if (action === 'pdf') {
         const { buildExportPdf } = await import('@/features/chat/lib/exportPdf')
@@ -65,20 +72,34 @@ export function ExportMenu({
           new Blob([bytes as BlobPart], { type: 'application/pdf' }),
           buildExportFilename(project.name, 'pdf'),
         )
+        resultEmit('export_pdf_succeeded', {
+          latency_ms: Date.now() - startedAt,
+          file_bytes:
+            (bytes as Uint8Array | ArrayBuffer | undefined)?.byteLength ?? null,
+        })
       } else if (action === 'md') {
         const md = buildExportMarkdown({ project, events, lang })
         download(
           new Blob([md], { type: 'text/markdown;charset=utf-8' }),
           buildExportFilename(project.name, 'md'),
         )
+        resultEmit('export_md_succeeded', {
+          latency_ms: Date.now() - startedAt,
+          file_bytes: md.length,
+        })
       } else if (action === 'json') {
         const json = buildExportJson({ project, messages, events })
+        const serialized = JSON.stringify(json, null, 2)
         download(
-          new Blob([JSON.stringify(json, null, 2)], {
+          new Blob([serialized], {
             type: 'application/json;charset=utf-8',
           }),
           buildExportFilename(project.name, 'json'),
         )
+        resultEmit('export_json_succeeded', {
+          latency_ms: Date.now() - startedAt,
+          file_bytes: serialized.length,
+        })
       } else if (action === 'share') {
         const result = await createShareToken(project.id)
         try {
@@ -87,8 +108,13 @@ export function ExportMenu({
           // permission denied / not focused — recipient can copy manually
         }
         onShareCreated(result.url, result.expiresAt)
+        resultEmit('share_link_created', { latency_ms: Date.now() - startedAt })
       }
     } catch (err) {
+      resultEmit('export_failed', {
+        action,
+        error_message: err instanceof Error ? err.message : String(err),
+      })
       console.error('[result-export] failed', err)
     } finally {
       setBusy(null)

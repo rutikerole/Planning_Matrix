@@ -1,6 +1,7 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { AnimatePresence, m, useReducedMotion } from 'framer-motion'
+import { useEventEmitter } from '@/hooks/useEventEmitter'
 import { BlueprintSubstrate } from '@/components/shared/BlueprintSubstrate'
 import type { MessageRow, ProjectRow } from '@/types/db'
 import type { ProjectState } from '@/types/projectState'
@@ -52,6 +53,36 @@ export function ResultWorkspace({ project, messages, events, source }: Props) {
   const reduced = useReducedMotion()
   const { t } = useTranslation()
   const [inspectOpen, setInspectOpen] = useState(false)
+  const resultEmit = useEventEmitter('result')
+
+  // Phase 9.2 — result.opened on mount + tab dwell tracking. The
+  // dwellRef tracks { tab, since } across renders so that on tab
+  // change we can emit the prior dwell delta before recording the
+  // new tab's start time.
+  const openedFired = useRef(false)
+  const dwellRef = useRef<{ tab: string; since: number }>({ tab: active, since: Date.now() })
+
+  useEffect(() => {
+    if (openedFired.current) return
+    openedFired.current = true
+    resultEmit('opened', {
+      project_id: project.id,
+      kind: source.kind,
+      initial_tab: active,
+    })
+  }, [project.id, source.kind, active, resultEmit])
+
+  useEffect(() => {
+    const prev = dwellRef.current
+    if (prev.tab !== active) {
+      resultEmit('tab_dwell_time', {
+        tab: prev.tab,
+        dwell_ms: Date.now() - prev.since,
+      })
+      resultEmit('tab_opened', { tab: active, from: prev.tab })
+      dwellRef.current = { tab: active, since: Date.now() }
+    }
+  }, [active, resultEmit])
 
   return (
     <div
@@ -109,7 +140,10 @@ export function ResultWorkspace({ project, messages, events, source }: Props) {
                 <div className="mt-10 pt-4 border-t border-ink/10">
                   <button
                     type="button"
-                    onClick={() => setInspectOpen(true)}
+                    onClick={() => {
+                      resultEmit('inspect_data_flow_opened')
+                      setInspectOpen(true)
+                    }}
                     className="text-[11.5px] italic font-serif text-clay/85 hover:text-ink underline underline-offset-4 decoration-clay/55 transition-colors duration-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/35 focus-visible:ring-offset-2 focus-visible:ring-offset-paper rounded-sm"
                   >
                     ↗ {t('result.workspace.inspectDataFlow.linkLabel')}
