@@ -1,10 +1,16 @@
 // Phase 8 — Datenschutzerklärung per DSGVO Art. 13 + 14.
+// Phase 9.2 follow-up — Sentry reclassified from legitimate-interest
+// to functional-consent after the SentryLifecycle component started
+// gating init on state.functional. PostHog and Sentry subprocessor
+// entries expanded with company addresses + EU-instance qualifier
+// (Frankfurt) + DPA wording (Sentry: standard DPA Art. 28 DSGVO;
+// PostHog: standard DPA + EU SCCs).
 //
 // Lists every processing activity in the product:
 //   • Account (email, password)        — Art. 6 (1) (b)
 //   • Plot address + chat content       — Art. 6 (1) (b)
-//   • Sentry error tracking             — Art. 6 (1) (f)
-//   • PostHog analytics                 — Art. 6 (1) (a) (consent)
+//   • Sentry error tracking (Functional consent) — Art. 6 (1) (a)
+//   • PostHog analytics (Analytics consent)      — Art. 6 (1) (a)
 //   • Anthropic API                     — Art. 6 (1) (b) + AVV
 //   • Supabase (DB + Auth + Functions)  — Art. 6 (1) (b) + AVV
 //   • OpenFreeMap / Nominatim           — Art. 6 (1) (f)
@@ -13,7 +19,7 @@
 import { useTranslation } from 'react-i18next'
 import { LegalPageLayout } from '../components/LegalPageLayout'
 
-const LAST_UPDATED = '2026-05-01'
+const LAST_UPDATED = '2026-05-06'
 
 export function DatenschutzPage() {
   const { i18n } = useTranslation()
@@ -149,39 +155,53 @@ function PrivacyDe() {
         <strong>Speicherdauer:</strong> bis zu 30 Tage.
       </p>
 
-      <h3>3.6 Sentry (Fehler-Telemetrie, EU-Region)</h3>
+      <h3>3.6 Sentry (Fehler-Telemetrie, EU-Region — Functional Storage)</h3>
       <p>
         <strong>Daten:</strong> Fehler-Stacktrace, Browser-Information,
         URL, anonymisierter Benutzer-Identifier. Sensible Felder
-        (insbesondere Grundstücksadresse, E-Mail, Passwort, Telefon)
-        werden bereits client-seitig vor der Übertragung entfernt
-        (PII-Scrubbing).
+        (insbesondere Grundstücksadresse, E-Mail, Passwort, Telefon,
+        Chat-Inhalte) werden bereits client-seitig vor der Übertragung
+        über den <code>beforeSend</code>-Hook entfernt (PII-Scrubbing).
+        IP-Adressen werden gekürzt.
         <br />
-        <strong>Empfänger:</strong> Functional Software, Inc.
-        (Sentry), Hosting-Region EU (Frankfurt).
+        <strong>Empfänger:</strong> Functional Software, Inc. (Sentry,
+        Inc.), 132 Hawthorne Street, San Francisco, CA 94107, USA.
+        Verarbeitung über die EU-Instanz (sentry.io EU-Region,
+        Frankfurt).
         <br />
-        <strong>Rechtsgrundlage:</strong> Art. 6 Abs. 1 lit. f DSGVO
-        (berechtigtes Interesse an Fehleranalyse zur
-        Anwendungs­stabilität). DPA abgeschlossen.
+        <strong>Rechtsgrundlage:</strong> Art. 6 Abs. 1 lit. a DSGVO —
+        ausschließlich nach Ihrer aktiven Einwilligung in
+        <em>funktionale Cookies</em> über das Cookie-Banner.
+        Auftragsverarbeitungsvertrag (Stand-DPA gemäß Art. 28 DSGVO,
+        EU-Standardvertragsklauseln) abgeschlossen.
+        <br />
+        <strong>Aktivierung:</strong> nur nach ausdrücklicher
+        Einwilligung in funktionale Cookies; ohne Einwilligung wird
+        das SDK nicht geladen, es findet keine Datenverarbeitung statt.
         <br />
         <strong>Speicherdauer:</strong> 30 Tage.
       </p>
 
-      <h3>3.7 PostHog (Produkt-Analytik, EU-Region, einwilligungsbasiert)</h3>
+      <h3>3.7 PostHog (Produkt-Analytik, EU-Region — Analytics)</h3>
       <p>
         <strong>Daten:</strong> aufgerufene Seiten, Wizard-Funnel-Schritte,
         Anzahl Chat-Turns. <strong>Keine</strong> Grundstücksadressen,
-        E-Mails oder andere PII.
+        E-Mails oder andere PII. Keine Sitzungsaufzeichnung.
         <br />
-        <strong>Empfänger:</strong> PostHog Inc., Hosting-Region EU
-        (eu.posthog.com).
+        <strong>Empfänger:</strong> PostHog Inc., 2261 Market Street
+        #4008, San Francisco, CA 94114, USA. Verarbeitung über die
+        EU-Instanz (eu.i.posthog.com, Frankfurt).
         <br />
         <strong>Rechtsgrundlage:</strong> Art. 6 Abs. 1 lit. a DSGVO —
-        ausschließlich nach Ihrer aktiven Einwilligung über das
-        Cookie-Banner. PostHog läuft im Cookieless-Modus
-        (<code>disable_persistence: true</code>) und setzt
-        keine Cookies; eine Datenverarbeitung findet ohne Einwilligung
-        nicht statt. DPA abgeschlossen.
+        ausschließlich nach Ihrer aktiven Einwilligung in
+        <em>Analyse-Cookies</em> über das Cookie-Banner. PostHog läuft
+        im Cookieless-Modus (<code>persistence: 'memory'</code>) und
+        setzt keine Cookies. Auftragsverarbeitungsvertrag (Stand-DPA
+        gemäß Art. 28 DSGVO, EU-Standardvertragsklauseln) abgeschlossen.
+        <br />
+        <strong>Aktivierung:</strong> nur nach ausdrücklicher
+        Einwilligung in Analyse-Cookies; ohne Einwilligung wird das
+        SDK nicht geladen, es findet keine Datenverarbeitung statt.
         <br />
         <strong>Speicherdauer:</strong> 90 Tage.
       </p>
@@ -310,8 +330,14 @@ function PrivacyEn() {
         <li>Anthropic API (US, SCCs + DPA) — Art. 6 (1) (b)</li>
         <li>Supabase (Frankfurt + US, SCCs + DPA) — Art. 6 (1) (b)</li>
         <li>Vercel hosting (SCCs + DPA) — Art. 6 (1) (f)</li>
-        <li>Sentry EU (PII-scrubbed, DPA) — Art. 6 (1) (f)</li>
-        <li>PostHog EU (cookieless, consent-gated, DPA) — Art. 6 (1) (a)</li>
+        <li>
+          Sentry EU (Functional Storage, PII-scrubbed, DPA) —
+          Art. 6 (1) (a) (consent)
+        </li>
+        <li>
+          PostHog EU (Analytics, cookieless, no session recording,
+          DPA + EU SCCs) — Art. 6 (1) (a) (consent)
+        </li>
         <li>OpenFreeMap basemap tiles — Art. 6 (1) (f)</li>
         <li>Nominatim geocoder — Art. 6 (1) (f)</li>
         <li>Munich Geoportal WMS (admin preview only) — Art. 6 (1) (f)</li>
