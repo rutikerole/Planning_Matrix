@@ -45,7 +45,15 @@ export function useProjects() {
         counts.set(pid, (counts.get(pid) ?? 0) + 1)
       }
 
-      return projects.map((p) => ({ ...p, turnCount: counts.get(p.id) ?? 0 }))
+      // Only surface projects whose first chat turn has landed. A row
+      // exists in `projects` from the moment the wizard submits, but
+      // until the first-turn priming commits the assistant message
+      // there is nothing to show — the user hasn't really started
+      // yet. Filtering here keeps the dashboard honest and quietly
+      // hides orphans left behind when priming fails.
+      return projects
+        .map((p) => ({ ...p, turnCount: counts.get(p.id) ?? 0 }))
+        .filter((p) => p.turnCount > 0)
     },
     staleTime: 30_000,
     refetchOnWindowFocus: false,

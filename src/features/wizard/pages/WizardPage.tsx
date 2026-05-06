@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react'
+import { useLocation } from 'react-router-dom'
 import { AnimatePresence, m, useReducedMotion } from 'framer-motion'
 import { WizardShell } from '../components/WizardShell'
 import { QuestionIntent } from '../components/QuestionIntent'
@@ -8,6 +9,8 @@ import { useWizardState } from '../hooks/useWizardState'
 import { useCreateProject } from '../hooks/useCreateProject'
 import { selectTemplate } from '../lib/selectTemplate'
 import { useEventEmitter } from '@/hooks/useEventEmitter'
+
+const WIZARD_ENTRY_KEY = 'pm.wizard.entryKey'
 
 /**
  * Wizard root. Three visual states:
@@ -36,6 +39,23 @@ export function WizardPage() {
     error,
   } = useCreateProject()
   const emit = useEventEmitter('wizard')
+  const location = useLocation()
+
+  // Reset the wizard whenever the user enters via a fresh navigation
+  // (dashboard "+ New project", command palette, direct URL paste, etc.)
+  // so they always land on Q1. A browser refresh preserves the same
+  // location.key (rehydrated from history.state), so the existing
+  // refresh-mid-flow behavior still restores Q2 with prior input.
+  // Stored in sessionStorage to survive React 18 Strict-Mode double-mount
+  // — the second mount sees the key already saved and no-ops.
+  useEffect(() => {
+    const savedKey = sessionStorage.getItem(WIZARD_ENTRY_KEY)
+    if (savedKey !== location.key) {
+      reset()
+      sessionStorage.setItem(WIZARD_ENTRY_KEY, location.key)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   // Phase 9.2 — wizard.opened fires once on mount.
   const openedFired = useRef(false)
