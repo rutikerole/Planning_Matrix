@@ -22,6 +22,7 @@ import { useChatStore } from '@/stores/chatStore'
 import { useLongPress } from '@/lib/useLongPress'
 import { useDeleteFile } from '../../hooks/useDeleteFile'
 import { useInputState } from '../../hooks/useInputState'
+import { useEventEmitter } from '@/hooks/useEventEmitter'
 import type { MessageRow } from '@/types/db'
 import type { UserAnswer } from '@/types/chatTurn'
 import { SmartChips } from './SmartChips'
@@ -78,6 +79,7 @@ export function InputBar({
   const textareaRef = textareaRefExt ?? localRef
   const [pickerOpen, setPickerOpen] = useState(false)
   const [longPressOpen, setLongPressOpen] = useState(false)
+  const chatEmit = useEventEmitter('chat')
 
   // Auto-grow up to MAX_ROWS.
   useEffect(() => {
@@ -102,10 +104,18 @@ export function InputBar({
     }
   }, [activeSuggestion, disabled, textareaRef])
 
-  const handleSubmit = () => {
+  const handleSubmit = (source: 'button' | 'enter' | 'meta_enter' = 'button') => {
     if (disabled) return
     const payload = buildSubmitAndClear()
     if (!payload) return
+    // Phase 9.2 — emit BEFORE onSubmit so the event is captured even
+    // if the network call fails. Privacy: length only, never the body.
+    chatEmit('send_clicked', {
+      length: payload.userMessage.length,
+      has_user_answer: !!payload.userAnswer,
+      attachment_count: payload.attachmentIds?.length ?? 0,
+      source,
+    })
     onSubmit({
       userMessage: payload.userMessage,
       userMessageEn: payload.userMessageEn,
@@ -117,12 +127,12 @@ export function InputBar({
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
       e.preventDefault()
-      handleSubmit()
+      handleSubmit('meta_enter')
       return
     }
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault()
-      handleSubmit()
+      handleSubmit('enter')
     }
   }
 
@@ -257,7 +267,7 @@ export function InputBar({
           />
 
           <div className="self-end pb-0.5">
-            <SendButton isEmpty={isEmpty} disabled={disabled} onSend={handleSubmit} />
+            <SendButton isEmpty={isEmpty} disabled={disabled} onSend={() => handleSubmit('button')} />
           </div>
         </div>
       </div>

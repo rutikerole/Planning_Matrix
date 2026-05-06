@@ -45,6 +45,7 @@ import { OfflineBanner } from '../components/Chamber/OfflineBanner'
 import { RateLimitBanner } from '../components/Chamber/RateLimitBanner'
 import { ErrorBanner } from '../components/Chamber/ErrorBanner'
 import { EmptyState } from '../components/Chamber/EmptyState'
+import { useEventEmitter } from '@/hooks/useEventEmitter'
 import { StandUp } from '../components/Chamber/StandUp'
 import { SpineDebugPanel } from '../components/Chamber/Spine/SpineDebugPanel'
 
@@ -52,12 +53,24 @@ export function ChatWorkspacePage() {
   const { t, i18n } = useTranslation()
   const { id } = useParams<{ id: string }>()
   const projectId = id ?? ''
+  const chatEmit = useEventEmitter('chat')
 
   const { data: project } = useProject(projectId)
   const { data: messages } = useMessages(projectId)
   // events feed audit consumers (StandUp, telemetry); fetched here
   // so the React-Query cache is hot for sub-component reads.
   useProjectEvents(projectId)
+
+  // Phase 9.2 — chat.opened fires once per project mount. Per-tab
+  // visibility flushes are handled at module scope inside eventBus,
+  // not here.
+  const openedFired = useRef(false)
+  useEffect(() => {
+    if (openedFired.current) return
+    if (!projectId) return
+    openedFired.current = true
+    chatEmit('opened', { project_id: projectId })
+  }, [projectId, chatEmit])
 
   const chatTurn = useChatTurn(projectId)
   const isThinking = useChatStore((s) => s.isAssistantThinking)

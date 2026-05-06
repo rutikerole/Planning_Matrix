@@ -22,6 +22,7 @@ import { cn } from '@/lib/utils'
 import { isPlotAddressValid } from '@/lib/addressParse'
 import type { MessageRow } from '@/types/db'
 import type { UserAnswer } from '@/types/chatTurn'
+import { useEventEmitter } from '@/hooks/useEventEmitter'
 import { IdkAffordance } from './IdkAffordance'
 
 interface SelectOption {
@@ -50,6 +51,34 @@ export function SmartChips({
   const inputType = lastAssistant?.input_type ?? 'text'
   const options = (lastAssistant?.input_options as SelectOption[] | null) ?? []
   const completionSignalLooksContinue = lastAssistant?.allow_idk === false
+  const chatEmit = useEventEmitter('chat')
+
+  // Phase 9.2 — wrap onPick once at the entry point so every chip
+  // variant (Yes/No, single_select, multi_select, address) emits a
+  // chat.chip_clicked event without each child sub-component having
+  // to know about analytics.
+  const wrappedOnPick = (answer: UserAnswer) => {
+    chatEmit('chip_clicked', {
+      input_type: inputType,
+      // Strip any free-text body from `value` — for select chips
+      // value is the option key (short, no PII); for address it's
+      // the literal address which we don't want.
+      value:
+        inputType === 'address'
+          ? '<address>'
+          : (answer as { value?: unknown })?.value ?? null,
+      kind: (answer as { kind?: string })?.kind ?? null,
+    })
+    onPick(answer)
+  }
+  const wrappedOnContinue = () => {
+    chatEmit('continue_clicked', { input_type: inputType })
+    onContinue()
+  }
+  const wrappedOnIdkOpen = () => {
+    chatEmit('idk_opened', { input_type: inputType })
+    onIdkOpen()
+  }
 
   // Continue flow.
   if (
@@ -58,10 +87,10 @@ export function SmartChips({
   ) {
     return (
       <ChipRow disabled={disabled}>
-        <FilledButton onClick={onContinue} disabled={disabled}>
+        <FilledButton onClick={wrappedOnContinue} disabled={disabled}>
           <ContinueLabel />
         </FilledButton>
-        {showIdk && <IdkAffordance onOpen={onIdkOpen} disabled={disabled} />}
+        {showIdk && <IdkAffordance onOpen={wrappedOnIdkOpen} disabled={disabled} />}
       </ChipRow>
     )
   }
@@ -69,9 +98,9 @@ export function SmartChips({
   if (inputType === 'yesno') {
     return (
       <ChipRow disabled={disabled}>
-        <YesNoChip value="ja" disabled={disabled} onPick={onPick} />
-        <YesNoChip value="nein" disabled={disabled} onPick={onPick} />
-        {showIdk && <IdkAffordance onOpen={onIdkOpen} disabled={disabled} />}
+        <YesNoChip value="ja" disabled={disabled} onPick={wrappedOnPick} />
+        <YesNoChip value="nein" disabled={disabled} onPick={wrappedOnPick} />
+        {showIdk && <IdkAffordance onOpen={wrappedOnIdkOpen} disabled={disabled} />}
       </ChipRow>
     )
   }
@@ -80,9 +109,9 @@ export function SmartChips({
     return (
       <ChipRow disabled={disabled}>
         {options.map((opt) => (
-          <SelectChip key={opt.value} option={opt} disabled={disabled} onPick={onPick} />
+          <SelectChip key={opt.value} option={opt} disabled={disabled} onPick={wrappedOnPick} />
         ))}
-        {showIdk && <IdkAffordance onOpen={onIdkOpen} disabled={disabled} />}
+        {showIdk && <IdkAffordance onOpen={wrappedOnIdkOpen} disabled={disabled} />}
       </ChipRow>
     )
   }
@@ -92,22 +121,22 @@ export function SmartChips({
       <MultiSelectRow
         options={options}
         disabled={disabled}
-        onPick={onPick}
+        onPick={wrappedOnPick}
         showIdk={showIdk}
-        onIdkOpen={onIdkOpen}
+        onIdkOpen={wrappedOnIdkOpen}
       />
     )
   }
 
   if (inputType === 'address') {
-    return <AddressRow disabled={disabled} onPick={onPick} />
+    return <AddressRow disabled={disabled} onPick={wrappedOnPick} />
   }
 
   // Free text — only an IDK affordance, no chips.
   if (showIdk) {
     return (
       <ChipRow disabled={disabled}>
-        <IdkAffordance onOpen={onIdkOpen} disabled={disabled} />
+        <IdkAffordance onOpen={wrappedOnIdkOpen} disabled={disabled} />
       </ChipRow>
     )
   }

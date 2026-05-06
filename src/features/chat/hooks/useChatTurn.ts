@@ -13,6 +13,7 @@ import {
 import { useChatStore, OFFLINE_QUEUE_CAP } from '@/stores/chatStore'
 import { useAuthStore } from '@/stores/authStore'
 import { isAdminEmail } from '@/lib/cn-feature-flags'
+import { eventBus } from '@/lib/eventBus'
 import { thinkingLabelToSection } from '../lib/thinkingLabelToSection'
 import type { MessageRow, ProjectRow } from '@/types/db'
 import type { ChatTurnRequest, ChatTurnResponse, UserAnswer } from '@/types/chatTurn'
@@ -320,6 +321,21 @@ export function useChatTurn(projectId: string) {
       if (isAdminEmail(useAuthStore.getState().user?.email)) {
         console.log('[pm-cost]', response.costInfo)
       }
+
+      // Phase 9.2 — chat.message_received correlates this client
+      // event with the server-side trace. Privacy: length only on
+      // the assistant message body. costInfo is non-PII.
+      eventBus.emit('chat', 'message_received', {
+        client_request_id: clientRequestId,
+        specialist: response.assistantMessage.specialist,
+        message_length: (response.assistantMessage.content_de ?? '').length,
+        completion_signal: response.completionSignal ?? null,
+        latency_ms: response.costInfo?.latencyMs ?? null,
+        input_tokens: response.costInfo?.inputTokens ?? null,
+        output_tokens: response.costInfo?.outputTokens ?? null,
+        cache_read_tokens: response.costInfo?.cacheReadTokens ?? null,
+        cache_write_tokens: response.costInfo?.cacheWriteTokens ?? null,
+      })
 
       // Append the persisted assistant message to cache.
       const current =
