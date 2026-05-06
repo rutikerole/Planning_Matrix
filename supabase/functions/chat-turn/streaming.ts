@@ -36,6 +36,7 @@ import { MODEL, respondToolDefinition, respondToolChoice } from './toolSchema.ts
 import { estimateCostUsd, UpstreamError, type AnthropicUsage } from './anthropic.ts'
 import { commitChatTurnAtomic } from './persistence.ts'
 import { validateFactPlausibility } from './factPlausibility.ts'
+import { lintCitations } from './citationLint.ts'
 import { applyToolInputToState } from '../../../src/lib/projectStateHelpers.ts'
 import {
   respondToolInputSchema,
@@ -210,6 +211,31 @@ export function runStreamingTurn(args: StreamingTurnArgs): Response {
         if (plausibility.downgraded > 0) {
           console.log(
             `[chat-turn] [${args.requestId}] plausibility (streaming): ${plausibility.downgraded} fact(s) downgraded to ASSUMED`,
+          )
+        }
+
+        // ── Phase 10.1 — citation linter (streaming path) ──────────
+        // Same observability as the JSON path. Non-blocking.
+        const citationLintSpan = tracer.startSpan('citation.lint', rootSpan.span_id)
+        const citationViolations = lintCitations({
+          message_de: toolInput.message_de,
+          message_en: toolInput.message_en,
+        })
+        citationLintSpan.setAttributes({
+          violations_count: citationViolations.length,
+          error_count: citationViolations.filter((v) => v.severity === 'error').length,
+          warning_count: citationViolations.filter((v) => v.severity === 'warning').length,
+        })
+        citationLintSpan.end()
+        if (citationViolations.length > 0) {
+          console.log(
+            `[chat-turn] [${args.requestId}] citation-lint (streaming): ${citationViolations.length} violation(s)`,
+            citationViolations.map((v) => ({
+              pattern: v.pattern,
+              match: v.match,
+              severity: v.severity,
+              field: v.field,
+            })),
           )
         }
 

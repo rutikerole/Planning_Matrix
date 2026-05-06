@@ -41,6 +41,7 @@ import {
   type MessageRow,
 } from './persistence.ts'
 import { validateFactPlausibility } from './factPlausibility.ts'
+import { lintCitations } from './citationLint.ts'
 import { runStreamingTurn, acceptsStream } from './streaming.ts'
 import {
   hydrateProjectState,
@@ -366,6 +367,35 @@ Deno.serve(async (req: Request) => {
   if (plausibility.downgraded > 0) {
     console.log(
       `[chat-turn] [${requestId}] plausibility: ${plausibility.downgraded} fact(s) downgraded to ASSUMED`,
+    )
+  }
+
+  // ── Phase 10.1 — citation linter ────────────────────────────────
+  // Non-blocking. Scans message_de + message_en for known-bad
+  // citation patterns (e.g. "Anlage 1 BayBO" in a Bayern context)
+  // and logs each violation. The response always proceeds — this is
+  // observability, not gating. Commit 6 wires violations to
+  // public.event_log so the admin Logs drawer can surface trends.
+  const citationLintSpan = tracer.startSpan('citation.lint', rootSpan.span_id)
+  const citationViolations = lintCitations({
+    message_de: toolInput.message_de,
+    message_en: toolInput.message_en,
+  })
+  citationLintSpan.setAttributes({
+    violations_count: citationViolations.length,
+    error_count: citationViolations.filter((v) => v.severity === 'error').length,
+    warning_count: citationViolations.filter((v) => v.severity === 'warning').length,
+  })
+  citationLintSpan.end()
+  if (citationViolations.length > 0) {
+    console.log(
+      `[chat-turn] [${requestId}] citation-lint: ${citationViolations.length} violation(s)`,
+      citationViolations.map((v) => ({
+        pattern: v.pattern,
+        match: v.match,
+        severity: v.severity,
+        field: v.field,
+      })),
     )
   }
 
