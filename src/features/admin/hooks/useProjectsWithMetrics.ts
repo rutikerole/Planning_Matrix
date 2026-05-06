@@ -27,16 +27,13 @@ const PROJECT_LIMIT = 500
  * Phase 9 — Atelier Console list view query.
  *
  * Two fetches, joined client-side:
- *   1. All projects (admin RLS — sees everyone's via the admin RLS
- *      policy on projects, OR via the service-role escalation in a
- *      future migration). For v1 the project itself is owner-RLS so
- *      admin sees only their own projects unless we add a separate
- *      admin policy. (Note in PHASE_9_FINDINGS §3.10 — for v1 admin
- *      = viewer of their own projects' traces.)
- *   2. All traces (admin RLS via logs.is_admin()).
+ *   1. Every project — RLS lets the admin see all rows via the
+ *      "admins read all projects" policy added in 0018. Non-admins
+ *      still see only their own.
+ *   2. All traces — RLS via logs.is_admin() (added in 0015).
  *
  * Aggregates compute in JS — fine for ≤ 500 projects × ≤ 100 traces
- * each. Beyond that, a server-side materialized view is the move.
+ * each. Beyond that, a server-side materialised view is the move.
  */
 export function useProjectsWithMetrics() {
   return useQuery<ProjectMetrics[]>({

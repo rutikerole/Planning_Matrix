@@ -1,4 +1,4 @@
-# Supabase project config — Edge Function settings.
+# Supabase project config — Edge Function settings + API exposure.
 #
 # verify_jwt = true is the platform default, but we set it explicitly so
 # the requirement is documented in code and will not silently flip if the
@@ -9,3 +9,17 @@
 
 [functions.chat-turn]
 verify_jwt = true
+
+# ─── PostgREST schema exposure (Phase 9 audit fix) ────────────────────
+# The Atelier Console at /admin/* reads logs.traces, logs.spans, and
+# logs.persona_snapshots from the SPA via .schema('logs').from(...).
+# By default Supabase only exposes the `public` schema via PostgREST,
+# so those reads return 404 until `logs` is added to the allowlist.
+#
+# Local dev (this file) — restart `supabase start` after editing.
+# Production (Supabase Cloud) — Dashboard → Settings → API → Exposed
+# schemas → add `logs`. The local config.toml is not auto-applied to
+# the cloud project; the Dashboard step is required.
+[api]
+schemas = ["public", "graphql_public", "logs"]
+extra_search_path = ["public", "extensions"]

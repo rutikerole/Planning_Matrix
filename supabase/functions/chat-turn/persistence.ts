@@ -397,6 +397,13 @@ export async function commitChatTurnAtomic(
   // 0016 is applied. Sending it against the pre-0016 7-arg signature
   // would fail with "function ... does not exist". Conservative path:
   // omit when null, so the RPC resolves on either schema.
+  //
+  // Phase 9 audit fix: also reject the noop-tracer's all-zeroes UUID.
+  // When SUPABASE_SERVICE_ROLE_KEY is missing, createTracer falls back
+  // to noopTracer() whose trace_id is '00000000-0000-0000-0000-000000000000'.
+  // That id is truthy but points at no real trace row, so propagating
+  // it would write garbage into project_events.trace_id (and would
+  // also fail the new FK in 0018). Treat it as "no trace".
   const rpcArgs: Record<string, unknown> = {
     p_project_id: args.projectId,
     p_assistant_row: assistantRow,
@@ -406,7 +413,7 @@ export async function commitChatTurnAtomic(
     p_event_payload: args.plausibilityEvents ?? null,
     p_client_request_id: args.clientRequestId,
   }
-  if (args.traceId) {
+  if (args.traceId && args.traceId !== '00000000-0000-0000-0000-000000000000') {
     rpcArgs.p_trace_id = args.traceId
   }
 
