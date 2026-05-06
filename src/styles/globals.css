@@ -581,6 +581,38 @@
   .chamber-sigil-active { animation: sigilActive 2.4s ease-in-out infinite; }
   @media (prefers-reduced-motion: reduce) { .chamber-sigil-active { animation: none; } }
 
+  /* ThinkingIndicator — soft pulsing halo behind the active sigil. */
+  @keyframes thinkingHalo {
+    0%, 100% { opacity: 0.35; transform: scale(0.92); }
+    50%      { opacity: 0.85; transform: scale(1.18); }
+  }
+  .animate-thinking-halo { animation: thinkingHalo 2.2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+
+  /* ThinkingIndicator — three sequenced dots replacing the ellipsis.
+   * Stagger via inline animation-delay; rhythm reads as live typing. */
+  @keyframes thinkingDot {
+    0%, 100% { opacity: 0.25; transform: translateY(0); }
+    40%      { opacity: 1;    transform: translateY(-1.5px); }
+  }
+  .animate-thinking-dot { animation: thinkingDot 1.3s ease-in-out infinite; }
+
+  /* ThinkingIndicator — drafting hairline trace under the action line.
+   * Sweeps left-to-right (drawing) then right-to-left (erasing) so the
+   * stroke feels deliberate, not just a generic progress shimmer. */
+  @keyframes thinkingTrace {
+    0%      { transform: scaleX(0); transform-origin: left center; }
+    49.99%  { transform: scaleX(1); transform-origin: left center; }
+    50%     { transform: scaleX(1); transform-origin: right center; }
+    100%    { transform: scaleX(0); transform-origin: right center; }
+  }
+  .animate-thinking-trace { animation: thinkingTrace 2.6s cubic-bezier(0.16, 1, 0.3, 1) infinite; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .animate-thinking-halo,
+    .animate-thinking-dot,
+    .animate-thinking-trace { animation: none; }
+  }
+
   /* Phase 7.5 — Spine live-stage halo pulse. */
   @keyframes spineGlow {
     0%, 100% { transform: scale(1);   opacity: 0.7; }
