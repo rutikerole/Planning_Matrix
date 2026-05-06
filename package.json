@@ -18,6 +18,8 @@
     "images:download": "bash scripts/download-images.sh",
     "freshness:check": "node scripts/freshness-check.mjs",
     "freshness:report": "node scripts/freshness-check.mjs --report-only",
+    "smoke:citations": "node scripts/smokeWalk.mjs",
+    "smoke:citations:live": "node scripts/smokeWalk.mjs --live",
     "eval:run": "node scripts/eval-harness/run.mjs",
     "eval:dry-run": "node scripts/eval-harness/run.mjs --dry-run"
   },
