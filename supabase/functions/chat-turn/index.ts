@@ -314,7 +314,7 @@ Deno.serve(async (req: Request) => {
     tracerHandedOff = true  // streaming pipeline will finalize
     return runStreamingTurn({
       apiKey,
-      systemBlocks: buildSystemBlocks(liveStateText, locale),
+      systemBlocks: buildSystemBlocks(liveStateText, locale, templateId),
       messages: anthropicMessages,
       supabase,
       projectId,
@@ -333,7 +333,7 @@ Deno.serve(async (req: Request) => {
   try {
     anthropicResult = await callAnthropicWithRetry({
       apiKey,
-      systemBlocks: buildSystemBlocks(liveStateText, locale),
+      systemBlocks: buildSystemBlocks(liveStateText, locale, templateId),
       messages: anthropicMessages,
       tracer,
       parentSpan: callSpan,
@@ -371,7 +371,7 @@ Deno.serve(async (req: Request) => {
   // Materializes "what the model saw and what it said" so a turn can
   // be reconstructed for debugging. Sampled inside the tracer:
   // always-store on non-ok, 1-in-50 on ok. Hash always stored.
-  const systemBlocksFinal = buildSystemBlocks(liveStateText, locale)
+  const systemBlocksFinal = buildSystemBlocks(liveStateText, locale, templateId)
   tracer.capturePersonaSnapshot({
     system_prompt_full: systemBlocksFinal.map((b) => b.text).join('\n\n──\n\n'),
     state_block_full: liveStateText,

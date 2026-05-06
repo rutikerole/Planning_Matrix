@@ -198,20 +198,45 @@ export function buildLocaleBlock(locale: 'de' | 'en' | undefined): string {
   ].join('\n')
 }
 
+import { getTemplateBlock } from './legalContext/templates/index.ts'
+
 /**
- * Compose the multi-block system array as Anthropic expects it. Block 1
- * (persona) carries cache_control: ephemeral; Block 2 (locale-aware
- * addendum, fresh per turn) and Block 3 (live state) don't, so they
- * stay fresh while everything before stays in cache.
+ * Compose the multi-block system array as Anthropic expects it.
+ *
+ * Phase 10 — two-block cache architecture:
+ *
+ *   Block 1 (persona prefix) — cache_control: ephemeral.
+ *     SHARED + FEDERAL + BAYERN + MUENCHEN + PERSONA_BEHAVIOUR +
+ *     TEMPLATE_SHARED. Warms ONCE across all templates and projects.
+ *
+ *   Block 2 (per-template tail) — cache_control: ephemeral.
+ *     getTemplateBlock(templateId). Warms PER TEMPLATE, hits cache
+ *     on second+ turns within a template.
+ *
+ *   Block 3 (locale-aware addendum) — NOT cached. Per-turn locale.
+ *
+ *   Block 4 (live state block) — NOT cached. Per-turn project state.
+ *
+ * Anthropic supports up to 4 cache_control markers per request; we
+ * use 2. The split keeps the long stable prefix hot regardless of
+ * which template is active (better cache economics than a single
+ * rebuilt prefix per template).
  */
 export function buildSystemBlocks(
   liveStateText: string,
-  locale?: 'de' | 'en',
+  locale: 'de' | 'en' | undefined,
+  templateId: TemplateId,
 ) {
   return [
     {
       type: 'text' as const,
       text: PERSONA_BLOCK_V1,
+      cache_control: { type: 'ephemeral' as const },
+    },
+    // Phase 10 — per-template tail, cached separately.
+    {
+      type: 'text' as const,
+      text: getTemplateBlock(templateId),
       cache_control: { type: 'ephemeral' as const },
     },
     // Phase 3.7 #79 — locale-aware addendum. NOT cached.

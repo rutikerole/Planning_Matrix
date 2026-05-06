@@ -22,21 +22,38 @@ import { FEDERAL_BLOCK } from './federal.ts'
 import { BAYERN_BLOCK } from './bayern.ts'
 import { MUENCHEN_BLOCK } from './muenchen.ts'
 import { PERSONA_BEHAVIOURAL_RULES } from './personaBehaviour.ts'
+import { TEMPLATE_SHARED_BLOCK } from './templates/index.ts'
 // import { ERLANGEN_BLOCK } from './erlangen.ts'  // sleeping — re-enable when adding city #2
 
 const SLICE_SEPARATOR = '\n\n---\n\n'
 
 /**
- * Composed system-prompt prefix. Cache-eligible (ephemeral, 5-min
- * TTL via Anthropic prompt cache). Total size ~9–12k tokens —
- * verify against the `scripts/dev/print-composed-prompt.mjs` count
- * after a substantive edit. The prefix is followed at runtime by:
+ * Phase 10 — composed system-prompt PREFIX (Block 1 of the two-block
+ * cache architecture). Cache-eligible (ephemeral, 5-min TTL).
  *
- *   1. buildLocaleBlock (locale-aware addendum, NOT cached)
- *   2. buildLiveStateBlock (per-turn state, NOT cached)
+ * Two-block cache architecture (Phase 10 audit § 2):
  *
- * — i.e. only this constant carries `cache_control` in the multi-
- * block system array.
+ *   Block 1 (this constant, cached): SHARED + FEDERAL + BAYERN +
+ *     MUENCHEN + PERSONA_BEHAVIOURAL_RULES + TEMPLATE_SHARED_BLOCK.
+ *     Warms ONCE across all templates and all projects.
+ *
+ *   Block 2 (cached separately, sourced via getTemplateBlock from
+ *     templates/index.ts): the per-template tail. Warms per template,
+ *     hits cache on second+ turns within a template.
+ *
+ * Why two blocks instead of rebuilding the whole prefix per template:
+ * Anthropic's prompt cache supports up to 4 cache breakpoints per
+ * request. Splitting prefix from template tail means the long stable
+ * prefix stays hot regardless of which template is active — cache
+ * economics dominate.
+ *
+ * Total size of Block 1: ~9–13k tokens (was ~9–12k pre-Phase 10;
+ * +TEMPLATE_SHARED_BLOCK adds ~700 tokens).
+ *
+ * Followed at runtime by:
+ *   2. getTemplateBlock(templateId)  (cached, Phase 10 commit 10)
+ *   3. buildLocaleBlock(locale)      (NOT cached)
+ *   4. buildLiveStateBlock(state)    (NOT cached)
  */
 export const COMPOSED_LEGAL_CONTEXT = [
   SHARED_BLOCK,
@@ -44,13 +61,14 @@ export const COMPOSED_LEGAL_CONTEXT = [
   BAYERN_BLOCK,
   MUENCHEN_BLOCK,
   PERSONA_BEHAVIOURAL_RULES,
+  TEMPLATE_SHARED_BLOCK,
 ].join(SLICE_SEPARATOR) +
-  // Tail: PROJEKTKONTEXT marker — the dynamic state block follows in
-  // the multi-block system array. The model expects this label so it
-  // knows where the static prefix ends and the live state begins.
+  // Tail: PROJEKTKONTEXT marker — the per-template block + dynamic
+  // state block follow in the multi-block system array. The model
+  // expects this label so it knows where the stable prefix ends.
   '\n\n══════════════════════════════════════════════════════════════════════════' +
   '\nPROJEKTKONTEXT' +
   '\n══════════════════════════════════════════════════════════════════════════' +
-  '\n\nEs folgt der aktuelle Projektzustand: Template, Grundstück, A/B/C-Bereiche,' +
-  '\njüngste Fakten, vorhandene Top-3-Empfehlungen, zuletzt gestellte Fragen,' +
-  '\njüngste Bauherreneingabe und letzte sprechende Fachperson.\n'
+  '\n\nEs folgt: Template-Kontext (T-XX), Locale-Hinweis, aktueller Projektzustand' +
+  '\n(Grundstück, A/B/C-Bereiche, jüngste Fakten, Top-3-Empfehlungen, zuletzt' +
+  '\ngestellte Fragen, jüngste Bauherreneingabe, letzte sprechende Fachperson).\n'
