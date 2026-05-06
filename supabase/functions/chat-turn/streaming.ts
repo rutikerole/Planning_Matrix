@@ -36,7 +36,7 @@ import { MODEL, respondToolDefinition, respondToolChoice } from './toolSchema.ts
 import { estimateCostUsd, UpstreamError, type AnthropicUsage } from './anthropic.ts'
 import { commitChatTurnAtomic } from './persistence.ts'
 import { validateFactPlausibility } from './factPlausibility.ts'
-import { lintCitations } from './citationLint.ts'
+import { lintCitations, logCitationViolations } from './citationLint.ts'
 import { applyToolInputToState } from '../../../src/lib/projectStateHelpers.ts'
 import {
   respondToolInputSchema,
@@ -56,6 +56,11 @@ interface StreamingTurnArgs {
   messages: { role: 'user' | 'assistant'; content: string }[]
   supabase: SupabaseClient
   projectId: string
+  /** Phase 10.1 — needed to attach citation.violation events to the
+   *  authed user in public.event_log. RLS requires user_id to match
+   *  auth.uid(); we pass it through explicitly rather than calling
+   *  supabase.auth.getUser() a second time. */
+  userId: string
   currentState: ProjectState
   corsHeaders: Record<string, string>
   requestId: string
@@ -237,6 +242,14 @@ export function runStreamingTurn(args: StreamingTurnArgs): Response {
               field: v.field,
             })),
           )
+          await logCitationViolations({
+            supabase: args.supabase,
+            userId: args.userId,
+            projectId: args.projectId,
+            requestId: args.requestId,
+            traceId: tracer.trace_id,
+            violations: citationViolations,
+          })
         }
 
         // ── Capture persona snapshot (Phase 9) ─────────────────────

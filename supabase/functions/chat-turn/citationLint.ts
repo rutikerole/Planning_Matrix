@@ -162,3 +162,89 @@ export function lintCitations(args: {
 /** For tests: expose the pattern count so a consumer can guard against
  *  accidentally shipping with the list emptied. */
 export const FORBIDDEN_PATTERN_COUNT = FORBIDDEN_PATTERNS.length
+
+// ── Event-log wiring (Phase 10.1 commit 6) ────────────────────────────
+
+import type { SupabaseClient } from '@supabase/supabase-js'
+
+const NOOP_TRACE_UUID = '00000000-0000-0000-0000-000000000000'
+
+interface LogCitationViolationsArgs {
+  supabase: SupabaseClient
+  /** Auth user id from supabase.auth.getUser(). RLS on event_log
+   *  requires user_id IS NULL OR user_id = auth.uid(); we pass it
+   *  through explicitly so the row joins back to the auth user. */
+  userId: string
+  projectId: string
+  /** Per-turn request id (UUID). Doubles as session_id when no
+   *  client-side session is available — every server-emitted event
+   *  in this turn shares this id, mirroring the per-tab semantics on
+   *  the client side. */
+  requestId: string
+  /** logs.traces FK. Skipped when noopTracer is active (all-zeros UUID)
+   *  to avoid violating the FK. */
+  traceId: string | null
+  violations: CitationViolation[]
+}
+
+/**
+ * Insert one event_log row per violation. Best-effort: an insert
+ * failure is warn-logged and swallowed — the user's response must
+ * never be blocked by an observability-pipeline glitch. Same posture
+ * as logTurnEvent in persistence.ts.
+ *
+ * Each row has:
+ *   source        = 'system'  (matches event_log CHECK constraint)
+ *   name          = 'citation.violation'
+ *   attributes    = { pattern, match, context, severity, reason, field,
+ *                     total_violations_in_turn }
+ *   trace_id      = tracer.trace_id (or NULL when noop)
+ *   session_id    = requestId
+ *
+ * The match string is short (the matched citation, ~10-30 chars) and
+ * the context is bounded to ±25 chars. No user PII flows through here.
+ */
+export async function logCitationViolations(
+  args: LogCitationViolationsArgs,
+): Promise<void> {
+  if (args.violations.length === 0) return
+
+  const safeTraceId =
+    args.traceId && args.traceId !== NOOP_TRACE_UUID ? args.traceId : null
+
+  const now = new Date().toISOString()
+  const rows = args.violations.map((v) => ({
+    session_id: args.requestId,
+    user_id: args.userId,
+    project_id: args.projectId,
+    source: 'system' as const,
+    name: 'citation.violation',
+    attributes: {
+      pattern: v.pattern,
+      match: v.match,
+      context: v.context,
+      severity: v.severity,
+      reason: v.reason,
+      field: v.field,
+      total_violations_in_turn: args.violations.length,
+    },
+    client_ts: now,
+    trace_id: safeTraceId,
+  }))
+
+  const { error } = await args.supabase.from('event_log').insert(rows)
+  if (error) {
+    console.warn(
+      JSON.stringify({
+        component: 'chat-turn',
+        event: 'citation_lint_log_drop',
+        severity: 'warn',
+        project_id: args.projectId,
+        violations_count: args.violations.length,
+        sql_error_code: error.code ?? null,
+        sql_error_message: error.message,
+        hint: 'event_log insert failed — turn proceeded but the citation.violation rows were lost.',
+      }),
+    )
+  }
+}

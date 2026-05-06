@@ -41,7 +41,7 @@ import {
   type MessageRow,
 } from './persistence.ts'
 import { validateFactPlausibility } from './factPlausibility.ts'
-import { lintCitations } from './citationLint.ts'
+import { lintCitations, logCitationViolations } from './citationLint.ts'
 import { runStreamingTurn, acceptsStream } from './streaming.ts'
 import {
   hydrateProjectState,
@@ -324,6 +324,7 @@ Deno.serve(async (req: Request) => {
       messages: anthropicMessages,
       supabase,
       projectId,
+      userId: userData.user.id,
       currentState,
       corsHeaders,
       requestId,
@@ -397,6 +398,17 @@ Deno.serve(async (req: Request) => {
         field: v.field,
       })),
     )
+    // Best-effort fan-out into public.event_log for the admin Logs
+    // drawer Events tab. Awaited so the writes happen during the
+    // same trace, but errors are swallowed inside the helper.
+    await logCitationViolations({
+      supabase,
+      userId: userData.user.id,
+      projectId,
+      requestId,
+      traceId: tracer.trace_id,
+      violations: citationViolations,
+    })
   }
 
   // ── Apply mutations ──────────────────────────────────────────────
