@@ -177,6 +177,57 @@ VERMEIDE für T-08
 • KEINE Stellplatz-, Schallschutz-, Brandschutz-Empfehlungen ohne
   expliziten Sub-Kategorie-Bezug.
 
+──────────────────────────────────────────────────────────────────────────
+TYPISCHE KORREKTE ZITATE für T-08 (sub-kategorien-spezifisch)
+──────────────────────────────────────────────────────────────────────────
+
+  ✓ "BayBO Art. 57 Abs. 1 Nr. 1 b" — Garage/Carport ≤ 30 m²
+                                     Grundfläche und ≤ 3 m mittlere
+                                     Höhe verfahrensfrei
+  ✓ "BayBO Art. 57 Abs. 1 Nr. 1 a" — Gartenhaus / Geräteschuppen
+                                     ≤ 75 m³ Brutto-Rauminhalt ohne
+                                     Aufenthaltsräume verfahrensfrei
+  ✓ "BayBO Art. 57 Abs. 1 Nr. 3 b" — Solaranlagen auf, an oder
+                                     unter Dächern (Dach-PV)
+                                     verfahrensfrei
+  ✓ "BayBO Art. 57 Abs. 1 (Pool)" — Schwimmbecken bis 100 m³
+                                     Beckeninhalt verfahrensfrei,
+                                     wenn nicht im Außenbereich
+  ✓ "BayBO Art. 57 Abs. 7"         — Anzeigepflicht für nicht
+                                     OHNE-Anzeige-verfahrensfreie
+                                     Vorhaben
+  ✓ "BauGB § 35 Abs. 1 Nr. 8 b"    — PV-Freifläche im Außenbereich
+                                     in Vorrangflächen privilegiert
+  ✓ "Werbeanlagensatzung der LHM" — Werbeanlagen-Maßgaben
+                                     (städtische Satzung; bei
+                                     Denkmal-Ensemble zusätzlich
+                                     BayDSchG Art. 6)
+  ✓ "Viertes Modernisierungsgesetz Werbeanlagen-Reform"
+                                   — Stand 04/2026, Tiers haben
+                                     sich verschoben
+
+──────────────────────────────────────────────────────────────────────────
+VERBOTENE ZITATE für T-08
+──────────────────────────────────────────────────────────────────────────
+
+  ✗ "Anlage 1 BayBO" / "Annex 1 BayBO" — existiert nicht; die
+                                     einzelnen Sub-Kategorie-Schwellen
+                                     (Garage 30 m², Pool 100 m³,
+                                     Gartenhaus 75 m³) stehen direkt
+                                     in Art. 57 Abs. 1 mit ihren
+                                     jeweiligen Nummern
+  ✗ "§ 57 BayBO" / "§ 58 BayBO"   — Art., nicht §
+  ✗ Pauschal "verfahrensfrei" ohne Sub-Kategorie-Bezug
+                                   — die m²-/m³-Schwellen sind
+                                     unterschiedlich; jede Sub-
+                                     Kategorie hat ihren eigenen
+                                     Anker (Nr. 1 a vs Nr. 1 b vs
+                                     Nr. 3 b)
+  ✗ "BauO NRW", "BbgBO", "BauO Bln" — falsches Bundesland
+  ✗ "Werbeanlagengesetz" als Bundesgesetz — Werbeanlagen sind
+                                     Landesrecht (BayBO + kommunale
+                                     Satzung)
+
 ══════════════════════════════════════════════════════════════════════════
 ENDE TEMPLATE-KONTEXT T-08
 ══════════════════════════════════════════════════════════════════════════

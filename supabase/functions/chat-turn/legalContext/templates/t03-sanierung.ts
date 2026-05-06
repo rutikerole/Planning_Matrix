@@ -185,6 +185,68 @@ VERMEIDE für T-03
 • KEIN PV-Konzept nach Art. 44a (das ist Wohn-NEUBAU; Sanierung ist
   davon nicht erfasst).
 
+──────────────────────────────────────────────────────────────────────────
+TYPISCHE KORREKTE ZITATE für T-03
+──────────────────────────────────────────────────────────────────────────
+
+  ✓ "BayBO Art. 57 Abs. 3 Nr. 3"  — Instandsetzung VERFAHRENSFREI
+                                    (seit 01.01.2025 — Hauptanker
+                                    für like-for-like Sanierung)
+  ✓ "BayBO Art. 57 Abs. 1 Nr. 18" — DG-Ausbau zu Wohnzwecken
+                                    VERFAHRENSFREI (seit 01.01.2025)
+  ✓ "BayBO Art. 57 Abs. 7"        — Anzeigepflicht in Textform,
+                                    2 Wochen vor Baubeginn
+  ✓ "BayBO Art. 76"               — Bestandsschutz
+  ✓ "BayBO Art. 46 Abs. 6"        — Gebäudeklasse bleibt unverändert
+                                    bei Bestandsmaßnahmen
+  ✓ "BayBO Art. 58"               — vereinfachtes Verfahren bei
+                                    Eingriff in tragende Teile /
+                                    Brandwände / Fluchtwege
+  ✓ "BayBO Art. 81 Abs. 1 Nr. 4 b" — Stellplatz-Privileg bei
+                                    DG-Ausbau zu Wohnzwecken
+                                    (seit 01.10.2025)
+  ✓ "BayDSchG Art. 6"             — Denkmalrechtliche Erlaubnis
+                                    (zusätzlich zur BayBO-Anzeige)
+  ✓ "GEG"                         — Sanierungspflicht-Schwellen
+                                    (10 % Außenhülle-Trigger)
+
+──────────────────────────────────────────────────────────────────────────
+VERBOTENE ZITATE für T-03
+──────────────────────────────────────────────────────────────────────────
+
+  ✗ "Anlage 1 BayBO" / "Annex 1 BayBO" — existiert nicht. Die
+                                    Instandsetzungsregel steht in
+                                    Art. 57 Abs. 3 Nr. 3, NICHT in
+                                    einer Anlage. Das ist der häufigste
+                                    Fehler bei T-03 — nicht
+                                    wiederholen.
+  ✗ "§ 57 BayBO" / "§ 58 BayBO"  — BayBO verwendet Art.
+  ✗ "Art. 44a BayBO PV-Pflicht"  — gilt nur für Wohnneubau, nicht
+                                    Sanierung. Nicht zitieren.
+  ✗ "BauO NRW § 62", "BbgBO Anlage 1" — falsches Bundesland
+
+──────────────────────────────────────────────────────────────────────────
+KRITISCHE PRÄZISIONS-ANKER für T-03 (Klassikerfehler)
+──────────────────────────────────────────────────────────────────────────
+
+Verfahrensfrei vs Materielle Anforderungen TRENNEN:
+
+  Verfahrensfreiheit nach Art. 57 (z.B. Abs. 3 Nr. 3) bedeutet,
+  dass KEIN Bauantrag nötig ist — nur die Anzeige nach Abs. 7.
+  Sie bedeutet NICHT, dass alle materiell-rechtlichen
+  Anforderungen entfallen. Abstandsflächen (Art. 6), Brandschutz,
+  Schallschutz, GEG-Anforderungen, Denkmalrecht, Baulasten gelten
+  weiter — sie werden nur nicht im Vorfeld behördlich geprüft.
+
+  FALSCH: „Wegen Abstandsflächenverletzung ist die Verfahrens-
+   freiheit nach Art. 57 nicht anwendbar."
+  → Verwechselt Verfahren mit Materialität.
+
+  RICHTIG: „Die Maßnahme ist nach Art. 57 Abs. 3 Nr. 3
+   verfahrensfrei. Materiell muss die Abstandsfläche nach Art. 6
+   trotzdem eingehalten werden — bei Verstoß droht Rückbau, auch
+   ohne dass das Verfahren ‚aufrückt'."
+
 ══════════════════════════════════════════════════════════════════════════
 ENDE TEMPLATE-KONTEXT T-03
 ══════════════════════════════════════════════════════════════════════════

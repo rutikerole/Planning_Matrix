@@ -172,6 +172,47 @@ VERMEIDE für T-04
   Nutzung gebietstypisch ist (Art. 31 BauGB nicht erforderlich
   bei zulässigen Nutzungen).
 
+──────────────────────────────────────────────────────────────────────────
+TYPISCHE KORREKTE ZITATE für T-04
+──────────────────────────────────────────────────────────────────────────
+
+  ✓ "BayBO Art. 57 Abs. 4"        — Umnutzung VERFAHRENSFREI bei
+                                    keine anderen / strengeren
+                                    Anforderungen (seit 01.01.2025)
+  ✓ "BayBO Art. 57 Abs. 7"        — Anzeigepflicht 2 Wochen
+  ✓ "BayBO Art. 58"               — vereinfachtes Verfahren bei
+                                    strengeren Anforderungen
+  ✓ "BayBO Art. 59"               — reguläres Verfahren bei
+                                    Sonderbau-Tatbestand
+  ✓ "BayBO Art. 2 Abs. 4"         — Sonderbau-Trigger (Hotel,
+                                    Gaststätte ≥ 60, Versammlung
+                                    ≥ 200, Beherbergung > 12, KiTa,
+                                    Pflegeheim)
+  ✓ "BauNVO § 1–§ 11"             — Gebietstypen (WR/WA/MI/MK/GE/GI)
+  ✓ "BauGB § 31 Abs. 2"           — Befreiung (nur bei
+                                    nicht-zulässiger Nutzung)
+  ✓ "DIN 4109"                    — Schallschutz bei Use-Change
+                                    → Wohnen
+  ✓ "BayDSchG Art. 6"             — bei Use-Change in Denkmal
+
+──────────────────────────────────────────────────────────────────────────
+VERBOTENE ZITATE für T-04
+──────────────────────────────────────────────────────────────────────────
+
+  ✗ "Anlage 1 BayBO"              — existiert nicht; Umnutzungs-
+                                    Tier steht in Art. 57 Abs. 4
+  ✗ "§ 57 BayBO" / "§ 58 BayBO"   — BayBO verwendet Art.
+  ✗ Art. 57 Abs. 1 Nr. 1 a (75 m³) — das ist die Anbau-Schwelle
+                                    (T-07), nicht die Umnutzungs-
+                                    Regel. Bei reiner Use-Change
+                                    ohne Bauwerksvergrößerung greift
+                                    Abs. 4
+  ✗ "BauO NRW § 63", "BbgBO"      — falsches Bundesland
+  ✗ "Stellplatz-Pflicht aus BayBO Art. 47" pauschal — Art. 47 ist
+                                    seit 01.10.2025 kommunalisiert;
+                                    die StPlS 926 ist die maßgebliche
+                                    Grundlage in München
+
 ══════════════════════════════════════════════════════════════════════════
 ENDE TEMPLATE-KONTEXT T-04
 ══════════════════════════════════════════════════════════════════════════

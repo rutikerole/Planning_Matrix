@@ -180,6 +180,50 @@ VERMEIDE für T-05
 • KEINE Empfehlung „Bauantrag" wenn Vollabbruch verfahrensfrei
   oder anzeigepflichtig ist.
 
+──────────────────────────────────────────────────────────────────────────
+TYPISCHE KORREKTE ZITATE für T-05
+──────────────────────────────────────────────────────────────────────────
+
+  ✓ "BayBO Art. 57 Abs. 5 Satz 1" — Vollabbruch verfahrensfrei
+                                    OHNE Anzeige (freistehend bis
+                                    GK 3, sonstige Anlagen ≤ 10 m,
+                                    verfahrensfreie Anlagen)
+  ✓ "BayBO Art. 57 Abs. 5 Satz 2" — Vollabbruch anzeigepflichtig
+                                    (alles darüber)
+  ✓ "BayBO Art. 57 Abs. 7"        — Anzeige in Textform; Frist
+                                    Abbruch: 1 Monat vor Baubeginn
+                                    + Baubeginnsanzeige 1 Woche
+                                    vorher
+  ✓ "BayBO Art. 76"               — Bestandsschutz endet mit
+                                    Beseitigung
+  ✓ "BayBO Art. 12"               — Standsicherheit Nachbarbebauung
+  ✓ "BayBO Art. 58"               — Teilabbruch ist Änderung,
+                                    nicht Abbruch — vereinfachtes
+                                    Verfahren typisch
+  ✓ "BayDSchG Art. 6"             — denkmalrechtliche Erlaubnis
+                                    bei Baudenkmal (zusätzlich zur
+                                    BayBO-Anzeige)
+  ✓ "KrWG § 7 / § 8"              — Entsorgungspflicht
+  ✓ "GefStoffV"                   — Schadstoffkataster (Asbest,
+                                    KMF, PCB)
+
+──────────────────────────────────────────────────────────────────────────
+VERBOTENE ZITATE für T-05
+──────────────────────────────────────────────────────────────────────────
+
+  ✗ "Anlage 1 BayBO" / "Annex 1 BayBO" — existiert nicht; Abbruch-
+                                    Tier steht in Art. 57 Abs. 5
+  ✗ "§ 57 Abs. 5 BayBO"           — Art., nicht §
+  ✗ "BayBO Art. 57 Abs. 7" als Anker für Vollabbruch ohne
+                                    Verbindung zu Abs. 5 — die
+                                    Anzeigepflicht fließt aus
+                                    Abs. 5 Satz 2 i. V. m. Abs. 7,
+                                    nicht aus Abs. 7 allein
+  ✗ "BauO NRW § 62 Abs. 2"        — falsches Bundesland
+  ✗ Vollabbruch und Teilabbruch durcheinander — Vollabbruch
+                                    nach Art. 57 Abs. 5; Teilabbruch
+                                    ist Änderung nach Art. 58
+
 ══════════════════════════════════════════════════════════════════════════
 ENDE TEMPLATE-KONTEXT T-05
 ══════════════════════════════════════════════════════════════════════════

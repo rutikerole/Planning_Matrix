@@ -154,6 +154,41 @@ VERMEIDE für T-02
 • KEINE Aufstockungs-Logik (BayBO Art. 46 Abs. 6) — das ist T-06.
 • KEINE Sanierungs-Logik (Anzeige Art. 57 Abs. 7) — das ist T-03.
 
+──────────────────────────────────────────────────────────────────────────
+TYPISCHE KORREKTE ZITATE für T-02
+──────────────────────────────────────────────────────────────────────────
+
+  ✓ "BayBO Art. 2 Abs. 3 Nr. 3" — GK 3 (≤ 7 m, ≥ 3 NE > 400 m²)
+  ✓ "BayBO Art. 2 Abs. 3 Nr. 4" — GK 4 (≤ 13 m, NE-Fläche
+                                  ≤ 400 m² je NE)
+  ✓ "BayBO Art. 2 Abs. 3 Nr. 5" — GK 5 (> 13 m, alles übrige)
+  ✓ "BayBO Art. 2 Abs. 4"       — Sonderbau-Tatbestände
+  ✓ "BayBO Art. 58"             — vereinfachtes Verfahren (Default
+                                  GK 3-5 ohne Sonderbau)
+  ✓ "BayBO Art. 59"             — reguläres Verfahren (sobald
+                                  Sonderbau)
+  ✓ "BayBO Art. 60"             — Sonderbau-Verfahren
+  ✓ "BayBO Art. 62"             — bautechnische Nachweise / Prüf-
+                                  sachverständige (Pflicht ab GK 4)
+  ✓ "BayBO Art. 8 Abs. 2"       — Spielplatzpflicht (in
+                                  Verbindung mit kommunaler Satzung)
+  ✓ "DIN 4109"                  — Schallschutz Hochbau
+  ✓ "BauGB § 30 Abs. 1 / § 34"  — Bauplanungsrecht
+
+──────────────────────────────────────────────────────────────────────────
+VERBOTENE ZITATE für T-02
+──────────────────────────────────────────────────────────────────────────
+
+  ✗ "Anlage 1 BayBO"            — existiert nicht; Sonderbau-Liste
+                                  steht direkt in Art. 2 Abs. 4
+  ✗ "§ 2 BayBO" / "§ 58 BayBO"  — BayBO verwendet Art.
+  ✗ "Art. 57 Abs. 1" für ein MFH — bei MFH selten anwendbar; Default
+                                  ist Art. 58 (vereinfachtes Verfahren)
+  ✗ Brandschutz-Listen "BAYIKA" — die Liste der Prüfsachverständigen
+                                  für Brandschutz wird bei BAYAK
+                                  geführt, nicht BAYIKA
+  ✗ "BauO NRW", "BauO Bln", "BbgBO" — falsches Bundesland
+
 ══════════════════════════════════════════════════════════════════════════
 ENDE TEMPLATE-KONTEXT T-02
 ══════════════════════════════════════════════════════════════════════════

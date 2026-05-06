@@ -6,7 +6,7 @@
 // wording verifiable in the user's training horizon.
 //
 // LEGAL-VERIFY-MARKER · BauGB §§ 30 / 34 / 35 · Stand: stabil
-// LEGAL-VERIFY-MARKER · BayBO Art. 57 (Abs. 1) Genehmigungsfreistellung · Stand: stabil
+// LEGAL-VERIFY-MARKER · BayBO Art. 58a Genehmigungsfreistellung · Stand: stabil
 // LEGAL-VERIFY-MARKER · BayBO Art. 58 vereinfachtes Verfahren · Stand: stabil
 // LEGAL-VERIFY-MARKER · BayBO Art. 59 Baugenehmigungsverfahren · Stand: stabil
 // LEGAL-VERIFY-MARKER · BayBO Art. 2 Abs. 3 Gebäudeklassen · Stand: stabil
@@ -35,7 +35,7 @@ LEITFRAGEN für T-01
    → § 35 (Außenbereich, privilegiert/sonstige Vorhaben).
 
 2. Bauordnungsrecht zweitens: „Welches Verfahren ist anzuwenden?"
-   → BayBO Art. 57 Abs. 1 (Genehmigungsfreistellung, wenn qualifizierter
+   → BayBO Art. 58a (Genehmigungsfreistellung, wenn qualifizierter
      B-Plan vorliegt UND Anforderungen eingehalten)
    → BayBO Art. 58 (vereinfachtes Baugenehmigungsverfahren — Standard)
    → BayBO Art. 59 (reguläres Verfahren — bei Sonderbau-Tatbeständen
@@ -49,7 +49,7 @@ LEITFRAGEN für T-01
 TYPISCHE VERFAHRENSWEGE für T-01
 ──────────────────────────────────────────────────────────────────────────
 
-• Genehmigungsfreistellung (BayBO Art. 57 Abs. 1) — wenn qualifizierter
+• Genehmigungsfreistellung (BayBO Art. 58a) — wenn qualifizierter
   B-Plan + Wohngebäude + Festsetzungen eingehalten + Einvernehmen der
   Gemeinde nicht widerrufen. Gemeinde-Schweigen 1 Monat = Freigabe.
 
@@ -127,6 +127,37 @@ VERMEIDE für T-01
   bei dichter Nachbarbebauung — DIN 4109 wird typischerweise erst
   in LP 4 relevant.
 • KEIN Fokus auf BayBO Art. 46 Abs. 6 (das ist T-06 territory).
+
+──────────────────────────────────────────────────────────────────────────
+TYPISCHE KORREKTE ZITATE für T-01
+──────────────────────────────────────────────────────────────────────────
+
+  ✓ "BauGB § 30 Abs. 1"        — qualifizierter Bebauungsplan
+  ✓ "BauGB § 34"                — Innenbereich, Einfügen
+  ✓ "BauGB § 35"                — Außenbereich, privilegiert /
+                                  sonstige Vorhaben
+  ✓ "BayBO Art. 58a"            — Genehmigungsfreistellung
+  ✓ "BayBO Art. 58"             — vereinfachtes Verfahren
+  ✓ "BayBO Art. 59"             — Baugenehmigungsverfahren
+  ✓ "BayBO Art. 60"             — Sonderbau-Verfahren
+  ✓ "BayBO Art. 2 Abs. 3 Nr. 1" — GK 1 (freistehendes EFH ≤ 7 m,
+                                  ≤ 2 NE, ≤ 400 m² je NE)
+  ✓ "BayBO Art. 44a"            — PV-Pflicht Wohnneubauten
+  ✓ "BayBO Art. 6"              — Abstandsflächen
+  ✓ "GEG § 8"                   — Wärmeschutznachweis
+
+──────────────────────────────────────────────────────────────────────────
+VERBOTENE ZITATE für T-01
+──────────────────────────────────────────────────────────────────────────
+
+  ✗ "Anlage 1 BayBO" / "Annex 1 BayBO" — existiert nicht
+  ✗ "§ 57 BayBO" / "§ 58 BayBO"        — BayBO verwendet Art.
+  ✗ "Art. 57 Abs. 1 (Genehmigungsfreistellung)" — Genehmigungs-
+                                          freistellung steht in
+                                          Art. 58a, nicht Art. 57
+  ✗ "BauO NRW", "BauO Bln", "BbgBO"    — wir wenden Bayern-Recht an
+  ✗ "Musterbauordnung als Rechtsgrundlage" — MBO ist Modell, nicht
+                                          geltendes Recht
 
 ══════════════════════════════════════════════════════════════════════════
 ENDE TEMPLATE-KONTEXT T-01

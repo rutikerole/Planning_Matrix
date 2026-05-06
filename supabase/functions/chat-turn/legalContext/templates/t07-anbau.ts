@@ -169,6 +169,84 @@ VERMEIDE für T-07
   Wohnraumschaffung — die StPlS 926-Pflicht knüpft an Wohnraum
   bzw. zusätzliche Nutzung an.
 
+──────────────────────────────────────────────────────────────────────────
+TYPISCHE KORREKTE ZITATE für T-07
+──────────────────────────────────────────────────────────────────────────
+
+  ✓ "BayBO Art. 57 Abs. 1 Nr. 1 a" — Anbau ≤ 75 m³ Brutto-
+                                     Rauminhalt VERFAHRENSFREI,
+                                     wenn nicht im Außenbereich.
+                                     DAS ist der Anker — niemals
+                                     "Anlage 1".
+  ✓ "BayBO Art. 6"                 — Abstandsflächen (typisch
+                                     0,4 H, mindestens 3 m). Bei
+                                     Grenzbebauung Baulast nötig.
+  ✓ "BayBO Art. 57 Abs. 7"         — Anzeigepflicht (formlose
+                                     Textform, 2 Wochen vorher;
+                                     bei verfahrensfreien Anbauten
+                                     empfohlen, je nach
+                                     Gemeindepraxis)
+  ✓ "BayBO Art. 58"                — vereinfachtes Verfahren
+                                     bei Anbau > 75 m³, im
+                                     Außenbereich oder bei
+                                     Abstandsflächen-Verstoß
+  ✓ "BauGB § 35 Abs. 1"            — Außenbereich-Privilegierung
+                                     (relevant wenn Grundstück
+                                     außerhalb Innenbereich liegt)
+  ✓ "BauGB § 34"                   — Innenbereich-Einfügen
+  ✓ "GEG § 8"                      — Wärmeschutznachweis bei
+                                     beheiztem Anbau (Wintergarten
+                                     zählt; Carport / Kaltgarage
+                                     NICHT)
+
+──────────────────────────────────────────────────────────────────────────
+VERBOTENE ZITATE für T-07
+──────────────────────────────────────────────────────────────────────────
+
+  ✗ "Anlage 1 BayBO" / "Annex 1 BayBO" — existiert nicht. Die
+                                     75-m³-Schwelle steht direkt in
+                                     Art. 57 Abs. 1 Nr. 1 a, NICHT
+                                     in einer Anlage. Das ist der
+                                     Klassikerfehler bei T-07 — nicht
+                                     wiederholen.
+  ✗ "§ 57 Abs. 1 BayBO"            — Art., nicht §
+  ✗ "BauO NRW § 62", "BbgBO § 60" — falsches Bundesland
+  ✗ Abstandsflächenverstoß als Verfahrensfreistellungs-Sperre
+                                   — Verfahrensfreiheit nach Art. 57
+                                     Abs. 1 Nr. 1 a wird durch
+                                     materiell-rechtliche Verstöße
+                                     (z.B. Art. 6) NICHT aufgehoben.
+                                     Das Verfahren rückt nicht
+                                     automatisch nach Art. 58 auf —
+                                     der Verstoß ist eine
+                                     materiell-rechtliche Frage,
+                                     keine verfahrensrechtliche
+  ✗ "Aufstockungs-Privileg" Art. 46 Abs. 6 / "Stellplatz-Privileg"
+                                     Art. 81 Abs. 1 Nr. 4 b
+                                   — das ist T-06; bei einem ANBAU
+                                     gelten diese Privilegien nicht
+
+──────────────────────────────────────────────────────────────────────────
+KRITISCHE PRÄZISIONS-ANKER für T-07
+──────────────────────────────────────────────────────────────────────────
+
+Volumen-Berechnung explizit machen:
+
+  Brutto-Rauminhalt = Länge × Breite × Höhe (Außenmaße,
+  einschließlich Bauteile, ohne Bodenplatte unterhalb Geländeoberkante).
+
+  Beispiel: 4 × 4 × 3 m Wintergarten = 48 m³ < 75 m³ → unter
+  der Schwelle. Persona MUSS den Rechenweg in der Antwort zeigen,
+  damit der Bauherr die Schwellen-Logik nachvollziehen kann.
+
+  FALSCH: „Der Wintergarten überschreitet die Schwelle"
+  → ohne Rechnung; verletzt die Quantifizierungspflicht.
+
+  RICHTIG: „4 × 4 × 3 m ergeben 48 m³ Brutto-Rauminhalt — unter
+   der 75-m³-Schwelle nach BayBO Art. 57 Abs. 1 Nr. 1 a, also
+   verfahrensfrei (sofern Innenbereich + Abstandsflächen
+   eingehalten)."
+
 ══════════════════════════════════════════════════════════════════════════
 ENDE TEMPLATE-KONTEXT T-07
 ══════════════════════════════════════════════════════════════════════════

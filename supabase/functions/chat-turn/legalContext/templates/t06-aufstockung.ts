@@ -189,6 +189,58 @@ VERMEIDE für T-06
 • KEIN Fokus auf Bauplanungsrecht ohne den Privilegien-Hinweis —
   ohne diesen Kontext fehlt dem Bauherrn das Wert-Verständnis.
 
+──────────────────────────────────────────────────────────────────────────
+TYPISCHE KORREKTE ZITATE für T-06
+──────────────────────────────────────────────────────────────────────────
+
+  ✓ "BayBO Art. 46 Abs. 6"           — Aufstockungs-Privileg:
+                                       eingeschossige Aufstockung
+                                       zur Schaffung von Wohnraum;
+                                       Anforderungen der bisherigen
+                                       Gebäudeklasse gelten weiter,
+                                       Bestand wird nicht
+                                       brandschutz-nachertüchtigt
+  ✓ "BayBO Art. 81 Abs. 1 Nr. 4 b"   — Stellplatz-Privileg
+                                       (seit 01.10.2025); Gemeinde
+                                       darf KEINE zusätzlichen
+                                       Stellplätze fordern
+  ✓ "BayBO Art. 31 Abs. 2 Satz 2"    — zweiter Rettungsweg (Pflicht
+                                       trotz Privileg)
+  ✓ "BayBO Art. 57 Abs. 1 Nr. 18"    — DG-Ausbau verfahrensfrei
+                                       (Grenzfall: reiner Speicher-
+                                       Ausbau ohne Höhenüberschreitung)
+  ✓ "BayBO Art. 58"                  — vereinfachtes Verfahren
+                                       (echter Aufstockungs-Default)
+  ✓ "BayBO Art. 62"                  — Prüfsachverständige bei
+                                       GK 4 / Sonderbau
+  ✓ "BayBO Art. 76"                  — Bestandsschutz
+                                       (Voraussetzung für Privileg)
+  ✓ "BauGB § 31 Abs. 2"              — Befreiung bei B-Plan-
+                                       Konflikt (z.B. GFZ-Reserve)
+
+──────────────────────────────────────────────────────────────────────────
+VERBOTENE ZITATE für T-06
+──────────────────────────────────────────────────────────────────────────
+
+  ✗ "Anlage 1 BayBO"                 — existiert nicht; Privileg
+                                       steht in Art. 46 Abs. 6
+  ✗ "§ 46 BayBO"                     — Art., nicht §
+  ✗ Aufstockung als verfahrensfrei nach Art. 57 Abs. 1 (allgemein)
+                                     — Aufstockung ist eine Errichtung,
+                                       Default-Verfahren ist Art. 58.
+                                       Nur reiner DG-Ausbau ohne
+                                       Höhenänderung kann unter
+                                       Abs. 1 Nr. 18 fallen.
+  ✗ "Stellplatz-Pflicht aus Art. 47 BayBO" — Art. 47 ist seit
+                                       01.10.2025 kommunalisiert;
+                                       bei Aufstockung greift zudem
+                                       das Privileg Art. 81
+                                       Abs. 1 Nr. 4 b
+  ✗ "BauO NRW § 62 Abs. 1 Nr. 1"    — falsches Bundesland
+  ✗ Pauschale Brandschutz-Nachertüchtigung des Bestands fordern —
+                                       Art. 46 Abs. 6 Satz 1 wirkt
+                                       explizit dagegen
+
 ══════════════════════════════════════════════════════════════════════════
 ENDE TEMPLATE-KONTEXT T-06
 ══════════════════════════════════════════════════════════════════════════
