@@ -487,7 +487,7 @@ values, doesn't author content.
 | **Real Impressum signoff** | `docs/PHASE_17_SIGNOFFS.md` § 2 (counsel) + § 3 (DPAs) | Fills the signoffs ledger as each piece lands. |
 | **72-point smoke walk on production** | `docs/PHASE_17_SMOKE_CHECKLIST.md` | Runs the 18×4 cross-browser walk against the production deployment before public traffic. |
 
-### Engineering-side responsibilities (already complete at v1.0)
+### Engineering-side responsibilities (already complete at v1.0.1)
 
 | Item | Where it shipped |
 | ---- | ---------------- |
@@ -495,8 +495,10 @@ values, doesn't author content.
 | Architect verification flow (qualifier-write gate, dashboard, verify-fact / share-project Edge Functions) | Phase 13 commits |
 | Three handoff docs (DEPLOYMENT / OPS_RUNBOOK / HANDOFF) | `docs/` |
 | Daily-gate set (verify-bayern-sha / smoke:citations / tsc / build) | `scripts/` + `package.json` |
-| Bayern SHA invariant `b18d3f7f9a6fe238c18cec5361d30ea3a547e46b1ef2b16a1e74c533aacb3471` | `scripts/lib/bayernSha.mjs` (held across 33+ commits) |
+| Bayern SHA invariant `b18d3f7f9a6fe238c18cec5361d30ea3a547e46b1ef2b16a1e74c533aacb3471` | `scripts/lib/bayernSha.mjs` (held across 34+ commits) |
 | Templated client-side work (DPA emails, legal-page placeholder map, signoffs ledger, smoke checklist) | `docs/PHASE_17_*.md` set |
+| **v1.0.1 invite-flow security hardening** (owner-check on share, role-check on accept, 7-day TTL) | commit `468ecc3` + migration 0030 |
+| **v1.1 sprint scope — 3 audit findings open** per `POST_V1_AUDIT.md` (verify-fact race, 13b threshold disarmed, qualifier views RLS pin). All non-blocking for v1 B2B traffic. Schedule before public exposure. | `docs/POST_V1_AUDIT.md` § 1, § 8, § 2 — three CRITICAL items, one needs post-deploy empirical probe (see audit doc § 2 "Empirical RLS probe") |
 
 ### Order of operations the client should follow
 

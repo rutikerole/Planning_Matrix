@@ -200,6 +200,54 @@ updating in lockstep — flagged dependency.
 - profiles RLS (migration 0001) self-read only; designer detection
   in `useIsDesigner.ts:30-44` correctly returns own row.
 
+### Empirical RLS probe (2026-05-08, post-v1.0.1)
+
+Probe ran against the live dev Supabase project (`dklseznumnehutbarleg`).
+Findings:
+
+- **`event_log` RLS confirmed working for anon.** `GET /rest/v1/event_log
+  ?select=event_id,user_id,project_id,source,name&limit=3` with the
+  anon key returns `[]` — the policy `using (user_id = auth.uid())`
+  evaluates to false for anon (NULL = NULL → NULL/false in SQL).
+  Underlying table is correctly scoped.
+- **Phase-13 migrations 0026..0030 NOT yet applied to the live dev
+  DB.** PGRST205 ("table not found") on `project_members`,
+  `qualifier_transitions`, `qualifier_rates_7d_per_project`,
+  `qualifier_rates_7d_global`. OpenAPI doc returns zero paths
+  matching `qualifier`/`project_member`.
+- **The view→underlying-table RLS handoff therefore could not be
+  empirically confirmed in this probe.** The views don't exist yet
+  in the live DB. Re-running the probe after the manager applies
+  0026..0030 (per `DEPLOYMENT.md § 3`) is the deterministic test.
+
+**Static analysis (unchanged from original audit):** 0027 + 0029
+do NOT declare `with (security_invoker = true)`. Postgres 15+
+default for views is `security_invoker = false` — view runs as
+owner. Dashboard-created views are owned by `postgres`, which
+bypasses RLS. **Without an empirical post-deploy test, the leak
+risk remains HIGHLY LIKELY but UNCONFIRMED.**
+
+**Recommended manager action** (one-time, ~5 min after migrations
+apply):
+
+```bash
+# As anon (no JWT):
+curl "${VITE_SUPABASE_URL}/rest/v1/qualifier_rates_7d_per_project?select=*&limit=5" \
+     -H "apikey: ${VITE_SUPABASE_ANON_KEY}"
+# Expected (RLS working): [] — empty array.
+# Confirmed leak: returns rows with project_id values.
+```
+
+If the probe returns rows: ship `v1.0.2` adding `with
+(security_invoker = true)` to both view definitions in 0027 + 0029
+(one-line per view). If empty: downgrade CRITICAL-3 to SERIOUS
+and pin via a smokeWalk drift check that asserts the keyword is
+present.
+
+**Probe-status verdict for CRITICAL-3 today: PENDING (deploy-then-
+probe).** Severity stays at CRITICAL until the post-deploy test
+confirms one way or the other.
+
 ---
 
 ## 3. Bayern SHA invariant
