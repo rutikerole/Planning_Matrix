@@ -46,6 +46,7 @@ import { runStreamingTurn, acceptsStream } from './streaming.ts'
 import {
   hydrateProjectState,
   applyToolInputToState,
+  gateQualifiersByRole,
 } from '../../../src/lib/projectStateHelpers.ts'
 import { isRegisteredBundesland } from '../../../src/legal/legalRegistry.ts'
 import {
@@ -126,8 +127,21 @@ Deno.serve(async (req: Request) => {
     return respond({ code: 'unauthenticated', message: 'Invalid session' }, 401)
   }
 
+  // Phase 13 Week 1 — fetch caller's profile role for the qualifier-
+  // write-gate. We tolerate a missing profile row (defaults to 'client')
+  // so a misconfigured profile never blocks a user's chat turn; the
+  // gate only downgrades DESIGNER+VERIFIED attempts in observability
+  // mode, never rejects.
+  const { data: profileRow } = await supabase
+    .from('profiles')
+    .select('role')
+    .eq('id', userData.user.id)
+    .maybeSingle()
+  const callerRole = (profileRow?.role ?? 'client') as
+    'client' | 'designer' | 'engineer' | 'authority'
+
   console.log(
-    `[chat-turn] [${requestId}] user=${userData.user.id} project=${projectId}`,
+    `[chat-turn] [${requestId}] user=${userData.user.id} role=${callerRole} project=${projectId}`,
   )
 
   // ── Tracer (Phase 9) ─────────────────────────────────────────────
@@ -338,6 +352,7 @@ Deno.serve(async (req: Request) => {
       supabase,
       projectId,
       userId: userData.user.id,
+      callerRole,
       currentState,
       bundesland: project.bundesland,
       corsHeaders,
@@ -423,6 +438,65 @@ Deno.serve(async (req: Request) => {
       traceId: tracer.trace_id,
       violations: citationViolations,
     })
+  }
+
+  // ── Phase 13 Week 1 — qualifier-write-gate (observability mode) ──
+  // Mutates toolInput in place: any DESIGNER+VERIFIED attempt from a
+  // non-designer caller is downgraded to DESIGNER+ASSUMED before
+  // applyToolInputToState sees it. The downgrade events are logged to
+  // event_log so the 13b telemetry threshold can read them later.
+  // Production rollout discipline: 7 days of observability before the
+  // Week 2 commit flips to gating mode (throw on attempt). See
+  // PHASE_13_REVIEW.md.
+  const qualifierGateSpan = tracer.startSpan('qualifier.gate', rootSpan.span_id)
+  const qualifierDowngrades = gateQualifiersByRole(toolInput, callerRole)
+  qualifierGateSpan.setAttributes({
+    caller_role: callerRole,
+    downgrade_count: qualifierDowngrades.length,
+  })
+  qualifierGateSpan.end()
+  if (qualifierDowngrades.length > 0) {
+    console.log(
+      `[chat-turn] [${requestId}] qualifier-gate: ${qualifierDowngrades.length} downgrade(s)`,
+      qualifierDowngrades.map((e) => ({
+        field: e.field,
+        item_id: e.item_id,
+        attempted: `${e.attempted_source}+${e.attempted_quality}`,
+        enforced: `${e.enforced_source}+${e.enforced_quality}`,
+      })),
+    )
+    // Best-effort fan-out into event_log. Failures are warn-logged and
+    // swallowed (mirror citationLint logCitationViolations posture).
+    const safeTraceId =
+      tracer.trace_id && tracer.trace_id !== '00000000-0000-0000-0000-000000000000'
+        ? tracer.trace_id
+        : null
+    const now = new Date().toISOString()
+    const rows = qualifierDowngrades.map((e) => ({
+      session_id: requestId,
+      user_id: userData.user.id,
+      project_id: projectId,
+      source: 'system' as const,
+      name: 'qualifier.downgraded',
+      attributes: {
+        field: e.field,
+        item_id: e.item_id,
+        attempted_source: e.attempted_source,
+        attempted_quality: e.attempted_quality,
+        enforced_source: e.enforced_source,
+        enforced_quality: e.enforced_quality,
+        caller_role: e.caller_role,
+        reason: e.reason,
+      },
+      client_ts: now,
+      trace_id: safeTraceId,
+    }))
+    const { error: qgErr } = await supabase.from('event_log').insert(rows)
+    if (qgErr) {
+      console.warn(
+        `[chat-turn] [${requestId}] qualifier-gate event_log insert failed: ${qgErr.message}`,
+      )
+    }
   }
 
   // ── Apply mutations ──────────────────────────────────────────────

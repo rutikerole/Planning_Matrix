@@ -37,7 +37,11 @@ import { estimateCostUsd, UpstreamError, type AnthropicUsage } from './anthropic
 import { commitChatTurnAtomic } from './persistence.ts'
 import { validateFactPlausibility } from './factPlausibility.ts'
 import { lintCitations, logCitationViolations } from './citationLint.ts'
-import { applyToolInputToState } from '../../../src/lib/projectStateHelpers.ts'
+import {
+  applyToolInputToState,
+  gateQualifiersByRole,
+  type CallerRole,
+} from '../../../src/lib/projectStateHelpers.ts'
 import {
   respondToolInputSchema,
   type RespondToolInput,
@@ -61,6 +65,8 @@ interface StreamingTurnArgs {
    *  auth.uid(); we pass it through explicitly rather than calling
    *  supabase.auth.getUser() a second time. */
   userId: string
+  /** Phase 13 Week 1 — caller's profile.role for the qualifier-write-gate. */
+  callerRole: CallerRole
   currentState: ProjectState
   /** Phase 11 — used by the bundesland-aware citation firewall to
    *  skip the active state's own LBO pattern. Source of truth is
@@ -268,6 +274,40 @@ export function runStreamingTurn(args: StreamingTurnArgs): Response {
         })
 
         // ── Persistence pipeline ───────────────────────────────────
+        // Phase 13 Week 1 — qualifier-write-gate (observability mode).
+        // See chat-turn/index.ts for the matching JSON-path logic.
+        const qualifierDowngrades = gateQualifiersByRole(toolInput, args.callerRole)
+        if (qualifierDowngrades.length > 0) {
+          console.log(
+            `[chat-turn] [${args.requestId}] qualifier-gate (streaming): ${qualifierDowngrades.length} downgrade(s)`,
+          )
+          const safeTraceId =
+            tracer.trace_id && tracer.trace_id !== '00000000-0000-0000-0000-000000000000'
+              ? tracer.trace_id
+              : null
+          const now = new Date().toISOString()
+          const rows = qualifierDowngrades.map((e) => ({
+            session_id: args.requestId,
+            user_id: args.userId,
+            project_id: args.projectId,
+            source: 'system' as const,
+            name: 'qualifier.downgraded',
+            attributes: {
+              field: e.field,
+              item_id: e.item_id,
+              attempted_source: e.attempted_source,
+              attempted_quality: e.attempted_quality,
+              enforced_source: e.enforced_source,
+              enforced_quality: e.enforced_quality,
+              caller_role: e.caller_role,
+              reason: e.reason,
+            },
+            client_ts: now,
+            trace_id: safeTraceId,
+          }))
+          await args.supabase.from('event_log').insert(rows)
+        }
+
         const newState = applyToolInputToState(args.currentState, toolInput)
         const commitSpan = tracer.startSpan('rpc.commit_chat_turn', rootSpan.span_id)
         const commitResult = await commitChatTurnAtomic(args.supabase, {

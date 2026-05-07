@@ -18,11 +18,168 @@ import type {
   Fact,
   ProjectState,
   Procedure,
+  Quality,
   Recommendation,
   Role,
+  Source,
   TemplateId,
 } from '../types/projectState.ts'
 import type { RespondToolInput } from '../types/respondTool.ts'
+
+// ── Phase 13 — qualifier-write-gate ───────────────────────────────────
+//
+// The gate enforces v1.5 §6.B.01: only role='designer' callers can
+// emit DESIGNER+VERIFIED qualifiers. CLIENT or anonymous turns that
+// claim DESIGNER+VERIFIED have the qualifier downgraded to
+// DESIGNER+ASSUMED in-place, and a downgrade event is collected for
+// the Edge Function to log to event_log.
+//
+// Phase 13 Week 1 ships in OBSERVABILITY MODE: downgrade-and-log,
+// no rejection (mirrors Phase 10.1 citationLint posture). Week 2
+// flips to GATING MODE: throw QualifierRoleViolationError instead.
+// Production rollout discipline: run observability for 7 days
+// before flipping (see PHASE_13_REVIEW.md).
+
+export type CallerRole = 'client' | 'designer' | 'engineer' | 'authority' | 'system'
+
+export type QualifierFieldKind =
+  | 'extracted_fact'
+  | 'recommendation'
+  | 'procedure'
+  | 'document'
+  | 'role'
+
+export interface QualifierDowngradeEvent {
+  field: QualifierFieldKind
+  /** Identifier — fact `key`, others' `id`. */
+  item_id: string
+  attempted_source: Source
+  attempted_quality: Quality
+  enforced_source: Source
+  enforced_quality: Quality
+  caller_role: CallerRole
+  reason: string
+}
+
+/**
+ * Inspect every qualifier-bearing entry in `toolInput`. When a non-
+ * designer caller tries to set DESIGNER+VERIFIED, mutate the entry
+ * in-place to DESIGNER+ASSUMED and accumulate a downgrade event.
+ * Returns the events; the Edge Function logs them to event_log.
+ *
+ * Mutation discipline: same pattern as
+ * `supabase/functions/chat-turn/factPlausibility.ts` —
+ * mutate the toolInput so downstream apply-helpers see the gated
+ * qualifier without a wrapper API change.
+ *
+ * Designer + system callers pass through unchanged.
+ */
+export function gateQualifiersByRole(
+  toolInput: RespondToolInput,
+  callerRole: CallerRole,
+): QualifierDowngradeEvent[] {
+  const events: QualifierDowngradeEvent[] = []
+  if (callerRole === 'designer' || callerRole === 'system') return events
+
+  const REASON =
+    'DESIGNER+VERIFIED requires role=designer; downgraded to DESIGNER+ASSUMED per v1.5 §6.B.01.'
+
+  // extracted_facts: source/quality top-level
+  for (const f of toolInput.extracted_facts ?? []) {
+    if (f.source === 'DESIGNER' && f.quality === 'VERIFIED') {
+      events.push({
+        field: 'extracted_fact',
+        item_id: f.key,
+        attempted_source: 'DESIGNER',
+        attempted_quality: 'VERIFIED',
+        enforced_source: 'DESIGNER',
+        enforced_quality: 'ASSUMED',
+        caller_role: callerRole,
+        reason: REASON,
+      })
+      f.quality = 'ASSUMED'
+    }
+  }
+
+  // recommendations_delta upserts: qualifier nested as { source, quality }
+  for (const r of toolInput.recommendations_delta ?? []) {
+    if (r.op !== 'upsert') continue
+    if (r.qualifier?.source === 'DESIGNER' && r.qualifier?.quality === 'VERIFIED') {
+      events.push({
+        field: 'recommendation',
+        item_id: r.id,
+        attempted_source: 'DESIGNER',
+        attempted_quality: 'VERIFIED',
+        enforced_source: 'DESIGNER',
+        enforced_quality: 'ASSUMED',
+        caller_role: callerRole,
+        reason: REASON,
+      })
+      r.qualifier.quality = 'ASSUMED'
+    }
+  }
+
+  // procedures / documents / roles: source + quality top-level on upserts
+  for (const p of toolInput.procedures_delta ?? []) {
+    if (p.op !== 'upsert') continue
+    if (p.source === 'DESIGNER' && p.quality === 'VERIFIED') {
+      events.push({
+        field: 'procedure',
+        item_id: p.id,
+        attempted_source: 'DESIGNER',
+        attempted_quality: 'VERIFIED',
+        enforced_source: 'DESIGNER',
+        enforced_quality: 'ASSUMED',
+        caller_role: callerRole,
+        reason: REASON,
+      })
+      p.quality = 'ASSUMED'
+    }
+  }
+  for (const d of toolInput.documents_delta ?? []) {
+    if (d.op !== 'upsert') continue
+    if (d.source === 'DESIGNER' && d.quality === 'VERIFIED') {
+      events.push({
+        field: 'document',
+        item_id: d.id,
+        attempted_source: 'DESIGNER',
+        attempted_quality: 'VERIFIED',
+        enforced_source: 'DESIGNER',
+        enforced_quality: 'ASSUMED',
+        caller_role: callerRole,
+        reason: REASON,
+      })
+      d.quality = 'ASSUMED'
+    }
+  }
+  for (const r of toolInput.roles_delta ?? []) {
+    if (r.op !== 'upsert') continue
+    if (r.source === 'DESIGNER' && r.quality === 'VERIFIED') {
+      events.push({
+        field: 'role',
+        item_id: r.id,
+        attempted_source: 'DESIGNER',
+        attempted_quality: 'VERIFIED',
+        enforced_source: 'DESIGNER',
+        enforced_quality: 'ASSUMED',
+        caller_role: callerRole,
+        reason: REASON,
+      })
+      r.quality = 'ASSUMED'
+    }
+  }
+
+  return events
+}
+
+/**
+ * Phase 13 Week 2 flip — when this constant is `true`, the
+ * Edge Function will throw QualifierRoleViolationError instead of
+ * applying the downgrade silently. Currently `false`; Week 2 commit
+ * flips to `true` after 7 days of observability-mode telemetry
+ * confirms zero false-positives.
+ */
+export const QUALIFIER_GATE_REJECTS = false as boolean
 
 // ── Initial / hydrate ──────────────────────────────────────────────────
 

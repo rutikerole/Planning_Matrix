@@ -640,6 +640,213 @@ const TOOL_INPUT_FIXTURES = [
   },
 ]
 
+// ── Phase 13 — qualifier-write-gate fixtures ────────────────────────────
+//
+// Mirror of src/lib/projectStateHelpers.ts gateQualifiersByRole. Drift
+// between this JS port and the TS source is a bug — the structural
+// drift-check below (drift_qualifierGate) reads the .ts and asserts
+// the function still exists and QUALIFIER_GATE_REJECTS is still false.
+//
+// The gate enforces v1.5 §6.B.01: only role='designer' callers can emit
+// DESIGNER+VERIFIED qualifiers. Phase 13 Week 1 = observability mode
+// (downgrade-and-log, no rejection). Week 2 will flip to gating mode.
+//
+// Fixtures cover the four mutation surfaces (extracted_facts, the three
+// _delta upserts) plus the pass-through callers (designer, system).
+
+function gateQualifiersByRoleJS(toolInput, callerRole) {
+  const events = []
+  if (callerRole === 'designer' || callerRole === 'system') return events
+  const REASON =
+    'DESIGNER+VERIFIED requires role=designer; downgraded to DESIGNER+ASSUMED per v1.5 §6.B.01.'
+  for (const f of toolInput.extracted_facts ?? []) {
+    if (f.source === 'DESIGNER' && f.quality === 'VERIFIED') {
+      events.push({ field: 'extracted_fact', item_id: f.key })
+      f.quality = 'ASSUMED'
+    }
+  }
+  for (const r of toolInput.recommendations_delta ?? []) {
+    if (r.op !== 'upsert') continue
+    if (r.qualifier?.source === 'DESIGNER' && r.qualifier?.quality === 'VERIFIED') {
+      events.push({ field: 'recommendation', item_id: r.id })
+      r.qualifier.quality = 'ASSUMED'
+    }
+  }
+  for (const p of toolInput.procedures_delta ?? []) {
+    if (p.op !== 'upsert') continue
+    if (p.source === 'DESIGNER' && p.quality === 'VERIFIED') {
+      events.push({ field: 'procedure', item_id: p.id })
+      p.quality = 'ASSUMED'
+    }
+  }
+  for (const d of toolInput.documents_delta ?? []) {
+    if (d.op !== 'upsert') continue
+    if (d.source === 'DESIGNER' && d.quality === 'VERIFIED') {
+      events.push({ field: 'document', item_id: d.id })
+      d.quality = 'ASSUMED'
+    }
+  }
+  for (const r of toolInput.roles_delta ?? []) {
+    if (r.op !== 'upsert') continue
+    if (r.source === 'DESIGNER' && r.quality === 'VERIFIED') {
+      events.push({ field: 'role', item_id: r.id })
+      r.quality = 'ASSUMED'
+    }
+  }
+  return events
+}
+
+const QUALIFIER_GATE_FIXTURES = [
+  {
+    label: 'client + DESIGNER+VERIFIED extracted_fact → 1 downgrade event',
+    role: 'client',
+    input: {
+      extracted_facts: [
+        { key: 'site.height', value: 6.8, source: 'DESIGNER', quality: 'VERIFIED' },
+      ],
+    },
+    expectEventCount: 1,
+    expectFinalQuality: { kind: 'extracted_fact', key: 'site.height', quality: 'ASSUMED' },
+  },
+  {
+    label: 'client + DESIGNER+VERIFIED recommendation upsert → 1 downgrade',
+    role: 'client',
+    input: {
+      recommendations_delta: [
+        {
+          op: 'upsert',
+          id: 'rec-1',
+          qualifier: { source: 'DESIGNER', quality: 'VERIFIED' },
+        },
+      ],
+    },
+    expectEventCount: 1,
+    expectFinalQuality: { kind: 'recommendation', id: 'rec-1', quality: 'ASSUMED' },
+  },
+  {
+    label: 'client + 3-way procedure/document/role upserts → 3 downgrades',
+    role: 'client',
+    input: {
+      procedures_delta: [
+        { op: 'upsert', id: 'p-1', source: 'DESIGNER', quality: 'VERIFIED' },
+      ],
+      documents_delta: [
+        { op: 'upsert', id: 'd-1', source: 'DESIGNER', quality: 'VERIFIED' },
+      ],
+      roles_delta: [
+        { op: 'upsert', id: 'r-1', source: 'DESIGNER', quality: 'VERIFIED' },
+      ],
+    },
+    expectEventCount: 3,
+  },
+  {
+    label: 'designer caller passes DESIGNER+VERIFIED unchanged',
+    role: 'designer',
+    input: {
+      extracted_facts: [
+        { key: 'k', value: 1, source: 'DESIGNER', quality: 'VERIFIED' },
+      ],
+    },
+    expectEventCount: 0,
+    expectFinalQuality: { kind: 'extracted_fact', key: 'k', quality: 'VERIFIED' },
+  },
+  {
+    label: 'system caller passes DESIGNER+VERIFIED unchanged',
+    role: 'system',
+    input: {
+      extracted_facts: [
+        { key: 'k', value: 1, source: 'DESIGNER', quality: 'VERIFIED' },
+      ],
+    },
+    expectEventCount: 0,
+    expectFinalQuality: { kind: 'extracted_fact', key: 'k', quality: 'VERIFIED' },
+  },
+  {
+    label: 'client + non-DESIGNER source untouched',
+    role: 'client',
+    input: {
+      extracted_facts: [
+        { key: 'a', value: 1, source: 'CLIENT', quality: 'VERIFIED' },
+        { key: 'b', value: 1, source: 'LEGAL', quality: 'VERIFIED' },
+        { key: 'c', value: 1, source: 'AUTHORITY', quality: 'VERIFIED' },
+      ],
+    },
+    expectEventCount: 0,
+  },
+  {
+    label: 'client + DESIGNER + non-VERIFIED quality untouched',
+    role: 'client',
+    input: {
+      extracted_facts: [
+        { key: 'a', value: 1, source: 'DESIGNER', quality: 'ASSUMED' },
+        { key: 'b', value: 1, source: 'DESIGNER', quality: 'CALCULATED' },
+        { key: 'c', value: 1, source: 'DESIGNER', quality: 'DECIDED' },
+      ],
+    },
+    expectEventCount: 0,
+  },
+  {
+    label: 'remove ops never inspected',
+    role: 'client',
+    input: {
+      recommendations_delta: [{ op: 'remove', id: 'rec-old' }],
+      procedures_delta: [{ op: 'remove', id: 'p-old' }],
+      documents_delta: [{ op: 'remove', id: 'd-old' }],
+      roles_delta: [{ op: 'remove', id: 'r-old' }],
+    },
+    expectEventCount: 0,
+  },
+  {
+    label: 'engineer caller behaves like client (downgrade)',
+    role: 'engineer',
+    input: {
+      extracted_facts: [
+        { key: 'k', value: 1, source: 'DESIGNER', quality: 'VERIFIED' },
+      ],
+    },
+    expectEventCount: 1,
+    expectFinalQuality: { kind: 'extracted_fact', key: 'k', quality: 'ASSUMED' },
+  },
+  {
+    label: 'authority caller behaves like client (downgrade)',
+    role: 'authority',
+    input: {
+      extracted_facts: [
+        { key: 'k', value: 1, source: 'DESIGNER', quality: 'VERIFIED' },
+      ],
+    },
+    expectEventCount: 1,
+  },
+  {
+    label: 'mixed payload: only DESIGNER+VERIFIED entries are gated',
+    role: 'client',
+    input: {
+      extracted_facts: [
+        { key: 'gated', value: 1, source: 'DESIGNER', quality: 'VERIFIED' },
+        { key: 'free-1', value: 1, source: 'CLIENT', quality: 'VERIFIED' },
+        { key: 'free-2', value: 1, source: 'DESIGNER', quality: 'ASSUMED' },
+      ],
+    },
+    expectEventCount: 1,
+    expectFinalQuality: { kind: 'extracted_fact', key: 'gated', quality: 'ASSUMED' },
+  },
+]
+
+function readQualifierFromFixture(input, expect) {
+  if (!expect) return null
+  if (expect.kind === 'extracted_fact') {
+    const f = (input.extracted_facts ?? []).find((x) => x.key === expect.key)
+    return f ? f.quality : null
+  }
+  if (expect.kind === 'recommendation') {
+    const r = (input.recommendations_delta ?? []).find(
+      (x) => x.op === 'upsert' && x.id === expect.id,
+    )
+    return r ? r.qualifier?.quality ?? null : null
+  }
+  return null
+}
+
 // ── Static gate ────────────────────────────────────────────────────────
 
 async function readFileText(relPath) {
@@ -898,6 +1105,47 @@ async function runStaticGate() {
     results.push(failures(`toolInput fixture: ${f.label}`, conditions))
   }
 
+  // 7. Phase 13 — qualifier-write-gate fixtures.
+  // Drift check: read projectStateHelpers.ts and assert the gate
+  // function exists and the Week 1 observability flag is still false.
+  // Then run the JS-port gate over each fixture and assert the event
+  // count + post-mutation qualifier matches the expectation.
+  const helpersSource = await readFileText('src/lib/projectStateHelpers.ts')
+  results.push(failures('phase-13: gate function + observability flag', [
+    {
+      ok: /export function gateQualifiersByRole\b/.test(helpersSource),
+      msg: 'projectStateHelpers.ts missing gateQualifiersByRole export',
+    },
+    {
+      ok: /export const QUALIFIER_GATE_REJECTS\s*=\s*false\b/.test(helpersSource),
+      msg: 'Week 1 invariant: QUALIFIER_GATE_REJECTS must remain `false` until Week 2 flip',
+    },
+    {
+      ok: /export type CallerRole\s*=\s*'client' \| 'designer' \| 'engineer' \| 'authority' \| 'system'/.test(helpersSource),
+      msg: 'CallerRole type drifted from expected union',
+    },
+  ]))
+
+  for (const f of QUALIFIER_GATE_FIXTURES) {
+    // Deep-clone so cross-fixture mutation can't bleed through.
+    const cloned = JSON.parse(JSON.stringify(f.input))
+    const events = gateQualifiersByRoleJS(cloned, f.role)
+    const conditions = [
+      {
+        ok: events.length === f.expectEventCount,
+        msg: `expected ${f.expectEventCount} downgrade event(s) for role=${f.role}; got ${events.length}: ${JSON.stringify(events)}`,
+      },
+    ]
+    if (f.expectFinalQuality) {
+      const actual = readQualifierFromFixture(cloned, f.expectFinalQuality)
+      conditions.push({
+        ok: actual === f.expectFinalQuality.quality,
+        msg: `expected post-gate qualifier=${f.expectFinalQuality.quality} on ${f.expectFinalQuality.kind}; got ${actual}`,
+      })
+    }
+    results.push(failures(`phase-13 fixture: ${f.label}`, conditions))
+  }
+
   return results
 }
 
@@ -1009,9 +1257,20 @@ function report(label, results) {
 // ── Main ───────────────────────────────────────────────────────────────
 
 const liveFlag = process.argv.includes('--live')
+// `--phase=13` filters the static-gate report to only Phase 13 results
+// (gate function drift + qualifier-gate fixtures). Used by the Week 1
+// daily gate to surface qualifier-gate regressions without scrolling
+// through 80+ unrelated fixtures.
+const phase13Filter = process.argv.includes('--phase=13')
 
 const staticResults = await runStaticGate()
-const staticOk = report('static gate', staticResults)
+const filteredResults = phase13Filter
+  ? staticResults.filter((r) => r.label.startsWith('phase-13'))
+  : staticResults
+const staticOk = report(
+  phase13Filter ? 'static gate (phase 13 only)' : 'static gate',
+  filteredResults,
+)
 
 let liveOk = true
 if (liveFlag) {
