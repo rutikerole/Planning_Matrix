@@ -3,6 +3,17 @@
 **Status.** Authoritative roadmap for Phases 11–17. Supersedes
 `docs/NEXT_MOVE.md` (which assumed a PMF-seeking product — wrong frame).
 
+**Post-Phase-13 scope-cut decisions (2026-05-07, locked).**
+- **Phase 12.5 (async takt) — POST-V1.** Architectural debt, not v1-
+  blocking. Documented as known follow-up work in HANDOFF.md (Phase
+  17 deliverable).
+- **Phase 14 (remaining 11 states) — POST-V1.** The 11 minimum stubs
+  honestly surface *"werden in einer späteren Bearbeitungsphase
+  ergänzt"* — that's the defensible v1 minimum. Documented as known
+  follow-up work in HANDOFF.md.
+- **Next active phase = Phase 17 (Production Handoff).** See
+  `docs/PHASE_17_SCOPE.md`.
+
 **Frame.** Planning Matrix is a **client deliverable** for the v1.5
 architecture document's manager. Validation is **AI-proxy only via
 `scripts/smokeWalk.mjs`** plus the audit trail. No end-user testing.
@@ -207,7 +218,12 @@ delivery is the most fragile dependency — budget conservatively.
 
 ---
 
-## Phase 14 — Remaining 11 States
+## Phase 14 — Remaining 11 States [POST-V1]
+
+> **Status (2026-05-07): cut to post-v1.** The 11 minimum stubs
+> honestly surface *"werden in einer späteren Bearbeitungsphase
+> ergänzt"* and the persona reads that framing — defensible v1
+> minimum. Original scope preserved below for the post-v1 reader.
 
 **Goal.** Full 16-state coverage at minimum-viable depth.
 
