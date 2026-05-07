@@ -461,10 +461,14 @@ shipped in Phase 13 Week 4). What's missing is the cron harness
 
 ## 9. Operational responsibilities — split between engineering and client
 
-The v1.0 tag marks the engineering scope as complete. A second tier
-of work is the **client's operational responsibility** to action
-post-tag, before public traffic touches the system. This split is
-deliberate and documented here so neither side has to re-derive it.
+The **v1.0.1 tag is the production-ready release**. v1.0 is the
+engineering-milestone tag (complete feature scope, three CRITICAL
+findings open per `POST_V1_AUDIT.md`); v1.0.1 closes those CRITICAL
+findings (`fix(security)` commit, see audit doc for resolution
+status). A second tier of work is the **client's operational
+responsibility** to action post-tag, before public traffic touches
+the system. This split is deliberate and documented here so neither
+side has to re-derive it.
 
 ### Client-side operational work (post-tag)
 
