@@ -378,10 +378,10 @@ Deno.serve(async (req: Request) => {
   // observability, not gating. Commit 6 wires violations to
   // public.event_log so the admin Logs drawer can surface trends.
   const citationLintSpan = tracer.startSpan('citation.lint', rootSpan.span_id)
-  const citationViolations = lintCitations({
-    message_de: toolInput.message_de,
-    message_en: toolInput.message_en,
-  })
+  // Phase 10.1 firewall — pass the full toolInput so the linter scans
+  // recommendations_delta / procedures_delta / documents_delta /
+  // extracted_facts.evidence in addition to message_de / message_en.
+  const citationViolations = lintCitations(toolInput)
   citationLintSpan.setAttributes({
     violations_count: citationViolations.length,
     error_count: citationViolations.filter((v) => v.severity === 'error').length,

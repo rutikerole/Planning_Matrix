@@ -43,8 +43,12 @@ const REPO_ROOT = join(__dirname, '..')
 // ── Forbidden patterns (mirror of citationLint.ts) ─────────────────────
 // Keep this list in sync with supabase/functions/chat-turn/citationLint.ts
 // FORBIDDEN_PATTERNS. Drift between the two is itself a bug — the
-// static gate below detects it indirectly by counting lines.
+// static gate below detects it by counting lines.
+//
+// Layer A (5 rules) — Bayern structural mistakes.
+// Layer B (15 rules) — Bundesland firewall, one entry per non-Bayern LBO/BO.
 const FORBIDDEN_PATTERNS = [
+  // Layer A
   { name: 'anlage_1_baybo', regex: /Anlage\s+1\s+BayBO/gi, severity: 'error' },
   { name: 'annex_1_baybo', regex: /Annex\s+1\s+BayBO/gi, severity: 'error' },
   {
@@ -52,9 +56,80 @@ const FORBIDDEN_PATTERNS = [
     regex: /§\s*\d+(?:\s*Abs\.\s*\d+)?(?:\s*Nr\.\s*\d+\w?)?\s*BayBO/g,
     severity: 'error',
   },
-  { name: 'bauo_nrw', regex: /Bauordnung\s+NRW|BauO\s+NRW/gi, severity: 'error' },
-  { name: 'bbgbo', regex: /Bauordnung\s+Brandenburg|BbgBO/gi, severity: 'error' },
-  { name: 'bauo_bln', regex: /Bauordnung\s+Berlin|BauO\s+Bln/gi, severity: 'error' },
+  { name: 'mbo_warning', regex: /Musterbauordnung|\bMBO\b/g, severity: 'warning' },
+  {
+    name: 'placeholder_warning',
+    regex: /relevante\s+(Bauordnung|Vorschrift)|einschl[äa]gige\s+(Bauordnung|Vorschrift)/gi,
+    severity: 'warning',
+  },
+  // Layer B — non-Bayern Bundesland firewall (15 entries)
+  {
+    name: 'lbo_bw',
+    regex: /\bLBO[\s-]+BW\b|\bLandesbauordnung\s+Baden[\s-]?W[üu]rttemberg\b/gi,
+    severity: 'error',
+  },
+  {
+    name: 'bauo_nrw',
+    regex: /\bBauO\s+NRW\b|\bBauordnung\s+Nordrhein[\s-]?Westfalen\b/gi,
+    severity: 'error',
+  },
+  { name: 'hbo', regex: /\bHBO\b|\bHessische\s+Bauordnung\b/gi, severity: 'error' },
+  {
+    name: 'nbauo',
+    regex: /\bNBauO\b|\bNieders[äa]chsische\s+Bauordnung\b/gi,
+    severity: 'error',
+  },
+  {
+    name: 'saechsbo',
+    regex: /\bS[äa]chsBO\b|\bS[äa]chsische\s+Bauordnung\b/gi,
+    severity: 'error',
+  },
+  {
+    name: 'lbauo_rlp',
+    regex: /\bLBauO\s+RLP\b|\bLandesbauordnung\s+Rheinland[\s-]?Pfalz\b/gi,
+    severity: 'error',
+  },
+  {
+    name: 'lbo_sh',
+    regex: /\bLBO\s+SH\b|\bLandesbauordnung\s+Schleswig[\s-]?Holstein\b/gi,
+    severity: 'error',
+  },
+  {
+    name: 'lbo_mv',
+    regex: /\bLBO\s+MV\b|\bLandesbauordnung\s+Mecklenburg[\s-]?Vorpommern\b/gi,
+    severity: 'error',
+  },
+  {
+    name: 'bremlbo',
+    regex: /\bBremLBO\b|\bBremische\s+Landesbauordnung\b/gi,
+    severity: 'error',
+  },
+  { name: 'hbauo', regex: /\bHBauO\b|\bHamburgische\s+Bauordnung\b/gi, severity: 'error' },
+  {
+    name: 'lbo_saarland',
+    regex: /\bLBO\s+Saarland\b|\bLandesbauordnung\s+(des\s+)?Saarland(es)?\b/gi,
+    severity: 'error',
+  },
+  {
+    name: 'thuerbo',
+    regex: /\bTh[üu]rBO\b|\bTh[üu]ringer\s+Bauordnung\b/gi,
+    severity: 'error',
+  },
+  {
+    name: 'bauo_lsa',
+    regex: /\bBauO\s+LSA\b|\bBauordnung\s+Sachsen[\s-]?Anhalt\b/gi,
+    severity: 'error',
+  },
+  {
+    name: 'bbgbo',
+    regex: /\bBbgBO\b|\bBrandenburgische\s+Bauordnung\b|\bBauordnung\s+Brandenburg\b/gi,
+    severity: 'error',
+  },
+  {
+    name: 'bauo_bln',
+    regex: /\bBauO\s+Bln\b|\bBauordnung\s+(f[üu]r\s+)?Berlin\b|\bBerliner\s+Bauordnung\b/gi,
+    severity: 'error',
+  },
 ]
 
 // ── Seed test cases ─────────────────────────────────────────────────────
@@ -125,6 +200,215 @@ const LINT_SAMPLES = [
       'Wintergarten 48 m³ < 75 m³ → verfahrensfrei nach BayBO Art. 57 Abs. 1 Nr. 1 a',
     expectError: false,
   },
+  // ── Bundesland firewall — one fixture per non-Bayern LBO/BO ─────────
+  // The wrong-Bundesland NRW sample above already covers BauO NRW; the
+  // entries below cover the remaining 14 Bundesländer.
+  {
+    label: 'wrong-Bundesland HBO Hessen (must flag)',
+    text: 'Nach HBO § 63 wäre das verfahrensfrei',
+    expectError: true,
+  },
+  {
+    label: 'wrong-Bundesland NBauO Niedersachsen (must flag)',
+    text: 'Die NBauO behandelt das in einer anderen Logik',
+    expectError: true,
+  },
+  {
+    label: 'wrong-Bundesland SächsBO (must flag)',
+    text: 'Die SächsBO sieht in § 4 eine abweichende Regelung vor',
+    expectError: true,
+  },
+  {
+    label: 'wrong-Bundesland LBauO RLP (must flag)',
+    text: 'Nach LBauO RLP § 62 sind Anbauten unter 50 m³ verfahrensfrei',
+    expectError: true,
+  },
+  {
+    label: 'wrong-Bundesland LBO SH (must flag)',
+    text: 'Die LBO SH wendet hier andere Schwellen an',
+    expectError: true,
+  },
+  {
+    label: 'wrong-Bundesland LBO MV (must flag)',
+    text: 'In Mecklenburg-Vorpommern greift LBO MV § 60',
+    expectError: true,
+  },
+  {
+    label: 'wrong-Bundesland BremLBO (must flag)',
+    text: 'BremLBO regelt Stellplätze abweichend',
+    expectError: true,
+  },
+  {
+    label: 'wrong-Bundesland HBauO Hamburg (must flag)',
+    text: 'Die HBauO § 70 sieht eine Genehmigungsfreistellung vor',
+    expectError: true,
+  },
+  {
+    label: 'wrong-Bundesland LBO Saarland (must flag)',
+    text: 'LBO Saarland regelt Abstandsflächen mit anderer Formel',
+    expectError: true,
+  },
+  {
+    label: 'wrong-Bundesland ThürBO (must flag)',
+    text: 'Nach ThürBO § 60 wäre der Anbau verfahrensfrei',
+    expectError: true,
+  },
+  {
+    label: 'wrong-Bundesland BauO LSA (must flag)',
+    text: 'BauO LSA § 71 wendet eine andere Schwellenwerte-Logik an',
+    expectError: true,
+  },
+  {
+    label: 'wrong-Bundesland BbgBO (must flag)',
+    text: 'In Brandenburg greift BbgBO Anlage 1 Nr. 5',
+    expectError: true,
+  },
+  {
+    label: 'wrong-Bundesland BauO Bln (must flag)',
+    text: 'Die Bauordnung Berlin BauO Bln § 62 regelt das anders',
+    expectError: true,
+  },
+  {
+    label: 'wrong-Bundesland Hessische Bauordnung long form (must flag)',
+    text: 'Nach Hessische Bauordnung § 63 wäre das verfahrensfrei',
+    expectError: true,
+  },
+]
+
+// ── toolInput-shape fixtures ───────────────────────────────────────────
+//
+// Mirror of citationLint.ts collectModelTexts. Drift between this and
+// the source-of-truth is a bug — adding a new model-emitted field in
+// citationLint.ts means adding it here too. The tests below catch
+// regressions of the §6 audit attack vector A2 (a wrong-Bundesland
+// citation buried inside a non-message field).
+function* collectModelTexts(input) {
+  if (input.message_de) yield { field: 'message_de', text: input.message_de }
+  if (input.message_en) yield { field: 'message_en', text: input.message_en }
+
+  for (const r of input.recommendations_delta ?? []) {
+    if (r.op !== 'upsert') continue
+    if (r.title_de) yield { field: `recommendations_delta[${r.id}].title_de`, text: r.title_de }
+    if (r.title_en) yield { field: `recommendations_delta[${r.id}].title_en`, text: r.title_en }
+    if (r.detail_de) yield { field: `recommendations_delta[${r.id}].detail_de`, text: r.detail_de }
+    if (r.detail_en) yield { field: `recommendations_delta[${r.id}].detail_en`, text: r.detail_en }
+  }
+  for (const p of input.procedures_delta ?? []) {
+    if (p.op !== 'upsert') continue
+    if (p.rationale_de) yield { field: `procedures_delta[${p.id}].rationale_de`, text: p.rationale_de }
+    if (p.rationale_en) yield { field: `procedures_delta[${p.id}].rationale_en`, text: p.rationale_en }
+  }
+  for (const d of input.documents_delta ?? []) {
+    if (d.op !== 'upsert') continue
+    if (d.title_de) yield { field: `documents_delta[${d.id}].title_de`, text: d.title_de }
+    if (d.title_en) yield { field: `documents_delta[${d.id}].title_en`, text: d.title_en }
+  }
+  for (const f of input.extracted_facts ?? []) {
+    if (f.evidence) yield { field: `extracted_facts[${f.key}].evidence`, text: f.evidence }
+  }
+}
+
+// Deep-fixture suite. The first entry is the audit's acceptance test
+// — an LBO BW (Baden-Württemberg) citation buried inside a
+// recommendations_delta.detail_de. Pre-firewall, this would have
+// shipped to the result page silently.
+const TOOL_INPUT_FIXTURES = [
+  {
+    label: 'LBO BW in recommendations_delta.detail_de (must flag, error)',
+    input: {
+      message_de: 'Wir prüfen den Vorgang.',
+      message_en: 'We are reviewing the matter.',
+      recommendations_delta: [
+        {
+          op: 'upsert',
+          id: 'rec-bw',
+          title_de: 'Verfahrensfreiheit klären',
+          detail_de:
+            'Im Zweifel orientieren Sie sich an § 5 LBO BW — die Schwelle ist dort 30 m³.',
+        },
+      ],
+    },
+    expectViolation: true,
+    expectSeverity: 'error',
+    expectField: 'recommendations_delta[rec-bw].detail_de',
+  },
+  {
+    label: 'HBauO Hamburg in procedures_delta.rationale_de (must flag, error)',
+    input: {
+      message_de: 'Test.',
+      message_en: 'Test.',
+      procedures_delta: [
+        {
+          op: 'upsert',
+          id: 'proc-hh',
+          rationale_de: 'Vergleich mit HBauO § 70 zeigt eine andere Schwellenlogik.',
+        },
+      ],
+    },
+    expectViolation: true,
+    expectSeverity: 'error',
+  },
+  {
+    label: 'BauO Bln in documents_delta.title_de (must flag, error)',
+    input: {
+      message_de: 'Test.',
+      message_en: 'Test.',
+      documents_delta: [
+        {
+          op: 'upsert',
+          id: 'doc-bln',
+          title_de: 'Vergleichsdokument zur Bauordnung Berlin',
+        },
+      ],
+    },
+    expectViolation: true,
+    expectSeverity: 'error',
+  },
+  {
+    label: 'SächsBO in extracted_facts.evidence (must flag, error)',
+    input: {
+      message_de: 'Test.',
+      message_en: 'Test.',
+      extracted_facts: [
+        {
+          key: 'fact.foo',
+          value: 'bar',
+          source: 'LEGAL',
+          quality: 'CALCULATED',
+          evidence: 'Verweis auf SächsBO § 4',
+        },
+      ],
+    },
+    expectViolation: true,
+    expectSeverity: 'error',
+  },
+  {
+    label: 'remove-op recommendation_delta with bad text in id (must NOT flag)',
+    input: {
+      message_de: 'Wir entfernen die Empfehlung.',
+      message_en: 'Removing the recommendation.',
+      recommendations_delta: [{ op: 'remove', id: 'rec-old' }],
+    },
+    expectViolation: false,
+  },
+  {
+    label: 'clean toolInput with Art. 57 BayBO across multiple fields (must NOT flag)',
+    input: {
+      message_de:
+        'Verfahrensfrei nach BayBO Art. 57 Abs. 1 Nr. 1 a (Anbau ≤ 75 m³).',
+      message_en:
+        'Permit-free under BayBO Art. 57 Abs. 1 Nr. 1 a (extension ≤ 75 m³).',
+      recommendations_delta: [
+        {
+          op: 'upsert',
+          id: 'rec-clean',
+          title_de: 'Lageplan beauftragen',
+          detail_de: 'Beim ADBV München eine Vermessung beantragen.',
+        },
+      ],
+    },
+    expectViolation: false,
+  },
 ]
 
 // ── Static gate ────────────────────────────────────────────────────────
@@ -142,6 +426,16 @@ function lintText(text) {
     while ((m = regex.exec(text)) !== null) {
       violations.push({ name, match: m[0], severity, index: m.index })
       if (m.index === regex.lastIndex) regex.lastIndex += 1
+    }
+  }
+  return violations
+}
+
+function lintToolInput(input) {
+  const violations = []
+  for (const { field, text } of collectModelTexts(input)) {
+    for (const v of lintText(text)) {
+      violations.push({ ...v, field })
     }
   }
   return violations
@@ -213,16 +507,17 @@ async function runStaticGate() {
     },
   ]))
 
-  // 4. citationLint.ts has at least 6 forbidden patterns (sanity guard
-  //    against an accidental list-empty).
+  // 4. citationLint.ts has at least 20 forbidden patterns (5 Layer-A
+  //    Bayern structural rules + 15 Layer-B Bundesland firewall rules).
+  //    Sanity guard against an accidental list-empty or a partial revert.
   const lintModuleSource = await readFileText(
     'supabase/functions/chat-turn/citationLint.ts',
   )
   const patternCount = (lintModuleSource.match(/regex:\s*\//g) ?? []).length
   results.push(failures('citationLint.ts: forbidden patterns present', [
     {
-      ok: patternCount >= 6,
-      msg: `expected ≥ 6 regex entries in FORBIDDEN_PATTERNS; found ${patternCount}`,
+      ok: patternCount >= 20,
+      msg: `expected ≥ 20 regex entries in FORBIDDEN_PATTERNS (5 Bayern structural + 15 Bundesland firewall); found ${patternCount}`,
     },
   ]))
 
@@ -238,6 +533,40 @@ async function runStaticGate() {
           : `expected no violation but got ${v.length}: ${JSON.stringify(v.map((x) => x.match))}`,
       },
     ]))
+  }
+
+  // 6. Deep-fixture suite: run the lint over the FULL respond-tool
+  // input shape so the new scan surface (recommendations_delta /
+  // procedures_delta / documents_delta / extracted_facts.evidence) is
+  // exercised by the static gate. The acceptance test for the audit's
+  // §6 attack vector A2 — an LBO BW citation buried inside a
+  // recommendation detail — lives here.
+  for (const f of TOOL_INPUT_FIXTURES) {
+    const violations = lintToolInput(f.input)
+    const flagged = violations.length > 0
+    const hasError = violations.some((v) => v.severity === 'error')
+    const conditions = [
+      {
+        ok: flagged === f.expectViolation,
+        msg: f.expectViolation
+          ? `expected violation in toolInput but got none`
+          : `expected no violation but got ${violations.length}: ${JSON.stringify(violations.map((v) => `${v.field}: ${v.match}`))}`,
+      },
+    ]
+    if (f.expectViolation) {
+      conditions.push({
+        ok: hasError === (f.expectSeverity === 'error'),
+        msg: `expected severity=${f.expectSeverity} but got ${hasError ? 'error' : 'warning'}`,
+      })
+      if (f.expectField) {
+        const inField = violations.some((v) => v.field === f.expectField)
+        conditions.push({
+          ok: inField,
+          msg: `expected violation in field=${f.expectField}; got fields=${JSON.stringify(violations.map((v) => v.field))}`,
+        })
+      }
+    }
+    results.push(failures(`toolInput fixture: ${f.label}`, conditions))
   }
 
   return results
