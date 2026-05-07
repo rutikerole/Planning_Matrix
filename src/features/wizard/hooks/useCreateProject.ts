@@ -161,17 +161,16 @@ export function useCreateProject() {
       areas: input.hasPlot
         ? baseState.areas
         : {
-            A: {
-              state: 'VOID',
-              reason:
-                'I-02: kein Grundstück benannt — Bereich A (Planungsrecht) ohne Standortbezug nicht etablierbar',
-            },
+            // I-02 = no plot named ⇒ areas A and C lose their site
+            // anchor and cannot be substantively assessed. Bereich B
+            // stays PENDING because BayBO-defaults still apply
+            // location-independent. Reason strings stay short and
+            // English-language — they live in audit-only state, not
+            // in any user-visible surface, and the canonical German
+            // labels for the areas are owned by locale files.
+            A: { state: 'VOID', reason: 'I-02: no site named' },
             B: { state: 'PENDING' },
-            C: {
-              state: 'VOID',
-              reason:
-                'I-02: kein Grundstück benannt — Bereich C (Sonstige Vorgaben) ohne Standortbezug nicht etablierbar',
-            },
+            C: { state: 'VOID', reason: 'I-02: no site named' },
           },
     }
 
