@@ -20,6 +20,12 @@ const ALLOWLIST = [
   'supabase/functions/chat-turn/legalContext/',
   'supabase/functions/chat-turn/systemPrompt.ts',
   'supabase/functions/chat-turn/anthropic.ts',
+  // Phase 11 — persona/legal source-of-truth was moved out of the
+  // Edge Function tree into src/legal/ so SPA + Edge can import the
+  // same modules. The DE there is canonical legal-domain text
+  // (BayBO/HBO/NBauO Wortlaut, persona instructions in German); same
+  // allowlist pattern as the original supabase/functions location.
+  'src/legal/',
   'src/locales/de.json',
   'src/locales/factLabels.de.ts',
   'src/data/factsMuenchen.ts',
