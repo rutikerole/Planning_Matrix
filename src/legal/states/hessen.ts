@@ -69,8 +69,15 @@ gemäß § 67 HBO.
 
   ✗ "Art. NN HBO"          → HBO verwendet "§", nicht "Art."
                               Korrekt: "HBO § NN" oder "§ NN HBO".
-  ✗ "Anlage 1 HBO"         → existiert nicht. Verfahrensfreiheit
-                              regelt die HBO direkt in § 63.
+  ✗ "Anlage 1 BayBO" / "Annex 1 BayBO" — bleibt in Hessen-Kontext
+                              kein zulässiges Zitat (Bayern-Struktur,
+                              dort selbst falsch).
+  ⚠ Hinweis zur HBO-Anlage: § 63 HBO verweist ausdrücklich "nach
+     Maßgabe der Anlage". Die HBO trägt eine Anlage; "Anlage HBO"
+     bzw. "Anlage zu § 63 HBO" ist als Zitat zulässig, wenn der
+     konkrete Eintrag aus dem Anlagentext belegt ist. Pauschal-
+     Aussagen "die HBO regele Verfahrensfreiheit direkt in § 63"
+     sind FALSCH — § 63 delegiert an die Anlage.
   ✗ "BayBO Art. 57"        → falsches Bundesland. Wir wenden
                               hessisches Recht an.
   ✗ "BauO NRW", "LBO BW"   → falsches Bundesland.
@@ -133,15 +140,42 @@ HBO — Hessische Bauordnung (zentrale Normen)
   Nachweispflichten nach § 68.
 
 § 63 HBO — Baugenehmigungsfreie Bauvorhaben
-  Hessen regelt die Baugenehmigungsfreiheit DIREKT in § 63 HBO
-  (anders als in BbgBO/MBO/älterer NRW-Struktur, die mit "Anlage 1"
-  arbeiten). Eine "Anlage 1 HBO" existiert NICHT.
+  Wortlaut § 63 HBO: "Vorhaben nach § 62 Abs. 1 Satz 1 bedürfen
+  nach Maßgabe der Anlage keiner Baugenehmigung." § 63 delegiert
+  damit den Maßnahmenkatalog an die Anlage zur HBO. Der konkrete
+  Inhalt der Anlage zu § 63 HBO ist im Einzelfall gegen den Wort-
+  laut zu prüfen — insbesondere die Schwellen für Instandsetzung,
+  Nutzungsänderung und Anbau. Pauschal-Aussagen wie "Sanierung ist
+  in Hessen verfahrensfrei" sind ohne Anlagentext-Beleg unzulässig.
 
 § 64 HBO — Genehmigungsfreistellung
-  Genehmigungsfreistellung in Hessen kommt für Wohngebäude im Gel-
-  tungsbereich eines qualifizierten Bebauungsplans nach § 30 Abs. 1
-  BauGB in Betracht. Die Gemeinde kann binnen einem Monat die Durch-
-  führung des vereinfachten Verfahrens nach § 65 HBO verlangen.
+  Anwendungsbereich nach Abs. 1: Errichtung, Änderung oder Nutzungs-
+  änderung baulicher Anlagen, die KEINE Sonderbauten sind, sind
+  baugenehmigungsfrei, wenn (kumulativ):
+  1. das Vorhaben im Geltungsbereich eines Bebauungsplans im Sinne
+     des § 30 Abs. 1 oder der §§ 12, 30 Abs. 2 BauGB liegt,
+  2. keine Ausnahme oder Befreiung nach § 31 BauGB beantragt ist,
+  3. die Erschließung im Sinne des BauGB gesichert ist,
+  4. keine Abweichung nach § 73 HBO erforderlich ist,
+  5. die Gemeinde nicht innerhalb der Frist nach Abs. 3 Satz 4
+     erklärt, dass ein Baugenehmigungsverfahren durchgeführt werden
+     soll.
+
+  Frist nach Abs. 3 Satz 4 (verbatim): "Mit dem Vorhaben darf
+  begonnen werden, wenn die Gemeinde innerhalb EINES MONATS, nach-
+  dem die Bauvorlagen bei ihr eingegangen sind, gegenüber der Bau-
+  aufsichtsbehörde 1. nicht die Durchführung eines Baugenehmigungs-
+  verfahrens fordert, 2. vorab den Verzicht hierauf mitteilt oder
+  3. keine Untersagung nach § 15 Abs. 1 Satz 2 BauGB beantragt."
+
+  Schwellen-Ausschlüsse nach Abs. 2 (Genehmigungsfreistellung gilt
+  NICHT für):
+  • Gebäude, die mehr als 5.000 m² Wohnfläche schaffen;
+  • öffentlich zugängliche bauliche Anlagen mit gleichzeitiger
+    Nutzung durch mehr als 100 zusätzliche Besucher;
+  • Tageseinrichtungen für Kinder im Sicherheitsabstand eines
+    Betriebsbereichs nach § 3 Abs. 5a/5c Bundes-Immissionsschutz-
+    gesetz.
 
 § 65 HBO — Vereinfachtes Baugenehmigungsverfahren
   Häufigste Verfahrensart für Wohngebäude und kleinere Vorhaben.
@@ -328,16 +362,23 @@ T-03 SANIERUNG — TYPISCHE / VERBOTENE Zitate
 ══════════════════════════════════════════════════════════════════════════
 
 TYPISCHE ✓ in Hessen:
-  • § 63 HBO baugenehmigungsfreie Maßnahmen für Instandsetzungen
-    ohne Eingriff in tragende Bauteile / Brandwände / Fluchtwege
+  • § 63 HBO als Eingangsverweisung für baugenehmigungsfreie
+    Bauvorhaben — der konkrete Maßnahmenkatalog steht in der
+    Anlage zur HBO und ist im Einzelfall gegen den Anlagentext
+    zu prüfen, nicht aus BayBO-/MBO-Analogie zu inferieren.
   • § 73 HBO Abweichungen für Bestandsanpassungen
   • Hinweis auf HBO-Baupaket-I (Stand 14.10.2025): die genauen
     Erleichterungen für Sanierungsmaßnahmen sind über die IngKH-
-    Synopse zu verifizieren
+    Synopse zu verifizieren.
 
 VERBOTENE ✗ in Hessen:
   • Pauschal-Aussage "Sanierung ist verfahrensfrei" — § 63 HBO
-    ist nach Maßnahmenkatalog zu prüfen, nicht generisch
+    delegiert an die Anlage; ohne Anlagentext-Beleg keine pauschale
+    Verfahrensfreiheits-Aussage.
+  • Inferenz aus BayBO Art. 57 Abs. 3 Nr. 3 ("Instandsetzung ohne
+    Eingriff in tragende Teile / Brandwände / Fluchtwege") als
+    HBO-Aussage zitieren — strukturell parallel, aber HBO-Anlagen-
+    text nicht byteweise verifiziert.
 
 ══════════════════════════════════════════════════════════════════════════
 T-04 UMNUTZUNG — TYPISCHE / VERBOTENE Zitate
