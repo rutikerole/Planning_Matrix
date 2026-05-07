@@ -363,6 +363,31 @@ const BUNDESLAND_SWITCH_FIXTURES = [
     text: 'Anlage 1 BayBO ist hier ohnehin nicht einschlägig.',
     expectFlag: true,
   },
+  // Phase 12 commit 3 — NRW content-grade fixtures
+  {
+    label: 'active=nrw, "§ 6 BauO NRW" Abstandsflächen — must NOT flag',
+    activeBundesland: 'nrw',
+    text: 'Die Abstandsflächen richten sich nach § 6 BauO NRW.',
+    expectFlag: false,
+  },
+  {
+    label: 'active=nrw, "§ 63 BauO NRW" Genehmigungsfreistellung — must NOT flag',
+    activeBundesland: 'nrw',
+    text: 'Im qualifizierten B-Plan greift § 63 BauO NRW Genehmigungsfreistellung.',
+    expectFlag: false,
+  },
+  {
+    label: 'active=nrw, "§ 64 BauO NRW" vereinfachtes Verfahren — must NOT flag',
+    activeBundesland: 'nrw',
+    text: 'Das vereinfachte Verfahren nach § 64 BauO NRW ist Regel für Wohngebäude.',
+    expectFlag: false,
+  },
+  {
+    label: 'active=nrw, "§ 67 BauO NRW" Bauvorlageberechtigung — must NOT flag',
+    activeBundesland: 'nrw',
+    text: 'Bauvorlageberechtigung nach § 67 BauO NRW ist zwingend.',
+    expectFlag: false,
+  },
   // ── BW
   {
     label: 'active=bw, "§ 5 LBO BW" — must NOT flag (own state)',
