@@ -238,6 +238,13 @@ if architecture warrants (flag during the phase); smokeWalk fixtures.
 - LOC: ~2400–2750 (8 Flächenländer × ~200 + 3 Stadtstaaten × ~250
   + ~100 composition layer).
 - Time: 2–3 weeks.
+- **Phase 11 stub-correction overhead.** Phase 14 stub-expansion
+  must verify every Phase 11 stub § against primary PDF before
+  expanding. Hessen commit 1 (Phase 12) found 5 wrong §§ in the
+  Phase 11 stub (§ 49 / § 56 / § 64 / § 67 / § 78 all assigned
+  to wrong HBO articles); assume similar density across the other
+  10 states. Per-state Phase 14 budget conservatively: **+30 min
+  verification per state** before content writing starts.
 
 **Risks / open questions.** Stadtstaaten architecture — may need a
 `StateDelta.kind: 'flaechenland' | 'stadtstaat'` discriminator.
