@@ -389,6 +389,31 @@ const BUNDESLAND_SWITCH_FIXTURES = [
     text: 'BayBO Art. 6 ist nicht anwendbar.',
     expectFlag: true,
   },
+  // Phase 12 commit 2 — Niedersachsen content-grade fixtures
+  {
+    label: 'active=niedersachsen, "§ 60 NBauO" Verfahrensfreie + Anhang — must NOT flag',
+    activeBundesland: 'niedersachsen',
+    text: 'Die im Anhang genannten baulichen Anlagen nach § 60 NBauO sind verfahrensfrei.',
+    expectFlag: false,
+  },
+  {
+    label: 'active=niedersachsen, "§ 63 NBauO" vereinfachtes Verfahren — must NOT flag',
+    activeBundesland: 'niedersachsen',
+    text: 'Sofern keine Sonderbauten vorliegen, läuft das Vorhaben über § 63 NBauO.',
+    expectFlag: false,
+  },
+  {
+    label: 'active=niedersachsen, "§ 64 NBauO" reguläres Verfahren — must NOT flag',
+    activeBundesland: 'niedersachsen',
+    text: 'Sonderbauten werden nach § 64 NBauO geprüft.',
+    expectFlag: false,
+  },
+  {
+    label: 'active=niedersachsen, "Anhang NBauO" — must NOT flag',
+    activeBundesland: 'niedersachsen',
+    text: 'Der konkrete Maßnahmenkatalog steht im Anhang NBauO.',
+    expectFlag: false,
+  },
   // ── Hessen
   {
     label: 'active=hessen, "§ 6 HBO" — must NOT flag (own state)',
