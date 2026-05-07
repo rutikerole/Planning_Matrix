@@ -19,12 +19,17 @@ to one of these. Inline-cite the source in the commit message.
 No Wikipedia, no SEO blog content, no "according to general
 practice."
 
+> **Confidence ratings here are advisory. Per-state fetch dry-runs
+> supersede these — when the dry-run finds a discrepancy, the
+> dry-run wins.** See `docs/PHASE_12_HESSEN_FETCH_DRYRUN.md` for
+> the pattern; one dry-run lands per state before content writing.
+
 | State | LBO consolidated text | Architektenkammer guidance | Verfahrens-/Ausführungs-VV | Confidence |
 | --- | --- | --- | --- | --- |
 | NRW | `recht.nrw.de` — BauO NRW (Fassung 2018) **+ 2024-Novelle** consolidated | `aknw.de` Bauherreninformation; IK-Bau NRW Bauvorlage-Richtlinien | VV TB NRW (Technische Baubestimmungen); Stellplatzverordnung NRW | **HIGH** for the 2018 base; **MEDIUM** for 2024-Novelle (verify changed articles via consolidated text) |
 | BW | `landesrecht-bw.de` — LBO BW **+ Modernisierungsnovelle 2023** | `akbw.de` Bauherrenmappe | LBOAVO (Allgemeine Ausführungsverordnung); LBOVVO (Verfahrensverordnung) | **MEDIUM** — the 2023 Modernisierung needs Drucksache 17/4334 (Landtag) verification; AKBW summary alone is not sufficient |
 | NS | `voris.niedersachsen.de` — NBauO 2012 + 2022-Novelle | `aknds.de` Bauherreninformation; IKN | DVO-NBauO; AVV-NBauO | **HIGH** — voris is well-structured, NBauO is stable |
-| HE | `landesrecht-hessen.de` — HBO 2018 + 2020-Novelle | `akh.de` Bauherreninformation; IngKH | HBauVwV (Hessische Bauaufsichts-VV) | **HIGH** for HBO; **MEDIUM** for HBauVwV (Verwaltungsvorschrift, public version may lag latest) |
+| HE | `ingkh.de` (Synopse + consolidated PDF) — HBO 2018 **+ Drittes Änderungsgesetz / Baupaket I, in Kraft 14.10.2025 (GVBl. 2025 Nr. 66)** | `akh.de/beratung/bauen-mit-architekten` Bauherreninformation; IngKH | HBauVwV (Hessische Bauaufsichts-VV) — **omit citations from systemBlock unless a reachable post-Baupaket-I version surfaces mid-commit** | **MEDIUM-HIGH** for HBO via IngKH (state portal `rv.hessenrecht.hessen.de` is JS-rendered SPA, unreachable via server-side fetch); **LOW** for HBauVwV (same SPA limitation, no IngKH-equivalent identified) — see PHASE_12_HESSEN_FETCH_DRYRUN.md |
 
 ---
 
