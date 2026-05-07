@@ -1199,6 +1199,68 @@ async function runStaticGate() {
       msg: 'share-project must log project_member.accepted to event_log',
     },
   ]))
+
+  // ── v1.0.1 hot-fix drift checks (POST_V1_AUDIT CRIT-1/2/3) ──────────
+  // Three CRITICAL findings closed in v1.0.1; the static-source asserts
+  // below pin the fix and fail the gate if any of the three is reverted.
+  results.push(failures('v1.0.1 CRIT-1: non-owner-cannot-share', [
+    {
+      ok: /action:\s*'create'/.test(shareProjectSrc),
+      msg: 'share-project must support {action:"create"} mode for owner-side invite generation',
+    },
+    {
+      ok: /handleCreate\b[\s\S]{0,2000}owner_id\s*!==\s*userId/.test(shareProjectSrc),
+      msg: 'CRIT-1 fix: handleCreate must explicitly compare projects.owner_id against the caller before INSERT',
+    },
+    {
+      ok: /Only the project owner can create architect invites/.test(shareProjectSrc),
+      msg: 'CRIT-1 fix: 403 message must surface "Only the project owner can create architect invites"',
+    },
+  ]))
+  results.push(failures('v1.0.1 CRIT-2: accept-rejects-non-designer', [
+    {
+      ok: /handleAccept\b[\s\S]{0,2000}profile\?\.role\s*!==\s*'designer'/.test(shareProjectSrc),
+      msg: 'CRIT-2 pin: handleAccept must check profile.role !== designer before any state mutation',
+    },
+    {
+      ok: /Only profiles with role=designer can claim architect invites/.test(shareProjectSrc),
+      msg: 'CRIT-2 pin: 403 message must surface the locked designer-only copy',
+    },
+  ]))
+  results.push(failures('v1.0.1 CRIT-3: accept-rejects-expired-token', [
+    {
+      ok: /expires_at/.test(shareProjectSrc),
+      msg: 'CRIT-3 fix: share-project must read expires_at from the project_members row',
+    },
+    {
+      ok: /new Date\(row\.expires_at\)\.getTime\(\)\s*<\s*Date\.now\(\)/.test(shareProjectSrc),
+      msg: 'CRIT-3 fix: handleAccept must reject if the invite has expired (expires_at < now)',
+    },
+    {
+      ok: /Diese Einladung ist abgelaufen/.test(shareProjectSrc),
+      msg: 'CRIT-3 fix: expired-invite copy must surface the locked German message',
+    },
+  ]))
+  // Migration drift — 0030 must declare the column + backfill + index.
+  const expiryMig = await readFileText('supabase/migrations/0030_project_members_expiry.sql')
+  results.push(failures('v1.0.1 CRIT-3: 0030_project_members_expiry.sql shape', [
+    {
+      ok: /add column if not exists expires_at\s+timestamptz/i.test(expiryMig),
+      msg: '0030 must ADD COLUMN IF NOT EXISTS expires_at timestamptz',
+    },
+    {
+      ok: /default now\(\)\s*\+\s*interval\s+'7 days'/i.test(expiryMig),
+      msg: '0030 must use 7-day default for new rows',
+    },
+    {
+      ok: /update public\.project_members[\s\S]{0,400}set expires_at\s*=\s*invited_at\s*\+\s*interval\s+'7 days'/i.test(expiryMig),
+      msg: '0030 must backfill pre-existing rows from invited_at + 7 days',
+    },
+    {
+      ok: /create index if not exists project_members_expires_at_idx/i.test(expiryMig),
+      msg: '0030 must create the partial index for stale-invite cleanup',
+    },
+  ]))
   results.push(failures('phase-13 week 3: verify-fact edge function shape', [
     {
       ok: /Deno\.serve\(/.test(verifyFactSrc),

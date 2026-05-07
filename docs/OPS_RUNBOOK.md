@@ -179,7 +179,9 @@ For a deeper dive, see `docs/PHASE_10_1_REPORT.md`.
 ## 6. DESIGNER role provisioning
 
 Until the v1.5 §6.B.01 self-service architect-onboarding flow ships
-post-v1, designer role is provisioned manually:
+post-v1, designer role is provisioned manually. Two paths to
+generate the invite: SQL (always works) or Edge Function call
+(v1.0.1 hardened path with explicit owner check).
 
 ```sql
 -- 1. Sign up the architect's email through the SPA's normal /sign-up.
@@ -188,20 +190,63 @@ post-v1, designer role is provisioned manually:
 update public.profiles
    set role = 'designer'
  where email = '<architect-email>';
--- 3. The owner inserts an unclaimed project_members row:
-insert into public.project_members (project_id, role_in_project)
-values ('<project-uuid>', 'designer')
-returning invite_token;
+-- 3. The owner inserts an unclaimed project_members row.
+--    v1.0.1 — set expires_at explicitly so the row gets a non-null
+--    TTL even if a future schema migration drops the default.
+insert into public.project_members (
+    project_id,
+    role_in_project,
+    expires_at
+)
+values (
+    '<project-uuid>',
+    'designer',
+    now() + interval '7 days'
+)
+returning invite_token, expires_at;
 -- 4. Owner copy-paste-shares the URL:
 --    https://<host>/architect/accept?token=<invite_token>
+--    (NB the token is now valid for 7 days from `expires_at`.)
 ```
 
-The architect signs in, lands on the route, the SPA POSTs
-`/functions/v1/share-project`, the Edge Function flips
-`user_id + accepted_at`, and the architect lands on `/architect`
-with the new mandate visible.
+**v1.0.1 alternative — generate via Edge Function** (no DB-level
+SQL needed; cleaner audit trail):
+
+```sh
+curl -X POST "$SUPABASE_URL/functions/v1/share-project" \
+  -H "Authorization: Bearer <owner-session-jwt>" \
+  -H "Content-Type: application/json" \
+  -d '{"action":"create","projectId":"<project-uuid>"}'
+```
+
+Returns `{ inviteToken, expiresAt, acceptUrl }`. The Edge Function
+explicitly checks the caller is the project's owner before INSERT
+(POST_V1_AUDIT CRIT-1 fix) and the architect's role check fires on
+accept (POST_V1_AUDIT CRIT-2). The 7-day TTL is enforced on accept
+(POST_V1_AUDIT CRIT-3); expired tokens are rejected with the locked
+"Diese Einladung ist abgelaufen" copy.
+
+**Stale-invite cleanup** (run weekly during ramp; daily once
+production traffic ramps). Removes unclaimed invites that have
+expired:
+
+```sql
+delete from public.project_members
+ where accepted_at is null
+   and expires_at  is not null
+   and expires_at  < now();
+```
+
+The partial index `project_members_expires_at_idx` (added in
+migration 0030) makes this query fast even at scale.
+
+The architect signs in, lands on `/architect/accept?token=…`, the
+SPA POSTs `/functions/v1/share-project` with `{inviteToken}`, the
+Edge Function flips `user_id + accepted_at`, and the architect
+lands on `/architect` with the new mandate visible.
 
 **Cross-ref:** `docs/PHASE_13_REVIEW.md` § "Manual deploy checklist".
+**Cross-ref:** `docs/POST_V1_AUDIT.md` § 5 (Phase 13 architect flow).
 
 ---
 

@@ -1,47 +1,45 @@
 // ───────────────────────────────────────────────────────────────────────
-// Phase 13 Week 3 — share-project Edge Function
+// Phase 13 Week 3 — share-project Edge Function (v1.0.1 hardened).
 //
-// "B1 ship-without-email" invite-claim endpoint. The project owner
-// generated a project_members row in advance (via Wizard or Result-
-// page action) carrying an invite_token + role_in_project='designer'
-// and user_id=NULL. The owner then copy-paste-shares the URL
+// Two modes, discriminated by request body shape:
 //
-//   /architect/accept?token=<invite_token>
+//   • CREATE  { action: 'create', projectId: '<uuid>' }
+//     v1.0.1 hot-fix (POST_V1_AUDIT CRIT-1). Owner generates an
+//     invite for an architect. Explicit ownership check before the
+//     INSERT — RLS at 0026 enforces the same predicate, but a code-
+//     level check returns the locked 403 copy instead of a generic
+//     RLS error. Returns the new invite_token + expires_at + the
+//     /architect/accept URL the owner copy-paste-shares.
 //
-// with the architect, who signs into their own account, lands on the
-// SPA /architect/accept route, and the SPA POSTs here with the token.
-// We:
+//   • ACCEPT  { inviteToken: '<uuid>' }
+//     The architect lands on /architect/accept?token=…, the SPA
+//     POSTs here. We:
+//       1. Auth-check the caller (Bearer + supabase.auth.getUser).
+//       2. Verify profiles.role === 'designer' (POST_V1_AUDIT CRIT-2 —
+//          existing check pinned + smokeWalk fixture added).
+//       3. Look up the unclaimed project_members row by invite_token.
+//       4. Reject if expires_at is in the past (POST_V1_AUDIT CRIT-3
+//          — 7-day TTL added in migration 0030).
+//       5. Atomically UPDATE (user_id = caller, accepted_at = now())
+//          using a service-role client. RLS on project_members
+//          ("member accepts invite") only permits UPDATEs where
+//          user_id = auth.uid(); the row's user_id is still NULL
+//          here, so a user-scoped UPDATE would no-op. Service role
+//          is used deliberately AFTER the role check above runs
+//          against the caller's RLS-scoped session.
+//       6. Log to event_log with name='project_member.accepted'.
 //
-//   1. Auth-check the caller (Bearer + supabase.auth.getUser).
-//   2. Verify the caller's profiles.role === 'designer' — clients
-//      cannot claim architect mandates.
-//   3. Look up the unclaimed project_members row by invite_token.
-//   4. Atomically UPDATE it (user_id = caller, accepted_at = now())
-//      using a service-role client. RLS on project_members
-//      ("member accepts invite") only permits UPDATEs where
-//      user_id = auth.uid(); the row's user_id is still NULL at this
-//      moment, so a user-scoped UPDATE would no-op. Service role is
-//      used deliberately here for the claim, after the role check
-//      above runs against the caller's RLS-scoped session.
-//   5. Log to event_log with name='project_member.accepted'.
+// Idempotent: re-claim by the same user returns alreadyAccepted=true.
 //
-// Idempotent: if the row's user_id is already the caller and
-// accepted_at is set, return ok with the existing project_id
-// (re-clicks during a refresh storm don't double-fail).
-//
-// Request:
-//   POST /functions/v1/share-project
-//   Headers: Authorization: Bearer <session.access_token>
-//   Body:    { "inviteToken": "<uuid>" }
-//
-// Response 200:
-//   { "ok": true, "projectId": "<uuid>", "alreadyAccepted": <bool> }
-//
-// Response 4xx/5xx:
-//   { "ok": false, "error": { "code": "...", "message": "..." } }
+// Response 200 (create):
+//   { ok: true, inviteToken, expiresAt, acceptUrl, requestId }
+// Response 200 (accept):
+//   { ok: true, projectId, alreadyAccepted, requestId }
+// Response 4xx/5xx (both):
+//   { ok: false, error: { code, message }, requestId }
 // ───────────────────────────────────────────────────────────────────────
 
-import { createClient } from '@supabase/supabase-js'
+import { createClient, type SupabaseClient } from '@supabase/supabase-js'
 
 const ALLOWED_ORIGINS = [
   'http://localhost:5173',
@@ -62,7 +60,14 @@ function buildCorsHeaders(origin: string | null): Record<string, string> {
   }
 }
 
+const PUBLIC_SITE_URL =
+  Deno.env.get('PUBLIC_SITE_URL') ?? 'https://planning-matrix.vercel.app'
+
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+
+type RequestBody =
+  | { action: 'create'; projectId: string }
+  | { inviteToken: string }
 
 Deno.serve(async (req: Request) => {
   const corsHeaders = buildCorsHeaders(req.headers.get('Origin'))
@@ -90,9 +95,9 @@ Deno.serve(async (req: Request) => {
     )
   }
 
-  let body: { inviteToken?: string }
+  let raw: unknown
   try {
-    body = await req.json()
+    raw = await req.json()
   } catch {
     return jsonError(
       { code: 'validation', message: 'Invalid JSON' },
@@ -101,9 +106,15 @@ Deno.serve(async (req: Request) => {
       requestId,
     )
   }
-  if (typeof body.inviteToken !== 'string' || !UUID_RE.test(body.inviteToken)) {
+
+  const body = parseBody(raw)
+  if (!body) {
     return jsonError(
-      { code: 'validation', message: 'inviteToken must be a UUID' },
+      {
+        code: 'validation',
+        message:
+          'Body must be either {action:"create", projectId:"<uuid>"} or {inviteToken:"<uuid>"}.',
+      },
       400,
       corsHeaders,
       requestId,
@@ -122,8 +133,6 @@ Deno.serve(async (req: Request) => {
     )
   }
 
-  // Caller-scoped client — RLS reads profiles.role for the actual
-  // signed-in user only.
   const userClient = createClient(supabaseUrl, anonKey, {
     global: { headers: { Authorization: authHeader } },
     auth: { persistSession: false, autoRefreshToken: false },
@@ -139,10 +148,146 @@ Deno.serve(async (req: Request) => {
     )
   }
 
+  if ('action' in body) {
+    return await handleCreate({
+      body,
+      userClient,
+      userId: userData.user.id,
+      corsHeaders,
+      requestId,
+    })
+  }
+  return await handleAccept({
+    body,
+    userClient,
+    serviceClient: createClient(supabaseUrl, serviceKey, {
+      auth: { persistSession: false, autoRefreshToken: false },
+    }),
+    userId: userData.user.id,
+    corsHeaders,
+    requestId,
+  })
+})
+
+function parseBody(raw: unknown): RequestBody | null {
+  if (raw === null || typeof raw !== 'object') return null
+  const obj = raw as Record<string, unknown>
+  if (
+    obj.action === 'create' &&
+    typeof obj.projectId === 'string' &&
+    UUID_RE.test(obj.projectId)
+  ) {
+    return { action: 'create', projectId: obj.projectId }
+  }
+  if (typeof obj.inviteToken === 'string' && UUID_RE.test(obj.inviteToken)) {
+    return { inviteToken: obj.inviteToken }
+  }
+  return null
+}
+
+// ── CREATE — owner generates an invite ───────────────────────────────────
+async function handleCreate(args: {
+  body: { action: 'create'; projectId: string }
+  userClient: SupabaseClient
+  userId: string
+  corsHeaders: Record<string, string>
+  requestId: string
+}): Promise<Response> {
+  const { body, userClient, userId, corsHeaders, requestId } = args
+
+  // POST_V1_AUDIT CRIT-1 — explicit project-ownership check before
+  // the INSERT. RLS at 0026:67-78 enforces the same predicate; the
+  // code-level check is defense-in-depth + cleaner UX (a structured
+  // 403 instead of a generic RLS-deny). The user-scoped client's
+  // SELECT also relies on the projects RLS at 0003 (owner-only +
+  // 0028 architect-member); only the owner can read their own
+  // project here.
+  const { data: project, error: pErr } = await userClient
+    .from('projects')
+    .select('id, owner_id')
+    .eq('id', body.projectId)
+    .maybeSingle()
+  if (pErr) {
+    return jsonError(
+      { code: 'persistence_failed', message: pErr.message },
+      500,
+      corsHeaders,
+      requestId,
+    )
+  }
+  if (!project) {
+    return jsonError(
+      { code: 'not_found', message: 'Project not found.' },
+      404,
+      corsHeaders,
+      requestId,
+    )
+  }
+  if (project.owner_id !== userId) {
+    return jsonError(
+      {
+        code: 'forbidden',
+        message: 'Only the project owner can create architect invites.',
+      },
+      403,
+      corsHeaders,
+      requestId,
+    )
+  }
+
+  const { data: row, error: insertErr } = await userClient
+    .from('project_members')
+    .insert({
+      project_id: body.projectId,
+      role_in_project: 'designer',
+    })
+    .select('id, invite_token, expires_at')
+    .maybeSingle()
+
+  if (insertErr || !row) {
+    return jsonError(
+      {
+        code: 'persistence_failed',
+        message: insertErr?.message ?? 'Insert returned no row.',
+      },
+      500,
+      corsHeaders,
+      requestId,
+    )
+  }
+
+  return new Response(
+    JSON.stringify({
+      ok: true,
+      inviteToken: row.invite_token,
+      expiresAt: row.expires_at,
+      acceptUrl: `${PUBLIC_SITE_URL}/architect/accept?token=${row.invite_token}`,
+      requestId,
+    }),
+    {
+      status: 201,
+      headers: { 'Content-Type': 'application/json', ...corsHeaders },
+    },
+  )
+}
+
+// ── ACCEPT — architect claims an invite ──────────────────────────────────
+async function handleAccept(args: {
+  body: { inviteToken: string }
+  userClient: SupabaseClient
+  serviceClient: SupabaseClient
+  userId: string
+  corsHeaders: Record<string, string>
+  requestId: string
+}): Promise<Response> {
+  const { body, userClient, serviceClient, userId, corsHeaders, requestId } = args
+
+  // POST_V1_AUDIT CRIT-2 — designer-role check (existing in v1.0;
+  // pinned by smokeWalk drift fixture in v1.0.1).
   const { data: profile } = await userClient
     .from('profiles')
     .select('role')
-    .eq('id', userData.user.id)
+    .eq('id', userId)
     .maybeSingle()
   if (profile?.role !== 'designer') {
     return jsonError(
@@ -156,16 +301,12 @@ Deno.serve(async (req: Request) => {
     )
   }
 
-  // Service-role client — bypasses the project_members "member accepts
-  // invite" RLS so the claim can flip user_id=NULL → auth.uid().
-  const serviceClient = createClient(supabaseUrl, serviceKey, {
-    auth: { persistSession: false, autoRefreshToken: false },
-  })
-
-  // Look up the row by invite_token.
+  // Look up the row by invite_token via service-role (the unclaimed
+  // row has user_id=NULL, which the user-scoped SELECT policy
+  // would not return).
   const { data: row, error: lookupErr } = await serviceClient
     .from('project_members')
-    .select('id, project_id, user_id, accepted_at, role_in_project')
+    .select('id, project_id, user_id, accepted_at, role_in_project, expires_at')
     .eq('invite_token', body.inviteToken)
     .maybeSingle()
 
@@ -194,9 +335,23 @@ Deno.serve(async (req: Request) => {
     )
   }
 
-  // Idempotency: if already accepted by this same user, succeed.
+  // POST_V1_AUDIT CRIT-3 — TTL enforcement. Migration 0030 default is
+  // 7 days from row creation. An expired invite is rejected before
+  // any state mutation; the owner can re-issue via the create mode.
+  if (row.expires_at && new Date(row.expires_at).getTime() < Date.now()) {
+    return jsonError(
+      {
+        code: 'forbidden',
+        message: 'Diese Einladung ist abgelaufen. Bitte den Bauherrn um eine neue.',
+      },
+      403,
+      corsHeaders,
+      requestId,
+    )
+  }
+
   if (row.user_id && row.accepted_at) {
-    if (row.user_id === userData.user.id) {
+    if (row.user_id === userId) {
       return jsonOk(
         { projectId: row.project_id, alreadyAccepted: true },
         corsHeaders,
@@ -211,12 +366,10 @@ Deno.serve(async (req: Request) => {
     )
   }
 
-  // Atomic claim. Guard with WHERE user_id IS NULL so two concurrent
-  // claims race-safe — only one wins.
   const now = new Date().toISOString()
   const { data: updated, error: updErr } = await serviceClient
     .from('project_members')
-    .update({ user_id: userData.user.id, accepted_at: now })
+    .update({ user_id: userId, accepted_at: now })
     .eq('id', row.id)
     .is('user_id', null)
     .select('id, project_id')
@@ -231,13 +384,12 @@ Deno.serve(async (req: Request) => {
     )
   }
   if (!updated) {
-    // Lost the race — re-fetch to give a precise error.
     const { data: fresh } = await serviceClient
       .from('project_members')
       .select('user_id')
       .eq('id', row.id)
       .maybeSingle()
-    if (fresh?.user_id === userData.user.id) {
+    if (fresh?.user_id === userId) {
       return jsonOk(
         { projectId: row.project_id, alreadyAccepted: true },
         corsHeaders,
@@ -252,14 +404,11 @@ Deno.serve(async (req: Request) => {
     )
   }
 
-  // Best-effort observability event. Use service role since event_log
-  // RLS scopes inserts to user_id=auth.uid() and we want the row
-  // attributed to the architect anyway.
   void serviceClient
     .from('event_log')
     .insert({
       session_id: requestId,
-      user_id: userData.user.id,
+      user_id: userId,
       project_id: updated.project_id,
       source: 'system',
       name: 'project_member.accepted',
@@ -283,7 +432,7 @@ Deno.serve(async (req: Request) => {
     corsHeaders,
     requestId,
   )
-})
+}
 
 function jsonOk(
   payload: { projectId: string; alreadyAccepted: boolean },
