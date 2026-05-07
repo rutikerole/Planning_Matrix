@@ -47,6 +47,20 @@ Each state's `systemBlock` expands from the commit-2 stub to include:
 `allowedCitations` extends from ~10 stub entries to ~25–35 per
 state (every canonical article touched in the new content).
 
+**Visible-gap rule.** When `PHASE_12_<state>_VV_REQUESTS.md` is
+empty for a category (e.g., HBauVwV cites that can't be made
+meaningful given dry-run findings), the state's `systemBlock` MUST
+acknowledge the gap explicitly in persona text — not bury it in
+audit-trail docs. Use the same "in Vorbereitung" pattern the 11
+minimum stubs use. Example phrasing:
+
+> *"Verwaltungsvorschriften zum HBauVwV werden in einer späteren
+> Bearbeitungsphase ergänzt — bitte verifizieren Sie verfahrens-
+> spezifische Anforderungen mit der zuständigen Behörde."*
+
+A user asking about HBauVwV gets an honest "in Vorbereitung"
+answer, not a hallucinated paraphrase or a confident silence.
+
 ---
 
 ## Per-state acceptance criteria
