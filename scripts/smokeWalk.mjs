@@ -36,7 +36,7 @@
 import { readFile } from 'node:fs/promises'
 import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'node:path'
-import { createHash } from 'node:crypto'
+import { computeBayernSha, EXPECTED_BAYERN_SHA } from './lib/bayernSha.mjs'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const REPO_ROOT = join(__dirname, '..')
@@ -554,46 +554,19 @@ function lintText(text, activeBundesland = null) {
 }
 
 // ── Bayern byte-for-byte gate ──────────────────────────────────────────
-// Re-derives composeLegalContext('bayern') from raw slice files and
-// asserts the SHA-256 matches the expected baseline. The baseline is
-// frozen at Phase 11 commit 1 (b18d3f7f...3471). When Bayern content
-// is intentionally edited, update EXPECTED_BAYERN_SHA below and call
-// out the change in the commit message.
-const EXPECTED_BAYERN_SHA =
-  'b18d3f7f9a6fe238c18cec5361d30ea3a547e46b1ef2b16a1e74c533aacb3471'
-
-function extractBackticked(file, exportName) {
-  const re = new RegExp(`export const ${exportName} =\\s*\`([\\s\\S]*?)\``)
-  const m = file.match(re)
-  if (!m) throw new Error(`Could not extract ${exportName}`)
-  return m[1]
-}
-
+// Single source of truth: scripts/lib/bayernSha.mjs. Same module backs
+// the standalone `node scripts/verify-bayern-sha.mjs` debug CLI, so
+// the two paths cannot drift.
 async function runBayernShaGate() {
-  const SLICE_SEPARATOR = '\n\n---\n\n'
-  const TAIL =
-    '\n\n══════════════════════════════════════════════════════════════════════════' +
-    '\nPROJEKTKONTEXT' +
-    '\n══════════════════════════════════════════════════════════════════════════' +
-    '\n\nEs folgt: Template-Kontext (T-XX), Locale-Hinweis, aktueller Projektzustand' +
-    '\n(Grundstück, A/B/C-Bereiche, jüngste Fakten, Top-3-Empfehlungen, zuletzt' +
-    '\ngestellte Fragen, jüngste Bauherreneingabe, letzte sprechende Fachperson).\n'
-  const SHARED  = extractBackticked(await readFileText('src/legal/shared.ts'),           'SHARED_BLOCK')
-  const FED     = extractBackticked(await readFileText('src/legal/federal.ts'),          'FEDERAL_BLOCK')
-  const BAYERN  = extractBackticked(await readFileText('src/legal/bayern.ts'),           'BAYERN_BLOCK')
-  const MUE     = extractBackticked(await readFileText('src/legal/muenchen.ts'),         'MUENCHEN_BLOCK')
-  const PERS    = extractBackticked(await readFileText('src/legal/personaBehaviour.ts'), 'PERSONA_BEHAVIOURAL_RULES')
-  const TPLS    = extractBackticked(await readFileText('src/legal/templates/shared.ts'), 'TEMPLATE_SHARED_BLOCK')
-  const composed = [SHARED, FED, BAYERN, MUE, PERS, TPLS].join(SLICE_SEPARATOR) + TAIL
-  const sha = createHash('sha256').update(composed).digest('hex')
+  const { sha, length } = await computeBayernSha()
   return [
     {
       ok: sha === EXPECTED_BAYERN_SHA,
       msg: `Bayern prefix SHA mismatch.\n` +
         `  expected: ${EXPECTED_BAYERN_SHA}\n` +
         `  actual:   ${sha}\n` +
-        `  length:   ${composed.length}\n` +
-        `  → If Bayern content was edited intentionally, update EXPECTED_BAYERN_SHA in scripts/smokeWalk.mjs and call it out in the commit message.`,
+        `  length:   ${length}\n` +
+        `  → If Bayern content was edited intentionally, update EXPECTED_BAYERN_SHA in scripts/lib/bayernSha.mjs and call it out in the commit message.`,
     },
   ]
 }
