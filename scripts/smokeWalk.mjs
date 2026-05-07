@@ -455,7 +455,7 @@ async function runStaticGate() {
     't04-umnutzung', 't05-abbruch', 't06-aufstockung', 't07-anbau',
     't08-sonstiges']
   for (const t of templates) {
-    const path = `supabase/functions/chat-turn/legalContext/templates/${t}.ts`
+    const path = `src/legal/templates/${t}.ts`
     const text = await readFileText(path)
     results.push(failures(`${t}: required blocks`, [
       {
@@ -473,7 +473,7 @@ async function runStaticGate() {
   // Allow exactly two known mentions: one ✗ negative example, one
   // explicit "niemals 'Anlage 1 BayBO'" disziplin reminder.
   const bayernText = await readFileText(
-    'supabase/functions/chat-turn/legalContext/bayern.ts',
+    'src/legal/bayern.ts',
   )
   const bayernAnlageMatches = (bayernText.match(/Anlage\s+1\s+BayBO/gi) ?? [])
   results.push(failures('bayern.ts: structure', [
@@ -494,7 +494,7 @@ async function runStaticGate() {
 
   // 3. personaBehaviour.ts has ZITATE-DISZIPLIN.
   const personaText = await readFileText(
-    'supabase/functions/chat-turn/legalContext/personaBehaviour.ts',
+    'src/legal/personaBehaviour.ts',
   )
   results.push(failures('personaBehaviour.ts: ZITATE-DISZIPLIN', [
     {

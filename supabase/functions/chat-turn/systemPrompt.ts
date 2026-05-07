@@ -1,15 +1,18 @@
 // ───────────────────────────────────────────────────────────────────────
-// Phase 3 — System prompt for chat-turn (thin shim post-refactor)
+// Phase 3 → Phase 11 — System prompt for chat-turn
 //
 // Two blocks at runtime:
 //
-//   1. PERSONA_BLOCK_V1     — re-exports the composed legal context
-//                              (`legalContext/compose.ts`) so existing
-//                              consumers (index.ts, streaming.ts) keep
-//                              the same import. Carries
+//   1. composeLegalContext(bundesland)  — composed legal-context
+//                              PREFIX from src/legal/compose.ts. Uses
+//                              the Phase 11 StateDelta registry so
+//                              `projects.bundesland` selects the
+//                              state slice. Phase 11 commit 1 only
+//                              registers Bayern; commits 2 + 3 add
+//                              the other 15. Carries
 //                              `cache_control: { type: 'ephemeral' }`
-//                              in the multi-block system array. ~9–12k
-//                              tokens after Phase 3.
+//                              in the multi-block system array. ~9–13k
+//                              tokens for Bayern.
 //
 //   2. buildLiveStateBlock  — per-turn ~200–500 token state summary,
 //                              NOT cached. Contains templateId, plot,
@@ -17,29 +20,14 @@
 //                              questions, last user input, last
 //                              specialist. Same shape as before.
 //
-// Phase 3 split the persona into 4 ordered slices (shared / federal /
-// bayern / muenchen) under legalContext/. Phase 5 pivoted the active
-// city slice from Erlangen to München; the Erlangen slice is parked
-// (sleeping) — see compose.ts. The composed string is one flat
-// constant, so the prompt-cache semantics are unchanged.
+// Phase 11 invariant: `composeLegalContext('bayern')` is byte-for-byte
+// identical to the pre-Phase-11 `COMPOSED_LEGAL_CONTEXT` const. The
+// production wizard hardcodes 'bayern' (audit B04, held), so the
+// production prefix is unchanged.
 // ───────────────────────────────────────────────────────────────────────
 
 import type { ProjectState, Specialist, TemplateId } from '../../../src/types/projectState.ts'
-import { COMPOSED_LEGAL_CONTEXT } from './legalContext/compose.ts'
-
-/**
- * Phase 3 — re-export of the composed prefix. Existing consumers
- * (index.ts, streaming.ts) import `PERSONA_BLOCK_V1` from here and
- * see no behavioural change; the caching marker still attaches to
- * this single string in `buildSystemBlocks` below.
- */
-export const PERSONA_BLOCK_V1 = COMPOSED_LEGAL_CONTEXT
-
-// Keep the legacy in-place persona below as `_LEGACY_PERSONA_BLOCK_V1`
-// for one release cycle, gated behind a comment, so the diff in this
-// commit is purely additive (re-export + dead-code-marker). It is no
-// longer reachable via any import; lint will flag it after the next
-// dead-code sweep.
+import { composeLegalContext } from '../../../src/legal/compose.ts'
 
 
 // ── Live state block (Block 2 — uncached) ──────────────────────────────
@@ -198,16 +186,19 @@ export function buildLocaleBlock(locale: 'de' | 'en' | undefined): string {
   ].join('\n')
 }
 
-import { getTemplateBlock } from './legalContext/templates/index.ts'
+import { getTemplateBlock } from '../../../src/legal/templates/index.ts'
 
 /**
  * Compose the multi-block system array as Anthropic expects it.
  *
- * Phase 10 — two-block cache architecture:
+ * Phase 10 → Phase 11 — two-block cache architecture, now bundesland-
+ * aware via the StateDelta registry:
  *
  *   Block 1 (persona prefix) — cache_control: ephemeral.
- *     SHARED + FEDERAL + BAYERN + MUENCHEN + PERSONA_BEHAVIOUR +
- *     TEMPLATE_SHARED. Warms ONCE across all templates and projects.
+ *     SHARED + FEDERAL + state.systemBlock + state.cityBlock?
+ *           + PERSONA_BEHAVIOUR + TEMPLATE_SHARED. Warms ONCE per
+ *     bundesland across all templates and projects (today only
+ *     Bayern is in production; the wizard hardcodes 'bayern').
  *
  *   Block 2 (per-template tail) — cache_control: ephemeral.
  *     getTemplateBlock(templateId). Warms PER TEMPLATE, hits cache
@@ -226,11 +217,12 @@ export function buildSystemBlocks(
   liveStateText: string,
   locale: 'de' | 'en' | undefined,
   templateId: TemplateId,
+  bundesland: string | null | undefined,
 ) {
   return [
     {
       type: 'text' as const,
-      text: PERSONA_BLOCK_V1,
+      text: composeLegalContext(bundesland),
       cache_control: { type: 'ephemeral' as const },
     },
     // Phase 10 — per-template tail, cached separately.

@@ -9,7 +9,7 @@
 // template dispatch.
 // ───────────────────────────────────────────────────────────────────────
 
-import type { TemplateId } from '../../../../../src/types/projectState.ts'
+import type { TemplateId } from '../../types/projectState.ts'
 import { T01_NEUBAU_EFH_BLOCK } from './t01-neubau-efh.ts'
 import { T02_NEUBAU_MFH_BLOCK } from './t02-neubau-mfh.ts'
 import { T03_SANIERUNG_BLOCK } from './t03-sanierung.ts'
