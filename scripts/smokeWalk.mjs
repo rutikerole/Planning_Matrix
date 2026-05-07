@@ -408,6 +408,39 @@ const BUNDESLAND_SWITCH_FIXTURES = [
     text: 'Im Vergleich zu LBO BW gibt es Abweichungen.',
     expectFlag: true,
   },
+  // Phase 12 commit 1 — Hessen content-grade fixtures
+  {
+    label: 'active=hessen, "§ 67 Abs. 3 HBO" Bauvorlageberechtigung — must NOT flag',
+    activeBundesland: 'hessen',
+    text: 'Bauvorlageberechtigung nach § 67 Abs. 3 HBO bei Wohngebäuden bis 200 m² Wohnfläche und 2 Wohneinheiten.',
+    expectFlag: false,
+  },
+  {
+    label: 'active=hessen, "§ 70 Abs. 4 HBO" 3-Monats-Frist — must NOT flag',
+    activeBundesland: 'hessen',
+    text: 'Die Bauaufsichtsbehörde entscheidet über den Bauantrag innerhalb von drei Monaten nach § 70 Abs. 4 HBO.',
+    expectFlag: false,
+  },
+  {
+    label: 'active=hessen, "§ 74 Abs. 7 HBO" Geltungsdauer — must NOT flag',
+    activeBundesland: 'hessen',
+    text: 'Die Baugenehmigung erlischt nach § 74 Abs. 7 HBO grundsätzlich nach drei Jahren.',
+    expectFlag: false,
+  },
+  {
+    label: 'active=hessen, Phase-11-stub "wrong" claim "§ 78 HBO Genehmigungsfreistellung" — must NOT flag (Layer-A doesnt fire); semantic correctness checked in review doc',
+    activeBundesland: 'hessen',
+    // Note: this would have been a wrong claim in the Phase 11 stub
+    // (§ 78 is Fliegende Bauten, not Genehmigungsfreistellung). The
+    // citation lint catches WRONG-BUNDESLAND citations, not WRONG-§-
+    // CONTENT claims. Semantic correctness is a review-doc concern;
+    // the lint is a Bundesland firewall, not a paragraph oracle.
+    // This fixture confirms the lint does NOT over-fire on a
+    // Hessen project's HBO §-citation regardless of whether the §-
+    // body claim is right.
+    text: '§ 78 HBO regelt Fliegende Bauten.',
+    expectFlag: false,
+  },
   // ── Bayern regressions
   {
     label: 'active=bayern, "Art. 57 BayBO" — must NOT flag (own state)',
