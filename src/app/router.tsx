@@ -1,6 +1,7 @@
 import { lazy, Suspense } from 'react'
 import { Navigate, Route, Routes, useLocation, useParams } from 'react-router-dom'
 import { AnimatePresence } from 'framer-motion'
+import { AcceptInvite } from '@/features/architect/pages/AcceptInvite'
 import { LandingPage } from '@/features/landing/LandingPage'
 import { NotFoundPage } from '@/features/not-found/NotFoundPage'
 import { SignUpPage } from '@/features/auth/pages/SignUpPage'
@@ -169,6 +170,14 @@ export function AppRouter() {
             </Suspense>
           }
         />
+
+        {/* Phase 13 Week 3 — Invite-claim landing. Sits OUTSIDE the
+          * /architect/* guard because at the moment of the click the
+          * caller is not yet a project_members member; the
+          * share-project Edge Function does the role + token checks
+          * itself. The route handles its own /sign-in?next=… redirect
+          * when the caller is anonymous. */}
+        <Route path="/architect/accept" element={<AcceptInvite />} />
 
         {/* Phase 13 Week 2 — Architect Console. Same wildcard +
           * Suspense pattern as /admin/*. Gate is profiles.role ===

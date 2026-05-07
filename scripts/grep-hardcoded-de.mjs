@@ -26,6 +26,12 @@ const ALLOWLIST = [
   // (BayBO/HBO/NBauO Wortlaut, persona instructions in German); same
   // allowlist pattern as the original supabase/functions location.
   'src/legal/',
+  // Phase 13 Week 2 — architect console is a German-only v1 surface
+  // (target audience is bauvorlageberechtigte Architekt:innen). Locked
+  // CTA copy + section labels (Fakten / Empfehlungen / Verfahren /
+  // Dokumente / Rollen) are canonical legal-domain terms. Same
+  // pattern as src/features/legal/.
+  'src/features/architect/',
   'src/locales/de.json',
   'src/locales/factLabels.de.ts',
   'src/data/factsMuenchen.ts',

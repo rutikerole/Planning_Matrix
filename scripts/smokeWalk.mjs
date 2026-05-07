@@ -1173,6 +1173,83 @@ async function runStaticGate() {
     },
   ]))
 
+  // Phase 13 Week 3 — Edge Functions + RLS drift checks. The
+  // share-project + verify-fact functions both depend on env vars
+  // (SUPABASE_URL / SUPABASE_ANON_KEY / SUPABASE_SERVICE_ROLE_KEY)
+  // and on the 0028_projects_architect_read.sql migration being
+  // applied. Pre-build asserts the modules exist, expose the right
+  // route handler, and reference the env vars by name.
+  const shareProjectSrc = await readFileText('supabase/functions/share-project/index.ts')
+  const verifyFactSrc = await readFileText('supabase/functions/verify-fact/index.ts')
+  results.push(failures('phase-13 week 3: share-project edge function shape', [
+    {
+      ok: /Deno\.serve\(/.test(shareProjectSrc),
+      msg: 'share-project must expose Deno.serve handler',
+    },
+    {
+      ok: /SUPABASE_SERVICE_ROLE_KEY/.test(shareProjectSrc),
+      msg: 'share-project must read SUPABASE_SERVICE_ROLE_KEY (claim path uses service-role bypass)',
+    },
+    {
+      ok: /role\s*!==\s*'designer'|profile\?\.role\s*!==\s*'designer'/.test(shareProjectSrc),
+      msg: 'share-project must reject callers whose profiles.role is not designer',
+    },
+    {
+      ok: /'project_member\.accepted'/.test(shareProjectSrc),
+      msg: 'share-project must log project_member.accepted to event_log',
+    },
+  ]))
+  results.push(failures('phase-13 week 3: verify-fact edge function shape', [
+    {
+      ok: /Deno\.serve\(/.test(verifyFactSrc),
+      msg: 'verify-fact must expose Deno.serve handler',
+    },
+    {
+      ok: /SUPABASE_SERVICE_ROLE_KEY/.test(verifyFactSrc),
+      msg: 'verify-fact must read SUPABASE_SERVICE_ROLE_KEY (state mutation bypasses RLS after role checks)',
+    },
+    {
+      ok: /role\s*!==\s*'designer'|profile\?\.role\s*!==\s*'designer'/.test(verifyFactSrc),
+      msg: 'verify-fact must reject callers whose profiles.role is not designer',
+    },
+    {
+      ok: /accepted_at/.test(verifyFactSrc),
+      msg: 'verify-fact must require an accepted project_members row',
+    },
+    {
+      ok: /'qualifier\.verified'/.test(verifyFactSrc),
+      msg: 'verify-fact must log qualifier.verified to event_log',
+    },
+  ]))
+
+  // Phase 13 Week 3 — projects RLS extension migration must exist,
+  // and the policy must reference project_members + accepted_at.
+  const archReadMig = await readFileText('supabase/migrations/0028_projects_architect_read.sql')
+  results.push(failures('phase-13 week 3: 0028_projects_architect_read.sql shape', [
+    {
+      ok: /project_members\s+pm/.test(archReadMig),
+      msg: '0028 must subquery project_members for the architect-read policy',
+    },
+    {
+      ok: /pm\.accepted_at\s+is\s+not\s+null/i.test(archReadMig),
+      msg: '0028 must require accepted_at IS NOT NULL (pending invitees should not read)',
+    },
+  ]))
+
+  // Phase 13 Week 3 — surface-locked CTA copy must appear in the
+  // VorlaeufigFooter component verbatim.
+  const vorlaeufigSrc = await readFileText('src/features/architect/components/VorlaeufigFooter.tsx')
+  results.push(failures('phase-13 week 3: VorlaeufigFooter copy locked', [
+    {
+      ok: /Vorl[äa]ufig/.test(vorlaeufigSrc),
+      msg: 'VorlaeufigFooter must surface the "Vorläufig" tag',
+    },
+    {
+      ok: /bauvorlageberechtigte\/n Architekt\/in/.test(vorlaeufigSrc),
+      msg: 'VorlaeufigFooter must surface the locked architect copy',
+    },
+  ]))
+
   for (const f of QUALIFIER_GATE_FIXTURES) {
     // Deep-clone so cross-fixture mutation can't bleed through.
     const cloned = JSON.parse(JSON.stringify(f.input))
