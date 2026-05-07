@@ -1250,6 +1250,60 @@ async function runStaticGate() {
     },
   ]))
 
+  // Phase 13 Week 4 — metrics view + CLI + audit doc.
+  // The view + CLI together implement the 13b conditional-trigger
+  // surface (kept deferred per locked decisions, but the data path
+  // must exist so an operator can spot a regression).
+  const metricsView = await readFileText('supabase/migrations/0029_qualifier_metrics_view.sql')
+  results.push(failures('phase-13 week 4: 0029_qualifier_metrics_view.sql shape', [
+    {
+      ok: /create or replace view public\.qualifier_rates_7d_global/.test(metricsView),
+      msg: '0029 must define qualifier_rates_7d_global view',
+    },
+    {
+      ok: /create or replace view public\.qualifier_rates_7d_per_project/.test(metricsView),
+      msg: '0029 must define qualifier_rates_7d_per_project view',
+    },
+    {
+      ok: /create or replace view public\.qualifier_field_breakdown_7d/.test(metricsView),
+      msg: '0029 must define qualifier_field_breakdown_7d view',
+    },
+    {
+      ok: /interval\s+'7\s+days'/.test(metricsView),
+      msg: '0029 views must use the 7-day rolling window from the spec',
+    },
+  ]))
+  const cliSrc = await readFileText('scripts/qualifier-downgrade-rate.mjs')
+  results.push(failures('phase-13 week 4: qualifier-downgrade-rate.mjs shape', [
+    {
+      ok: /SMOKE_SUPABASE_URL/.test(cliSrc) && /SMOKE_SUPABASE_SERVICE_KEY/.test(cliSrc),
+      msg: 'CLI must read SMOKE_SUPABASE_URL + SMOKE_SUPABASE_SERVICE_KEY',
+    },
+    {
+      ok: /qualifier_rates_7d_global/.test(cliSrc),
+      msg: 'CLI must query qualifier_rates_7d_global',
+    },
+    {
+      ok: /numerator\s*>\s*5/.test(cliSrc) && /turns\s*>=?\s*100/.test(cliSrc),
+      msg: 'CLI must encode the 13b threshold (>5 events AND ≥100 turns)',
+    },
+  ]))
+  const reviewDoc = await readFileText('docs/PHASE_13_REVIEW.md')
+  results.push(failures('phase-13 week 4: PHASE_13_REVIEW.md audit trail', [
+    {
+      ok: /Manual deploy checklist/.test(reviewDoc),
+      msg: 'PHASE_13_REVIEW.md must include the manual deploy checklist',
+    },
+    {
+      ok: /Rollback playbook/.test(reviewDoc),
+      msg: 'PHASE_13_REVIEW.md must include the rollback playbook',
+    },
+    {
+      ok: /Migration ordering/.test(reviewDoc),
+      msg: 'PHASE_13_REVIEW.md must record the 0028→0029 migration renumber',
+    },
+  ]))
+
   for (const f of QUALIFIER_GATE_FIXTURES) {
     // Deep-clone so cross-fixture mutation can't bleed through.
     const cloned = JSON.parse(JSON.stringify(f.input))
