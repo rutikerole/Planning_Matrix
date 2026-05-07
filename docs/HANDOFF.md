@@ -1,0 +1,489 @@
+# Planning Matrix — HANDOFF
+
+> The single document that lets the next operator/engineer run and
+> extend Planning Matrix v1 without the build engineer in the room.
+> Reads end-to-end on first pass; subsequent visits use the table of
+> contents. **This document IS the v1 deliverable's audit trail.**
+
+## Contents
+
+1. What Planning Matrix is
+2. Architecture overview
+3. v1.5 concept → code mapping
+4. How to extend StateDelta (add a new state's content)
+5. How to add a new template
+6. How to read the audit + phase-review docs
+7. Known post-v1 follow-up work (12.5 / 14 / 15 / 16)
+8. Glossary of system-internal terms
+9. Contact handoff
+
+---
+
+## 1. What Planning Matrix is
+
+Planning Matrix is a **single-page web application** that helps a
+*Bauherr* (private-sector building owner) prepare a German building-
+permit ("Bauantrag") through a structured AI-assisted research
+conversation. The app is in active use as the v1.5 architecture
+document's flagship deliverable; it is **not a public-market product
+seeking PMF**. The audience is the v1.5 manager + the architects /
+engineers / authorities they invite onto a project.
+
+What v1 does:
+
+- Gathers project facts from the Bauherr through a guided wizard
+  (PLZ + template type) plus a roundtable chat with seven specialist
+  personas (moderator, Planungsrecht, Bauordnungsrecht, sonstige
+  Vorgaben, Verfahren, Beteiligte, synthesizer).
+- Persists all state in a typed JSONB document (`projects.state`)
+  whose shape is `src/types/projectState.ts`.
+- Surfaces the result as a tabbed Workspace (Overview / Cost &
+  Timeline / Procedure & Documents / Team) with a per-card qualifier
+  ("LEGAL+CALCULATED", "DESIGNER+ASSUMED", etc.) and a "Vorläufig"
+  footer for entries that need architect verification (Phase 13).
+- Lets a `role='designer'` architect be invited to a project to
+  explicitly verify qualifiers — clients cannot mint
+  DESIGNER+VERIFIED themselves (Phase 13 §6.B.01 legal shield).
+
+What v1 deliberately does NOT do:
+
+- Public landing-page sign-up / PMF marketing.
+- Substantive content for 11 of 16 Bundesländer (those carry
+  honest "in Vorbereitung" stubs — see § 7.2 below).
+- Per-state Geoportals beyond München's WMS (§ 7.3).
+- Automated nightly regression at scale (§ 7.4).
+- An architect-onboarding self-service flow — designer role is
+  manager-provisioned via SQL until post-v1.
+
+---
+
+## 2. Architecture overview
+
+Planning Matrix is a typed three-layer document model wrapped in
+a typed conversation pipeline.
+
+### 2.1 The three document layers (v1.5 §3 — DECISION DECOMPOSITION)
+
+| Layer            | Where it lives in code | Edited by | Cached |
+| ---------------- | ---------------------- | --------- | ------ |
+| **Constitutional** | `src/legal/{shared,federal,bayern,muenchen,personaBehaviour}.ts` + `src/legal/states/*.ts` + `src/legal/templates/*.ts` | Build engineer at PR time; never at runtime | Yes — Bayern prefix SHA `b18d3f7f9a6fe238c18cec5361d30ea3a547e46b1ef2b16a1e74c533aacb3471` is the byte-for-byte invariant |
+| **Template**     | `src/legal/templates/{t01-neubau-efh, t02-neubau-mfh, t03-sanierung, t04-umnutzung, t05-abbruch, t06-aufstockung, t07-anbau, t08-sonstiges}.ts` | Build engineer | Inside the cached prefix when shared, after when template-specific |
+| **Project instance** | `public.projects.state` JSONB column (shape: `src/types/projectState.ts`) | The persona's `respond` tool call (only) | Per-row |
+
+The three layers are concatenated in this order at chat-turn time
+to produce the Anthropic system prompt:
+
+```
+[CONSTITUTIONAL: shared + federal + (state delta = bayern + muenchen / NRW / BW / NS / HE / minimum-stub)] ← cached
+[TEMPLATE: T-XX block]                                      ← cached when same T applies
+[PROJECT INSTANCE: live state delta]                        ← never cached
+```
+
+The cache boundary is what makes the Bayern SHA invariant
+load-bearing: any byte-level change to the constitutional Bayern
+region would invalidate Anthropic's prompt cache, blow the cost
+model, AND risk subtly altering persona behaviour. The
+`scripts/lib/bayernSha.mjs` module is the authoritative computation;
+`scripts/verify-bayern-sha.mjs` is the standalone CLI;
+`scripts/smokeWalk.mjs` re-runs the same computation as a daily
+gate.
+
+### 2.2 The 16-state StateDelta framework (Phase 11)
+
+`src/legal/legalRegistry.ts` is a typed
+`Record<BundeslandCode, StateDelta>` that maps each of the 16
+German Bundesländer to a `StateDelta`:
+
+```ts
+// src/legal/states/_types.ts
+export interface StateDelta {
+  systemBlock: string         // persona-grade legal/local content
+  allowedCitations: string[]  // anchors the persona can cite
+  homeBundesland: BundeslandCode
+}
+```
+
+Currently:
+
+- **bayern** carries the deepest content (the SHA-invariant block).
+- **bw / hessen / niedersachsen / nrw** carry Phase-12 substantive
+  content — verbatim §§-anchored for verfahrensfrei /
+  vereinfachtes / reguläres Verfahren + Genehmigungsfreistellung +
+  Bauvorlageberechtigung etc.
+- **berlin / brandenburg / bremen / hamburg / mv / rlp / saarland /
+  sachsen / sachsen-anhalt / sh / thueringen** carry minimum stubs
+  with `allowedCitations: []` and a verbatim "in Vorbereitung"
+  Hinweis the persona reads aloud when asked specifics. **This is
+  the v1 minimum.** See § 7.2.
+
+`src/legal/compose.ts` exposes `composeLegalContext(bundesland)`
+that pulls the right StateDelta from the registry; `chat-turn`
+calls this once per turn. The composition is order-stable and
+SHA-checked when the bundesland is `'bayern'`.
+
+### 2.3 The seven specialists
+
+The persona is a roundtable. `src/legal/personaBehaviour.ts`
+defines the seven specialists, the `respond` tool's `specialist`
+discriminator, and the rules for when each speaks:
+
+| Specialist | Domain |
+| ---------- | ------ |
+| moderator  | Front-of-house; opens; routes |
+| planungsrecht | BauGB §§ 30/34/35 + BauNVO + Bebauungsplan |
+| bauordnungsrecht | LBO/BayBO + GK + Abstandsflächen |
+| sonstige_vorgaben | Denkmal / Naturschutz / Baulasten / kommunal |
+| verfahren | Welches Verfahren ist nötig + Anforderungen |
+| beteiligte | Welche Fachplaner:innen + welche Behörden |
+| synthesizer | Synthese-Turn at the end of a thread |
+
+Each persona's voice is constrained to a German-formal-Sie register;
+the `personaBehaviour.ts` file enforces that constraint via the
+ZITATE-DISZIPLIN rule (§ 8.4 below).
+
+### 2.4 The qualifier system
+
+Every fact / recommendation / procedure / document / role in
+`projects.state` carries a qualifier:
+
+```ts
+// src/types/projectState.ts
+export type Source  = 'LEGAL' | 'CLIENT' | 'DESIGNER' | 'AUTHORITY'
+export type Quality = 'CALCULATED' | 'VERIFIED' | 'ASSUMED' | 'DECIDED'
+export interface Qualifier {
+  source: Source
+  quality: Quality
+  setAt: string          // ISO instant
+  setBy: 'user' | 'assistant' | 'system'
+  reason?: string
+}
+```
+
+The four-by-four product is read as confidence + provenance. The
+**v1.5 §6.B.01 legal shield** says only role='designer' callers
+can mint `DESIGNER+VERIFIED` — a CLIENT-turn that emits this
+combination is rejected at the Edge Function before
+`applyToolInputToState` runs (Phase 13 Week 2 gate-flip). The gate's
+constant lives at `src/lib/projectStateHelpers.ts` →
+`QUALIFIER_GATE_REJECTS = true`.
+
+### 2.5 The chat-turn pipeline
+
+`supabase/functions/chat-turn/index.ts` is the per-turn entrypoint.
+The flow:
+
+  1. CORS + auth check (Bearer token).
+  2. Load project + last 30 messages.
+  3. Insert user message (idempotent on `client_request_id`).
+  4. Build the system prompt (constitutional + template + state
+     block) and call Anthropic with forced `tool_choice: respond`.
+  5. Validate tool input (Zod, strict).
+  6. Phase 8.6 fact-plausibility check.
+  7. Phase 10.1 + 11 citation lint (Bundesland firewall).
+  8. **Phase 13 qualifier-write gate** (rejects on CLIENT
+     DESIGNER+VERIFIED attempts).
+  9. `applyToolInputToState` reduces the deltas into the new
+     state.
+  10. `commit_chat_turn` RPC writes assistant message + project
+      state UPDATE in a single transaction.
+  11. Return JSON or stream as SSE (per Accept header).
+
+Streaming variant lives in
+`supabase/functions/chat-turn/streaming.ts`; both share helpers
+under the same directory. See `docs/PHASE_3_BRIEF.md` for the
+architectural rationale and `docs/PHASE_8_6_FINDINGS.md` for the
+A/B/C/D decisions.
+
+---
+
+## 3. v1.5 concept → code mapping
+
+| v1.5 §       | Concept | Where in code |
+| ------------ | ------- | ------------- |
+| §3           | Decision-decomposition document layers | `src/legal/` + `src/legal/templates/` + `src/types/projectState.ts` |
+| §4           | Areas A/B/C (Planungsrecht / Bauordnung / Sonstige) | `src/types/projectState.ts:Areas` + `src/lib/projectStateHelpers.ts:applyAreasUpdate` |
+| §4.B.03      | Qualifier system (Source × Quality) | `src/types/projectState.ts:Qualifier` + `src/lib/projectStateHelpers.ts` |
+| §5           | Wizard I-01 (PLZ) + I-02 (no-plot) | `src/features/wizard/` + `src/features/wizard/hooks/useCreateProject.ts` |
+| §6.B.01      | Designer-role legal shield | `src/lib/projectStateHelpers.ts:gateQualifiersByRole` + `supabase/functions/chat-turn/index.ts` + `supabase/functions/verify-fact/index.ts` |
+| §6.C.02      | Citation firewall (Bundesland-Disziplin) | `supabase/functions/chat-turn/citationLint.ts` + `src/legal/states/*.ts` |
+| §7.0.04      | I-02 → areas A+C VOID | `src/features/wizard/hooks/useCreateProject.ts` |
+| §7.9         | LOCKED chat surfaces (Spine, MatchCut, Astrolabe, Stand-up, CapturedToast, magnetic focus) | `src/features/chat/components/Chamber/` |
+| §8 Gate 99   | Architect cockpit (post-v1) | OQ1: simpler approve/reject shipped at `src/features/architect/pages/VerificationPanel.tsx` |
+| §9           | Atelier Console (admin) | `src/features/admin/` |
+| §10          | Citation lint (Phase 10.1) | `supabase/functions/chat-turn/citationLint.ts` |
+| §11          | StateDelta + 16-state coverage | `src/legal/states/*.ts` + `src/legal/legalRegistry.ts` |
+
+Cross-ref `docs/AUDIT_REPORT.md` § 2 for the original three-doc
+disagreement table; the resolutions there are the source of truth
+for the present mapping.
+
+---
+
+## 4. How to extend StateDelta (add a new state's content)
+
+Phase 14 will follow this exact pattern. The Phase-12 commit
+history (`f1c0aae`, `c3860c6`, `575321f`, `7f4466f`, `3b28bf3`)
+is the authoritative example.
+
+### Workflow
+
+  1. **Lock primary sources.** Find the state's consolidated LBO
+     text (e.g., `recht.nrw.de`, `landesrecht-bw.de`,
+     `voris.niedersachsen.de`, `ingkh.de`). Do a fetch dry-run
+     before content writing — see
+     `docs/PHASE_12_HESSEN_FETCH_DRYRUN.md` for the template.
+  2. **Run the visible-gap rule.** If the dry-run shows you can't
+     reach a primary source for a section, the StateDelta MUST
+     surface the gap explicitly in the persona text — not bury
+     it as silent omission. Use the verbatim "in Vorbereitung"
+     framing the 11 minimum stubs already use.
+  3. **Expand the stub.** Open `src/legal/states/<code>.ts`. Add
+     the same shape Bayern uses:
+       * Bundesland-Disziplin block (✗ FALSCHE / ✓ KORREKTE
+         anchors; mirror `src/legal/bayern.ts:12-105`).
+       * Per-template TYPISCHE / VERBOTENE blocks (~25 LOC each
+         × 8 templates).
+       * Verfahrenstypen detail — Article-and-Absatz precision.
+       * Architektenkammer + Vermessung detail.
+  4. **Write `allowedCitations`.** Every TYPISCHE entry needs an
+     anchor in the array.
+  5. **Add smokeWalk fixtures.**
+     `scripts/smokeWalk.mjs:BUNDESLAND_SWITCH_FIXTURES` already
+     has positive + negative cases per state — extend with the
+     state's own positives + a couple of cross-state negatives.
+  6. **Verify Bayern SHA unchanged.** `npm run verify:bayern-sha`.
+     Any edit to Bayern itself is a separate, scope-flagged change.
+  7. **Run `npm run smoke:citations`** — fixtures must pass before
+     commit.
+  8. **Commit message:** list every primary source used (file path,
+     paragraph, retrieval date). Format:
+     `recht.nrw.de retrieved 2026-MM-DD: BauO NRW § 5
+     (Abstandsflächen)`.
+
+### Per-state realistic budget (from Phase 12 actuals)
+
+  - **150–250 LOC** for the systemBlock (depending on the state's
+    Verfahrenstypen surface area and Modernisierungsstand).
+  - **+30 minutes verification** per state before content writing
+    (the Hessen commit found 5 wrong §§ in the Phase 11 stub —
+    assume similar density).
+  - **One commit per state.** No batch merges. Manager review
+    between states.
+
+---
+
+## 5. How to add a new template
+
+Templates are decision-trees the persona walks. T-01..T-08 are the
+v1 set (single-family neubau, MFH neubau, sanierung, umnutzung,
+abbruch, aufstockung, anbau, sonstiges). To add T-09:
+
+  1. Open `src/legal/templates/index.ts` and check the existing
+     order. Templates are read in registration order during
+     persona-prompt assembly.
+  2. Create `src/legal/templates/t09-<slug>.ts` mirroring the
+     shape of, say, `t01-neubau-efh.ts`:
+       * TYPISCHE KORREKTE ZITATE block.
+       * VERBOTENE ZITATE block.
+       * Per-question framing (TEMPLATE-START, etc.).
+       * Material-specific BayBO/state-LBO anchors.
+  3. Register it in `src/legal/templates/index.ts`.
+  4. Update `TemplateId` in `src/types/projectState.ts`.
+  5. Update the wizard's template-step dropdown if you want it
+     visible in the SPA: `src/features/wizard/...` (the wizard
+     B04 hardcodes Bayern; T-09 visibility is independent).
+  6. Add smokeWalk static-gate fixture: every template must
+     contain both required blocks (TYPISCHE / VERBOTENE);
+     smokeWalk's `templates` loop checks this automatically — the
+     new template falls into the loop once registered.
+  7. Bayern SHA: a new template extends the *post-Bayern* cached
+     prefix (template blocks land after the Bayern region) so the
+     Bayern SHA is unaffected. Verify.
+
+### Realistic per-template budget
+
+  - **~250 LOC** including all 8-template-pattern blocks.
+  - **~1 day** to research + write the per-question framing for
+     the new domain.
+
+---
+
+## 6. How to read the audit + phase-review docs
+
+Three audit-trail artifacts the manager / future engineer should
+know:
+
+### 6.1 `docs/AUDIT_REPORT.md`
+
+The 18-section paranoid audit run before Phase 11 started. Section
+20 (the "B-rows table") enumerates every finding with severity,
+file:line, and a one-line summary. **Read this first** when
+investigating any unfamiliar surface — it's the truth-table of
+known weirdness as of pre-Phase-11. Resolutions for B-rows that
+were fixed during Phases 11–13 are tracked in the relevant phase
+review doc; B-rows still open ship as-known into v1 and are listed
+in `OPS_RUNBOOK.md` § 7.
+
+### 6.2 Per-state Phase-12 review docs
+
+`docs/PHASE_12_REVIEW_{hessen,niedersachsen,nrw,bw}.md` carry the
+per-state research evidence: which §§ were verified verbatim,
+which Phase-11-stub claims were wrong (and corrected), which
+sections fell back to "in Vorbereitung" framing per the visible-
+gap rule. Format is captured in `docs/PHASE_12_REVIEW_TEMPLATE.md`.
+
+If you're touching a state's content and want to know WHY a
+specific phrase is what it is, the review doc explains.
+
+### 6.3 `docs/PHASE_13_REVIEW.md`
+
+The Phase 13 audit trail: locked-scope decisions (B1 ship-without-
+email, austere visual, locked CTA copy), commit list, migration
+ordering (0026/0027/0028/0029 with the renumber explanation),
+manual deploy checklist, daily-gates evidence, rollback playbook,
+and the deliberately-not-shipped list. Read this when any
+qualifier-gate / architect-surface question comes up.
+
+---
+
+## 7. Known post-v1 follow-up work
+
+These four phases were in the original roadmap but were locked as
+post-v1 by the manager during the v1 ship window. Each is
+preserved in `docs/PHASE_ROADMAP.md` under a `[POST-V1]` banner so
+the original scope is not lost.
+
+### 7.1 Phase 12.5 — Async-takt rebuild [POST-V1]
+
+**What's missing:** Multi-Bauherr / multi-architect collaboration
+on a single project. Today the chat-turn pipeline is single-author
+per project (the `messages` table doesn't carry a participant
+discriminator beyond `role` and `user_id`).
+
+**Why deferred:** Architectural debt, not v1-blocking. The Phase 13
+DESIGNER role surfaces enough multi-role flow (one Bauherr + one
+or more architects) to ship v1; full async takt is the
+generalisation post-v1 will need.
+
+**Rough rebuild estimate:** 3–4 weeks. Schema changes
+(participants table; per-message author scope; presence pings) +
+SPA work (multi-cursor Spine, Stand-up split per author) + Edge
+Function adjustments (chat-turn participant gating). Dependencies:
+none beyond v1.
+
+### 7.2 Phase 14 — Remaining 11 states [POST-V1]
+
+**What's stub-grade today:** Berlin, Brandenburg, Bremen, Hamburg,
+Mecklenburg-Vorpommern, Rheinland-Pfalz, Saarland, Sachsen, Sachsen-
+Anhalt, Schleswig-Holstein, Thüringen. Each carries a minimum stub
+with `allowedCitations: []` and a verbatim "werden in einer
+späteren Bearbeitungsphase ergänzt" Hinweis the persona reads
+aloud when asked specifics.
+
+**Why deferred:** v1 ships München-first; the manager's go-to-
+market scope is not the long tail. The 11 stubs honestly surface
+their gap rather than hallucinate state-specific content — that's
+the defensible v1 minimum.
+
+**The expansion pattern:** § 4 above. Per-state budget: **150–250
+LOC + ~30 min stub-correction overhead** (Phase 12 found 4 of 4
+top states had wrong §§ in their Phase-11 stubs).
+
+**Stadtstaaten architecture flag:** Berlin / Hamburg / Bremen
+LBO IS the municipal-level rule, unlike Flächenländer where city-
+specific Satzungs ride on top of LBO. May warrant a
+`StateDelta.kind: 'flaechenland' | 'stadtstaat'` discriminator
+when the work lands.
+
+### 7.3 Phase 15 — Per-state Geoportals [POST-V1]
+
+**Current state:** München WMS shipped (the wizard's
+`PlotMap.tsx` + the Bayern persona's geo-context). Address →
+B-Plan polygon → Festsetzungen works for München PLZ codes.
+
+**What's missing:** the same flow for NRW, Hessen, BW (conditional
+on portal availability), Niedersachsen (conditional). OQ3 research
+in `docs/PHASE_11_OQ3_GEOPORTAL_RESEARCH.md` enumerates which top-
+5 states have a public WMS.
+
+**Why deferred:** Blocked on Phase 14 anyway — no point fetching
+B-Plan polygons for states with stub-grade persona content.
+
+**Rough rebuild estimate:** 1 week per state once the state's
+content is at Phase-12 depth. Mostly per-state WMS endpoint config
++ per-state coordinate-projection adapters.
+
+### 7.4 Phase 16 — Nightly regression at scale [POST-V1]
+
+**What manual `smoke:citations` covers today:** 110+ static
+fixtures + Bayern SHA gate run before every commit. Caught the 4
+states' wrong-§§ in their Phase-11 stubs during Phase 12.
+
+**What nightly cron + drift detection would add:**
+  - Live-mode smokeWalk (`--live`) running against a deployed
+    instance, with persona-output capture and citation-lint
+    re-check.
+  - Persona drift detection (compute `b18d3f7f…3471` plus a
+    rolling SHA over the broader prompt assembly; alert on any
+    sub-region change).
+  - Admin dashboard at `/admin/logs/quality` (the Phase 9.2
+    placeholder lives at `_PagePlaceholder.tsx`).
+
+**Why deferred:** v1 manual cadence is sufficient at v1 scale.
+At ~10 active projects / week, the manual gate is a 5-minute
+operation; nightly cron pays for itself only at 100x volume.
+
+**Rough rebuild estimate:** 2 weeks. Most of the wiring is in
+place (the `event_log` view + `qualifier-downgrade-rate.mjs` CLI
+shipped in Phase 13 Week 4). What's missing is the cron harness
++ the admin dashboard charts.
+
+---
+
+## 8. Glossary of system-internal terms
+
+| Term | What it means |
+| ---- | ------------- |
+| **Bundesland-Disziplin** | The persona-prompt rule that the model never cites another state's LBO when discussing a project in a different Bundesland. Implemented as a rule block in each state's `systemBlock` plus the citationLint Layer-B firewall. |
+| **ZITATE-DISZIPLIN** | The rule in `src/legal/personaBehaviour.ts` that the persona prefers no citation over a wrong citation. Operationalised via the TYPISCHE KORREKTE / VERBOTENE blocks in every template. |
+| **allowedCitations firewall** | Per-state array of citation anchors the persona is allowed to cite (`src/legal/states/*.ts`). The citationLint module's Layer-B regexes check the inverse — any reference to a non-active-state LBO fires a violation. |
+| **Visible-gap rule** | When source-availability blocks substantive content for a section, the persona MUST surface the gap aloud rather than invent silently. Applied verbatim in the 11 minimum stubs. Phase 12 codified. |
+| **Bayern SHA invariant** | `b18d3f7f9a6fe238c18cec5361d30ea3a547e46b1ef2b16a1e74c533aacb3471` — the SHA-256 of the canonical Bayern composed-prefix. Held across 33+ commits since Phase 11. Re-baseline only on intentional Bayern edits with explicit commit-message call-out. |
+| **Phase 7.9 LOCKED** | The set of chat workspace surfaces (Spine, MatchCut, Astrolabe, Stand-up, CapturedToast, magnetic focus) that are visually + behaviourally frozen post-Phase 7.9. Edits land only via explicit unlock + scope decision. |
+| **Atelier mode** | Design-DNA token bucket (`:root` selector) — paper / ink / clay palette, sharp corners, no shadows, mono-leaning labels. Used for every admin / architect surface. |
+| **Operating mode** | Alternate token bucket (`[data-mode='operating']`) — softer shadows, rounded corners. Used for client-facing chat workspace. |
+| **Qualifier-write gate** | The Phase-13 server-side check that rejects CLIENT-turn DESIGNER+VERIFIED attempts. Lives at `src/lib/projectStateHelpers.ts:gateQualifiersByRole`. |
+| **Vorläufig footer** | The "bestätigt durch eine/n bauvorlageberechtigte/n Architekt/in noch ausstehend" footer that appears on result-page cards with DESIGNER+ASSUMED qualifiers. Helper at `src/features/architect/components/VorlaeufigFooter.tsx`. |
+| **13b conditional trigger** | The Phase-13 telemetry threshold (>5 downgrade+rejected events / 7 days / ≥100 turns) that signals possible false-positive in the qualifier gate. Read via `node scripts/qualifier-downgrade-rate.mjs`. |
+| **Visible-gap framing** | See "Visible-gap rule" — same idea, persona-surfacing variant. |
+
+---
+
+## 9. Contact handoff
+
+| Topic | Who to reach | Where |
+| ----- | ------------ | ----- |
+| Build engineer's deliverable scope (this doc) | `<MANAGER_NAME>` | `<MANAGER_EMAIL>` |
+| Anthropic billing / API key | Manager (DPA-signing identity) | Anthropic Console |
+| Supabase project ownership | Manager | Supabase Dashboard |
+| Vercel project ownership | Manager | Vercel Dashboard |
+| Sentry org admin | Manager | Sentry EU instance |
+| PostHog org admin | Manager | PostHog EU instance |
+| Counsel signoff on legal pages | `<COUNSEL_NAME>` | `<COUNSEL_EMAIL>` |
+| GitHub repo + this codebase | Manager (post-handoff write access) | (repo URL) |
+
+For any post-v1 question that maps cleanly to one of the four
+post-v1 phases (12.5 / 14 / 15 / 16): start with this doc § 7,
+then `docs/PHASE_ROADMAP.md`'s preserved-original-scope sections.
+
+For any in-codebase question that maps to a phase that DID ship
+(11 / 12 / 13 / 17): the per-phase review doc + `git log` are the
+authoritative trail. Every commit message is grounded; no
+"miscellaneous tweaks" land in this repo's history.
+
+---
+
+**This document is the v1 deliverable's audit trail. It is
+intentionally long; future readers should find every load-bearing
+decision recorded somewhere in this file or one of its
+cross-references.**
