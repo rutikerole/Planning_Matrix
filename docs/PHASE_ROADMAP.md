@@ -3,7 +3,7 @@
 **Status.** Authoritative roadmap for Phases 11–17. Supersedes
 `docs/NEXT_MOVE.md` (which assumed a PMF-seeking product — wrong frame).
 
-**Post-Phase-13 scope-cut decisions (2026-05-07, locked).**
+**Post-Phase-13 scope-cut decisions (2026-05-07 / 2026-05-08, locked).**
 - **Phase 12.5 (async takt) — POST-V1.** Architectural debt, not v1-
   blocking. Documented as known follow-up work in HANDOFF.md (Phase
   17 deliverable).
@@ -11,8 +11,19 @@
   honestly surface *"werden in einer späteren Bearbeitungsphase
   ergänzt"* — that's the defensible v1 minimum. Documented as known
   follow-up work in HANDOFF.md.
-- **Next active phase = Phase 17 (Production Handoff).** See
-  `docs/PHASE_17_SCOPE.md`.
+- **Phase 15 (Geoportal Integration) — POST-V1 (2026-05-08).** München
+  WMS shipped (`src/features/wizard/components/PlotMap.tsx` + the
+  Bayern persona's geo-context). Per-state Geoportals (NRW, Hessen,
+  BW conditional, NS conditional) are blocked on Phase 14 anyway —
+  no point fetching B-Plan polygons for states without substantive
+  persona content. Documented as known follow-up work in HANDOFF.md.
+- **Phase 16 (Quality Dashboard + Nightly Regression) — POST-V1
+  (2026-05-08).** Manual `smoke:citations` + `verify:bayern-sha`
+  cover regression at v1 scale. Nightly cron + persona drift
+  detection + admin dashboard are observability-at-scale features
+  for post-v1. Documented as known follow-up work in HANDOFF.md.
+- **Active v1 path: Phase 17 → tag v1.0 → delivered.** All other
+  phases are post-v1. See `docs/PHASE_17_SCOPE.md`.
 
 **Frame.** Planning Matrix is a **client deliverable** for the v1.5
 architecture document's manager. Validation is **AI-proxy only via
@@ -267,7 +278,12 @@ if architecture warrants (flag during the phase); smokeWalk fixtures.
 
 ---
 
-## Phase 15 — Geoportal Integration
+## Phase 15 — Geoportal Integration [POST-V1]
+
+> **Status (2026-05-08): cut to post-v1.** München WMS shipped; per-
+> state Geoportals are blocked on Phase 14 (no point fetching B-Plan
+> polygons for states without substantive persona content). Original
+> scope preserved below for the post-v1 reader.
 
 **Goal.** Address → B-Plan polygon → Festsetzungen for top-5 states
 where a public WMS exists.
@@ -311,7 +327,12 @@ per-state layer config; `vercel.json` — CSP additions per WMS host.
 
 ---
 
-## Phase 16 — Quality Dashboard + AI Regression Harness
+## Phase 16 — Quality Dashboard + AI Regression Harness [POST-V1]
+
+> **Status (2026-05-08): cut to post-v1.** Manual `smoke:citations`
+> + `verify:bayern-sha` cover regression at v1 scale. Nightly cron
+> + persona drift detection + admin dashboard are observability-at-
+> scale features for post-v1. Original scope preserved below.
 
 **Goal.** Nightly 16 × 8 × N persona regression. Drift detection.
 Cache-hit ratios. Citation-violation rate per state per template.

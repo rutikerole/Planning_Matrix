@@ -46,10 +46,67 @@ The LOC is mostly Markdown. The calendar dimension is what blows up.
 | --- | --- | --- | --- | --- |
 | **1** | DPA requests sent **Day 1** to all five sub-processors (Anthropic, Supabase, Vercel, Sentry, PostHog). In parallel: legal-page audit. Replace the Impressum placeholder with real manager contact details; sync the AGB + Datenschutz sub-processor list against the deployed reality (`src/main.tsx` Sentry init + `src/lib/analytics.ts` PostHog init are the source of truth — no quietly-disabled vendors); cookie-consent surface review. Kick off counsel-review window for the three pages. | `src/features/legal/pages/{Impressum,AGB,Datenschutz}.tsx`, `src/locales/{de,en}.json`, `docs/legal/dpas/README.md` (tracker), DPA outbound emails | ~150 | All 5 DPA requests sent + acknowledged. Legal pages have zero placeholder copy. Counsel-review meeting scheduled. Daily gates green. |
 | **2** | 72-point smoke walk (18 surfaces × 4 browsers — see expansion below). `docs/DEPLOYMENT.md` (env vars, secret rotation, migration apply order 0001…0029, Vercel rollback, Anthropic key swap, region-locked hosting note). `docs/OPS_RUNBOOK.md` (incident response triggers, rate-limit budget tuning, cost monitoring, qualifier-gate rollback playbook reference, Phase 13's 13b threshold, known-error catalogue). | `docs/DEPLOYMENT.md`, `docs/OPS_RUNBOOK.md`, smokeWalk extension if surface count drifted, screenshots in `docs/handoff/screenshots/` | ~300 | 72-point walk all green; both docs reviewed by manager; counsel feedback on legal pages incorporated. Daily gates green. |
-| **3** | `docs/HANDOFF.md` (architecture overview anchored to v1.5 §6, where each concept lives by file path, how to extend StateDelta + add a template + read the audit, what's deferred to post-v1 with rationale). DPA chase. Final read-through. Tag `v1.0` (or whatever release tag the manager chooses). | `docs/HANDOFF.md`, `CHANGELOG.md` (final), git tag | ~150 | All 5 DPAs countersigned-OR-explicitly-tracked-as-pending. HANDOFF.md signed off by manager. v1.0 tag pushed. Daily gates green. Phase 17 close. |
+| **3** | `docs/HANDOFF.md` (architecture overview anchored to v1.5 §6, where each concept lives by file path, how to extend StateDelta + add a template + read the audit, what's deferred to post-v1 with rationale). DPA chase. Final read-through. **v1.0 tag (named acceptance criterion — see below)**. | `docs/HANDOFF.md`, `CHANGELOG.md` (final), git tag | ~150 | All v1.0 tag preconditions met (see "v1.0 tag" section below). Phase 17 close = project delivered. |
 
 **Total: ~600 LOC, 3 weeks, 1 engineer + counsel + manager
 review windows.** Per-week commit count: 3-4 / 3-4 / 2-3.
+
+---
+
+## v1.0 tag — THE delivery event
+
+The git tag `v1.0` is the named acceptance criterion that closes
+Phase 17 and ships the project. It is not a routine bullet inside
+Week 3 — it is the gate that the rest of the phase exists to
+satisfy. Pre-tag preconditions (every one must be green at the
+SAME commit):
+
+1. **All 5 DPAs** either countersigned OR flagged with an expected
+   countersignature date in `docs/HANDOFF.md` (the manager makes
+   the call on whether to ship-with-pending vs. block).
+2. **All three handoff docs** (`docs/DEPLOYMENT.md`,
+   `docs/OPS_RUNBOOK.md`, `docs/HANDOFF.md`) reviewed AND signed
+   off by the manager. Signoff captured in
+   `docs/PHASE_17_SIGNOFFS.md` with a date per doc.
+3. **72-point smoke walk** green across the 4-browser matrix
+   (Desktop Chrome / Desktop Safari / iPhone 13 / Pixel 5).
+   Captured in `docs/PHASE_17_SMOKE_CHECKLIST.md`. Mobile may be
+   ≥95% with documented carve-outs for known mobile limitations;
+   desktop must be 100%.
+4. **7 consecutive nights of `smoke:citations` green** immediately
+   before the tag commit. The Bayern SHA invariant is implicit in
+   smokeWalk's gate.
+5. **Bayern SHA still `b18d3f7f9a6fe238c18cec5361d30ea3a547e46b1ef2b16a1e74c533aacb3471`** at the
+   tag commit. Verified one last time via
+   `npm run verify:bayern-sha`.
+6. **Counsel signoff on Impressum / AGB / Datenschutz / Cookies**
+   received and incorporated. Counsel's letter referenced in
+   `docs/PHASE_17_SIGNOFFS.md`.
+
+The tag command:
+
+```sh
+git tag -a v1.0 -m "Planning Matrix v1.0 — delivered to client.
+
+Active v1 path complete: Phases 11, 12 (Bayern + 4-state content),
+13 (DESIGNER role), 17 (handoff). Bayern SHA b18d3f7f...3471
+held across 33+ commits.
+
+Known post-v1 follow-up work (see HANDOFF.md):
+  - Phase 12.5 (async takt) — architectural debt, post-v1.
+  - Phase 14 (remaining 11 states) — minimum stubs honestly
+    surface 'in Vorbereitung'; full content post-v1.
+  - Phase 15 (per-state Geoportals) — München WMS shipped;
+    other states post-v1.
+  - Phase 16 (nightly regression at scale) — manual smoke
+    walk + verify:bayern-sha cover v1 scale; nightly cron
+    + persona drift detection + admin dashboard post-v1.
+"
+git push --tags
+```
+
+After the tag pushes, the contract scope is complete. No v2 work
+is proposed in this phase.
 
 **72-point smoke walk surfaces (Week 2):** landing, sign-up, sign-in,
 forgot-password, reset-password, verify-email, dashboard, /projects/new
