@@ -47,6 +47,7 @@ import {
   hydrateProjectState,
   applyToolInputToState,
 } from '../../../src/lib/projectStateHelpers.ts'
+import { isRegisteredBundesland } from '../../../src/legal/legalRegistry.ts'
 import {
   chatTurnRequestSchema,
   type ChatTurnError,
@@ -218,6 +219,18 @@ Deno.serve(async (req: Request) => {
     template_id: project.template_id,
     bundesland: project.bundesland,
   })
+  // Phase 11 — emit a span event when the project's Bundesland code
+  // isn't registered in src/legal/legalRegistry.ts. resolveStateDelta
+  // falls back to BAYERN_DELTA silently; this event is the queryable
+  // signal that the fallback fired. Production wizard hardcodes
+  // 'bayern' (audit B04, held), so this should never fire in prod
+  // unless someone manually edited projects.bundesland in the DB.
+  if (!isRegisteredBundesland(project.bundesland)) {
+    loadSpan.addEvent('legal.bundesland.fallback', {
+      raw: project.bundesland,
+      fallback: 'bayern',
+    })
+  }
   loadSpan.end()
   const templateId = project.template_id as TemplateId
   const currentState = hydrateProjectState(project.state, templateId)
@@ -326,6 +339,7 @@ Deno.serve(async (req: Request) => {
       projectId,
       userId: userData.user.id,
       currentState,
+      bundesland: project.bundesland,
       corsHeaders,
       requestId,
       clientRequestId,
@@ -378,10 +392,10 @@ Deno.serve(async (req: Request) => {
   // observability, not gating. Commit 6 wires violations to
   // public.event_log so the admin Logs drawer can surface trends.
   const citationLintSpan = tracer.startSpan('citation.lint', rootSpan.span_id)
-  // Phase 10.1 firewall — pass the full toolInput so the linter scans
-  // recommendations_delta / procedures_delta / documents_delta /
-  // extracted_facts.evidence in addition to message_de / message_en.
-  const citationViolations = lintCitations(toolInput)
+  // Phase 10.1 + Phase 11 firewall — pass toolInput so the linter
+  // scans every model-emitted text field, and pass project.bundesland
+  // so the active state's own LBO citations are not flagged.
+  const citationViolations = lintCitations(toolInput, project.bundesland)
   citationLintSpan.setAttributes({
     violations_count: citationViolations.length,
     error_count: citationViolations.filter((v) => v.severity === 'error').length,

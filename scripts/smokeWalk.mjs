@@ -36,6 +36,7 @@
 import { readFile } from 'node:fs/promises'
 import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'node:path'
+import { createHash } from 'node:crypto'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const REPO_ROOT = join(__dirname, '..')
@@ -43,12 +44,12 @@ const REPO_ROOT = join(__dirname, '..')
 // ── Forbidden patterns (mirror of citationLint.ts) ─────────────────────
 // Keep this list in sync with supabase/functions/chat-turn/citationLint.ts
 // FORBIDDEN_PATTERNS. Drift between the two is itself a bug — the
-// static gate below detects it by counting lines.
+// static gate below counts entries.
 //
-// Layer A (5 rules) — Bayern structural mistakes.
-// Layer B (15 rules) — Bundesland firewall, one entry per non-Bayern LBO/BO.
+// Layer A (5 rules, no homeBundesland) — always run.
+// Layer B (16 rules, each with homeBundesland) — skip when active.
 const FORBIDDEN_PATTERNS = [
-  // Layer A
+  // Layer A — structural mistakes, Bundesland-independent
   { name: 'anlage_1_baybo', regex: /Anlage\s+1\s+BayBO/gi, severity: 'error' },
   { name: 'annex_1_baybo', regex: /Annex\s+1\s+BayBO/gi, severity: 'error' },
   {
@@ -62,73 +63,102 @@ const FORBIDDEN_PATTERNS = [
     regex: /relevante\s+(Bauordnung|Vorschrift)|einschl[äa]gige\s+(Bauordnung|Vorschrift)/gi,
     severity: 'warning',
   },
-  // Layer B — non-Bayern Bundesland firewall (15 entries)
+  // Layer B — per-Bundesland firewall (16 entries)
+  {
+    name: 'baybo',
+    regex: /\bBayBO\b|\bBayerische\s+Bauordnung\b/gi,
+    severity: 'error',
+    homeBundesland: 'bayern',
+  },
   {
     name: 'lbo_bw',
     regex: /\bLBO[\s-]+BW\b|\bLandesbauordnung\s+Baden[\s-]?W[üu]rttemberg\b/gi,
     severity: 'error',
+    homeBundesland: 'bw',
   },
   {
     name: 'bauo_nrw',
     regex: /\bBauO\s+NRW\b|\bBauordnung\s+Nordrhein[\s-]?Westfalen\b/gi,
     severity: 'error',
+    homeBundesland: 'nrw',
   },
-  { name: 'hbo', regex: /\bHBO\b|\bHessische\s+Bauordnung\b/gi, severity: 'error' },
+  {
+    name: 'hbo',
+    regex: /\bHBO\b|\bHessische\s+Bauordnung\b/gi,
+    severity: 'error',
+    homeBundesland: 'hessen',
+  },
   {
     name: 'nbauo',
     regex: /\bNBauO\b|\bNieders[äa]chsische\s+Bauordnung\b/gi,
     severity: 'error',
+    homeBundesland: 'niedersachsen',
   },
   {
     name: 'saechsbo',
     regex: /\bS[äa]chsBO\b|\bS[äa]chsische\s+Bauordnung\b/gi,
     severity: 'error',
+    homeBundesland: 'sachsen',
   },
   {
     name: 'lbauo_rlp',
     regex: /\bLBauO\s+RLP\b|\bLandesbauordnung\s+Rheinland[\s-]?Pfalz\b/gi,
     severity: 'error',
+    homeBundesland: 'rlp',
   },
   {
     name: 'lbo_sh',
     regex: /\bLBO\s+SH\b|\bLandesbauordnung\s+Schleswig[\s-]?Holstein\b/gi,
     severity: 'error',
+    homeBundesland: 'sh',
   },
   {
     name: 'lbo_mv',
     regex: /\bLBO\s+MV\b|\bLandesbauordnung\s+Mecklenburg[\s-]?Vorpommern\b/gi,
     severity: 'error',
+    homeBundesland: 'mv',
   },
   {
     name: 'bremlbo',
     regex: /\bBremLBO\b|\bBremische\s+Landesbauordnung\b/gi,
     severity: 'error',
+    homeBundesland: 'bremen',
   },
-  { name: 'hbauo', regex: /\bHBauO\b|\bHamburgische\s+Bauordnung\b/gi, severity: 'error' },
+  {
+    name: 'hbauo',
+    regex: /\bHBauO\b|\bHamburgische\s+Bauordnung\b/gi,
+    severity: 'error',
+    homeBundesland: 'hamburg',
+  },
   {
     name: 'lbo_saarland',
     regex: /\bLBO\s+Saarland\b|\bLandesbauordnung\s+(des\s+)?Saarland(es)?\b/gi,
     severity: 'error',
+    homeBundesland: 'saarland',
   },
   {
     name: 'thuerbo',
     regex: /\bTh[üu]rBO\b|\bTh[üu]ringer\s+Bauordnung\b/gi,
     severity: 'error',
+    homeBundesland: 'thueringen',
   },
   {
     name: 'bauo_lsa',
     regex: /\bBauO\s+LSA\b|\bBauordnung\s+Sachsen[\s-]?Anhalt\b/gi,
     severity: 'error',
+    homeBundesland: 'sachsen-anhalt',
   },
   {
     name: 'bbgbo',
     regex: /\bBbgBO\b|\bBrandenburgische\s+Bauordnung\b|\bBauordnung\s+Brandenburg\b/gi,
     severity: 'error',
+    homeBundesland: 'brandenburg',
   },
   {
     name: 'bauo_bln',
     regex: /\bBauO\s+Bln\b|\bBauordnung\s+(f[üu]r\s+)?Berlin\b|\bBerliner\s+Bauordnung\b/gi,
     severity: 'error',
+    homeBundesland: 'berlin',
   },
 ]
 
@@ -308,6 +338,97 @@ function* collectModelTexts(input) {
   }
 }
 
+// Per-Bundesland switch fixtures — Phase 11 commit 2.
+// For each top state (NRW / BW / Niedersachsen / Hessen) the lint must
+// allow the state's own LBO citations (homeBundesland match filters the
+// pattern out) and still reject citations to other states' LBOs. Bayern
+// regression checks confirm the home state still doesn't self-flag.
+const BUNDESLAND_SWITCH_FIXTURES = [
+  // ── NRW
+  {
+    label: 'active=nrw, "§ 5 BauO NRW" — must NOT flag (own state)',
+    activeBundesland: 'nrw',
+    text: 'Die Abstandsflächen richten sich nach § 5 BauO NRW.',
+    expectFlag: false,
+  },
+  {
+    label: 'active=nrw, "BayBO Art. 57" — must flag (wrong Bundesland)',
+    activeBundesland: 'nrw',
+    text: 'Ein Vergleich mit BayBO Art. 57 wäre hier irreführend.',
+    expectFlag: true,
+  },
+  {
+    label: 'active=nrw, "Anlage 1 BayBO" — must flag (Layer-A always)',
+    activeBundesland: 'nrw',
+    text: 'Anlage 1 BayBO ist hier ohnehin nicht einschlägig.',
+    expectFlag: true,
+  },
+  // ── BW
+  {
+    label: 'active=bw, "§ 5 LBO BW" — must NOT flag (own state)',
+    activeBundesland: 'bw',
+    text: 'Abstandsflächen nach § 5 LBO BW.',
+    expectFlag: false,
+  },
+  {
+    label: 'active=bw, "BauO NRW" — must flag (wrong Bundesland)',
+    activeBundesland: 'bw',
+    text: 'Die BauO NRW kennt eine andere Schwellenlogik.',
+    expectFlag: true,
+  },
+  // ── Niedersachsen
+  {
+    label: 'active=niedersachsen, "§ 5 NBauO" — must NOT flag (own state)',
+    activeBundesland: 'niedersachsen',
+    text: 'Abstandsflächen nach § 5 NBauO.',
+    expectFlag: false,
+  },
+  {
+    label: 'active=niedersachsen, "BayBO Art. 6" — must flag',
+    activeBundesland: 'niedersachsen',
+    text: 'BayBO Art. 6 ist nicht anwendbar.',
+    expectFlag: true,
+  },
+  // ── Hessen
+  {
+    label: 'active=hessen, "§ 6 HBO" — must NOT flag (own state)',
+    activeBundesland: 'hessen',
+    text: 'Abstandsflächen nach § 6 HBO.',
+    expectFlag: false,
+  },
+  {
+    label: 'active=hessen, "Hessische Bauordnung" — must NOT flag (own state long form)',
+    activeBundesland: 'hessen',
+    text: 'Die Hessische Bauordnung regelt das in § 6.',
+    expectFlag: false,
+  },
+  {
+    label: 'active=hessen, "LBO BW" — must flag (wrong Bundesland)',
+    activeBundesland: 'hessen',
+    text: 'Im Vergleich zu LBO BW gibt es Abweichungen.',
+    expectFlag: true,
+  },
+  // ── Bayern regressions
+  {
+    label: 'active=bayern, "Art. 57 BayBO" — must NOT flag (own state)',
+    activeBundesland: 'bayern',
+    text: 'Verfahrensfreiheit nach BayBO Art. 57 Abs. 1 Nr. 1 a.',
+    expectFlag: false,
+  },
+  {
+    label: 'active=bayern, "BauO NRW" — must STILL flag (wrong Bundesland)',
+    activeBundesland: 'bayern',
+    text: 'Im Gegensatz zu BauO NRW regelt das BayBO direkt.',
+    expectFlag: true,
+  },
+  {
+    label: 'active=bayern, "§ 57 BayBO" — must STILL flag (Layer-A § vs Art.)',
+    activeBundesland: 'bayern',
+    text: 'Die Verfahrensfreiheit folgt aus § 57 BayBO.',
+    expectFlag: true,
+  },
+]
+
 // Deep-fixture suite. The first entry is the audit's acceptance test
 // — an LBO BW (Baden-Württemberg) citation buried inside a
 // recommendations_delta.detail_de. Pre-firewall, this would have
@@ -418,9 +539,10 @@ async function readFileText(relPath) {
   return await readFile(abs, 'utf8')
 }
 
-function lintText(text) {
+function lintText(text, activeBundesland = null) {
   const violations = []
-  for (const { name, regex, severity } of FORBIDDEN_PATTERNS) {
+  for (const { name, regex, severity, homeBundesland } of FORBIDDEN_PATTERNS) {
+    if (homeBundesland && homeBundesland === activeBundesland) continue
     regex.lastIndex = 0
     let m
     while ((m = regex.exec(text)) !== null) {
@@ -431,10 +553,55 @@ function lintText(text) {
   return violations
 }
 
-function lintToolInput(input) {
+// ── Bayern byte-for-byte gate ──────────────────────────────────────────
+// Re-derives composeLegalContext('bayern') from raw slice files and
+// asserts the SHA-256 matches the expected baseline. The baseline is
+// frozen at Phase 11 commit 1 (b18d3f7f...3471). When Bayern content
+// is intentionally edited, update EXPECTED_BAYERN_SHA below and call
+// out the change in the commit message.
+const EXPECTED_BAYERN_SHA =
+  'b18d3f7f9a6fe238c18cec5361d30ea3a547e46b1ef2b16a1e74c533aacb3471'
+
+function extractBackticked(file, exportName) {
+  const re = new RegExp(`export const ${exportName} =\\s*\`([\\s\\S]*?)\``)
+  const m = file.match(re)
+  if (!m) throw new Error(`Could not extract ${exportName}`)
+  return m[1]
+}
+
+async function runBayernShaGate() {
+  const SLICE_SEPARATOR = '\n\n---\n\n'
+  const TAIL =
+    '\n\n══════════════════════════════════════════════════════════════════════════' +
+    '\nPROJEKTKONTEXT' +
+    '\n══════════════════════════════════════════════════════════════════════════' +
+    '\n\nEs folgt: Template-Kontext (T-XX), Locale-Hinweis, aktueller Projektzustand' +
+    '\n(Grundstück, A/B/C-Bereiche, jüngste Fakten, Top-3-Empfehlungen, zuletzt' +
+    '\ngestellte Fragen, jüngste Bauherreneingabe, letzte sprechende Fachperson).\n'
+  const SHARED  = extractBackticked(await readFileText('src/legal/shared.ts'),           'SHARED_BLOCK')
+  const FED     = extractBackticked(await readFileText('src/legal/federal.ts'),          'FEDERAL_BLOCK')
+  const BAYERN  = extractBackticked(await readFileText('src/legal/bayern.ts'),           'BAYERN_BLOCK')
+  const MUE     = extractBackticked(await readFileText('src/legal/muenchen.ts'),         'MUENCHEN_BLOCK')
+  const PERS    = extractBackticked(await readFileText('src/legal/personaBehaviour.ts'), 'PERSONA_BEHAVIOURAL_RULES')
+  const TPLS    = extractBackticked(await readFileText('src/legal/templates/shared.ts'), 'TEMPLATE_SHARED_BLOCK')
+  const composed = [SHARED, FED, BAYERN, MUE, PERS, TPLS].join(SLICE_SEPARATOR) + TAIL
+  const sha = createHash('sha256').update(composed).digest('hex')
+  return [
+    {
+      ok: sha === EXPECTED_BAYERN_SHA,
+      msg: `Bayern prefix SHA mismatch.\n` +
+        `  expected: ${EXPECTED_BAYERN_SHA}\n` +
+        `  actual:   ${sha}\n` +
+        `  length:   ${composed.length}\n` +
+        `  → If Bayern content was edited intentionally, update EXPECTED_BAYERN_SHA in scripts/smokeWalk.mjs and call it out in the commit message.`,
+    },
+  ]
+}
+
+function lintToolInput(input, activeBundesland = null) {
   const violations = []
   for (const { field, text } of collectModelTexts(input)) {
-    for (const v of lintText(text)) {
+    for (const v of lintText(text, activeBundesland)) {
       violations.push({ ...v, field })
     }
   }
@@ -516,14 +683,18 @@ async function runStaticGate() {
   const patternCount = (lintModuleSource.match(/regex:\s*\//g) ?? []).length
   results.push(failures('citationLint.ts: forbidden patterns present', [
     {
-      ok: patternCount >= 20,
-      msg: `expected ≥ 20 regex entries in FORBIDDEN_PATTERNS (5 Bayern structural + 15 Bundesland firewall); found ${patternCount}`,
+      ok: patternCount >= 21,
+      msg: `expected ≥ 21 regex entries in FORBIDDEN_PATTERNS (5 Bayern structural + 16 per-Bundesland firewall); found ${patternCount}`,
     },
   ]))
 
-  // 5. Lint logic validates against curated samples.
+  // 5. Lint logic validates against curated samples. The legacy
+  // LINT_SAMPLES were authored in a Bayern-only world; Phase 11
+  // makes the firewall per-Bundesland, so we explicitly pass
+  // 'bayern' as the active state to preserve the original semantics.
+  // Per-state samples live in BUNDESLAND_SWITCH_FIXTURES below.
   for (const s of LINT_SAMPLES) {
-    const v = lintText(s.text)
+    const v = lintText(s.text, s.activeBundesland ?? 'bayern')
     const flagged = v.length > 0
     results.push(failures(`lint sample: ${s.label}`, [
       {
@@ -535,14 +706,47 @@ async function runStaticGate() {
     ]))
   }
 
-  // 6. Deep-fixture suite: run the lint over the FULL respond-tool
+  // 6.0 Bayern byte-for-byte gate — Phase 11 invariant.
+  // The composed legal-context PREFIX for Bayern must produce the
+  // exact same SHA-256 across phases. If this changes, the Anthropic
+  // prompt cache is invalidated AND we may have unintended drift in
+  // the Bayern persona. Re-baseline the expected hash deliberately
+  // when Bayern content is intentionally edited (commit message must
+  // call it out).
+  results.push(failures('Bayern byte-for-byte SHA gate', await runBayernShaGate()))
+
+  // 6a. Per-Bundesland switch suite — Phase 11 commit 2 acceptance.
+  // For each of the four newly-registered top states (NRW, BW, NS, HE),
+  // assert that:
+  //   - The state's own LBO citations DO NOT flag (homeBundesland match
+  //     filters out the pattern).
+  //   - Citations to a different Bundesland's LBO STILL flag (firewall
+  //     for non-active states stays active).
+  //   - Layer-A structural patterns (Anlage 1 BayBO, § N BayBO, MBO)
+  //     still fire regardless of active Bundesland.
+  for (const sw of BUNDESLAND_SWITCH_FIXTURES) {
+    const violations = lintText(sw.text, sw.activeBundesland)
+    const flagged = violations.length > 0
+    results.push(failures(`bundesland-switch: ${sw.label}`, [
+      {
+        ok: flagged === sw.expectFlag,
+        msg: sw.expectFlag
+          ? `expected to flag in active=${sw.activeBundesland} but got none on text: "${sw.text.slice(0, 70)}…"`
+          : `expected NO flag in active=${sw.activeBundesland} but got ${violations.length}: ${JSON.stringify(violations.map((v) => v.match))}`,
+      },
+    ]))
+  }
+
+  // 6b. Deep-fixture suite: run the lint over the FULL respond-tool
   // input shape so the new scan surface (recommendations_delta /
   // procedures_delta / documents_delta / extracted_facts.evidence) is
   // exercised by the static gate. The acceptance test for the audit's
   // §6 attack vector A2 — an LBO BW citation buried inside a
-  // recommendation detail — lives here.
+  // recommendation detail — lives here. Legacy fixtures default to
+  // 'bayern' as the active Bundesland; per-state cases set
+  // activeBundesland explicitly.
   for (const f of TOOL_INPUT_FIXTURES) {
-    const violations = lintToolInput(f.input)
+    const violations = lintToolInput(f.input, f.activeBundesland ?? 'bayern')
     const flagged = violations.length > 0
     const hasError = violations.some((v) => v.severity === 'error')
     const conditions = [

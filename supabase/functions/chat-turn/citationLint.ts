@@ -1,44 +1,50 @@
 // ───────────────────────────────────────────────────────────────────────
-// Phase 10.1 — Citation linter (Bundesland firewall)
+// Phase 10.1 → Phase 11 — Citation linter (per-Bundesland firewall)
 //
-// Permanent safety net for the wrong-Bundesland citation bug. Scans every
-// model-emitted text field on the respond tool input (message_de,
-// message_en, recommendations_delta, procedures_delta, documents_delta,
-// extracted_facts.evidence) AFTER Zod validation but BEFORE the response
-// leaves the function. Findings are logged to public.event_log as
-// `citation.violation` events; the response itself is NEVER blocked —
-// the linter is observability, not gating. A future phase will flip
-// this to blocking once the false-positive rate is understood.
+// Permanent safety net for the wrong-Bundesland citation bug. Scans
+// every model-emitted text field on the respond tool input AFTER Zod
+// validation but BEFORE the response leaves the function. Findings
+// log to public.event_log as `citation.violation` events; the
+// response itself is NEVER blocked — the linter is observability,
+// not gating.
 //
-// Architecture: WHITELIST + REJECT-OTHER-BUNDESLAND.
+// Architecture: REJECT-WHEN-NOT-HOME-STATE.
 //
-//   1. BAYERN_ALLOWED_CITATIONS is a reference list of canonical Bayern
-//      citation tokens (see bayern.ts + muenchen.ts as the source of
-//      truth). Documentation only; not used as a positive gate today.
-//   2. FORBIDDEN_PATTERNS is the active reject list. Two layers:
-//      (a) The five Anlage/MBO/§-vs-Art./placeholder rules — Bayern-
-//          specific structural mistakes the persona MUST avoid.
-//      (b) Fifteen non-Bayern Landesbauordnungen (every Bundesland
-//          except Bayern), each with abbreviation AND long-form
-//          regex alternatives. These reject any citation to a wrong
-//          Bundesland's building code.
+//   Layer A (5 rules, no homeBundesland tag) — Bayern STRUCTURAL
+//   mistakes that are wrong regardless of the active state:
+//     • "Anlage 1 BayBO" / "Annex 1 BayBO" — BayBO has no Anlage 1.
+//     • "§ N BayBO" — BayBO uses Art., not §.
+//     • "MBO" — model law, never geltendes Recht (warning only).
+//     • "relevante Bauordnung" placeholder (warning only).
+//
+//   Layer B (16 rules, each tagged with `homeBundesland`) — citations
+//   to a Bundesland's LBO/BO that fire for projects OUTSIDE that
+//   state. Every Bundesland is covered, including Bayern: a Bayern
+//   citation in a NRW project flags as wrong-Bundesland.
+//
+// The `lintCitations(input, activeBundesland)` function takes the
+// active project's Bundesland and skips any Layer-B pattern whose
+// `homeBundesland` matches — that pattern's home state is the
+// active state, so its citations are correct. Layer-A patterns
+// always run.
 //
 // False-positive discipline:
-//   • Pattern `/Anlage 1 BayBO/i` — anchors to BayBO. The Münchner
-//     Stellplatzsatzung 926 has its own correct "Anlage 1" reference
+//   • "Anlage 1 BayBO" anchors to BayBO. The Münchner Stellplatz-
+//     satzung StPlS 926 has its own correct "Anlage 1" reference
 //     (StPlS 926 Anlage 1 Nr. 1.1) that must NOT trip the linter.
-//   • Pattern `/§\s*\d+\s*BayBO/` — BayBO uses Art., not §. Cross-
-//     references to BauGB/BauNVO with § are fine because they don't
-//     end in "BayBO".
-//   • The 15 LBO-firewall patterns use word boundaries and require
-//     specific Bundesland-identifying suffixes (e.g. "LBO BW" — not
-//     plain "LBO" — because plain "LBO" is also a generic). Known
-//     limitation: paraphrased forms ("die hessische Bauordnung" with
-//     lowercase definite article, "Bauordnung des Landes Hessen")
-//     are NOT all caught — telemetry will surface the gaps.
+//   • Cross-references to BauGB / BauNVO / GEG with "§" are fine —
+//     they don't end in "BayBO".
+//   • Layer-B patterns use word boundaries and require specific
+//     Bundesland-identifying suffixes (e.g. "LBO BW", not plain
+//     "LBO"). Known limitation: paraphrased long forms ("die
+//     hessische Bauordnung" with lowercase article, "Bauordnung
+//     des Landes Hessen") are NOT all caught — telemetry will
+//     surface the gaps.
 // ───────────────────────────────────────────────────────────────────────
 
 import type { RespondToolInput } from '../../../src/types/respondTool.ts'
+import { normalizeBundeslandCode } from '../../../src/legal/legalRegistry.ts'
+import type { BundeslandCode } from '../../../src/legal/states/_types.ts'
 
 export type CitationSeverity = 'error' | 'warning'
 
@@ -64,6 +70,20 @@ interface ForbiddenPattern {
   regex: RegExp
   severity: CitationSeverity
   reason: string
+  /**
+   * When set, this pattern is SKIPPED if the active project's
+   * `projects.bundesland` matches — i.e., this is a "wrong-Bundesland"
+   * pattern that should NOT fire for projects in this very state.
+   *
+   * Layer-A structural patterns (Anlage 1 BayBO, § N BayBO, MBO,
+   * placeholder) leave this undefined: those mistakes are wrong
+   * regardless of the active Bundesland.
+   *
+   * Layer-B Bundesland-firewall patterns each carry their home
+   * code: e.g., `BauO NRW` carries `homeBundesland = 'nrw'` so
+   * a NRW project can cite BauO NRW without flagging.
+   */
+  homeBundesland?: BundeslandCode
 }
 
 // ── Reference: canonical Bayern + München citations ────────────────────
@@ -166,99 +186,123 @@ const FORBIDDEN_PATTERNS: ForbiddenPattern[] = [
       'Generic placeholder ("die relevante Bauordnung") avoids the Bayern-specific anchor. Either cite a concrete BayBO Article, or hedge with explicit Bayern-Bezug.',
   },
 
-  // ── Layer B: non-Bayern Bundesland firewall (15 rules) ─────────────
-  // Each entry rejects citations to a wrong Bundesland's building code.
-  // Both the abbreviation and the long form are matched (case-insensitive,
-  // global, word-boundary).
+  // ── Layer B: per-Bundesland firewall (16 rules) ────────────────────
+  // Each entry rejects citations to a Bundesland's LBO/BO unless that
+  // Bundesland is the active state. Both the abbreviation and the long
+  // form are matched (case-insensitive, global, word-boundary).
+  // `homeBundesland` makes the rule skip when projects.bundesland
+  // matches.
+  {
+    regex: /\bBayBO\b|\bBayerische\s+Bauordnung\b/gi,
+    severity: 'error',
+    reason:
+      'Wrong Bundesland — BayBO (Bayern) does not apply when the active project is not in Bayern.',
+    homeBundesland: 'bayern',
+  },
   {
     regex: /\bLBO[\s-]+BW\b|\bLandesbauordnung\s+Baden[\s-]?W[üu]rttemberg\b/gi,
     severity: 'error',
     reason:
-      'Wrong Bundesland — LBO BW (Baden-Württemberg) is not anwendbares Recht for a Bayern project. Cite BayBO instead.',
+      'Wrong Bundesland — LBO BW (Baden-Württemberg) does not apply when the active project is not in Baden-Württemberg.',
+    homeBundesland: 'bw',
   },
   {
     regex: /\bBauO\s+NRW\b|\bBauordnung\s+Nordrhein[\s-]?Westfalen\b/gi,
     severity: 'error',
     reason:
-      'Wrong Bundesland — BauO NRW (Nordrhein-Westfalen) is not anwendbares Recht for a Bayern project. Cite BayBO instead.',
+      'Wrong Bundesland — BauO NRW (Nordrhein-Westfalen) does not apply when the active project is not in Nordrhein-Westfalen.',
+    homeBundesland: 'nrw',
   },
   {
     regex: /\bHBO\b|\bHessische\s+Bauordnung\b/gi,
     severity: 'error',
     reason:
-      'Wrong Bundesland — HBO (Hessen) is not anwendbares Recht for a Bayern project. Cite BayBO instead.',
+      'Wrong Bundesland — HBO (Hessen) does not apply when the active project is not in Hessen.',
+    homeBundesland: 'hessen',
   },
   {
     regex: /\bNBauO\b|\bNieders[äa]chsische\s+Bauordnung\b/gi,
     severity: 'error',
     reason:
-      'Wrong Bundesland — NBauO (Niedersachsen) is not anwendbares Recht for a Bayern project. Cite BayBO instead.',
+      'Wrong Bundesland — NBauO (Niedersachsen) does not apply when the active project is not in Niedersachsen.',
+    homeBundesland: 'niedersachsen',
   },
   {
     regex: /\bS[äa]chsBO\b|\bS[äa]chsische\s+Bauordnung\b/gi,
     severity: 'error',
     reason:
-      'Wrong Bundesland — SächsBO (Sachsen) is not anwendbares Recht for a Bayern project. Cite BayBO instead.',
+      'Wrong Bundesland — SächsBO (Sachsen) does not apply when the active project is not in Sachsen.',
+    homeBundesland: 'sachsen',
   },
   {
     regex: /\bLBauO\s+RLP\b|\bLandesbauordnung\s+Rheinland[\s-]?Pfalz\b/gi,
     severity: 'error',
     reason:
-      'Wrong Bundesland — LBauO RLP (Rheinland-Pfalz) is not anwendbares Recht for a Bayern project. Cite BayBO instead.',
+      'Wrong Bundesland — LBauO RLP (Rheinland-Pfalz) does not apply when the active project is not in Rheinland-Pfalz.',
+    homeBundesland: 'rlp',
   },
   {
     regex: /\bLBO\s+SH\b|\bLandesbauordnung\s+Schleswig[\s-]?Holstein\b/gi,
     severity: 'error',
     reason:
-      'Wrong Bundesland — LBO SH (Schleswig-Holstein) is not anwendbares Recht for a Bayern project. Cite BayBO instead.',
+      'Wrong Bundesland — LBO SH (Schleswig-Holstein) does not apply when the active project is not in Schleswig-Holstein.',
+    homeBundesland: 'sh',
   },
   {
     regex: /\bLBO\s+MV\b|\bLandesbauordnung\s+Mecklenburg[\s-]?Vorpommern\b/gi,
     severity: 'error',
     reason:
-      'Wrong Bundesland — LBO MV (Mecklenburg-Vorpommern) is not anwendbares Recht for a Bayern project. Cite BayBO instead.',
+      'Wrong Bundesland — LBO MV (Mecklenburg-Vorpommern) does not apply when the active project is not in Mecklenburg-Vorpommern.',
+    homeBundesland: 'mv',
   },
   {
     regex: /\bBremLBO\b|\bBremische\s+Landesbauordnung\b/gi,
     severity: 'error',
     reason:
-      'Wrong Bundesland — BremLBO (Bremen) is not anwendbares Recht for a Bayern project. Cite BayBO instead.',
+      'Wrong Bundesland — BremLBO (Bremen) does not apply when the active project is not in Bremen.',
+    homeBundesland: 'bremen',
   },
   {
     regex: /\bHBauO\b|\bHamburgische\s+Bauordnung\b/gi,
     severity: 'error',
     reason:
-      'Wrong Bundesland — HBauO (Hamburg) is not anwendbares Recht for a Bayern project. Cite BayBO instead.',
+      'Wrong Bundesland — HBauO (Hamburg) does not apply when the active project is not in Hamburg.',
+    homeBundesland: 'hamburg',
   },
   {
     regex: /\bLBO\s+Saarland\b|\bLandesbauordnung\s+(des\s+)?Saarland(es)?\b/gi,
     severity: 'error',
     reason:
-      'Wrong Bundesland — LBO Saarland is not anwendbares Recht for a Bayern project. Cite BayBO instead.',
+      'Wrong Bundesland — LBO Saarland does not apply when the active project is not in Saarland.',
+    homeBundesland: 'saarland',
   },
   {
     regex: /\bTh[üu]rBO\b|\bTh[üu]ringer\s+Bauordnung\b/gi,
     severity: 'error',
     reason:
-      'Wrong Bundesland — ThürBO (Thüringen) is not anwendbares Recht for a Bayern project. Cite BayBO instead.',
+      'Wrong Bundesland — ThürBO (Thüringen) does not apply when the active project is not in Thüringen.',
+    homeBundesland: 'thueringen',
   },
   {
     regex: /\bBauO\s+LSA\b|\bBauordnung\s+Sachsen[\s-]?Anhalt\b/gi,
     severity: 'error',
     reason:
-      'Wrong Bundesland — BauO LSA (Sachsen-Anhalt) is not anwendbares Recht for a Bayern project. Cite BayBO instead.',
+      'Wrong Bundesland — BauO LSA (Sachsen-Anhalt) does not apply when the active project is not in Sachsen-Anhalt.',
+    homeBundesland: 'sachsen-anhalt',
   },
   {
     regex: /\bBbgBO\b|\bBrandenburgische\s+Bauordnung\b|\bBauordnung\s+Brandenburg\b/gi,
     severity: 'error',
     reason:
-      'Wrong Bundesland — BbgBO (Brandenburg) is not anwendbares Recht for a Bayern project. Cite BayBO instead.',
+      'Wrong Bundesland — BbgBO (Brandenburg) does not apply when the active project is not in Brandenburg.',
+    homeBundesland: 'brandenburg',
   },
   {
     regex: /\bBauO\s+Bln\b|\bBauordnung\s+(f[üu]r\s+)?Berlin\b|\bBerliner\s+Bauordnung\b/gi,
     severity: 'error',
     reason:
-      'Wrong Bundesland — Berliner Bauordnung is not anwendbares Recht for a Bayern project. Cite BayBO instead.',
+      'Wrong Bundesland — Berliner Bauordnung does not apply when the active project is not in Berlin.',
+    homeBundesland: 'berlin',
   },
 ]
 
@@ -267,15 +311,25 @@ const CONTEXT_WINDOW = 25
 /**
  * Scan a single piece of text for forbidden citation patterns.
  *
+ * Layer-A patterns (no `homeBundesland` tag) always run.
+ * Layer-B patterns (one per Bundesland) are skipped when their
+ * `homeBundesland` matches `activeBundesland` — that pattern's
+ * home state is the active state, so the citation is correct.
+ *
  * Implementation note: regex is reset (`lastIndex = 0`) before use
  * because each pattern uses the `g` flag for global matching. Without
  * the reset, repeated calls on the same regex object would skip past
  * earlier matches.
  */
-function lintText(text: string, field: string): CitationViolation[] {
+function lintText(
+  text: string,
+  field: string,
+  activeBundesland: BundeslandCode | null,
+): CitationViolation[] {
   if (!text) return []
   const violations: CitationViolation[] = []
-  for (const { regex, severity, reason } of FORBIDDEN_PATTERNS) {
+  for (const { regex, severity, reason, homeBundesland } of FORBIDDEN_PATTERNS) {
+    if (homeBundesland && homeBundesland === activeBundesland) continue
     regex.lastIndex = 0
     let m: RegExpExecArray | null
     while ((m = regex.exec(text)) !== null) {
@@ -367,15 +421,28 @@ function* collectModelTexts(
 }
 
 /**
- * Lint every model-emitted text field on a respond-tool input. Returns
- * an empty array when nothing is flagged. Accepts the full RespondToolInput
- * (or any subset that names message_de / message_en / *_delta /
- * extracted_facts) so callers can simply pass `toolInput` through.
+ * Lint every model-emitted text field on a respond-tool input.
+ *
+ * `activeBundesland` is the project's `projects.bundesland` value
+ * (will be normalised + cast). The matching Layer-B pattern is
+ * skipped — that state's citations are legitimate for the active
+ * project. Layer-A structural patterns always run.
+ *
+ * Returns an empty array when nothing is flagged. Accepts the full
+ * RespondToolInput (or any subset that names message_de / message_en
+ * / *_delta / extracted_facts) so callers can simply pass `toolInput`
+ * through.
  */
-export function lintCitations(input: LintInput): CitationViolation[] {
+export function lintCitations(
+  input: LintInput,
+  activeBundesland?: string | null,
+): CitationViolation[] {
+  const code = activeBundesland
+    ? (normalizeBundeslandCode(activeBundesland) as BundeslandCode)
+    : null
   const violations: CitationViolation[] = []
   for (const { field, text } of collectModelTexts(input)) {
-    violations.push(...lintText(text, field))
+    violations.push(...lintText(text, field, code))
   }
   return violations
 }

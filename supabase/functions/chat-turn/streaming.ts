@@ -62,6 +62,10 @@ interface StreamingTurnArgs {
    *  supabase.auth.getUser() a second time. */
   userId: string
   currentState: ProjectState
+  /** Phase 11 — used by the bundesland-aware citation firewall to
+   *  skip the active state's own LBO pattern. Source of truth is
+   *  the projects row's bundesland column. */
+  bundesland: string | null
   corsHeaders: Record<string, string>
   requestId: string
   /** Phase 8.6 (B.3) — propagated to commit_chat_turn for replay
@@ -222,10 +226,11 @@ export function runStreamingTurn(args: StreamingTurnArgs): Response {
         // ── Phase 10.1 — citation linter (streaming path) ──────────
         // Same observability as the JSON path. Non-blocking.
         const citationLintSpan = tracer.startSpan('citation.lint', rootSpan.span_id)
-        // Phase 10.1 firewall — pass the full toolInput so the linter scans
-        // recommendations_delta / procedures_delta / documents_delta /
-        // extracted_facts.evidence in addition to message_de / message_en.
-        const citationViolations = lintCitations(toolInput)
+        // Phase 10.1 + Phase 11 firewall — pass toolInput so the linter
+        // scans every model-emitted text field, and pass the active
+        // bundesland so the home-state's own LBO citations are not
+        // flagged.
+        const citationViolations = lintCitations(toolInput, args.bundesland)
         citationLintSpan.setAttributes({
           violations_count: citationViolations.length,
           error_count: citationViolations.filter((v) => v.severity === 'error').length,
