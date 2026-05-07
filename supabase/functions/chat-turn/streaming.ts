@@ -30,7 +30,7 @@
 // ───────────────────────────────────────────────────────────────────────
 
 import Anthropic from '@anthropic-ai/sdk'
-import type { SupabaseClient } from '@supabase/supabase-js'
+import type { SupabaseClient } from 'npm:@supabase/supabase-js@2'
 import { buildSystemBlocks } from './systemPrompt.ts'
 import { MODEL, respondToolDefinition, respondToolChoice } from './toolSchema.ts'
 import { estimateCostUsd, UpstreamError, type AnthropicUsage } from './anthropic.ts'

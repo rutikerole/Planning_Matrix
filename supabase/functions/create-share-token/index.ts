@@ -21,7 +21,7 @@
 //   { "ok": false, "error": { "code": "...", "message": "..." } }
 // ───────────────────────────────────────────────────────────────────────
 
-import { createClient } from '@supabase/supabase-js'
+import { createClient } from 'npm:@supabase/supabase-js@2'
 
 const ALLOWED_ORIGINS = [
   'http://localhost:5173',

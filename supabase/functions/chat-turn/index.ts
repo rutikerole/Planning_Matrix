@@ -23,7 +23,7 @@
 // Every error envelope carries a requestId for log correlation.
 // ───────────────────────────────────────────────────────────────────────
 
-import { createClient } from '@supabase/supabase-js'
+import { createClient } from 'npm:@supabase/supabase-js@2'
 import { buildCorsHeaders } from './cors.ts'
 import { buildSystemBlocks, buildLiveStateBlock } from './systemPrompt.ts'
 import {

@@ -36,7 +36,7 @@
 // 4xx/5xx:      { ok: false, error: { code, message }, requestId }
 // ───────────────────────────────────────────────────────────────────────
 
-import { createClient } from '@supabase/supabase-js'
+import { createClient } from 'npm:@supabase/supabase-js@2'
 import type { ProjectState, Qualifier } from '../../../src/types/projectState.ts'
 
 const ALLOWED_ORIGINS = [

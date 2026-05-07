@@ -22,7 +22,7 @@
 // only this file changes — the SPA contract stays the same.
 // ───────────────────────────────────────────────────────────────────────
 
-import { createClient } from '@supabase/supabase-js'
+import { createClient } from 'npm:@supabase/supabase-js@2'
 import { z } from 'zod'
 import { buildCorsHeaders } from '../chat-turn/cors.ts'
 import { callWmsGetFeatureInfo } from './wmsClient.ts'

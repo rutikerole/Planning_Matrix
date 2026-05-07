@@ -39,7 +39,7 @@
 //   { ok: false, error: { code, message }, requestId }
 // ───────────────────────────────────────────────────────────────────────
 
-import { createClient, type SupabaseClient } from '@supabase/supabase-js'
+import { createClient, type SupabaseClient } from 'npm:@supabase/supabase-js@2'
 
 const ALLOWED_ORIGINS = [
   'http://localhost:5173',

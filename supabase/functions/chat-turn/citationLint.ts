@@ -453,7 +453,7 @@ export const FORBIDDEN_PATTERN_COUNT = FORBIDDEN_PATTERNS.length
 
 // ── Event-log wiring (Phase 10.1 commit 6) ────────────────────────────
 
-import type { SupabaseClient } from '@supabase/supabase-js'
+import type { SupabaseClient } from 'npm:@supabase/supabase-js@2'
 
 const NOOP_TRACE_UUID = '00000000-0000-0000-0000-000000000000'
 

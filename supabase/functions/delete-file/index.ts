@@ -21,7 +21,7 @@
 // Response 409 when the file is already linked to a sent message.
 // ───────────────────────────────────────────────────────────────────────
 
-import { createClient } from '@supabase/supabase-js'
+import { createClient } from 'npm:@supabase/supabase-js@2'
 
 const ALLOWED_ORIGINS = [
   'http://localhost:5173',
