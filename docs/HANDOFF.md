@@ -459,7 +459,65 @@ shipped in Phase 13 Week 4). What's missing is the cron harness
 
 ---
 
-## 9. Contact handoff
+## 9. Operational responsibilities — split between engineering and client
+
+The v1.0 tag marks the engineering scope as complete. A second tier
+of work is the **client's operational responsibility** to action
+post-tag, before public traffic touches the system. This split is
+deliberate and documented here so neither side has to re-derive it.
+
+### Client-side operational work (post-tag)
+
+Each item below is templated in this repo so the client only fills
+values, doesn't author content.
+
+| Item | Template / Tracker | What the client does |
+| ---- | ------------------ | -------------------- |
+| **DPAs (5 sub-processors)** | `docs/PHASE_17_DPA_LEDGER.md` | Sends the 5 vendor emails in the ledger (or claims via vendor dashboards), records sent/received dates, files countersigned PDFs in `docs/legal/dpas/<vendor>/`. |
+| **Impressum entity details** | `docs/PHASE_17_LEGAL_AUDIT.md` § "Impressum — placeholders" | Supplies real values for the 8 `{{...}}` placeholders in `src/features/legal/pages/ImpressumPage.tsx` (legal name, registered address, phone, email, USt-IdNr, Handelsregister). |
+| **Datenschutz placeholders** | `docs/PHASE_17_LEGAL_AUDIT.md` § "Datenschutz" | Same `{{...}}` set as Impressum — fills propagate. |
+| **Counsel review** | `docs/PHASE_17_LEGAL_AUDIT.md` § "Counsel-meeting prep" | Schedules counsel meeting; ships the four legal pages + this handoff package; incorporates feedback into `src/features/legal/pages/*.tsx`. |
+| **Sub-processor list lock** | `docs/PHASE_17_LEGAL_AUDIT.md` § "Datenschutz — Sub-processor list" | Confirms whether all 5 vendors stay in v1; if any is cut, removes the SDK from the bundle (not just disables) and removes the Datenschutz § for that vendor. |
+| **Hosting region lock** | `docs/DEPLOYMENT.md` § 1 + § 7 | Confirms Vercel + Supabase regions in dashboards; updates Datenschutz § 3.4-3.5 if anything diverges from the EU-Frankfurt narrative. |
+| **Retention windows** | `docs/OPS_RUNBOOK.md` § 1 (incident triggers) + Datenschutz § 4 | Decides retention policy on chat history / project state / event_log; counsel adds Datenschutz § 4 subsection. |
+| **Real Impressum signoff** | `docs/PHASE_17_SIGNOFFS.md` § 2 (counsel) + § 3 (DPAs) | Fills the signoffs ledger as each piece lands. |
+| **72-point smoke walk on production** | `docs/PHASE_17_SMOKE_CHECKLIST.md` | Runs the 18×4 cross-browser walk against the production deployment before public traffic. |
+
+### Engineering-side responsibilities (already complete at v1.0)
+
+| Item | Where it shipped |
+| ---- | ---------------- |
+| 16-state legal coverage (Bayern + 4 substantive + 11 honest stubs) | `src/legal/states/` + `src/legal/legalRegistry.ts` |
+| Architect verification flow (qualifier-write gate, dashboard, verify-fact / share-project Edge Functions) | Phase 13 commits |
+| Three handoff docs (DEPLOYMENT / OPS_RUNBOOK / HANDOFF) | `docs/` |
+| Daily-gate set (verify-bayern-sha / smoke:citations / tsc / build) | `scripts/` + `package.json` |
+| Bayern SHA invariant `b18d3f7f9a6fe238c18cec5361d30ea3a547e46b1ef2b16a1e74c533aacb3471` | `scripts/lib/bayernSha.mjs` (held across 33+ commits) |
+| Templated client-side work (DPA emails, legal-page placeholder map, signoffs ledger, smoke checklist) | `docs/PHASE_17_*.md` set |
+
+### Order of operations the client should follow
+
+  1. Day 1 — send the 5 DPA emails (or self-service via vendor
+     dashboards). Update `PHASE_17_DPA_LEDGER.md` "Sent date".
+  2. Day 1 — schedule counsel meeting; share the four legal page
+     sources + `PHASE_17_LEGAL_AUDIT.md` + this doc.
+  3. Day 1 — supply the 8 Impressum placeholder values; engineering
+     of-record (or successor) replaces the `{{...}}` markers.
+  4. Week 1–3 — vendor countersignature returns; ledger updated
+     per row.
+  5. Counsel feedback received — incorporated into legal pages.
+     Re-deploy SPA.
+  6. Production smoke walk — fill `PHASE_17_SMOKE_CHECKLIST.md`.
+  7. `PHASE_17_SIGNOFFS.md` filled green — system ready for public
+     traffic.
+
+The split is final: no item above should slide back to engineering
+unless a substantive issue (counsel finds a fundamental legal flaw,
+a vendor refuses the standard DPA, the smoke walk uncovers a real
+regression in shipped behaviour) reopens scope.
+
+---
+
+## 10. Contact handoff
 
 | Topic | Who to reach | Where |
 | ----- | ------------ | ----- |
