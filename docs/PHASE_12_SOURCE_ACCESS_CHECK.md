@@ -156,3 +156,64 @@ writing starts:
   if "one degree removed" is unacceptable for the client deliverable.
 
 **Awaiting decision before Hessen content commit starts.**
+
+---
+
+## Update — voris paragraph permalink probe (post-Rutik Path A+B hybrid decision)
+
+Rutik's decision: **hybrid** — Path A for statutory-text §-citations,
+Path B (manual browser verification by Rutik) for
+Verwaltungsvorschriften only. Before locking the hybrid scope, one
+follow-up probe: can the Wolters Kluwer-hosted voris portal serve
+NBauO §-permalinks via server-side fetch? If yes, NS drops back to
+Path A statutory-text-pure (no manual VV verification needed for
+NS § references — only for DVO-NBauO).
+
+### Probe
+
+| URL | Status | Result |
+| --- | --- | --- |
+| `https://voris.wolterskluwer-online.de/browse/document/f3470ad0-4ca5-3275-9be2-a1a1c1bbf75c` (§ 5 NBauO Grenzabstände) | 200 | **READABLE.** Returns the verbatim text: *"Gebäude müssen mit allen auf ihren Außenflächen oberhalb der Geländeoberfläche gelegenen Punkten von den Grenzen des Baugrundstücks Abstand halten. Satz 1 gilt entsprechend für andere bauliche Anlagen, von denen Wirkungen wie von Gebäuden ausgehen, und Terrassen, soweit sie jeweils höher als 1 m über der Geländeoberfläche sind."* |
+
+URL pattern: `https://voris.wolterskluwer-online.de/browse/document/<uuid>`.
+UUIDs are search-derivable (e.g., the § 5 NBauO UUID surfaced via
+`site:voris.wolterskluwer-online.de` search). Free access, no login.
+
+### Verdict
+
+**NS NBauO §-citations: Path A pure.** Source-ledger entries cite
+the Wolters Kluwer voris permalink directly; same posture as
+`dejure.org` for federal cites. Per-state dry-run before NS commit
+still mandatory — the dry-run's job becomes UUID-derivation for the
+specific paragraphs the systemBlock will cite.
+
+**NS DVO-NBauO + AVV-NBauO citations: Path B (manual browser
+verification by Rutik) per the hybrid rule.** Verwaltungsvorschriften
+were not probed — assume the same SPA limitation applies until
+proven otherwise.
+
+### Side finding (pre-flag for the NS dry-run)
+
+The search surfaced a 2024-Novelle change to § 5 NBauO Abstands­
+flächen: **0.5 H → 0.4 H** (commercial/industrial: 0.25 H → 0.2 H).
+The current NS Phase 11 stub doesn't mention this; the NS Phase 12
+content commit must verify the current numerical thresholds via the
+Wolters Kluwer portal before writing. **Pre-flag for Niedersachsen
+fetch dry-run when its turn comes.** Same surprise pattern as the
+Hessen 2025-Novelle finding — the dry-run-first discipline pays for
+itself.
+
+### Per-state hybrid scope (locked)
+
+| State | Statutory text (LBO §) | Verwaltungsvorschriften |
+| --- | --- | --- |
+| HE | Path A (ingkh.de + akh.de + wirtschaft.hessen.de) | **Path B manual** for HBauVwV when needed; recommended omission per dry-run findings |
+| NS | **Path A pure** (voris.wolterskluwer-online.de permalinks) | **Path B manual** for DVO-NBauO + AVV-NBauO |
+| NRW | Path A (aknw.de + ministry; per-state dry-run will confirm) | **Path B manual** for VV TB NRW |
+| BW | Path A (akbw.de + ministry; per-state dry-run will confirm) | **Path B manual** for LBOAVO + LBOVVO |
+
+`PHASE_12_<state>_VV_REQUESTS.md` and the matching
+`PHASE_12_<state>_VV_VERIFIED.md` flow lands per state at the
+start of each commit, per Rutik's hybrid spec.
+
+**Hessen content commit cleared to start under hybrid mode.**
