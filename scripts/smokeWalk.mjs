@@ -1111,18 +1111,65 @@ async function runStaticGate() {
   // Then run the JS-port gate over each fixture and assert the event
   // count + post-mutation qualifier matches the expectation.
   const helpersSource = await readFileText('src/lib/projectStateHelpers.ts')
-  results.push(failures('phase-13: gate function + observability flag', [
+  results.push(failures('phase-13: gate function + rejection flag', [
     {
       ok: /export function gateQualifiersByRole\b/.test(helpersSource),
       msg: 'projectStateHelpers.ts missing gateQualifiersByRole export',
     },
     {
-      ok: /export const QUALIFIER_GATE_REJECTS\s*=\s*false\b/.test(helpersSource),
-      msg: 'Week 1 invariant: QUALIFIER_GATE_REJECTS must remain `false` until Week 2 flip',
+      ok: /export const QUALIFIER_GATE_REJECTS\s*=\s*true\b/.test(helpersSource),
+      msg: 'Week 2 invariant: QUALIFIER_GATE_REJECTS must be `true` (rejection mode)',
+    },
+    {
+      ok: /export class QualifierRoleViolationError\b/.test(helpersSource),
+      msg: 'Week 2 invariant: QualifierRoleViolationError class must be exported',
     },
     {
       ok: /export type CallerRole\s*=\s*'client' \| 'designer' \| 'engineer' \| 'authority' \| 'system'/.test(helpersSource),
       msg: 'CallerRole type drifted from expected union',
+    },
+  ]))
+
+  // Phase 13 Week 2 — Edge Function wiring drift checks. The chat-turn
+  // entrypoint MUST short-circuit with the qualifier_role_violation
+  // envelope before applyToolInputToState runs; the streaming path
+  // must close the SSE stream with an error frame in the same case.
+  // Without these, the "rejection mode" flip is purely cosmetic.
+  const indexSource = await readFileText('supabase/functions/chat-turn/index.ts')
+  const streamingSource = await readFileText('supabase/functions/chat-turn/streaming.ts')
+  results.push(failures('phase-13 week 2: chat-turn JSON path rejects', [
+    {
+      ok: /QUALIFIER_GATE_REJECTS/.test(indexSource),
+      msg: 'index.ts must reference QUALIFIER_GATE_REJECTS to flip behaviour',
+    },
+    {
+      ok: /code:\s*'qualifier_role_violation'/.test(indexSource),
+      msg: 'index.ts must return the qualifier_role_violation error code on rejection',
+    },
+    {
+      ok: /Diese Festlegung erfordert die Freigabe durch eine\/n bauvorlageberechtigte\/n Architekt\/in/.test(indexSource),
+      msg: 'index.ts must surface the locked CTA copy verbatim',
+    },
+  ]))
+  results.push(failures('phase-13 week 2: streaming path closes with error frame', [
+    {
+      ok: /QUALIFIER_GATE_REJECTS/.test(streamingSource),
+      msg: 'streaming.ts must reference QUALIFIER_GATE_REJECTS',
+    },
+    {
+      ok: /type:\s*'error'[\s\S]{0,400}qualifier_role_violation/.test(streamingSource),
+      msg: 'streaming.ts must emit a type=error SSE frame with code=qualifier_role_violation',
+    },
+  ]))
+
+  // Phase 13 Week 2 — error-code union drift check. Adding the new
+  // code to ChatTurnErrorCode is what allows the SPA's exhaustiveness
+  // checks (switch-case error UI rendering) to handle the new case.
+  const chatTurnTypesSource = await readFileText('src/types/chatTurn.ts')
+  results.push(failures('phase-13 week 2: ChatTurnErrorCode includes qualifier_role_violation', [
+    {
+      ok: /\|\s*'qualifier_role_violation'/.test(chatTurnTypesSource),
+      msg: 'src/types/chatTurn.ts ChatTurnErrorCode must include qualifier_role_violation',
     },
   ]))
 

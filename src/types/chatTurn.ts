@@ -82,6 +82,16 @@ export type ChatTurnErrorCode =
   | 'model_response_invalid'
   | 'persistence_failed'
   | 'rate_limit_exceeded'
+  /**
+   * Phase 13 Week 2 — gating-mode qualifier-write-gate fired. The
+   * model attempted to emit a DESIGNER+VERIFIED qualifier from a non-
+   * designer caller; the persistence pipeline rejected the turn before
+   * `applyToolInputToState` ran. The SPA renders the surface-locked
+   * "Diese Festlegung erfordert die Freigabe durch eine/n
+   * bauvorlageberechtigte/n Architekt/in." copy and surfaces the
+   * "Architekt/in einladen" CTA.
+   */
+  | 'qualifier_role_violation'
   | 'internal'
 
 export interface ChatTurnError {

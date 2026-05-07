@@ -40,6 +40,7 @@ import { lintCitations, logCitationViolations } from './citationLint.ts'
 import {
   applyToolInputToState,
   gateQualifiersByRole,
+  QUALIFIER_GATE_REJECTS,
   type CallerRole,
 } from '../../../src/lib/projectStateHelpers.ts'
 import {
@@ -274,12 +275,15 @@ export function runStreamingTurn(args: StreamingTurnArgs): Response {
         })
 
         // ── Persistence pipeline ───────────────────────────────────
-        // Phase 13 Week 1 — qualifier-write-gate (observability mode).
+        // Phase 13 — qualifier-write-gate (rejection mode after Week 2).
         // See chat-turn/index.ts for the matching JSON-path logic.
         const qualifierDowngrades = gateQualifiersByRole(toolInput, args.callerRole)
+        const gateEventName = QUALIFIER_GATE_REJECTS
+          ? 'qualifier.rejected'
+          : 'qualifier.downgraded'
         if (qualifierDowngrades.length > 0) {
           console.log(
-            `[chat-turn] [${args.requestId}] qualifier-gate (streaming): ${qualifierDowngrades.length} downgrade(s)`,
+            `[chat-turn] [${args.requestId}] qualifier-gate (streaming, ${gateEventName}): ${qualifierDowngrades.length} event(s)`,
           )
           const safeTraceId =
             tracer.trace_id && tracer.trace_id !== '00000000-0000-0000-0000-000000000000'
@@ -291,7 +295,7 @@ export function runStreamingTurn(args: StreamingTurnArgs): Response {
             user_id: args.userId,
             project_id: args.projectId,
             source: 'system' as const,
-            name: 'qualifier.downgraded',
+            name: gateEventName,
             attributes: {
               field: e.field,
               item_id: e.item_id,
@@ -306,6 +310,25 @@ export function runStreamingTurn(args: StreamingTurnArgs): Response {
             trace_id: safeTraceId,
           }))
           await args.supabase.from('event_log').insert(rows)
+
+          if (QUALIFIER_GATE_REJECTS) {
+            // SSE error frame + close. Outer finally runs the tracer
+            // finalize via traceStatus='error'.
+            tracer.setError(
+              'qualifier_role_violation',
+              `Gate rejected ${qualifierDowngrades.length} qualifier write(s) from caller_role=${args.callerRole}.`,
+            )
+            traceStatus = 'error'
+            send({
+              type: 'error',
+              code: 'qualifier_role_violation',
+              message:
+                'Diese Festlegung erfordert die Freigabe durch eine/n bauvorlageberechtigte/n Architekt/in.',
+              requestId: args.requestId,
+            })
+            controller.close()
+            return
+          }
         }
 
         const newState = applyToolInputToState(args.currentState, toolInput)

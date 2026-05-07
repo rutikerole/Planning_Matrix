@@ -47,6 +47,7 @@ import {
   hydrateProjectState,
   applyToolInputToState,
   gateQualifiersByRole,
+  QUALIFIER_GATE_REJECTS,
 } from '../../../src/lib/projectStateHelpers.ts'
 import { isRegisteredBundesland } from '../../../src/legal/legalRegistry.ts'
 import {
@@ -440,24 +441,30 @@ Deno.serve(async (req: Request) => {
     })
   }
 
-  // ── Phase 13 Week 1 — qualifier-write-gate (observability mode) ──
-  // Mutates toolInput in place: any DESIGNER+VERIFIED attempt from a
-  // non-designer caller is downgraded to DESIGNER+ASSUMED before
-  // applyToolInputToState sees it. The downgrade events are logged to
-  // event_log so the 13b telemetry threshold can read them later.
-  // Production rollout discipline: 7 days of observability before the
-  // Week 2 commit flips to gating mode (throw on attempt). See
-  // PHASE_13_REVIEW.md.
+  // ── Phase 13 — qualifier-write-gate (rejection mode) ──────────────
+  // Inspects every qualifier-bearing surface in toolInput. When a non-
+  // designer caller attempts DESIGNER+VERIFIED, the gate collects
+  // events AND mutates toolInput in-place to DESIGNER+ASSUMED.
+  //   - Week 1 (observability):  log event, persist downgraded state.
+  //   - Week 2+ (rejection, current): when QUALIFIER_GATE_REJECTS=true
+  //     and events.length>0, log event with name='qualifier.rejected'
+  //     and short-circuit with the qualifier_role_violation envelope
+  //     BEFORE applyToolInputToState. The in-place mutation is left
+  //     intact as a defensive secondary guard.
   const qualifierGateSpan = tracer.startSpan('qualifier.gate', rootSpan.span_id)
   const qualifierDowngrades = gateQualifiersByRole(toolInput, callerRole)
+  const gateEventName = QUALIFIER_GATE_REJECTS
+    ? 'qualifier.rejected'
+    : 'qualifier.downgraded'
   qualifierGateSpan.setAttributes({
     caller_role: callerRole,
     downgrade_count: qualifierDowngrades.length,
+    rejecting: QUALIFIER_GATE_REJECTS,
   })
   qualifierGateSpan.end()
   if (qualifierDowngrades.length > 0) {
     console.log(
-      `[chat-turn] [${requestId}] qualifier-gate: ${qualifierDowngrades.length} downgrade(s)`,
+      `[chat-turn] [${requestId}] qualifier-gate (${gateEventName}): ${qualifierDowngrades.length} event(s)`,
       qualifierDowngrades.map((e) => ({
         field: e.field,
         item_id: e.item_id,
@@ -465,8 +472,6 @@ Deno.serve(async (req: Request) => {
         enforced: `${e.enforced_source}+${e.enforced_quality}`,
       })),
     )
-    // Best-effort fan-out into event_log. Failures are warn-logged and
-    // swallowed (mirror citationLint logCitationViolations posture).
     const safeTraceId =
       tracer.trace_id && tracer.trace_id !== '00000000-0000-0000-0000-000000000000'
         ? tracer.trace_id
@@ -477,7 +482,7 @@ Deno.serve(async (req: Request) => {
       user_id: userData.user.id,
       project_id: projectId,
       source: 'system' as const,
-      name: 'qualifier.downgraded',
+      name: gateEventName,
       attributes: {
         field: e.field,
         item_id: e.item_id,
@@ -495,6 +500,26 @@ Deno.serve(async (req: Request) => {
     if (qgErr) {
       console.warn(
         `[chat-turn] [${requestId}] qualifier-gate event_log insert failed: ${qgErr.message}`,
+      )
+    }
+
+    if (QUALIFIER_GATE_REJECTS) {
+      // Mark the trace as errored — the outer finally block calls
+      // rootSpan.end + tracer.finalize, so we must NOT do it here or
+      // we double-finalize. setError stores the code+message; the
+      // finally branches on traceStatus.
+      tracer.setError(
+        'qualifier_role_violation',
+        `Gate rejected ${qualifierDowngrades.length} qualifier write(s) from caller_role=${callerRole}.`,
+      )
+      traceStatus = 'error'
+      return respond(
+        {
+          code: 'qualifier_role_violation',
+          message:
+            'Diese Festlegung erfordert die Freigabe durch eine/n bauvorlageberechtigte/n Architekt/in.',
+        },
+        403,
       )
     }
   }

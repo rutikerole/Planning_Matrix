@@ -17,8 +17,39 @@
 // ───────────────────────────────────────────────────────────────────────
 
 import { assertEquals } from 'https://deno.land/std@0.224.0/assert/mod.ts'
-import { gateQualifiersByRole } from '../../../src/lib/projectStateHelpers.ts'
+import {
+  gateQualifiersByRole,
+  QUALIFIER_GATE_REJECTS,
+  QualifierRoleViolationError,
+} from '../../../src/lib/projectStateHelpers.ts'
 import type { RespondToolInput } from '../../../src/types/respondTool.ts'
+
+// Phase 13 Week 2 — invariant pinning. The constant + the error class
+// MUST stay in their post-flip shape for the rejection wiring in
+// chat-turn/index.ts and streaming.ts to fire. The smokeWalk static
+// gate also asserts these via source-text regex; the duplication is
+// deliberate (test file = unit guard, smokeWalk = pre-build guard).
+Deno.test('Week 2 invariant: QUALIFIER_GATE_REJECTS = true', () => {
+  assertEquals(QUALIFIER_GATE_REJECTS, true)
+})
+
+Deno.test('Week 2 invariant: QualifierRoleViolationError carries events + code', () => {
+  const err = new QualifierRoleViolationError([
+    {
+      field: 'extracted_fact',
+      item_id: 'k',
+      attempted_source: 'DESIGNER',
+      attempted_quality: 'VERIFIED',
+      enforced_source: 'DESIGNER',
+      enforced_quality: 'ASSUMED',
+      caller_role: 'client',
+      reason: 'test',
+    },
+  ])
+  assertEquals(err.code, 'qualifier_role_violation')
+  assertEquals(err.events.length, 1)
+  assertEquals(err.name, 'QualifierRoleViolationError')
+})
 
 const baseEnvelope = {
   specialist: 'moderator' as const,

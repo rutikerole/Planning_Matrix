@@ -28,6 +28,11 @@ import { SEO } from '@/components/SEO'
 // main bundle for non-admin users.
 const AdminRoutes = lazy(() => import('@/features/admin/AdminRoutes'))
 
+// Phase 13 Week 2 — Architect Console. Lazy-loaded for the same
+// reason as AdminRoutes: keeps the main bundle small for clients,
+// who are the majority of authenticated users.
+const ArchitectRoutes = lazy(() => import('@/features/architect/ArchitectRoutes'))
+
 function OverviewRedirect() {
   const { id } = useParams<{ id: string }>()
   return <Navigate to={`/projects/${id}/result?tab=overview`} replace />
@@ -161,6 +166,18 @@ export function AppRouter() {
             <Suspense fallback={<AdminLoadingFallback />}>
               <SEO titleKey="seo.title.admin" />
               <AdminRoutes />
+            </Suspense>
+          }
+        />
+
+        {/* Phase 13 Week 2 — Architect Console. Same wildcard +
+          * Suspense pattern as /admin/*. Gate is profiles.role ===
+          * 'designer'; failures land on the same 403 surface. */}
+        <Route
+          path="/architect/*"
+          element={
+            <Suspense fallback={<AdminLoadingFallback />}>
+              <ArchitectRoutes />
             </Suspense>
           }
         />

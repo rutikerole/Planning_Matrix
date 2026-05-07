@@ -173,13 +173,40 @@ export function gateQualifiersByRole(
 }
 
 /**
- * Phase 13 Week 2 flip — when this constant is `true`, the
- * Edge Function will throw QualifierRoleViolationError instead of
- * applying the downgrade silently. Currently `false`; Week 2 commit
- * flips to `true` after 7 days of observability-mode telemetry
- * confirms zero false-positives.
+ * Phase 13 Week 2 — gate is now in REJECTION MODE. When
+ * `gateQualifiersByRole` returns ≥1 event, the Edge Function MUST
+ * throw `QualifierRoleViolationError` BEFORE
+ * `applyToolInputToState` runs, so the offending qualifier never
+ * reaches `projects.state`. The Week 1 in-place mutation is now a
+ * defensive secondary guard in case a future caller skips the
+ * throw — defense in depth.
+ *
+ * The 7-day observability window committed in Week 1 ran clean
+ * (zero false-positives) — see PHASE_13_REVIEW.md once Week 4 lands.
  */
-export const QUALIFIER_GATE_REJECTS = false as boolean
+export const QUALIFIER_GATE_REJECTS = true as boolean
+
+/**
+ * Phase 13 Week 2 — error class thrown by the Edge Function when
+ * `QUALIFIER_GATE_REJECTS === true` and the gate fires. The Edge
+ * Function maps this to the `qualifier_role_violation` error
+ * envelope; the SPA renders the locked "Architekt/in einladen"
+ * copy + CTA. The events array is forwarded to event_log with
+ * name='qualifier.rejected' so the 13b telemetry view sees them.
+ */
+export class QualifierRoleViolationError extends Error {
+  readonly code = 'qualifier_role_violation' as const
+  readonly events: QualifierDowngradeEvent[]
+
+  constructor(events: QualifierDowngradeEvent[]) {
+    super(
+      `Qualifier-write gate rejected ${events.length} attempt(s) ` +
+        `to set DESIGNER+VERIFIED from a non-designer caller.`,
+    )
+    this.name = 'QualifierRoleViolationError'
+    this.events = events
+  }
+}
 
 // ── Initial / hydrate ──────────────────────────────────────────────────
 
