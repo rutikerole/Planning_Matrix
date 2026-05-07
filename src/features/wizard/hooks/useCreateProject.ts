@@ -5,7 +5,8 @@ import { supabase } from '@/lib/supabase'
 import { postChatTurn, ChatTurnError } from '@/lib/chatApi'
 import { useAuthStore } from '@/stores/authStore'
 import type { BplanLookupResult } from '@/types/bplan'
-import type { Fact } from '@/types/projectState'
+import type { Fact, ProjectState } from '@/types/projectState'
+import { initialProjectState } from '@/lib/projectStateHelpers'
 import { selectTemplate, type Intent } from '../lib/selectTemplate'
 import { deriveName } from '../lib/deriveName'
 
@@ -139,8 +140,40 @@ export function useCreateProject() {
         },
       })
     }
-    const initialState =
-      seededFacts.length > 0 ? { facts: seededFacts } : undefined
+    // Audit B02 fix — seed the FULL canonical ProjectState shape, not
+    // just `{ facts: seededFacts }`. Two reasons it matters:
+    //   1. v1.5 §7.0.04 — when I-02 = "kein Grundstück" the
+    //      Bereichsqualifier of areas A (Planungsrecht) and C (Sonstige
+    //      Vorgaben) MUST be VOID; both areas are not substantively
+    //      etablierbar without a Grundstücksbezug. Bereich B
+    //      (Bauordnungsrecht) stays PENDING because the MBO/BayBO-
+    //      default still applies even without a plot.
+    //   2. hydrateProjectState() (in projectStateHelpers.ts) only
+    //      preserves a stored state that carries `schemaVersion: 1`.
+    //      The pre-fix wizard wrote a schema-less `{ facts: [...] }`
+    //      blob that hydrate silently discarded on the first turn,
+    //      taking the seeded B-Plan facts with it. Writing the
+    //      canonical shape here keeps the seed alive through hydrate.
+    const baseState = initialProjectState(templateId)
+    const initialState: ProjectState = {
+      ...baseState,
+      facts: seededFacts.length > 0 ? seededFacts : baseState.facts,
+      areas: input.hasPlot
+        ? baseState.areas
+        : {
+            A: {
+              state: 'VOID',
+              reason:
+                'I-02: kein Grundstück benannt — Bereich A (Planungsrecht) ohne Standortbezug nicht etablierbar',
+            },
+            B: { state: 'PENDING' },
+            C: {
+              state: 'VOID',
+              reason:
+                'I-02: kein Grundstück benannt — Bereich C (Sonstige Vorgaben) ohne Standortbezug nicht etablierbar',
+            },
+          },
+    }
 
     const { data: projectRow, error: insertErr } = await supabase
       .from('projects')
@@ -155,7 +188,7 @@ export function useCreateProject() {
         name:
           input.suggestedName?.trim() ||
           deriveName(input.intent, input.hasPlot ? input.plotAddress : null),
-        ...(initialState ? { state: initialState } : {}),
+        state: initialState,
       })
       .select()
       .single()
