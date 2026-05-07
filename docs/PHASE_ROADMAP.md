@@ -249,13 +249,16 @@ if architecture warrants (flag during the phase); smokeWalk fixtures.
 **Goal.** Address → B-Plan polygon → Festsetzungen for top-5 states
 where a public WMS exists.
 
-**In scope.**
-- München WMS — already shipped; refactor only (extract per-state
-  proxy pattern from `bplan-lookup`).
-- Up to four additional state Geoportals — set bound by OQ3.
-- Honest "kein öffentlicher WMS verfügbar" fallback elsewhere.
-  Failure surfaces in the wizard as a soft note, never as a hard
-  error.
+**In scope (post-OQ3 research, see `docs/PHASE_11_OQ3_GEOPORTAL_RESEARCH.md`).**
+- München (refactor) + Hessen + NRW ship cleanly — most likely path.
+- BW conditional on the **2026-02-05 LGL-BW service cutover**;
+  verify post-cutover endpoints before any per-state code lands.
+- Niedersachsen B-Plan conditional on a positive Phase-15-kickoff
+  catalog scan finding state-level B-Plan aggregation. Cadastral
+  WMS confirmed usable today (`opendata.lgln.niedersachsen.de/
+  doorman/noauth/`); state-level B-Plan layer not yet confirmed.
+- Honest "kein öffentlicher WMS verfügbar" fallback elsewhere —
+  surfaces in the wizard as a soft note, never as a hard error.
 - Per-state WMS proxy Edge Function with the existing rate-limit
   pattern (mirror of `bplan_lookup_rate_limits`).
 

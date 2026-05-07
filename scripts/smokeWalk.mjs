@@ -688,6 +688,50 @@ async function runStaticGate() {
     },
   ]))
 
+  // 4b. legalRegistry has all 16 Bundesländer registered (Phase 11
+  // commit 3 acceptance). The TypeScript Record<BundeslandCode,
+  // StateDelta> type already enforces this at compile time; the
+  // string-level check here is a defensive belt-and-braces against
+  // the registry file being silently shortened during a refactor.
+  const registrySource = await readFileText('src/legal/legalRegistry.ts')
+  const ALL_16_STATE_CODES = [
+    'bayern', 'nrw', 'bw', 'niedersachsen', 'hessen',
+    'sachsen', 'sachsen-anhalt', 'thueringen', 'rlp', 'saarland',
+    'sh', 'mv', 'brandenburg', 'berlin', 'hamburg', 'bremen',
+  ]
+  results.push(failures('legalRegistry: all 16 Bundesländer registered', [
+    {
+      ok: ALL_16_STATE_CODES.every((code) =>
+        new RegExp(`['"]?${code}['"]?\\s*:\\s*\\w+_DELTA`).test(registrySource)
+      ),
+      msg: `Missing Bundesland registry entries: ${ALL_16_STATE_CODES.filter(
+        (code) => !new RegExp(`['"]?${code}['"]?\\s*:\\s*\\w+_DELTA`).test(registrySource)
+      ).join(', ')}`,
+    },
+  ]))
+
+  // 4c. Each of the 11 minimum-stub states must surface a
+  // "Vorbereitung" Hinweis in its systemBlock. The persona reads
+  // this and gives the user honest "MBO-default, full state content
+  // pending" framing instead of fabricating state-specific advice.
+  const MINIMUM_STUBS = [
+    'sachsen', 'sachsen-anhalt', 'thueringen', 'rlp', 'saarland',
+    'sh', 'mv', 'brandenburg', 'berlin', 'hamburg', 'bremen',
+  ]
+  for (const code of MINIMUM_STUBS) {
+    const stubSource = await readFileText(`src/legal/states/${code}.ts`)
+    results.push(failures(`minimum stub ${code}: "Vorbereitung" Hinweis present`, [
+      {
+        ok: /werden in einer späteren\s*\n?\s*Bearbeitungsphase ergänzt|in Vorbereitung/i.test(stubSource),
+        msg: `Stub src/legal/states/${code}.ts must surface a "werden in einer späteren Bearbeitungsphase ergänzt" or "in Vorbereitung" Hinweis so the persona doesn't hallucinate state-specific content.`,
+      },
+      {
+        ok: /allowedCitations:\s*\[\s*\]/.test(stubSource),
+        msg: `Stub src/legal/states/${code}.ts must keep allowedCitations as an empty array — Phase 14 widens it once content lands.`,
+      },
+    ]))
+  }
+
   // 5. Lint logic validates against curated samples. The legacy
   // LINT_SAMPLES were authored in a Bayern-only world; Phase 11
   // makes the firewall per-Bundesland, so we explicitly pass

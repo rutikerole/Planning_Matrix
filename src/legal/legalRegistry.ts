@@ -20,21 +20,51 @@ import { NRW_DELTA } from './states/nrw.ts'
 import { BW_DELTA } from './states/bw.ts'
 import { NIEDERSACHSEN_DELTA } from './states/niedersachsen.ts'
 import { HESSEN_DELTA } from './states/hessen.ts'
+import { SACHSEN_DELTA } from './states/sachsen.ts'
+import { SACHSEN_ANHALT_DELTA } from './states/sachsen-anhalt.ts'
+import { THUERINGEN_DELTA } from './states/thueringen.ts'
+import { RLP_DELTA } from './states/rlp.ts'
+import { SAARLAND_DELTA } from './states/saarland.ts'
+import { SH_DELTA } from './states/sh.ts'
+import { MV_DELTA } from './states/mv.ts'
+import { BRANDENBURG_DELTA } from './states/brandenburg.ts'
+import { BERLIN_DELTA } from './states/berlin.ts'
+import { HAMBURG_DELTA } from './states/hamburg.ts'
+import { BREMEN_DELTA } from './states/bremen.ts'
 
 /**
- * State registry. Keyed by canonical Bundesland code. Phase 11 commit
- * 2: Bayern + the four top states (NRW, BW, Niedersachsen, Hessen) —
- * the latter four carry stub-grade scaffolding only (article numbers
- * + Verfahrenstypen + Architektenkammer + key Modernisierungsdaten).
- * Persona-grade content for the four lands in Phase 12; the
- * remaining 11 minimum stubs land in Phase 11 commit 3.
+ * State registry. Phase 11 commit 3: full 16-state coverage.
+ *
+ *   - Bayern        (full content; München cityBlock)
+ *   - NRW / BW      (top-state stubs — article numbers, Verfahrenstypen,
+ *     Niedersachsen    Architektenkammer, key Modernisierungsdaten)
+ *     Hessen
+ *   - 11 minimum stubs (Sachsen, Sachsen-Anhalt, Thüringen, RLP,
+ *     Saarland, SH, MV, Brandenburg, Berlin, Hamburg, Bremen) —
+ *     MBO-default + "in Vorbereitung" framing. allowedCitations is
+ *     deliberately empty so the firewall accepts only federal-law
+ *     citations until per-state content lands (Phase 14).
+ *
+ * Phase 12 expands NRW/BW/Niedersachsen/Hessen to persona-grade.
+ * Phase 14 expands the 11 minimum stubs.
  */
-const REGISTRY: Partial<Record<BundeslandCode, StateDelta>> = {
+const REGISTRY: Record<BundeslandCode, StateDelta> = {
   bayern: BAYERN_DELTA,
   nrw: NRW_DELTA,
   bw: BW_DELTA,
   niedersachsen: NIEDERSACHSEN_DELTA,
   hessen: HESSEN_DELTA,
+  sachsen: SACHSEN_DELTA,
+  'sachsen-anhalt': SACHSEN_ANHALT_DELTA,
+  thueringen: THUERINGEN_DELTA,
+  rlp: RLP_DELTA,
+  saarland: SAARLAND_DELTA,
+  sh: SH_DELTA,
+  mv: MV_DELTA,
+  brandenburg: BRANDENBURG_DELTA,
+  berlin: BERLIN_DELTA,
+  hamburg: HAMBURG_DELTA,
+  bremen: BREMEN_DELTA,
 }
 
 /**
