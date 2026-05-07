@@ -401,6 +401,31 @@ const BUNDESLAND_SWITCH_FIXTURES = [
     text: 'Die BauO NRW kennt eine andere Schwellenlogik.',
     expectFlag: true,
   },
+  // Phase 12 commit 4 — BW content-grade fixtures
+  {
+    label: 'active=bw, "§ 51 LBO Kenntnisgabeverfahren" — must NOT flag (BW-Spezifikum)',
+    activeBundesland: 'bw',
+    text: 'Das Kenntnisgabeverfahren nach § 51 LBO ist eine BW-spezifische Verfahrensart.',
+    expectFlag: false,
+  },
+  {
+    label: 'active=bw, "§ 52 LBO vereinfachtes Verfahren" — must NOT flag',
+    activeBundesland: 'bw',
+    text: 'Im vereinfachten Verfahren nach § 52 LBO ist der Prüfumfang reduziert.',
+    expectFlag: false,
+  },
+  {
+    label: 'active=bw, "§ 58 Abs. 1a LBO Genehmigungsfiktion" — must NOT flag (Novelle 2025)',
+    activeBundesland: 'bw',
+    text: 'Nach § 58 Abs. 1a LBO greift die Genehmigungsfiktion 3 Monate.',
+    expectFlag: false,
+  },
+  {
+    label: 'active=bw, "ANHANG 1 zu § 50 Abs. 1 LBO" — must NOT flag',
+    activeBundesland: 'bw',
+    text: 'Verfahrensfreie Vorhaben sind im ANHANG 1 zu § 50 Abs. 1 LBO katalogisiert.',
+    expectFlag: false,
+  },
   // ── Niedersachsen
   {
     label: 'active=niedersachsen, "§ 5 NBauO" — must NOT flag (own state)',
