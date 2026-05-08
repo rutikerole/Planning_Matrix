@@ -1229,6 +1229,14 @@
       "internal": {
         "title": "Interner Fehler.",
         "body": "Im Hintergrund ist ein unerwarteter Fehler aufgetreten. Bitte versuchen Sie es erneut."
+      },
+      "qualifier_role_violation": {
+        "title": "Architekt-Freigabe erforderlich.",
+        "body": "Diese Festlegung erfordert die Freigabe durch eine/n bauvorlageberechtigte/n Architekt/in. Bitte laden Sie eine/n Architekt/in ein, um die Eintragung zu bestätigen."
+      },
+      "forbidden": {
+        "title": "Aktion nicht zulässig.",
+        "body": "Ihre Sitzung darf diese Aktion derzeit nicht ausführen. Bitte laden Sie die Seite neu oder melden Sie sich erneut an."
       }
     },
     "overview": {

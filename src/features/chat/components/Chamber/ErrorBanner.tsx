@@ -13,6 +13,16 @@ const KNOWN_ERROR_CODES = new Set([
   'idempotency_replay',
   'validation',
   'unauthenticated',
+  // v1.0.4 A3 — close PROD_READINESS audit finding: forbidden +
+  // qualifier_role_violation were Edge-Function-emittable codes
+  // that the SPA fell through to generic 'internal' for. The
+  // qualifier_role_violation case is load-bearing for the §6.B.01
+  // legal shield; the locked German CTA must reach the user.
+  // 'rate_limit_exceeded' is INTENTIONALLY excluded — useChatTurn
+  // routes that envelope to the dedicated rate-limit banner, not
+  // through this ErrorBanner.
+  'forbidden',
+  'qualifier_role_violation',
   'not_found',
   'internal',
 ])

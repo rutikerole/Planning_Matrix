@@ -1303,6 +1303,43 @@ async function runStaticGate() {
     },
   ]))
 
+  // ── v1.0.4 A3 drift checks (qualifier_role_violation propagation) ─
+  const errorBannerSrc = await readFileText('src/features/chat/components/Chamber/ErrorBanner.tsx')
+  const deLocale = JSON.parse(await readFileText('src/locales/de.json'))
+  const enLocale = JSON.parse(await readFileText('src/locales/en.json'))
+  results.push(failures('v1.0.4 A3: qualifier_role_violation reaches user', [
+    {
+      ok: /'qualifier_role_violation'/.test(errorBannerSrc),
+      msg: 'ErrorBanner KNOWN_ERROR_CODES must include qualifier_role_violation',
+    },
+    {
+      ok: /'forbidden'/.test(errorBannerSrc),
+      msg: 'ErrorBanner KNOWN_ERROR_CODES must include forbidden (defense-in-depth)',
+    },
+    {
+      ok: !!deLocale?.chat?.errors?.qualifier_role_violation?.title &&
+          !!deLocale?.chat?.errors?.qualifier_role_violation?.body,
+      msg: 'de.json must define chat.errors.qualifier_role_violation.{title,body}',
+    },
+    {
+      ok: !!enLocale?.chat?.errors?.qualifier_role_violation?.title &&
+          !!enLocale?.chat?.errors?.qualifier_role_violation?.body,
+      msg: 'en.json must define chat.errors.qualifier_role_violation.{title,body}',
+    },
+    {
+      // Locked CTA copy must surface verbatim in the DE locale body.
+      ok: /bauvorlageberechtigte\/n Architekt\/in/.test(
+        deLocale?.chat?.errors?.qualifier_role_violation?.body ?? '',
+      ),
+      msg: 'de.json qualifier_role_violation.body must surface the locked architect-invite copy',
+    },
+    {
+      ok: !!deLocale?.chat?.errors?.forbidden?.title &&
+          !!enLocale?.chat?.errors?.forbidden?.title,
+      msg: 'forbidden locale keys must exist in both DE + EN',
+    },
+  ]))
+
   // ── v1.0.4 A2 drift checks (13b denominator alarm rewire) ─────────
   const denomMig = await readFileText('supabase/migrations/0032_qualifier_metrics_denominator_fix.sql')
   // Strip SQL line-comments before regex so the explanatory block at

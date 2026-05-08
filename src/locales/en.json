@@ -1229,6 +1229,14 @@
       "internal": {
         "title": "Internal error.",
         "body": "An unexpected error occurred. Please try again."
+      },
+      "qualifier_role_violation": {
+        "title": "Architect approval required.",
+        "body": "This entry requires sign-off from a licensed architect (Bauvorlageberechtigte/r). Please invite an architect to confirm."
+      },
+      "forbidden": {
+        "title": "Action not permitted.",
+        "body": "Your session is not allowed to perform this action right now. Try reloading the page or signing in again."
       }
     },
     "completion": {
