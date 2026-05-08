@@ -1590,6 +1590,29 @@ async function runStaticGate() {
       msg: 'validator must require VITE_LEGAL_ANBIETER_NAME',
     },
   ]))
+  // v1.0.4 hot-patch — Vercel preview soft-mode. PRs / Dependabot
+  // can deploy without the env (runtime banner kicks in); Production
+  // stays strict. Without this, every PR preview build fails in ~5s.
+  results.push(failures('v1.0.4 A1 hot-patch: Vercel preview soft-mode', [
+    {
+      ok: /isVercelPreview\s*=\s*process\.env\.VERCEL_ENV\s*===\s*'preview'/.test(verifyLegalCfg),
+      msg: 'validator must branch on VERCEL_ENV === \'preview\' for soft-mode',
+    },
+    {
+      ok: /WARN \(Vercel preview soft-mode\)/.test(verifyLegalCfg),
+      msg: 'validator must surface a WARN message under preview soft-mode',
+    },
+    {
+      ok: /isVercelPreview && onlyKeyMisses/.test(verifyLegalCfg),
+      msg: 'soft-mode must apply ONLY to env-key misses (source leaks always hard-fail)',
+    },
+    {
+      ok: /process\.env\.VERCEL_ENV/.test(verifyLegalCfg) &&
+          /\.env\.local/.test(verifyLegalCfg) &&
+          /skip the file load when running on Vercel/.test(verifyLegalCfg),
+      msg: 'validator must skip .env.local file-load on Vercel (platform env is source of truth)',
+    },
+  ]))
 
   // ── v1.0.3 hot-fix drift checks (POST_SMOKE_TEST_INVESTIGATION — wire VorlaeufigFooter into result tabs) ──
   // Per the locked spec: every result tab + SuggestionCard imports

@@ -33,9 +33,11 @@ const LEGAL_DIR = join(REPO_ROOT, 'src/features/legal')
 
 // Self-contained .env.local loader so the validator works under
 // `npm run prebuild` without a `dotenv` dependency. Vercel sets env
-// vars natively (no file load). Local dev: the file is read on
-// demand. Process env always wins over the file (Vercel override).
+// vars natively — skip the file load when running on Vercel so the
+// platform's env is the only source of truth. Local dev: the file
+// is read on demand. Process env always wins over the file.
 function loadEnvLocal() {
+  if (process.env.VERCEL_ENV) return
   const path = join(REPO_ROOT, '.env.local')
   if (!existsSync(path)) return
   const text = readFileSync(path, 'utf-8')
@@ -75,6 +77,16 @@ function readEnv() {
 }
 
 const skipKeyCheck = process.env.SKIP_LEGAL_CONFIG_CHECK === '1'
+// v1.0.4 hot-patch — Vercel Preview deploys (PRs, branches,
+// Dependabot updates) run without the production env. Hard-failing
+// every preview blocks dependency review and slows iteration. The
+// runtime fail-closed banner already covers "missing env" at view-
+// time on /impressum. So: in `VERCEL_ENV=preview` we WARN loudly
+// and let the build through. Production + local strict mode is
+// preserved (any other VERCEL_ENV value or no VERCEL_ENV at all =
+// strict). PROD VERCEL deploys MUST still set VITE_LEGAL_* in the
+// Vercel project's Production environment.
+const isVercelPreview = process.env.VERCEL_ENV === 'preview'
 
 function checkKeys(env) {
   const missing = []
@@ -137,6 +149,22 @@ const leaks = await checkSourceLeaks()
 
 if (keyMisses.length === 0 && leaks.length === 0) {
   console.log('[verify:legal-config] OK — all 8 keys present, zero source leaks.')
+  process.exit(0)
+}
+
+// Source leaks ARE always-fail (a literal {{...}} in source code is
+// a code regression regardless of environment). Env-key misses are
+// soft on Vercel previews so PR/Dependabot deploys can proceed with
+// the fail-closed runtime banner.
+const onlyKeyMisses = leaks.length === 0 && keyMisses.length > 0
+if (isVercelPreview && onlyKeyMisses) {
+  console.warn('[verify:legal-config] WARN (Vercel preview soft-mode)')
+  console.warn(`  ${keyMisses.length} legal-config env var(s) not set on this preview.`)
+  console.warn(`  Production deploys MUST set them; previews render the`)
+  console.warn(`  "Provider details unavailable" fail-closed banner instead.`)
+  for (const m of keyMisses) {
+    console.warn(`    • ${m.key} — ${m.reason}`)
+  }
   process.exit(0)
 }
 

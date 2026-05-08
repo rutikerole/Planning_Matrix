@@ -62,6 +62,20 @@ Variables panel. Set under:
 any change (`vercel --prod` or trigger via the dashboard) — env
 changes do not auto-rebuild.
 
+**v1.0.4 hard requirement — `VITE_LEGAL_*` (8 keys):** the prebuild
+validator (`scripts/verify-legal-config.mjs`) hard-fails any
+`VERCEL_ENV=production` deploy unless all 8 of these keys are
+set. Set them in BOTH the Production scope (mandatory — § 5 DDG
+real values) and the Preview scope (recommended — without it,
+preview deploys still build but render the
+"Provider details unavailable" fail-closed banner on /impressum
+instead of the real provider details). The 8 keys are listed in
+`.env.example`.
+
+Symptom of a missing key on Production: Vercel build fails in
+~5 seconds with `[verify:legal-config] FAIL` listing the unset
+keys. This IS the v1.0.4 ship-blocker doing its job.
+
 ## 3. Migrations — apply order 0001 → 0029
 
 The migration history is sequential with two intentional gaps
