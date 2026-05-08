@@ -1374,6 +1374,74 @@ async function runStaticGate() {
     },
   ]))
 
+  // ── v1.0.4 hot-fix drift check (PROD_READINESS_AUDIT A1 — Impressum DDG) ──
+  // Zero literal {{...}} placeholders may remain anywhere under
+  // src/features/legal/. The build-time validator
+  // (scripts/verify-legal-config.mjs) catches the same regression in
+  // the prebuild step; the smokeWalk fixture is the citation-suite
+  // mirror so a single smoke:citations command surfaces both the
+  // citation-firewall and the legal-config posture.
+  const { readdir: smokeReaddir } = await import('node:fs/promises')
+  async function* walkLegalSources(dir) {
+    const entries = await smokeReaddir(dir, { withFileTypes: true })
+    for (const e of entries) {
+      const full = join(dir, e.name)
+      if (e.isDirectory()) {
+        yield* walkLegalSources(full)
+      } else if (e.isFile() && /\.(tsx?|jsx?)$/.test(e.name)) {
+        yield full
+      }
+    }
+  }
+  const legalLeaks = []
+  for await (const file of walkLegalSources(join(REPO_ROOT, 'src/features/legal'))) {
+    const text = await readFile(file, 'utf-8')
+    // Strip comment-only lines so the audit-blocker documentation in
+    // LegalConfigUnavailable.tsx (which names the pattern verbatim
+    // for explanation) doesn't false-positive. Render-time leaks
+    // would always be in JSX-expression positions, never in comments.
+    const stripped = text
+      .split('\n')
+      .filter((l) => {
+        const t = l.trimStart()
+        return !(
+          t.startsWith('//') ||
+          t.startsWith('*') ||
+          t.startsWith('/*') ||
+          t.startsWith('{/*')
+        )
+      })
+      .join('\n')
+    if (/\{\{[A-Z_]+\}\}/.test(stripped)) {
+      legalLeaks.push(file.replace(REPO_ROOT + '/', ''))
+    }
+  }
+  results.push(failures('v1.0.4 A1: zero {{PLACEHOLDER}} leaks under src/features/legal/', [
+    {
+      ok: legalLeaks.length === 0,
+      msg: legalLeaks.length === 0
+        ? '(no leaks — § 5 DDG posture preserved)'
+        : `Literal placeholder leak in ${legalLeaks.length} file(s): ${legalLeaks.join(', ')}`,
+    },
+  ]))
+  // Validator script must exist + be wired into prebuild.
+  const verifyLegalCfg = await readFileText('scripts/verify-legal-config.mjs')
+  const pkgJson = await readFileText('package.json')
+  results.push(failures('v1.0.4 A1: legal-config validator wired into prebuild', [
+    {
+      ok: /REQUIRED_KEYS\s*=\s*\[/.test(verifyLegalCfg),
+      msg: 'verify-legal-config.mjs must declare REQUIRED_KEYS',
+    },
+    {
+      ok: /verify:legal-config/.test(pkgJson),
+      msg: 'package.json prebuild must call verify:legal-config',
+    },
+    {
+      ok: /VITE_LEGAL_ANBIETER_NAME/.test(verifyLegalCfg),
+      msg: 'validator must require VITE_LEGAL_ANBIETER_NAME',
+    },
+  ]))
+
   // ── v1.0.3 hot-fix drift checks (POST_SMOKE_TEST_INVESTIGATION — wire VorlaeufigFooter into result tabs) ──
   // Per the locked spec: every result tab + SuggestionCard imports
   // VorlaeufigFooter; per-card render uses the locked broadened

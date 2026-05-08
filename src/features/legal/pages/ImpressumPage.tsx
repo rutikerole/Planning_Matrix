@@ -16,24 +16,33 @@
 
 import { useTranslation } from 'react-i18next'
 import { LegalPageLayout } from '../components/LegalPageLayout'
+import { getLegalConfig, type LegalConfigValues, type LegalConfigKey } from '../lib/legalConfig'
+import { LegalConfigUnavailable } from '../components/LegalConfigUnavailable'
 
-const LAST_UPDATED = '2026-05-01'
+const LAST_UPDATED = '2026-05-08'
 
 export function ImpressumPage() {
   const { i18n } = useTranslation()
   const isEn = (i18n.resolvedLanguage ?? 'de') === 'en'
+  const cfg = getLegalConfig()
   return (
     <LegalPageLayout
       eyebrow={isEn ? 'Legal notice' : 'Rechtliches'}
       headline="Impressum"
       lastUpdated={LAST_UPDATED}
     >
-      {isEn ? <ImprintEn /> : <ImprintDe />}
+      {isEn
+        ? <ImprintEn cfg={cfg} />
+        : <ImprintDe cfg={cfg} />}
     </LegalPageLayout>
   )
 }
 
-function ImprintDe() {
+type Cfg =
+  | { ok: true; values: LegalConfigValues }
+  | { ok: false; missing: LegalConfigKey[] }
+
+function ImprintDe({ cfg }: { cfg: Cfg }) {
   return (
     <>
       <p>
@@ -43,42 +52,60 @@ function ImprintDe() {
       </p>
 
       <h2>Anbieter und verantwortlich für den Inhalt</h2>
-      <p>
-        <strong>{'{{ANBIETER_NAME}}'}</strong>
-        <br />
-        {'{{ANBIETER_STRASSE_HAUSNUMMER}}'}
-        <br />
-        {'{{ANBIETER_PLZ}}'} {'{{ANBIETER_ORT}}'}
-        <br />
-        Deutschland
-      </p>
+      {cfg.ok ? (
+        <p>
+          <strong>{cfg.values.anbieterName}</strong>
+          <br />
+          {cfg.values.anbieterStrasseHausnummer}
+          <br />
+          {cfg.values.anbieterPlz} {cfg.values.anbieterOrt}
+          <br />
+          Deutschland
+        </p>
+      ) : (
+        <LegalConfigUnavailable missing={cfg.missing} />
+      )}
 
       <h2>Kontakt</h2>
-      <p>
-        Telefon: {'{{KONTAKT_TELEFON}}'}
-        <br />
-        E-Mail: {'{{KONTAKT_EMAIL}}'}
-      </p>
+      {cfg.ok ? (
+        <p>
+          Telefon: {cfg.values.kontaktTelefon}
+          <br />
+          E-Mail: {cfg.values.kontaktEmail}
+        </p>
+      ) : (
+        <LegalConfigUnavailable missing={cfg.missing} />
+      )}
 
       <h2>Verantwortlich für den Inhalt nach § 18 Abs. 2 MStV</h2>
-      <p>
-        {'{{ANBIETER_NAME}}'}, Anschrift wie oben.
-      </p>
+      {cfg.ok ? (
+        <p>{cfg.values.anbieterName}, Anschrift wie oben.</p>
+      ) : (
+        <LegalConfigUnavailable missing={cfg.missing} />
+      )}
 
       <h2>Umsatzsteuer-Identifikationsnummer</h2>
-      <p>
-        Eine Umsatzsteuer-Identifikationsnummer nach § 27a UStG ist
-        nicht vorhanden ({'{{UST_ID_HINWEIS}}'}). Sobald eine
-        USt-IdNr. erteilt wurde, wird sie hier ergänzt.
-      </p>
+      {cfg.ok ? (
+        <p>
+          Eine Umsatzsteuer-Identifikationsnummer nach § 27a UStG ist
+          nicht vorhanden ({cfg.values.ustIdHinweis}). Sobald eine
+          USt-IdNr. erteilt wurde, wird sie hier ergänzt.
+        </p>
+      ) : (
+        <LegalConfigUnavailable missing={cfg.missing} />
+      )}
 
       <h2>Handelsregister / Berufsbezeichnung</h2>
-      <p>
-        Eintragung im Handelsregister: {'{{HANDELSREGISTER_HINWEIS}}'}.
-        Berufsbezeichnung und kammerrechtliche Aufsicht entfallen, da
-        Planning Matrix kein reglementiertes Beratungsangebot im Sinne
-        einer berufsrechtlichen Kammer erbringt.
-      </p>
+      {cfg.ok ? (
+        <p>
+          Eintragung im Handelsregister: {cfg.values.handelsregisterHinweis}.
+          Berufsbezeichnung und kammerrechtliche Aufsicht entfallen, da
+          Planning Matrix kein reglementiertes Beratungsangebot im Sinne
+          einer berufsrechtlichen Kammer erbringt.
+        </p>
+      ) : (
+        <LegalConfigUnavailable missing={cfg.missing} />
+      )}
 
       <h2>Streitschlichtung</h2>
       <p>
@@ -150,7 +177,7 @@ function ImprintDe() {
   )
 }
 
-function ImprintEn() {
+function ImprintEn({ cfg }: { cfg: Cfg }) {
   return (
     <>
       <p>
@@ -161,21 +188,29 @@ function ImprintEn() {
         courtesy.
       </p>
       <h2>Provider and content responsibility</h2>
-      <p>
-        <strong>{'{{ANBIETER_NAME}}'}</strong>
-        <br />
-        {'{{ANBIETER_STRASSE_HAUSNUMMER}}'}
-        <br />
-        {'{{ANBIETER_PLZ}}'} {'{{ANBIETER_ORT}}'}
-        <br />
-        Germany
-      </p>
+      {cfg.ok ? (
+        <p>
+          <strong>{cfg.values.anbieterName}</strong>
+          <br />
+          {cfg.values.anbieterStrasseHausnummer}
+          <br />
+          {cfg.values.anbieterPlz} {cfg.values.anbieterOrt}
+          <br />
+          Germany
+        </p>
+      ) : (
+        <LegalConfigUnavailable missing={cfg.missing} />
+      )}
       <h2>Contact</h2>
-      <p>
-        Telephone: {'{{KONTAKT_TELEFON}}'}
-        <br />
-        Email: {'{{KONTAKT_EMAIL}}'}
-      </p>
+      {cfg.ok ? (
+        <p>
+          Telephone: {cfg.values.kontaktTelefon}
+          <br />
+          Email: {cfg.values.kontaktEmail}
+        </p>
+      ) : (
+        <LegalConfigUnavailable missing={cfg.missing} />
+      )}
       <h2>VAT ID / Commercial register</h2>
       <p>
         No VAT ID under § 27a UStG has been issued; no commercial

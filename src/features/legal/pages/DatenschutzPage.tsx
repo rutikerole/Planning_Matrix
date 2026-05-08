@@ -18,24 +18,31 @@
 
 import { useTranslation } from 'react-i18next'
 import { LegalPageLayout } from '../components/LegalPageLayout'
+import { getLegalConfig, type LegalConfigValues, type LegalConfigKey } from '../lib/legalConfig'
+import { LegalConfigUnavailable } from '../components/LegalConfigUnavailable'
 
-const LAST_UPDATED = '2026-05-06'
+const LAST_UPDATED = '2026-05-08'
+
+type Cfg =
+  | { ok: true; values: LegalConfigValues }
+  | { ok: false; missing: LegalConfigKey[] }
 
 export function DatenschutzPage() {
   const { i18n } = useTranslation()
   const isEn = (i18n.resolvedLanguage ?? 'de') === 'en'
+  const cfg = getLegalConfig()
   return (
     <LegalPageLayout
       eyebrow={isEn ? 'Privacy' : 'Datenschutz'}
       headline={isEn ? 'Privacy notice' : 'Datenschutzerklärung'}
       lastUpdated={LAST_UPDATED}
     >
-      {isEn ? <PrivacyEn /> : <PrivacyDe />}
+      {isEn ? <PrivacyEn cfg={cfg} /> : <PrivacyDe cfg={cfg} />}
     </LegalPageLayout>
   )
 }
 
-function PrivacyDe() {
+function PrivacyDe({ cfg }: { cfg: Cfg }) {
   return (
     <>
       <p>
@@ -51,12 +58,16 @@ function PrivacyDe() {
         Verantwortlich im Sinne des Art. 4 Nr. 7 DSGVO ist der
         Anbieter gemäß Impressum:
       </p>
-      <p>
-        {'{{ANBIETER_NAME}}'}, {'{{ANBIETER_STRASSE_HAUSNUMMER}}'},
-        {' '}
-        {'{{ANBIETER_PLZ}}'} {'{{ANBIETER_ORT}}'}, Deutschland.
-        E-Mail: {'{{KONTAKT_EMAIL}}'}.
-      </p>
+      {cfg.ok ? (
+        <p>
+          {cfg.values.anbieterName}, {cfg.values.anbieterStrasseHausnummer},
+          {' '}
+          {cfg.values.anbieterPlz} {cfg.values.anbieterOrt}, Deutschland.
+          E-Mail: {cfg.values.kontaktEmail}.
+        </p>
+      ) : (
+        <LegalConfigUnavailable missing={cfg.missing} />
+      )}
 
       <h2>2. Datenschutzbeauftragter</h2>
       <p>
@@ -274,10 +285,14 @@ function PrivacyDe() {
           Zukunft (Art. 7 Abs. 3 DSGVO)
         </li>
       </ul>
-      <p>
-        Anfragen zur Ausübung dieser Rechte richten Sie bitte
-        formlos per E-Mail an {'{{KONTAKT_EMAIL}}'}.
-      </p>
+      {cfg.ok ? (
+        <p>
+          Anfragen zur Ausübung dieser Rechte richten Sie bitte
+          formlos per E-Mail an {cfg.values.kontaktEmail}.
+        </p>
+      ) : (
+        <LegalConfigUnavailable missing={cfg.missing} />
+      )}
 
       <h2>6. Recht auf Beschwerde bei der Aufsichtsbehörde</h2>
       <p>
@@ -307,7 +322,7 @@ function PrivacyDe() {
   )
 }
 
-function PrivacyEn() {
+function PrivacyEn({ cfg }: { cfg: Cfg }) {
   return (
     <>
       <p>
@@ -317,12 +332,16 @@ function PrivacyEn() {
         translation.
       </p>
       <h2>Controller</h2>
-      <p>
-        Per Art. 4 (7) GDPR: the provider listed in the Impressum
-        ({'{{ANBIETER_NAME}}'}, {'{{ANBIETER_PLZ}}'}{' '}
-        {'{{ANBIETER_ORT}}'}, Germany; email{' '}
-        {'{{KONTAKT_EMAIL}}'}).
-      </p>
+      {cfg.ok ? (
+        <p>
+          Per Art. 4 (7) GDPR: the provider listed in the Impressum
+          ({cfg.values.anbieterName}, {cfg.values.anbieterPlz}{' '}
+          {cfg.values.anbieterOrt}, Germany; email{' '}
+          {cfg.values.kontaktEmail}).
+        </p>
+      ) : (
+        <LegalConfigUnavailable missing={cfg.missing} />
+      )}
       <h2>Processing activities (summary)</h2>
       <ul>
         <li>Account (email, password) — Art. 6 (1) (b) GDPR</li>
@@ -343,11 +362,15 @@ function PrivacyEn() {
         <li>Munich Geoportal WMS (admin preview only) — Art. 6 (1) (f)</li>
       </ul>
       <h2>Your rights</h2>
-      <p>
-        Access, rectification, erasure, restriction, objection,
-        portability, consent withdrawal — Articles 15–22 GDPR. Contact{' '}
-        {'{{KONTAKT_EMAIL}}'}.
-      </p>
+      {cfg.ok ? (
+        <p>
+          Access, rectification, erasure, restriction, objection,
+          portability, consent withdrawal — Articles 15–22 GDPR. Contact{' '}
+          {cfg.values.kontaktEmail}.
+        </p>
+      ) : (
+        <LegalConfigUnavailable missing={cfg.missing} />
+      )}
       <h2>Supervisory authority</h2>
       <p>
         Bayerisches Landesamt für Datenschutzaufsicht (BayLDA),
