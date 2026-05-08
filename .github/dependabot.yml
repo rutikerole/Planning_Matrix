@@ -1,0 +1,55 @@
+version: 2
+updates:
+  # npm — main app dependencies
+  - package-ecosystem: npm
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+      time: "06:00"
+      timezone: "Europe/Berlin"
+    open-pull-requests-limit: 5
+    versioning-strategy: increase
+    labels:
+      - dependencies
+      - automated
+    groups:
+      # Group all React/Vite ecosystem updates so we don't get five
+      # parallel PRs every week. Major bumps still split out.
+      react-ecosystem:
+        applies-to: version-updates
+        patterns:
+          - "react"
+          - "react-dom"
+          - "@types/react*"
+          - "@vitejs/*"
+          - "vite"
+        update-types:
+          - "minor"
+          - "patch"
+      radix:
+        applies-to: version-updates
+        patterns:
+          - "@radix-ui/*"
+        update-types:
+          - "minor"
+          - "patch"
+      supabase-anthropic:
+        applies-to: version-updates
+        patterns:
+          - "@supabase/supabase-js"
+          - "@anthropic-ai/sdk"
+        update-types:
+          - "minor"
+          - "patch"
+
+  # GitHub Actions — kept up to date for any future CI workflow.
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 3
+    labels:
+      - dependencies
+      - automated

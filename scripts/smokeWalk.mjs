@@ -1303,6 +1303,45 @@ async function runStaticGate() {
     },
   ]))
 
+  // ── v1.0.4 D2+D3+D6 drift checks (compliance docs + dependabot) ──
+  const compliance = await readFileText('docs/COMPLIANCE.md')
+  const legalReview = await readFileText('docs/LEGAL_COPY_REVIEW.md')
+  const dependabot = await readFileText('.github/dependabot.yml')
+  results.push(failures('v1.0.4 D2: docs/COMPLIANCE.md present + sub-processor table', [
+    {
+      ok: /Anthropic, PBC/.test(compliance) &&
+          /Supabase Inc\./.test(compliance) &&
+          /Vercel Inc\./.test(compliance) &&
+          /Functional Software \(Sentry\)/.test(compliance) &&
+          /PostHog Inc\./.test(compliance),
+      msg: 'COMPLIANCE.md must enumerate all 5 sub-processors',
+    },
+    {
+      ok: /Sub-processors|Data flows across vendor/.test(compliance),
+      msg: 'COMPLIANCE.md must surface sub-processor + data-flow sections',
+    },
+  ]))
+  results.push(failures('v1.0.4 D3: docs/LEGAL_COPY_REVIEW.md present + sign-off ledger', [
+    {
+      ok: /Sign-off ledger/.test(legalReview),
+      msg: 'LEGAL_COPY_REVIEW.md must include a counsel sign-off ledger',
+    },
+    {
+      ok: /Vorl[äa]ufig.*bauvorlageberechtigte/.test(legalReview),
+      msg: 'LEGAL_COPY_REVIEW.md must catalogue the §6.B.01 Vorläufig clause verbatim',
+    },
+  ]))
+  results.push(failures('v1.0.4 D6: dependabot.yml present', [
+    {
+      ok: /package-ecosystem:\s*npm/.test(dependabot),
+      msg: '.github/dependabot.yml must register npm ecosystem',
+    },
+    {
+      ok: /package-ecosystem:\s*github-actions/.test(dependabot),
+      msg: '.github/dependabot.yml must register github-actions ecosystem',
+    },
+  ]))
+
   // ── v1.0.4 C3+C4 drift checks (streaming await + i18n + comment) ──
   const streamingC3 = await readFileText('supabase/functions/chat-turn/streaming.ts')
   const indexC4 = await readFileText('supabase/functions/chat-turn/index.ts')
