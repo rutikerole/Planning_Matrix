@@ -6,8 +6,8 @@
 
 ## TL;DR
 
-11 findings: **0 CRITICAL, 3 SERIOUS, 3 MINOR, 5 INFO.** Bayern
-SHA still `b18d3f7f9a6fe238c18cec5361d30ea3a547e46b1ef2b16a1e74c533aacb3471`. **Production-ready
+11 findings: **0 CRITICAL, 2 SERIOUS, 3 MINOR, 5 INFO, 1 RESOLVED-IN-V1.0.3.**
+Bayern SHA still `b18d3f7f9a6fe238c18cec5361d30ea3a547e46b1ef2b16a1e74c533aacb3471`. **Production-ready
 verdict: YES-FOR-BAYERN-ONLY.** Migration 0031 holds; the
 projects ↔ project_members RLS recursion is gone. The bundesland
 change *did* propagate at the system-prompt layer (code path
@@ -15,10 +15,15 @@ verified file:line); the persona "still cited Bayern" because
 9 turns of past assistant_messages + Bayern-flavoured
 projects.state JSONB dominate the model's context window —
 **by-design conversational dominance, not a stale-cache bug**.
-Headline: **`VorlaeufigFooter` is dead code — imported by zero
-result-page surfaces.** The architect verification flow flips
-qualifiers correctly server-side, but the Bauherr-facing footer
-that motivates verification doesn't render anywhere.
+
+**v1.0.3 (commit `b98cc98`, tag `v1.0.3`) wired
+`VorlaeufigFooter` into every qualifier-bearing result-page
+surface** (4 tabs + SuggestionCard + Overview aggregate). The
+original headline finding ("dead code, server-side real but
+client-side invisible") is RESOLVED. Architect verification now
+has direct Bauherr-visible consequence: per-card footers vanish
+as the architect verifies, tab-level aggregates hide once all
+entries are DESIGNER+VERIFIED.
 
 ---
 
@@ -179,7 +184,7 @@ deterministic round-based advancement.
 
 ## 4. Architect verification flow — UNTESTED in production smoke
 
-### [SERIOUS-3] `VorlaeufigFooter` is dead code — imported by ZERO surfaces
+### [SERIOUS-3] `VorlaeufigFooter` is dead code — imported by ZERO surfaces — **RESOLVED in v1.0.3 (commit `b98cc98`)**
 
 Empirical:
 ```
