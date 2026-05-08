@@ -367,6 +367,43 @@ export function runStreamingTurn(args: StreamingTurnArgs): Response {
         commitSpan.end()
         if (commitResult.replayed) traceStatus = 'idempotent_replay'
 
+        // v1.0.4 A2 — emit chat.turn_completed for the 13b denominator.
+        // Wrapped in try/catch so a transient DB blip does not blow
+        // the SSE close path (POST_V1_AUDIT SERIOUS — fix C3 also lands
+        // in this commit-cycle's later phase).
+        if (!commitResult.replayed) {
+          try {
+            const safeTraceId =
+              tracer.trace_id && tracer.trace_id !== '00000000-0000-0000-0000-000000000000'
+                ? tracer.trace_id
+                : null
+            const { error: turnEvtErr } = await args.supabase.from('event_log').insert({
+              session_id: args.requestId,
+              user_id: args.userId,
+              project_id: args.projectId,
+              source: 'chat',
+              name: 'chat.turn_completed',
+              attributes: {
+                specialist: toolInput.specialist,
+                latency_ms: latencyMs,
+                completion_signal: toolInput.completion_signal ?? 'continue',
+              },
+              client_ts: new Date().toISOString(),
+              trace_id: safeTraceId,
+            })
+            if (turnEvtErr) {
+              console.warn(
+                `[chat-turn] [${args.requestId}] chat.turn_completed event_log insert failed: ${turnEvtErr.message}`,
+              )
+            }
+          } catch (evtErr) {
+            console.warn(
+              `[chat-turn] [${args.requestId}] chat.turn_completed insert threw:`,
+              evtErr,
+            )
+          }
+        }
+
         // ── Final complete frame ───────────────────────────────────
         send({
           type: 'complete',

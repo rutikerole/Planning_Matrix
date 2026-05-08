@@ -99,6 +99,24 @@ duplicated; if you change one, change both.
 
 ## 4. Qualifier-gate rollback (Phase 13 §6.B.01)
 
+> **v1.0.4 alarm rewire** — the 13b denominator was structurally
+> inert in v1.0.0..v1.0.3 (the 0029 view's
+> `where source = 'chat-turn'` was rejected by the event_log CHECK
+> constraint, so `turns_count` sat at 0 forever). Migration 0032
+> (applied in v1.0.4) aligns the predicate to
+> `(source='chat', name='chat.turn_completed')`; the chat-turn
+> Edge Function emits that event per non-replay turn. Verify
+> post-apply:
+>
+> ```sql
+> select * from public.qualifier_rates_7d_global;
+> -- turns_count > 0 within minutes of any traffic.
+> ```
+>
+> If `turns_count` stays at 0 after a real chat turn, the alarm
+> wiring regressed — escalate.
+
+
 The gate constant lives at
 `src/lib/projectStateHelpers.ts` → `QUALIFIER_GATE_REJECTS`.
 

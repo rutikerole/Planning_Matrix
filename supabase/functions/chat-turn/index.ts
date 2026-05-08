@@ -572,6 +572,42 @@ Deno.serve(async (req: Request) => {
     traceStatus = 'idempotent_replay'
   }
 
+  // v1.0.4 A2 — emit `chat.turn_completed` per successful turn so the
+  // 0032 qualifier_rates_7d_global view's `turns_count` denominator
+  // counts real turns. The 0029 predecessor used `source='chat-turn'`
+  // which is rejected by the event_log CHECK constraint
+  // ('wizard'|'chat'|'result'|'auth'|'dashboard'|'sentry'|'system'),
+  // so the threshold sat at 0 forever (audit CRIT-2). The migration
+  // 0032 view aligns its WHERE to (source='chat', name='chat.turn_completed').
+  // Best-effort fan-out: a transient DB blip on this insert must NOT
+  // fail the user's turn — wrapped in warn-and-continue (mirrors
+  // citationLint's logCitationViolations posture).
+  if (!commitResult.replayed) {
+    const safeTraceId =
+      tracer.trace_id && tracer.trace_id !== '00000000-0000-0000-0000-000000000000'
+        ? tracer.trace_id
+        : null
+    const { error: turnEvtErr } = await supabase.from('event_log').insert({
+      session_id: requestId,
+      user_id: userData.user.id,
+      project_id: projectId,
+      source: 'chat',
+      name: 'chat.turn_completed',
+      attributes: {
+        specialist: toolInput.specialist,
+        latency_ms: latencyMs,
+        completion_signal: toolInput.completion_signal ?? 'continue',
+      },
+      client_ts: new Date().toISOString(),
+      trace_id: safeTraceId,
+    })
+    if (turnEvtErr) {
+      console.warn(
+        `[chat-turn] [${requestId}] chat.turn_completed event_log insert failed: ${turnEvtErr.message}`,
+      )
+    }
+  }
+
   console.log(
     `[chat-turn] [${requestId}] ok specialist=${toolInput.specialist} latency=${latencyMs}ms tokens(in/out/cR/cW)=${usage.inputTokens}/${usage.outputTokens}/${usage.cacheReadTokens}/${usage.cacheWriteTokens}${commitResult.replayed ? ' (replayed)' : ''}`,
   )

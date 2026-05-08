@@ -1303,6 +1303,44 @@ async function runStaticGate() {
     },
   ]))
 
+  // ── v1.0.4 A2 drift checks (13b denominator alarm rewire) ─────────
+  const denomMig = await readFileText('supabase/migrations/0032_qualifier_metrics_denominator_fix.sql')
+  // Strip SQL line-comments before regex so the explanatory block at
+  // the top of the migration (which quotes the old broken predicate)
+  // doesn't false-positive on the "must not retain" assertion.
+  const denomMigCode = denomMig
+    .split('\n')
+    .filter((l) => !l.trimStart().startsWith('--'))
+    .join('\n')
+  const indexEmits = await readFileText('supabase/functions/chat-turn/index.ts')
+  const streamingEmits = await readFileText('supabase/functions/chat-turn/streaming.ts')
+  results.push(failures('v1.0.4 A2: 13b denominator predicate aligned to event_log CHECK', [
+    {
+      ok: /source\s*=\s*'chat'\s+and\s+name\s*=\s*'chat\.turn_completed'/i.test(denomMigCode),
+      msg: '0032 view must use (source=\'chat\' AND name=\'chat.turn_completed\') for turns_count',
+    },
+    {
+      ok: !/source\s*=\s*'chat-turn'/.test(denomMigCode),
+      msg: '0032 must not retain the broken source=\'chat-turn\' predicate from 0029 (in code, not comments)',
+    },
+  ]))
+  results.push(failures('v1.0.4 A2: chat-turn emits chat.turn_completed', [
+    {
+      ok: /name:\s*'chat\.turn_completed'/.test(indexEmits) &&
+          /source:\s*'chat'/.test(indexEmits),
+      msg: 'chat-turn/index.ts must emit chat.turn_completed event with source=chat',
+    },
+    {
+      ok: /name:\s*'chat\.turn_completed'/.test(streamingEmits) &&
+          /source:\s*'chat'/.test(streamingEmits),
+      msg: 'chat-turn/streaming.ts must emit chat.turn_completed event with source=chat',
+    },
+    {
+      ok: /!commitResult\.replayed/.test(indexEmits),
+      msg: 'index.ts must skip emit on idempotent replay (don\'t double-count turns)',
+    },
+  ]))
+
   // Migration drift — 0030 must declare the column + backfill + index.
   const expiryMig = await readFileText('supabase/migrations/0030_project_members_expiry.sql')
   results.push(failures('v1.0.1 CRIT-3: 0030_project_members_expiry.sql shape', [
