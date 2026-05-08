@@ -70,19 +70,21 @@ export function VorlaeufigFooter({
  * Pure predicate so card composers can branch without rendering the
  * component (e.g. for ordering / sorting "pending first" rows).
  *
- * "Pending" = the entry's authoritative reading depends on architect
- * sign-off:
- *   - DESIGNER+ASSUMED  (gate-downgraded or never-verified)
- *   - DESIGNER+CALCULATED (architect-derived but not yet blessed)
+ * v1.0.3 — broadened per the locked spec: "if not DESIGNER+VERIFIED,
+ * render the Vorläufig footer; if verified, hide." The earlier
+ * narrower predicate only fired on DESIGNER-source entries; that left
+ * LEGAL / CLIENT / AUTHORITY items unflagged, which the user-side
+ * legal shield is meant to cover. Now: anything that is NOT
+ * exactly DESIGNER+VERIFIED is treated as "still preliminary,
+ * needs architect sign-off." Verified entries hide the footer.
  *
- * NOT pending: DESIGNER+VERIFIED (already blessed), LEGAL+anything
- * (statute-grounded), CLIENT+anything (factual user input), AUTHORITY+
- * anything.
+ * Aggregate use: composers can pass `someUnverified = items.some((it)
+ * => isPending(it.qualifier?.source, it.qualifier?.quality))` to
+ * decide whether to render an aggregate footer at the tab bottom.
  */
 export function isPending(
   source: Source | null | undefined,
   quality: Quality | null | undefined,
 ): boolean {
-  if (source !== 'DESIGNER') return false
-  return quality === 'ASSUMED' || quality === 'CALCULATED'
+  return !(source === 'DESIGNER' && quality === 'VERIFIED')
 }

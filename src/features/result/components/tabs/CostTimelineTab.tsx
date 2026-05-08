@@ -15,6 +15,10 @@ import { PROCEDURE_PHASES, totalPhaseWeight } from '../../lib/composeTimeline'
 import { findCostRationale } from '@/data/costRationales'
 import { findTimelineAnnotation } from '@/data/timelineAnnotations'
 import { composeCalendar, formatCalendarDate } from '../../lib/composeCalendar'
+import {
+  VorlaeufigFooter,
+  isPending,
+} from '@/features/architect/components/VorlaeufigFooter'
 
 interface Props {
   project: ProjectRow
@@ -228,6 +232,19 @@ export function CostTimelineTab({ project, state }: Props) {
         {/* C.3 calendar narrator note. */}
         <CalendarNarrator lang={lang} />
       </section>
+
+      {/* v1.0.3 — tab-level aggregate. Cost lines themselves have no
+        * qualifier (they are heuristic-derived); the underlying
+        * procedures + documents do. Render the footer if any of them
+        * is not yet DESIGNER+VERIFIED. */}
+      {(procedures.some((p) =>
+        isPending(p.qualifier?.source, p.qualifier?.quality),
+      ) ||
+        (state.documents ?? []).some((d) =>
+          isPending(d.qualifier?.source, d.qualifier?.quality),
+        )) && (
+        <VorlaeufigFooter source={null} quality={null} />
+      )}
     </div>
   )
 }

@@ -5,6 +5,10 @@ import type { ProjectState } from '@/types/projectState'
 import { pickSmartSuggestions } from '../../lib/smartSuggestionsMatcher'
 import { SuggestionCard } from '../Cards/SuggestionCard'
 import { useEventEmitter } from '@/hooks/useEventEmitter'
+import {
+  VorlaeufigFooter,
+  isPending,
+} from '@/features/architect/components/VorlaeufigFooter'
 
 interface Props {
   project: ProjectRow
@@ -102,6 +106,17 @@ export function SuggestionsTab({ project, state, ownerMode }: Props) {
           ))}
         </ul>
       )}
+
+      {/* v1.0.3 — tab-level aggregate. Smart-suggestions catalogue
+        * entries are statically LEGAL+CALCULATED, so isPending always
+        * returns true once at least one suggestion is visible. Aligned
+        * with the user's locked spec: "if not DESIGNER+VERIFIED,
+        * render". Hides only if the tab itself is empty. */}
+      {visible.some((s) =>
+        // SmartSuggestion has no per-row qualifier; treat as preliminary
+        // until an architect pulls it into recommendations and verifies.
+        isPending(null, null) && s,
+      ) && <VorlaeufigFooter source={null} quality={null} />}
     </div>
   )
 }

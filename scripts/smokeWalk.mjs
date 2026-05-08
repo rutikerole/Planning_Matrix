@@ -1374,6 +1374,109 @@ async function runStaticGate() {
     },
   ]))
 
+  // ── v1.0.3 hot-fix drift checks (POST_SMOKE_TEST_INVESTIGATION — wire VorlaeufigFooter into result tabs) ──
+  // Per the locked spec: every result tab + SuggestionCard imports
+  // VorlaeufigFooter; per-card render uses the locked broadened
+  // isPending predicate (source !== 'DESIGNER' || quality !== 'VERIFIED').
+  results.push(failures('v1.0.3 UX: isPending broadened to !DESIGNER+VERIFIED', [
+    {
+      ok: /return\s+!\(source\s*===\s*'DESIGNER'\s*&&\s*quality\s*===\s*'VERIFIED'\)/.test(vorlaeufigSrc),
+      msg: 'isPending must use the v1.0.3 broadened predicate (anything not DESIGNER+VERIFIED is pending)',
+    },
+  ]))
+  const overviewTab = await readFileText('src/features/result/components/tabs/OverviewTab.tsx')
+  const procDocsTab = await readFileText('src/features/result/components/tabs/ProcedureDocumentsTab.tsx')
+  const teamTab = await readFileText('src/features/result/components/tabs/TeamTab.tsx')
+  const costTab = await readFileText('src/features/result/components/tabs/CostTimelineTab.tsx')
+  const suggestionsTab = await readFileText('src/features/result/components/tabs/SuggestionsTab.tsx')
+  const suggestionCard = await readFileText('src/features/result/components/Cards/SuggestionCard.tsx')
+  const VORL_IMPORT_RE = /from\s+['"]@\/features\/architect\/components\/VorlaeufigFooter['"]/
+  const FOOTER_RENDER_RE = /<VorlaeufigFooter\b/
+  results.push(failures('v1.0.3 UX: every result tab imports VorlaeufigFooter', [
+    {
+      ok: VORL_IMPORT_RE.test(overviewTab),
+      msg: 'OverviewTab must import VorlaeufigFooter',
+    },
+    {
+      ok: VORL_IMPORT_RE.test(procDocsTab),
+      msg: 'ProcedureDocumentsTab must import VorlaeufigFooter',
+    },
+    {
+      ok: VORL_IMPORT_RE.test(teamTab),
+      msg: 'TeamTab must import VorlaeufigFooter',
+    },
+    {
+      ok: VORL_IMPORT_RE.test(costTab),
+      msg: 'CostTimelineTab must import VorlaeufigFooter',
+    },
+    {
+      ok: VORL_IMPORT_RE.test(suggestionsTab),
+      msg: 'SuggestionsTab must import VorlaeufigFooter',
+    },
+    {
+      ok: VORL_IMPORT_RE.test(suggestionCard),
+      msg: 'SuggestionCard must import VorlaeufigFooter',
+    },
+  ]))
+  results.push(failures('v1.0.3 UX: every result tab renders VorlaeufigFooter', [
+    {
+      ok: FOOTER_RENDER_RE.test(overviewTab),
+      msg: 'OverviewTab must render <VorlaeufigFooter ... />',
+    },
+    {
+      ok: FOOTER_RENDER_RE.test(procDocsTab),
+      msg: 'ProcedureDocumentsTab must render <VorlaeufigFooter ... />',
+    },
+    {
+      ok: FOOTER_RENDER_RE.test(teamTab),
+      msg: 'TeamTab must render <VorlaeufigFooter ... />',
+    },
+    {
+      ok: FOOTER_RENDER_RE.test(costTab),
+      msg: 'CostTimelineTab must render <VorlaeufigFooter ... />',
+    },
+    {
+      ok: FOOTER_RENDER_RE.test(suggestionsTab),
+      msg: 'SuggestionsTab must render <VorlaeufigFooter ... />',
+    },
+    {
+      ok: FOOTER_RENDER_RE.test(suggestionCard),
+      msg: 'SuggestionCard must render <VorlaeufigFooter ... />',
+    },
+  ]))
+  results.push(failures('v1.0.3 UX: per-card render reads THIS card qualifier', [
+    {
+      ok: /<VorlaeufigFooter[\s\S]{0,160}source=\{primary\.qualifier\?\.source\}/.test(procDocsTab),
+      msg: 'ProcedureDocumentsTab primary procedure must read primary.qualifier.source',
+    },
+    {
+      ok: /<VorlaeufigFooter[\s\S]{0,160}source=\{doc\.qualifier\?\.source\}/.test(procDocsTab),
+      msg: 'DocumentCard must read doc.qualifier.source per-card (inline)',
+    },
+    {
+      ok: /<VorlaeufigFooter[\s\S]{0,160}source=\{role\.qualifier\?\.source\}/.test(teamTab),
+      msg: 'RoleCard must read role.qualifier.source per-card (inline)',
+    },
+  ]))
+  results.push(failures('v1.0.3 UX: tab-level aggregate uses isPending().some(...)', [
+    {
+      ok: /isPending\([\s\S]{0,400}\.some\(/.test(overviewTab) || /\.some\([\s\S]{0,200}isPending\(/.test(overviewTab),
+      msg: 'OverviewTab aggregate must use isPending() across recommendations/procedures/documents/roles',
+    },
+    {
+      ok: /\.some\([\s\S]{0,200}isPending\(/.test(procDocsTab),
+      msg: 'ProcedureDocumentsTab aggregate must use isPending() across procedures+documents',
+    },
+    {
+      ok: /\.some\([\s\S]{0,200}isPending\(/.test(teamTab),
+      msg: 'TeamTab aggregate must use isPending() across roles',
+    },
+    {
+      ok: /\.some\([\s\S]{0,200}isPending\(/.test(costTab),
+      msg: 'CostTimelineTab aggregate must use isPending() across procedures+documents',
+    },
+  ]))
+
   // Phase 13 Week 4 — metrics view + CLI + audit doc.
   // The view + CLI together implement the 13b conditional-trigger
   // surface (kept deferred per locked decisions, but the data path

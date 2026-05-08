@@ -10,6 +10,10 @@ import type {
 } from '@/types/projectState'
 import { PROCEDURE_PHASES, totalPhaseWeight } from '../../lib/composeTimeline'
 import { useResolvedProcedures } from '../../hooks/useResolvedProcedures'
+import {
+  VorlaeufigFooter,
+  isPending,
+} from '@/features/architect/components/VorlaeufigFooter'
 
 interface Props {
   project: ProjectRow
@@ -88,6 +92,15 @@ export function ProcedureDocumentsTab({ project, state }: Props) {
                 })}
               </p>
             )}
+            {/* v1.0.3 — Phase 13 §6.B.01 legal shield. Per-card footer
+              * renders unless this procedure's qualifier is
+              * DESIGNER+VERIFIED. The architect's verify-fact flip
+              * hides this footer for the verified card only. */}
+            <VorlaeufigFooter
+              source={primary.qualifier?.source}
+              quality={primary.qualifier?.quality}
+              note={primary.qualifier?.reason}
+            />
           </article>
         ) : (
           <article className="border border-dashed border-ink/15 rounded-[10px] bg-paper-card p-5 flex flex-col gap-2">
@@ -185,6 +198,18 @@ export function ProcedureDocumentsTab({ project, state }: Props) {
           </p>
         </div>
       </section>
+
+      {/* v1.0.3 — tab-level aggregate. Renders only when AT LEAST ONE
+        * procedure or document is not yet DESIGNER+VERIFIED. Hides
+        * once an architect has verified every entry on this tab. */}
+      {(resolved.procedures.some((p) =>
+        isPending(p.qualifier?.source, p.qualifier?.quality),
+      ) ||
+        documents.some((d) =>
+          isPending(d.qualifier?.source, d.qualifier?.quality),
+        )) && (
+        <VorlaeufigFooter source={null} quality={null} />
+      )}
     </div>
   )
 }
@@ -252,6 +277,12 @@ function DocumentCard({
             {producer}
           </span>
         )}
+        {/* v1.0.3 — inline Vorläufig tag for grid density. */}
+        <VorlaeufigFooter
+          source={doc.qualifier?.source}
+          quality={doc.qualifier?.quality}
+          variant="inline"
+        />
       </div>
       {open && (
         <div className="text-[12px] text-ink/75 leading-relaxed border-t border-ink/12 pt-2 mt-1 flex flex-col gap-1">

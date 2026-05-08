@@ -10,6 +10,7 @@ import type {
   SmartSuggestion,
   SuggestionCategory,
 } from '@/data/smartSuggestionsMuenchen'
+import { VorlaeufigFooter } from '@/features/architect/components/VorlaeufigFooter'
 
 interface Props {
   project: ProjectRow
@@ -183,6 +184,11 @@ export function SuggestionCard({
           </button>
         )}
       </div>
+      {/* v1.0.3 — per-card Vorläufig footer. SmartSuggestions are
+        * statically LEGAL+CALCULATED (line 71 set on add-to-checklist);
+        * passing nulls forces the footer to render until an architect
+        * picks the suggestion up via verify-fact. */}
+      <VorlaeufigFooter source={null} quality={null} />
     </article>
   )
 }

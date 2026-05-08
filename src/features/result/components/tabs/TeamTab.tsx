@@ -5,6 +5,10 @@ import { RoleGlyph } from '../RoleGlyphs'
 import { inferRoleGlyphKey } from '../RoleGlyphs.helpers'
 import { ROLE_EFFORT_LOOKUP, type RoleKey } from '../../lib/roleEffortLookup'
 import { useResolvedRoles } from '../../hooks/useResolvedRoles'
+import {
+  VorlaeufigFooter,
+  isPending,
+} from '@/features/architect/components/VorlaeufigFooter'
 
 interface Props {
   project: ProjectRow
@@ -125,6 +129,12 @@ export function TeamTab({ project, state }: Props) {
           ))}
         </ul>
       </section>
+
+      {/* v1.0.3 — tab-level aggregate. Renders if any role on this
+        * tab is not yet DESIGNER+VERIFIED. */}
+      {roles.some((r) => isPending(r.qualifier?.source, r.qualifier?.quality)) && (
+        <VorlaeufigFooter source={null} quality={null} />
+      )}
     </div>
   )
 }
@@ -183,6 +193,12 @@ function RoleCard({
           </span>
         </p>
       )}
+      {/* v1.0.3 — inline Vorläufig tag for grid density (per-role). */}
+      <VorlaeufigFooter
+        source={role.qualifier?.source}
+        quality={role.qualifier?.quality}
+        variant="inline"
+      />
     </li>
   )
 }
