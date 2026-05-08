@@ -70,7 +70,7 @@ jobs:
         # reflects the actual exit code (failure for any non-zero).
         # We disambiguate exit 1 (drift) vs exit 2 (unreachable) by
         # parsing the script's summary line below.
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         env:
           OUTPUT: ${{ steps.output.outputs.STDOUT }}
         with:
