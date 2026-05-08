@@ -1241,6 +1241,68 @@ async function runStaticGate() {
       msg: 'CRIT-3 fix: expired-invite copy must surface the locked German message',
     },
   ]))
+  // ── v1.0.2 hot-fix drift checks (RLS recursion) ────────────────────
+  // Pin the SECURITY DEFINER helper functions + replaced policies so any
+  // future revert of 0031 fires the daily gate immediately.
+  const recursionMig = await readFileText('supabase/migrations/0031_fix_projects_rls_recursion.sql')
+  results.push(failures('v1.0.2 CRIT: rls-recursion-fix — helper functions', [
+    {
+      ok: /create or replace function public\.is_project_owner\(p_project_id uuid\)[\s\S]{0,400}security definer[\s\S]{0,200}set search_path = ''/.test(recursionMig),
+      msg: '0031 must declare is_project_owner with security definer + set search_path = \'\'',
+    },
+    {
+      ok: /create or replace function public\.is_accepted_architect\(p_project_id uuid\)[\s\S]{0,400}security definer[\s\S]{0,200}set search_path = ''/.test(recursionMig),
+      msg: '0031 must declare is_accepted_architect with security definer + set search_path = \'\'',
+    },
+    {
+      ok: /\bstable\b/.test(recursionMig),
+      msg: '0031 helper functions must be marked stable for query-plan optimization',
+    },
+  ]))
+  results.push(failures('v1.0.2 CRIT: rls-recursion-fix — grants', [
+    {
+      ok: /revoke all on function public\.is_project_owner\(uuid\)\s+from public/.test(recursionMig),
+      msg: '0031 must revoke default PUBLIC execute on is_project_owner',
+    },
+    {
+      ok: /revoke all on function public\.is_accepted_architect\(uuid\)\s+from public/.test(recursionMig),
+      msg: '0031 must revoke default PUBLIC execute on is_accepted_architect',
+    },
+    {
+      ok: /grant\s+execute on function public\.is_project_owner\(uuid\)\s+to authenticated, anon/.test(recursionMig),
+      msg: '0031 must grant execute on is_project_owner to authenticated + anon',
+    },
+    {
+      ok: /grant\s+execute on function public\.is_accepted_architect\(uuid\)\s+to authenticated, anon/.test(recursionMig),
+      msg: '0031 must grant execute on is_accepted_architect to authenticated + anon',
+    },
+  ]))
+  results.push(failures('v1.0.2 CRIT: rls-recursion-fix — replaced policies', [
+    {
+      ok: /drop policy if exists "architect-member can select projects" on public\.projects/.test(recursionMig),
+      msg: '0031 must drop the recursive architect-member policy first',
+    },
+    {
+      ok: /using \(\s*public\.is_accepted_architect\(id\)\s*\)/.test(recursionMig),
+      msg: '0031 must replace the architect-member USING clause with public.is_accepted_architect(id)',
+    },
+    {
+      ok: /drop policy if exists "members read own membership" on public\.project_members/.test(recursionMig),
+      msg: '0031 must drop the recursive project_members policy first',
+    },
+    {
+      ok: /public\.is_project_owner\(project_id\)/.test(recursionMig),
+      msg: '0031 must replace the project_members owner subquery with public.is_project_owner(project_id)',
+    },
+    {
+      // Defense-in-depth: the recursive EXISTS subquery patterns from
+      // 0026 + 0028 must NOT survive in 0031. If a future refactor
+      // re-introduces them, this fixture catches it before deploy.
+      ok: !/exists\s*\(\s*select 1\s+from public\.project_members pm\s+where pm\.project_id = projects\.id/.test(recursionMig),
+      msg: '0031 must NOT contain the recursive EXISTS subquery from 0028',
+    },
+  ]))
+
   // Migration drift — 0030 must declare the column + backfill + index.
   const expiryMig = await readFileText('supabase/migrations/0030_project_members_expiry.sql')
   results.push(failures('v1.0.1 CRIT-3: 0030_project_members_expiry.sql shape', [
