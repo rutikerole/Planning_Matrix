@@ -35,7 +35,7 @@ jobs:
       SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
       EVAL_HARNESS_TEST_USER_PASSWORD: ${{ secrets.EVAL_HARNESS_TEST_USER_PASSWORD }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 1
 

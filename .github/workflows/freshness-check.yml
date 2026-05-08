@@ -29,7 +29,7 @@ jobs:
     # week's run picks up where this one stopped.
     timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 1
 
