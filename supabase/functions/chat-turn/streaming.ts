@@ -36,7 +36,11 @@ import { MODEL, respondToolDefinition, respondToolChoice } from './toolSchema.ts
 import { estimateCostUsd, UpstreamError, type AnthropicUsage } from './anthropic.ts'
 import { commitChatTurnAtomic } from './persistence.ts'
 import { validateFactPlausibility } from './factPlausibility.ts'
-import { lintCitations, logCitationViolations } from './citationLint.ts'
+import {
+  enforceCitationAllowList,
+  lintCitations,
+  logCitationViolations,
+} from './citationLint.ts'
 import {
   applyToolInputToState,
   gateQualifiersByRole,
@@ -262,6 +266,49 @@ export function runStreamingTurn(args: StreamingTurnArgs): Response {
             traceId: tracer.trace_id,
             violations: citationViolations,
           })
+        }
+
+        // v1.0.5 / audit B3 — Layer C positive-list enforcement
+        // (mirrors chat-turn/index.ts JSON-path wiring).
+        const allowListEvents = enforceCitationAllowList(toolInput, args.bundesland)
+        if (allowListEvents.length > 0) {
+          console.log(
+            `[chat-turn] [${args.requestId}] citation-allow-list (streaming): ${allowListEvents.length} downgrade(s)`,
+          )
+          try {
+            const safeTraceId =
+              tracer.trace_id && tracer.trace_id !== '00000000-0000-0000-0000-000000000000'
+                ? tracer.trace_id
+                : null
+            const now = new Date().toISOString()
+            const rows = allowListEvents.map((e) => ({
+              session_id: args.requestId,
+              user_id: args.userId,
+              project_id: args.projectId,
+              source: 'system' as const,
+              name: 'citation.fabrication',
+              attributes: {
+                field: e.field,
+                item_id: e.item_id,
+                fabricated: e.fabricated,
+                reason: e.reason,
+                active_bundesland: args.bundesland,
+              },
+              client_ts: now,
+              trace_id: safeTraceId,
+            }))
+            const { error: alErr } = await args.supabase.from('event_log').insert(rows)
+            if (alErr) {
+              console.warn(
+                `[chat-turn] [${args.requestId}] citation-allow-list event_log insert failed: ${alErr.message}`,
+              )
+            }
+          } catch (insErr) {
+            console.warn(
+              `[chat-turn] [${args.requestId}] citation-allow-list insert threw:`,
+              insErr,
+            )
+          }
         }
 
         // ── Capture persona snapshot (Phase 9) ─────────────────────

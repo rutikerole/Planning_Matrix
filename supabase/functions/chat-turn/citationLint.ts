@@ -451,6 +451,271 @@ export function lintCitations(
  *  accidentally shipping with the list emptied. */
 export const FORBIDDEN_PATTERN_COUNT = FORBIDDEN_PATTERNS.length
 
+// ── Layer C — positive-list enforcement (v1.0.5 / audit B3) ───────────
+//
+// Layer A/B above are NEGATIVE filters: a model emission that matches a
+// forbidden pattern is flagged. Without this Layer C, the model can
+// emit a fabricated paragraph number ("BayBO Art. 99") and only the
+// Vorläufig footer flags it as preliminary — that's rhetorical defense,
+// not technical defense. Layer C adds POSITIVE-LIST enforcement: every
+// citation the model emits in a delta-bearing item must match an entry
+// in the active state's `allowedCitations`. Items whose citations
+// fail the check have their qualifier downgraded to DESIGNER+ASSUMED
+// in-place (mirrors factPlausibility's mutate-and-return-warnings
+// posture). Fail-soft: the turn proceeds; the Vorläufig footer
+// renders on the result page.
+//
+// MATCHING SHAPE — and where this is WEAKER than full strictness.
+//
+// `allowedCitations` is an array of formatted strings ('Art. 57
+// Abs. 1 Nr. 1 a BayBO', 'BayDSchG Art. 6', '§ 6 HBO', 'BauGB § 30',
+// 'StPlS 926 Anlage 1 Nr. 1.1', etc.). The model emits citations in
+// inconsistent ordering ('BayBO Art. 57' vs 'Art. 57 BayBO'),
+// inconsistent capitalisation, and inconsistent whitespace. Direct
+// string equality won't work.
+//
+// The chosen normalisation: parse each entry to a (law, number) tuple
+// — where `law` is the lowercase law-name token (`baybo`, `hbo`,
+// `baugb`, `stpls 926`, etc.) and `number` is the lowercased Art./§/
+// Anlage number (`57`, `6`, `30`, `82c`). The tuple is the cache key.
+// At runtime, the same parser runs over every model-emitted citation;
+// if its (law, number) is NOT in the allow-list set, the containing
+// item is downgraded.
+//
+// **Limit:** sub-Absatz fabrications ('Art. 57 Abs. 99 Nr. 5 BayBO')
+// are NOT caught at this granularity — Art. 57 IS in the allow-list,
+// so the (BayBO, 57) tuple matches. The audit's load-bearing case
+// is fabricated ARTICLE numbers ('Art. 99'); those ARE caught.
+// Sub-Absatz fabrication is a v1.1+ sharpening if it surfaces.
+//
+// **Empty allow-list (the 11 minimum-stub states):** Layer C
+// short-circuits — without a positive list to check against, the
+// only sound posture is "no enforcement." The Vorläufig footer +
+// Layer A/B + the persona's own discipline are the defenses for
+// stub states. Documented; not silently skipped.
+
+import type { RespondToolInput as ResponseToolInputForLayerC } from '../../../src/types/respondTool.ts'
+import { resolveStateDelta as resolveStateDeltaForLayerC } from '../../../src/legal/legalRegistry.ts'
+
+const KNOWN_LAW_TOKEN_RE =
+  /\b(BayBO|BauGB|BauNVO|BayDSchG|GEG|StPlS\s*\d+|HBO|HBauO|NBauO|BauO\s*NRW|LBO(?:\s+BW|\s+SH|\s+MV|\s+Saarland)?|S[äa]chsBO|LBauO\s+RLP|BremLBO|BauO\s+LSA|BbgBO|BauO\s+Bln|Th[üu]rBO)\b/i
+const ANCHOR_NUMBER_RE = /(?:Art\.|§|Anlage)\s*(\d+[a-z]?)/gi
+
+interface ParsedCitation {
+  law: string
+  number: string
+}
+
+function normaliseLaw(s: string): string {
+  return s.toLowerCase().replace(/\s+/g, ' ').trim()
+}
+
+/**
+ * Parse a single allow-list entry into a (law, number) tuple.
+ * Returns null if no recognisable law-token + anchor-number is
+ * present — empty entries / future-proofing strings just don't
+ * contribute to the set.
+ */
+function parseAllowedCitationEntry(s: string): ParsedCitation | null {
+  const lawMatch = s.match(KNOWN_LAW_TOKEN_RE)
+  // ANCHOR_NUMBER_RE is global — pull out the first match only.
+  ANCHOR_NUMBER_RE.lastIndex = 0
+  const anchorMatch = ANCHOR_NUMBER_RE.exec(s)
+  if (!lawMatch || !anchorMatch) return null
+  return {
+    law: normaliseLaw(lawMatch[1]),
+    number: anchorMatch[1].toLowerCase(),
+  }
+}
+
+const ALLOW_KEY_CACHE = new Map<string, Set<string>>()
+
+function getAllowKeySet(allowedCitations: ReadonlyArray<string>, cacheKey: string): Set<string> {
+  const cached = ALLOW_KEY_CACHE.get(cacheKey)
+  if (cached) return cached
+  const set = new Set<string>()
+  for (const entry of allowedCitations) {
+    const parsed = parseAllowedCitationEntry(entry)
+    if (parsed) set.add(`${parsed.law}|${parsed.number}`)
+  }
+  ALLOW_KEY_CACHE.set(cacheKey, set)
+  return set
+}
+
+/**
+ * Yield every (law, number, match) triple found in `text`. The
+ * extractor scans for anchor+number occurrences and looks for the
+ * NEAREST law-token within ±40 chars. This catches both word-orders
+ * the model uses ("Art. 57 BayBO" and "BayBO Art. 57"), plus
+ * BauGB/BauNVO/GEG cross-references and StPlS/Anlage forms.
+ */
+function* extractCitationsFromText(
+  text: string,
+): Iterable<ParsedCitation & { match: string; index: number }> {
+  ANCHOR_NUMBER_RE.lastIndex = 0
+  let m: RegExpExecArray | null
+  while ((m = ANCHOR_NUMBER_RE.exec(text)) !== null) {
+    const start = Math.max(0, m.index - 40)
+    const end = Math.min(text.length, m.index + m[0].length + 40)
+    const ctx = text.slice(start, end)
+    const lawMatch = ctx.match(KNOWN_LAW_TOKEN_RE)
+    if (!lawMatch) continue
+    yield {
+      law: normaliseLaw(lawMatch[1]),
+      number: m[1].toLowerCase(),
+      match: m[0],
+      index: m.index,
+    }
+    if (m.index === ANCHOR_NUMBER_RE.lastIndex) ANCHOR_NUMBER_RE.lastIndex += 1
+  }
+}
+
+export type AllowListField =
+  | 'recommendation'
+  | 'procedure'
+  | 'document'
+  | 'role'
+  | 'extracted_fact'
+
+export interface CitationAllowListEvent {
+  field: AllowListField
+  /** Recommendation/procedure/document/role id, or fact `key`. */
+  item_id: string
+  fabricated: { law: string; number: string; match: string }[]
+  reason: string
+}
+
+const REASON_PREFIX = 'citation not in allow-list'
+
+function fmtFabricated(fab: { law: string; number: string }[]): string {
+  return fab.map((f) => `${f.law.toUpperCase()} ${f.number}`).join(', ')
+}
+
+/**
+ * Aggregate the texts on a single delta-item into a single string +
+ * extract every citation. Returns the fabricated (law, number) tuples
+ * that are NOT in the active allow-list set.
+ */
+function fabricatedCitationsForTexts(
+  texts: Array<string | undefined>,
+  allowSet: Set<string>,
+): { law: string; number: string; match: string }[] {
+  const seen = new Set<string>()
+  const fabricated: { law: string; number: string; match: string }[] = []
+  for (const t of texts) {
+    if (!t) continue
+    for (const cite of extractCitationsFromText(t)) {
+      const key = `${cite.law}|${cite.number}`
+      if (allowSet.has(key)) continue
+      if (seen.has(key)) continue
+      seen.add(key)
+      fabricated.push({ law: cite.law, number: cite.number, match: cite.match })
+    }
+  }
+  return fabricated
+}
+
+/**
+ * v1.0.5 / audit B3 — Layer C positive-list enforcement.
+ *
+ * Mutates `toolInput` in place:
+ *   - For each delta-item with at least one citation NOT in the
+ *     active state's allow-list, downgrade its qualifier to
+ *     DESIGNER+ASSUMED (recommendation: nested `qualifier`;
+ *     procedures/documents/roles: top-level source/quality on the
+ *     upsert; extracted_facts: top-level source/quality).
+ *   - The Vorläufig footer then renders for that item on the
+ *     result page (per VorlaeufigFooter's broadened isPending).
+ *
+ * Returns the events for event_log. Empty when no fabrications
+ * found OR the active state has no allow-list (stub states).
+ *
+ * Fail-soft: never rejects the turn. Mirrors factPlausibility.
+ */
+export function enforceCitationAllowList(
+  toolInput: ResponseToolInputForLayerC,
+  activeBundesland: string | null | undefined,
+): CitationAllowListEvent[] {
+  const code = activeBundesland ? normalizeBundeslandCode(activeBundesland) : null
+  if (!code) return []
+  const state = resolveStateDeltaForLayerC(code)
+  if (!state.allowedCitations.length) return []
+  const allowSet = getAllowKeySet(state.allowedCitations, code)
+  if (allowSet.size === 0) return []
+
+  const events: CitationAllowListEvent[] = []
+  const reasonSuffix = ` (active=${code})`
+
+  // recommendations_delta upserts: qualifier nested as { source, quality }
+  for (const r of toolInput.recommendations_delta ?? []) {
+    if (r.op !== 'upsert') continue
+    const fab = fabricatedCitationsForTexts(
+      [r.title_de, r.title_en, r.detail_de, r.detail_en],
+      allowSet,
+    )
+    if (fab.length === 0) continue
+    const reason = `${REASON_PREFIX}: ${fmtFabricated(fab)}${reasonSuffix}`
+    events.push({ field: 'recommendation', item_id: r.id, fabricated: fab, reason })
+    r.qualifier = { source: 'DESIGNER', quality: 'ASSUMED' }
+  }
+
+  // procedures_delta / documents_delta / roles_delta upserts:
+  // source / quality / reason are TOP-LEVEL on the upsert.
+  for (const p of toolInput.procedures_delta ?? []) {
+    if (p.op !== 'upsert') continue
+    const fab = fabricatedCitationsForTexts(
+      [p.title_de, p.title_en, p.rationale_de, p.rationale_en],
+      allowSet,
+    )
+    if (fab.length === 0) continue
+    const reason = `${REASON_PREFIX}: ${fmtFabricated(fab)}${reasonSuffix}`
+    events.push({ field: 'procedure', item_id: p.id, fabricated: fab, reason })
+    p.source = 'DESIGNER'
+    p.quality = 'ASSUMED'
+    p.reason = p.reason ? `${p.reason} · ${reason}` : reason
+  }
+  for (const d of toolInput.documents_delta ?? []) {
+    if (d.op !== 'upsert') continue
+    const fab = fabricatedCitationsForTexts(
+      [d.title_de, d.title_en],
+      allowSet,
+    )
+    if (fab.length === 0) continue
+    const reason = `${REASON_PREFIX}: ${fmtFabricated(fab)}${reasonSuffix}`
+    events.push({ field: 'document', item_id: d.id, fabricated: fab, reason })
+    d.source = 'DESIGNER'
+    d.quality = 'ASSUMED'
+    d.reason = d.reason ? `${d.reason} · ${reason}` : reason
+  }
+  for (const r of toolInput.roles_delta ?? []) {
+    if (r.op !== 'upsert') continue
+    const fab = fabricatedCitationsForTexts(
+      [r.title_de, r.title_en, r.rationale_de, r.rationale_en],
+      allowSet,
+    )
+    if (fab.length === 0) continue
+    const reason = `${REASON_PREFIX}: ${fmtFabricated(fab)}${reasonSuffix}`
+    events.push({ field: 'role', item_id: r.id, fabricated: fab, reason })
+    r.source = 'DESIGNER'
+    r.quality = 'ASSUMED'
+    r.reason = r.reason ? `${r.reason} · ${reason}` : reason
+  }
+
+  // extracted_facts: source / quality top-level, evidence is the
+  // citation-bearing field.
+  for (const f of toolInput.extracted_facts ?? []) {
+    const fab = fabricatedCitationsForTexts([f.evidence], allowSet)
+    if (fab.length === 0) continue
+    const reason = `${REASON_PREFIX}: ${fmtFabricated(fab)}${reasonSuffix}`
+    events.push({ field: 'extracted_fact', item_id: f.key, fabricated: fab, reason })
+    f.source = 'DESIGNER'
+    f.quality = 'ASSUMED'
+    f.reason = f.reason ? `${f.reason} · ${reason}` : reason
+  }
+
+  return events
+}
+
 // ── Event-log wiring (Phase 10.1 commit 6) ────────────────────────────
 
 import type { SupabaseClient } from 'npm:@supabase/supabase-js@2'

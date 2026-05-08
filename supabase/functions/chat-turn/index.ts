@@ -41,7 +41,7 @@ import {
   type MessageRow,
 } from './persistence.ts'
 import { validateFactPlausibility } from './factPlausibility.ts'
-import { lintCitations, logCitationViolations } from './citationLint.ts'
+import { enforceCitationAllowList, lintCitations, logCitationViolations } from './citationLint.ts'
 import { runStreamingTurn, acceptsStream } from './streaming.ts'
 import {
   hydrateProjectState,
@@ -446,6 +446,53 @@ Deno.serve(async (req: Request) => {
       traceId: tracer.trace_id,
       violations: citationViolations,
     })
+  }
+
+  // v1.0.5 / audit B3 — Layer C positive-list enforcement.
+  // Mutates toolInput in place: any delta-item whose citations are
+  // NOT in the active state's allowedCitations gets its qualifier
+  // downgraded to DESIGNER+ASSUMED. The Vorläufig footer renders
+  // for that item on the result page. Best-effort fan-out into
+  // event_log under name='citation.fabrication' (mirrors the
+  // citation.violation event-log shape so the admin Logs drawer
+  // surfaces both classes side-by-side).
+  const allowListEvents = enforceCitationAllowList(toolInput, project.bundesland)
+  if (allowListEvents.length > 0) {
+    console.log(
+      `[chat-turn] [${requestId}] citation-allow-list: ${allowListEvents.length} downgrade(s)`,
+      allowListEvents.map((e) => ({
+        field: e.field,
+        item_id: e.item_id,
+        fabricated: e.fabricated.map((f) => `${f.law.toUpperCase()} ${f.number}`),
+      })),
+    )
+    const safeTraceId =
+      tracer.trace_id && tracer.trace_id !== '00000000-0000-0000-0000-000000000000'
+        ? tracer.trace_id
+        : null
+    const now = new Date().toISOString()
+    const rows = allowListEvents.map((e) => ({
+      session_id: requestId,
+      user_id: userData.user.id,
+      project_id: projectId,
+      source: 'system' as const,
+      name: 'citation.fabrication',
+      attributes: {
+        field: e.field,
+        item_id: e.item_id,
+        fabricated: e.fabricated,
+        reason: e.reason,
+        active_bundesland: project.bundesland,
+      },
+      client_ts: now,
+      trace_id: safeTraceId,
+    }))
+    const { error: alErr } = await supabase.from('event_log').insert(rows)
+    if (alErr) {
+      console.warn(
+        `[chat-turn] [${requestId}] citation-allow-list event_log insert failed: ${alErr.message}`,
+      )
+    }
   }
 
   // ── Phase 13 — qualifier-write-gate (rejection mode) ──────────────

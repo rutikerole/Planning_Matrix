@@ -847,6 +847,207 @@ function readQualifierFromFixture(input, expect) {
   return null
 }
 
+// ── Layer-C citation allow-list (v1.0.5 / audit B3) ────────────────────
+// JS port of citationLint.ts enforceCitationAllowList. Drift between
+// this and the source-of-truth would be a bug — the smokeWalk static
+// gate runs the JS port, the live chat-turn function runs the TS
+// version. Both must agree on which citations are fabricated.
+//
+// Per-state minimal allow-lists for fixture purposes — keep small +
+// representative; the full lists live in src/legal/states/*.ts and
+// the JS port doesn't import them (keeps smokeWalk stand-alone). The
+// drift gate below grep-asserts the TS version still references the
+// allow-list data.
+const ALLOW_KEY_SETS = {
+  bayern: new Set([
+    'baybo|2', 'baybo|6', 'baybo|12', 'baybo|44a', 'baybo|46',
+    'baybo|47', 'baybo|57', 'baybo|58', 'baybo|58a', 'baybo|59',
+    'baybo|60', 'baybo|61', 'baybo|62', 'baybo|64', 'baybo|65',
+    'baybo|66', 'baybo|69', 'baybo|76', 'baybo|81', 'baybo|82c',
+    'baydschg|6',
+    'stpls 926|1', 'stpls 926|3', 'stpls 926|4',
+    'baugb|30', 'baugb|31', 'baugb|34', 'baugb|35', 'baugb|172',
+    'baugb|246e', 'baunvo|19', 'geg|8',
+  ]),
+  hessen: new Set([
+    'hbo|2', 'hbo|6', 'hbo|8', 'hbo|52', 'hbo|53', 'hbo|56',
+    'hbo|57', 'hbo|63', 'hbo|64', 'hbo|65', 'hbo|66', 'hbo|67',
+    'hbo|68', 'hbo|69', 'hbo|70', 'hbo|71', 'hbo|73', 'hbo|74',
+    'baugb|30', 'baugb|34', 'baugb|35', 'baunvo|19', 'geg|8',
+  ]),
+}
+
+const KNOWN_LAW_TOKEN_RE_JS =
+  /\b(BayBO|BauGB|BauNVO|BayDSchG|GEG|StPlS\s*\d+|HBO|HBauO|NBauO|BauO\s*NRW|LBO(?:\s+BW|\s+SH|\s+MV|\s+Saarland)?|S[äa]chsBO|LBauO\s+RLP|BremLBO|BauO\s+LSA|BbgBO|BauO\s+Bln|Th[üu]rBO)\b/i
+const ANCHOR_NUMBER_RE_JS = /(?:Art\.|§|Anlage)\s*(\d+[a-z]?)/gi
+
+function* extractCitationsJS(text) {
+  ANCHOR_NUMBER_RE_JS.lastIndex = 0
+  let m
+  while ((m = ANCHOR_NUMBER_RE_JS.exec(text)) !== null) {
+    const start = Math.max(0, m.index - 40)
+    const end = Math.min(text.length, m.index + m[0].length + 40)
+    const ctx = text.slice(start, end)
+    const lawMatch = ctx.match(KNOWN_LAW_TOKEN_RE_JS)
+    if (!lawMatch) continue
+    yield {
+      law: lawMatch[1].toLowerCase().replace(/\s+/g, ' ').trim(),
+      number: m[1].toLowerCase(),
+      match: m[0],
+    }
+    if (m.index === ANCHOR_NUMBER_RE_JS.lastIndex) ANCHOR_NUMBER_RE_JS.lastIndex += 1
+  }
+}
+
+function fabricatedForTextsJS(texts, allowSet) {
+  const seen = new Set()
+  const fab = []
+  for (const t of texts) {
+    if (!t) continue
+    for (const cite of extractCitationsJS(t)) {
+      const key = `${cite.law}|${cite.number}`
+      if (allowSet.has(key)) continue
+      if (seen.has(key)) continue
+      seen.add(key)
+      fab.push(cite)
+    }
+  }
+  return fab
+}
+
+function enforceAllowListJS(toolInput, activeBundesland) {
+  const allowSet = ALLOW_KEY_SETS[activeBundesland]
+  if (!allowSet || allowSet.size === 0) return { events: [], mutated: toolInput }
+  const events = []
+  for (const r of toolInput.recommendations_delta ?? []) {
+    if (r.op !== 'upsert') continue
+    const fab = fabricatedForTextsJS([r.title_de, r.title_en, r.detail_de, r.detail_en], allowSet)
+    if (fab.length === 0) continue
+    events.push({ field: 'recommendation', item_id: r.id, fabricated: fab })
+    r.qualifier = { source: 'DESIGNER', quality: 'ASSUMED' }
+  }
+  for (const p of toolInput.procedures_delta ?? []) {
+    if (p.op !== 'upsert') continue
+    const fab = fabricatedForTextsJS([p.title_de, p.title_en, p.rationale_de, p.rationale_en], allowSet)
+    if (fab.length === 0) continue
+    events.push({ field: 'procedure', item_id: p.id, fabricated: fab })
+    p.source = 'DESIGNER'
+    p.quality = 'ASSUMED'
+  }
+  for (const f of toolInput.extracted_facts ?? []) {
+    const fab = fabricatedForTextsJS([f.evidence], allowSet)
+    if (fab.length === 0) continue
+    events.push({ field: 'extracted_fact', item_id: f.key, fabricated: fab })
+    f.source = 'DESIGNER'
+    f.quality = 'ASSUMED'
+  }
+  return { events, mutated: toolInput }
+}
+
+const ALLOW_LIST_FIXTURES = [
+  {
+    label: "B3 Bayern: 'BayBO Art. 99' (fabricated) → recommendation downgraded",
+    activeBundesland: 'bayern',
+    input: {
+      recommendations_delta: [{
+        op: 'upsert', id: 'rec-fab',
+        title_de: 'Verfahrensfreiheit prüfen',
+        detail_de: 'Verfahrensfreiheit folgt aus BayBO Art. 99 Abs. 3.',
+        qualifier: { source: 'LEGAL', quality: 'CALCULATED' },
+      }],
+    },
+    expectEvents: 1,
+    expectQualifier: { itemId: 'rec-fab', source: 'DESIGNER', quality: 'ASSUMED' },
+  },
+  {
+    label: "B3 Bayern: 'BayBO Art. 57 Abs. 1 Nr. 1 a' (real) → passes through",
+    activeBundesland: 'bayern',
+    input: {
+      recommendations_delta: [{
+        op: 'upsert', id: 'rec-real',
+        title_de: 'Anbau-Verfahrensfreiheit',
+        detail_de: 'Verfahrensfreiheit nach BayBO Art. 57 Abs. 1 Nr. 1 a.',
+        qualifier: { source: 'LEGAL', quality: 'CALCULATED' },
+      }],
+    },
+    expectEvents: 0,
+    expectQualifier: { itemId: 'rec-real', source: 'LEGAL', quality: 'CALCULATED' },
+  },
+  {
+    label: "B3 Hessen: '§ 6 HBO' (real) + active=hessen → passes",
+    activeBundesland: 'hessen',
+    input: {
+      procedures_delta: [{
+        op: 'upsert', id: 'proc-hbo',
+        rationale_de: 'Abstandsflächen nach § 6 HBO einhalten.',
+        source: 'LEGAL', quality: 'CALCULATED',
+      }],
+    },
+    expectEvents: 0,
+    expectQualifierTopLevel: { itemId: 'proc-hbo', source: 'LEGAL', quality: 'CALCULATED' },
+  },
+  {
+    label: "B3 Cross-state: '§ 6 HBO' + active=bayern → procedure downgraded",
+    activeBundesland: 'bayern',
+    input: {
+      procedures_delta: [{
+        op: 'upsert', id: 'proc-cross',
+        rationale_de: 'Abstandsflächen nach § 6 HBO.',
+        source: 'LEGAL', quality: 'CALCULATED',
+      }],
+    },
+    expectEvents: 1,
+    expectQualifierTopLevel: { itemId: 'proc-cross', source: 'DESIGNER', quality: 'ASSUMED' },
+  },
+  {
+    label: 'B3 No-cite path: empty text → no spurious downgrade',
+    activeBundesland: 'bayern',
+    input: {
+      recommendations_delta: [{
+        op: 'upsert', id: 'rec-no-cite',
+        title_de: 'Lageplan einholen',
+        detail_de: 'Den Lageplan beim ÖbVI beauftragen.',
+        qualifier: { source: 'LEGAL', quality: 'CALCULATED' },
+      }],
+    },
+    expectEvents: 0,
+    expectQualifier: { itemId: 'rec-no-cite', source: 'LEGAL', quality: 'CALCULATED' },
+  },
+  {
+    label: 'B3 Mixed: one real + one fabricated → only the fabricated downgrades',
+    activeBundesland: 'bayern',
+    input: {
+      recommendations_delta: [
+        {
+          op: 'upsert', id: 'rec-good',
+          detail_de: 'Verfahrensfreiheit nach BayBO Art. 57 Abs. 1 Nr. 1 a.',
+          qualifier: { source: 'LEGAL', quality: 'CALCULATED' },
+        },
+        {
+          op: 'upsert', id: 'rec-bad',
+          detail_de: 'Genehmigungsfreistellung nach BayBO Art. 200.',
+          qualifier: { source: 'LEGAL', quality: 'CALCULATED' },
+        },
+      ],
+    },
+    expectEvents: 1,
+    expectQualifier: { itemId: 'rec-bad', source: 'DESIGNER', quality: 'ASSUMED' },
+  },
+  {
+    label: 'B3 Stub state: active=sachsen → no enforcement (empty allow-list)',
+    activeBundesland: 'sachsen',
+    input: {
+      recommendations_delta: [{
+        op: 'upsert', id: 'rec-stub',
+        detail_de: 'Anything BayBO Art. 99 stub-state-fine.',
+        qualifier: { source: 'LEGAL', quality: 'CALCULATED' },
+      }],
+    },
+    expectEvents: 0,
+    expectQualifier: { itemId: 'rec-stub', source: 'LEGAL', quality: 'CALCULATED' },
+  },
+]
+
 // ── Static gate ────────────────────────────────────────────────────────
 
 async function readFileText(relPath) {
@@ -1302,6 +1503,77 @@ async function runStaticGate() {
       msg: '0031 must NOT contain the recursive EXISTS subquery from 0028',
     },
   ]))
+
+  // ── v1.0.5 / audit B3: Layer-C citation allow-list runtime ────────
+  const citationLintSrc = await readFileText('supabase/functions/chat-turn/citationLint.ts')
+  const indexSrcB3 = await readFileText('supabase/functions/chat-turn/index.ts')
+  const streamingSrcB3 = await readFileText('supabase/functions/chat-turn/streaming.ts')
+  results.push(failures('v1.0.5 B3: enforceCitationAllowList wired into citationLint.ts', [
+    {
+      ok: /export function enforceCitationAllowList\(/.test(citationLintSrc),
+      msg: 'citationLint.ts must export enforceCitationAllowList',
+    },
+    {
+      ok: /resolveStateDelta(?:ForLayerC)?/.test(citationLintSrc),
+      msg: 'citationLint.ts must call resolveStateDelta to read allowedCitations per state',
+    },
+    {
+      ok: /ALLOW_KEY_CACHE\s*=\s*new Map/.test(citationLintSrc),
+      msg: 'citationLint.ts must memoise the parsed allow-list set per state',
+    },
+    {
+      ok: /citation not in allow-list/.test(citationLintSrc),
+      msg: 'reason string must surface "citation not in allow-list"',
+    },
+  ]))
+  results.push(failures('v1.0.5 B3: chat-turn pipeline calls Layer-C', [
+    {
+      ok: /enforceCitationAllowList\(toolInput,\s*project\.bundesland\)/.test(indexSrcB3),
+      msg: 'chat-turn/index.ts must call enforceCitationAllowList after lintCitations',
+    },
+    {
+      ok: /enforceCitationAllowList\(toolInput,\s*args\.bundesland\)/.test(streamingSrcB3),
+      msg: 'chat-turn/streaming.ts must call enforceCitationAllowList in the SSE path',
+    },
+    {
+      ok: /'citation\.fabrication'/.test(indexSrcB3) &&
+          /'citation\.fabrication'/.test(streamingSrcB3),
+      msg: 'both paths must emit citation.fabrication event_log rows',
+    },
+  ]))
+  // Run the JS port against the 7 fixture cases. Verifies the
+  // ALGORITHM the production code uses, not just regex shape.
+  for (const f of ALLOW_LIST_FIXTURES) {
+    const cloned = JSON.parse(JSON.stringify(f.input))
+    const { events } = enforceAllowListJS(cloned, f.activeBundesland)
+    const conds = [
+      {
+        ok: events.length === f.expectEvents,
+        msg: `expected ${f.expectEvents} event(s); got ${events.length}: ${JSON.stringify(events.map((e) => `${e.field}/${e.item_id}/${e.fabricated.map((x) => x.law + ' ' + x.number).join(',')}`))}`,
+      },
+    ]
+    if (f.expectQualifier) {
+      const rec = (cloned.recommendations_delta ?? []).find(
+        (r) => r.op === 'upsert' && r.id === f.expectQualifier.itemId,
+      )
+      conds.push({
+        ok: rec?.qualifier?.source === f.expectQualifier.source &&
+            rec?.qualifier?.quality === f.expectQualifier.quality,
+        msg: `expected rec ${f.expectQualifier.itemId} qualifier=${f.expectQualifier.source}+${f.expectQualifier.quality}; got ${rec?.qualifier?.source}+${rec?.qualifier?.quality}`,
+      })
+    }
+    if (f.expectQualifierTopLevel) {
+      const proc = (cloned.procedures_delta ?? []).find(
+        (p) => p.op === 'upsert' && p.id === f.expectQualifierTopLevel.itemId,
+      )
+      conds.push({
+        ok: proc?.source === f.expectQualifierTopLevel.source &&
+            proc?.quality === f.expectQualifierTopLevel.quality,
+        msg: `expected proc ${f.expectQualifierTopLevel.itemId} top-level=${f.expectQualifierTopLevel.source}+${f.expectQualifierTopLevel.quality}; got ${proc?.source}+${proc?.quality}`,
+      })
+    }
+    results.push(failures(`v1.0.5 B3 fixture: ${f.label}`, conds))
+  }
 
   // ── v1.0.4 D2+D3+D6 drift checks (compliance docs + dependabot) ──
   const compliance = await readFileText('docs/COMPLIANCE.md')
