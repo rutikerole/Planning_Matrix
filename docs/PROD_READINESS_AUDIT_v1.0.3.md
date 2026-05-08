@@ -5,6 +5,31 @@
 > + tsc + npm audit). Bayern SHA `b18d3f7f9a6fe238c18cec5361d30ea3a547e46b1ef2b16a1e74c533aacb3471`
 > **MATCH** at start AND end of audit (no drift during probe). Scope
 > is single-state (Bayern); multi-state is explicitly v1.1.
+>
+> ### v1.0.4 RESOLUTION STATUS (this audit's findings)
+>
+> | Finding | Status | Commit |
+> | ------- | ------ | ------ |
+> | A1 — Impressum § 5 DDG (14 placeholders) | ✅ RESOLVED | `549b48b` |
+> | A2 — 13b denominator alarm rewire (CRIT-2) | ✅ RESOLVED in code; ⚠️ requires migration 0032 apply | `075283d` |
+> | A3 — `qualifier_role_violation` propagation | ✅ RESOLVED | `df4c1fc` |
+> | C3 — streaming-path bare-await | ✅ RESOLVED | `567b724` |
+> | C4 — ArchitectGuard English copy + stale chat-turn comment | ✅ RESOLVED | `567b724` |
+> | D2 — `docs/COMPLIANCE.md` | ✅ SHIPPED | `104608b` |
+> | D3 — `docs/LEGAL_COPY_REVIEW.md` (Anwalt prep) | ✅ SHIPPED | `104608b` |
+> | D6 — Dependabot config | ✅ SHIPPED | `104608b` |
+> | B1 — Real DOM test harness (Vitest/RTL) | ⏭ DEFERRED v1.1 | — |
+> | B2 — VorlaeufigFooter render assertions | ⏭ DEFERRED v1.1 (depends on B1) | — |
+> | B3 — Citation runtime allow-list enforcement | ⏭ DEFERRED v1.1 (touches the chat-turn pipeline; high blast radius for a hot-fix) | — |
+> | C1 — verify-fact race (POST_V1_AUDIT CRIT-1) | ⏭ DEFERRED v1.1 (needs schema column + retry path; bigger than a hot-fix) | — |
+> | C2 — qualifier-views security_invoker probe | ⏭ DEFERRED v1.1 (needs service-role probe against authenticated-non-admin; live probe of anon path was clean) | — |
+> | D1 — Sentry runtime smoke | ✅ already wired (audit confirmed); no v1.0.4 change needed | — |
+> | D4 — Load-test script + execution | ⏭ DEFERRED v1.1 (no execution capacity in this pass) | — |
+> | D5 — Mobile render Playwright pass | ⏭ DEFERRED v1.1 (depends on B1) | — |
+>
+> 8 findings RESOLVED in v1.0.4. 7 findings honestly deferred to v1.1
+> with the reason named per row. Bayern SHA `b18d3f7f…3471` MATCH at
+> end of v1.0.4 commit cycle.
 
 ---
 

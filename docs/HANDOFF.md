@@ -461,7 +461,7 @@ shipped in Phase 13 Week 4). What's missing is the cron harness
 
 ## 9. Operational responsibilities — split between engineering and client
 
-The **v1.0.3 tag is the production-ready release**. The version
+The **v1.0.4 tag is the production-ready release**. The version
 ladder:
   • v1.0   = engineering milestone (complete feature scope).
   • v1.0.1 = invite-flow security hardening (owner-check on share,
@@ -473,6 +473,18 @@ ladder:
              (`VorlaeufigFooter` wired into every result-page tab
              + SuggestionCard; architect verification now has
              direct Bauherr-visible consequence).
+  • v1.0.4 = remediation sweep against `PROD_READINESS_AUDIT_v1.0.3.md`:
+             A1 Impressum § 5 DDG (env-driven config + build
+             validator + fail-closed banner; 0 leaks), A2 13b
+             denominator alarm rewire (migration 0032 + chat-turn
+             emits chat.turn_completed), A3 qualifier_role_violation
+             propagation (KNOWN_ERROR_CODES + locale keys; locked
+             German CTA reaches user), C3 streaming await safety,
+             C4 ArchitectGuard German + stale comment cleanup, D2
+             COMPLIANCE.md, D3 LEGAL_COPY_REVIEW.md, D6 Dependabot.
+             8 audit blockers closed; 7 items honestly deferred to
+             v1.1 (see PROD_READINESS_AUDIT_v1.0.3.md resolution
+             table).
 
 A second tier of work is the **client's operational
 responsibility** to action post-tag, before public traffic touches

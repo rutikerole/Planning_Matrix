@@ -36,6 +36,27 @@ shield's user-facing message never reaches the user**
 
 ### [CRITICAL-1] verify-fact race on `projects.state` UPDATE — STILL OPEN (v1.1)
 
+**v1.0.4 status:** STILL OPEN. The race fix needs a schema column
+(`qualifier_version`) + atomic UPDATE WITH version predicate +
+retry-on-conflict path on the SPA side. Cross-cutting; bigger than a
+hot-fix; deferred to v1.1 sprint per the locked v1.0.4 scope.
+
+### [CRITICAL-2] 13b conditional-trigger threshold permanently disarmed — RESOLVED in v1.0.4 (commit `075283d`)
+
+**v1.0.4 fix:** migration `0032_qualifier_metrics_denominator_fix.sql`
+re-aligns the view's WHERE to `(source='chat', name='chat.turn_completed')`;
+the chat-turn handler emits that event per non-replay turn (both JSON
+and SSE paths). Empirical confirmation requires applying 0032 to the
+live DB and sending a real chat-turn — `turns_count` should advance
+within seconds.
+
+### [CRITICAL-3] qualifier_transitions + qualifier_rates_*_per_project views may bypass RLS — STILL OPEN (v1.1)
+
+**v1.0.4 status:** anon-path empirically clean (live REST returns `[]`
+HTTP 200 on all three views as of 2026-05-08). Authenticated-non-admin
+probe still pending — needs a test JWT against the live DB. Deferred
+to v1.1 once test-account provisioning lands.
+
 `supabase/functions/verify-fact/index.ts:184-238` reads
 `projects.state` at line 184-188, computes `next` at line 225, writes
 the full state at line 235-238 with `eq('id', body.projectId)` — no
