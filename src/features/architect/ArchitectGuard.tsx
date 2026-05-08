@@ -46,7 +46,7 @@ function GateLoading() {
   return (
     <div className="grid min-h-screen place-items-center bg-[hsl(var(--paper))] text-[hsl(var(--ink))]">
       <div className="font-mono text-xs uppercase tracking-[0.18em] text-[hsl(var(--ink))]/50">
-        Verifying architect
+        Architekt-Berechtigung wird geprüft
       </div>
     </div>
   )
@@ -57,22 +57,23 @@ function NotAuthorized() {
     <div className="grid min-h-screen place-items-center bg-[hsl(var(--paper))] px-6">
       <div className="max-w-md space-y-4 text-center">
         <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-[hsl(var(--ink))]/45">
-          403 — Restricted
+          403 — Zugriff eingeschränkt
         </p>
         <h1 className="text-2xl text-[hsl(var(--ink))]">
-          The architect console is for bauvorlageberechtigte/n only.
+          Die Architekt-Oberfläche ist bauvorlageberechtigten Architekt:innen vorbehalten.
         </h1>
         <p className="text-sm text-[hsl(var(--ink))]/65">
-          Your account is not registered as an architect for this
-          environment. If you received an invite link, sign in with the
-          account that received the invitation.
+          Ihr Konto ist in dieser Umgebung nicht als Architekt:in
+          hinterlegt. Falls Sie einen Einladungslink erhalten haben,
+          melden Sie sich mit dem Konto an, an das die Einladung
+          gerichtet war.
         </p>
         <div className="pt-2">
           <Link
             to="/dashboard"
             className="inline-block border-b border-[hsl(var(--ink))]/30 pb-0.5 text-sm text-[hsl(var(--ink))] hover:border-[hsl(var(--ink))]"
           >
-            Back to dashboard
+            Zurück zum Dashboard
           </Link>
         </div>
       </div>

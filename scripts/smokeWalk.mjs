@@ -1303,6 +1303,41 @@ async function runStaticGate() {
     },
   ]))
 
+  // ── v1.0.4 C3+C4 drift checks (streaming await + i18n + comment) ──
+  const streamingC3 = await readFileText('supabase/functions/chat-turn/streaming.ts')
+  const indexC4 = await readFileText('supabase/functions/chat-turn/index.ts')
+  const guardSrc = await readFileText('src/features/architect/ArchitectGuard.tsx')
+  results.push(failures('v1.0.4 C3: streaming event_log insert wrapped in try/catch', [
+    {
+      ok: /try \{\s*const \{ error: gateEvtErr \}/.test(streamingC3),
+      msg: 'streaming.ts qualifier-gate event_log insert must be wrapped in try/catch (closes POST_V1_AUDIT SERIOUS bare-await)',
+    },
+  ]))
+  results.push(failures('v1.0.4 C4: stale chat-turn comment corrected', [
+    {
+      ok: !/never rejects/.test(indexC4),
+      msg: 'chat-turn/index.ts must not retain the pre-flip "never rejects" comment',
+    },
+    {
+      ok: /REJECTION mode|QUALIFIER_GATE_REJECTS = true/.test(indexC4),
+      msg: 'chat-turn/index.ts must reflect the post-flip REJECTION mode',
+    },
+  ]))
+  results.push(failures('v1.0.4 C4: ArchitectGuard German consistency', [
+    {
+      ok: !/Verifying architect|Back to dashboard|console is for/.test(guardSrc),
+      msg: 'ArchitectGuard must not retain English fallback strings',
+    },
+    {
+      ok: /Architekt-Berechtigung wird geprüft/.test(guardSrc),
+      msg: 'ArchitectGuard GateLoading must use German "Architekt-Berechtigung wird geprüft"',
+    },
+    {
+      ok: /Zur[üu]ck zum Dashboard/.test(guardSrc),
+      msg: 'ArchitectGuard NotAuthorized must use German "Zurück zum Dashboard"',
+    },
+  ]))
+
   // ── v1.0.4 A3 drift checks (qualifier_role_violation propagation) ─
   const errorBannerSrc = await readFileText('src/features/chat/components/Chamber/ErrorBanner.tsx')
   const deLocale = JSON.parse(await readFileText('src/locales/de.json'))

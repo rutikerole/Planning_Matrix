@@ -128,11 +128,18 @@ Deno.serve(async (req: Request) => {
     return respond({ code: 'unauthenticated', message: 'Invalid session' }, 401)
   }
 
-  // Phase 13 Week 1 — fetch caller's profile role for the qualifier-
-  // write-gate. We tolerate a missing profile row (defaults to 'client')
-  // so a misconfigured profile never blocks a user's chat turn; the
-  // gate only downgrades DESIGNER+VERIFIED attempts in observability
-  // mode, never rejects.
+  // Phase 13 — fetch caller's profile role for the qualifier-write-gate.
+  // We tolerate a missing profile row (defaults to 'client') so a
+  // misconfigured profile never blocks a user's chat turn at the
+  // role-lookup step. The gate itself runs in REJECTION mode since the
+  // Week-2 flip (v1.0.2: QUALIFIER_GATE_REJECTS = true in
+  // src/lib/projectStateHelpers.ts); a CLIENT-turn that emits
+  // DESIGNER+VERIFIED is rejected with the qualifier_role_violation
+  // envelope before applyToolInputToState runs.
+  //
+  // Historical note: an earlier comment block here described an
+  // observability-only posture that was accurate for v1.0.0–v1.0.1 but
+  // had drifted from runtime behaviour by v1.0.2; corrected in v1.0.4.
   const { data: profileRow } = await supabase
     .from('profiles')
     .select('role')

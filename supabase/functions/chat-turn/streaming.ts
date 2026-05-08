@@ -309,7 +309,26 @@ export function runStreamingTurn(args: StreamingTurnArgs): Response {
             client_ts: now,
             trace_id: safeTraceId,
           }))
-          await args.supabase.from('event_log').insert(rows)
+          // v1.0.4 C3 — wrap the event_log insert in warn-and-continue
+          // so a transient DB blip cannot blow the SSE close path
+          // (POST_V1_AUDIT SERIOUS — "streaming-path bare-await
+          // diverges from index.ts's posture"). The gate-rejection
+          // SSE error frame must still send below regardless.
+          try {
+            const { error: gateEvtErr } = await args.supabase
+              .from('event_log')
+              .insert(rows)
+            if (gateEvtErr) {
+              console.warn(
+                `[chat-turn] [${args.requestId}] qualifier-gate event_log insert failed: ${gateEvtErr.message}`,
+              )
+            }
+          } catch (insErr) {
+            console.warn(
+              `[chat-turn] [${args.requestId}] qualifier-gate event_log insert threw:`,
+              insErr,
+            )
+          }
 
           if (QUALIFIER_GATE_REJECTS) {
             // SSE error frame + close. Outer finally runs the tracer
