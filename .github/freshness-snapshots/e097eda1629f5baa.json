@@ -1,12 +1,16 @@
 {
   "url": "https://www.muenchen.info/plan/bebauungsplan/t_8528_1755.pdf",
   "fingerprint": "12592bec86b45fce7ab1076512589c1ec62f7d1ab0dc7cb274fcba346563b1cb",
-  "lastChecked": "2026-05-03",
+  "lastChecked": "2026-05-10",
   "lastChanged": "2026-05-03",
   "statusHistory": [
     {
       "status": "UNCHANGED",
       "date": "2026-05-03"
+    },
+    {
+      "status": "UNCHANGED",
+      "date": "2026-05-10"
     }
   ]
 }

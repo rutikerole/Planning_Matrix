@@ -1,7 +1,7 @@
 {
   "url": "https://www.muenchen.info/plan/bebauungsplan/p_7429_680.pdf",
   "fingerprint": "c17690831046fba61012bcb739452f8bc5089980dca3b85aafe32109ca53dd43",
-  "lastChecked": "2026-05-03",
+  "lastChecked": "2026-05-10",
   "lastChanged": "2026-04-30",
   "statusHistory": [
     {
@@ -11,6 +11,10 @@
     {
       "status": "UNCHANGED",
       "date": "2026-05-03"
+    },
+    {
+      "status": "UNCHANGED",
+      "date": "2026-05-10"
     }
   ]
 }

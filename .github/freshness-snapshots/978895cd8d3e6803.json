@@ -1,12 +1,16 @@
 {
   "url": "https://www.muenchen.info/plan/bebauungsplan/t_8236_1358.pdf",
   "fingerprint": "c41202d9fa7193323d9d34787a7e344f2e0d0922d34ed25219037c0e41025056",
-  "lastChecked": "2026-05-03",
+  "lastChecked": "2026-05-10",
   "lastChanged": "2026-05-03",
   "statusHistory": [
     {
       "status": "UNCHANGED",
       "date": "2026-05-03"
+    },
+    {
+      "status": "UNCHANGED",
+      "date": "2026-05-10"
     }
   ]
 }

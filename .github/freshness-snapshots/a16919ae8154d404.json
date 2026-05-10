@@ -1,12 +1,16 @@
 {
   "url": "https://www.muenchen.info/plan/bebauungsplan/t_8027_885a.pdf",
   "fingerprint": "74d8ee130b09ad3545d9ab3ac3ef44c2fbb0b7398b66b5b77539030c0ea9a329",
-  "lastChecked": "2026-05-03",
+  "lastChecked": "2026-05-10",
   "lastChanged": "2026-05-03",
   "statusHistory": [
     {
       "status": "UNCHANGED",
       "date": "2026-05-03"
+    },
+    {
+      "status": "UNCHANGED",
+      "date": "2026-05-10"
     }
   ]
 }

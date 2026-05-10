@@ -1,12 +1,16 @@
 {
   "url": "https://www.muenchen.info/plan/bebauungsplan/t_7212_457.pdf",
   "fingerprint": "757f7c708371dbc166f357cfd69896297b62c573daf6fa9baaa365ed2192c05d",
-  "lastChecked": "2026-05-03",
+  "lastChecked": "2026-05-10",
   "lastChanged": "2026-05-03",
   "statusHistory": [
     {
       "status": "UNCHANGED",
       "date": "2026-05-03"
+    },
+    {
+      "status": "UNCHANGED",
+      "date": "2026-05-10"
     }
   ]
 }

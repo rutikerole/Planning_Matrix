@@ -1,8 +1,8 @@
 {
   "url": "https://stadt.muenchen.de/infos/baumschutzverordnung.html",
-  "fingerprint": "6ee7f7a4069da852fc2514846767207afc3c44c143fa8728507660a2d31c9b08",
-  "lastChecked": "2026-05-03",
-  "lastChanged": "2026-04-30",
+  "fingerprint": "847b642aacdb7ac1b0010490df9f8d2ca4e0df2e1f0ad136ff1d333b83e46854",
+  "lastChecked": "2026-05-10",
+  "lastChanged": "2026-05-10",
   "statusHistory": [
     {
       "status": "UNCHANGED",
@@ -11,6 +11,10 @@
     {
       "status": "UNCHANGED",
       "date": "2026-05-03"
+    },
+    {
+      "status": "CHANGED",
+      "date": "2026-05-10"
     }
   ]
 }

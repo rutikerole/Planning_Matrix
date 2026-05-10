@@ -1,7 +1,7 @@
 {
   "url": "https://geoportal.muenchen.de/portal/plan/",
   "fingerprint": "0d419bd93a2e0d5547c2810f0befaece3ae28f01d2c7f7da80cdaeec8fc8e9c4",
-  "lastChecked": "2026-05-03",
+  "lastChecked": "2026-05-10",
   "lastChanged": "2026-04-30",
   "statusHistory": [
     {
@@ -11,6 +11,10 @@
     {
       "status": "UNCHANGED",
       "date": "2026-05-03"
+    },
+    {
+      "status": "UNCHANGED",
+      "date": "2026-05-10"
     }
   ]
 }

@@ -1,7 +1,7 @@
 {
   "url": "https://erlangen.de/uwao-api/faila/files/bypath/Dokumente/Stadtrecht/052.00_erhaltungssatzung_burgberg.pdf",
   "fingerprint": "3a59f440b0972bfb2e1543f1e1260798de204bf83a9dbe5e5bfb8313a88b28f7",
-  "lastChecked": "2026-05-03",
+  "lastChecked": "2026-05-10",
   "lastChanged": "2026-04-30",
   "statusHistory": [
     {
@@ -11,6 +11,10 @@
     {
       "status": "UNCHANGED",
       "date": "2026-05-03"
+    },
+    {
+      "status": "UNCHANGED",
+      "date": "2026-05-10"
     }
   ]
 }

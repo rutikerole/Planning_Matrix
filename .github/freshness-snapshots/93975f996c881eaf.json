@@ -1,7 +1,7 @@
 {
   "url": "https://atlas.bayern.de/",
   "fingerprint": "f6aafa2f807b571365faa5115994a7f2a6e6de4ff29bee1660588421e9b52b76",
-  "lastChecked": "2026-05-03",
+  "lastChecked": "2026-05-10",
   "lastChanged": "2026-04-30",
   "statusHistory": [
     {
@@ -11,6 +11,10 @@
     {
       "status": "UNCHANGED",
       "date": "2026-05-03"
+    },
+    {
+      "status": "UNCHANGED",
+      "date": "2026-05-10"
     }
   ]
 }

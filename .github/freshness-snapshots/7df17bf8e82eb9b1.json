@@ -1,8 +1,8 @@
 {
   "url": "https://www.byak.de/",
-  "fingerprint": "1b144846eb400129953ce55327254f0347585b89209f4da6ad6d27f9a9be4acf",
-  "lastChecked": "2026-05-03",
-  "lastChanged": "2026-05-03",
+  "fingerprint": "87376ae0c2d26858a75dc4379aade4c884c30d402a30706955efc37a60584047",
+  "lastChecked": "2026-05-10",
+  "lastChanged": "2026-05-10",
   "statusHistory": [
     {
       "status": "UNCHANGED",
@@ -11,6 +11,10 @@
     {
       "status": "CHANGED",
       "date": "2026-05-03"
+    },
+    {
+      "status": "CHANGED",
+      "date": "2026-05-10"
     }
   ]
 }
