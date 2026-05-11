@@ -461,7 +461,7 @@ shipped in Phase 13 Week 4). What's missing is the cron harness
 
 ## 9. Operational responsibilities — split between engineering and client
 
-The **v1.0.4 tag is the production-ready release**. The version
+The **v1.0.5 tag is the production-ready release**. The version
 ladder:
   • v1.0   = engineering milestone (complete feature scope).
   • v1.0.1 = invite-flow security hardening (owner-check on share,
