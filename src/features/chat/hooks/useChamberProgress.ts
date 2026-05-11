@@ -23,7 +23,7 @@ import { useMemo } from 'react'
 import type { MessageRow } from '@/types/db'
 import type { ProjectState, Specialist } from '@/types/projectState'
 import { currentStageId } from './useSpineStages'
-import type { SpineStageId } from '../lib/spineStageDefinitions'
+import { SPINE_STAGES, type SpineStageId } from '../lib/spineStageDefinitions'
 
 const TOTAL_ESTIMATE_T01 = 22
 
@@ -82,13 +82,32 @@ export function useChamberProgress(
     const recsFraction = Math.min(recsCount, 3) / 3
 
     const isReadyForReview = completionSignal === 'ready_for_review'
+    // v1.0.6 Bug 3 — spine reaches 100% when the final_synthesis stage
+    // is done, independent of round count. The legacy formula only
+    // boosted to 95% via the transient `ready_for_review` completion
+    // signal (sourced from a zustand store that resets on refresh), so
+    // a project whose result page already renders fully could still
+    // show Round 9 · 41% in the spine — the visible spine "lying" about
+    // completion state. Reading isDone() off the last stage gives a
+    // refresh-stable, project-state-derived 100% gate.
+    const finalStage = SPINE_STAGES[SPINE_STAGES.length - 1]
+    let isSpineComplete = false
+    try {
+      isSpineComplete = !!state && finalStage.isDone(state as ProjectState, list)
+    } catch {
+      isSpineComplete = false
+    }
     const blended =
       turnsFraction * 0.6 + areasFraction * 0.2 + recsFraction * 0.2
     // Phase 7.7 §1.1 — floor at turnsFraction. The blended formula
     // can BOOST upward when areas/recs are present; it cannot drag
     // progress below the user's actual turn count.
     const floored = Math.max(turnsFraction, blended)
-    const finalRaw = isReadyForReview ? Math.max(floored, 0.95) : floored
+    const finalRaw = isSpineComplete
+      ? 1
+      : isReadyForReview
+        ? Math.max(floored, 0.95)
+        : floored
     const percent = Math.max(0, Math.min(100, Math.round(finalRaw * 100)))
 
     return {
