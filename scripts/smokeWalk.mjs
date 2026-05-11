@@ -2137,6 +2137,84 @@ async function runStaticGate() {
     },
   ]))
 
+  // ── v1.0.8 W2 — per-state ALLOWED_CITATIONS depth pin ──────────────
+  // Phase 12 already delivered substantive content for NRW, BW,
+  // Niedersachsen, Hessen (per Phase-12-grade commits f1c0aae,
+  // c3860c6, 575321f, 7f4466f). The Rutik live-deploy Hessen × T-03
+  // smoke walk confirmed the depth is sufficient to produce
+  // specific § citations. v1.0.8 pins the current per-state count
+  // so any future content edit that DROPS coverage is caught
+  // immediately. Counts are obtained by parsing the
+  // ALLOWED_CITATIONS string-literal array out of the source file
+  // and counting single-quoted entries (line-comments excluded).
+  //
+  // Also pins the spec-required minimum citation set per state so
+  // a content edit that removes a procedurally-load-bearing §
+  // (e.g., the Verfahrenstypen anchors) is caught.
+  function countAllowedCitations(src) {
+    const m = src.match(
+      /const\s+ALLOWED_CITATIONS:\s*readonly\s+string\[\]\s*=\s*\[([\s\S]*?)\]\s*as\s*const/,
+    )
+    if (!m) return 0
+    const body = m[1]
+      .split('\n')
+      .filter((l) => !l.trim().startsWith('//'))
+      .join('\n')
+    const entries = body.match(/'[^']+'/g) || []
+    return entries.length
+  }
+  const stateDepthPins = [
+    {
+      file: 'src/legal/states/nrw.ts',
+      label: 'NRW',
+      expectedCount: 27,
+      mustContain: ['§ 62 BauO NRW', '§ 63 BauO NRW', '§ 64 BauO NRW', '§ 65 BauO NRW', '§ 67 BauO NRW'],
+    },
+    {
+      file: 'src/legal/states/bw.ts',
+      label: 'BW',
+      expectedCount: 30,
+      mustContain: ['§ 50 LBO', '§ 51 LBO', '§ 52 LBO', '§ 58 LBO'],
+    },
+    {
+      file: 'src/legal/states/niedersachsen.ts',
+      label: 'Niedersachsen',
+      expectedCount: 24,
+      mustContain: ['§ 60 NBauO', '§ 62 NBauO', '§ 63 NBauO', '§ 65 NBauO'],
+    },
+    {
+      file: 'src/legal/states/hessen.ts',
+      label: 'Hessen',
+      expectedCount: 26,
+      mustContain: ['§ 63 HBO', '§ 64 HBO', '§ 65 HBO', '§ 66 HBO', '§ 67 HBO'],
+    },
+  ]
+  for (const pin of stateDepthPins) {
+    const src = await readFileText(pin.file)
+    const count = countAllowedCitations(src)
+    const missingAnchors = pin.mustContain.filter(
+      (anchor) => !src.includes(`'${anchor}'`),
+    )
+    results.push(
+      failures(
+        `v1.0.8 W2: ${pin.label} ALLOWED_CITATIONS depth + spec set pinned`,
+        [
+          {
+            ok: count === pin.expectedCount,
+            msg: `${pin.label} expected ${pin.expectedCount} ALLOWED_CITATIONS entries; counted ${count}. A drop signals content regression; a rise is acceptable but requires updating the pin in this fixture.`,
+          },
+          {
+            ok: missingAnchors.length === 0,
+            msg:
+              missingAnchors.length === 0
+                ? '(spec-required anchors all present)'
+                : `Missing canonical anchors: ${missingAnchors.join(' · ')}`,
+          },
+        ],
+      ),
+    )
+  }
+
   // ── v1.0.7 Bug 10 — Update Bundesland pill on project header ───────
   // For existing projects mislabeled by the legacy B04 wizard
   // hardcode, the bauherr now has a retroactive correction path.
