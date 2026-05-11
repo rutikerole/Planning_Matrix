@@ -2137,6 +2137,76 @@ async function runStaticGate() {
     },
   ]))
 
+  // ── v1.0.7 Bug 10 — Update Bundesland pill on project header ───────
+  // For existing projects mislabeled by the legacy B04 wizard
+  // hardcode, the bauherr now has a retroactive correction path.
+  // The pill renders in SpineHeader and opens a dialog that
+  // mutates projects.bundesland directly. On success, project +
+  // messages queries are invalidated so the next chat turn loads
+  // the correct state-level systemBlock (including the anti-leak
+  // override for non-Bayern states).
+  const pillSrc = await readFileText('src/features/chat/components/Chamber/Spine/BundeslandPill.tsx')
+  results.push(failures('v1.0.7 Bug 10: BundeslandPill mutates projects.bundesland + invalidates queries', [
+    {
+      ok: /from\('projects'\)\s*\.update\(\{\s*bundesland:\s*next\s*\}\)/.test(pillSrc),
+      msg: 'pill must update projects.bundesland with the new code',
+    },
+    {
+      ok: /\.eq\('id',\s*projectId\)/.test(pillSrc),
+      msg: 'pill update must scope to .eq("id", projectId)',
+    },
+    {
+      ok: /invalidateQueries\(\{\s*queryKey:\s*\['project',\s*projectId\]\s*\}\)/.test(pillSrc),
+      msg: 'pill must invalidate the project query on success so next turn loads new bundesland',
+    },
+    {
+      ok: /invalidateQueries\(\{\s*queryKey:\s*\['messages',\s*projectId\]\s*\}\)/.test(pillSrc),
+      msg: 'pill must invalidate the messages query so the chat refetches',
+    },
+    {
+      ok: /BUNDESLAND_OPTIONS/.test(pillSrc) && /bayern[\s\S]{0,2000}hessen[\s\S]{0,2000}nrw/.test(pillSrc),
+      msg: 'pill must list all 16 Bundesländer (bayern, hessen, nrw at minimum as sanity sample)',
+    },
+  ]))
+  // SpineHeader passes projectId + bundesland through.
+  const spineHeaderSrc = await readFileText('src/features/chat/components/Chamber/Spine/SpineHeader.tsx')
+  results.push(failures('v1.0.7 Bug 10: SpineHeader wires BundeslandPill', [
+    {
+      ok: /BundeslandPill/.test(spineHeaderSrc),
+      msg: 'SpineHeader must import + render BundeslandPill',
+    },
+    {
+      ok: /projectId:\s*string/.test(spineHeaderSrc),
+      msg: 'SpineHeader Props must declare projectId',
+    },
+    {
+      ok: /bundesland:\s*string\s*\|\s*null\s*\|\s*undefined/.test(spineHeaderSrc),
+      msg: 'SpineHeader Props must declare bundesland (nullable)',
+    },
+  ]))
+  // Locale keys present in DE + EN.
+  const deLocaleBug10 = await readFileText('src/locales/de.json')
+  const enLocaleBug10 = await readFileText('src/locales/en.json')
+  results.push(failures('v1.0.7 Bug 10: locale keys for chat.spine.bundesland dialog (DE + EN)', [
+    {
+      ok: /"chat\.spine\.bundesland"|"bundesland":\s*\{\s*"label":\s*"Bundesland",\s*"update":\s*"ändern"/.test(deLocaleBug10) ||
+          /"label":\s*"Bundesland",\s*"update":\s*"ändern"/.test(deLocaleBug10),
+      msg: 'de.json must define chat.spine.bundesland.label + chat.spine.bundesland.update',
+    },
+    {
+      ok: /"label":\s*"Federal state",\s*"update":\s*"change"/.test(enLocaleBug10),
+      msg: 'en.json must define chat.spine.bundesland.label + chat.spine.bundesland.update',
+    },
+    {
+      ok: /"Bundesland aktualisieren"/.test(deLocaleBug10),
+      msg: 'de.json must define chat.spine.bundesland.dialog.title',
+    },
+    {
+      ok: /"Update federal state"/.test(enLocaleBug10),
+      msg: 'en.json must define chat.spine.bundesland.dialog.title',
+    },
+  ]))
+
   // ── v1.0.6 Bug 2 — PDF export ships all result-page sections ───────
   // Legacy PDF dropped Costs, Timeline, Stakeholders (4-actor cards),
   // Recommendations (all, not just top 3), and the per-page Vorläufig

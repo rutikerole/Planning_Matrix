@@ -1494,6 +1494,18 @@
         "round": "Runde {{current}} · ~ {{total}}",
         "percent": "{{percent}} %"
       },
+      "bundesland": {
+        "label": "Bundesland",
+        "update": "ändern",
+        "dialog": {
+          "title": "Bundesland aktualisieren",
+          "body": "Dieses Projekt wurde mit einer voreingestellten Bundesland-Kennung angelegt. Wählen Sie das tatsächliche Bundesland; der nächste Gesprächs-Turn lädt automatisch das passende Landesrecht.",
+          "cancel": "Abbrechen",
+          "confirm": "Übernehmen",
+          "saving": "wird gespeichert…",
+          "error": "Aktualisierung fehlgeschlagen. Bitte erneut versuchen."
+        }
+      },
       "stages": {
         "project_intent": {
           "title": "Vorhaben",

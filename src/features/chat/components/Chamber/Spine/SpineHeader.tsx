@@ -15,6 +15,7 @@ import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useReducedMotion } from 'framer-motion'
 import { Wordmark } from '@/components/shared/Wordmark'
+import { BundeslandPill } from './BundeslandPill'
 
 interface Props {
   projectName: string
@@ -22,9 +23,22 @@ interface Props {
   percent: number
   round: number
   totalEstimate: number
+  /** v1.0.7 Bug 10 — projectId + bundesland fuel the Update
+   *  Bundesland pill, which lets the bauherr correct B04-mislabeled
+   *  pre-v1.0.6 projects post-creation. */
+  projectId: string
+  bundesland: string | null | undefined
 }
 
-export function SpineHeader({ projectName, plotAddress, percent, round, totalEstimate }: Props) {
+export function SpineHeader({
+  projectName,
+  plotAddress,
+  percent,
+  round,
+  totalEstimate,
+  projectId,
+  bundesland,
+}: Props) {
   const { t } = useTranslation()
   const reduced = useReducedMotion()
   const cleanName = projectName.split('·')[0]?.trim() ?? projectName
@@ -92,6 +106,9 @@ export function SpineHeader({ projectName, plotAddress, percent, round, totalEst
             }}
           />
         </div>
+
+        {/* v1.0.7 Bug 10 — Bundesland indicator + change pill. */}
+        <BundeslandPill projectId={projectId} currentBundesland={bundesland} />
       </div>
     </header>
   )

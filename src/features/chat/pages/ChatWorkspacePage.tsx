@@ -242,6 +242,8 @@ export function ChatWorkspacePage() {
       percent={progress.percent}
       round={progress.currentTurn}
       totalEstimate={progress.totalEstimate}
+      projectId={project.id}
+      bundesland={project.bundesland}
     />
   )
   const spineFooterNode = (

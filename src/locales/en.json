@@ -1494,6 +1494,18 @@
         "round": "Round {{current}} · ~ {{total}}",
         "percent": "{{percent}} %"
       },
+      "bundesland": {
+        "label": "Federal state",
+        "update": "change",
+        "dialog": {
+          "title": "Update federal state",
+          "body": "This project was created with a default federal-state code. Pick the actual state; the next chat turn will load the matching state-level law automatically.",
+          "cancel": "Cancel",
+          "confirm": "Apply",
+          "saving": "saving…",
+          "error": "Update failed. Please try again."
+        }
+      },
       "stages": {
         "project_intent": {
           "title": "Project intent",
