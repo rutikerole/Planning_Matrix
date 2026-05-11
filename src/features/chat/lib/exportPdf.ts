@@ -24,6 +24,25 @@ import { factLabel, factValueWithUnit } from '@/lib/factLabel'
 import { winAnsiSafe } from '@/lib/winAnsiSafe'
 import type { MessageRow, ProjectRow } from '@/types/db'
 import type { AreaState, ProjectState } from '@/types/projectState'
+// v1.0.6 Bug 2 — PDF brief now mirrors the Cost & Timeline, Team &
+// Stakeholders, and Suggestions/Recommendations surfaces. Imports use
+// the same engines as the result-page tabs so the two surfaces cannot
+// drift.
+import {
+  buildCostBreakdown,
+  describeCostInputs,
+  detectAreaSqm,
+  detectKlasse,
+  detectProcedure,
+  formatEurRange,
+  resolveInputs,
+} from '@/features/result/lib/costNormsMuenchen'
+import {
+  PROCEDURE_PHASES,
+  totalPhaseWeight,
+} from '@/features/result/lib/composeTimeline'
+import { findCostRationale } from '@/data/costRationales'
+import { pickSmartSuggestions } from '@/features/result/lib/smartSuggestionsMatcher'
 
 /**
  * Phase 3.6 #73 — sanitize unicode that pdf-lib's WinAnsi-encoded
@@ -74,6 +93,42 @@ const STATE_LABELS_EN: Record<AreaState, string> = {
   VOID: 'NOT DETERMINABLE',
 }
 
+// v1.0.6 Bug 2 — stakeholder block mirrors src/features/result/components/
+// tabs/TeamTab.tsx:STAKEHOLDERS verbatim so the PDF cannot drift from the
+// in-app card grid. Four-actor mental model: Owner / Architect /
+// Engineers / Building authority.
+const STAKEHOLDERS_PDF: ReadonlyArray<{
+  titleDe: string
+  titleEn: string
+  detailDe: string
+  detailEn: string
+}> = [
+  {
+    titleDe: 'Bauherr:in',
+    titleEn: 'Owner',
+    detailDe: 'Sie. Beauftragt das Vorhaben, trägt die Kosten, entscheidet.',
+    detailEn: 'You. Commissions the project, carries the costs, decides.',
+  },
+  {
+    titleDe: 'Architekt:in',
+    titleEn: 'Architect',
+    detailDe: 'Bauvorlageberechtigt. Reicht im Namen der Bauherrschaft ein.',
+    detailEn: "Licensed for submissions. Files on the owner's behalf.",
+  },
+  {
+    titleDe: 'Fachplaner:innen',
+    titleEn: 'Engineers',
+    detailDe: 'Tragwerksplanung, Energieberatung, Brandschutz, Vermessung.',
+    detailEn: 'Structural, energy, fire protection, surveying.',
+  },
+  {
+    titleDe: 'Bauamt',
+    titleEn: 'Building authority',
+    detailDe: 'Kommunale Genehmigungsbehörde. Prüft und entscheidet.',
+    detailEn: 'Municipal permitting body. Reviews and decides.',
+  },
+]
+
 /**
  * Build the PDF and return its bytes. Caller pipes to a Blob + saveAs.
  */
@@ -106,6 +161,16 @@ export async function buildExportPdf({
     drawBereichePage(doc, fonts, state.areas, lang)
   }
 
+  // ── Page 4: Costs (III COSTS) ──────────────────────────────────
+  // v1.0.6 Bug 2 — mirror src/features/result/components/tabs/
+  // CostTimelineTab.tsx. The numeric engine is the same; the PDF
+  // surface adds the per-row rationale next to the EUR range and
+  // calls out the inputs that drove the multiplier.
+  drawCostsPage(doc, fonts, project, state, lang)
+
+  // ── Page 5: Timeline (IV TIMELINE) ─────────────────────────────
+  drawTimelinePage(doc, fonts, lang)
+
   // ── Schedule sections ──────────────────────────────────────────
   // Phase 8.5 (A.3): read through the resolve* helpers so PDF + result
   // page show the same data. Without this, the PDF Section IV printed
@@ -120,9 +185,12 @@ export async function buildExportPdf({
   const roles = resolvedRoles.roles
   const facts = state.facts ?? []
 
+  // v1.0.6 Bug 2 — TOC re-ordering: Procedures becomes V, Documents
+  // becomes VI, Specialists becomes VII (renamed Team & Stakeholders),
+  // then VIII Recommendations, IX Key Data. Audit log stays last as X.
   if (procs.length + docs.length + roles.length + facts.length > 0) {
     let { page, y } = startPage(doc)
-    drawSectionHeader(page, fonts, y, lang === 'en' ? 'IV  PROCEDURES' : 'IV  VERFAHREN')
+    drawSectionHeader(page, fonts, y, lang === 'en' ? 'V  PROCEDURES' : 'V  VERFAHREN')
     y -= 30
     if (procs.length === 0) {
       page.drawText(safe(lang === 'en' ? '- None recorded.' : '- Noch nicht erfasst.'), {
@@ -158,7 +226,7 @@ export async function buildExportPdf({
         page,
         fonts,
         y,
-        lang === 'en' ? 'V  DOCUMENTS' : 'V  DOKUMENTE',
+        lang === 'en' ? 'VI  DOCUMENTS' : 'VI  DOKUMENTE',
       )
       y -= 30
       for (const d of docs) {
@@ -181,16 +249,21 @@ export async function buildExportPdf({
       }
     }
 
+    // v1.0.6 Bug 2 — VII renamed Specialists → "Team & Stakeholders"
+    // and extended with the four-actor stakeholder cards from
+    // src/features/result/components/tabs/TeamTab.tsx. The section
+    // always renders (so the Bauherr / Architekt / Fachplaner / Bauamt
+    // narrative carries through even when roles[] is empty).
+    ;({ page, y } = ensureSpace(doc, page, y, 80))
+    y -= 12
+    drawSectionHeader(
+      page,
+      fonts,
+      y,
+      lang === 'en' ? 'VII  TEAM & STAKEHOLDERS' : 'VII  TEAM & BETEILIGTE',
+    )
+    y -= 30
     if (roles.length > 0) {
-      ;({ page, y } = ensureSpace(doc, page, y, 80))
-      y -= 12
-      drawSectionHeader(
-        page,
-        fonts,
-        y,
-        lang === 'en' ? 'VI  SPECIALISTS' : 'VI  FACHPLANER',
-      )
-      y -= 30
       const sorted = roles
         .slice()
         .sort((a, b) => (a.needed === b.needed ? 0 : a.needed ? -1 : 1))
@@ -213,6 +286,97 @@ export async function buildExportPdf({
         page = result.page
         y = result.y
       }
+      ;({ page, y } = ensureSpace(doc, page, y, 30))
+      y -= 6
+    }
+    // Stakeholder block — always renders.
+    const stakeEyebrow = lang === 'en' ? 'STAKEHOLDERS' : 'BETEILIGTE'
+    page.drawText(safe(stakeEyebrow), {
+      x: MARGIN,
+      y,
+      size: 9,
+      font: fonts.interMedium,
+      color: CLAY,
+      opacity: 0.85,
+    })
+    y -= 16
+    for (const s of STAKEHOLDERS_PDF) {
+      ;({ page, y } = ensureSpace(doc, page, y, 40))
+      page.drawText(safe(lang === 'en' ? s.titleEn : s.titleDe), {
+        x: MARGIN + 32,
+        y,
+        size: 11,
+        font: fonts.interMedium,
+        color: INK,
+      })
+      y -= 14
+      const detail = wrapText(lang === 'en' ? s.detailEn : s.detailDe, 76)
+      for (const line of detail) {
+        page.drawText(safe(line), {
+          x: MARGIN + 32,
+          y,
+          size: 10,
+          font: fonts.inter,
+          color: INK,
+          opacity: 0.75,
+        })
+        y -= 13
+      }
+      y -= 6
+    }
+
+    // v1.0.6 Bug 2 — VIII RECOMMENDATIONS. Lists ALL recommendations
+    // (not just the TOP-3 from page 2) plus smart suggestions matched
+    // for the project. Each entry carries WHY + qualifier so the PDF
+    // mirrors the in-app Suggestions tab.
+    const recs = (state.recommendations ?? []).slice().sort((a, b) => a.rank - b.rank)
+    const smartPicks = pickSmartSuggestions({ project, state: state as ProjectState })
+    if (recs.length > 0 || smartPicks.length > 0) {
+      ;({ page, y } = ensureSpace(doc, page, y, 80))
+      y -= 12
+      drawSectionHeader(
+        page,
+        fonts,
+        y,
+        lang === 'en' ? 'VIII  RECOMMENDATIONS' : 'VIII  EMPFEHLUNGEN',
+      )
+      y -= 30
+      recs.forEach((r, idx) => {
+        const qualLabel = r.qualifier
+          ? `${r.qualifier.source} · ${r.qualifier.quality}`
+          : ''
+        const result = drawScheduleEntry({
+          doc,
+          page,
+          fonts,
+          y,
+          index: idx + 1,
+          title: lang === 'en' ? r.title_en : r.title_de,
+          meta: '',
+          body: (lang === 'en' ? r.detail_en : r.detail_de) ?? '',
+          qualifier: qualLabel,
+        })
+        page = result.page
+        y = result.y
+      })
+      // Smart suggestions appended below the explicit recs (continues
+      // the index across the section so the document reads as one
+      // recommendations list).
+      smartPicks.forEach((s, idx) => {
+        const result = drawScheduleEntry({
+          doc,
+          page,
+          fonts,
+          y,
+          index: recs.length + idx + 1,
+          title: lang === 'en' ? s.titleEn : s.titleDe,
+          meta: lang === 'en' ? 'SMART · WHY' : 'SMART · WARUM',
+          body: `${lang === 'en' ? s.bodyEn : s.bodyDe}  ·  ${lang === 'en' ? s.reasoningEn : s.reasoningDe}`,
+          qualifier: 'LEGAL · CALCULATED',
+        })
+        page = result.page
+        y = result.y
+      })
     }
 
     if (facts.length > 0) {
@@ -222,7 +386,7 @@ export async function buildExportPdf({
         page,
         fonts,
         y,
-        lang === 'en' ? 'VII  KEY DATA' : 'VII  ECKDATEN',
+        lang === 'en' ? 'IX  KEY DATA' : 'IX  ECKDATEN',
       )
       y -= 30
       for (const f of facts) {
@@ -244,15 +408,36 @@ export async function buildExportPdf({
   }
 
   // ── Audit log ──────────────────────────────────────────────────
+  // v1.0.6 Bug 2 — renumbered to X; if the list is truncated to 30,
+  // the eyebrow surfaces "showing last 30 of N" so the reader knows
+  // the export is partial.
   if (events.length > 0) {
     let { page, y } = startPage(doc)
     drawSectionHeader(
       page,
       fonts,
       y,
-      lang === 'en' ? 'VIII  AUDIT LOG' : 'VIII  AUDITSPUR',
+      lang === 'en' ? 'X  AUDIT LOG' : 'X  AUDITSPUR',
     )
-    y -= 30
+    y -= 18
+    if (events.length > 30) {
+      page.drawText(
+        safe(
+          lang === 'en'
+            ? `Showing last 30 of ${events.length} events.`
+            : `Letzte 30 von ${events.length} Ereignissen.`,
+        ),
+        {
+          x: MARGIN,
+          y,
+          size: 9,
+          font: fonts.serifItalic,
+          color: CLAY,
+          opacity: 0.7,
+        },
+      )
+      y -= 14
+    }
     for (const ev of events.slice(0, 30)) {
       ;({ page, y } = ensureSpace(doc, page, y, 30))
       const when = formatDateTime(ev.created_at, lang)
@@ -287,10 +472,30 @@ export async function buildExportPdf({
   }
 
   // ── Page footers (every page) ──────────────────────────────────
+  // v1.0.6 Bug 2 — every page now carries the locked Vorläufig footer
+  // text, not just page 1. The Phase-13 legal shield messaging must
+  // travel with the exported brief; the original PDF dropped it from
+  // pages 2..N. Page 1 already prints the same line as part of the
+  // cover composition (drawTitlePage), so we skip page 0 here to
+  // avoid double-printing.
   const allPages = doc.getPages()
   const today = formatDate(new Date().toISOString(), lang)
   const footer = `${lang === 'en' ? 'Generated with Planning Matrix' : 'Generiert mit Planning Matrix'}  ·  planning-matrix.app  ·  ${today}`
+  const vorlaeufig =
+    lang === 'en'
+      ? 'Preliminary - to be confirmed by a certified architect (Bauvorlageberechtigte/r).'
+      : 'Vorläufig - bestätigt durch eine/n bauvorlageberechtigte/n Architekt/in.'
   allPages.forEach((p, i) => {
+    if (i > 0) {
+      p.drawText(safe(vorlaeufig), {
+        x: MARGIN,
+        y: 44,
+        size: 8,
+        font: fonts.serifItalic,
+        color: CLAY,
+        maxWidth: PAGE_WIDTH - MARGIN * 2,
+      })
+    }
     p.drawText(safe(footer), {
       x: MARGIN,
       y: 28,
@@ -661,6 +866,217 @@ function drawBereichePage(
     }
     legendY -= 6
   })
+}
+
+// v1.0.6 Bug 2 — Costs page (III). Mirrors src/features/result/components/
+// tabs/CostTimelineTab.tsx. Same heuristic engine (buildCostBreakdown +
+// resolveInputs), same per-row rationale (findCostRationale), same
+// "Computed from: …" inputs line. Each row prints the label, the
+// rationale below it, and the EUR range right-aligned.
+function drawCostsPage(
+  doc: PDFDocument,
+  fonts: BrandFonts,
+  project: ProjectRow,
+  state: Partial<ProjectState>,
+  lang: 'de' | 'en',
+): void {
+  let { page, y } = startPage(doc)
+  drawSectionHeader(
+    page,
+    fonts,
+    y,
+    lang === 'en' ? 'III  COSTS' : 'III  KOSTEN',
+  )
+  y -= 30
+  const procedures = state.procedures ?? []
+  const primaryRationale =
+    procedures.find((p) => p.status === 'erforderlich')?.rationale_de ??
+    procedures[0]?.rationale_de ??
+    ''
+  const procedure = detectProcedure(primaryRationale)
+  const corpus = (state.facts ?? [])
+    .map((f) => `${f.key} ${typeof f.value === 'string' ? f.value : ''}`)
+    .join(' ')
+    .toLowerCase()
+  const klasse = detectKlasse(corpus)
+  const areaSqm = detectAreaSqm(corpus)
+  const opts = { areaSqm, bundesland: project.bundesland }
+  const cost = buildCostBreakdown(procedure, klasse, opts)
+  const inputs = resolveInputs(procedure, klasse, opts)
+  const inputsLabel = describeCostInputs(inputs, lang)
+
+  const rows: Array<{
+    key: 'architekt' | 'tragwerksplanung' | 'vermessung' | 'energieberatung' | 'behoerdengebuehren'
+    labelDe: string
+    labelEn: string
+  }> = [
+    { key: 'architekt', labelDe: 'Architekt:in (LP 1–4)', labelEn: 'Architect (LP 1–4)' },
+    { key: 'tragwerksplanung', labelDe: 'Tragwerksplanung', labelEn: 'Structural engineering' },
+    { key: 'vermessung', labelDe: 'Vermessung', labelEn: 'Surveying' },
+    { key: 'energieberatung', labelDe: 'Energieberatung', labelEn: 'Energy consultation' },
+    { key: 'behoerdengebuehren', labelDe: 'Behördengebühren', labelEn: 'Authority fees' },
+  ]
+  for (const row of rows) {
+    ;({ page, y } = ensureSpace(doc, page, y, 36))
+    const rationale = findCostRationale(row.key)
+    page.drawText(safe(lang === 'en' ? row.labelEn : row.labelDe), {
+      x: MARGIN,
+      y,
+      size: 11,
+      font: fonts.interMedium,
+      color: INK,
+    })
+    page.drawText(safe(formatEurRange(cost[row.key], lang)), {
+      x: PAGE_WIDTH - MARGIN - 140,
+      y,
+      size: 11,
+      font: fonts.serifItalic,
+      color: CLAY_DEEP,
+    })
+    y -= 13
+    if (rationale) {
+      page.drawText(
+        safe(lang === 'en' ? rationale.rationaleEn : rationale.rationaleDe),
+        {
+          x: MARGIN,
+          y,
+          size: 9,
+          font: fonts.serifItalic,
+          color: CLAY,
+          opacity: 0.85,
+          maxWidth: PAGE_WIDTH - MARGIN * 2 - 160,
+        },
+      )
+      y -= 12
+    }
+    y -= 6
+  }
+  // Total row
+  page.drawLine({
+    start: { x: MARGIN, y: y + 4 },
+    end: { x: PAGE_WIDTH - MARGIN, y: y + 4 },
+    thickness: 0.5,
+    color: INK,
+    opacity: 0.18,
+  })
+  y -= 8
+  page.drawText(safe(lang === 'en' ? 'Total (estimated)' : 'Summe (geschätzt)'), {
+    x: MARGIN,
+    y,
+    size: 12,
+    font: fonts.interMedium,
+    color: INK,
+  })
+  page.drawText(safe(formatEurRange(cost.total, lang)), {
+    x: PAGE_WIDTH - MARGIN - 140,
+    y,
+    size: 12,
+    font: fonts.interMedium,
+    color: CLAY_DEEP,
+  })
+  y -= 22
+  // Inputs caption — verbatim parity with the in-app tooltip.
+  page.drawText(
+    safe(
+      `${lang === 'en' ? 'Computed from' : 'Berechnet aus'}: ${inputsLabel}`,
+    ),
+    {
+      x: MARGIN,
+      y,
+      size: 9,
+      font: fonts.serifItalic,
+      color: CLAY,
+      opacity: 0.85,
+      maxWidth: PAGE_WIDTH - MARGIN * 2,
+    },
+  )
+}
+
+// v1.0.6 Bug 2 — Timeline page (IV). Mirrors the Procedure Duration
+// section of CostTimelineTab. Five phases (Preparation / Submission /
+// Review / Corrections / Approval) plus total.
+function drawTimelinePage(
+  doc: PDFDocument,
+  fonts: BrandFonts,
+  lang: 'de' | 'en',
+): void {
+  let { page, y } = startPage(doc)
+  drawSectionHeader(
+    page,
+    fonts,
+    y,
+    lang === 'en' ? 'IV  TIMELINE' : 'IV  ZEITRAHMEN',
+  )
+  y -= 30
+  const totalWeight = totalPhaseWeight()
+  for (const phase of PROCEDURE_PHASES) {
+    ;({ page, y } = ensureSpace(doc, page, y, 28))
+    const widthPct = Math.round((phase.weight / totalWeight) * 100)
+    page.drawText(safe(lang === 'en' ? phase.labelEn : phase.labelDe), {
+      x: MARGIN,
+      y,
+      size: 11,
+      font: fonts.interMedium,
+      color: INK,
+    })
+    page.drawText(safe(lang === 'en' ? phase.rangeEn : phase.rangeDe), {
+      x: PAGE_WIDTH - MARGIN - 140,
+      y,
+      size: 11,
+      font: fonts.serifItalic,
+      color: CLAY_DEEP,
+    })
+    y -= 12
+    // Bar
+    page.drawRectangle({
+      x: MARGIN,
+      y: y + 2,
+      width: ((PAGE_WIDTH - MARGIN * 2 - 160) * widthPct) / 100,
+      height: 4,
+      color: CLAY,
+      opacity: 0.55,
+    })
+    y -= 18
+  }
+  // Total
+  page.drawLine({
+    start: { x: MARGIN, y: y + 4 },
+    end: { x: PAGE_WIDTH - MARGIN, y: y + 4 },
+    thickness: 0.5,
+    color: INK,
+    opacity: 0.18,
+  })
+  y -= 8
+  page.drawText(safe(lang === 'en' ? 'Total duration' : 'Gesamtdauer'), {
+    x: MARGIN,
+    y,
+    size: 12,
+    font: fonts.interMedium,
+    color: INK,
+  })
+  page.drawText(safe(lang === 'en' ? '~ 4–6 months' : 'ca. 4–6 Monate'), {
+    x: PAGE_WIDTH - MARGIN - 140,
+    y,
+    size: 12,
+    font: fonts.interMedium,
+    color: CLAY_DEEP,
+  })
+  y -= 22
+  page.drawText(
+    safe(
+      lang === 'en'
+        ? 'subject to authority workload'
+        : 'abhängig von der Auslastung der Behörde',
+    ),
+    {
+      x: MARGIN,
+      y,
+      size: 9,
+      font: fonts.serifItalic,
+      color: CLAY,
+      opacity: 0.85,
+    },
+  )
 }
 
 function drawHatching(

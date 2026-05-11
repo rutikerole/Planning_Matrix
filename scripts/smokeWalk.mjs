@@ -2137,6 +2137,63 @@ async function runStaticGate() {
     },
   ]))
 
+  // ── v1.0.6 Bug 2 — PDF export ships all result-page sections ───────
+  // Legacy PDF dropped Costs, Timeline, Stakeholders (4-actor cards),
+  // Recommendations (all, not just top 3), and the per-page Vorläufig
+  // footer. Drift gates assert each new section's TOC label is in the
+  // exporter source.
+  const exportPdfSrc = await readFileText('src/features/chat/lib/exportPdf.ts')
+  results.push(failures('v1.0.6 Bug 2: PDF exporter ships every result-page section', [
+    {
+      ok: /'III\s+COSTS'/.test(exportPdfSrc) && /'III\s+KOSTEN'/.test(exportPdfSrc),
+      msg: 'PDF must render section III (Costs / Kosten) in both languages',
+    },
+    {
+      ok: /'IV\s+TIMELINE'/.test(exportPdfSrc) && /'IV\s+ZEITRAHMEN'/.test(exportPdfSrc),
+      msg: 'PDF must render section IV (Timeline / Zeitrahmen) in both languages',
+    },
+    {
+      ok: /'V\s+PROCEDURES'/.test(exportPdfSrc) && /'V\s+VERFAHREN'/.test(exportPdfSrc),
+      msg: 'Procedures section must be renumbered V',
+    },
+    {
+      ok: /'VI\s+DOCUMENTS'/.test(exportPdfSrc) && /'VI\s+DOKUMENTE'/.test(exportPdfSrc),
+      msg: 'Documents section must be renumbered VI',
+    },
+    {
+      ok: /'VII\s+TEAM\s+&\s+STAKEHOLDERS'/.test(exportPdfSrc) && /'VII\s+TEAM\s+&\s+BETEILIGTE'/.test(exportPdfSrc),
+      msg: 'Specialists section must be renamed "Team & Stakeholders" and renumbered VII',
+    },
+    {
+      ok: /STAKEHOLDERS_PDF\b/.test(exportPdfSrc),
+      msg: 'PDF must define STAKEHOLDERS_PDF constant (4-actor cards)',
+    },
+    {
+      ok: /'VIII\s+RECOMMENDATIONS'/.test(exportPdfSrc) && /'VIII\s+EMPFEHLUNGEN'/.test(exportPdfSrc),
+      msg: 'PDF must add section VIII (Recommendations / Empfehlungen)',
+    },
+    {
+      ok: /pickSmartSuggestions/.test(exportPdfSrc),
+      msg: 'PDF Recommendations section must include smart suggestions via pickSmartSuggestions',
+    },
+    {
+      ok: /'IX\s+KEY\s+DATA'/.test(exportPdfSrc) && /'IX\s+ECKDATEN'/.test(exportPdfSrc),
+      msg: 'Key Data section must be renumbered IX',
+    },
+    {
+      ok: /'X\s+AUDIT\s+LOG'/.test(exportPdfSrc) && /'X\s+AUDITSPUR'/.test(exportPdfSrc),
+      msg: 'Audit Log section must be renumbered X',
+    },
+    {
+      ok: /Vorläufig - bestätigt durch/.test(exportPdfSrc) && /if \(i > 0\)/.test(exportPdfSrc),
+      msg: 'Vorläufig footer must be drawn on every non-cover page',
+    },
+    {
+      ok: /Showing last 30 of/.test(exportPdfSrc),
+      msg: 'Audit log must surface "showing last 30 of N" when truncated',
+    },
+  ]))
+
   // ── v1.0.6 Bug 5+6 — anti-Bayern-leak in every non-Bayern state ────
   // The Hessen × T-03 smoke walk surfaced the persona reaching for
   // BayBO Art./Abs. as "comparable" anchors even when the active
