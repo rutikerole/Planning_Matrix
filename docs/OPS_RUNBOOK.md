@@ -399,7 +399,82 @@ Documented as known follow-up work in HANDOFF.md per the
 
 ---
 
-## 9. Where to find more
+## 9. Post-tag deploy verification (added v1.0.7)
+
+Vercel auto-deploys on push to `main`. The deploy typically lands
+within 1-2 minutes of the push. Before declaring a tag "live", run
+the deploy-verification probe and clear browser cache.
+
+### 9.1 Probe the live SPA
+
+```sh
+# 1. Confirm the SPA is responding + capture the bundle hash.
+curl -sSI https://planning-matrix.vercel.app/ \
+  | grep -iE "(last-modified|x-vercel-id|etag)"
+LIVE_BUNDLE=$(curl -sS https://planning-matrix.vercel.app/ \
+  | grep -oE 'index-[A-Za-z0-9_-]+\.js' | head -1)
+echo "live bundle: $LIVE_BUNDLE"
+```
+
+### 9.2 Compare against local build
+
+```sh
+# 2. Run a local build; note the bundle filename.
+npm run build 2>&1 | grep -oE 'index-[A-Za-z0-9_-]+\.js' | head -1
+```
+
+The local + live hashes will differ because Vite inlines
+`VITE_LEGAL_*` env vars at build time and the local `.env.local`
+typically has different values than Vercel's project env. The
+hash difference is expected — what matters is that the LIVE bundle
+filename changed compared to the previous tag's live bundle.
+
+### 9.3 Confirm a tag-introduced marker is present
+
+For features that introduce greppable strings (new translation
+keys, new event names, new HTML element ids), grep the live bundle
+for at least one such marker:
+
+```sh
+curl -sS "https://planning-matrix.vercel.app/assets/$LIVE_BUNDLE" \
+  > /tmp/live_index.js
+grep -oE 'plot-bundesland' /tmp/live_index.js   # v1.0.6 marker
+grep -oE 'bundesland_changed' /tmp/live_index.js # v1.0.6 telemetry
+```
+
+Server-side fixes (Edge Function code in
+`supabase/functions/chat-turn/*`, persona/template content in
+`src/legal/*`) do NOT appear in the SPA bundle — those deploy via
+Supabase, not Vercel. Verify Supabase-side fixes by running a
+chat turn against the live Edge Function and inspecting the
+response.
+
+### 9.4 Browser cache guidance
+
+After every tag's deploy, the bauherr should hard-refresh
+(`Cmd+Shift+R` on macOS, `Ctrl+Shift+R` on Windows/Linux) on the
+first page-load post-deploy. Vercel sets long cache lifetimes on
+hashed asset filenames, so the stale-bundle window is bounded by
+the user's last visit + the index.html cache lifetime
+(typically short).
+
+### 9.5 When to escalate
+
+If the live bundle hash has NOT changed > 5 minutes after the
+push:
+1. Check Vercel dashboard → Deployments → latest. Is the deploy
+   in "Building", "Ready", or "Error"?
+2. If "Error", click into the deploy and read the build log.
+   Common causes: prebuild gate failure (locale parity,
+   hardcoded-DE, legal-config validator), tsc error, bundle
+   ceiling.
+3. If "Building" > 5 min, allow up to 10 min total.
+4. If "Ready" but live bundle hash unchanged → CDN cache; wait
+   2-3 min, retry.
+
+---
+
+## 10. Where to find more
 
 - **AUDIT_REPORT.md** — the original 18-section audit; the source for
   every B-row referenced above.
