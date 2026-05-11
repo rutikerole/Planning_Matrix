@@ -52,6 +52,52 @@ Cross-walk against `docs/PHASE_17_SMOKE_CHECKLIST.md`:
 | -------- | ---- | ------- |
 | `<MANAGER_NAME>` | _ | _ |
 
+### 4.1 Programmatic state × template smoke matrix (v1.0.8 W3)
+
+The W3 harness `scripts/smoke-walk-matrix.mjs` provides
+programmatic coverage of the 14 priority cells from
+`V1_SMOKE_WALK_EXECUTION_PLAN.md`. Each cell is filled with
+"pending — awaiting first harness run" until Rutik supplies creds
++ Anthropic budget acknowledgement and runs `npm run smoke:matrix`.
+
+Cell-by-cell ledger (filled by the harness on first run; paste
+the contents of `/tmp/smoke-walk-matrix-report.json` here):
+
+| # | Cell                                | First-run status | Date | Notes |
+| - | ----------------------------------- | :--------------: | :---:| ----- |
+| 1 | bayern × T-01 (EFH)                 | pending          |      |       |
+| 2 | nrw × T-01                          | pending          |      |       |
+| 3 | bw × T-01                           | pending          |      |       |
+| 4 | hessen × T-01                       | pending          |      |       |
+| 5 | niedersachsen × T-01                | pending          |      |       |
+| 6 | bayern × T-02 (MFH)                 | pending          |      |       |
+| 7 | bayern × T-03 (Sanierung)           | pending          |      |       |
+| 8 | bayern × T-04 (Umnutzung)           | pending          |      |       |
+| 9 | bayern × T-05 (Abbruch)             | pending          |      |       |
+| 10 | bayern × T-06 (Aufstockung)        | pending          |      |       |
+| 11 | bayern × T-07 (Anbau)              | pending          |      |       |
+| 12 | bayern × T-08 (Sonstiges)          | pending          |      |       |
+| 13 | sachsen × T-01 (Flächenland stub)  | pending          |      |       |
+| 14 | berlin × T-01 (Stadtstaat)         | pending          |      |       |
+
+### 4.2 Architect verification flow end-to-end (v1.0.8 W1)
+
+The W1 harness `scripts/architect-e2e-smoke.mjs` runs the 7-phase
+architect flow against live production. Per-phase ledger
+(filled by the harness on first run; paste
+`/tmp/architect-e2e-report.json` here):
+
+| Phase                    | First-run status | Date | Notes |
+| ------------------------ | :--------------: | :---:| ----- |
+| 1 SETUP                  | pending          |      |       |
+| 2 PICK PROJECT           | pending          |      |       |
+| 3 PROMOTE DESIGNER       | pending          |      |       |
+| 4 GENERATE INVITE        | pending          |      |       |
+| 5 ACCEPT INVITE          | pending          |      |       |
+| 6 VERIFY FACT            | pending          |      |       |
+| 7 ASSERT FOOTER-HIDE     | pending          |      |       |
+| 8 TEARDOWN               | pending          |      |       |
+
 ## 5. Daily-gate evidence at the tag commit
 
 Run on tag day, paste outputs verbatim:

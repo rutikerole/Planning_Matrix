@@ -474,7 +474,79 @@ push:
 
 ---
 
-## 10. Where to find more
+## 10. Live-production smoke harnesses (added v1.0.8)
+
+Two operator-triggered harnesses extend the static daily-gate set
+with empirical live-production assertions. **Neither runs as part
+of `npm run build` or `smoke:citations`** — both mutate live DB
+rows and (the matrix harness) consume Anthropic tokens.
+
+### 10.1 `npm run smoke:architect-e2e`
+
+Script: `scripts/architect-e2e-smoke.mjs`. Runs the 7-phase Phase 13
+architect verification flow against live production. First-ever
+automated end-to-end against the deliverable that
+DELIVERABLE_GAP_AUDIT.md flagged as "0 architect end-to-end runs
+observed."
+
+Required env (in `.env.local` or shell):
+```
+SUPABASE_SERVICE_ROLE_KEY   — Supabase Dashboard → Settings → API
+BAUHERR_TEST_EMAIL          — owner of the test Hessen project
+BAUHERR_TEST_JWT            — fresh access_token; copy from DevTools
+DESIGNER_TEST_EMAIL         — designer account (profile must exist)
+DESIGNER_TEST_JWT           — fresh access_token for the designer
+```
+
+Pre-flight: a non-Bayern test project must exist
+(`projects WHERE bundesland='hessen' AND owner_id=<bauherr>`). Use
+the SPA's wizard with the v1.0.6 Bundesland dropdown to create one.
+
+When to run:
+- Before tagging any v1.x with architect-surface changes.
+- Monthly during ramp (smoke validation of Phase 13 surface).
+- After Supabase Edge Function deploys touching share-project or
+  verify-fact.
+
+Cost: zero Anthropic tokens (no chat-turn invocations). Live DB
+side-effects revert via Phase 8 TEARDOWN unless `--keep-side-effects`.
+
+### 10.2 `npm run smoke:matrix`
+
+Script: `scripts/smoke-walk-matrix.mjs`. Runs the 14-cell state ×
+template smoke matrix from `V1_SMOKE_WALK_EXECUTION_PLAN.md`
+programmatically.
+
+Required env:
+```
+SUPABASE_SERVICE_ROLE_KEY   — same key as above
+BAUHERR_TEST_JWT            — same as above
+BAUHERR_TEST_USER_ID        — auth.users.id matching the JWT
+ANTHROPIC_BUDGET_ACKED=yes  — explicit budget acknowledgement
+```
+
+Cost: ~14 cells × 5 turns = 70 Anthropic chat-turn calls per run.
+Sonnet 4.6 / MAX_TOKENS=1280: rough order-of-magnitude $10-20.
+Test projects deleted via service-role on teardown (default).
+
+Flags:
+- `--turns=N` — chat turns per cell (default 5)
+- `--cells=A,B,C` — pin a subset of cell indices (default all 14)
+- `--keep-projects` — skip teardown for debugging
+
+When to run:
+- Before tagging any v1.x with content edits to `src/legal/states/*`
+  or `src/legal/templates/*`.
+- Quarterly during ramp (full multi-state regression).
+- After legal-content authoring rounds for new Bundesländer.
+
+Both harnesses write `/tmp/architect-e2e-report.json` and
+`/tmp/smoke-walk-matrix-report.json` respectively, with structured
+per-phase / per-cell evidence.
+
+---
+
+## 11. Where to find more
 
 - **AUDIT_REPORT.md** — the original 18-section audit; the source for
   every B-row referenced above.

@@ -461,7 +461,7 @@ shipped in Phase 13 Week 4). What's missing is the cron harness
 
 ## 9. Operational responsibilities — split between engineering and client
 
-The **v1.0.7 tag is the production-ready release**. The version
+The **v1.0.8 tag is the production-ready release**. The version
 ladder:
   • v1.0   = engineering milestone (complete feature scope).
   • v1.0.1 = invite-flow security hardening (owner-check on share,
@@ -488,6 +488,34 @@ ladder:
   • v1.0.5 = Layer-C citation firewall (allowedCitations runtime
              positive-list enforcement; closes PROD_READINESS_AUDIT
              B3).
+  • v1.0.8 = coverage-expansion sprint (4 commits, harnesses
+             BUILT but not yet RUN against live production).
+             W1: scripts/architect-e2e-smoke.mjs — 7-phase live
+             smoke harness for the Phase 13 architect verification
+             flow (promote → invite → accept → verify → footer-hide
+             → teardown). First-ever automated end-to-end against
+             production, closes the 0-architect-runs gap from
+             DELIVERABLE_GAP_AUDIT. Defensive env-loading; exits
+             with code 2 + clear hint when SUPABASE_SERVICE_ROLE_KEY
+             / BAUHERR_TEST_JWT / DESIGNER_TEST_JWT missing.
+             W2: smokeWalk drift fixture pinning per-state
+             ALLOWED_CITATIONS depth at the Phase-12-verified
+             counts (NRW: 27 · BW: 30 · NS: 24 · Hessen: 26).
+             No content commits — empirical audit found all four
+             substantive states already at peer depth from Phase 12;
+             pin catches any future regression.
+             W3: scripts/smoke-walk-matrix.mjs — programmatic
+             14-cell (state × template) coverage harness. Each
+             cell creates a test project, runs N chat-turns,
+             asserts state-correct § citation appears + Bayern
+             leak detector zero on non-Bayern cells. Per-run cost
+             ~$10-20 in Anthropic spend; ANTHROPIC_BUDGET_ACKED
+             env guard required. Operator-triggered:
+                npm run smoke:architect-e2e
+                npm run smoke:matrix
+             Both gated on Rutik providing creds. v1.0.9 will close
+             any findings the first runs surface.
+             Bayern SHA preserved.
   • v1.0.7 = post-v1.0.6 visibility-gap closure (4 commits). Rutik's
              post-deploy observation showed v1.0.6 fixes shipped but
              not visible on existing project 24c8fb67-… Investigation
