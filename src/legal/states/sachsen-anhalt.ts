@@ -5,8 +5,16 @@
 // ───────────────────────────────────────────────────────────────────────
 
 import type { StateDelta } from './_types.ts'
+import { buildAntiBayernLeakBlock } from './_antiBayernLeak.ts'
 
-const SYSTEM_BLOCK = `══════════════════════════════════════════════════════════════════════════
+const ANTI_LEAK = buildAntiBayernLeakBlock({
+  labelDe: 'Sachsen-Anhalt',
+  labelEn: 'Saxony-Anhalt',
+  codePrefix: 'BauO LSA',
+  isSubstantive: false,
+})
+
+const SYSTEM_BLOCK = `${ANTI_LEAK}══════════════════════════════════════════════════════════════════════════
 BUNDESLAND-DISZIPLIN: SACHSEN-ANHALT — Mindest-Eckdaten
 ══════════════════════════════════════════════════════════════════════════
 

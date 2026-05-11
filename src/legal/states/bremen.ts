@@ -6,8 +6,16 @@
 // ───────────────────────────────────────────────────────────────────────
 
 import type { StateDelta } from './_types.ts'
+import { buildAntiBayernLeakBlock } from './_antiBayernLeak.ts'
 
-const SYSTEM_BLOCK = `══════════════════════════════════════════════════════════════════════════
+const ANTI_LEAK = buildAntiBayernLeakBlock({
+  labelDe: 'Bremen',
+  labelEn: 'Bremen',
+  codePrefix: 'BremLBO',
+  isSubstantive: false,
+})
+
+const SYSTEM_BLOCK = `${ANTI_LEAK}══════════════════════════════════════════════════════════════════════════
 BUNDESLAND-DISZIPLIN: BREMEN (STADTSTAAT) — Mindest-Eckdaten
 ══════════════════════════════════════════════════════════════════════════
 

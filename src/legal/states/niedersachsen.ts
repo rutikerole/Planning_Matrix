@@ -32,8 +32,16 @@
 // ───────────────────────────────────────────────────────────────────────
 
 import type { StateDelta } from './_types.ts'
+import { buildAntiBayernLeakBlock } from './_antiBayernLeak.ts'
 
-const SYSTEM_BLOCK = `══════════════════════════════════════════════════════════════════════════
+const ANTI_LEAK = buildAntiBayernLeakBlock({
+  labelDe: 'Niedersachsen',
+  labelEn: 'Lower Saxony',
+  codePrefix: 'NBauO',
+  isSubstantive: true,
+})
+
+const SYSTEM_BLOCK = `${ANTI_LEAK}══════════════════════════════════════════════════════════════════════════
 BUNDESLAND-DISZIPLIN: NIEDERSACHSEN — verbindlich, keine Ausnahmen
 ══════════════════════════════════════════════════════════════════════════
 

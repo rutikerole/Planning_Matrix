@@ -2137,6 +2137,66 @@ async function runStaticGate() {
     },
   ]))
 
+  // ── v1.0.6 Bug 5+6 — anti-Bayern-leak in every non-Bayern state ────
+  // The Hessen × T-03 smoke walk surfaced the persona reaching for
+  // BayBO Art./Abs. as "comparable" anchors even when the active
+  // state is Hessen, because the Bayern-SHA-locked persona/template
+  // shared layers contain Bayern-specific examples. We cannot edit
+  // those layers (Bayern SHA invariant). Mitigation: every non-Bayern
+  // state's systemBlock prepends a buildAntiBayernLeakBlock(...) call
+  // that explicitly invalidates Bayern examples for the active state.
+  // Bayern.ts is intentionally NOT touched.
+  const antiLeakHelper = await readFileText('src/legal/states/_antiBayernLeak.ts')
+  results.push(failures('v1.0.6 Bug 5+6: _antiBayernLeak helper exists with DE+EN override text', [
+    {
+      ok: /buildAntiBayernLeakBlock/.test(antiLeakHelper),
+      msg: '_antiBayernLeak.ts must export buildAntiBayernLeakBlock',
+    },
+    {
+      ok: /NIEMALS\s+BayBO/.test(antiLeakHelper),
+      msg: 'helper must contain the DE "NIEMALS BayBO" assertion',
+    },
+    {
+      ok: /NEVER\s+cite\s+BayBO/.test(antiLeakHelper),
+      msg: 'helper must contain the EN "NEVER cite BayBO" assertion',
+    },
+    {
+      ok: /isSubstantive/.test(antiLeakHelper),
+      msg: 'helper must branch substantive vs stub variants',
+    },
+  ]))
+  // Every non-Bayern state must import + invoke the helper. Bayern.ts
+  // is the SHA-anchored prefix and stays untouched.
+  const nonBayernStates = [
+    'bw', 'hessen', 'niedersachsen', 'nrw',
+    'berlin', 'brandenburg', 'bremen', 'hamburg',
+    'mv', 'rlp', 'saarland', 'sachsen',
+    'sachsen-anhalt', 'sh', 'thueringen',
+  ]
+  const antiLeakMissing = []
+  for (const code of nonBayernStates) {
+    const src = await readFileText(`src/legal/states/${code}.ts`)
+    if (!/buildAntiBayernLeakBlock\s*\(/.test(src)) antiLeakMissing.push(`${code}: import/call missing`)
+    else if (!/const ANTI_LEAK\s*=\s*buildAntiBayernLeakBlock/.test(src)) antiLeakMissing.push(`${code}: ANTI_LEAK const not declared`)
+    else if (!/\$\{ANTI_LEAK\}/.test(src)) antiLeakMissing.push(`${code}: SYSTEM_BLOCK does not interpolate ANTI_LEAK`)
+  }
+  results.push(failures('v1.0.6 Bug 5+6: all 15 non-Bayern state files import + prepend buildAntiBayernLeakBlock', [
+    {
+      ok: antiLeakMissing.length === 0,
+      msg: antiLeakMissing.length === 0
+        ? '(all 15 non-Bayern states wired)'
+        : `Wiring missing in: ${antiLeakMissing.join(' · ')}`,
+    },
+  ]))
+  // Bayern.ts must STAY pristine — anti-leak helper is non-Bayern only.
+  const bayernSrcCheck = await readFileText('src/legal/states/bayern.ts')
+  results.push(failures('v1.0.6 Bug 5+6: bayern.ts is intentionally NOT touched (Bayern SHA invariant)', [
+    {
+      ok: !/buildAntiBayernLeakBlock/.test(bayernSrcCheck),
+      msg: 'bayern.ts must NOT import or call buildAntiBayernLeakBlock (would invalidate the SHA)',
+    },
+  ]))
+
   // ── v1.0.6 Bug 4 — confidence formula is fact-quality mix only ─────
   // The legacy composite (0.65 × factScore + 0.35 × sectionScore)
   // let a sectionScore=100 inflate a factScore=82 to ~94%, which is

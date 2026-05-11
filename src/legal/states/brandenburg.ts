@@ -5,8 +5,16 @@
 // ───────────────────────────────────────────────────────────────────────
 
 import type { StateDelta } from './_types.ts'
+import { buildAntiBayernLeakBlock } from './_antiBayernLeak.ts'
 
-const SYSTEM_BLOCK = `══════════════════════════════════════════════════════════════════════════
+const ANTI_LEAK = buildAntiBayernLeakBlock({
+  labelDe: 'Brandenburg',
+  labelEn: 'Brandenburg',
+  codePrefix: 'BbgBO',
+  isSubstantive: false,
+})
+
+const SYSTEM_BLOCK = `${ANTI_LEAK}══════════════════════════════════════════════════════════════════════════
 BUNDESLAND-DISZIPLIN: BRANDENBURG — Mindest-Eckdaten
 ══════════════════════════════════════════════════════════════════════════
 

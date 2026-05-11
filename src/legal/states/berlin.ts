@@ -8,8 +8,16 @@
 // ───────────────────────────────────────────────────────────────────────
 
 import type { StateDelta } from './_types.ts'
+import { buildAntiBayernLeakBlock } from './_antiBayernLeak.ts'
 
-const SYSTEM_BLOCK = `══════════════════════════════════════════════════════════════════════════
+const ANTI_LEAK = buildAntiBayernLeakBlock({
+  labelDe: 'Berlin',
+  labelEn: 'Berlin',
+  codePrefix: 'BauO Bln',
+  isSubstantive: false,
+})
+
+const SYSTEM_BLOCK = `${ANTI_LEAK}══════════════════════════════════════════════════════════════════════════
 BUNDESLAND-DISZIPLIN: BERLIN (STADTSTAAT) — Mindest-Eckdaten
 ══════════════════════════════════════════════════════════════════════════
 

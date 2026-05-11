@@ -5,8 +5,16 @@
 // ───────────────────────────────────────────────────────────────────────
 
 import type { StateDelta } from './_types.ts'
+import { buildAntiBayernLeakBlock } from './_antiBayernLeak.ts'
 
-const SYSTEM_BLOCK = `══════════════════════════════════════════════════════════════════════════
+const ANTI_LEAK = buildAntiBayernLeakBlock({
+  labelDe: 'Rheinland-Pfalz',
+  labelEn: 'Rhineland-Palatinate',
+  codePrefix: 'LBauO',
+  isSubstantive: false,
+})
+
+const SYSTEM_BLOCK = `${ANTI_LEAK}══════════════════════════════════════════════════════════════════════════
 BUNDESLAND-DISZIPLIN: RHEINLAND-PFALZ — Mindest-Eckdaten
 ══════════════════════════════════════════════════════════════════════════
 

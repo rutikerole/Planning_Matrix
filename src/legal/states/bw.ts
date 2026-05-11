@@ -33,8 +33,16 @@
 // ───────────────────────────────────────────────────────────────────────
 
 import type { StateDelta } from './_types.ts'
+import { buildAntiBayernLeakBlock } from './_antiBayernLeak.ts'
 
-const SYSTEM_BLOCK = `══════════════════════════════════════════════════════════════════════════
+const ANTI_LEAK = buildAntiBayernLeakBlock({
+  labelDe: 'Baden-Württemberg',
+  labelEn: 'Baden-Württemberg',
+  codePrefix: 'LBO',
+  isSubstantive: true,
+})
+
+const SYSTEM_BLOCK = `${ANTI_LEAK}══════════════════════════════════════════════════════════════════════════
 BUNDESLAND-DISZIPLIN: BADEN-WÜRTTEMBERG — verbindlich, keine Ausnahmen
 ══════════════════════════════════════════════════════════════════════════
 

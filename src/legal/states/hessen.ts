@@ -37,8 +37,16 @@
 // ───────────────────────────────────────────────────────────────────────
 
 import type { StateDelta } from './_types.ts'
+import { buildAntiBayernLeakBlock } from './_antiBayernLeak.ts'
 
-const SYSTEM_BLOCK = `══════════════════════════════════════════════════════════════════════════
+const ANTI_LEAK = buildAntiBayernLeakBlock({
+  labelDe: 'Hessen',
+  labelEn: 'Hesse',
+  codePrefix: 'HBO',
+  isSubstantive: true,
+})
+
+const SYSTEM_BLOCK = `${ANTI_LEAK}══════════════════════════════════════════════════════════════════════════
 BUNDESLAND-DISZIPLIN: HESSEN — verbindlich, keine Ausnahmen
 ══════════════════════════════════════════════════════════════════════════
 
