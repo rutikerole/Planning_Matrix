@@ -2254,16 +2254,16 @@ async function runStaticGate() {
     },
   ]))
 
-  // ── v1.0.6 Bug 4 — confidence formula is fact-quality mix only ─────
-  // The legacy composite (0.65 × factScore + 0.35 × sectionScore)
-  // let a sectionScore=100 inflate a factScore=82 to ~94%, which is
-  // not defensible from 57% decided facts. Drop sectionScore weight
-  // to 0; factScore alone drives the headline number.
+  // ── v1.0.6 Bug 4 + v1.0.7 Bug 8 — confidence formula ───────────────
+  // v1.0.6 dropped sectionScore weight to 0. v1.0.7 widened the
+  // qualifier-mix SCOPE from `state.facts` to ALL qualifier-bearing
+  // categories (via aggregateQualifiers) so the header number
+  // matches the DataQualityDonut the user sees on the same page.
   const computeConfidenceSrc = await readFileText('src/features/result/lib/computeConfidence.ts')
-  results.push(failures('v1.0.6 Bug 4: computeConfidence weights factScore at 1.0 and sectionScore at 0.0', [
+  results.push(failures('v1.0.6 Bug 4 + v1.0.7 Bug 8: computeConfidence scope + weights', [
     {
       ok: /const\s+FACT_WEIGHT\s*=\s*1\.0/.test(computeConfidenceSrc),
-      msg: 'FACT_WEIGHT must equal 1.0 (factScore is the sole composite driver)',
+      msg: 'FACT_WEIGHT must equal 1.0 (qualifier-mix is the sole composite driver)',
     },
     {
       ok: /const\s+SECTION_WEIGHT\s*=\s*0\.0/.test(computeConfidenceSrc),
@@ -2271,7 +2271,23 @@ async function runStaticGate() {
     },
     {
       ok: /v1\.0\.6\s+Bug\s+4/.test(computeConfidenceSrc),
-      msg: 'docstring must record v1.0.6 Bug 4 rationale (so future readers know the legacy 0.65/0.35 mix was deliberate to drop)',
+      msg: 'docstring must record v1.0.6 Bug 4 rationale',
+    },
+    {
+      ok: /aggregateQualifiers/.test(computeConfidenceSrc),
+      msg: 'v1.0.7: must import + use aggregateQualifiers to walk all 5 categories',
+    },
+    {
+      ok: /v1\.0\.7\s+Bug\s+8/.test(computeConfidenceSrc),
+      msg: 'v1.0.7: docstring must record Bug 8 scope-widening rationale',
+    },
+    {
+      ok: /agg\.counts\.CALCULATED\s*\+\s*agg\.counts\.VERIFIED/.test(computeConfidenceSrc),
+      msg: 'v1.0.7: CALCULATED + VERIFIED grouped at 0.85 (matches donut)',
+    },
+    {
+      ok: /agg\.counts\.ASSUMED\s*\+\s*agg\.counts\.UNKNOWN/.test(computeConfidenceSrc),
+      msg: 'v1.0.7: ASSUMED + UNKNOWN grouped at 0.4 (matches donut)',
     },
   ]))
 

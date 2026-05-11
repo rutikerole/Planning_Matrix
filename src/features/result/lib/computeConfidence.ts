@@ -1,50 +1,60 @@
 import type { ProjectState } from '@/types/projectState'
 import { computeSectionCompleteness } from './computeSectionCompleteness'
+import { aggregateQualifiers } from './qualifierAggregate'
 
 export interface ConfidenceBreakdown {
   /** Composite percent shown in the header (0–100 integer). */
   total: number
-  /** Fact-quality mix score (0–100 integer). */
+  /** Qualifier-mix score across all qualifier-bearing categories
+   *  (facts + procedures + documents + roles + recommendations).
+   *  Field name kept as `factScore` for backward compatibility with
+   *  callers; the underlying scope widened in v1.0.7. */
   factScore: number
   /** Section completeness score (0–100 integer). */
   sectionScore: number
-  /** Weighting applied to factScore (0–100 integer; e.g. 65). */
+  /** Weighting applied to factScore (0–100 integer; e.g. 100 in v1.0.6+). */
   factWeight: number
-  /** Weighting applied to sectionScore (0–100 integer; e.g. 35). */
+  /** Weighting applied to sectionScore (0–100 integer; 0 in v1.0.6+). */
   sectionWeight: number
 }
 
-// v1.0.6 Bug 4 — header confidence is the fact-quality mix only.
+// v1.0.6 Bug 4 + v1.0.7 Bug 8 — header confidence is the qualifier-
+// mix score across ALL qualifier-bearing categories, weighted to
+// match the DataQualityDonut grouping the user sees on the same
+// page.
 //
-// The legacy formula (factScore × 0.65 + sectionScore × 0.35) let
-// sectionScore=100 inflate a factScore=82 project to ~94%, which is
-// not defensible when only 57% of facts are DECIDED. Hessen × T-03
-// smoke walk surfaced "CONFIDENCE 94% — preliminary · pending
-// architect confirmation" against the DataQualityDonut's
-// Decided 57% / Calculated 17% / Assumed 26% — the two surfaces
-// visibly disagreed.
+// v1.0.6 (Bug 4) dropped sectionScore weight to 0 so the header
+// number couldn't be inflated by section completeness above the
+// fact-quality mix.
 //
-// Resolution: factScore alone drives the header. sectionScore stays
-// computed in the breakdown for tooltip transparency but contributes
-// 0 to the composite. The "How was this computed?" link should
-// surface the unweighted mix verbatim.
+// v1.0.7 (Bug 8) widens the SCOPE of the mix. Previously the score
+// walked only state.facts; the donut walks all five categories
+// (facts + procedures + documents + roles + recommendations). On
+// the Hessen × T-03 project the donut showed 57/17/26 but the
+// header showed 91% because facts had a different (more DECIDED)
+// distribution than the global. The two surfaces visibly diverged.
+// Switching to aggregateQualifiers makes the header number track
+// exactly what the donut shows the user.
+//
+// Weighting mirrors the donut's slice grouping:
+//   - DECIDED                       × 1.0
+//   - CALCULATED + VERIFIED         × 0.85
+//   - ASSUMED + UNKNOWN             × 0.4
+// For a 57/17/26 donut split this resolves to ≈ 82, which is the
+// defensible value Rutik called for.
 const FACT_WEIGHT = 1.0
 const SECTION_WEIGHT = 0.0
 
 /**
  * Phase 8 / 8.1 (A.6) — header confidence percent.
  *
- * v1.0.6 Bug 4: factScore is the sole driver of the composite total.
- * sectionScore is still computed in the breakdown so the tooltip can
- * surface "fact-quality 82% · section completeness 100%" verbatim,
- * but it no longer lifts the headline number above the fact-quality
- * mix it claims to summarise.
+ * v1.0.7 Bug 8: scope widened to all 5 qualifier-bearing categories
+ * (matches DataQualityDonut). Weighting:
+ *   DECIDED 1.0 · CALCULATED+VERIFIED 0.85 · ASSUMED+UNKNOWN 0.4
  *
- * Fact-quality mix: DECIDED/VERIFIED count 1.0, CALCULATED 0.85,
- * ASSUMED 0.4; sum / count.
- *
- * Returns 0 when the project has no facts AND no sections populated
- * (the header renders an em-dash in that case rather than 0%).
+ * Returns 0 when the project has no qualifier-bearing items AND
+ * no sections populated (the header renders an em-dash in that
+ * case rather than 0%).
  */
 export function computeConfidence(state: Partial<ProjectState>): number {
   return computeConfidenceBreakdown(state).total
@@ -53,21 +63,20 @@ export function computeConfidence(state: Partial<ProjectState>): number {
 export function computeConfidenceBreakdown(
   state: Partial<ProjectState>,
 ): ConfidenceBreakdown {
-  const facts = state.facts ?? []
+  const agg = aggregateQualifiers(state)
   let factScore = 0
-  if (facts.length > 0) {
-    let sum = 0
-    for (const f of facts) {
-      const q = f.qualifier?.quality
-      if (q === 'DECIDED' || q === 'VERIFIED') sum += 1.0
-      else if (q === 'CALCULATED') sum += 0.85
-      else if (q === 'ASSUMED') sum += 0.4
-    }
-    factScore = Math.round((sum / facts.length) * 100)
+  if (agg.total > 0) {
+    const decidedWeight = agg.counts.DECIDED * 1.0
+    const calcWeight =
+      (agg.counts.CALCULATED + agg.counts.VERIFIED) * 0.85
+    const assumedWeight =
+      (agg.counts.ASSUMED + agg.counts.UNKNOWN) * 0.4
+    const sum = decidedWeight + calcWeight + assumedWeight
+    factScore = Math.round((sum / agg.total) * 100)
   }
   const sectionScore = computeSectionCompleteness(state).percent
   const total =
-    facts.length === 0 && sectionScore === 0
+    agg.total === 0 && sectionScore === 0
       ? 0
       : Math.round(factScore * FACT_WEIGHT + sectionScore * SECTION_WEIGHT)
   return {
