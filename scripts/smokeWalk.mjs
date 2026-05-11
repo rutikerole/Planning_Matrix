@@ -2191,6 +2191,48 @@ async function runStaticGate() {
     },
   ]))
 
+  // ── v1.0.8 W3 — smoke-matrix harness skeleton drift gate ──────────
+  // The matrix harness lives at scripts/smoke-walk-matrix.mjs. NOT
+  // part of daily gates: each run creates live DB rows + consumes
+  // Anthropic tokens (~$10-20 per 14-cell × 5-turn run). Operator-
+  // triggered via `npm run smoke:matrix`. Drift gate asserts the
+  // 14-cell matrix is declared + the Bayern-leak detector regex is
+  // wired + the budget acknowledgment guard exists.
+  const matrixHarness = await readFileText('scripts/smoke-walk-matrix.mjs')
+  results.push(failures('v1.0.8 W3: smoke-matrix harness declares 14 cells + budget guard', [
+    {
+      ok: /const\s+CELLS\s*=/.test(matrixHarness),
+      msg: 'harness must declare a CELLS array',
+    },
+    {
+      ok: /i:\s*14,\s*bundesland:\s*'berlin'/.test(matrixHarness),
+      msg: 'CELLS must include all 14 indexed entries (cell 14 = berlin × T-01)',
+    },
+    {
+      ok: /FORBIDDEN_NON_BAYERN/.test(matrixHarness) && /\\bBayBO\\s\+Art/.test(matrixHarness),
+      msg: 'harness must wire FORBIDDEN_NON_BAYERN regex (Bayern-leak detector)',
+    },
+    {
+      ok: /ANTHROPIC_BUDGET_ACKED/.test(matrixHarness) && /process\.exit\(2\)/.test(matrixHarness),
+      msg: 'harness must require ANTHROPIC_BUDGET_ACKED env + exit(2) when missing',
+    },
+    {
+      ok: /KEEP_PROJECTS/.test(matrixHarness),
+      msg: 'harness must support --keep-projects flag for teardown skip',
+    },
+    {
+      ok: /adminDelete\([`'"]projects\?id=eq\./.test(matrixHarness),
+      msg: 'harness must teardown test projects via service-role DELETE',
+    },
+  ]))
+  const pkgJsonForW3 = await readFileText('package.json')
+  results.push(failures('v1.0.8 W3: package.json wires smoke:matrix', [
+    {
+      ok: /smoke:matrix/.test(pkgJsonForW3),
+      msg: 'package.json must declare the smoke:matrix npm script',
+    },
+  ]))
+
   // ── v1.0.8 W2 — per-state ALLOWED_CITATIONS depth pin ──────────────
   // Phase 12 already delivered substantive content for NRW, BW,
   // Niedersachsen, Hessen (per Phase-12-grade commits f1c0aae,

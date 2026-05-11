@@ -22,6 +22,7 @@
     "smoke:citations": "node scripts/smokeWalk.mjs",
     "smoke:citations:live": "node scripts/smokeWalk.mjs --live",
     "smoke:architect-e2e": "node scripts/architect-e2e-smoke.mjs",
+    "smoke:matrix": "node scripts/smoke-walk-matrix.mjs",
     "verify:bayern-sha": "node scripts/verify-bayern-sha.mjs",
     "eval:run": "node scripts/eval-harness/run.mjs",
     "eval:dry-run": "node scripts/eval-harness/run.mjs --dry-run"
