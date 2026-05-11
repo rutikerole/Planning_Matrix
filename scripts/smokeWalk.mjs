@@ -2275,14 +2275,14 @@ async function runStaticGate() {
     },
   ]))
 
-  // ── v1.0.6 Bug 3 — spine reaches 100% on final_synthesis isDone ────
-  // The legacy useChamberProgress hook only boosted to 95% via a
-  // transient `ready_for_review` signal from a zustand store that
-  // resets on refresh. A project whose result page already renders
-  // could still show Round 9 · 41%. Fix: read final stage isDone() off
-  // SPINE_STAGES and force percent to 100 when it returns true.
+  // ── v1.0.6 Bug 3 + v1.0.7 Bug 9 — spine reaches 100% on canonical
+  // OR material-result fallback. v1.0.6 added the canonical
+  // criterion (final_synthesis.isDone → state.recommendations.length
+  // >= 3). v1.0.7 widens with the material-result fallback so
+  // projects with procedures + areas active + recommendations
+  // (regardless of count >= 3) also report complete.
   const progressHookSrc = await readFileText('src/features/chat/hooks/useChamberProgress.ts')
-  results.push(failures('v1.0.6 Bug 3: useChamberProgress forces 100% when final_synthesis isDone', [
+  results.push(failures('v1.0.6 Bug 3 + v1.0.7 Bug 9: useChamberProgress completion paths', [
     {
       ok: /SPINE_STAGES/.test(progressHookSrc),
       msg: 'hook must import SPINE_STAGES to read the last stage isDone',
@@ -2298,6 +2298,18 @@ async function runStaticGate() {
     {
       ok: /isSpineComplete\s*\n?\s*\?\s*1\b/.test(progressHookSrc),
       msg: 'hook must short-circuit to 1.0 (100%) when isSpineComplete',
+    },
+    {
+      ok: /hasMaterialResult/.test(progressHookSrc),
+      msg: 'v1.0.7: hook must compute hasMaterialResult fallback',
+    },
+    {
+      ok: /canonical\s*\|\|\s*hasMaterialResult/.test(progressHookSrc),
+      msg: 'v1.0.7: isSpineComplete must OR canonical with hasMaterialResult',
+    },
+    {
+      ok: /proceduresCount\s*>=\s*1[\s\S]{0,200}areasActive[\s\S]{0,200}recsCount\s*>=\s*1/.test(progressHookSrc),
+      msg: 'v1.0.7: hasMaterialResult must require procedures >= 1 AND areasActive AND recs >= 1',
     },
   ]))
 

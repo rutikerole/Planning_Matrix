@@ -82,18 +82,32 @@ export function useChamberProgress(
     const recsFraction = Math.min(recsCount, 3) / 3
 
     const isReadyForReview = completionSignal === 'ready_for_review'
-    // v1.0.6 Bug 3 — spine reaches 100% when the final_synthesis stage
-    // is done, independent of round count. The legacy formula only
-    // boosted to 95% via the transient `ready_for_review` completion
-    // signal (sourced from a zustand store that resets on refresh), so
-    // a project whose result page already renders fully could still
-    // show Round 9 · 41% in the spine — the visible spine "lying" about
-    // completion state. Reading isDone() off the last stage gives a
-    // refresh-stable, project-state-derived 100% gate.
+    // v1.0.6 Bug 3 + v1.0.7 Bug 9 — spine reaches 100% when EITHER
+    // the canonical final_synthesis.isDone criterion fires
+    // (state.recommendations.length >= 3) OR the result page already
+    // has material content. The legacy formula only boosted to 95%
+    // via the transient `ready_for_review` completion signal sourced
+    // from a zustand store that resets on refresh — projects whose
+    // result page rendered fully (procedures + areas active +
+    // recommendations present) still showed Round 9 · 41% in the
+    // sidebar. v1.0.6 added the canonical criterion; v1.0.7 widens
+    // to the fallback so existing projects whose persona stopped
+    // before emitting 3 distinct recs (but still produced the
+    // matrix) also reflect completion in the spine.
     const finalStage = SPINE_STAGES[SPINE_STAGES.length - 1]
     let isSpineComplete = false
     try {
-      isSpineComplete = !!state && finalStage.isDone(state as ProjectState, list)
+      if (state) {
+        const canonical = finalStage.isDone(state as ProjectState, list)
+        const proceduresCount = state.procedures?.length ?? 0
+        const recsCount = state.recommendations?.length ?? 0
+        const areasActive = (['A', 'B', 'C'] as const).some(
+          (k) => state.areas?.[k]?.state === 'ACTIVE',
+        )
+        const hasMaterialResult =
+          proceduresCount >= 1 && areasActive && recsCount >= 1
+        isSpineComplete = canonical || hasMaterialResult
+      }
     } catch {
       isSpineComplete = false
     }
