@@ -6,6 +6,14 @@
  *
  * Curated for orientation only — same verifyBeforePublicLaunch caveat
  * as costNormsMuenchen.
+ *
+ * v1.0.6 Bug 1 — documented downgrade. The strings below are
+ * Bayern-flavoured ("Bayern-Faktor", "BayBO Art. 62", "Pflicht für
+ * Neubauten in Bayern"). For a Hessen project they still surface
+ * verbatim because these rationales are static per-row text, not
+ * bundesland-templated. Accepted v1.0.6 leakage; per-state rationale
+ * sets are v1.1 content scope. The numeric breakdown + the dynamic
+ * inputs label (`${inputs.bundesland} factor`) are correct.
  */
 
 export interface CostRationale {

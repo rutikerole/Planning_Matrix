@@ -20,6 +20,20 @@
  * for variety. Floor area is not factored in for v1 (HOAI fee is
  * based on Honorarsumme not area; we'd need the model to emit floor
  * area for that — future phase).
+ *
+ * v1.0.6 Bug 1 — documented downgrade. The Hessen × T-03 smoke walk
+ * surfaced "Computed from: 180 m² · HOAI Zone III · bayern factor"
+ * on a Hessen project. Empirical DB probe showed
+ * projects.bundesland='bayern' for that project — the cost engine
+ * read it correctly. Root cause was the legacy wizard hardcoding
+ * bayern (B04). Fixed in v1.0.6 Bug 0 (the wizard now writes the
+ * user's explicit selection through). Cost engine itself unchanged;
+ * for non-Bayern projects REGION_MULT silently falls through to 1.0
+ * which is the right v1.0.6 behaviour (per-state HOAI factors are
+ * a v1.1 content scope decision). Residual Bayern wording in
+ * costRationales.ts + locale caveats is accepted v1.0.6 leakage; the
+ * numeric multiplier + the dynamic `${inputs.bundesland} factor`
+ * string are correct.
  */
 
 export type ProcedureType =
