@@ -208,6 +208,190 @@ export class QualifierRoleViolationError extends Error {
   }
 }
 
+// ── v1.0.6 Phase A — Mode 2 protection (AI overwrite of verified) ─────
+//
+// CANONICAL HOME for the verified-qualifier protection guard. The helper
+// is exactly the right place because BOTH chat-turn paths
+// (supabase/functions/chat-turn/index.ts:582 and streaming.ts:400) call
+// applyToolInputToState through this module — fixing it here closes
+// Mode 2 in the JSON path AND the SSE path with a single source of
+// truth. Doing it inside streaming.ts only would silently leak the bug
+// into the JSON happy-path; doing it client-side wouldn't help because
+// the model writes through the Edge Function.
+//
+// What "protect" means: when an existing item's CURRENT qualifier is
+// DESIGNER+VERIFIED (i.e., an architect has clicked verify on it), the
+// AI's chat-turn delta cannot mutate it — neither the qualifier nor any
+// other field. The whole upsert/remove against that item is dropped
+// from toolInput before applyToolInputToState reduces. Once verified,
+// the item is locked until the architect re-verifies through the
+// verify-fact Edge Function (the only canonical write path for
+// DESIGNER+VERIFIED, enforced by gateQualifiersByRole at this same
+// layer).
+//
+// Why drop the whole delta and not just the qualifier field: the apply*
+// helpers REBUILD qualifier from baseQual unconditionally for procs /
+// docs / roles even when the delta omits source/quality (defaulting
+// source to 'LEGAL'). Letting the delta through with qualifier
+// "stripped" would still clobber cur.qualifier via that rebuild path.
+// Dropping the entire delta is the only correct fix that doesn't
+// require redesigning the apply* helpers.
+//
+// False-positive risk analysis (audit-confirmed safe):
+//   1. Designer-role chat-turn legitimately re-verifying via chat?
+//      Not a real flow. Designers verify through the architect-side
+//      verify-fact button, not through chat. The gate at line 187
+//      (QUALIFIER_GATE_REJECTS=true) already throws for non-designer
+//      callers attempting DESIGNER+VERIFIED — so the only chat-turn
+//      caller that could even reach this point with a verified
+//      attempt is a designer, and even then the canonical re-verify
+//      path is verify-fact. Drop is safe.
+//   2. AI legitimately upgrading DESIGNER+ASSUMED → DESIGNER+VERIFIED?
+//      Cannot happen. Only verify-fact writes DESIGNER+VERIFIED; AI
+//      deltas can't reach that state at all.
+//   3. AI legitimately archiving (op='remove') a verified item?
+//      No — architects archive via verify-fact's reject path. Drop
+//      is correct.
+
+export interface QualifierProtectEvent {
+  field: QualifierFieldKind
+  /** fact `key` or item `id` */
+  item_id: string
+  attempted_op: 'upsert' | 'remove'
+  current_source: Source
+  current_quality: Quality
+  reason: string
+}
+
+const PROTECT_REASON =
+  'Item qualifier is DESIGNER+VERIFIED; chat-turn delta dropped to ' +
+  'preserve architect verification (POST_V1_AUDIT C1 Mode 2).'
+
+const isCurrentlyVerified = (q: { source: Source; quality: Quality } | undefined): boolean =>
+  q?.source === 'DESIGNER' && q?.quality === 'VERIFIED'
+
+/**
+ * Strip every chat-turn delta that targets an item already at
+ * DESIGNER+VERIFIED. Mutates toolInput in-place (mirrors
+ * gateQualifiersByRole and factPlausibility). Returns events for the
+ * Edge Function to log to event_log with name='qualifier.protect'.
+ *
+ * Run order (Edge Function): citation-lint → gate-by-role →
+ * protectVerifiedQualifiers → applyToolInputToState. Protect runs AFTER
+ * the role gate so any DESIGNER+VERIFIED attempt by a non-designer is
+ * already rejected upstream before we get here.
+ */
+export function protectVerifiedQualifiers(
+  currentState: ProjectState,
+  toolInput: RespondToolInput,
+): QualifierProtectEvent[] {
+  const events: QualifierProtectEvent[] = []
+  const factsByKey = new Map(currentState.facts.map((f) => [f.key, f]))
+  const recsById = new Map(currentState.recommendations.map((r) => [r.id, r]))
+  const procsById = new Map(currentState.procedures.map((p) => [p.id, p]))
+  const docsById = new Map(currentState.documents.map((d) => [d.id, d]))
+  const rolesById = new Map(currentState.roles.map((r) => [r.id, r]))
+
+  if (toolInput.extracted_facts?.length) {
+    toolInput.extracted_facts = toolInput.extracted_facts.filter((d) => {
+      const cur = factsByKey.get(d.key)
+      if (cur && isCurrentlyVerified(cur.qualifier)) {
+        events.push({
+          field: 'extracted_fact',
+          item_id: d.key,
+          attempted_op: 'upsert',
+          current_source: cur.qualifier.source,
+          current_quality: cur.qualifier.quality,
+          reason: PROTECT_REASON,
+        })
+        return false
+      }
+      return true
+    })
+  }
+
+  if (toolInput.recommendations_delta?.length) {
+    toolInput.recommendations_delta = toolInput.recommendations_delta.filter((d) => {
+      const cur = recsById.get(d.id)
+      // Recommendation.qualifier is optional in the type; the
+      // isCurrentlyVerified narrow is defensive but TS can't follow it
+      // through a Map.get(), so we re-check inline to avoid `cur.qualifier!`.
+      if (
+        cur?.qualifier &&
+        cur.qualifier.source === 'DESIGNER' &&
+        cur.qualifier.quality === 'VERIFIED'
+      ) {
+        events.push({
+          field: 'recommendation',
+          item_id: d.id,
+          attempted_op: d.op,
+          current_source: cur.qualifier.source,
+          current_quality: cur.qualifier.quality,
+          reason: PROTECT_REASON,
+        })
+        return false
+      }
+      return true
+    })
+  }
+
+  if (toolInput.procedures_delta?.length) {
+    toolInput.procedures_delta = toolInput.procedures_delta.filter((d) => {
+      const cur = procsById.get(d.id)
+      if (cur && isCurrentlyVerified(cur.qualifier)) {
+        events.push({
+          field: 'procedure',
+          item_id: d.id,
+          attempted_op: d.op,
+          current_source: cur.qualifier.source,
+          current_quality: cur.qualifier.quality,
+          reason: PROTECT_REASON,
+        })
+        return false
+      }
+      return true
+    })
+  }
+
+  if (toolInput.documents_delta?.length) {
+    toolInput.documents_delta = toolInput.documents_delta.filter((d) => {
+      const cur = docsById.get(d.id)
+      if (cur && isCurrentlyVerified(cur.qualifier)) {
+        events.push({
+          field: 'document',
+          item_id: d.id,
+          attempted_op: d.op,
+          current_source: cur.qualifier.source,
+          current_quality: cur.qualifier.quality,
+          reason: PROTECT_REASON,
+        })
+        return false
+      }
+      return true
+    })
+  }
+
+  if (toolInput.roles_delta?.length) {
+    toolInput.roles_delta = toolInput.roles_delta.filter((d) => {
+      const cur = rolesById.get(d.id)
+      if (cur && isCurrentlyVerified(cur.qualifier)) {
+        events.push({
+          field: 'role',
+          item_id: d.id,
+          attempted_op: d.op,
+          current_source: cur.qualifier.source,
+          current_quality: cur.qualifier.quality,
+          reason: PROTECT_REASON,
+        })
+        return false
+      }
+      return true
+    })
+  }
+
+  return events
+}
+
 // ── Initial / hydrate ──────────────────────────────────────────────────
 
 /**

@@ -12,6 +12,12 @@ export interface VerifyFactRequest {
   field: VerifyFactField
   itemId: string
   note?: string
+  /**
+   * v1.0.6 Phase A — optimistic concurrency. Pass the projects.state_version
+   * read alongside the project state. Edge Function refuses the UPDATE if
+   * the row's current state_version no longer matches and returns 409.
+   */
+  expectedStateVersion?: number
 }
 
 export interface VerifyFactSuccess {
@@ -19,6 +25,8 @@ export interface VerifyFactSuccess {
   projectId: string
   field: VerifyFactField
   itemId: string
+  /** v1.0.6 — newly-incremented state_version after this verify lands. */
+  stateVersion?: number
   requestId: string
 }
 
@@ -26,6 +34,8 @@ export interface VerifyFactFailure {
   ok: false
   error: { code: string; message: string }
   requestId: string
+  /** v1.0.6 — only present on 409 state_conflict. */
+  currentStateVersion?: number
 }
 
 /**

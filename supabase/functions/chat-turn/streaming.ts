@@ -44,6 +44,7 @@ import {
 import {
   applyToolInputToState,
   gateQualifiersByRole,
+  protectVerifiedQualifiers,
   QUALIFIER_GATE_REJECTS,
   type CallerRole,
 } from '../../../src/lib/projectStateHelpers.ts'
@@ -394,6 +395,62 @@ export function runStreamingTurn(args: StreamingTurnArgs): Response {
             })
             controller.close()
             return
+          }
+        }
+
+        // ── v1.0.6 C1 Mode 2 — protect verified qualifiers (SSE path)
+        // Mirror of the JSON-path guard in index.ts. Single-source-of-
+        // truth helper in projectStateHelpers.ts; same warn-and-continue
+        // event_log posture as the qualifier-gate insert immediately
+        // above so a transient DB blip cannot blow the SSE close path.
+        const protectSpan = tracer.startSpan('qualifier.protect', rootSpan.span_id)
+        const protectEvents = protectVerifiedQualifiers(args.currentState, toolInput)
+        protectSpan.setAttributes({ protect_count: protectEvents.length })
+        protectSpan.end()
+        if (protectEvents.length > 0) {
+          console.log(
+            `[chat-turn] [${args.requestId}] qualifier-protect dropped ${protectEvents.length} delta(s) targeting verified items`,
+            protectEvents.map((e) => ({
+              field: e.field,
+              item_id: e.item_id,
+              attempted_op: e.attempted_op,
+            })),
+          )
+          const safeTraceId =
+            tracer.trace_id && tracer.trace_id !== '00000000-0000-0000-0000-000000000000'
+              ? tracer.trace_id
+              : null
+          const now = new Date().toISOString()
+          const rows = protectEvents.map((e) => ({
+            session_id: args.requestId,
+            user_id: args.userId,
+            project_id: args.projectId,
+            source: 'system' as const,
+            name: 'qualifier.protect',
+            attributes: {
+              field: e.field,
+              item_id: e.item_id,
+              attempted_op: e.attempted_op,
+              current_source: e.current_source,
+              current_quality: e.current_quality,
+              caller_role: args.callerRole,
+              reason: e.reason,
+            },
+            client_ts: now,
+            trace_id: safeTraceId,
+          }))
+          try {
+            const { error: pErr } = await args.supabase.from('event_log').insert(rows)
+            if (pErr) {
+              console.warn(
+                `[chat-turn] [${args.requestId}] qualifier-protect event_log insert failed: ${pErr.message}`,
+              )
+            }
+          } catch (insErr) {
+            console.warn(
+              `[chat-turn] [${args.requestId}] qualifier-protect event_log insert threw:`,
+              insErr,
+            )
           }
         }
 

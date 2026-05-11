@@ -47,6 +47,7 @@ import {
   hydrateProjectState,
   applyToolInputToState,
   gateQualifiersByRole,
+  protectVerifiedQualifiers,
   QUALIFIER_GATE_REJECTS,
 } from '../../../src/lib/projectStateHelpers.ts'
 import { isRegisteredBundesland } from '../../../src/legal/legalRegistry.ts'
@@ -574,6 +575,61 @@ Deno.serve(async (req: Request) => {
             'Diese Festlegung erfordert die Freigabe durch eine/n bauvorlageberechtigte/n Architekt/in.',
         },
         403,
+      )
+    }
+  }
+
+  // ── v1.0.6 C1 Mode 2 — protect verified qualifiers from AI overwrite
+  //
+  // Runs AFTER the role gate (which has already rejected/downgraded
+  // illegitimate DESIGNER+VERIFIED attempts) and BEFORE
+  // applyToolInputToState (so the protected items never reach the
+  // reducer). Drops every chat-turn delta that would mutate an item
+  // whose CURRENT qualifier is DESIGNER+VERIFIED. Best-effort event
+  // emission to event_log: a transient DB blip on the protect event
+  // insert must NOT fail the user's turn (mirrors qualifier-gate +
+  // citationLint posture). See projectStateHelpers.ts for the design
+  // rationale (single source of truth for both JSON + SSE paths).
+  const protectSpan = tracer.startSpan('qualifier.protect', rootSpan.span_id)
+  const protectEvents = protectVerifiedQualifiers(currentState, toolInput)
+  protectSpan.setAttributes({ protect_count: protectEvents.length })
+  protectSpan.end()
+  if (protectEvents.length > 0) {
+    console.log(
+      `[chat-turn] [${requestId}] qualifier-protect dropped ${protectEvents.length} delta(s) targeting verified items`,
+      protectEvents.map((e) => ({
+        field: e.field,
+        item_id: e.item_id,
+        attempted_op: e.attempted_op,
+      })),
+    )
+    const safeTraceId =
+      tracer.trace_id && tracer.trace_id !== '00000000-0000-0000-0000-000000000000'
+        ? tracer.trace_id
+        : null
+    const now = new Date().toISOString()
+    const rows = protectEvents.map((e) => ({
+      session_id: requestId,
+      user_id: userData.user.id,
+      project_id: projectId,
+      source: 'system' as const,
+      name: 'qualifier.protect',
+      attributes: {
+        field: e.field,
+        item_id: e.item_id,
+        attempted_op: e.attempted_op,
+        current_source: e.current_source,
+        current_quality: e.current_quality,
+        caller_role: callerRole,
+        reason: e.reason,
+      },
+      client_ts: now,
+      trace_id: safeTraceId,
+    }))
+    const { error: pErr } = await supabase.from('event_log').insert(rows)
+    if (pErr) {
+      console.warn(
+        `[chat-turn] [${requestId}] qualifier-protect event_log insert failed: ${pErr.message}`,
       )
     }
   }

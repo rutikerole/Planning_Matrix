@@ -12,6 +12,16 @@ interface ProjectRow {
   bundesland: string | null
   template_id: string | null
   state: ProjectState | null
+  /**
+   * v1.0.6 Phase A — projects.state_version (column + trigger added in
+   * migration 0033). Sent as `expectedStateVersion` on verify-fact so
+   * the Edge Function can refuse the UPDATE if a concurrent writer has
+   * mutated state since this row was read. Optional in the type for
+   * defense-in-depth: a row queried before migration 0033 lands would
+   * have no column. Code below treats `undefined` as 0 (the column
+   * default) which matches the trigger semantics.
+   */
+  state_version?: number
 }
 
 /**
@@ -41,7 +51,7 @@ export function VerificationPanel() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('projects')
-        .select('id, name, bundesland, template_id, state')
+        .select('id, name, bundesland, template_id, state, state_version')
         .eq('id', projectId!)
         .maybeSingle()
       if (error) throw error
@@ -49,6 +59,12 @@ export function VerificationPanel() {
     },
     staleTime: 30_000,
   })
+
+  // v1.0.6 Phase A — separate state for the conflict toast. The 409
+  // path is fundamentally different from a generic error: we MUST
+  // refetch (the local view is now stale) and we MUST show the
+  // locked DE+EN copy. Generic errors stay in `error`.
+  const [conflictToast, setConflictToast] = useState<boolean>(false)
 
   const verifyMutation = useMutation({
     mutationFn: async (args: { field: VerifyFactField; itemId: string; note?: string }) => {
@@ -58,17 +74,30 @@ export function VerificationPanel() {
         field: args.field,
         itemId: args.itemId,
         note: args.note,
+        expectedStateVersion: data?.state_version,
       })
-      if (!result.ok) {
-        throw new Error(result.error.message)
-      }
       return result
     },
-    onSuccess: () => {
+    onSuccess: (result) => {
+      if (result.ok) {
+        void queryClient.invalidateQueries({ queryKey: ['architect-project', projectId] })
+        return
+      }
+      // v1.0.6 — surface 409 distinctly. Refetch regardless of code so
+      // a partially-stale local view doesn't keep stale qualifier
+      // labels visible after a transient error either.
       void queryClient.invalidateQueries({ queryKey: ['architect-project', projectId] })
+      if (result.error.code === 'state_conflict') {
+        setConflictToast(true)
+        setError(null)
+      } else {
+        setError(result.error.message)
+        setConflictToast(false)
+      }
     },
     onError: (err: unknown) => {
       setError(err instanceof Error ? err.message : String(err))
+      setConflictToast(false)
     },
   })
 
@@ -115,6 +144,29 @@ export function VerificationPanel() {
           „Vorläufig"-Hinweis nicht mehr.
         </p>
       </header>
+
+      {conflictToast && (
+        <div className="mb-4 border border-[hsl(var(--ink))]/40 bg-[hsl(var(--paper))] px-4 py-3">
+          <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-[hsl(var(--ink))]/70">
+            Konflikt · Conflict
+          </p>
+          <p className="mt-1 text-sm text-[hsl(var(--ink))]/85">
+            Diese Festlegung wurde inzwischen geändert. Der Projektzustand
+            wurde neu geladen — bitte erneut bestätigen.
+          </p>
+          <p className="mt-1 text-sm text-[hsl(var(--ink))]/55">
+            This entry was modified by another caller in the meantime. The
+            project state has been refreshed — please re-confirm.
+          </p>
+          <button
+            type="button"
+            onClick={() => setConflictToast(false)}
+            className="mt-2 font-mono text-[11px] text-[hsl(var(--ink))]/45 hover:text-[hsl(var(--ink))]"
+          >
+            schließen
+          </button>
+        </div>
+      )}
 
       {error && (
         <div className="mb-4">

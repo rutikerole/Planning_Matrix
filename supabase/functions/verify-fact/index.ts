@@ -1,5 +1,6 @@
 // ───────────────────────────────────────────────────────────────────────
 // Phase 13 Week 3 — verify-fact Edge Function
+// v1.0.6 Phase A — optimistic-lock against POST_V1_AUDIT C1 race.
 //
 // Architect-only qualifier flip from DESIGNER+ASSUMED →
 // DESIGNER+VERIFIED on a single project_state entry. Counterpart to
@@ -22,6 +23,22 @@
 //      telemetry view picks it up alongside the rejected/downgraded
 //      events.
 //
+// Optimistic concurrency (v1.0.6 Phase A):
+//   The SPA sends `expectedStateVersion` (the version it observed in
+//   its last project read). The UPDATE runs WHERE id = $id AND
+//   state_version = $expected. If rowcount = 0 (someone else mutated
+//   state between the SPA's read and this write — concurrent verify,
+//   concurrent SuggestionCard add, or concurrent chat-turn), we return
+//   409 conflict with the current state_version and a `state.conflict`
+//   event_log row. The SPA refetches and shows a DE+EN toast.
+//
+//   Backward compat: `expectedStateVersion` is OPTIONAL. When absent,
+//   the call falls back to the legacy non-locking UPDATE and emits a
+//   `verify-fact.legacy_no_version` warning to event_log so v1.0.7 can
+//   gate-flip once telemetry confirms 100% of clients send it. This
+//   keeps the rollout safe — old SPA build calling new Edge Function
+//   does not break; only race protection degrades.
+//
 // Request:
 //   POST /functions/v1/verify-fact
 //   Body: {
@@ -29,10 +46,13 @@
 //     "field":  "extracted_fact" | "recommendation" | "procedure"
 //             | "document" | "role",
 //     "itemId": "<fact.key | rec.id | proc.id | doc.id | role.id>",
+//     "expectedStateVersion"?: <number — projects.state_version>,
 //     "note"?: "Architect's own note (verbatim, optional)."
 //   }
 //
-// Response 200: { ok: true, projectId, field, itemId }
+// Response 200: { ok: true, projectId, field, itemId, stateVersion }
+// 409 conflict: { ok: false, error: { code: 'state_conflict', ... },
+//                 currentStateVersion, requestId }
 // 4xx/5xx:      { ok: false, error: { code, message }, requestId }
 // ───────────────────────────────────────────────────────────────────────
 
@@ -90,7 +110,13 @@ Deno.serve(async (req: Request) => {
     )
   }
 
-  let body: { projectId?: string; field?: string; itemId?: string; note?: string }
+  let body: {
+    projectId?: string
+    field?: string
+    itemId?: string
+    note?: string
+    expectedStateVersion?: number
+  }
   try {
     body = await req.json()
   } catch {
@@ -119,6 +145,29 @@ Deno.serve(async (req: Request) => {
       corsHeaders,
       requestId,
     )
+  }
+  // Optional: expectedStateVersion. When present must be a non-negative
+  // safe integer; when absent we fall back to legacy non-locking
+  // behavior + emit a warning event for v1.0.7 deprecation telemetry.
+  let expectedStateVersion: number | null = null
+  if (body.expectedStateVersion !== undefined) {
+    if (
+      typeof body.expectedStateVersion !== 'number' ||
+      !Number.isInteger(body.expectedStateVersion) ||
+      body.expectedStateVersion < 0 ||
+      body.expectedStateVersion > Number.MAX_SAFE_INTEGER
+    ) {
+      return jsonError(
+        {
+          code: 'validation',
+          message: 'expectedStateVersion must be a non-negative safe integer',
+        },
+        400,
+        corsHeaders,
+        requestId,
+      )
+    }
+    expectedStateVersion = body.expectedStateVersion
   }
   const note =
     typeof body.note === 'string' && body.note.length <= 500 ? body.note : undefined
@@ -183,7 +232,7 @@ Deno.serve(async (req: Request) => {
 
   const { data: project, error: pErr } = await serviceClient
     .from('projects')
-    .select('id, state')
+    .select('id, state, state_version')
     .eq('id', body.projectId)
     .maybeSingle()
   if (pErr) {
@@ -212,6 +261,37 @@ Deno.serve(async (req: Request) => {
       requestId,
     )
   }
+  const currentStateVersion = (project as { state_version?: number }).state_version ?? 0
+
+  // Early 409 — pre-UPDATE check. If the SPA's expected version is
+  // already stale relative to what we just read, no point firing the
+  // UPDATE: emit state.conflict and return immediately.
+  if (
+    expectedStateVersion !== null &&
+    expectedStateVersion !== currentStateVersion
+  ) {
+    void emitStateConflict(serviceClient, {
+      requestId,
+      userId: userData.user.id,
+      projectId: body.projectId,
+      field: body.field,
+      itemId: body.itemId,
+      expectedStateVersion,
+      currentStateVersion,
+      reason: 'pre_update_version_mismatch',
+    })
+    return jsonError(
+      {
+        code: 'state_conflict',
+        message:
+          'Project state has been modified by another caller. Please refetch and retry.',
+      },
+      409,
+      corsHeaders,
+      requestId,
+      { currentStateVersion },
+    )
+  }
 
   const now = new Date().toISOString()
   const verifiedQualifier: Qualifier = {
@@ -232,10 +312,22 @@ Deno.serve(async (req: Request) => {
     )
   }
 
-  const { error: upErr } = await serviceClient
+  // Optimistic-lock UPDATE. The .eq('state_version', currentStateVersion)
+  // predicate is the race fix: if a concurrent writer (another verify,
+  // a SuggestionCard add, or a chat-turn commit) lands between our
+  // SELECT and UPDATE, the BEFORE-UPDATE trigger from migration 0033
+  // has already incremented state_version and our predicate fails;
+  // .select() returns zero rows and we emit state.conflict + 409.
+  // The legacy fall-back path (no expectedStateVersion sent) STILL
+  // uses currentStateVersion as the predicate so both paths benefit
+  // from the in-Edge race window protection — only the SPA-vs-server
+  // race window stays open for legacy callers.
+  const { data: updatedRows, error: upErr } = await serviceClient
     .from('projects')
     .update({ state: next, updated_at: now })
     .eq('id', body.projectId)
+    .eq('state_version', currentStateVersion)
+    .select('id, state_version')
   if (upErr) {
     return jsonError(
       { code: 'persistence_failed', message: upErr.message },
@@ -243,6 +335,68 @@ Deno.serve(async (req: Request) => {
       corsHeaders,
       requestId,
     )
+  }
+  if (!updatedRows || updatedRows.length === 0) {
+    // Race lost — re-read the current version for the conflict response.
+    const { data: latest } = await serviceClient
+      .from('projects')
+      .select('state_version')
+      .eq('id', body.projectId)
+      .maybeSingle()
+    const latestVersion =
+      (latest as { state_version?: number } | null)?.state_version ?? currentStateVersion
+    void emitStateConflict(serviceClient, {
+      requestId,
+      userId: userData.user.id,
+      projectId: body.projectId,
+      field: body.field,
+      itemId: body.itemId,
+      expectedStateVersion: expectedStateVersion ?? currentStateVersion,
+      currentStateVersion: latestVersion,
+      reason: 'update_predicate_failed',
+    })
+    return jsonError(
+      {
+        code: 'state_conflict',
+        message:
+          'Project state has been modified by another caller. Please refetch and retry.',
+      },
+      409,
+      corsHeaders,
+      requestId,
+      { currentStateVersion: latestVersion },
+    )
+  }
+  const newStateVersion =
+    (updatedRows[0] as { state_version?: number }).state_version ?? currentStateVersion + 1
+
+  // Legacy-call telemetry: emit a deprecation warning when the SPA
+  // didn't send expectedStateVersion. After v1.0.6 deploy we expect
+  // this counter to drop to zero; v1.0.7 flips the field to required.
+  if (expectedStateVersion === null) {
+    void serviceClient
+      .from('event_log')
+      .insert({
+        session_id: requestId,
+        user_id: userData.user.id,
+        project_id: body.projectId,
+        source: 'system',
+        name: 'verify-fact.legacy_no_version',
+        attributes: {
+          field: body.field,
+          item_id: body.itemId,
+          assumed_version: currentStateVersion,
+        },
+        client_ts: now,
+        trace_id: null,
+      })
+      .then(({ error }) => {
+        if (error) {
+          console.warn(
+            `[verify-fact] [${requestId}] legacy-call event_log insert failed: ${error.message}`,
+          )
+        }
+      })
   }
 
   void serviceClient
@@ -280,6 +434,7 @@ Deno.serve(async (req: Request) => {
       projectId: body.projectId,
       field: body.field,
       itemId: body.itemId,
+      stateVersion: newStateVersion,
       requestId,
     }),
     {
@@ -342,12 +497,55 @@ function jsonError(
   status: number,
   corsHeaders: Record<string, string>,
   requestId: string,
+  extra?: Record<string, unknown>,
 ): Response {
   return new Response(
-    JSON.stringify({ ok: false, error, requestId }),
+    JSON.stringify({ ok: false, error, requestId, ...(extra ?? {}) }),
     {
       status,
       headers: { 'Content-Type': 'application/json', ...corsHeaders },
     },
   )
+}
+
+/**
+ * Best-effort `state.conflict` event_log emit. Voided so the caller
+ * can fire-and-forget — the 409 response is the contract; the event is
+ * for telemetry only and must never affect user-visible behavior on
+ * insert failure (mirrors qualifier.protect's warn-and-continue).
+ */
+async function emitStateConflict(
+  serviceClient: ReturnType<typeof createClient>,
+  args: {
+    requestId: string
+    userId: string
+    projectId: string
+    field: string
+    itemId: string
+    expectedStateVersion: number
+    currentStateVersion: number
+    reason: 'pre_update_version_mismatch' | 'update_predicate_failed'
+  },
+): Promise<void> {
+  const { error } = await serviceClient.from('event_log').insert({
+    session_id: args.requestId,
+    user_id: args.userId,
+    project_id: args.projectId,
+    source: 'system',
+    name: 'state.conflict',
+    attributes: {
+      field: args.field,
+      item_id: args.itemId,
+      expected_state_version: args.expectedStateVersion,
+      current_state_version: args.currentStateVersion,
+      reason: args.reason,
+    },
+    client_ts: new Date().toISOString(),
+    trace_id: null,
+  })
+  if (error) {
+    console.warn(
+      `[verify-fact] [${args.requestId}] state.conflict event_log insert failed: ${error.message}`,
+    )
+  }
 }

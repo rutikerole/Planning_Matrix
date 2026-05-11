@@ -696,6 +696,203 @@ function gateQualifiersByRoleJS(toolInput, callerRole) {
   return events
 }
 
+// ── v1.0.6 Phase A — Mode-2 protection (JS port for fixtures) ─────────
+//
+// Drift between this and src/lib/projectStateHelpers.ts's
+// protectVerifiedQualifiers would be a bug. The drift fixture above
+// asserts the helper exists in the source; this JS port lets the
+// algorithmic fixture below verify the strip-on-verified semantics
+// without needing a Deno/TS runtime in the smoke harness.
+
+function protectVerifiedQualifiersJS(currentState, toolInput) {
+  const events = []
+  const isVerified = (q) => q?.source === 'DESIGNER' && q?.quality === 'VERIFIED'
+  const factsByKey = new Map((currentState.facts ?? []).map((f) => [f.key, f]))
+  const recsById = new Map(
+    (currentState.recommendations ?? []).map((r) => [r.id, r]),
+  )
+  const procsById = new Map((currentState.procedures ?? []).map((p) => [p.id, p]))
+  const docsById = new Map((currentState.documents ?? []).map((d) => [d.id, d]))
+  const rolesById = new Map((currentState.roles ?? []).map((r) => [r.id, r]))
+
+  if (toolInput.extracted_facts?.length) {
+    toolInput.extracted_facts = toolInput.extracted_facts.filter((d) => {
+      const cur = factsByKey.get(d.key)
+      if (cur && isVerified(cur.qualifier)) {
+        events.push({ field: 'extracted_fact', item_id: d.key })
+        return false
+      }
+      return true
+    })
+  }
+  if (toolInput.recommendations_delta?.length) {
+    toolInput.recommendations_delta = toolInput.recommendations_delta.filter((d) => {
+      const cur = recsById.get(d.id)
+      if (cur && isVerified(cur.qualifier)) {
+        events.push({ field: 'recommendation', item_id: d.id })
+        return false
+      }
+      return true
+    })
+  }
+  if (toolInput.procedures_delta?.length) {
+    toolInput.procedures_delta = toolInput.procedures_delta.filter((d) => {
+      const cur = procsById.get(d.id)
+      if (cur && isVerified(cur.qualifier)) {
+        events.push({ field: 'procedure', item_id: d.id })
+        return false
+      }
+      return true
+    })
+  }
+  if (toolInput.documents_delta?.length) {
+    toolInput.documents_delta = toolInput.documents_delta.filter((d) => {
+      const cur = docsById.get(d.id)
+      if (cur && isVerified(cur.qualifier)) {
+        events.push({ field: 'document', item_id: d.id })
+        return false
+      }
+      return true
+    })
+  }
+  if (toolInput.roles_delta?.length) {
+    toolInput.roles_delta = toolInput.roles_delta.filter((d) => {
+      const cur = rolesById.get(d.id)
+      if (cur && isVerified(cur.qualifier)) {
+        events.push({ field: 'role', item_id: d.id })
+        return false
+      }
+      return true
+    })
+  }
+  return events
+}
+
+const PROTECT_FIXTURES = [
+  {
+    label:
+      'AI upsert against verified fact → dropped (no value-clobber, 1 event)',
+    state: {
+      facts: [
+        {
+          key: 'site.height',
+          value: 6.8,
+          qualifier: { source: 'DESIGNER', quality: 'VERIFIED' },
+        },
+      ],
+    },
+    input: {
+      extracted_facts: [
+        { key: 'site.height', value: 9.9, source: 'LEGAL', quality: 'CALCULATED' },
+      ],
+    },
+    expectEventCount: 1,
+    expectRemainingFacts: 0,
+  },
+  {
+    label: 'AI upsert against unverified fact → passes through (0 events)',
+    state: {
+      facts: [
+        {
+          key: 'site.height',
+          value: 6.8,
+          qualifier: { source: 'CLIENT', quality: 'ASSUMED' },
+        },
+      ],
+    },
+    input: {
+      extracted_facts: [
+        { key: 'site.height', value: 9.9, source: 'LEGAL', quality: 'CALCULATED' },
+      ],
+    },
+    expectEventCount: 0,
+    expectRemainingFacts: 1,
+  },
+  {
+    label: 'AI upsert against verified recommendation → dropped',
+    state: {
+      recommendations: [
+        { id: 'rec-1', qualifier: { source: 'DESIGNER', quality: 'VERIFIED' } },
+      ],
+    },
+    input: {
+      recommendations_delta: [
+        {
+          op: 'upsert',
+          id: 'rec-1',
+          title_de: 'Hijack',
+          qualifier: { source: 'LEGAL', quality: 'CALCULATED' },
+        },
+      ],
+    },
+    expectEventCount: 1,
+    expectRemainingRecs: 0,
+  },
+  {
+    label: 'AI remove against verified procedure → dropped',
+    state: {
+      procedures: [
+        { id: 'p-1', qualifier: { source: 'DESIGNER', quality: 'VERIFIED' } },
+      ],
+    },
+    input: {
+      procedures_delta: [{ op: 'remove', id: 'p-1' }],
+    },
+    expectEventCount: 1,
+    expectRemainingProcs: 0,
+  },
+  {
+    label: 'AI upsert against unrelated fact-id → passes through',
+    state: {
+      facts: [
+        {
+          key: 'site.height',
+          value: 6.8,
+          qualifier: { source: 'DESIGNER', quality: 'VERIFIED' },
+        },
+      ],
+    },
+    input: {
+      extracted_facts: [
+        { key: 'site.area', value: 250, source: 'LEGAL', quality: 'CALCULATED' },
+      ],
+    },
+    expectEventCount: 0,
+    expectRemainingFacts: 1,
+  },
+  {
+    label: 'mixed: 1 verified + 1 unverified upsert → 1 dropped, 1 kept',
+    state: {
+      documents: [
+        { id: 'doc-locked', qualifier: { source: 'DESIGNER', quality: 'VERIFIED' } },
+        { id: 'doc-open', qualifier: { source: 'LEGAL', quality: 'CALCULATED' } },
+      ],
+    },
+    input: {
+      documents_delta: [
+        { op: 'upsert', id: 'doc-locked', title_de: 'Hijack' },
+        { op: 'upsert', id: 'doc-open', title_de: 'OK' },
+      ],
+    },
+    expectEventCount: 1,
+    expectRemainingDocs: 1,
+  },
+  {
+    label:
+      'helper-level fix vs streaming-only: same protect events for SSE+JSON paths',
+    state: {
+      roles: [
+        { id: 'role-locked', qualifier: { source: 'DESIGNER', quality: 'VERIFIED' } },
+      ],
+    },
+    input: {
+      roles_delta: [{ op: 'upsert', id: 'role-locked', rationale_de: 'AI try' }],
+    },
+    expectEventCount: 1,
+    expectRemainingRoles: 0,
+  },
+]
+
 const QUALIFIER_GATE_FIXTURES = [
   {
     label: 'client + DESIGNER+VERIFIED extracted_fact → 1 downgrade event',
@@ -2043,6 +2240,175 @@ async function runStaticGate() {
     },
   ]))
 
+  // ── v1.0.6 Phase A — POST_V1_AUDIT C1 drift fixtures ─────────────
+  //
+  // Five drift checks that fail if Phase A's wiring regresses:
+  //   1. migration 0033 declares state_version + the increment trigger.
+  //   2. verify-fact reads state_version from projects, accepts
+  //      expectedStateVersion, and writes WHERE state_version = $expected.
+  //   3. verify-fact emits state.conflict event_log row on race.
+  //   4. projectStateHelpers.ts exports protectVerifiedQualifiers AND
+  //      both chat-turn entry points call it before applyToolInputToState.
+  //   5. SPA verifyFactClient + VerificationPanel send
+  //      expectedStateVersion + handle the 409 conflict toast.
+
+  const migration0033 = await readFileText(
+    'supabase/migrations/0033_projects_state_version.sql',
+  )
+  results.push(failures('v1.0.6 C1: 0033_projects_state_version.sql shape', [
+    {
+      ok: /add column if not exists state_version bigint not null default 0/i.test(
+        migration0033,
+      ),
+      msg: '0033 must add state_version BIGINT NOT NULL DEFAULT 0 to public.projects',
+    },
+    {
+      ok: /create or replace function public\.bump_projects_state_version/.test(
+        migration0033,
+      ),
+      msg: '0033 must define the bump_projects_state_version() trigger function',
+    },
+    {
+      ok: /create trigger projects_bump_state_version[\s\S]{0,200}before update on public\.projects/i.test(
+        migration0033,
+      ),
+      msg: '0033 must wire the BEFORE-UPDATE trigger on public.projects',
+    },
+    {
+      ok: /set search_path = ''/i.test(migration0033),
+      msg: '0033 trigger function must set search_path = \'\' (Supabase 2026 hardening)',
+    },
+    {
+      ok: /is distinct from old\.state/i.test(migration0033),
+      msg: '0033 trigger must compare new.state IS DISTINCT FROM old.state to avoid spurious bumps',
+    },
+  ]))
+
+  // verifyFactSrc is already loaded earlier in the static gate (Phase 13
+  // Week 3 share/verify drift block). Strip line-comments so explanatory
+  // blocks don't false-match the regexes (mirror the pattern used
+  // elsewhere for chat-turn drift).
+  const verifyFactCode = verifyFactSrc.replace(/^\s*\/\/.*$/gm, '')
+  results.push(failures('v1.0.6 C1: verify-fact optimistic-lock wired', [
+    {
+      ok: /\.select\(['"][^'"]*state_version[^'"]*['"]\)/.test(verifyFactCode),
+      msg: 'verify-fact must SELECT state_version alongside state',
+    },
+    {
+      ok: /expectedStateVersion/.test(verifyFactCode),
+      msg: 'verify-fact must accept expectedStateVersion in the request body',
+    },
+    {
+      ok: /\.eq\(['"]state_version['"],\s*currentStateVersion\)/.test(verifyFactCode),
+      msg: 'verify-fact must UPDATE WHERE state_version = currentStateVersion (the race-fix predicate)',
+    },
+    {
+      ok: /code:\s*['"]state_conflict['"]/.test(verifyFactCode) &&
+        /409/.test(verifyFactCode),
+      msg: 'verify-fact must return code=state_conflict with HTTP 409 on race',
+    },
+    {
+      ok: /name:\s*['"]state\.conflict['"]/.test(verifyFactCode),
+      msg: 'verify-fact must emit state.conflict event_log rows on race',
+    },
+  ]))
+
+  const helpersSrc = await readFileText('src/lib/projectStateHelpers.ts')
+  const helpersCode = helpersSrc.replace(/^\s*\/\/.*$/gm, '')
+  results.push(failures('v1.0.6 C1 Mode-2: protectVerifiedQualifiers helper', [
+    {
+      ok: /export\s+function\s+protectVerifiedQualifiers/.test(helpersSrc),
+      msg: 'projectStateHelpers must export protectVerifiedQualifiers',
+    },
+    {
+      ok: /QualifierProtectEvent/.test(helpersSrc),
+      msg: 'protectVerifiedQualifiers must declare QualifierProtectEvent shape',
+    },
+    {
+      ok:
+        /source.*===.*['"]DESIGNER['"]/.test(helpersCode) &&
+        /quality.*===.*['"]VERIFIED['"]/.test(helpersCode),
+      msg: 'helper must check current qualifier == DESIGNER+VERIFIED',
+    },
+  ]))
+
+  const indexSrc = await readFileText('supabase/functions/chat-turn/index.ts')
+  const indexCode = indexSrc.replace(/^\s*\/\/.*$/gm, '')
+  results.push(failures('v1.0.6 C1 Mode-2: chat-turn JSON path wires protect', [
+    {
+      ok: /protectVerifiedQualifiers\s*\(/.test(indexCode),
+      msg: 'index.ts must call protectVerifiedQualifiers',
+    },
+    {
+      ok:
+        indexCode.indexOf('protectVerifiedQualifiers') > 0 &&
+        indexCode.indexOf('protectVerifiedQualifiers') <
+          indexCode.indexOf('applyToolInputToState(currentState, toolInput)'),
+      msg: 'protectVerifiedQualifiers must run BEFORE applyToolInputToState',
+    },
+    {
+      ok: /name:\s*['"]qualifier\.protect['"]/.test(indexCode),
+      msg: 'index.ts must emit qualifier.protect event_log rows',
+    },
+  ]))
+
+  const streamingSrc = await readFileText('supabase/functions/chat-turn/streaming.ts')
+  const streamingCode = streamingSrc.replace(/^\s*\/\/.*$/gm, '')
+  results.push(failures('v1.0.6 C1 Mode-2: chat-turn SSE path wires protect', [
+    {
+      ok: /protectVerifiedQualifiers\s*\(/.test(streamingCode),
+      msg: 'streaming.ts must call protectVerifiedQualifiers',
+    },
+    {
+      ok:
+        streamingCode.indexOf('protectVerifiedQualifiers') > 0 &&
+        streamingCode.indexOf('protectVerifiedQualifiers') <
+          streamingCode.indexOf('applyToolInputToState(args.currentState, toolInput)'),
+      msg: 'streaming.ts must call protectVerifiedQualifiers BEFORE applyToolInputToState',
+    },
+    {
+      ok: /name:\s*['"]qualifier\.protect['"]/.test(streamingCode),
+      msg: 'streaming.ts must emit qualifier.protect event_log rows',
+    },
+  ]))
+
+  const verifyClientSrc = await readFileText('src/features/architect/lib/verifyFactClient.ts')
+  results.push(failures('v1.0.6 C1: verifyFactClient sends expectedStateVersion', [
+    {
+      ok: /expectedStateVersion\?:\s*number/.test(verifyClientSrc),
+      msg: 'VerifyFactRequest must include expectedStateVersion?: number',
+    },
+    {
+      ok: /currentStateVersion\?:\s*number/.test(verifyClientSrc),
+      msg: 'VerifyFactFailure must surface currentStateVersion on 409',
+    },
+  ]))
+
+  const verifyPanelSrc = await readFileText(
+    'src/features/architect/pages/VerificationPanel.tsx',
+  )
+  const verifyPanelCode = verifyPanelSrc.replace(/^\s*\/\/.*$/gm, '')
+  results.push(failures('v1.0.6 C1: VerificationPanel handles 409 conflict', [
+    {
+      ok: /state_version/.test(verifyPanelCode),
+      msg: 'VerificationPanel must select state_version from projects',
+    },
+    {
+      ok: /expectedStateVersion:\s*data\?\.state_version/.test(verifyPanelCode),
+      msg: 'VerificationPanel must pass expectedStateVersion: data?.state_version to verifyFact',
+    },
+    {
+      ok: /state_conflict/.test(verifyPanelCode),
+      msg: 'VerificationPanel must branch on result.error.code === "state_conflict"',
+    },
+    {
+      ok:
+        /Konflikt/.test(verifyPanelSrc) &&
+        /Conflict/.test(verifyPanelSrc),
+      msg: 'VerificationPanel conflict toast must include both DE ("Konflikt") and EN ("Conflict")',
+    },
+  ]))
+
   for (const f of QUALIFIER_GATE_FIXTURES) {
     // Deep-clone so cross-fixture mutation can't bleed through.
     const cloned = JSON.parse(JSON.stringify(f.input))
@@ -2061,6 +2427,54 @@ async function runStaticGate() {
       })
     }
     results.push(failures(`phase-13 fixture: ${f.label}`, conditions))
+  }
+
+  // ── v1.0.6 Phase A — algorithmic Mode-2 fixtures ──────────────────
+  // Drive the JS port of protectVerifiedQualifiers across pre/post
+  // shapes that mirror the worst-case AI-clobber attempts (verified
+  // fact value rewrite, verified recommendation hijack, verified
+  // procedure remove, mixed-batch keep-the-unverified). Drift between
+  // these expectations and the helper would be a real C1 regression.
+  for (const f of PROTECT_FIXTURES) {
+    const cloned = JSON.parse(JSON.stringify(f.input))
+    const events = protectVerifiedQualifiersJS(f.state, cloned)
+    const conditions = [
+      {
+        ok: events.length === f.expectEventCount,
+        msg: `expected ${f.expectEventCount} protect event(s); got ${events.length}: ${JSON.stringify(events)}`,
+      },
+    ]
+    if (f.expectRemainingFacts !== undefined) {
+      conditions.push({
+        ok: (cloned.extracted_facts ?? []).length === f.expectRemainingFacts,
+        msg: `expected ${f.expectRemainingFacts} remaining facts in delta; got ${(cloned.extracted_facts ?? []).length}`,
+      })
+    }
+    if (f.expectRemainingRecs !== undefined) {
+      conditions.push({
+        ok: (cloned.recommendations_delta ?? []).length === f.expectRemainingRecs,
+        msg: `expected ${f.expectRemainingRecs} remaining recommendation deltas; got ${(cloned.recommendations_delta ?? []).length}`,
+      })
+    }
+    if (f.expectRemainingProcs !== undefined) {
+      conditions.push({
+        ok: (cloned.procedures_delta ?? []).length === f.expectRemainingProcs,
+        msg: `expected ${f.expectRemainingProcs} remaining procedure deltas; got ${(cloned.procedures_delta ?? []).length}`,
+      })
+    }
+    if (f.expectRemainingDocs !== undefined) {
+      conditions.push({
+        ok: (cloned.documents_delta ?? []).length === f.expectRemainingDocs,
+        msg: `expected ${f.expectRemainingDocs} remaining document deltas; got ${(cloned.documents_delta ?? []).length}`,
+      })
+    }
+    if (f.expectRemainingRoles !== undefined) {
+      conditions.push({
+        ok: (cloned.roles_delta ?? []).length === f.expectRemainingRoles,
+        msg: `expected ${f.expectRemainingRoles} remaining role deltas; got ${(cloned.roles_delta ?? []).length}`,
+      })
+    }
+    results.push(failures(`v1.0.6 C1 protect: ${f.label}`, conditions))
   }
 
   return results
