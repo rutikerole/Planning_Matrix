@@ -2137,6 +2137,27 @@ async function runStaticGate() {
     },
   ]))
 
+  // ── v1.0.6 Bug 4 — confidence formula is fact-quality mix only ─────
+  // The legacy composite (0.65 × factScore + 0.35 × sectionScore)
+  // let a sectionScore=100 inflate a factScore=82 to ~94%, which is
+  // not defensible from 57% decided facts. Drop sectionScore weight
+  // to 0; factScore alone drives the headline number.
+  const computeConfidenceSrc = await readFileText('src/features/result/lib/computeConfidence.ts')
+  results.push(failures('v1.0.6 Bug 4: computeConfidence weights factScore at 1.0 and sectionScore at 0.0', [
+    {
+      ok: /const\s+FACT_WEIGHT\s*=\s*1\.0/.test(computeConfidenceSrc),
+      msg: 'FACT_WEIGHT must equal 1.0 (factScore is the sole composite driver)',
+    },
+    {
+      ok: /const\s+SECTION_WEIGHT\s*=\s*0\.0/.test(computeConfidenceSrc),
+      msg: 'SECTION_WEIGHT must equal 0.0 (section completeness no longer inflates the headline)',
+    },
+    {
+      ok: /v1\.0\.6\s+Bug\s+4/.test(computeConfidenceSrc),
+      msg: 'docstring must record v1.0.6 Bug 4 rationale (so future readers know the legacy 0.65/0.35 mix was deliberate to drop)',
+    },
+  ]))
+
   // ── v1.0.6 Bug 3 — spine reaches 100% on final_synthesis isDone ────
   // The legacy useChamberProgress hook only boosted to 95% via a
   // transient `ready_for_review` signal from a zustand store that
