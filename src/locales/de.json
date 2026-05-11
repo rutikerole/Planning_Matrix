@@ -836,6 +836,10 @@
       "mapHint": "Klicken Sie in die Karte, um eine andere Lage zu prüfen.",
       "mapWithoutPlot": "Ohne Grundstück arbeiten wir mit Annahmen.",
       "noPlot": "Ohne Grundstück können Bereich A (Planungsrecht) und C (sonstige Vorgaben) noch nicht ermittelt werden. Wir arbeiten mit Annahmen und markieren die Lücke.",
+      "bundesland": {
+        "label": "Bundesland",
+        "hint": "Aus der Adresse vorausgewählt — bei Bedarf anpassen."
+      },
       "bplan": {
         "loading": "Bebauungsplan wird geprüft…",
         "noneInner": "● Kein rechtsgültiger Bebauungsplan — Beurteilung nach § 34 BauGB.",

@@ -12,6 +12,31 @@ import { districtFromAddress } from '@/data/muenchenPlzDistricts'
 import type { BplanLookupResult } from '@/types/bplan'
 import type { GeocodeResult } from './PlotMap/geocode'
 import { useEventEmitter } from '@/hooks/useEventEmitter'
+import type { BundeslandCode } from '@/legal/states/_types'
+
+// v1.0.6 (Bug 0 — B04 surgical mitigation) — wizard exposes explicit
+// Bundesland selection. Mapping is registry-code → bundesland-locale-key
+// (the existing locale namespace at locales/{de,en}.json:bundesland.*).
+// Full address-to-state inference is deferred to v1.1; this dropdown is
+// the operator-friendly stop-gap.
+const BUNDESLAND_OPTIONS: ReadonlyArray<{ code: BundeslandCode; labelKey: string }> = [
+  { code: 'bayern',         labelKey: 'bundesland.bayern' },
+  { code: 'bw',             labelKey: 'bundesland.baden_wuerttemberg' },
+  { code: 'berlin',         labelKey: 'bundesland.berlin' },
+  { code: 'brandenburg',    labelKey: 'bundesland.brandenburg' },
+  { code: 'bremen',         labelKey: 'bundesland.bremen' },
+  { code: 'hamburg',        labelKey: 'bundesland.hamburg' },
+  { code: 'hessen',         labelKey: 'bundesland.hessen' },
+  { code: 'mv',             labelKey: 'bundesland.mecklenburg_vorpommern' },
+  { code: 'niedersachsen',  labelKey: 'bundesland.niedersachsen' },
+  { code: 'nrw',            labelKey: 'bundesland.nordrhein_westfalen' },
+  { code: 'rlp',            labelKey: 'bundesland.rheinland_pfalz' },
+  { code: 'saarland',       labelKey: 'bundesland.saarland' },
+  { code: 'sachsen',        labelKey: 'bundesland.sachsen' },
+  { code: 'sachsen-anhalt', labelKey: 'bundesland.sachsen_anhalt' },
+  { code: 'sh',             labelKey: 'bundesland.schleswig_holstein' },
+  { code: 'thueringen',     labelKey: 'bundesland.thueringen' },
+] as const
 
 /**
  * Phase 7.10g — derive the popover's "PLANNING LAW" string from the
@@ -55,6 +80,9 @@ interface Props {
     intent: Intent
     hasPlot: boolean
     plotAddress: string | null
+    /** v1.0.6 (Bug 0 — B04 surgical mitigation) — wizard's explicit
+     *  Bundesland selection. Writes through to `projects.bundesland`. */
+    bundesland: BundeslandCode
     bplanResult: BplanLookupResult | null
     suggestedName: string | null
     /** Phase 5 — true when the user explicitly confirmed proceeding
@@ -103,8 +131,10 @@ export function QuestionPlot({ onSubmit, submitError }: Props) {
   const intent = useWizardState((s) => s.intent)
   const hasPlot = useWizardState((s) => s.hasPlot)
   const plotAddress = useWizardState((s) => s.plotAddress)
+  const bundesland = useWizardState((s) => s.bundesland)
   const setPlotChoice = useWizardState((s) => s.setPlotChoice)
   const setPlotAddress = useWizardState((s) => s.setPlotAddress)
+  const setBundesland = useWizardState((s) => s.setBundesland)
   const goBackToQ1 = useWizardState((s) => s.goBackToQ1)
 
   const addressInputRef = useRef<HTMLInputElement>(null)
@@ -243,6 +273,7 @@ export function QuestionPlot({ onSubmit, submitError }: Props) {
       intent,
       hasPlot: hasPlot === true,
       plotAddress: hasPlot === true ? plotAddress.trim() : null,
+      bundesland,
       bplanResult,
       suggestedName,
       outsideMunichAcknowledged:
@@ -360,6 +391,45 @@ export function QuestionPlot({ onSubmit, submitError }: Props) {
               </m.div>
             ) : null}
           </AnimatePresence>
+
+          {/* v1.0.6 (Bug 0 — B04 surgical mitigation) — explicit
+            * Bundesland selection. Renders whenever the user has
+            * picked Yes/No, so projects with "no plot" still get an
+            * accurate Bundesland on INSERT. Full address-to-state
+            * inference is deferred to v1.1; this dropdown is the
+            * operator-friendly stop-gap. */}
+          {hasPlot !== null ? (
+            <div className="flex flex-col gap-2">
+              <label
+                htmlFor="plot-bundesland"
+                className="font-mono text-[11px] uppercase tracking-[0.16em] text-pm-clay"
+              >
+                {t('wizard.q2.bundesland.label')}
+              </label>
+              <select
+                id="plot-bundesland"
+                value={bundesland}
+                onChange={(e) => {
+                  const next = e.target.value as BundeslandCode
+                  setBundesland(next)
+                  emit('bundesland_changed', { bundesland: next })
+                }}
+                className={cn(
+                  'w-full max-w-md border-0 border-b bg-transparent py-2 pr-2 font-sans text-[16px] text-pm-ink',
+                  'border-pm-hair-strong focus:border-pm-clay focus:outline-none focus:ring-0',
+                )}
+              >
+                {BUNDESLAND_OPTIONS.map((opt) => (
+                  <option key={opt.code} value={opt.code}>
+                    {t(opt.labelKey)}
+                  </option>
+                ))}
+              </select>
+              <p className="font-serif text-[13px] italic leading-relaxed text-pm-clay">
+                {t('wizard.q2.bundesland.hint')}
+              </p>
+            </div>
+          ) : null}
 
           <AnimatePresence initial={false}>
             {hasPlot === true ? (

@@ -836,6 +836,10 @@
       "mapHint": "Click on the map to inspect a different location.",
       "mapWithoutPlot": "Without a plot, we proceed with assumptions.",
       "noPlot": "Without a plot, areas A (planning law) and C (further requirements) cannot yet be assessed. We work with assumptions and flag the gap.",
+      "bundesland": {
+        "label": "Federal state",
+        "hint": "Pre-selected from the address — adjust if needed."
+      },
       "bplan": {
         "loading": "Checking the development plan…",
         "noneInner": "● No legally binding development plan — assessment under § 34 BauGB.",

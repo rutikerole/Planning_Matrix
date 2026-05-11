@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 import type { Intent } from '../lib/selectTemplate'
+import type { BundeslandCode } from '@/legal/states/_types'
 
 export type WizardStep = 1 | 2
 
@@ -9,11 +10,16 @@ interface WizardState {
   intent: Intent | null
   hasPlot: boolean | null
   plotAddress: string
+  /** v1.0.6 (Bug 0 — B04 surgical mitigation) — explicit Bundesland
+   *  selection in the wizard. Defaults to 'bayern' so existing München
+   *  flows are unchanged. Persisted alongside the other answers. */
+  bundesland: BundeslandCode
 
   setStep: (step: WizardStep) => void
   setIntent: (intent: Intent) => void
   setPlotChoice: (hasPlot: boolean) => void
   setPlotAddress: (address: string) => void
+  setBundesland: (bundesland: BundeslandCode) => void
   goBackToQ1: () => void
   reset: () => void
 }
@@ -23,6 +29,7 @@ const initialState = {
   intent: null,
   hasPlot: null,
   plotAddress: '',
+  bundesland: 'bayern' as BundeslandCode,
 }
 
 /**
@@ -44,6 +51,7 @@ export const useWizardState = create<WizardState>()(
       setPlotChoice: (hasPlot) =>
         set((s) => ({ hasPlot, plotAddress: hasPlot ? s.plotAddress : '' })),
       setPlotAddress: (plotAddress) => set({ plotAddress }),
+      setBundesland: (bundesland) => set({ bundesland }),
       goBackToQ1: () => set({ step: 1 }),
       reset: () => set({ ...initialState }),
     }),

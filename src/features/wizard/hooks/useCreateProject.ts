@@ -9,6 +9,7 @@ import type { Fact, ProjectState } from '@/types/projectState'
 import { initialProjectState } from '@/lib/projectStateHelpers'
 import { selectTemplate, type Intent } from '../lib/selectTemplate'
 import { deriveName } from '../lib/deriveName'
+import type { BundeslandCode } from '@/legal/states/_types'
 
 export type CreateProjectStatus =
   | 'idle'
@@ -22,6 +23,11 @@ interface CreateProjectInput {
   intent: Intent
   hasPlot: boolean
   plotAddress: string | null
+  /** v1.0.6 (Bug 0 — B04 surgical mitigation) — explicit Bundesland
+   *  selection from the wizard. Required input — wizard always passes
+   *  the user's selection (default 'bayern' when unchanged). Writes
+   *  through to `projects.bundesland`. */
+  bundesland: BundeslandCode
   bplanResult?: BplanLookupResult | null
   /** v3 — friendly auto-suggested project name. Falls back to
    *  deriveName(intent, address) when null. */
@@ -174,6 +180,12 @@ export function useCreateProject() {
           },
     }
 
+    // v1.0.6 (Bug 0 — B04 surgical mitigation) — write the wizard's
+    // explicit Bundesland selection to projects.bundesland. The legacy
+    // wizard hardcoded 'bayern' regardless of address, which made every
+    // non-Bayern project resolve to Bayern law downstream. `city` stays
+    // 'muenchen' only when the project is in Bayern, since the cityBlock
+    // pilot is München-only (other Bundesländer have no cityBlock yet).
     const { data: projectRow, error: insertErr } = await supabase
       .from('projects')
       .insert({
@@ -181,8 +193,8 @@ export function useCreateProject() {
         intent: input.intent,
         has_plot: input.hasPlot,
         plot_address: input.hasPlot ? input.plotAddress : null,
-        bundesland: 'bayern',
-        city: 'muenchen',
+        bundesland: input.bundesland,
+        city: input.bundesland === 'bayern' ? 'muenchen' : null,
         template_id: templateId,
         name:
           input.suggestedName?.trim() ||

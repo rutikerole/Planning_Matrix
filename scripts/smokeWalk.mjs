@@ -2063,6 +2063,80 @@ async function runStaticGate() {
     results.push(failures(`phase-13 fixture: ${f.label}`, conditions))
   }
 
+  // ── v1.0.6 Bug 0 — B04 surgical mitigation drift checks ────────────
+  // The legacy wizard hardcoded `bundesland: 'bayern'` on every
+  // projects INSERT, defeating the 16-state framework downstream. The
+  // v1.0.6 fix: the wizard exposes an explicit Bundesland dropdown and
+  // useCreateProject writes the user's selection through to the DB.
+  // Drift gates assert (a) the hardcode is gone from the INSERT call,
+  // (b) the wizard store carries a bundesland field, and (c) the
+  // QuestionPlot component renders the locale-keyed selector.
+  const createProjectSrc = await readFileText('src/features/wizard/hooks/useCreateProject.ts')
+  results.push(failures("v1.0.6 Bug 0: useCreateProject no longer hardcodes bundesland='bayern' on INSERT", [
+    {
+      ok: !/bundesland:\s*'bayern'/.test(createProjectSrc),
+      msg: "INSERT call must not contain literal `bundesland: 'bayern'` — read from input.bundesland instead",
+    },
+    {
+      ok: /bundesland:\s*input\.bundesland/.test(createProjectSrc),
+      msg: 'INSERT call must reference input.bundesland (typed BundeslandCode)',
+    },
+    {
+      ok: /BundeslandCode/.test(createProjectSrc),
+      msg: 'useCreateProject must import BundeslandCode for the typed input',
+    },
+  ]))
+  const wizardStoreSrc = await readFileText('src/features/wizard/hooks/useWizardState.ts')
+  results.push(failures('v1.0.6 Bug 0: wizard store carries bundesland field', [
+    {
+      ok: /bundesland:\s*BundeslandCode/.test(wizardStoreSrc),
+      msg: 'WizardState interface must declare bundesland: BundeslandCode',
+    },
+    {
+      ok: /setBundesland:/.test(wizardStoreSrc),
+      msg: 'WizardState must expose setBundesland setter',
+    },
+    {
+      ok: /bundesland:\s*'bayern'\s+as\s+BundeslandCode/.test(wizardStoreSrc),
+      msg: 'initial bundesland must default to bayern (preserves existing München flow)',
+    },
+  ]))
+  const questionPlotSrc = await readFileText('src/features/wizard/components/QuestionPlot.tsx')
+  results.push(failures('v1.0.6 Bug 0: QuestionPlot renders the Bundesland selector + emits in onSubmit', [
+    {
+      ok: /BUNDESLAND_OPTIONS/.test(questionPlotSrc),
+      msg: 'QuestionPlot must declare BUNDESLAND_OPTIONS list',
+    },
+    {
+      ok: /wizard\.q2\.bundesland\.label/.test(questionPlotSrc),
+      msg: 'QuestionPlot must render the bundesland.label locale key',
+    },
+    {
+      ok: /wizard\.q2\.bundesland\.hint/.test(questionPlotSrc),
+      msg: 'QuestionPlot must render the bundesland.hint locale key',
+    },
+    {
+      ok: /bundesland,\s*$/m.test(questionPlotSrc) || /bundesland,\n/.test(questionPlotSrc),
+      msg: 'QuestionPlot onSubmit payload must include bundesland',
+    },
+    {
+      ok: /BUNDESLAND_OPTIONS[\s\S]{0,2000}'bayern'[\s\S]{0,2000}'hessen'[\s\S]{0,2000}'nrw'/.test(questionPlotSrc),
+      msg: 'BUNDESLAND_OPTIONS must include bayern, hessen, nrw at minimum (sanity sample)',
+    },
+  ]))
+  const deLocaleSrc = await readFileText('src/locales/de.json')
+  const enLocaleSrc = await readFileText('src/locales/en.json')
+  results.push(failures('v1.0.6 Bug 0: locale keys for wizard.q2.bundesland present in DE + EN', [
+    {
+      ok: /"bundesland":\s*\{\s*"label":\s*"Bundesland"/.test(deLocaleSrc),
+      msg: 'de.json must define wizard.q2.bundesland.label = "Bundesland"',
+    },
+    {
+      ok: /"bundesland":\s*\{\s*"label":\s*"Federal state"/.test(enLocaleSrc),
+      msg: 'en.json must define wizard.q2.bundesland.label = "Federal state"',
+    },
+  ]))
+
   return results
 }
 
