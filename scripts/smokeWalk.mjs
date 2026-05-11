@@ -2137,6 +2137,60 @@ async function runStaticGate() {
     },
   ]))
 
+  // ── v1.0.8 W1 — architect E2E harness skeleton drift gate ──────────
+  // The harness lives at scripts/architect-e2e-smoke.mjs. It is NOT
+  // run as part of daily gates (it mutates live DB rows + requires
+  // operator-supplied JWTs). The drift gate asserts the harness is
+  // present, declares the 7 named phases, and exits gracefully on
+  // missing creds. Live runs are operator-triggered via
+  // `npm run smoke:architect-e2e`.
+  const archHarness = await readFileText('scripts/architect-e2e-smoke.mjs')
+  results.push(failures('v1.0.8 W1: architect-e2e harness declares all 7 phases', [
+    {
+      ok: /Phase 1 SETUP/.test(archHarness) && /service-role REST reachable/.test(archHarness),
+      msg: 'harness must include Phase 1 SETUP (service-role probe)',
+    },
+    {
+      ok: /Phase 2 PICK PROJECT/.test(archHarness),
+      msg: 'harness must include Phase 2 PICK PROJECT',
+    },
+    {
+      ok: /Phase 3 PROMOTE DESIGNER/.test(archHarness),
+      msg: 'harness must include Phase 3 PROMOTE DESIGNER',
+    },
+    {
+      ok: /Phase 4 GENERATE INVITE/.test(archHarness),
+      msg: 'harness must include Phase 4 GENERATE INVITE',
+    },
+    {
+      ok: /Phase 5 ACCEPT INVITE/.test(archHarness),
+      msg: 'harness must include Phase 5 ACCEPT INVITE',
+    },
+    {
+      ok: /Phase 6 VERIFY FACT/.test(archHarness),
+      msg: 'harness must include Phase 6 VERIFY FACT',
+    },
+    {
+      ok: /Phase 7 ASSERT FOOTER-HIDE LOGIC/.test(archHarness),
+      msg: 'harness must include Phase 7 ASSERT FOOTER-HIDE LOGIC',
+    },
+    {
+      ok: /Phase 8 TEARDOWN/.test(archHarness) && /--keep-side-effects/.test(archHarness),
+      msg: 'harness must include Phase 8 TEARDOWN with --keep-side-effects flag',
+    },
+    {
+      ok: /SUPABASE_SERVICE_ROLE_KEY/.test(archHarness) && /process\.exit\(2\)/.test(archHarness),
+      msg: 'harness must exit(2) when required env missing — defensive load',
+    },
+  ]))
+  const pkgJsonForW1 = await readFileText('package.json')
+  results.push(failures('v1.0.8 W1: package.json wires smoke:architect-e2e', [
+    {
+      ok: /smoke:architect-e2e/.test(pkgJsonForW1),
+      msg: 'package.json must declare the smoke:architect-e2e npm script',
+    },
+  ]))
+
   // ── v1.0.8 W2 — per-state ALLOWED_CITATIONS depth pin ──────────────
   // Phase 12 already delivered substantive content for NRW, BW,
   // Niedersachsen, Hessen (per Phase-12-grade commits f1c0aae,
