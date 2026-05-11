@@ -461,7 +461,7 @@ shipped in Phase 13 Week 4). What's missing is the cron harness
 
 ## 9. Operational responsibilities — split between engineering and client
 
-The **v1.0.6 tag is the production-ready release**. The version
+The **v1.0.7 tag is the production-ready release**. The version
 ladder:
   • v1.0   = engineering milestone (complete feature scope).
   • v1.0.1 = invite-flow security hardening (owner-check on share,
@@ -488,6 +488,33 @@ ladder:
   • v1.0.5 = Layer-C citation firewall (allowedCitations runtime
              positive-list enforcement; closes PROD_READINESS_AUDIT
              B3).
+  • v1.0.7 = post-v1.0.6 visibility-gap closure (4 commits). Rutik's
+             post-deploy observation showed v1.0.6 fixes shipped but
+             not visible on existing project 24c8fb67-… Investigation
+             confirmed no retroactive-apply gap; three root causes:
+             Bug 8 (P0): computeConfidence walked only state.facts
+             while DataQualityDonut walked all 5 qualifier-bearing
+             categories — header showed 91% vs donut's implied 82%.
+             Fix: aggregateQualifiers parity + donut-aligned grouping
+             (DECIDED 1.0 / CALCULATED+VERIFIED 0.85 / ASSUMED+UNKNOWN
+             0.4).
+             Bug 9 (P0): v1.0.6's spine completion gated on
+             final_synthesis.isDone (recommendations.length >= 3).
+             Existing projects with material result content but
+             < 3 recs still showed Round 9 · 41%. Fix: widened with
+             a fallback path (procedures >= 1 AND areasActive AND
+             recs >= 1 → spine 100%).
+             Bug 10 (P0): existing project mislabeled by B04 wizard
+             hardcode (bundesland='bayern' on Frankfurt address)
+             correctly served Bayern content; anti-leak fix didn't
+             apply because Bayern.ts is SHA-locked. Fix: Update
+             Bundesland pill in SpineHeader lets bauherr retroactively
+             correct mislabeled projects; mutation invalidates
+             project + messages queries so next chat turn composes
+             new state's systemBlock (including anti-leak override).
+             Bug 11 (docs): OPS_RUNBOOK § 9 documents the
+             deploy-verification probe so future tag verifications
+             don't loop. Bayern SHA preserved.
   • v1.0.6 = Hessen × T-03 smoke-walk bug-fix sprint (6 commits).
              Bug 0 (P0, B04 surgical mitigation): wizard exposes
              explicit Bundesland dropdown; useCreateProject writes

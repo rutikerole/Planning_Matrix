@@ -4,6 +4,66 @@
 > Bayern SHA `b18d3f7f9a6fe238c18cec5361d30ea3a547e46b1ef2b16a1e74c533aacb3471`
 > verified MATCH at start AND end of read pass. No code edits.
 
+## V1.0.7 RESOLVED FINDINGS — post-v1.0.6 visibility-gap closure
+
+Rutik's post-v1.0.6 live-deploy observation on existing Hessen
+project 24c8fb67-… showed three pre-fix-looking behaviours.
+Investigation confirmed v1.0.6 shipped correctly (deploy verified
+live; greppable markers present) but three root causes were
+distinct from "retroactive-apply gap":
+
+| # | Bug                                              | Severity | v1.0.7 commit                                 |
+| - | ------------------------------------------------ | -------- | --------------------------------------------- |
+| 8 | Confidence 91% vs expected 82%                   | P0       | `da235bf fix(confidence): widen scope to all 5 qualifier-bearing categories` |
+| 9 | Spine still 41% on existing project              | P0       | `dd049ec fix(spine): widen final-synthesis criterion — OR with material-result fallback` |
+| 10 | BayBO still cited on Hessen project              | P0       | `4d72900 fix(ui): Update Bundesland pill in SpineHeader` |
+| 11 | Deploy verification ambiguity                    | P1 docs  | `7a0a39b docs(deploy): add post-tag deploy-verification step to OPS_RUNBOOK` |
+
+Root causes (per the investigation surfaced to user before
+fixing — none matched the original spec framing):
+
+- **Bug 8** was a scope mismatch, not a formula bug.
+  `computeConfidence` walked only `state.facts`; the donut
+  walked all 5 qualifier-bearing categories. Switching
+  computeConfidence to `aggregateQualifiers` (same engine the
+  donut uses) made the two surfaces produce identical numbers.
+  Weighting now mirrors donut grouping exactly: DECIDED 1.0,
+  CALCULATED+VERIFIED 0.85, ASSUMED+UNKNOWN 0.4.
+
+- **Bug 9** was a criterion-too-narrow problem, not a
+  retroactive-apply gap. v1.0.6's spine completion gated on
+  `final_synthesis.isDone = recommendations.length >= 3`. The
+  Hessen project had fewer than 3 entries in
+  `state.recommendations` even though the persona had emitted
+  a Final Synthesis turn. v1.0.7 ORs the canonical criterion
+  with a "result page has material content" fallback
+  (procedures >= 1 AND any area state ACTIVE AND recs >= 1).
+
+- **Bug 10**'s "BayBO on Hessen" was correct behaviour given DB
+  state. The project's bundesland column read 'bayern' (B04
+  wizard hardcode at creation time, pre-v1.0.6). composeLegalContext
+  correctly loaded BAYERN_DELTA, which has no anti-leak block
+  (Bayern.ts is intentionally SHA-locked). The v1.0.6 anti-leak
+  fix gates on bundesland being non-Bayern. v1.0.7 adds an
+  Update Bundesland pill in SpineHeader so bauherr can
+  retroactively correct mislabeled projects; the mutation
+  invalidates project + messages queries so the next chat turn
+  composes the corrected state's systemBlock.
+
+- **Bug 11** was an investigative-loop avoidance task. OPS_RUNBOOK
+  § 9 now documents the deploy-verification probe (curl bundle +
+  last-modified, grep tag-introduced markers, compare to local
+  build) + browser cache guidance + escalation ladder.
+
+Bayern SHA `b18d3f7f9a6fe238c18cec5361d30ea3a547e46b1ef2b16a1e74c533aacb3471`
+held across all four v1.0.7 commits.
+
+The original spec's "Bug 7 retroactive-apply gap" was dissolved
+during investigation — three distinct issues, not one shared
+root cause.
+
+---
+
 ## V1.0.6 RESOLVED FINDINGS — Hessen × T-03 smoke-walk sprint
 
 The 2026-05-11 Hessen × T-03 hand-walk against live v1.0.5
