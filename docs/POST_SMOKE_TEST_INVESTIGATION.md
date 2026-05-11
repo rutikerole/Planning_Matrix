@@ -4,6 +4,32 @@
 > Bayern SHA `b18d3f7f9a6fe238c18cec5361d30ea3a547e46b1ef2b16a1e74c533aacb3471`
 > verified MATCH at start AND end of read pass. No code edits.
 
+## V1.0.6 RESOLVED FINDINGS — Hessen × T-03 smoke-walk sprint
+
+The 2026-05-11 Hessen × T-03 hand-walk against live v1.0.5
+surfaced 6 production-facing bugs that landed as v1.0.6:
+
+| # | Bug                                              | Severity | Resolution commit                           |
+| - | ------------------------------------------------ | -------- | ------------------------------------------- |
+| 0 | Wizard hardcodes `bundesland: 'bayern'` (B04)    | P0       | `ccf176e fix(wizard): explicit Bundesland selection` |
+| 1 | Cost computation shows "bayern factor" on Hessen | P0 → docs | Root cause was Bug 0; engine unchanged. Comment trail in `bc0b8ec docs(cost): record Bug 1 downgrade` |
+| 2 | PDF export missing 4 result-page sections        | P0       | `4776888 fix(pdf-export): add Costs/Timeline/Stakeholders/Recommendations + Vorläufig per page` |
+| 3 | Spine 41% while result renders fully             | P1       | `c4e2b8e fix(spine): mark spine 100% when final_synthesis is reached` |
+| 4 | Confidence 94% vs 57% decided                    | P1       | `d6a2777 fix(confidence): drop sectionScore weight; header = fact-quality mix only` |
+| 5+6 | Persona leads with BayBO on Hessen projects    | P1       | `8039966 fix(legal): anti-Bayern-leak override prepended to every non-Bayern state` |
+
+Bayern SHA `b18d3f7f9a6fe238c18cec5361d30ea3a547e46b1ef2b16a1e74c533aacb3471`
+held across all six commits.
+
+The mid-flight-bundesland-switch SERIOUS-1 below is **NOT closed by
+v1.0.6** — Bug 0 prevents the case from being reachable (the wizard
+now writes the correct Bundesland up front), but a manual
+`UPDATE projects SET bundesland = '<x>'` mid-conversation still has
+the conversational-dominance behaviour described below. Tracked for
+v1.1 as before.
+
+---
+
 ## TL;DR
 
 11 findings: **0 CRITICAL, 2 SERIOUS, 3 MINOR, 5 INFO, 1 RESOLVED-IN-V1.0.3.**

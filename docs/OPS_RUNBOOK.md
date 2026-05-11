@@ -277,21 +277,21 @@ looks like post-v1.
 
 ### B04 — `projects.bundesland` partly decorative
 
-- **Where:** `src/features/wizard/hooks/useCreateProject.ts:152`,
+- **Where:** previously `src/features/wizard/hooks/useCreateProject.ts:184`,
   hardcoded to `'bayern'`.
-- **Status as of v1:** the legal registry (`src/legal/legalRegistry.ts`)
-  IS bundesland-aware (Phase 11), and `src/legal/compose.ts` reads
-  the project's bundesland to assemble the right StateDelta. The
-  decorative-ness is at the WIZARD layer only — every project is
-  inserted with `bundesland='bayern'`.
-- **Impact:** non-Bayern projects can't be created via the wizard.
-  Acceptable for v1 because the manager confirmed "München-first"
-  scope. The minimum-stub StateDelta for the other 15 states only
-  fires if a project's bundesland flips to non-Bayern, which today
-  requires a manual UPDATE.
-- **Post-v1 fix path:** widen wizard B04 (a templated decision the
-  current spec keeps locked) to take a state from a dropdown, or
-  derive from the PLZ.
+- **v1.0.6 surgical mitigation:** wizard exposes an explicit
+  Bundesland dropdown in Q2 (`src/features/wizard/components/
+  QuestionPlot.tsx`); `useCreateProject` writes the user's selection
+  through to `projects.bundesland`. 16 options, default 'bayern'.
+  Hessen × T-03 re-walk against v1.0.6 confirms a project at
+  Frankfurt + bundesland=hessen lands `bundesland='hessen'` in DB.
+- **v1.1 scope:** full address-to-state inference (PLZ → Bundesland
+  + automatic preselection in the dropdown).
+- **Historical impact (closed in v1.0.6):** non-Bayern projects
+  couldn't be created via the wizard. The 5 substantive Phase-12
+  states and 11 stub StateDeltas were unreachable from production
+  traffic; every project resolved to BAYERN_DELTA. Hessen × T-03
+  smoke walk caught this empirically.
 
 ### B10 — Tracer FK ordering chronic
 
@@ -355,6 +355,31 @@ looks like post-v1.
   Bauherr-stated values.
 - **Post-v1 fix path:** DECIDED stays DECIDED with a warning event,
   not a downgrade. Discuss with manager before changing semantics.
+
+### B16 — Bayern leakage in non-Bayern persona output
+
+- **Where:** Bayern-SHA-locked layers `src/legal/personaBehaviour.ts`,
+  `src/legal/shared.ts`, `src/legal/federal.ts`,
+  `src/legal/templates/shared.ts`, plus all per-template files
+  (`src/legal/templates/t01..t08-*.ts`) embed Bayern-specific
+  examples (BayBO Art./Abs., München cityBlock references).
+- **Status as of v1.0.5:** Hessen × T-03 smoke walk against live
+  surfaced the persona reaching for `BayBO Art. 57 Abs. 3 Nr. 3`
+  as a "comparable" anchor on a Hessen project, even when active
+  Bundesland was correctly hessen at the prompt-prefix layer.
+- **v1.0.6 mitigation (CLOSED):** every non-Bayern state file
+  (`src/legal/states/*.ts`, 15 files) prepends a
+  `buildAntiBayernLeakBlock(...)` override that explicitly
+  invalidates Bayern examples for the active state. Per-state
+  systemBlocks load AFTER the cached Bayern prefix, so "later
+  instruction wins" semantics push the override in front of the
+  upstream Bayern examples. `bayern.ts` is intentionally untouched
+  (Bayern SHA `b18d3f7f9a6fe238c18cec5361d30ea3a547e46b1ef2b16a1e74c533aacb3471`
+  preserved). Helper: `src/legal/states/_antiBayernLeak.ts`.
+- **Residual gap (v1.1):** per-state T-01..T-08 supplements remain
+  unwritten — when persona drift recurs against a state with a
+  Bayern-only template, the supplement is the proper fix. Tracked
+  separately from B16's closure.
 
 ### Phase deferrals (12.5 / 14 / 15 / 16) — see HANDOFF.md
 

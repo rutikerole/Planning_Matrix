@@ -461,7 +461,7 @@ shipped in Phase 13 Week 4). What's missing is the cron harness
 
 ## 9. Operational responsibilities — split between engineering and client
 
-The **v1.0.5 tag is the production-ready release**. The version
+The **v1.0.6 tag is the production-ready release**. The version
 ladder:
   • v1.0   = engineering milestone (complete feature scope).
   • v1.0.1 = invite-flow security hardening (owner-check on share,
@@ -485,6 +485,35 @@ ladder:
              8 audit blockers closed; 7 items honestly deferred to
              v1.1 (see PROD_READINESS_AUDIT_v1.0.3.md resolution
              table).
+  • v1.0.5 = Layer-C citation firewall (allowedCitations runtime
+             positive-list enforcement; closes PROD_READINESS_AUDIT
+             B3).
+  • v1.0.6 = Hessen × T-03 smoke-walk bug-fix sprint (6 commits).
+             Bug 0 (P0, B04 surgical mitigation): wizard exposes
+             explicit Bundesland dropdown; useCreateProject writes
+             user selection through to projects.bundesland (legacy
+             behaviour was hardcoded 'bayern' regardless of address).
+             Full address-to-state inference deferred to v1.1.
+             Bug 2 (P0): PDF export gains Costs / Timeline /
+             Stakeholders / Recommendations sections + per-page
+             Vorläufig footer + TOC renumber I..X.
+             Bug 3 (P1): spine percent reaches 100% when
+             final_synthesis isDone (state.recommendations.length ≥ 3),
+             not just on the transient ready_for_review signal.
+             Bug 4 (P1): header confidence becomes fact-quality mix
+             only (FACT_WEIGHT 1.0 / SECTION_WEIGHT 0.0) so the
+             value tracks DataQualityDonut.
+             Bug 5+6 (P1): every non-Bayern state file prepends a
+             `buildAntiBayernLeakBlock(...)` override that explicitly
+             invalidates Bayern-specific examples from the
+             SHA-anchored persona/template shared layers. Bayern SHA
+             `b18d3f7f9a6fe238c18cec5361d30ea3a547e46b1ef2b16a1e74c533aacb3471`
+             held across all six fixes.
+             Bug 1 (P0 → downgraded): cost engine root cause was the
+             B04 wizard hardcode; fixed via Bug 0. Engine code
+             unchanged; residual Bayern wording in cost rationale
+             strings is accepted v1.0.6 leakage (per-state rationale
+             sets are v1.1 content scope).
 
 A second tier of work is the **client's operational
 responsibility** to action post-tag, before public traffic touches
