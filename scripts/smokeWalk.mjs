@@ -2322,6 +2322,32 @@ async function runStaticGate() {
     },
   ]))
 
+  // ── v1.0.16 Bug 32 — formatQualifier unified in pdfPrimitives ────
+  const primForBug32 = await readFileText('src/features/chat/lib/pdfPrimitives.ts')
+  const exportPdfForBug32 = await readFileText('src/features/chat/lib/exportPdf.ts')
+  results.push(failures('v1.0.16 Bug 32: formatQualifier unified in pdfPrimitives', [
+    {
+      ok: /export\s+function\s+formatQualifier\s*\(/.test(primForBug32),
+      msg: 'formatQualifier exported from pdfPrimitives',
+    },
+    {
+      ok: /DESIGNER[\s\S]{0,40}ASSUMED[\s\S]{0,80}LEGAL.{0,5}CALCULATED/.test(primForBug32),
+      msg: 'formatQualifier normalizes DESIGNER+ASSUMED → LEGAL · CALCULATED',
+    },
+    {
+      ok: !/function\s+formatRecommendationQualifier\s*\(/.test(exportPdfForBug32),
+      msg: 'exportPdf no longer defines its own formatRecommendationQualifier (moved to pdfPrimitives)',
+    },
+    {
+      ok: /import\s+\{[^}]*formatQualifier[^}]*\}\s+from\s+['"]\.\/pdfPrimitives['"]/s.test(exportPdfForBug32),
+      msg: 'exportPdf imports formatQualifier from ./pdfPrimitives',
+    },
+    {
+      ok: /formatQualifier\(src\.rec\.qualifier\)/.test(exportPdfForBug32),
+      msg: 'executive build path applies formatQualifier to persisted recommendation qualifiers',
+    },
+  ]))
+
   // ── v1.0.16 Bug 31 — Executive merges recs + smartPicks (top 3) ──
   const exportPdfForBug31 = await readFileText('src/features/chat/lib/exportPdf.ts')
   results.push(failures('v1.0.16 Bug 31: executive topThree merges recommendations + smartPicks', [
@@ -2760,23 +2786,27 @@ async function runStaticGate() {
   ]))
 
   // ── v1.0.12 Bugs 25 + 26 — PDF qualifier normalization + section numbering ─
+  // v1.0.16 Bug 32 moved the helper from exportPdf.ts to pdfPrimitives.ts
+  // and renamed it formatQualifier. Bug 32 fixture (above) pins the new
+  // home; this fixture confirms the recommendations loop still calls it.
   const exportPdfSrcForV12 = await readFileText('src/features/chat/lib/exportPdf.ts')
-  results.push(failures('v1.0.12 Bug 25: formatRecommendationQualifier normalizes DESIGNER+ASSUMED → LEGAL · CALCULATED', [
+  const primSrcForV12 = await readFileText('src/features/chat/lib/pdfPrimitives.ts')
+  results.push(failures('v1.0.12 Bug 25 + v1.0.16 Bug 32: formatQualifier normalizes DESIGNER+ASSUMED → LEGAL · CALCULATED', [
     {
-      ok: /function\s+formatRecommendationQualifier/.test(exportPdfSrcForV12),
-      msg: 'helper must be defined',
+      ok: /export\s+function\s+formatQualifier\s*\(/.test(primSrcForV12),
+      msg: 'helper must be exported from pdfPrimitives (v1.0.16 move)',
     },
     {
-      ok: /q\.source\s*===\s*'DESIGNER'\s*&&\s*q\.quality\s*===\s*'ASSUMED'/.test(exportPdfSrcForV12),
+      ok: /q\.source\s*===\s*'DESIGNER'\s*&&\s*q\.quality\s*===\s*'ASSUMED'/.test(primSrcForV12),
       msg: 'helper must guard the gate-downgrade case',
     },
     {
-      ok: /return\s+'LEGAL\s+·\s+CALCULATED'/.test(exportPdfSrcForV12),
+      ok: /return\s+'LEGAL\s+·\s+CALCULATED'/.test(primSrcForV12),
       msg: 'helper must map gate-downgrade to LEGAL · CALCULATED display',
     },
     {
-      ok: /formatRecommendationQualifier\(r\.qualifier\)/.test(exportPdfSrcForV12),
-      msg: 'recommendations loop must call the helper instead of inlining source · quality',
+      ok: /formatQualifier\(r\.qualifier\)/.test(exportPdfSrcForV12),
+      msg: 'Section VIII recommendations loop must call formatQualifier (renamed in v1.0.16)',
     },
   ]))
   results.push(failures('v1.0.12 Bug 26: section VI (Documents) always renders for gap-free I..X numbering', [

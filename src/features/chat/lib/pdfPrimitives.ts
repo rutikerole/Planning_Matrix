@@ -100,6 +100,37 @@ export function resolveSafeTextFn(usingFallback: boolean): SafeTextFn {
   return (s: string) => preventBrandLigatures(decomposeLigatures(s))
 }
 
+// v1.0.12 Bug 25 + v1.0.16 — shared qualifier display normalization.
+//
+// The Phase 13 §6.B.01 qualifier-write gate downgrades any persona-
+// emitted DESIGNER+VERIFIED claim to DESIGNER+ASSUMED (audit signal:
+// "model attempted designer-source on a derived rec without actual
+// architect verification"). Storing DESIGNER+ASSUMED is the right
+// audit state, but rendering "DESIGNER · ASSUMED" on PDF cards
+// mis-signals to the bauherr that an architect has touched the
+// project when none has.
+//
+// Render-time normalization: when source=DESIGNER + quality=ASSUMED
+// AND no actual designer verification has fired (the qualifier was
+// set by the gate's downgrade path, not by a human designer), display
+// as "LEGAL · CALCULATED" — the qualifier that matches the rec's
+// actual derivation provenance.
+//
+// v1.0.16 Bug 32 — moved from exportPdf.ts and exported so the
+// executive renderer + body Section VIII + future Phase 2C key-data
+// and recommendations renderers all share the same normalization.
+// Bug 32 surfaced when v1.0.15's executive page rendered raw
+// "DESIGNER · ASSUMED" because it bypassed this helper.
+export function formatQualifier(q: {
+  source: string
+  quality: string
+}): string {
+  if (q.source === 'DESIGNER' && q.quality === 'ASSUMED') {
+    return 'LEGAL · CALCULATED'
+  }
+  return `${q.source} · ${q.quality}`
+}
+
 /**
  * Resolve the editorial font trio from the brand-fonts loader.
  *

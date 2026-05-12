@@ -45,6 +45,7 @@ import {
 import {
   PAGE_HEIGHT as PDF_PAGE_HEIGHT,
   PAGE_WIDTH as PDF_PAGE_WIDTH,
+  formatQualifier,
   resolveEditorialFonts,
   resolveSafeTextFn,
 } from './pdfPrimitives'
@@ -304,7 +305,7 @@ export async function buildExportPdf({
           // exactly like Section VIII does (and like the result-page
           // SuggestionCard does).
           sourceLabel: src.rec.qualifier
-            ? formatRecommendationQualifier(src.rec.qualifier)
+            ? formatQualifier(src.rec.qualifier)
             : undefined,
         }
       }
@@ -549,7 +550,7 @@ export async function buildExportPdf({
       y -= 30
       recs.forEach((r, idx) => {
         const qualLabel = r.qualifier
-          ? formatRecommendationQualifier(r.qualifier)
+          ? formatQualifier(r.qualifier)
           : ''
         const result = drawScheduleEntry({
           doc,
@@ -832,40 +833,10 @@ function computeTocPageNumbers(
 
 // ── Page builders ──────────────────────────────────────────────────
 
-// v1.0.12 Bug 25 — recommendation qualifier display normalization.
-//
-// The Phase 13 §6.B.01 qualifier-write gate downgrades any persona-
-// emitted DESIGNER+VERIFIED claim to DESIGNER+ASSUMED (audit signal:
-// "model attempted designer-source on a derived rec without an
-// actual architect verification"). Storing DESIGNER+ASSUMED is the
-// right audit state — it preserves the attempted-but-blocked
-// posture — but rendering "DESIGNER · ASSUMED" on the result-page
-// recommendation card mis-signals to the bauherr that an architect
-// has touched the project when none has.
-//
-// Render-time normalization: when source=DESIGNER + quality=ASSUMED
-// AND no actual designer verification has fired (i.e., the qualifier
-// was set by the gate's downgrade path, not by a human designer),
-// display as "LEGAL · CALCULATED" — the qualifier that matches the
-// recommendation's actual derivation provenance (persona model
-// computation against state). The DB row is unchanged.
-//
-// Future enhancement: if state.designer_verifications gains an
-// explicit per-rec ledger, we can disambiguate "true DESIGNER+ASSUMED"
-// (architect explicitly assumed a value) from "gate-downgraded
-// DESIGNER+ASSUMED" (persona attempted DESIGNER+VERIFIED, gate
-// enforced ASSUMED). Until then, the safer assumption is
-// gate-downgraded — that's the only path that produces this state
-// today.
-function formatRecommendationQualifier(q: {
-  source: string
-  quality: string
-}): string {
-  if (q.source === 'DESIGNER' && q.quality === 'ASSUMED') {
-    return 'LEGAL · CALCULATED'
-  }
-  return `${q.source} · ${q.quality}`
-}
+// v1.0.16 Bug 32 — formatQualifier moved to
+// pdfPrimitives.ts and renamed formatQualifier so the executive
+// renderer + body Section VIII + future v1.0.17 renderers all
+// consume the same DESIGNER+ASSUMED → LEGAL · CALCULATED normalization.
 
 function startPage(doc: PDFDocument): { page: PDFPage; y: number } {
   const page = doc.addPage([PAGE_WIDTH, PAGE_HEIGHT])
