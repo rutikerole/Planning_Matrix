@@ -2153,6 +2153,40 @@ async function runStaticGate() {
     },
   ]))
 
+  // ── v1.0.13 — PDF Renaissance Part 1: TOC section renderer ────────
+  const tocSrc = await readFileText('src/features/chat/lib/pdfSections/toc.ts')
+  results.push(failures('v1.0.13: pdfSections/toc.ts exports renderTocPage with 11 entries', [
+    {
+      ok: /export function renderTocPage/.test(tocSrc),
+      msg: 'renderTocPage exported',
+    },
+    {
+      ok: /interface TocData/.test(tocSrc),
+      msg: 'TocData interface declared (page-number map)',
+    },
+    {
+      ok: /drawTocLine/.test(tocSrc),
+      msg: 'uses drawTocLine primitive (which composes drawDottedLeader internally)',
+    },
+    {
+      ok: /'01'.*'02'.*'03'.*'04'.*'05'.*'06'.*'07'.*'08'.*'09'.*'10'.*'11'/s.test(tocSrc),
+      msg: 'all 11 TOC entries declared',
+    },
+    {
+      ok: /toc\.entry\.1/.test(tocSrc) && /toc\.entry\.11/.test(tocSrc),
+      msg: 'TOC resolves toc.entry.1..11 i18n keys',
+    },
+    {
+      ok: /pageNumbers\.executive/.test(tocSrc) &&
+          /pageNumbers\.glossary/.test(tocSrc),
+      msg: 'page-number map covers executive through glossary',
+    },
+    {
+      ok: /drawFooter\(page,\s*\{/.test(tocSrc) && /footer\.preliminary/.test(tocSrc),
+      msg: 'TOC footer uses drawFooter primitive + preliminary i18n key',
+    },
+  ]))
+
   // ── v1.0.13 — PDF Renaissance Part 1: cover section renderer ──────
   const coverSrc = await readFileText('src/features/chat/lib/pdfSections/cover.ts')
   results.push(failures('v1.0.13: pdfSections/cover.ts exports renderCoverPage + helpers', [
