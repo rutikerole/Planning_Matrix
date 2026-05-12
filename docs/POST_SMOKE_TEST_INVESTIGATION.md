@@ -4,6 +4,67 @@
 > Bayern SHA `b18d3f7f9a6fe238c18cec5361d30ea3a547e46b1ef2b16a1e74c533aacb3471`
 > verified MATCH at start AND end of read pass. No code edits.
 
+## V1.0.13 SHIPPED — PDF Renaissance Part 1
+
+Foundations + cover + TOC + DE/EN export picker. Mixed-state PDF
+intentional: new cover + TOC are prototype-faithful, body sections
+remain v1.0.12 state and ship in v1.0.14+ Parts 2-4.
+
+| # | Workstream                                       | Commit                                                                  |
+| - | ------------------------------------------------ | ----------------------------------------------------------------------- |
+| 1 | Layout primitives module                         | `200b0d2 feat(pdf): layout primitives module`                           |
+| 2 | DE/EN locale string table                        | `74b66d2 feat(pdf): DE/EN locale string table`                          |
+| 3 | Cover page renderer                              | `7d4b504 feat(pdf): cover page renderer`                                |
+| 4 | TOC page renderer                                | `fb0f630 feat(pdf): TOC page renderer`                                  |
+| 5 | Assembly wire-up                                 | `db3d227 feat(pdf): wire cover + TOC into assembly`                     |
+| 6 | DE/EN export picker UI                           | `5ee2b23 feat(ui): DE/EN export picker in result ExportMenu`            |
+| 7 | This docs commit                                 | _self-reference_                                                        |
+
+Key design decisions:
+
+- **Path A for serif italic**: Instrument Serif Italic already in
+  public/fonts/ — zero font budget impact. v1.0.6+ fontLoader
+  already embeds it; v1.0.13 just uses it via the new
+  resolveEditorialFonts facade.
+- **Locale-strict resolver**: pdfStrings throws "[[MISSING: key]]"
+  sentinel rather than silently falling back EN. Missing
+  translations surface at smoke-test layer not at user export.
+- **§ citations preserved in German across locales** (mirrors
+  v1.0.6 anti-Bayern-leak helper pattern).
+- **TOC page-number approximation**: body sections still flow
+  inline (v1.0.12 behaviour, untouched); computeTocPageNumbers
+  heuristic in exportPdf.ts gives best-effort per-section indices.
+  v1.0.14+ replaces with real tracking when each section gets a
+  dedicated renderer.
+- **finalizePageFooters post-process**: cover + TOC render with
+  "X / ?" placeholders initially; after body completes and total
+  page count is known, the placeholder regions are masked with
+  PAPER and redrawn with correct "1 / N" / "2 / N".
+- **DE/EN export picker as two adjacent menu items**: simplest UI
+  surface change; UI locale orders which option appears first;
+  both always available. preferred_locale schema column persistence
+  is v1.0.14+ scope (needs migration).
+
+**v1.0.14+ backlog (continuation by sprint design — NOT
+deferred-by-giving-up):**
+- Renaissance Part 2: executive + areas + costs pages
+- Renaissance Part 3: timeline + procedures + team pages
+- Renaissance Part 4: key data + verification + glossary pages
+- Runtime smoke:pdf-text via pdf-parse devDep (5th daily gate)
+- Font subset script if Inter rebuild ever needed
+- Bug 17 [P2] team-tab Bayern hardcodes audit
+- Bug 20 [P2] procedure-tab caveat audit beyond v1.0.10
+- Bug 23 [P1] persona-output Schwabing/BLfD scrub
+
+Bayern SHA `b18d3f7f9a6fe238c18cec5361d30ea3a547e46b1ef2b16a1e74c533aacb3471`
+held across all 7 v1.0.13 commits.
+
+Rutik validates by re-exporting Königsallee in EN AND DE,
+eyeballing cover + TOC against the approved prototype mockup. Body
+sections remain v1.0.12 plain-text — that's expected this sprint.
+
+---
+
 ## V1.0.12 RESOLVED FINDINGS — PDF visible-space + numbering + qualifier display
 
 Empirical NRW × T-03 Königsallee re-export against v1.0.11

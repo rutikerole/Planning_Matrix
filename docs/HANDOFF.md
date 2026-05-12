@@ -461,7 +461,7 @@ shipped in Phase 13 Week 4). What's missing is the cron harness
 
 ## 9. Operational responsibilities — split between engineering and client
 
-The **v1.0.12 tag is the production-ready release**. The version
+The **v1.0.13 tag is the production-ready release**. The version
 ladder:
   • v1.0   = engineering milestone (complete feature scope).
   • v1.0.1 = invite-flow security hardening (owner-check on share,
@@ -488,6 +488,80 @@ ladder:
   • v1.0.5 = Layer-C citation firewall (allowedCitations runtime
              positive-list enforcement; closes PROD_READINESS_AUDIT
              B3).
+  • v1.0.13 = PDF Renaissance Part 1 — foundations + cover + TOC +
+              DE/EN export picker (7 commits + docs). Mixed-state
+              PDF intentional this sprint: new cover + TOC are
+              prototype-faithful, body sections (executive through
+              audit) remain in v1.0.12 plain-text state and ship
+              in v1.0.14+ (Parts 2-4) after Rutik's visual
+              checkpoint on this Part 1.
+              Layout primitives module (src/features/chat/lib/
+              pdfPrimitives.ts): PAPER/INK/CLAY color constants
+              matching design DNA tokens; A4 portrait page
+              constants; drawPaperBackground/drawHairline (0.5pt)/
+              drawDottedLeader (4pt spacing)/drawKicker (10pt
+              letter-spaced CLAY)/drawEditorialTitle (26pt italic
+              serif)/drawCoverTitle (36pt italic serif)/
+              drawMonoMeta/drawLabelValue/drawSectionHeader/
+              drawFooter/drawTocLine; resolveEditorialFonts facade
+              over loadBrandFonts. Path A chosen for serif italic:
+              Instrument Serif Italic already in public/fonts/,
+              zero font budget impact.
+              DE/EN string table (pdfStrings.ts): v1.0.13 keys for
+              cover + TOC + footer + template-intent labels; both
+              EN and DE tables required to declare matching key
+              sets (drift fixture pins parity); pdfStr accessor
+              surfaces missing keys as visible "[[MISSING: key]]"
+              sentinel rather than silent empty draw; § citations
+              stay German across locales per v1.0.6 anti-leak
+              pattern. Hardcoded-DE allowlist extended for
+              pdfStrings.ts (legal-domain DE half is canonical).
+              Cover page (pdfSections/cover.ts): 28×28 logo +
+              wordmark + tagline + right-aligned DOC NO / REVISION
+              monospace meta; centered editorial title 36pt italic
+              serif + address + 60pt INK hairline + 3-column
+              metadata grid (BUNDESLAND / TEMPLATE / CREATED) via
+              drawLabelValue; bottom CLAY hairline + 3-cell footer
+              (BAUHERR / PRELIMINARY / page X / Y). Deterministic
+              DOC NO via deriveDocNo (PM-YYYY-MMDD-XXX pattern);
+              locale-aware formatCoverDate ("12 May 2026" / "12.
+              Mai 2026").
+              TOC page (pdfSections/toc.ts): standard section
+              header (kicker + 26pt italic serif title) + 60pt INK
+              hairline accent + 11 TOC lines via drawTocLine
+              (monospace numeral + Inter Regular title + dotted
+              leader + tabular page ref) + standard footer.
+              Per-section page-number map approximated via
+              computeTocPageNumbers heuristic; v1.0.14+ replaces
+              with real per-section tracking.
+              Assembly wire-up (exportPdf.ts): cover (page 1) +
+              TOC (page 2) inserted ahead of body sections; body
+              shifts to pages 3+ unchanged from v1.0.12; v1.0.6
+              drawTitlePage + drawAxonometricGlyph removed
+              (renderCoverPage supersedes); finalizePageFooters
+              post-process masks placeholder "X / ?" footers with
+              PAPER and redraws correct "1 / N" / "2 / N"; existing
+              v1.0.6 footer loop skips pages 1+2 (cover + TOC
+              have their own MARGIN+14 footers).
+              DE/EN export picker (ExportMenu.tsx): single "PDF"
+              menu item split into two locale-explicit options
+              [PDF DE] and [PDF EN]; UI locale orders which appears
+              first but both always available; exportLang resolved
+              from action variant overrides i18n locale at export
+              time; export_pdf_succeeded telemetry event gains
+              `locale: exportLang` field. preferred_locale schema
+              column persistence intentionally deferred to v1.0.14+
+              (needs migration).
+              v1.0.14+ backlog (continuation by sprint design):
+              - Renaissance Part 2: executive + areas + costs pages
+              - Renaissance Part 3: timeline + procedures + team
+              - Renaissance Part 4: key data + verification + glossary
+              - Runtime smoke:pdf-text via pdf-parse devDep
+              - Font subset script if Inter rebuild needed
+              - Bug 17 [P2] team-tab Bayern hardcodes
+              - Bug 20 [P2] procedure-tab caveat audit
+              - Bug 23 [P1] persona-output Schwabing/BLfD scrub
+              Bayern SHA preserved.
   • v1.0.12 = PDF visible-space + numbering + qualifier-display
               cleanup (3 commits + docs). Empirical NRW × T-03
               Königsallee re-export against v1.0.11 surfaced that
