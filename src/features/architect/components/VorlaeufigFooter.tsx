@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import type { Quality, Source } from '@/types/projectState'
 
 interface VorlaeufigFooterProps {
@@ -41,22 +42,29 @@ export function VorlaeufigFooter({
   note,
   variant = 'card',
 }: VorlaeufigFooterProps) {
+  // v1.0.10 Bug 19 — was hardcoded German regardless of locale; now
+  // resolves through i18n. DE keeps the locked Phase 13 wording
+  // verbatim ("noch ausstehend" suffix preserved); EN provides the
+  // analogous translation. Heading + body are separate keys so the
+  // tag-style 'inline' variant can show "Vorläufig" / "Preliminary"
+  // on its own.
+  const { t } = useTranslation()
   if (!isPending(source, quality)) return null
 
-  const message =
-    'Vorläufig — bestätigt durch eine/n bauvorlageberechtigte/n Architekt/in noch ausstehend.'
+  const heading = t('result.workspace.preliminaryFooter.heading')
+  const message = t('result.workspace.preliminaryFooter.body')
 
   if (variant === 'inline') {
     return (
       <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-[hsl(var(--clay))]">
-        Vorläufig
+        {heading}
       </span>
     )
   }
   return (
     <div className="mt-3 border-t border-[hsl(var(--ink))]/10 pt-2">
       <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-[hsl(var(--clay))]">
-        Vorläufig
+        {heading}
       </p>
       <p className="mt-0.5 text-[12px] text-[hsl(var(--ink))]/65">
         {message}

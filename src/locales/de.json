@@ -1783,6 +1783,10 @@
       }
     },
     "workspace": {
+      "preliminaryFooter": {
+        "heading": "Vorläufig",
+        "body": "Vorläufig — bestätigt durch eine/n bauvorlageberechtigte/n Architekt/in noch ausstehend."
+      },
       "tabs": {
         "aria": "Briefing-Bereiche",
         "overview": "Übersicht",

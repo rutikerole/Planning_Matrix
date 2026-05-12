@@ -1784,14 +1784,30 @@ async function runStaticGate() {
   // Phase 13 Week 3 — surface-locked CTA copy must appear in the
   // VorlaeufigFooter component verbatim.
   const vorlaeufigSrc = await readFileText('src/features/architect/components/VorlaeufigFooter.tsx')
+  // v1.0.10 — the locked copy moved out of the component into the DE
+  // locale (result.workspace.preliminaryFooter.body) so EN locale
+  // users see the English equivalent. Drift gate now asserts BOTH
+  // (a) the component reads from i18n and (b) the DE locale still
+  // carries the verbatim locked wording.
+  const deLocaleForVorl = await readFileText('src/locales/de.json')
+  const enLocaleForVorl = await readFileText('src/locales/en.json')
   results.push(failures('phase-13 week 3: VorlaeufigFooter copy locked', [
     {
-      ok: /Vorl[äa]ufig/.test(vorlaeufigSrc),
-      msg: 'VorlaeufigFooter must surface the "Vorläufig" tag',
+      ok: /result\.workspace\.preliminaryFooter\.heading/.test(vorlaeufigSrc),
+      msg: 'VorlaeufigFooter must resolve heading via i18n (preliminaryFooter.heading key)',
     },
     {
-      ok: /bauvorlageberechtigte\/n Architekt\/in/.test(vorlaeufigSrc),
-      msg: 'VorlaeufigFooter must surface the locked architect copy',
+      ok: /result\.workspace\.preliminaryFooter\.body/.test(vorlaeufigSrc),
+      msg: 'VorlaeufigFooter must resolve body via i18n (preliminaryFooter.body key)',
+    },
+    {
+      ok: /bauvorlageberechtigte\/n Architekt\/in noch ausstehend/.test(deLocaleForVorl),
+      msg: 'de.json must keep the locked Phase-13 architect copy verbatim',
+    },
+    {
+      ok: /Preliminary\s+—?\s*pending confirmation by a certified architect/.test(enLocaleForVorl) ||
+          /Preliminary - pending confirmation by a certified architect/.test(enLocaleForVorl),
+      msg: 'en.json must define the analogous English Preliminary footer',
     },
   ]))
 

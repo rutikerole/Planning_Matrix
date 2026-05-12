@@ -1783,6 +1783,10 @@
       }
     },
     "workspace": {
+      "preliminaryFooter": {
+        "heading": "Preliminary",
+        "body": "Preliminary — pending confirmation by a certified architect (Bauvorlageberechtigte/r)."
+      },
       "tabs": {
         "aria": "Briefing sections",
         "overview": "Overview",
