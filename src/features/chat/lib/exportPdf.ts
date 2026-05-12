@@ -92,6 +92,13 @@ interface BuildArgs {
   messages: MessageRow[]
   events: ProjectEventRow[]
   lang: 'de' | 'en'
+  /** v1.0.14 Bug 29 — resolved display name for the project owner.
+   *  Resolved by the caller (ExportMenu) from profile.full_name /
+   *  user.user_metadata.full_name / user.email local-part, with
+   *  "Bauherr"/"Owner" as final fallback. Threading the resolution
+   *  here so the PDF composer stays a pure renderer (no Supabase
+   *  queries during PDF build). */
+  bauherrName?: string
 }
 
 // ── Color tokens (mirrored from globals.css) ───────────────────────
@@ -160,6 +167,7 @@ export async function buildExportPdf({
   project,
   events,
   lang,
+  bauherrName: bauherrNameArg,
 }: BuildArgs): Promise<Uint8Array> {
   const doc = await PDFDocument.create()
   doc.setTitle(`${project.name} — Planning Matrix`)
@@ -202,10 +210,12 @@ export async function buildExportPdf({
     projectTitleForCover,
   )
   const revision = pdfStr(pdfStrings, 'cover.revisionValue')
-  // ProjectRow has owner_id but no owner_name surface. v1.0.13 ships
-  // the localized "Bauherr" label as a placeholder; v1.0.14+ may
-  // join to profiles for the actual owner name.
-  const bauherrName = lang === 'de' ? 'Bauherr' : 'Owner'
+  // v1.0.14 Bug 29 — bauherrName resolved by caller (ExportMenu)
+  // from profile.full_name / user_metadata / email local-part with
+  // localized "Bauherr"/"Owner" as final fallback. PDF composer
+  // stays a pure renderer; no Supabase queries during build.
+  const bauherrName =
+    bauherrNameArg ?? (lang === 'de' ? 'Bauherr' : 'Owner')
 
   // Cover page (page 1). totalPages placeholder; finalizePageFooters
   // will rewrite once doc is fully built.

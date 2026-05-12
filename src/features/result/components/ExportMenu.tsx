@@ -15,6 +15,7 @@ import { buildExportJson } from '@/lib/export/exportJson'
 import type { MessageRow, ProjectRow } from '@/types/db'
 import { createShareToken } from '../lib/shareTokenApi'
 import { useEventEmitter } from '@/hooks/useEventEmitter'
+import { useAuthStore } from '@/stores/authStore'
 
 interface ProjectEventRow {
   id: string
@@ -55,6 +56,29 @@ export function ExportMenu({
   const lang = (i18n.resolvedLanguage ?? 'de') as 'de' | 'en'
   const [busy, setBusy] = useState<Action | null>(null)
   const resultEmit = useEventEmitter('result')
+  // v1.0.14 Bug 29 — resolve owner display name from auth profile
+  // for the PDF cover Bauherr footer. Fallback chain:
+  //   profile.full_name  →  user.user_metadata.full_name  →
+  //   email local-part (title-cased)  →  localized 'Bauherr'/'Owner'
+  // The fallback case is the v1.0.13 behaviour (which surfaced as
+  // the literal "Owner" string on Rutik's NRW × T-03 export).
+  const authUser = useAuthStore((s) => s.user)
+  const authProfile = useAuthStore((s) => s.profile)
+  const resolvedBauherrName = (() => {
+    const profileFullName = authProfile?.full_name?.trim()
+    if (profileFullName) return profileFullName
+    const metaFullName =
+      (authUser?.user_metadata?.full_name as string | undefined)?.trim() ??
+      (authUser?.user_metadata?.name as string | undefined)?.trim()
+    if (metaFullName) return metaFullName
+    const email = authUser?.email ?? ''
+    const local = email.split('@')[0]
+    if (local) {
+      // Title-case the local part (e.g., "erolerutik9" → "Erolerutik9")
+      return local.charAt(0).toUpperCase() + local.slice(1)
+    }
+    return lang === 'de' ? 'Bauherr' : 'Owner'
+  })()
 
   const trigger = async (action: Action) => {
     if (busy) return
@@ -75,6 +99,7 @@ export function ExportMenu({
           messages,
           events,
           lang: exportLang,
+          bauherrName: resolvedBauherrName,
         })
         download(
           new Blob([bytes as BlobPart], { type: 'application/pdf' }),

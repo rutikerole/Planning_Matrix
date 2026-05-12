@@ -2178,6 +2178,36 @@ async function runStaticGate() {
     },
   ]))
 
+  // ── v1.0.14 Bug 29 — Bauherr name resolution via auth profile ────
+  const exportMenuV14 = await readFileText('src/features/result/components/ExportMenu.tsx')
+  const exportPdfV14Bug29 = await readFileText('src/features/chat/lib/exportPdf.ts')
+  results.push(failures('v1.0.14 Bug 29: ExportMenu resolves Bauherr name + threads to buildExportPdf', [
+    {
+      ok: /useAuthStore/.test(exportMenuV14),
+      msg: 'ExportMenu must read from useAuthStore for profile/user data',
+    },
+    {
+      ok: /profile\.full_name|authProfile\?\.full_name/.test(exportMenuV14),
+      msg: 'ExportMenu must check profile.full_name first',
+    },
+    {
+      ok: /user_metadata\?\.full_name|user_metadata\.full_name/.test(exportMenuV14),
+      msg: 'ExportMenu must fall back to user.user_metadata.full_name',
+    },
+    {
+      ok: /bauherrName:\s*resolvedBauherrName/.test(exportMenuV14),
+      msg: 'ExportMenu must pass resolvedBauherrName to buildExportPdf',
+    },
+    {
+      ok: /bauherrName\?:\s*string/.test(exportPdfV14Bug29),
+      msg: 'BuildArgs must declare optional bauherrName',
+    },
+    {
+      ok: /bauherrNameArg\s*\?\?\s*\(lang\s*===\s*'de'\s*\?\s*'Bauherr'\s*:\s*'Owner'\)/.test(exportPdfV14Bug29),
+      msg: 'buildExportPdf must use bauherrNameArg with localized fallback',
+    },
+  ]))
+
   // ── v1.0.14 Bug 28 — cover/TOC footer split (Path A) ─────────────
   const coverSrcV14 = await readFileText('src/features/chat/lib/pdfSections/cover.ts')
   const tocSrcV14 = await readFileText('src/features/chat/lib/pdfSections/toc.ts')
