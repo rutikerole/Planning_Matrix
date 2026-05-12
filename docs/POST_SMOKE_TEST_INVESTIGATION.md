@@ -4,6 +4,53 @@
 > Bayern SHA `b18d3f7f9a6fe238c18cec5361d30ea3a547e46b1ef2b16a1e74c533aacb3471`
 > verified MATCH at start AND end of read pass. No code edits.
 
+## V1.0.10 RESOLVED FINDINGS — state-parameterization sprint
+
+Rutik's Düsseldorf NRW × T-03 walk on v1.0.9 (project
+5c610d71-…) confirmed the persona-chat layer is state-correct
+(BauO NRW citations, anti-leak in force, no BayBO leak in
+turn 1) but exposed Bayern hardcodes in the deterministic
+computation layers — cost engine, baseline procedure, locale
+caveats, donut rounding.
+
+| # | Bug                                            | Severity | v1.0.10 commit                                   |
+| - | ---------------------------------------------- | -------- | ------------------------------------------------ |
+| 14 | Cost rationales hardcode Bayern factor / BayBO Art. 62 / "Pflicht für Neubauten in Bayern" | P0 | `831fa87 fix(cost): state-parameterize cost rationales + locale caveats` |
+| 15 | Baseline procedure cites BayBO Art. 58 on NRW | P0 | `f6c4df8 fix(procedure): state-parameterize deriveBaselineProcedure + new state-localization registry` |
+| 16 | smartSuggestions bundeslaender filter case-mismatch (silently never fired) | P2 | `280b3ac fix(suggestions): Bayern bundeslaender filter case-mismatch — was silently never firing` |
+| 19 | VorlaeufigFooter hardcoded German on EN locale | P1 | `edabad3 fix(locale): VorlaeufigFooter respects i18n locale — EN parity for the legal-shield footer` |
+| 21 | DataQualityDonut percentages sum to 101       | P2 | `5641bf5 fix(donut): largest-remainder rounding so DataQuality slices sum to 100` |
+
+Foundation: `src/legal/stateLocalization.ts` (commit `f6c4df8`)
+— central 16-state registry providing
+procedure/structuralCert/monumentAuthority/chamber/cost-factor
+strings per Bundesland. Substantive states (Bayern, NRW, BW,
+Hessen, NS) carry verified §§ from Phase-12 ALLOWED_CITATIONS;
+11 stubs use a generic "your Land's LBO" framing — never a
+silent Bayern leak.
+
+**v1.0.11 backlog (intentionally deferred during the sprint scope-cut):**
+- Bug 17 (P2): Team-tab Bayern hardcodes audit — surface unchecked
+- Bug 18 (P1): PDF state-parameterization for procedure section
+  (the cost section now state-correct via Bug 14 threading;
+  baseline procedure cited in PDF derives from chat-turn so
+  benefits from Bug 15 transitively)
+- Bug 20 (P2): "Procedure & documents" tab caveat audit beyond
+  the two strings already de-Bayern'd in Bug 14
+- Bug 22 (P2): PDF font `fi` ligature corruption — "conċrmed"
+  in the cover footer. Likely Helvetica + WinAnsi mismatch even
+  after winAnsiSafe's `ﬁ` → `fi` mapping; needs deeper font
+  audit
+- "Schwabing/BLfD on non-Bayern projects" residual: the strings
+  come from PERSONA OUTPUT (LLM-generated state), not baseline
+  composers. v1.1 may strengthen the anti-leak block to forbid
+  Bayern entity names beyond just BayBO §§
+
+Bayern SHA `b18d3f7f9a6fe238c18cec5361d30ea3a547e46b1ef2b16a1e74c533aacb3471`
+held across all six v1.0.10 commits.
+
+---
+
 ## V1.0.9 RESOLVED FINDING — Düsseldorf NRW smoke walk
 
 Rutik ran a Düsseldorf NRW smoke against v1.0.8 and observed the

@@ -362,6 +362,27 @@ looks like post-v1.
 - **Post-v1 fix path:** DECIDED stays DECIDED with a warning event,
   not a downgrade. Discuss with manager before changing semantics.
 
+### B17-B22 — Deterministic-computation Bayern hardcodes (v1.0.10 closures)
+
+The v1.0.6 anti-leak fix patched the persona-prompt layer for
+non-Bayern projects. v1.0.10 closes the parallel set of bugs in
+the deterministic computation layers (cost engine, baseline
+procedure derivation, locale caveats, donut rounding) that were
+NOT covered by the anti-leak gate. Foundation: central per-state
+registry at `src/legal/stateLocalization.ts`.
+
+- B17/B14 (closed in v1.0.10 commit `831fa87`): cost-row rationales
+  state-parameterized via `findCostRationale(key, bundesland)`.
+- B18/B15 (closed in v1.0.10 commit `f6c4df8`): baseline procedure
+  derivation reads `getStateLocalization`; previously hardcoded
+  BayBO Art. 58/57/59.
+- B19 (closed in v1.0.10 commit `edabad3`): VorlaeufigFooter uses
+  i18n; EN parity added.
+- B20 / B22 (deferred to v1.0.11): PDF font ligature corruption
+  + remaining locale-caveat audit on the Procedure tab.
+- B21 (closed in v1.0.10 commit `5641bf5`): DataQualityDonut
+  Hamilton largest-remainder rounding.
+
 ### B16 — Bayern leakage in non-Bayern persona output
 
 - **Where:** Bayern-SHA-locked layers `src/legal/personaBehaviour.ts`,

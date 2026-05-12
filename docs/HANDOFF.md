@@ -461,7 +461,7 @@ shipped in Phase 13 Week 4). What's missing is the cron harness
 
 ## 9. Operational responsibilities — split between engineering and client
 
-The **v1.0.9 tag is the production-ready release**. The version
+The **v1.0.10 tag is the production-ready release**. The version
 ladder:
   • v1.0   = engineering milestone (complete feature scope).
   • v1.0.1 = invite-flow security hardening (owner-check on share,
@@ -488,6 +488,48 @@ ladder:
   • v1.0.5 = Layer-C citation firewall (allowedCitations runtime
              positive-list enforcement; closes PROD_READINESS_AUDIT
              B3).
+  • v1.0.10 = state-parameterization sprint (6 commits). The
+              Düsseldorf NRW × T-03 smoke walk on v1.0.9 surfaced
+              that the persona-chat layer was state-correct
+              (BauO NRW citations, anti-leak in force) but the
+              deterministic computation layers stayed Bayern-
+              hardcoded: cost rationales said "Bayern factor" /
+              "BayBO Art. 62" / "new builds in Bayern"; the
+              baseline procedure derivation cited BayBO Art. 58
+              on NRW; locale caveats said "typical Bayern fee
+              tables"; the DataQualityDonut summed slices to 101.
+              Closures:
+              Foundation: src/legal/stateLocalization.ts — central
+              16-state registry exposing procedure/structuralCert/
+              monumentAuthority/chamber/cost-factor strings per
+              Bundesland. Substantive states (Bayern, NRW, BW,
+              Hessen, NS) carry verified §§ from Phase-12
+              ALLOWED_CITATIONS; 11 stubs fall back to a generic
+              "your Land's LBO" framing — never a silent Bayern
+              leak.
+              Bug 14: cost rationales state-parameterized via
+              getStateLocalization (structuralCert + surveying +
+              cost-factor per state).
+              Bug 15: deriveBaselineProcedure reads the registry;
+              "void bundesland" sentinel removed; Bayern projects
+              unchanged.
+              Bug 16: smartSuggestions bundeslaender case-mismatch
+              ('Bayern' → 'bayern') — filter was broken since
+              v1.0.0; suggestions never fired on any project. Now
+              Bayern projects receive Bayern-tagged suggestions
+              correctly.
+              Bug 19: VorlaeufigFooter respects i18n locale —
+              EN parity added; DE keeps the locked Phase-13 wording
+              verbatim.
+              Bug 21: DataQualityDonut uses Hamilton largest-
+              remainder rounding so the 3 legend percents sum to
+              exactly 100.
+              v1.0.11 backlog (deferred during sprint scope cut):
+              PDF font ligature corruption (ċ in "conċrmed");
+              persona-output Bayern-entity-name scrubbing (Schwabing/
+              BLfD references appear from LLM-generated state, not
+              from baseline composers).
+              Bayern SHA preserved.
   • v1.0.9 = wizard Bundesland auto-detection (1 fix commit +
              docs). The Düsseldorf NRW smoke walk surfaced v1.0.8's
              dropdown defaulting to 'bayern' regardless of address,
