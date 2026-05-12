@@ -2153,6 +2153,53 @@ async function runStaticGate() {
     },
   ]))
 
+  // ── v1.0.13 — PDF Renaissance Part 1: cover section renderer ──────
+  const coverSrc = await readFileText('src/features/chat/lib/pdfSections/cover.ts')
+  results.push(failures('v1.0.13: pdfSections/cover.ts exports renderCoverPage + helpers', [
+    {
+      ok: /export function renderCoverPage/.test(coverSrc),
+      msg: 'renderCoverPage exported',
+    },
+    {
+      ok: /export function deriveDocNo/.test(coverSrc),
+      msg: 'deriveDocNo exported (deterministic PM-YYYY-MMDD-XXX pattern)',
+    },
+    {
+      ok: /export function formatCoverDate/.test(coverSrc),
+      msg: 'formatCoverDate exported (DE/EN locale-aware long-form date)',
+    },
+    {
+      ok: /from '\.\.\/pdfPrimitives'/.test(coverSrc),
+      msg: 'imports primitives from ../pdfPrimitives',
+    },
+    {
+      ok: /from '\.\.\/pdfStrings'/.test(coverSrc),
+      msg: 'imports strings from ../pdfStrings',
+    },
+    {
+      ok: /drawPaperBackground\(page\)/.test(coverSrc),
+      msg: 'fills page with PAPER background first',
+    },
+    {
+      ok: /drawCoverTitle\(page,\s*MARGIN,\s*midY\s*-\s*36/.test(coverSrc),
+      msg: 'renders the 36pt italic-serif cover title at MARGIN, midY-36',
+    },
+    {
+      ok: /drawLabelValue/.test(coverSrc),
+      msg: 'uses drawLabelValue for the 3-column metadata grid',
+    },
+    {
+      ok: /cover\.bundeslandLabel/.test(coverSrc) &&
+          /cover\.templateLabel/.test(coverSrc) &&
+          /cover\.createdLabel/.test(coverSrc),
+      msg: 'metadata grid resolves all three i18n labels (BUNDESLAND / TEMPLATE / CREATED)',
+    },
+    {
+      ok: /cover\.preliminary/.test(coverSrc),
+      msg: 'bottom footer renders the cover.preliminary string',
+    },
+  ]))
+
   // ── v1.0.13 — PDF Renaissance Part 1: DE/EN string table ──────────
   const stringsSrc = await readFileText('src/features/chat/lib/pdfStrings.ts')
   results.push(failures('v1.0.13: pdfStrings declares EN + DE tables', [
