@@ -2480,7 +2480,7 @@ async function runStaticGate() {
   const reqDocsSrc = await readFileText('src/legal/requiredDocuments.ts')
   results.push(failures('v1.0.19 Bug 41+42: requiredDocumentsForCase resolver', [
     {
-      ok: /export function requiredDocumentsForCase\(c: DocumentCase\)/.test(reqDocsSrc),
+      ok: /export function requiredDocumentsForCase\s*\(\s*c:\s*DocumentCase/.test(reqDocsSrc),
       msg: 'requiredDocumentsForCase exported',
     },
     {
