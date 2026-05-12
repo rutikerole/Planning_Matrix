@@ -129,14 +129,45 @@ export function resolveSafeTextFn(usingFallback: boolean): SafeTextFn {
 // and recommendations renderers all share the same normalization.
 // Bug 32 surfaced when v1.0.15's executive page rendered raw
 // "DESIGNER · ASSUMED" because it bypassed this helper.
-export function formatQualifier(q: {
-  source: string
-  quality: string
-}): string {
-  if (q.source === 'DESIGNER' && q.quality === 'ASSUMED') {
-    return 'LEGAL · CALCULATED'
+/**
+ * v1.0.20 — locale-aware qualifier label lookup. Returns the
+ * "SOURCE · QUALITY" string in the caller's locale (sourced from
+ * the strings table's qualifier.source.* and qualifier.quality.*
+ * keys). Returns the raw English label if the strings table lacks
+ * the key (defense-in-depth — pdfStr's [[MISSING]] sentinel kicks
+ * in for the actual missing-key case).
+ */
+export function getQualifierLabel(
+  source: string,
+  quality: string,
+  strings: Record<string, string>,
+): string {
+  const sourceLabel =
+    strings[`qualifier.source.${source}`] ?? source
+  const qualityLabel =
+    strings[`qualifier.quality.${quality}`] ?? quality
+  return `${sourceLabel} · ${qualityLabel}`
+}
+
+export function formatQualifier(
+  q: {
+    source: string
+    quality: string
+  },
+  strings?: Record<string, string>,
+): string {
+  // v1.0.12 Bug 25 normalization preserved: DESIGNER+ASSUMED is
+  // re-cast as LEGAL · CALCULATED for display (the gate-downgrade
+  // case where the persona attempted DESIGNER+VERIFIED but the
+  // qualifier-write gate enforced ASSUMED).
+  const normalized =
+    q.source === 'DESIGNER' && q.quality === 'ASSUMED'
+      ? { source: 'LEGAL', quality: 'CALCULATED' }
+      : q
+  if (strings) {
+    return getQualifierLabel(normalized.source, normalized.quality, strings)
   }
-  return `${q.source} · ${q.quality}`
+  return `${normalized.source} · ${normalized.quality}`
 }
 
 /**
@@ -796,6 +827,11 @@ export interface QualifierPillOpts {
   size?: number
   padX?: number
   padY?: number
+  /** v1.0.20 — locale strings table for source/quality label
+   *  i18n. When present, the pill renders localized labels (e.g.
+   *  DE "RECHTLICH · BERECHNET") via getQualifierLabel. Defaults
+   *  to English when omitted (backward compat). */
+  strings?: Record<string, string>
 }
 
 /**
@@ -816,11 +852,17 @@ export function drawQualifierPill(
   y: number,
   opts: QualifierPillOpts,
 ): number {
-  const { source, quality, font, safe } = opts
+  const { source, quality, font, safe, strings } = opts
   const size = opts.size ?? 9
   const padX = opts.padX ?? 6
   const padY = opts.padY ?? 3
-  const text = `${source} · ${quality}`
+  // v1.0.20 — locale-aware label when strings table supplied; else
+  // fall back to raw English. Color routing (below) still keys off
+  // the raw source/quality discriminants, so DE labels render with
+  // the same color semantics as EN.
+  const text = strings
+    ? getQualifierLabel(source, quality, strings)
+    : `${source} · ${quality}`
   const safeText = safe(text)
   const textWidth = font.widthOfTextAtSize(safeText, size)
   const w = textWidth + padX * 2
