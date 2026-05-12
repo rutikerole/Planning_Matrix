@@ -2439,6 +2439,27 @@ async function runStaticGate() {
     },
   ]))
 
+  // ── v1.0.17 permanent ligature kill — embedFont features.liga=false ──
+  const fontLoaderSrc = await readFileText('src/lib/fontLoader.ts')
+  results.push(failures('v1.0.17: embedFont passes features.liga=false to disable GSUB at fontkit layer', [
+    {
+      ok: /liga:\s*false/.test(fontLoaderSrc),
+      msg: 'liga: false must appear in fontLoader (kills GSUB ligature substitution)',
+    },
+    {
+      ok: /dlig:\s*false/.test(fontLoaderSrc) && /clig:\s*false/.test(fontLoaderSrc),
+      msg: 'discretionary + contextual ligatures also disabled (dlig + clig)',
+    },
+    {
+      ok: /embedFont\(buffers\[0\],\s*\{\s*features:/.test(fontLoaderSrc),
+      msg: 'inter (buffer 0) embeds with features option',
+    },
+    {
+      ok: (fontLoaderSrc.match(/features:\s*noLigatures/g) ?? []).length >= 4,
+      msg: 'all four brand fonts (inter / interMedium / serifItalic / serif) embed with noLigatures features',
+    },
+  ]))
+
   // ── v1.0.16 architectural invariant — zero raw page.drawText in
   //    section renderers. ENDS the ligature regression cycle by
   //    making the bypass structurally impossible at the file level. ─
