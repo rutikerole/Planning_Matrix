@@ -461,7 +461,7 @@ shipped in Phase 13 Week 4). What's missing is the cron harness
 
 ## 9. Operational responsibilities — split between engineering and client
 
-The **v1.0.13 tag is the production-ready release**. The version
+The **v1.0.14 tag is the production-ready release**. The version
 ladder:
   • v1.0   = engineering milestone (complete feature scope).
   • v1.0.1 = invite-flow security hardening (owner-check on share,
@@ -488,6 +488,67 @@ ladder:
   • v1.0.5 = Layer-C citation firewall (allowedCitations runtime
              positive-list enforcement; closes PROD_READINESS_AUDIT
              B3).
+  • v1.0.14 = v1.0.13 regression closure (3 commits + docs). The
+              empirical NRW × T-03 Königsallee re-export against
+              v1.0.13 surfaced three P0/P1 regressions that v1.0.13
+              introduced or failed to close:
+              Bug 28 (P0 — cover/TOC footer duplication): v1.0.13's
+              finalizePageFooters tried to mask a "1 / ?" placeholder
+              with a PAPER-colored rectangle and redraw the
+              resolved "1 / N" on top, but pdf-lib's drawText
+              y-coordinate is the glyph BASELINE — ascender pixels
+              extended above the mask rectangle, leaving visible
+              residue ("1 / 10 1 / ?" double-text on page 1).
+              Path A fix: split cover.ts + toc.ts each into body +
+              footer render functions; body renders at addPage time
+              without page-number copy; footer renders AFTER total
+              page count is known. No placeholder is ever drawn.
+              v1.0.13's mask-and-redraw helper retired.
+              Bug 29 (P1 — "Owner" literal in cover footer):
+              v1.0.13 hardcoded bauherrName = lang === 'de' ?
+              'Bauherr' : 'Owner'. Fix: resolve display name in
+              ExportMenu via auth profile fallback chain
+              (profile.full_name → user_metadata.full_name →
+              email local-part title-cased → localized fallback)
+              and thread through new optional BuildArgs.bauherrName.
+              PDF composer stays a pure renderer (no Supabase calls
+              during build).
+              Bug 30 (P0 — body-page ligature regression):
+              v1.0.13's resolveEditorialFonts called loadBrandFonts
+              AGAIN against the same PDFDocument, producing a
+              second set of PDFFont instances for the same TTFs.
+              pdf-lib treats each load as an independent embed
+              with its own subset state; body pages' embed lost
+              the v1.0.12 ligature guard guarantees. Fix: extend
+              resolveEditorialFonts to accept an optional
+              pre-loaded BrandFonts; assembly threads the single
+              loadBrandFonts result through to both cover/TOC and
+              body, unifying subset state.
+              The 9 remaining Renaissance section renderers
+              (executive · areas · costs · timeline · procedures
+              · team · recommendations · keyData · verification
+              · glossary) — originally scoped as v1.0.14 Part 2 —
+              are deferred to v1.0.15+ as their own dedicated
+              sprint. v1.0.14 ships the v1.0.13 regression closures
+              cleanly; Rutik's PDF is shippable again with cover +
+              TOC prototype-faithful and body in v1.0.12 plain-text
+              state. The Renaissance section work requires
+              substantial focused time (each renderer ~50-150 LOC
+              + drift fixtures + careful styling against the
+              prototype) that exceeds a regression-closure sprint.
+              Plus runtime smoke:pdf-text via pdf-parse
+              devDependency.
+              v1.0.15+ backlog:
+              - Renaissance Part 2A: executive + areas + costs
+              - Renaissance Part 2B: timeline + procedures + team
+              - Renaissance Part 2C: recommendations + keyData +
+                verification + glossary
+              - Runtime smoke:pdf-text (5th daily gate via pdf-parse)
+              - Font subset script (if Inter rebuild needed)
+              - Bug 17 [P2] team-tab Bayern hardcodes (chat-layer)
+              - Bug 20 [P2] procedure-tab caveat audit (chat-layer)
+              - Bug 23 [P1] persona-output Schwabing/BLfD scrub
+              Bayern SHA preserved.
   • v1.0.13 = PDF Renaissance Part 1 — foundations + cover + TOC +
               DE/EN export picker (7 commits + docs). Mixed-state
               PDF intentional this sprint: new cover + TOC are

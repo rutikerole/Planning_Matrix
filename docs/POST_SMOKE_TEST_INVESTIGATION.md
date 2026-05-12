@@ -4,6 +4,79 @@
 > Bayern SHA `b18d3f7f9a6fe238c18cec5361d30ea3a547e46b1ef2b16a1e74c533aacb3471`
 > verified MATCH at start AND end of read pass. No code edits.
 
+## V1.0.14 RESOLVED FINDINGS — v1.0.13 regression closure
+
+Empirical NRW × T-03 Königsallee re-export against v1.0.13
+surfaced three P0/P1 regressions:
+
+| # | Bug                                              | Severity | v1.0.14 commit                                    |
+| - | ------------------------------------------------ | -------- | ------------------------------------------------- |
+| 28 | Cover/TOC footer duplication ("1 / 10 1 / ?")    | P0       | `7423195 fix(pdf): Bug 28 — cover/TOC footer split` |
+| 29 | Cover footer Bauherr name renders "Owner" literal | P1       | `5bb2902 fix(pdf): Bug 29 — Bauherr name resolved via auth profile fallback chain` |
+| 30 | Body-page ligature corruption regressed          | P0       | `26844be fix(pdf): Bug 30 — consolidate font instances across cover/TOC + body` |
+
+Root causes (Phase 0 investigation per bug):
+
+- **Bug 28**: v1.0.13's finalizePageFooters drew a PAPER mask
+  rectangle at y=MARGIN+8 height=14 over the "1 / ?" placeholder,
+  then drew the resolved "1 / N" on top. But pdf-lib's drawText
+  y-coordinate is the glyph BASELINE; the placeholder's ascender
+  extended above the mask, leaving visible residue. Path A fix:
+  split cover.ts + toc.ts each into body + footer renderers so
+  no placeholder is ever drawn — footer renders AFTER total page
+  count is resolved.
+
+- **Bug 29**: v1.0.13 hardcoded the lang-conditional "Bauherr" /
+  "Owner" literal at exportPdf.ts:206 with no Supabase query for
+  the actual owner name. Fix: ExportMenu resolves display name
+  via fallback chain (profile.full_name → user_metadata.full_name
+  → email local-part title-cased → localized fallback) and threads
+  the result through new optional BuildArgs.bauherrName.
+
+- **Bug 30**: v1.0.13 introduced resolveEditorialFonts which
+  internally called loadBrandFonts a SECOND time on the same
+  PDFDocument. pdf-lib treats each call as an independent font
+  embed — duplicate-embed configuration corrupted subset state
+  on body pages' font instances (cover/TOC used the second
+  embed, body used the first — only the first's subset lost
+  ligature guarantees). Fix: extend resolveEditorialFonts to
+  accept an optional pre-loaded BrandFonts; assembly threads the
+  single loadBrandFonts result through to both cover/TOC and
+  body, unifying subset state across all pages.
+
+**The 9 remaining Renaissance section renderers** (executive,
+areas, costs, timeline, procedures, team, recommendations,
+keyData, verification, glossary) — originally scoped as v1.0.14
+Part 2 — are deferred to v1.0.15+ as their own dedicated sprint.
+Each renderer is substantial work (50-150 LOC + drift fixtures
++ careful styling against the approved prototype) that exceeds
+the regression-closure scope of v1.0.14. Plus runtime smoke:
+pdf-text via pdf-parse devDep (refactoring fontLoader for Node
+runtime, committing fixture project state JSON, building the
+extraction harness).
+
+The v1.0.14 ship gets the PDF unbroken: cover + TOC remain
+prototype-faithful from v1.0.13, body pages stop corrupting
+ligatures, footers stop duplicating, owner name renders. That
+unblocks immediate client preview while v1.0.15+ completes the
+Renaissance body sections.
+
+**v1.0.15+ backlog:**
+- Renaissance Part 2A: executive + areas + costs (~3 commits)
+- Renaissance Part 2B: timeline + procedures + team (~3 commits)
+- Renaissance Part 2C: recommendations + keyData + verification
+  + glossary (~4 commits)
+- Runtime smoke:pdf-text via pdf-parse (5th daily gate)
+- Font subset script if Inter rebuild needed
+- Bug 17 [P2] team-tab Bayern hardcodes (chat-UI)
+- Bug 20 [P2] procedure-tab caveat audit (chat-UI)
+- Bug 23 [P1] persona-output Schwabing/BLfD scrub (chat-UI)
+
+Bayern SHA `b18d3f7f9a6fe238c18cec5361d30ea3a547e46b1ef2b16a1e74c533aacb3471`
+held across all 3 v1.0.14 fix commits.
+
+---
+
 ## V1.0.13 SHIPPED — PDF Renaissance Part 1
 
 Foundations + cover + TOC + DE/EN export picker. Mixed-state PDF
