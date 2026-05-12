@@ -668,6 +668,222 @@ export function drawStatusLegend(
   }
 }
 
+// ─── v1.0.16 primitives — table + notes block (Costs page) ──────────
+
+export interface TableColumn {
+  label: string
+  widthFraction: number
+  align?: 'left' | 'right'
+  /** Override the body font for this column. Defaults to fonts.sansMedium. */
+  bodyFont?: PDFFont
+}
+
+export interface TableRow {
+  cells: ReadonlyArray<string>
+  /** Optional basis-text line drawn under the first column in CLAY
+   *  italic-serif. Used by the Costs page for "HOAI Zone III · LP 1–4"
+   *  rationale rows beneath each item. */
+  basisRow?: string
+}
+
+export interface TotalRow {
+  label: string
+  value: string
+}
+
+export interface DrawTableOpts {
+  x: number
+  y: number
+  width: number
+  columns: ReadonlyArray<TableColumn>
+  rows: ReadonlyArray<TableRow>
+  totalRow?: TotalRow
+  fonts: EditorialFonts
+}
+
+/**
+ * 3-column table primitive. Header row with letter-spaced CLAY column
+ * labels above a 0.5pt INK hairline; body rows (each 22pt tall + optional
+ * 16pt basis line); inter-row 0.5pt CLAY hairlines; optional total row
+ * with a 1pt INK border-top, 14pt label, 16pt right-aligned tabular value.
+ *
+ * Returns the y-cursor after the bottom edge so callers can stack a
+ * notes block below.
+ */
+export function drawTable(opts: DrawTableOpts & { page: PDFPage }): { endY: number } {
+  const { page, x, y, width, columns, rows, totalRow, fonts } = opts
+  const safe = fonts.safe
+
+  // Compute column x positions and pixel widths from fractions.
+  const colWidths = columns.map((c) => c.widthFraction * width)
+  const colX = [] as number[]
+  let cursor = x
+  for (const w of colWidths) {
+    colX.push(cursor)
+    cursor += w
+  }
+
+  // ─── Header row ─────────────────────────────────────────────────
+  const headerY = y
+  for (let i = 0; i < columns.length; i++) {
+    const c = columns[i]
+    const txt = safe(c.label)
+    if (c.align === 'right') {
+      const tw = fonts.sansMedium.widthOfTextAtSize(txt, 10)
+      page.drawText(txt, {
+        x: colX[i] + colWidths[i] - tw,
+        y: headerY,
+        size: 10,
+        font: fonts.sansMedium,
+        color: CLAY,
+      })
+    } else {
+      page.drawText(txt, {
+        x: colX[i],
+        y: headerY,
+        size: 10,
+        font: fonts.sansMedium,
+        color: CLAY,
+      })
+    }
+  }
+  drawHairline(page, x, headerY - 8, x + width, { color: INK, thickness: 0.5, opacity: 0.7 })
+
+  // ─── Body rows ──────────────────────────────────────────────────
+  let rowTop = headerY - 24
+  for (const row of rows) {
+    for (let i = 0; i < columns.length; i++) {
+      const c = columns[i]
+      const cell = row.cells[i] ?? ''
+      const txt = safe(cell)
+      const font = c.bodyFont ?? fonts.sansMedium
+      const size = 12
+      if (c.align === 'right') {
+        const tw = font.widthOfTextAtSize(txt, size)
+        page.drawText(txt, {
+          x: colX[i] + colWidths[i] - tw,
+          y: rowTop,
+          size,
+          font,
+          color: INK,
+        })
+      } else {
+        page.drawText(txt, {
+          x: colX[i],
+          y: rowTop,
+          size,
+          font,
+          color: INK,
+        })
+      }
+    }
+    // Optional basis sub-line under column 0
+    if (row.basisRow) {
+      page.drawText(safe(row.basisRow), {
+        x: colX[0],
+        y: rowTop - 14,
+        size: 10,
+        font: fonts.serifItalic,
+        color: CLAY,
+      })
+      rowTop -= 14
+    }
+    rowTop -= 18
+    drawHairline(page, x, rowTop + 8, x + width, { color: CLAY, thickness: 0.4, opacity: 0.4 })
+  }
+
+  // ─── Total row ──────────────────────────────────────────────────
+  let endY = rowTop
+  if (totalRow) {
+    rowTop -= 8
+    // 1pt INK divider above the total row
+    page.drawLine({
+      start: { x, y: rowTop + 8 },
+      end: { x: x + width, y: rowTop + 8 },
+      color: INK,
+      thickness: 1,
+      opacity: 0.85,
+    })
+    rowTop -= 6
+    page.drawText(safe(totalRow.label), {
+      x,
+      y: rowTop,
+      size: 14,
+      font: fonts.sansMedium,
+      color: INK,
+    })
+    const valueTxt = safe(totalRow.value)
+    const vw = fonts.sansMedium.widthOfTextAtSize(valueTxt, 16)
+    page.drawText(valueTxt, {
+      x: x + width - vw,
+      y: rowTop,
+      size: 16,
+      font: fonts.sansMedium,
+      color: INK,
+    })
+    endY = rowTop - 8
+  }
+
+  return { endY }
+}
+
+export interface DrawNotesBlockOpts {
+  x: number
+  y: number
+  width: number
+  headerLabel: string
+  body: string
+  fonts: EditorialFonts
+}
+
+/**
+ * Editorial notes block — 2pt CLAY border-left + letter-spaced CLAY
+ * 11pt header + 11pt INK body word-wrapped at line-height 14.
+ * Returns the y-cursor after the bottom edge.
+ */
+export function drawNotesBlock(
+  page: PDFPage,
+  opts: DrawNotesBlockOpts,
+): { endY: number } {
+  const { x, y, width, headerLabel, body, fonts } = opts
+  const padX = 12
+  const safe = fonts.safe
+
+  // Header label
+  page.drawText(safe(headerLabel), {
+    x: x + padX,
+    y,
+    size: 11,
+    font: fonts.sansMedium,
+    color: CLAY,
+  })
+
+  // Body wrapped 11pt INK
+  const bodyEndY = drawWrappedText(page, x + padX, y - 18, body, {
+    maxWidth: width - padX - 4,
+    lineHeight: 14,
+    font: fonts.sans,
+    size: 11,
+    color: INK,
+    safe,
+  })
+
+  // 2pt CLAY accent on the left edge (drawn after content so it
+  // overlays cleanly).
+  const topY = y + 8
+  const bottomY = bodyEndY - 2
+  page.drawRectangle({
+    x,
+    y: bottomY,
+    width: 2,
+    height: topY - bottomY,
+    color: CLAY,
+    opacity: 0.85,
+  })
+
+  return { endY: bottomY }
+}
+
 /**
  * One TOC row: monospace numeral + title + dotted leader + page ref.
  * Returns the y-cursor after the row (drop by ~22pt for next row).
