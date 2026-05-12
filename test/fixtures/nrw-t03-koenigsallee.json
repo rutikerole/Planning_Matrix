@@ -1,0 +1,75 @@
+{
+  "_comment": "v1.0.17 — runtime smoke fixture. Minimal NRW × T-03 Königsallee state used by scripts/smoke-pdf-text.mjs to render a PDF (EN + DE) and verify ligature integrity via pdf-parse extraction. Empty arrays where the renderer's empty-state branch is sufficient to exercise the full layout — the fixture's job is to exercise EVERY layout path that text passes through, not to mirror production data.",
+  "project": {
+    "id": "5c610d71-fixture-koenigsallee",
+    "owner_id": "fixture-owner",
+    "intent": "renovation",
+    "has_plot": true,
+    "plot_address": "Königsallee 1, 40212 Düsseldorf",
+    "bundesland": "nrw",
+    "template_id": "T-03",
+    "name": "Renovation Königsallee",
+    "status": "active",
+    "state": {
+      "templateId": "T-03",
+      "facts": [
+        { "key": "fassadenflaeche_m2", "value": 220, "qualifier": { "source": "CLIENT", "quality": "VERIFIED" } },
+        { "key": "klasse", "value": "Gebaeudeklasse 3", "qualifier": { "source": "LEGAL", "quality": "CALCULATED" } },
+        { "key": "energiestandard", "value": "GEG 2024 Mindestanforderung", "qualifier": { "source": "LEGAL", "quality": "VERIFIED" } },
+        { "key": "denkmalschutz", "value": false, "qualifier": { "source": "LEGAL", "quality": "ASSUMED" } }
+      ],
+      "areas": {
+        "A": { "state": "ACTIVE", "reason": "Innenbereich nach § 30 BauGB. Bebauungsplan zulässig." },
+        "B": { "state": "PENDING", "reason": "§ 62/64 BauO NRW — Verfahrensart noch nicht identifiziert (Pflicht ausstehend)." },
+        "C": { "state": "ACTIVE", "reason": "GEG 2024 Energieausweis erforderlich. § 48 GEG Nachweis Pflicht." }
+      },
+      "recommendations": [
+        {
+          "id": "rec-1",
+          "rank": 1,
+          "title_de": "GEG-zertifizierten Energieberater beauftragen",
+          "title_en": "Engage a GEG-certified energy consultant",
+          "detail_de": "GEG § 48 verlangt einen Wärmeschutznachweis vor Bauantrag. Architekt-Beauftragung früh sicherstellen, denn die Energieberatung muss vor LP 4 abgeschlossen sein.",
+          "detail_en": "GEG § 48 requires a thermal certification before the building permit application. Confirm the architect engagement early since energy consultation must be complete before LP 4.",
+          "qualifier": { "source": "LEGAL", "quality": "CALCULATED" }
+        },
+        {
+          "id": "rec-2",
+          "rank": 2,
+          "title_de": "Bauantrag-Verfahrensart bestätigen",
+          "title_en": "Confirm building-permit procedure",
+          "detail_de": "§ 64 BauO NRW oder Verfahrensfreiheit? Die Klasse ist Gebaeudeklasse 3 — vereinfachtes Verfahren möglich. Bauamt-Anfrage vor LP 1.",
+          "detail_en": "§ 64 BauO NRW or permit-free status? Building class 3 — simplified procedure possible. Building authority inquiry before LP 1.",
+          "qualifier": { "source": "DESIGNER", "quality": "ASSUMED" }
+        },
+        {
+          "id": "rec-3",
+          "rank": 3,
+          "title_de": "KfW-BEG-Förderung vor Auftrag prüfen",
+          "title_en": "Check KfW BEG funding before awarding contracts",
+          "detail_de": "Förderprogramme verlangen Antrag vor Auftragsvergabe. Energie-Effizienz-Klasse identifiziert? Wichtig vor Auftragsvergabe.",
+          "detail_en": "Funding programs require the application before contract awarding. Energy efficiency class identified? Important before contract awarding.",
+          "qualifier": { "source": "LEGAL", "quality": "CALCULATED" }
+        }
+      ],
+      "procedures": [
+        {
+          "id": "proc-1",
+          "status": "erforderlich",
+          "title_de": "Vereinfachtes Bauantragsverfahren",
+          "title_en": "Simplified building permit procedure",
+          "rationale_de": "§ 64 BauO NRW gilt für Gebäudeklasse 3.",
+          "rationale_en": "§ 64 BauO NRW applies for building class 3.",
+          "qualifier": { "source": "LEGAL", "quality": "CALCULATED" }
+        }
+      ],
+      "documents": [],
+      "specialists": [],
+      "roles": []
+    },
+    "created_at": "2026-04-15T10:00:00.000Z",
+    "updated_at": "2026-05-12T10:00:00.000Z"
+  },
+  "messages": [],
+  "events": []
+}
