@@ -2153,6 +2153,123 @@ async function runStaticGate() {
     },
   ]))
 
+  // ── v1.0.10 — state-parameterization sprint drift fixtures ────────
+  // Foundation: src/legal/stateLocalization.ts exposes
+  // getStateLocalization(bundesland) returning procedure/structuralCert/
+  // monumentAuthority/chamber/cost-factor strings per Bundesland.
+  // Consumers: deriveBaselineProcedure + costRationales + (future)
+  // risk register + PDF.
+  const stateLocSrc = await readFileText('src/legal/stateLocalization.ts')
+  results.push(failures('v1.0.10: stateLocalization registry shape + verified citations', [
+    {
+      ok: /export\s+function\s+getStateLocalization/.test(stateLocSrc),
+      msg: 'stateLocalization must export getStateLocalization()',
+    },
+    {
+      ok: /BayBO Art\. 58/.test(stateLocSrc),
+      msg: 'Bayern simplified-permit citation present (Art. 58 BayBO)',
+    },
+    {
+      ok: /§ 64 BauO NRW/.test(stateLocSrc),
+      msg: 'NRW simplified-permit citation present (§ 64 BauO NRW)',
+    },
+    {
+      ok: /§ 52 LBO/.test(stateLocSrc),
+      msg: 'BW simplified-permit citation present (§ 52 LBO)',
+    },
+    {
+      ok: /§ 65 HBO/.test(stateLocSrc),
+      msg: 'Hessen simplified-permit citation present (§ 65 HBO)',
+    },
+    {
+      ok: /§ 63 NBauO/.test(stateLocSrc),
+      msg: 'Niedersachsen simplified-permit citation present (§ 63 NBauO)',
+    },
+    {
+      ok: /BLfD/.test(stateLocSrc) && /LVR\/LWL/.test(stateLocSrc) && /NLD/.test(stateLocSrc),
+      msg: 'monument authorities present for substantive states (BLfD/LVR-LWL/NLD)',
+    },
+    {
+      ok: /ByAK/.test(stateLocSrc) && /AKNW/.test(stateLocSrc) && /AKBW/.test(stateLocSrc) && /AKH/.test(stateLocSrc) && /AKNDS/.test(stateLocSrc),
+      msg: 'chamber abbrevs present for substantive states (ByAK/AKNW/AKBW/AKH/AKNDS)',
+    },
+  ]))
+  // deriveBaselineProcedure must use the registry, not the legacy
+  // Bayern hardcode.
+  const baselineProcSrc = await readFileText('src/features/result/lib/deriveBaselineProcedure.ts')
+  results.push(failures('v1.0.10: deriveBaselineProcedure uses stateLocalization', [
+    {
+      ok: /getStateLocalization/.test(baselineProcSrc),
+      msg: 'must import + call getStateLocalization',
+    },
+    {
+      ok: !/void bundesland/.test(baselineProcSrc),
+      msg: 'must NOT carry the legacy "void bundesland" sentinel',
+    },
+    {
+      ok: !/BayBO Art\. 58'/.test(baselineProcSrc),
+      msg: 'must NOT hardcode the BayBO Art. 58 string (now state-resolved)',
+    },
+  ]))
+  // costRationales must thread bundesland through findCostRationale.
+  const costRationalesSrc = await readFileText('src/data/costRationales.ts')
+  results.push(failures('v1.0.10: costRationales state-parameterized', [
+    {
+      ok: /findCostRationale\(\s*[^,]+,\s*bundesland\??\s*:\s*string/.test(costRationalesSrc) ||
+          /findCostRationale[\s\S]{0,300}bundesland\?/.test(costRationalesSrc),
+      msg: 'findCostRationale must accept optional bundesland argument',
+    },
+    {
+      ok: /getStateLocalization/.test(costRationalesSrc),
+      msg: 'costRationales must call getStateLocalization',
+    },
+    {
+      ok: !/'BayBO Art\. 62 Standsicherheitsnachweis · typischer/.test(costRationalesSrc),
+      msg: 'must NOT hardcode "BayBO Art. 62 structural certification" — now state-resolved',
+    },
+    {
+      ok: !/'Pflicht für Neubauten in Bayern'/.test(costRationalesSrc),
+      msg: 'must NOT hardcode "Pflicht für Neubauten in Bayern" — now state-resolved',
+    },
+  ]))
+  // Locale caveats de-Bayern'd.
+  const deLocaleForV1010 = await readFileText('src/locales/de.json')
+  const enLocaleForV1010 = await readFileText('src/locales/en.json')
+  results.push(failures('v1.0.10: locale caveats no longer hardcode Bayern', [
+    {
+      ok: !/typischen Bayern-Honoraren/.test(deLocaleForV1010),
+      msg: 'de.json must NOT contain "typischen Bayern-Honoraren"',
+    },
+    {
+      ok: !/typical Bayern fee tables/.test(enLocaleForV1010) && !/typical Bayern HOAI fees/.test(enLocaleForV1010),
+      msg: 'en.json must NOT contain "typical Bayern fee tables" or "typical Bayern HOAI fees"',
+    },
+  ]))
+  // Donut largest-remainder rounding.
+  const donutSrc = await readFileText('src/features/result/components/Cards/DataQualityDonut.tsx')
+  results.push(failures('v1.0.10 Bug 21: DataQualityDonut uses largest-remainder rounding', [
+    {
+      ok: /integerPercents/.test(donutSrc),
+      msg: 'donut must compute integerPercents (largest-remainder method)',
+    },
+    {
+      ok: /floors\.reduce/.test(donutSrc),
+      msg: 'donut must use floor + remainder distribution',
+    },
+  ]))
+  // SmartSuggestions bundeslaender case-fix.
+  const smartSugSrc = await readFileText('src/data/smartSuggestionsMuenchen.ts')
+  results.push(failures("v1.0.10 Bug 16: smartSuggestions bundeslaender uses lowercase 'bayern'", [
+    {
+      ok: !/bundeslaender:\s*\['Bayern'\]/.test(smartSugSrc),
+      msg: "no entries may carry bundeslaender: ['Bayern'] (uppercase mismatched BundeslandCode union)",
+    },
+    {
+      ok: /bundeslaender:\s*\['bayern'\]/.test(smartSugSrc),
+      msg: "entries must use bundeslaender: ['bayern'] (lowercase, matches the code)",
+    },
+  ]))
+
   // ── v1.0.9 Bug 13 — postcode → Bundesland inference fixture ────────
   // The wizard now auto-detects Bundesland from the first two digits
   // of the German postal code (deterministic Deutsche Post sector
