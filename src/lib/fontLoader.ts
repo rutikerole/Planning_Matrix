@@ -36,14 +36,33 @@ const FONT_PATHS = {
   serif: '/fonts/InstrumentSerif-Regular.ttf',
 }
 
-async function fetchTtf(path: string): Promise<ArrayBuffer | null> {
-  try {
-    const res = await fetch(path)
-    if (!res.ok) return null
-    return await res.arrayBuffer()
-  } catch {
-    return null
-  }
+/**
+ * v1.0.17 — injectable bytes loader so Node (runtime smoke) and the
+ * browser (production export) can both fetch TTFs from their
+ * respective sources. The browser default uses fetch(); the Node
+ * loader (smoke harness) reads from public/fonts/ directly.
+ */
+export interface FontBytesLoader {
+  load(path: string): Promise<ArrayBuffer | null>
+}
+
+export const browserFontLoader: FontBytesLoader = {
+  load: async (path) => {
+    try {
+      const res = await fetch(path)
+      if (!res.ok) return null
+      return await res.arrayBuffer()
+    } catch {
+      return null
+    }
+  },
+}
+
+async function fetchTtf(
+  path: string,
+  loader: FontBytesLoader,
+): Promise<ArrayBuffer | null> {
+  return loader.load(path)
 }
 
 /**
@@ -52,14 +71,17 @@ async function fetchTtf(path: string): Promise<ArrayBuffer | null> {
  * PDFFont handles regardless. fontkit is registered up front so
  * embedFont(buffer) accepts arbitrary TTFs.
  */
-export async function loadBrandFonts(doc: PDFDocument): Promise<BrandFonts> {
+export async function loadBrandFonts(
+  doc: PDFDocument,
+  loader: FontBytesLoader = browserFontLoader,
+): Promise<BrandFonts> {
   // pdf-lib needs fontkit for custom TTF embedding. Fontkit is heavy;
   // dynamic-import only when we have at least one TTF to embed.
   const buffers = await Promise.all([
-    fetchTtf(FONT_PATHS.inter),
-    fetchTtf(FONT_PATHS.interMedium),
-    fetchTtf(FONT_PATHS.serifItalic),
-    fetchTtf(FONT_PATHS.serif),
+    fetchTtf(FONT_PATHS.inter, loader),
+    fetchTtf(FONT_PATHS.interMedium, loader),
+    fetchTtf(FONT_PATHS.serifItalic, loader),
+    fetchTtf(FONT_PATHS.serif, loader),
   ])
   const allMissing = buffers.every((b) => b === null)
 
