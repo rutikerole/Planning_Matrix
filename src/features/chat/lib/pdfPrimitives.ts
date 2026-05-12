@@ -591,15 +591,26 @@ export interface WrappedTextOpts {
   /** v1.0.16 — sanitization fn from EditorialFonts.safe. Applied
    *  per-line so word-wrap math uses the same string drawText receives. */
   safe: SafeTextFn
+  /** v1.0.20 — vertical gap inserted between paragraphs when the
+   *  input contains "\n\n" separators. Defaults to lineHeight * 0.5
+   *  (half-line gap reads as a clean paragraph break without
+   *  ballooning vertical space). Pass 0 to disable. */
+  paragraphGap?: number
 }
 
 /**
- * Word-wrap a paragraph to maxWidth, drawing each line at lineHeight
+ * Word-wrap text to maxWidth, drawing each line at lineHeight
  * spacing. `y` is the baseline of the FIRST line; returns the y after
  * the LAST line's descender so callers can stack content below.
  *
  * Word-break only — no hyphenation. If a single word exceeds maxWidth
  * (unlikely with German legal §§), it's drawn anyway and overflows.
+ *
+ * v1.0.20 — input containing "\n\n" double-newline is split into
+ * paragraphs. Each paragraph word-wraps independently; between
+ * paragraphs a vertical gap (opts.paragraphGap ?? lineHeight * 0.5)
+ * is inserted. Single-paragraph inputs (no \n\n) render identically
+ * to pre-v1.0.20 behavior.
  */
 export function drawWrappedText(
   page: PDFPage,
@@ -608,8 +619,26 @@ export function drawWrappedText(
   text: string,
   opts: WrappedTextOpts,
 ): number {
-  const sanitized = opts.safe(text)
-  const words = sanitized.split(/\s+/)
+  const paragraphGap = opts.paragraphGap ?? opts.lineHeight * 0.5
+  // Split before sanitization so safe() doesn't collapse "\n\n".
+  const paragraphs = text.split(/\n\n+/)
+  let cursor = y
+  paragraphs.forEach((paragraph, idx) => {
+    if (idx > 0) cursor -= paragraphGap
+    cursor = drawWrappedParagraph(page, x, cursor, paragraph, opts)
+  })
+  return cursor
+}
+
+function drawWrappedParagraph(
+  page: PDFPage,
+  x: number,
+  y: number,
+  paragraph: string,
+  opts: WrappedTextOpts,
+): number {
+  const sanitized = opts.safe(paragraph)
+  const words = sanitized.split(/\s+/).filter((w) => w.length > 0)
   let line = ''
   let cursor = y
   for (const word of words) {
