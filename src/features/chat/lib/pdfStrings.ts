@@ -114,6 +114,24 @@ const EN: PdfStrings = {
   'costs.items.authority': 'Authority fees',
   'costs.items.authority.basis': 'Bauamt + neighbour involvement',
   'costs.empty': 'No cost rows recorded yet.',
+
+  // ─── v1.0.16 Renaissance Part 2B — Timeline ───────────────────
+  'timeline.kicker': 'SECTION 04 · TIMELINE',
+  'timeline.title': 'Estimated timeline',
+  'timeline.sub':
+    'Total duration ≈ 4–6 months · subject to authority workload',
+  'timeline.weekLabel': 'WEEK',
+  'timeline.phase.prep': 'Preparation · LP 1–4',
+  'timeline.phase.prep.duration': '8–14 weeks',
+  'timeline.phase.submit': 'Submission',
+  'timeline.phase.submit.duration': '1 week',
+  'timeline.phase.review': 'Review · Bauamt',
+  'timeline.phase.review.duration': '6–10 weeks',
+  'timeline.phase.fixes': 'Corrections',
+  'timeline.phase.fixes.duration': '2 weeks',
+  'timeline.milestone': 'Approval milestone',
+  'timeline.milestone.detail':
+    '— Baugenehmigung issued at end of week ≈ 22',
 }
 
 const DE: PdfStrings = {
@@ -206,6 +224,24 @@ const DE: PdfStrings = {
   'costs.items.authority': 'Behördengebühren',
   'costs.items.authority.basis': 'Bauamtsgebühr + Nachbarbeteiligung',
   'costs.empty': 'Noch keine Kostenzeilen erfasst.',
+
+  // ─── v1.0.16 Renaissance Part 2B — Timeline ───────────────────
+  'timeline.kicker': 'ABSCHNITT 04 · ZEITPLAN',
+  'timeline.title': 'Geschätzter Zeitplan',
+  'timeline.sub':
+    'Gesamtdauer ≈ 4–6 Monate · abhängig von Behördenauslastung',
+  'timeline.weekLabel': 'WOCHE',
+  'timeline.phase.prep': 'Vorbereitung · LP 1–4',
+  'timeline.phase.prep.duration': '8–14 Wochen',
+  'timeline.phase.submit': 'Einreichung',
+  'timeline.phase.submit.duration': '1 Woche',
+  'timeline.phase.review': 'Prüfung · Bauamt',
+  'timeline.phase.review.duration': '6–10 Wochen',
+  'timeline.phase.fixes': 'Korrekturen',
+  'timeline.phase.fixes.duration': '2 Wochen',
+  'timeline.milestone': 'Genehmigungs-Meilenstein',
+  'timeline.milestone.detail':
+    '— Baugenehmigung erteilt zum Ende von Woche ≈ 22',
 }
 
 export const PDF_STRINGS: Record<PdfLang, PdfStrings> = { en: EN, de: DE }
