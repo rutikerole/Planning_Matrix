@@ -298,6 +298,18 @@ async function runLocale(lang: 'en' | 'de'): Promise<{ passed: number; failed: n
       pass: /Stadtarchiv/u.test(text),
       msg: 'Stadtarchiv Düsseldorf verification caveat present in Areas A',
     },
+    // v1.0.20 Polish 1 — Area A + C bodies render as TWO paragraphs.
+    // The pre-paragraph word ("zulässig" for Area A; "ragen" or
+    // "Auflagen" for Area C in DE) should NOT directly butt up
+    // against the caveat/Hinweis lead word on the same line in
+    // extracted text — pdf-parse separates paragraphs with newlines
+    // when there's a positional vertical gap.
+    {
+      pass: lang === 'en'
+        ? /permitted\.\s*$/m.test(text) || /\n[\s\S]{0,4}Verify specific/m.test(text)
+        : /zulässig\.\s*$/m.test(text) || /\n[\s\S]{0,4}Konkreten Bebauungsplan/m.test(text),
+      msg: 'Area A renders as two paragraphs (observation + Stadtarchiv caveat)',
+    },
     {
       pass: /LEGAL\s*·\s*ASSUMED/u.test(text),
       msg: 'Area A qualifier honestly tagged LEGAL · ASSUMED (Bug 44)',

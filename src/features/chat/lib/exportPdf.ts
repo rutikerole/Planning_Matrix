@@ -450,7 +450,9 @@ export async function buildExportPdf({
             lang === 'en'
               ? 'Verify specific Bebauungsplan and Gestaltungssatzung with Stadtarchiv Düsseldorf — Königsallee lies in a regulated Innenstadt zone. LEGAL · ASSUMED until verified.'
               : 'Konkreten Bebauungsplan und Gestaltungssatzung mit Stadtarchiv Düsseldorf abklären — Königsallee liegt in regulierter Innenstadtlage. LEGAL · ASSUMED bis verifiziert.'
-          const reason = a.reason ? `${a.reason} ${caveat}` : caveat
+          // v1.0.20 — \n\n paragraph break so the caveat renders as
+          // its own block instead of an inline continuation.
+          const reason = a.reason ? `${a.reason}\n\n${caveat}` : caveat
           return {
             key: k,
             title: pdfStr(pdfStrings, `areas.${k.toLowerCase()}.title`),
@@ -468,7 +470,9 @@ export async function buildExportPdf({
             lang === 'en'
               ? 'Abstandsflächen note: external insulation may project into Abstandsfläche. § 6 Abs. 8 BauO NRW permits up to 25 cm thermal-insulation projection without neighbour consent under conditions — verify with Bauamt + Nachbarbeteiligung if grenzständig.'
               : 'Abstandsflächen-Hinweis: Außendämmung kann in Abstandsfläche ragen. § 6 Abs. 8 BauO NRW erlaubt bis 25 cm Dämmungsprojektion ohne Nachbarunterschrift unter Auflagen — mit Bauamt + ggf. Nachbarbeteiligung verifizieren bei grenzständiger Lage.'
-          reason = reason ? `${reason} ${hinweis}` : hinweis
+          // v1.0.20 — \n\n paragraph break so the Hinweis renders
+          // as its own block, not inline with the area observation.
+          reason = reason ? `${reason}\n\n${hinweis}` : hinweis
         }
         return {
           key: k,

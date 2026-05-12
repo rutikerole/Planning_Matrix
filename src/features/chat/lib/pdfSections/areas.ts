@@ -148,7 +148,10 @@ export function renderAreasBody(
 
     // Estimate height: title row 28 + reason ~2 lines × 14 + pad 36
     const reasonLines = estimateLineCount(reason, fonts.serifItalic, 11, cardWidth - 88)
-    const reasonBlockH = Math.max(1, reasonLines) * 14
+    // v1.0.20 — account for \n\n paragraph gaps that drawWrappedText
+    // now inserts (lineHeight * 0.5 = 7pt per break).
+    const paragraphBreaks = (reason.match(/\n\n+/g) ?? []).length
+    const reasonBlockH = Math.max(1, reasonLines) * 14 + paragraphBreaks * 7
     const estimatedHeight = 28 + reasonBlockH + 36
 
     // Card outline (full thin border in CLAY)
@@ -258,19 +261,26 @@ function estimateLineCount(
   maxWidth: number,
 ): number {
   if (!text) return 0
-  const words = text.split(/\s+/)
-  let line = ''
-  let lines = 0
-  for (const word of words) {
-    const candidate = line ? `${line} ${word}` : word
-    const w = font.widthOfTextAtSize(candidate, size)
-    if (w > maxWidth && line) {
-      lines += 1
-      line = word
-    } else {
-      line = candidate
-    }
-  }
-  if (line) lines += 1
-  return lines
+  // v1.0.20 — count lines per paragraph (drawWrappedText splits on
+  // \n\n with a half-line gap between).
+  return text
+    .split(/\n\n+/)
+    .map((paragraph) => {
+      const words = paragraph.split(/\s+/).filter((w) => w.length > 0)
+      let line = ''
+      let lines = 0
+      for (const word of words) {
+        const candidate = line ? `${line} ${word}` : word
+        const w = font.widthOfTextAtSize(candidate, size)
+        if (w > maxWidth && line) {
+          lines += 1
+          line = word
+        } else {
+          line = candidate
+        }
+      }
+      if (line) lines += 1
+      return lines
+    })
+    .reduce((a, b) => a + b, 0)
 }
