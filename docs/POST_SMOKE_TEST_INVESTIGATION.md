@@ -4,6 +4,70 @@
 > Bayern SHA `b18d3f7f9a6fe238c18cec5361d30ea3a547e46b1ef2b16a1e74c533aacb3471`
 > verified MATCH at start AND end of read pass. No code edits.
 
+## V1.0.12 RESOLVED FINDINGS — PDF visible-space + numbering + qualifier display
+
+Empirical NRW × T-03 Königsallee re-export against v1.0.11
+production showed v1.0.11's ZWNJ injection rendered as VISIBLE
+SPACE in Inter's TTF subset — worse than the original ligature
+corruption it tried to fix. Plus two adjacent PDF presentation
+bugs surfaced by the same re-walk.
+
+| # | Bug                                              | Severity | v1.0.12 commit                                |
+| - | ------------------------------------------------ | -------- | --------------------------------------------- |
+| 22 (regression) | ZWNJ visible-space ("conf irmed" / "Pf licht" / "Eingrif f") | P0 | `0c43754 fix(pdf): kill ZWNJ visible-space regression — preventBrandLigatures no-ops` |
+| 25 | DESIGNER+ASSUMED rendered on derived rec where no architect has touched the project | P1 | `e064877 fix(pdf): normalize recommendation qualifier display + always render section VI` |
+| 26 | Section VI (Documents) skipped → I..X gap in numbering | P2 | `e064877 fix(pdf): normalize recommendation qualifier display + always render section VI` |
+
+Root causes:
+
+- **Bug 22 regression**: v1.0.11 injected U+200C ZWNJ between
+  f+i/l/f to break OpenType `liga` GSUB. Theory: ZWNJ is a
+  Unicode default-ignorable character that Inter would render as
+  nothing. Reality: Inter's TTF subset lacks a U+200C glyph
+  definition; pdf-lib + fontkit's subset pass fell back to
+  .notdef, which Inter maps to a SPACE-WIDTH glyph. Path A fix:
+  no-op the helper. pdf-lib's font.encodeText path looks up
+  glyph indices per character without invoking fontkit's shaping
+  layout — no GSUB-driven ligature is placed in the content
+  stream when plain ASCII is passed to drawText. ToUnicode CMap
+  pdf-lib generates ensures text extraction works regardless of
+  viewer display-time shaping.
+
+- **Bug 25**: Phase 13's §6.B.01 qualifier-write gate downgrades
+  persona-attempted DESIGNER+VERIFIED to DESIGNER+ASSUMED (audit
+  signal). Render-time `formatRecommendationQualifier` helper
+  normalizes the display to "LEGAL · CALCULATED" — the qualifier
+  matching the recommendation's actual provenance. DB row + audit
+  trail unchanged.
+
+- **Bug 26**: section VI rendering was conditional on
+  docs.length > 0. Now always renders with "(no documents
+  recorded yet)" placeholder so I..X numbering is gap-free.
+
+**Bug 27 hypothesis (² superscript strip)**: incidentally closed
+by Bug 22's no-op. The v1.0.11 ZWNJ injection likely corrupted
+Inter's font subset integrity at PDF embed time, breaking adjacent
+U+00B2 extraction. Path A restoration of subset integrity should
+self-resolve. If Bug 27 persists in NRW × T-03 re-export post-
+v1.0.12 deploy, escalate to v1.0.13.
+
+**v1.0.13 backlog (multi-session work, intentionally deferred):**
+- PDF Renaissance (11-section redesign per approved prototype)
+- DE/EN export toggle in download UI
+- Per-locale string resolver (pdfStrings.ts) + section renderers
+  (pdfSections/*.ts) + layout primitives (pdfPrimitives.ts)
+- Runtime smoke:pdf-text gate via pdf-parse devDep
+- Font subset script (strip GSUB liga at subset time — Path B
+  fallback if Path A regresses)
+- Bug 17 [P2] team-tab Bayern hardcodes
+- Bug 20 [P2] procedure-tab caveat audit
+- Bug 23 [P1] persona-output Schwabing/BLfD scrub
+
+Bayern SHA `b18d3f7f9a6fe238c18cec5361d30ea3a547e46b1ef2b16a1e74c533aacb3471`
+held across all three v1.0.12 commits.
+
+---
+
 ## V1.0.11 RESOLVED FINDINGS — PDF deliverable hardening
 
 Production verification of v1.0.10 on NRW × T-03 Königsallee

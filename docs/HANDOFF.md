@@ -461,7 +461,7 @@ shipped in Phase 13 Week 4). What's missing is the cron harness
 
 ## 9. Operational responsibilities — split between engineering and client
 
-The **v1.0.11 tag is the production-ready release**. The version
+The **v1.0.12 tag is the production-ready release**. The version
 ladder:
   • v1.0   = engineering milestone (complete feature scope).
   • v1.0.1 = invite-flow security hardening (owner-check on share,
@@ -488,6 +488,53 @@ ladder:
   • v1.0.5 = Layer-C citation firewall (allowedCitations runtime
              positive-list enforcement; closes PROD_READINESS_AUDIT
              B3).
+  • v1.0.12 = PDF visible-space + numbering + qualifier-display
+              cleanup (3 commits + docs). Empirical NRW × T-03
+              Königsallee re-export against v1.0.11 surfaced that
+              the v1.0.11 ZWNJ injection rendered as visible space
+              in Inter's TTF subset ("conf irmed" / "Pf licht" /
+              "f loor" / "Eingrif f"), worse than the original
+              ligature corruption it tried to fix.
+              Bug 22 regression closure: preventBrandLigatures is
+              now a no-op (Path A). pdf-lib's font.encodeText path
+              doesn't invoke fontkit's shaping layout, so no
+              GSUB-driven ligature is placed in the content stream
+              when plain ASCII is passed to drawText. ToUnicode CMap
+              ensures text extraction works regardless of viewer-
+              side display-time shaping. decomposeLigatures retained
+              for literal U+FB0x in persona content.
+              Bug 25: PDF rendering normalizes DESIGNER+ASSUMED
+              (gate-downgraded) → "LEGAL · CALCULATED" display so
+              the bauherr doesn't see a designer-touch claim when
+              none has fired. DB row unchanged; §6.B.01 audit
+              signal preserved.
+              Bug 26: section VI (Documents) always renders with
+              empty-state placeholder so I..X numbering is gap-free
+              on projects with no documents emitted yet.
+              Bug 27 (² superscript strip) hypothesis: incidentally
+              closed by Bug 22 — v1.0.11's ZWNJ injection corrupted
+              Inter's font subset integrity, breaking adjacent
+              U+00B2 extraction. Path A restoration of subset
+              integrity should self-resolve. If Bug 27 persists
+              post-v1.0.12 deploy, escalate to v1.0.13.
+              v1.0.13 backlog (intentionally deferred — these
+              require multi-session work):
+              - PDF Renaissance (11-section redesign per approved
+                prototype: cover · TOC · executive · areas · costs
+                · timeline · procedures · team · recommendations
+                · key data · verification · glossary)
+              - DE/EN export toggle in download UI
+              - Per-locale string resolver (pdfStrings.ts) +
+                section renderers (pdfSections/*.ts) + layout
+                primitives (pdfPrimitives.ts)
+              - Runtime smoke:pdf-text gate via pdf-parse
+              - Font subset script (Inter Reg + Med + Serif Italic
+                with GSUB liga stripped at subset time — Path B
+                fallback if Path A regresses)
+              - Bug 17 [P2] team-tab Bayern hardcodes audit
+              - Bug 20 [P2] procedure-tab caveat audit
+              - Bug 23 [P1] persona-output Schwabing/BLfD scrub
+              Bayern SHA preserved.
   • v1.0.11 = PDF deliverable hardening (2 fix commits + docs).
               Production verification of v1.0.10 on NRW × T-03
               (Königsallee, project 5c610d71-…) surfaced two P0
