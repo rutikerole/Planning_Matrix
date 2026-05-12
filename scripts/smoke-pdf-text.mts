@@ -284,6 +284,15 @@ async function runLocale(lang: 'en' | 'de'): Promise<{ passed: number; failed: n
       pass: !/No documents recorded yet|Noch keine Dokumente erfasst/u.test(text),
       msg: 'Documents page no longer empty (Bug 42 guard)',
     },
+    // v1.0.19 Bug 43 — Abstandsflächen-Hinweis
+    {
+      pass: /Abstandsflächen/u.test(text),
+      msg: 'Abstandsflächen-Hinweis surfaces in Areas (Bug 43)',
+    },
+    {
+      pass: /§\s*6\s*Abs\.\s*8\s+BauO\s+NRW/u.test(text),
+      msg: '§ 6 Abs. 8 BauO NRW 25-cm-Dämmungs-Privileg cited',
+    },
   ]
 
   // Language-specific assertions

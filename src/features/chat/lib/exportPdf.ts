@@ -439,6 +439,30 @@ export async function buildExportPdf({
             reason: decisionReason,
           }
         }
+        if (k === 'C') {
+          // v1.0.19 Bug 43 — Abstandsflächen-Hinweis. When façade
+          // work is in scope, surface § 6 Abs. 8 BauO NRW
+          // 25-cm-Dämmungs-Privileg as a flagged risk so the
+          // bauherr knows to verify Nachbarbeteiligung if
+          // grenzständig. v1.0.18 had this invisible.
+          let reason = a.reason ?? ''
+          if (
+            procedureCase.eingriff_aussenhuelle &&
+            (procedureCase.fassadenflaeche_m2 ?? 0) > 0
+          ) {
+            const hinweis =
+              lang === 'en'
+                ? 'Abstandsflächen note: external insulation may project into Abstandsfläche. § 6 Abs. 8 BauO NRW permits up to 25 cm thermal-insulation projection without neighbour consent under conditions — verify with Bauamt + Nachbarbeteiligung if grenzständig.'
+                : 'Abstandsflächen-Hinweis: Außendämmung kann in Abstandsfläche ragen. § 6 Abs. 8 BauO NRW erlaubt bis 25 cm Dämmungsprojektion ohne Nachbarunterschrift unter Auflagen — mit Bauamt + ggf. Nachbarbeteiligung verifizieren bei grenzständiger Lage.'
+            reason = reason ? `${reason} ${hinweis}` : hinweis
+          }
+          return {
+            key: k,
+            title: pdfStr(pdfStrings, `areas.${k.toLowerCase()}.title`),
+            state: a.state,
+            reason,
+          }
+        }
         return {
           key: k,
           title: pdfStr(pdfStrings, `areas.${k.toLowerCase()}.title`),
