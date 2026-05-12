@@ -56,6 +56,17 @@ import {
 } from './pdfSections/cover'
 import { renderTocFooter, renderTocPage } from './pdfSections/toc'
 import {
+  inferPriority,
+  renderExecutiveBody,
+  renderExecutiveFooter,
+  type ExecutiveRec,
+} from './pdfSections/executive'
+import {
+  renderAreasBody,
+  renderAreasFooter,
+  type AreaRow,
+} from './pdfSections/areas'
+import {
   pdfStr,
   resolvePdfStrings,
   type PdfLang,
@@ -103,11 +114,8 @@ interface BuildArgs {
 
 // ── Color tokens (mirrored from globals.css) ───────────────────────
 const INK = rgb(0.13, 0.14, 0.16) // hsl(220 16% 11%)
-const INK_MUTED = rgb(0.13, 0.14, 0.16)
 const CLAY = rgb(0.51, 0.41, 0.32) // hsl(25 30% 38%)
 const CLAY_DEEP = rgb(0.36, 0.31, 0.25) // hsl(25 32% 28%)
-const DRAFTING_BLUE = rgb(0.32, 0.41, 0.51) // hsl(212 38% 32%)
-const PAPER = rgb(0.97, 0.96, 0.93) // hsl(38 30% 97%)
 
 const PAGE_WIDTH = 595.28 // A4 portrait in points
 const PAGE_HEIGHT = 841.89
@@ -117,11 +125,6 @@ const STATE_LABELS_DE: Record<AreaState, string> = {
   ACTIVE: 'AKTIV',
   PENDING: 'AUSSTEHEND',
   VOID: 'NICHT ERMITTELBAR',
-}
-const STATE_LABELS_EN: Record<AreaState, string> = {
-  ACTIVE: 'ACTIVE',
-  PENDING: 'PENDING',
-  VOID: 'NOT DETERMINABLE',
 }
 
 // v1.0.6 Bug 2 — stakeholder block mirrors src/features/result/components/
@@ -247,15 +250,63 @@ export async function buildExportPdf({
   // body page; v1.0.14+ adds dedicated pages).
   const tocPage = doc.addPage([PDF_PAGE_WIDTH, PDF_PAGE_HEIGHT])
 
-  // ── Body: existing v1.0.12 rendering, shifted by 2 (cover + TOC) ─
+  // ── Body: v1.0.15 Renaissance Part 2A — Executive + Areas ────
+  // v1.0.15 retires the v1.0.12 drawTop3Page + drawBereichePage
+  // schedule-block renderers in favour of the editorial-language
+  // executive.ts + areas.ts pages. The body footer-loop below skips
+  // these pages because their footers are drawn POST-page-count by
+  // renderExecutiveFooter / renderAreasFooter (same Path A split as
+  // the cover + TOC). The remaining v1.0.12 body sections (costs,
+  // timeline, schedule blocks) are deferred to v1.0.16+ Renaissance
+  // parts 2B/2C/2D per the user's strict scope guard.
+  const bundeslandCodeUpper = (project.bundesland ?? '').toUpperCase()
+  let executivePage: PDFPage | null = null
+  let executivePageNumber = 0
   const recs = (state.recommendations ?? []).slice().sort((a, b) => a.rank - b.rank).slice(0, 3)
   if (recs.length > 0) {
-    drawTop3Page(doc, fonts, recs, lang)
+    executivePage = doc.addPage([PDF_PAGE_WIDTH, PDF_PAGE_HEIGHT])
+    executivePageNumber = doc.getPageCount()
+    const topThree: ExecutiveRec[] = recs.map((r) => {
+      const title = (lang === 'en' ? r.title_en : r.title_de) ?? ''
+      const body = (lang === 'en' ? r.detail_en : r.detail_de) ?? ''
+      return {
+        title,
+        body,
+        priority: inferPriority(title, body),
+        sourceLabel: r.qualifier
+          ? `${r.qualifier.source} · ${r.qualifier.quality}`
+          : undefined,
+      }
+    })
+    renderExecutiveBody(executivePage, editorialFonts, pdfStrings, {
+      templateLabel,
+      bundeslandCode: bundeslandCodeUpper,
+      topThree,
+    })
   }
 
-  // ── Page 3: Bereiche ───────────────────────────────────────────
+  // ── Areas (Section 02 · A · B · C status) ──────────────────────
+  let areasPage: PDFPage | null = null
+  let areasPageNumber = 0
   if (state.areas) {
-    drawBereichePage(doc, fonts, state.areas, lang)
+    areasPage = doc.addPage([PDF_PAGE_WIDTH, PDF_PAGE_HEIGHT])
+    areasPageNumber = doc.getPageCount()
+    const rows: AreaRow[] = (['A', 'B', 'C'] as const)
+      .filter((k) => state.areas?.[k])
+      .map((k) => {
+        const a = state.areas![k]
+        return {
+          key: k,
+          title: pdfStr(pdfStrings, `areas.${k.toLowerCase()}.title`),
+          state: a.state,
+          reason: a.reason,
+        }
+      })
+    renderAreasBody(areasPage, editorialFonts, pdfStrings, {
+      templateLabel,
+      bundeslandCode: bundeslandCodeUpper,
+      rows,
+    })
   }
 
   // ── Page 4: Costs (III COSTS) ──────────────────────────────────
@@ -601,12 +652,16 @@ export async function buildExportPdf({
     lang === 'en'
       ? 'Preliminary - to be confirmed by a certified architect (Bauvorlageberechtigte/r).'
       : 'Vorläufig - bestätigt durch eine/n bauvorlageberechtigte/n Architekt/in.'
-  // v1.0.13 — skip the existing y=28/y=44 footers on pages 1 (cover)
-  // and 2 (TOC). Those pages have their own MARGIN+14 footers
-  // rendered by renderCoverPage / renderTocPage. Body pages 3+ keep
-  // the v1.0.6 footer styling unchanged for this checkpoint sprint.
+  // v1.0.13 — skip the y=28/y=44 footers on pages 1 (cover) and 2
+  // (TOC). v1.0.15 also skips the executive + areas pages (their
+  // footers are drawn by renderExecutiveFooter / renderAreasFooter
+  // AFTER total page count is known — same Path A split as cover).
+  const editorialPages = new Set<PDFPage>()
+  if (executivePage) editorialPages.add(executivePage)
+  if (areasPage) editorialPages.add(areasPage)
   allPages.forEach((p, i) => {
     if (i <= 1) return // skip cover + TOC
+    if (editorialPages.has(p)) return // skip v1.0.15 editorial pages
     p.drawText(safe(vorlaeufig), {
       x: MARGIN,
       y: 44,
@@ -654,6 +709,22 @@ export async function buildExportPdf({
     totalPages,
     tocPageNumber: 2,
   })
+
+  // v1.0.15 — executive + areas footers in the second pass.
+  if (executivePage) {
+    renderExecutiveFooter(executivePage, editorialFonts, pdfStrings, {
+      docNo,
+      totalPages,
+      pageNumber: executivePageNumber,
+    })
+  }
+  if (areasPage) {
+    renderAreasFooter(areasPage, editorialFonts, pdfStrings, {
+      docNo,
+      totalPages,
+      pageNumber: areasPageNumber,
+    })
+  }
 
   return await doc.save()
 }
@@ -772,212 +843,6 @@ function ensureSpace(
   return startPage(doc)
 }
 
-
-function drawTop3Page(
-  doc: PDFDocument,
-  fonts: BrandFonts,
-  recs: NonNullable<ProjectState['recommendations']>,
-  lang: 'de' | 'en',
-) {
-  const { page } = startPage(doc)
-  let y = PAGE_HEIGHT - MARGIN
-  drawSectionHeader(
-    page,
-    fonts,
-    y,
-    lang === 'en' ? 'I  TOP 3 NEXT STEPS' : 'I  TOP 3 SCHRITTE',
-  )
-  y -= 50
-  recs.forEach((rec, idx) => {
-    const title = lang === 'en' ? rec.title_en : rec.title_de
-    const detail = lang === 'en' ? rec.detail_en : rec.detail_de
-    // Drafting-blue left edge
-    page.drawLine({
-      start: { x: MARGIN - 8, y: y - 60 },
-      end: { x: MARGIN - 8, y },
-      thickness: 0.7,
-      color: DRAFTING_BLUE,
-      opacity: 0.35,
-    })
-    // Italic-Serif numeral
-    page.drawText(safe(`${idx + 1}.`), {
-      x: MARGIN,
-      y: y - 4,
-      size: 22,
-      font: fonts.serifItalic,
-      color: CLAY_DEEP,
-    })
-    // Title
-    page.drawText(safe(title), {
-      x: MARGIN + 28,
-      y,
-      size: 14,
-      font: fonts.interMedium,
-      color: INK,
-      maxWidth: PAGE_WIDTH - MARGIN * 2 - 28,
-    })
-    y -= 22
-    // Detail
-    if (detail) {
-      const wrapped = wrapText(detail, 80)
-      wrapped.forEach((line) => {
-        page.drawText(safe(line), {
-          x: MARGIN + 28,
-          y,
-          size: 11,
-          font: fonts.inter,
-          color: INK,
-          opacity: 0.85,
-        })
-        y -= 14
-      })
-    }
-    // Footer caveat. Em-dash flattened — same rationale as the cover.
-    y -= 4
-    page.drawText(
-      safe(
-        lang === 'en'
-          ? 'Preliminary - to be confirmed by a certified architect (Bauvorlageberechtigte/r).'
-          : 'Vorläufig - bestätigt durch eine/n bauvorlageberechtigte/n Architekt/in.',
-      ),
-      {
-        x: MARGIN + 28,
-        y,
-        size: 9,
-        font: fonts.serifItalic,
-        color: rgb(0.13, 0.14, 0.16),
-        opacity: 0.55,
-      },
-    )
-    y -= 36
-  })
-}
-
-function drawBereichePage(
-  doc: PDFDocument,
-  fonts: BrandFonts,
-  areas: NonNullable<ProjectState['areas']>,
-  lang: 'de' | 'en',
-) {
-  const { page } = startPage(doc)
-  let y = PAGE_HEIGHT - MARGIN
-  drawSectionHeader(
-    page,
-    fonts,
-    y,
-    lang === 'en' ? 'II  AREAS  (PLAN SECTION)' : 'II  BEREICHE  (SCHNITT)',
-  )
-  y -= 50
-
-  const stateLabels = lang === 'en' ? STATE_LABELS_EN : STATE_LABELS_DE
-  const labels: Record<'A' | 'B' | 'C', { de: string; en: string }> = {
-    A: { de: 'Planungsrecht', en: 'Planning law' },
-    B: { de: 'Bauordnungsrecht', en: 'Building law' },
-    C: { de: 'Sonstige Vorgaben', en: 'Other requirements' },
-  }
-
-  // Plan-section diagram: three horizontal hatched bands
-  const diagramX = MARGIN
-  const diagramY = y - 100
-  const diagramW = PAGE_WIDTH - MARGIN * 2
-  const bandH = 30
-  ;(['A', 'B', 'C'] as const).forEach((key, idx) => {
-    const a = areas[key]
-    if (!a) return
-    const bandTop = diagramY - idx * bandH
-
-    // Frame
-    page.drawLine({
-      start: { x: diagramX, y: bandTop },
-      end: { x: diagramX + diagramW, y: bandTop },
-      thickness: 0.5,
-      color: INK,
-      opacity: 0.3,
-    })
-
-    // Hatching by state
-    if (a.state === 'ACTIVE') {
-      drawHatching(page, diagramX, bandTop - bandH, diagramW, bandH, 4, DRAFTING_BLUE, 0.55)
-    } else if (a.state === 'PENDING') {
-      drawHatching(page, diagramX, bandTop - bandH, diagramW, bandH, 8, CLAY, 0.35)
-    } else if (a.state === 'VOID') {
-      // Dashed strikethrough
-      page.drawLine({
-        start: { x: diagramX + 6, y: bandTop - bandH + 4 },
-        end: { x: diagramX + diagramW - 6, y: bandTop - 4 },
-        thickness: 0.6,
-        color: INK,
-        opacity: 0.25,
-        dashArray: [3, 3],
-      })
-    }
-
-    // Letter notch on the left
-    page.drawRectangle({
-      x: diagramX + 4,
-      y: bandTop - bandH + 7,
-      width: 16,
-      height: 16,
-      color: PAPER,
-      borderColor: INK,
-      borderWidth: 0.5,
-      borderOpacity: 0.3,
-    })
-    page.drawText(safe(key), {
-      x: diagramX + 8,
-      y: bandTop - bandH + 11,
-      size: 11,
-      font: fonts.serifItalic,
-      color: CLAY_DEEP,
-    })
-  })
-
-  // Last divider
-  page.drawLine({
-    start: { x: diagramX, y: diagramY - bandH * 3 },
-    end: { x: diagramX + diagramW, y: diagramY - bandH * 3 },
-    thickness: 0.5,
-    color: INK,
-    opacity: 0.3,
-  })
-
-  // Legend below the diagram
-  let legendY = diagramY - bandH * 3 - 30
-  ;(['A', 'B', 'C'] as const).forEach((key) => {
-    const a = areas[key]
-    if (!a) return
-    const labelText = `${key}  ${labels[key][lang]}`
-    page.drawText(safe(labelText), {
-      x: MARGIN,
-      y: legendY,
-      size: 12,
-      font: fonts.interMedium,
-      color: INK,
-    })
-    page.drawText(safe(stateLabels[a.state]), {
-      x: MARGIN + 200,
-      y: legendY,
-      size: 10,
-      font: fonts.interMedium,
-      color: a.state === 'ACTIVE' ? CLAY : a.state === 'VOID' ? INK_MUTED : CLAY,
-      opacity: a.state === 'VOID' ? 0.4 : 1,
-    })
-    legendY -= 18
-    if (a.reason) {
-      page.drawText(safe(a.reason), {
-        x: MARGIN,
-        y: legendY,
-        size: 10,
-        font: fonts.serifItalic,
-        color: INK,
-        opacity: 0.65,
-        maxWidth: PAGE_WIDTH - MARGIN * 2,
-      })
-      legendY -= 18
-    }
-    legendY -= 6
-  })
-}
 
 // v1.0.6 Bug 2 — Costs page (III). Mirrors src/features/result/components/
 // tabs/CostTimelineTab.tsx. Same heuristic engine (buildCostBreakdown +
@@ -1192,32 +1057,6 @@ function drawTimelinePage(
       opacity: 0.85,
     },
   )
-}
-
-function drawHatching(
-  page: PDFPage,
-  x: number,
-  y: number,
-  w: number,
-  h: number,
-  spacing: number,
-  color: ReturnType<typeof rgb>,
-  opacity: number,
-) {
-  // Diagonal lines from top-left to bottom-right at 45°.
-  for (let off = 0; off < w + h; off += spacing) {
-    const x1 = Math.max(x, x + off - h)
-    const y1 = Math.min(y + h, y + off)
-    const x2 = Math.min(x + w, x + off)
-    const y2 = Math.max(y, y + off - w)
-    page.drawLine({
-      start: { x: x1, y: y1 },
-      end: { x: x2, y: y2 },
-      thickness: 0.5,
-      color,
-      opacity,
-    })
-  }
 }
 
 function drawSectionHeader(page: PDFPage, fonts: BrandFonts, y: number, title: string) {
