@@ -48,6 +48,12 @@ const ALLOWLIST = [
   // deliverable — same DE/EN map pattern as exportMarkdown.
   'src/features/chat/lib/documentLinkage.ts',
   'src/features/chat/lib/exportPdf.ts',
+  // v1.0.13 — pdfStrings.ts is the locale-aware DE+EN string table
+  // for the PDF Renaissance (cover + TOC + footer + template
+  // intents). German half is canonical legal-domain text mirroring
+  // the EN side; same allowlist pattern as the other DE/EN
+  // side-by-side maps.
+  'src/features/chat/lib/pdfStrings.ts',
   // Landing-page demo scripts + legal pages render canonical German
   // for product copy / DSGVO compliance.
   'src/features/landing/lib/chatScript.ts',

@@ -2153,6 +2153,76 @@ async function runStaticGate() {
     },
   ]))
 
+  // ── v1.0.13 — PDF Renaissance Part 1: DE/EN string table ──────────
+  const stringsSrc = await readFileText('src/features/chat/lib/pdfStrings.ts')
+  results.push(failures('v1.0.13: pdfStrings declares EN + DE tables', [
+    {
+      ok: /const EN:\s*PdfStrings\s*=\s*\{/.test(stringsSrc),
+      msg: 'EN string table declared',
+    },
+    {
+      ok: /const DE:\s*PdfStrings\s*=\s*\{/.test(stringsSrc),
+      msg: 'DE string table declared',
+    },
+    {
+      ok: /export const PDF_STRINGS:\s*Record<PdfLang, PdfStrings>\s*=\s*\{\s*en:\s*EN,\s*de:\s*DE\s*\}/.test(stringsSrc),
+      msg: 'PDF_STRINGS Record exported with both locales',
+    },
+    {
+      ok: /export function resolvePdfStrings/.test(stringsSrc),
+      msg: 'resolvePdfStrings exported',
+    },
+    {
+      ok: /export function pdfStr/.test(stringsSrc) && /\[\[MISSING:/.test(stringsSrc),
+      msg: 'pdfStr accessor surfaces missing keys as a visible sentinel',
+    },
+  ]))
+  results.push(failures('v1.0.13: pdfStrings key parity EN ↔ DE (no missing translations)', [
+    {
+      ok: /toc\.title': 'Table of contents'/.test(stringsSrc) &&
+          /toc\.title': 'Inhaltsverzeichnis'/.test(stringsSrc),
+      msg: 'toc.title present in both EN and DE',
+    },
+    {
+      ok: /template\.T-03': 'T-03 · Renovation'/.test(stringsSrc) &&
+          /template\.T-03': 'T-03 · Sanierung'/.test(stringsSrc),
+      msg: 'template.T-03 present in both EN and DE',
+    },
+    {
+      ok: /cover\.preliminary': 'PRELIMINARY — pending architect confirmation'/.test(stringsSrc) &&
+          /cover\.preliminary': 'VORLÄUFIG — Architekt:in-Bestätigung ausstehend'/.test(stringsSrc),
+      msg: 'cover.preliminary localized correctly per Phase-13 wording',
+    },
+    // Parity check via parsed-key compare. Both tables must declare
+    // the same set of keys; missing translations would silently fall
+    // through pdfStr's sentinel marker.
+    {
+      ok: (() => {
+        const enKeys = [...stringsSrc.matchAll(/^\s*'([^']+)':\s*'[^']*',?\s*$/gm)]
+          .map((m) => m[1])
+        // The matchAll above captures both EN and DE entries in source
+        // order. Split by locale by counting from after "const EN" to
+        // "const DE" (EN block) and "const DE" to end (DE block).
+        const enStart = stringsSrc.indexOf('const EN:')
+        const deStart = stringsSrc.indexOf('const DE:')
+        const exportStart = stringsSrc.indexOf('export const PDF_STRINGS')
+        if (enStart < 0 || deStart < 0 || exportStart < 0) return false
+        const enBlock = stringsSrc.slice(enStart, deStart)
+        const deBlock = stringsSrc.slice(deStart, exportStart)
+        const enSet = new Set(
+          [...enBlock.matchAll(/'([^']+)':\s*'[^']*'/g)].map((m) => m[1]),
+        )
+        const deSet = new Set(
+          [...deBlock.matchAll(/'([^']+)':\s*'[^']*'/g)].map((m) => m[1]),
+        )
+        if (enSet.size !== deSet.size) return false
+        for (const k of enSet) if (!deSet.has(k)) return false
+        return enKeys.length > 0
+      })(),
+      msg: 'every EN key must have a matching DE translation (and vice versa)',
+    },
+  ]))
+
   // ── v1.0.13 — PDF Renaissance Part 1: primitives module ─────────────
   const primitivesSrc = await readFileText('src/features/chat/lib/pdfPrimitives.ts')
   results.push(failures('v1.0.13: pdfPrimitives exports color + layout constants', [
