@@ -198,6 +198,16 @@ const EN: PdfStrings = {
   // ─── v1.0.17 — Glossary ───────────────────────────────────────
   'glossary.kicker': 'SECTION 11 · GLOSSARY',
   'glossary.title': 'German legal terms',
+
+  // ─── v1.0.20 — Qualifier pill i18n ────────────────────────────
+  'qualifier.source.CLIENT': 'CLIENT',
+  'qualifier.source.LEGAL': 'LEGAL',
+  'qualifier.source.DESIGNER': 'DESIGNER',
+  'qualifier.source.AUTHORITY': 'AUTHORITY',
+  'qualifier.quality.CALCULATED': 'CALCULATED',
+  'qualifier.quality.ASSUMED': 'ASSUMED',
+  'qualifier.quality.VERIFIED': 'VERIFIED',
+  'qualifier.quality.DECIDED': 'DECIDED',
 }
 
 const DE: PdfStrings = {
@@ -376,6 +386,16 @@ const DE: PdfStrings = {
   // ─── v1.0.17 — Glossary ───────────────────────────────────────
   'glossary.kicker': 'ABSCHNITT 11 · GLOSSAR',
   'glossary.title': 'Deutsche Rechtsbegriffe',
+
+  // ─── v1.0.20 — Qualifier pill i18n ────────────────────────────
+  'qualifier.source.CLIENT': 'BAUHERR',
+  'qualifier.source.LEGAL': 'RECHTLICH',
+  'qualifier.source.DESIGNER': 'ARCHITEKT:IN',
+  'qualifier.source.AUTHORITY': 'BEHÖRDE',
+  'qualifier.quality.CALCULATED': 'BERECHNET',
+  'qualifier.quality.ASSUMED': 'ANGENOMMEN',
+  'qualifier.quality.VERIFIED': 'VERIFIZIERT',
+  'qualifier.quality.DECIDED': 'ENTSCHIEDEN',
 }
 
 export const PDF_STRINGS: Record<PdfLang, PdfStrings> = { en: EN, de: DE }
