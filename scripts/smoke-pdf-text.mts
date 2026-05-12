@@ -171,6 +171,11 @@ async function runLocale(lang: 'en' | 'de'): Promise<{ passed: number; failed: n
     // space is ALWAYS a bug (legitimate m² has no leading space).
     { pass: !/\s²\s/u.test(text), msg: 'no orphan ² substitutions (v1.0.18 Bug 35 guard)' + (/\s²\s/u.test(text) ? ` — context: "${text.match(/.{0,20}\s²\s.{0,20}/u)?.[0] ?? ''}"` : '') },
     { pass: !/\s²LEGAL|\s²CLIENT|\s²DESIGNER/u.test(text), msg: 'no ² before qualifier labels' },
+    // v1.0.18 Bug 37 — Key Data value + qualifier pill must not
+    // collide. Negative-pattern: no concatenated "NRWLEGAL" /
+    // "BauOLEGAL" (no-space concatenations would only happen on
+    // overflow).
+    { pass: !/NRWLEGAL|BauOLEGAL/u.test(text), msg: 'no value/qualifier collision (Bug 37 guard)' },
   ]
 
   // Language-specific assertions

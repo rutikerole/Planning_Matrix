@@ -117,6 +117,15 @@ export function renderKeyDataBody(
   })
 
   let rowY = tableY - 26
+  // v1.0.18 Bug 37 — keep the qualifier pill clear of the value
+  // text. v1.0.17 pinned pill at colQualX (the field+value column
+  // boundary), causing collisions when value text overflowed.
+  // Now: measure value width; pill x = max(colQualX,
+  // colValueX + valueWidth + MIN_GAP). If pill would overflow the
+  // page right margin, fall back to wrapping the value on the next
+  // line and pinning the pill at colQualX.
+  const MIN_GAP = 12
+  const pageRight = tableX + tableW
   data.rows.forEach((row, idx) => {
     drawSafeText(page, row.field, {
       x: colFieldX,
@@ -134,13 +143,39 @@ export function renderKeyDataBody(
       color: INK,
       safe: fonts.safe,
     })
-    drawQualifierPill(page, colQualX, rowY, {
-      source: row.qualifier.source,
-      quality: row.qualifier.quality,
-      font: fonts.sansMedium,
-      safe: fonts.safe,
-    })
-    rowY -= 22
+
+    const valueWidth = fonts.sansMedium.widthOfTextAtSize(
+      fonts.safe(row.value),
+      11,
+    )
+    const proposedPillX = Math.max(colQualX, colValueX + valueWidth + MIN_GAP)
+    // Estimate pill width to know if it fits before the page right
+    // edge. drawQualifierPill returns its consumed width; here we
+    // approximate via text-width + padX*2 + small fudge.
+    const pillTextWidth = fonts.sansMedium.widthOfTextAtSize(
+      `${row.qualifier.source} · ${row.qualifier.quality}`,
+      9,
+    )
+    const pillWidth = pillTextWidth + 12
+    if (proposedPillX + pillWidth <= pageRight) {
+      drawQualifierPill(page, proposedPillX, rowY, {
+        source: row.qualifier.source,
+        quality: row.qualifier.quality,
+        font: fonts.sansMedium,
+        safe: fonts.safe,
+      })
+      rowY -= 22
+    } else {
+      // Value too long — wrap pill to next line, left-anchored to
+      // the value column so the field/value/pill still align.
+      drawQualifierPill(page, colValueX, rowY - 16, {
+        source: row.qualifier.source,
+        quality: row.qualifier.quality,
+        font: fonts.sansMedium,
+        safe: fonts.safe,
+      })
+      rowY -= 36
+    }
     if (idx < data.rows.length - 1) {
       drawHairline(page, tableX, rowY + 8, tableX + tableW, {
         color: CLAY,

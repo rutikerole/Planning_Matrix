@@ -16,7 +16,8 @@
         { "key": "fassadenflaeche_m2", "value": 220, "qualifier": { "source": "CLIENT", "quality": "VERIFIED" } },
         { "key": "klasse", "value": "Gebaeudeklasse 3", "qualifier": { "source": "LEGAL", "quality": "CALCULATED" } },
         { "key": "energiestandard", "value": "GEG 2024 Mindestanforderung", "qualifier": { "source": "LEGAL", "quality": "VERIFIED" } },
-        { "key": "denkmalschutz", "value": false, "qualifier": { "source": "LEGAL", "quality": "ASSUMED" } }
+        { "key": "denkmalschutz", "value": false, "qualifier": { "source": "LEGAL", "quality": "ASSUMED" } },
+        { "key": "verfahren_indikation", "value": "verfahrensfrei nach § 62 BauO NRW", "qualifier": { "source": "LEGAL", "quality": "ASSUMED" } }
       ],
       "areas": {
         "A": { "state": "ACTIVE", "reason": "Innenbereich nach § 30 BauGB. Bebauungsplan zulässig." },
