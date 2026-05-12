@@ -336,6 +336,23 @@ async function runLocale(lang: 'en' | 'de'): Promise<{ passed: number; failed: n
         : !/CLIENT\s*·\s*VERIFIED|LEGAL\s*·\s*CALCULATED|LEGAL\s*·\s*ASSUMED/u.test(text),
       msg: 'DE PDF has zero English qualifier pill labels',
     },
+    // v1.0.20 Polish 3 — Bauherr signature row on Verification page
+    {
+      pass: /Test Bauherr/u.test(text),
+      msg: 'Bauherr name pre-printed on Verification page signature row',
+    },
+    {
+      pass: lang === 'en'
+        ? /Bauherr\s*·\s*Owner/u.test(text)
+        : /Bauherr:in/u.test(text),
+      msg: 'Bauherr signature label rendered',
+    },
+    {
+      pass: lang === 'en'
+        ? /Co-signature required/u.test(text)
+        : /Mit-Unterschrift erforderlich/u.test(text),
+      msg: 'Bauherr co-signature note rendered',
+    },
   ]
 
   // Language-specific assertions

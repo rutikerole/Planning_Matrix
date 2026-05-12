@@ -164,6 +164,8 @@ const EN: PdfStrings = {
   'sig.architect': 'Architect (Bauvorlageberechtigte/r)',
   'sig.chamber': 'Chamber stamp · registration no.',
   'sig.date': 'Date',
+  'sig.bauherr': 'Bauherr · Owner',
+  'sig.bauherr.note': 'Co-signature required for Bauantrag.',
 
   // ─── v1.0.17 — Procedures + Documents ─────────────────────────
   'proc.kicker': 'SECTION 05 · PROCEDURES',
@@ -349,6 +351,8 @@ const DE: PdfStrings = {
   'verif.dq.legend.assumed': 'angenommen',
   'sig.architect': 'Architekt:in (Bauvorlageberechtigte/r)',
   'sig.chamber': 'Kammerstempel · Eintragungs-Nr.',
+  'sig.bauherr': 'Bauherr:in',
+  'sig.bauherr.note': 'Mit-Unterschrift erforderlich für Bauantrag.',
   'sig.date': 'Datum',
 
   // ─── v1.0.17 — Procedures + Documents ─────────────────────────

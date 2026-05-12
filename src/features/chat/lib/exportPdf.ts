@@ -808,6 +808,9 @@ export async function buildExportPdf({
   renderVerificationBody(verificationPage, editorialFonts, pdfStrings, {
     templateLabel,
     bundeslandCode: bundeslandCodeUpper,
+    // v1.0.20 Polish 3 — pre-printed Bauherr name above the
+    // third signature line.
+    bauherrName,
     verifiedCount,
     calculatedCount,
     assumedCount,

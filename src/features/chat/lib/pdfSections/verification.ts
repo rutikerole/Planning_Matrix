@@ -40,6 +40,11 @@ export interface VerificationData {
   verifiedCount: number
   calculatedCount: number
   assumedCount: number
+  /** v1.0.20 Polish 3 — pre-printed Bauherr name above the third
+   *  signature line. Resolved by exportPdf assembly per the v1.0.14
+   *  Bug 29 fallback chain (profile.full_name → user_metadata →
+   *  email local-part → "Bauherr"/"Owner"). */
+  bauherrName?: string
 }
 
 export interface VerificationFooterData {
@@ -206,6 +211,44 @@ export function renderVerificationBody(
     label: pdfStr(strings, 'sig.chamber'),
     sublabel: pdfStr(strings, 'sig.date'),
     fonts,
+  })
+
+  // ─── v1.0.20 Polish 3 — Bauherr signature row (full width) ──
+  // Architect + Chamber stamp signatures are professional-side
+  // accreditation. The Bauantrag also requires Bauherr-co-signature
+  // per BauO NRW — without it the Bauamt rejects the submission.
+  // This third row makes the requirement explicit and pre-fills the
+  // resolved Bauherr name above the signature line.
+  const bauherrY = sigStartY - 100
+  const fullW = PAGE_WIDTH - 2 * MARGIN
+  // Pre-printed name above the signature line
+  if (data.bauherrName) {
+    drawSafeText(page, data.bauherrName, {
+      x: MARGIN,
+      y: bauherrY,
+      size: 13,
+      font: fonts.sansMedium,
+      color: INK,
+      safe: fonts.safe,
+    })
+  }
+  // Full-width signature underline (drawSignatureField at fullW)
+  drawSignatureField(page, {
+    x: MARGIN,
+    y: bauherrY - 6,
+    width: fullW,
+    label: pdfStr(strings, 'sig.bauherr'),
+    sublabel: pdfStr(strings, 'sig.date'),
+    fonts,
+  })
+  // Italic-serif CLAY co-signature note below the labels
+  drawSafeText(page, pdfStr(strings, 'sig.bauherr.note'), {
+    x: MARGIN,
+    y: bauherrY - 80,
+    size: 9,
+    font: fonts.serifItalic,
+    color: CLAY,
+    safe: fonts.safe,
   })
 
   // Silence unused — PILL_LEGAL_BG is part of the design system but
