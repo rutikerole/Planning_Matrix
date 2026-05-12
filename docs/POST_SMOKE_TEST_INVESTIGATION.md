@@ -4,6 +4,69 @@
 > Bayern SHA `b18d3f7f9a6fe238c18cec5361d30ea3a547e46b1ef2b16a1e74c533aacb3471`
 > verified MATCH at start AND end of read pass. No code edits.
 
+## V1.0.15 SHIPPED — PDF Renaissance Part 2A (Executive + Areas)
+
+Tightly scoped follow-on to v1.0.14: ONLY the executive (Section 01
+· Top 3 next steps) and areas (Section 02 · A · B · C status) pages
+get the editorial-language treatment in this sprint. Original Part 2A
+plan included Costs as a third page; user halved the scope after the
+v1.0.14 regression-closure cycle so each page change can land its own
+Rutik visual checkpoint before the next sprint commits.
+
+**What shipped (6 commits + this doc):**
+
+| # | Sprint commit                                                | What it added                                                          |
+|---|--------------------------------------------------------------|------------------------------------------------------------------------|
+| 1 | feat(pdf): layout primitives extended (v1.0.15)              | drawCard / drawPriorityPill / drawCircularBadge / drawWrappedText / drawStatusLegend |
+| 2 | feat(pdf): strings extended with executive + areas keys      | exec.* + areas.* DE/EN strings (locale-strict, [[MISSING]] sentinel)   |
+| 3 | feat(pdf): executive page renderer                           | pdfSections/executive.ts: renderExecutiveBody + Footer + inferPriority |
+| 4 | feat(pdf): areas page renderer                               | pdfSections/areas.ts: renderAreasBody + Footer + estimateLineCount     |
+| 5 | feat(pdf): wire executive + areas into exportPdf assembly    | Retires drawTop3Page + drawBereichePage; editorialPages footer-skip set|
+| 6 | test(pdf): drift fixtures for v1.0.15 renderers + wire-up    | Five new fixture blocks pinning source-level shape                     |
+
+**Design decisions worth recording:**
+
+- **Path A 2-pass split reused.** Executive + Areas footers are
+  drawn AFTER `totalPages = doc.getPageCount()` resolves, mirroring
+  the cover/TOC Bug 28 fix. No placeholder "X / ?" is ever drawn.
+  Renderers expose body + footer as separate exports; the assembly
+  stashes the PDFPage refs and feeds them into the footer pass.
+- **Priority bucketing is heuristic.** The Recommendation shape
+  doesn't carry an explicit priority field (Phase 13 §6.B.01 records
+  only `qualifier.source` + `qualifier.quality`), so `inferPriority`
+  buckets on title+detail keywords: GEG/energy → high, "before
+  awarding"/KfW → beforeAward, Verfahrensfreiheit/confirm → confirm,
+  default → high. Cheap, local, future-friendly: if Phase 14 adds an
+  explicit priority field, the caller passes it through instead of
+  invoking inferPriority — no renderer change.
+- **Card height computed up-front.** Areas cards have a full thin
+  border that must wrap their reason text. Rather than two-pass
+  layout (measure then draw), `estimateLineCount` mirrors
+  `drawWrappedText`'s word-break algorithm so the card rect always
+  contains the wrapped text. Identical logic, single source of
+  truth via shared regex word-split.
+- **Status-color tables ride on the section renderer.**
+  `BADGE_COLOR_BY_STATE` and `PILL_BG_BY_STATE` / `PILL_FG_BY_STATE`
+  live in areas.ts. Primitives stay color-agnostic; section
+  renderers own state → color mapping. Keeps the design DNA
+  reachable from one file per page instead of a global theme map.
+- **Cleanup cascade.** Retiring drawTop3Page + drawBereichePage
+  freed `drawHatching`, `STATE_LABELS_EN`, `INK_MUTED`,
+  `DRAFTING_BLUE`, and `PAPER` (export-pdf-local copy). All five
+  removed in the assembly-wire commit. tsc TS6133 caught `PAPER`
+  in a follow-up tick.
+
+**Out of scope (deferred to v1.0.16+):**
+
+- Costs (Section 03) — editorial table with per-row rationale.
+- Timeline (Section 04) — Gantt-style horizontal bars.
+- Procedures / Team / Recommendations / KeyData / Verification /
+  Glossary — Sections 05-10 still in v1.0.12 schedule-block state.
+
+Bayern SHA preserved both ends of every commit. Bundle 269.1 KB gz.
+
+---
+
 ## V1.0.14 RESOLVED FINDINGS — v1.0.13 regression closure
 
 Empirical NRW × T-03 Königsallee re-export against v1.0.13

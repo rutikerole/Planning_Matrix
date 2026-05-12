@@ -461,8 +461,11 @@ shipped in Phase 13 Week 4). What's missing is the cron harness
 
 ## 9. Operational responsibilities — split between engineering and client
 
-The **v1.0.14 tag is the production-ready release**. The version
-ladder:
+The **v1.0.14 tag is the production-ready release**. v1.0.15 ships
+the first two editorial PDF pages (executive + areas) but the
+remaining seven body sections are still in v1.0.12 plain-text state,
+so v1.0.14 stays the last "all body sections coherent" tag until
+v1.0.16+ closes the rest of the Renaissance. The version ladder:
   • v1.0   = engineering milestone (complete feature scope).
   • v1.0.1 = invite-flow security hardening (owner-check on share,
              role-check on accept, 7-day TTL on invites).
@@ -549,6 +552,60 @@ ladder:
               - Bug 20 [P2] procedure-tab caveat audit (chat-layer)
               - Bug 23 [P1] persona-output Schwabing/BLfD scrub
               Bayern SHA preserved.
+  • v1.0.15 = PDF Renaissance Part 2A — Executive + Areas pages
+              only (~6 commits + docs). Scope was deliberately
+              halved from the original "Part 2A executive + areas
+              + costs" plan: the user requested a tightly scoped 2-
+              page sprint after the v1.0.14 regression-closure cycle,
+              banking the Costs page for v1.0.16 alongside its own
+              Rutik checkpoint. Both pages render via the cover/TOC
+              Path-A 2-pass split (body in first pass, page-numbered
+              footer in second pass once total page count resolves).
+              v1.0.15 primitives (pdfPrimitives.ts extensions):
+              drawCard with left|full|none borderSide options;
+              drawPriorityPill (returns consumed width for
+              chaining); drawCircularBadge (filled circle + centered
+              letter); drawWrappedText (word-break wrap with no
+              hyphenation); drawStatusLegend (right-anchored dot+
+              label legend). Accent colors live on the section
+              renderers — primitives stay color-agnostic.
+              Executive page (pdfSections/executive.ts): kicker +
+              26pt italic-serif title + right-anchored template ·
+              bundesland meta; three priority cards stacked at y ≈
+              680 downward, each with a left-accent border in
+              priority color (amber/clay/green), italic-serif numeral
+              01/02/03, Inter Medium title, priority pill, 12pt
+              wrapped body, optional ▸ source/timing chips; bottom
+              italic CLAY footer note citing § 30 BauGB · § 62/64
+              BauO {state} · § 48 GEG with {state} substitution from
+              project.bundesland. Priority bucketing via inferPriority
+              heuristic on title+detail keywords (GEG/energy → high,
+              "before awarding"/KfW → beforeAward, Verfahrensfreiheit
+              /confirm → confirm; default → high).
+              Areas page (pdfSections/areas.ts): kicker + 26pt
+              italic-serif title + right-anchored template ·
+              bundesland meta; status legend (active green dot /
+              pending amber dot / void red dot) anchored top-right;
+              three full-bordered cards stacked, each with a filled
+              circular badge in state color bearing the A/B/C
+              letter, INK title from areas.{a,b,c}.title, status
+              pill (ACTIVE/PENDING/VOID localized), italic-serif
+              CLAY reason paragraph wrapped to card width. Card
+              heights computed up-front via estimateLineCount
+              mirroring drawWrappedText's word-break algorithm so
+              the bordered rect always wraps its text.
+              Assembly wire-up: drawTop3Page + drawBereichePage
+              retired; cleanup cascade removed drawHatching,
+              STATE_LABELS_EN, INK_MUTED/DRAFTING_BLUE/PAPER
+              constants now-orphan. Footer-loop teaches itself to
+              skip editorial pages via PDFPage-ref Set so the legacy
+              y=28/y=44 footer stamp does not overwrite the v1.0.15
+              renderers' MARGIN+14 footers.
+              Strict scope guard observed: costs / timeline /
+              procedures / team / recommendations / keyData /
+              verification / glossary untouched. Those land in
+              v1.0.16+. Bayern SHA preserved both ends of every
+              commit. Bundle 269.1 KB gz (300 KB ceiling).
   • v1.0.13 = PDF Renaissance Part 1 — foundations + cover + TOC +
               DE/EN export picker (7 commits + docs). Mixed-state
               PDF intentional this sprint: new cover + TOC are
