@@ -4,6 +4,63 @@
 > Bayern SHA `b18d3f7f9a6fe238c18cec5361d30ea3a547e46b1ef2b16a1e74c533aacb3471`
 > verified MATCH at start AND end of read pass. No code edits.
 
+## V1.0.18 SHIPPED — Bug fixes + Tier 1 client value adds
+
+Empirical v1.0.17 NRW × T-03 Königsallee re-export confirmed the
+PDF Renaissance landed (12 pages, ligatures dead, both locales
+clean). BUT surfaced 4 bugs the runtime smoke missed plus
+opportunity for 4 immediate-utility additions.
+
+**4 bug fixes:**
+
+| # | Bug | Root cause | Fix |
+|---|-----|-----------|-----|
+| 35 | "²" substitution on pages 6/7/9 | (a) ▸ U+25B8 in recommendations/procedures/executive chip rows round-tripped via pdf-parse as ²; (b) Instrument Serif Italic doesn't carry U+2248 (≈) so timeline subtitle's ≈ fell back to .notdef extracted as ² | ▸→· in 4 source positions; timeline.sub EN ≈→"~" + DE ≈→"ca." (≈ stays in milestone callout which uses Inter, where ≈ renders fine) |
+| 36 | Team page dropped Structural engineer entry | exportPdf filtered roles to `r.needed === true` | Drop filter; sort needed-first; SpecialistRow gains needed/rationale/badgeLabel; team.ts renders NEEDED/NOT NEEDED pills + wrapped rationale |
+| 37 | Key Data "NRWLEGAL · ASSUMED" (no-space) | Pill pinned at colQualX overlapped long value text | proposedPillX = max(colQualX, colValueX + valueWidth + 12pt MIN_GAP); overflow path wraps pill to next line |
+| 39 | Costs notes wording drift | Phrase was "the actual fee agreement" | Restored "the architect-specific fee agreement and the selected Leistungsphasen" (apostrophe-free to satisfy single-quoted pdfStrings parser) |
+
+**Smoke gap analysis (Bug 35):** v1.0.17's "≈ + m² intact"
+assertion was `/≈/u.test(text)` — a single occurrence anywhere in
+the text passed it. The legitimate "week ≈ 22" milestone callout
+(rendered via Inter which has U+2248) satisfied the assertion while
+the timeline subtitle's broken ≈ was masked. v1.0.18 adds CONTEXT-
+checked negative-pattern guards: " ² " (with leading + trailing
+space — m² has no leading space) and " ²LEGAL/CLIENT/DESIGNER"
+substrings must NOT appear anywhere.
+
+**4 Tier 1 features:**
+
+| # | Feature | Mechanism |
+|---|---------|-----------|
+| 4 | 30-day validity stamp | cover footer renders "VALID FOR 30 DAYS · expires {date}" / "GÜLTIG 30 TAGE · läuft ab {date}" with per-locale date formatting. {date} = generatedAt + 30d. Sets stale-advice expectation. |
+| 2 | Confidence score | Cover metadata grid grows from 3 to 4 columns: BUNDESLAND · TEMPLATE · CREATED · CONFIDENCE. Sources `computeConfidence(state)` (same composite as result-page header). DE: "VERTRAUEN". |
+| 1 | QR code | qrcode npm dep, dynamic-imported. PNG buffer → doc.embedPng → 64×64pt on cover, right side above footer. Encodes `planning-matrix.app/project/{id}`. Label: "SCAN TO OPEN PROJECT" / "PROJEKT ÖFFNEN". |
+| 3 | § citation hyperlinks | New pdfCitations.ts (citationToUrl + findCitations) + addLinkAnnotation primitive. citationToUrl handles federal codes (BauGB/GEG/HOAI → gesetze-im-internet.de) + state BauO codes (16 Bundesländer covered, per-state portal URL table). Wired into Key Data value column. |
+
+**pdf-lib annotation gotcha (documented for future):** Link
+annotations require the URI dict value to be a `PDFString`. Passing
+a JS string into `ctx.obj({ ..., URI: 'https://...' })` causes
+pdf-lib's obj coercion to produce a PDFName (`/https://...`), which
+PDF viewers silently reject — the annotation rect exists in the
+tree but no click handler fires. Fix: `URI: PDFString.of(uri)`.
+
+**Smoke gate empirical proof (HEAD):** 60/60 EN + DE assertions
+pass including:
+- Zero ² substitutions (negative-pattern guards)
+- Both specialists rendered (Energy consultant + Structural engineer
+  / Energieberater + Tragwerksplaner) with badges
+- No "NRWLEGAL" collision substring
+- Validity stamp present (EN + DE)
+- Confidence label + percent present (EN + DE)
+- QR code label present (EN + DE)
+- ≥1 URI annotation extracted from PDF annotation tree
+
+Bayern SHA `b18d3f7f...c3471` preserved at start + end of every
+commit. Bundle 269.1 KB gz unchanged (qrcode lazy-loaded).
+
+---
+
 ## V1.0.17 SHIPPED — PDF Renaissance Part 3 FINAL + permanent ligature kill
 
 The chronic ligature regression cycle that ran from v1.0.11 through

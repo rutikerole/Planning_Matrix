@@ -461,11 +461,12 @@ shipped in Phase 13 Week 4). What's missing is the cron harness
 
 ## 9. Operational responsibilities — split between engineering and client
 
-**v1.0.17 IS THE NEW PRODUCTION-READY RELEASE.** The PDF
-Renaissance is COMPLETE — all 11 editorial sections shipped, the
-chronic ligature regression cycle has been killed permanently at
-the font-embed layer, and a runtime smoke gate empirically verifies
-ligature integrity on every commit going forward. The version
+**v1.0.18 IS THE NEW PRODUCTION-READY RELEASE.** Builds on v1.0.17's
+PDF Renaissance with 4 bug closures (²-substitution / specialists
+filter / Key Data overflow / costs notes wording) and 4 Tier 1
+client value-adds (30-day validity stamp, confidence score on
+cover, QR code on cover, § citation hyperlinks). Runtime smoke
+gate empirically verifies every assertion at 60/60. The version
 ladder:
   • v1.0   = engineering milestone (complete feature scope).
   • v1.0.1 = invite-flow security hardening (owner-check on share,
@@ -713,6 +714,73 @@ ladder:
               - v1.0.18: Recommendations + Key Data (Sections VIII-IX)
               - v1.0.19: Verification + Glossary + audit log + runtime
                 smoke:pdf-text
+  • v1.0.18 = Bug fixes + Tier 1 client value adds (9 commits + docs).
+              Empirical v1.0.17 Königsallee re-export confirmed the
+              Renaissance landed but surfaced 4 bugs:
+              - Bug 35 [P1]: "²" substitution leaked into timeline
+                subtitle ("Total duration ² 4–6 months"), recommendation
+                qualifier prefix, procedure qualifier prefix. Two
+                distinct sources: (a) ▸ U+25B8 in recommendations.ts
+                / procedures.ts / executive.ts chip rows round-tripped
+                via pdf-parse as ²; (b) Instrument Serif Italic
+                doesn't contain U+2248 (≈) so the timeline subtitle's
+                ≈ glyph fell back to .notdef which extracted as ².
+                Fix: ▸→· (U+00B7 middle dot, universally present),
+                timeline.sub EN ≈→~ + DE ≈→"ca." (German "circa").
+              - Bug 36 [P1]: Team specialists section filtered to
+                r.needed === true, dropping NOT-NEEDED entries.
+                Restored: full list, sorted needed-first, with green
+                NEEDED / amber NOT NEEDED pills + rationale paragraph.
+              - Bug 37 [P1]: Key Data qualifier pill collided with
+                long value text ("verfahrensfrei nach § 62 BauO NRW"
+                extracted as "NRWLEGAL · ASSUMED" no-space). Pill
+                x-position now max(colQualX, colValueX + valueWidth +
+                12pt). Overflow path: pill wraps to next line.
+              - Bug 39 [P2]: costs.notes.b wording drift restored to
+                "architect-specific fee agreement and the selected
+                Leistungsphasen" (apostrophe avoided so the single-
+                quoted pdfStrings literal parses cleanly).
+              Plus 4 Tier 1 client value-adds:
+              - Feature 4: 30-day validity stamp on cover footer
+                ("VALID FOR 30 DAYS · expires 11 June 2026" / "GÜLTIG
+                30 TAGE · läuft ab 11. Juni 2026") — sets stale-advice
+                expectation, reduces "is this still current?" support.
+              - Feature 2: Confidence score on cover (4th column in
+                metadata grid: BUNDESLAND · TEMPLATE · CREATED ·
+                CONFIDENCE). Sources computeConfidence(state) — same
+                composite the result-page header renders.
+              - Feature 1: QR code on cover (64×64pt, links to
+                planning-matrix.app/project/{id} via qrcode npm dep
+                + doc.embedPng). Architect scans phone, opens project,
+                zero URL typing. Dynamic-imported with the export
+                path so the dep stays out of the main bundle.
+              - Feature 3: § citation hyperlinks. New pdfCitations.ts
+                with citationToUrl + findCitations exports. Federal
+                codes (BauGB/GEG/HOAI) map to gesetze-im-internet.de;
+                state BauO codes map to per-state portals (16
+                Bundesländer covered). New addLinkAnnotation primitive
+                overlays Link annotations with URI actions on detected
+                citation rects. Wired into Key Data value column;
+                wrapped-text paths (executive/areas/procedures) defer
+                to v1.0.19+ since drawWrappedText doesn't expose
+                per-line substring positions.
+              pdf-lib gotcha discovered + documented: URI in a Link
+              annotation must be wrapped in PDFString.of(...); passing
+              the raw string causes ctx.obj to coerce to PDFName,
+              which PDF viewers silently reject (annotation present
+              but inert).
+              Runtime smoke gate gains a pdf-lib annotation-tree walk
+              that counts URI annotations. 60/60 EN + DE assertions
+              pass on HEAD.
+              Bayern SHA preserved. Bundle 269.1 KB gz / 300 KB.
+              v1.0.19+ backlog (chat-UI + Tier 2 PDF features):
+              - Bug 17/20/23 (chat-UI, separate track)
+              - Tier 2 PDF: cost stacked chart, next-3-milestones
+                callout, state-comparison appendix, workflow status
+                strip
+              - Wrapped-text citation hyperlinks (executive footer,
+                areas reasons, procedure rationales — requires
+                drawWrappedText to expose per-line substring rects)
   • v1.0.17 = PDF Renaissance Part 3 FINAL + permanent ligature kill
               (~17 commits + docs). PDF is now 100% prototype-faithful.
               All 11 editorial sections shipped: Cover · TOC ·
