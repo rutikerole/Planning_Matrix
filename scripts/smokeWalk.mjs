@@ -2153,6 +2153,38 @@ async function runStaticGate() {
     },
   ]))
 
+  // ── v1.0.12 Bugs 25 + 26 — PDF qualifier normalization + section numbering ─
+  const exportPdfSrcForV12 = await readFileText('src/features/chat/lib/exportPdf.ts')
+  results.push(failures('v1.0.12 Bug 25: formatRecommendationQualifier normalizes DESIGNER+ASSUMED → LEGAL · CALCULATED', [
+    {
+      ok: /function\s+formatRecommendationQualifier/.test(exportPdfSrcForV12),
+      msg: 'helper must be defined',
+    },
+    {
+      ok: /q\.source\s*===\s*'DESIGNER'\s*&&\s*q\.quality\s*===\s*'ASSUMED'/.test(exportPdfSrcForV12),
+      msg: 'helper must guard the gate-downgrade case',
+    },
+    {
+      ok: /return\s+'LEGAL\s+·\s+CALCULATED'/.test(exportPdfSrcForV12),
+      msg: 'helper must map gate-downgrade to LEGAL · CALCULATED display',
+    },
+    {
+      ok: /formatRecommendationQualifier\(r\.qualifier\)/.test(exportPdfSrcForV12),
+      msg: 'recommendations loop must call the helper instead of inlining source · quality',
+    },
+  ]))
+  results.push(failures('v1.0.12 Bug 26: section VI (Documents) always renders for gap-free I..X numbering', [
+    {
+      ok: /\/\/ v1\.0\.12 Bug 26 — ALWAYS render section VI/.test(exportPdfSrcForV12),
+      msg: 'docs section must carry the v1.0.12 Bug 26 docstring',
+    },
+    {
+      ok: /'- No documents recorded yet\.'.*'-? Noch keine Dokumente erfasst/s.test(exportPdfSrcForV12) ||
+          /No documents recorded yet/.test(exportPdfSrcForV12),
+      msg: 'docs section must render an empty-state placeholder when docs.length === 0',
+    },
+  ]))
+
   // ── v1.0.12 Bug 22 regression closure — kill ZWNJ injection ───────
   // v1.0.11 preventBrandLigatures injected U+200C between f+i/l/f
   // pairs to break OpenType `liga` GSUB. Inter TTF subset lacks a

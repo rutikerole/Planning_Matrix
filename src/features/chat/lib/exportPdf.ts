@@ -231,7 +231,13 @@ export async function buildExportPdf({
       }
     }
 
-    if (docs.length > 0) {
+    // v1.0.12 Bug 26 — ALWAYS render section VI (Documents) so the
+    // I..X numbering has no gaps. Previously the section was
+    // conditional on docs.length > 0, which produced "V → VII → ..."
+    // numbering on projects where the persona hadn't emitted any
+    // documents yet. Empty state surfaces "(no documents recorded yet)"
+    // honestly instead of skipping the header.
+    {
       ;({ page, y } = ensureSpace(doc, page, y, 80))
       y -= 12
       drawSectionHeader(
@@ -241,6 +247,19 @@ export async function buildExportPdf({
         lang === 'en' ? 'VI  DOCUMENTS' : 'VI  DOKUMENTE',
       )
       y -= 30
+      if (docs.length === 0) {
+        page.drawText(
+          safe(lang === 'en' ? '- No documents recorded yet.' : '- Noch keine Dokumente erfasst.'),
+          {
+            x: MARGIN + 40,
+            y,
+            size: 11,
+            font: fonts.serifItalic,
+            color: CLAY,
+          },
+        )
+        y -= 24
+      }
       for (const d of docs) {
         const result = drawScheduleEntry({
           doc,
@@ -355,7 +374,7 @@ export async function buildExportPdf({
       y -= 30
       recs.forEach((r, idx) => {
         const qualLabel = r.qualifier
-          ? `${r.qualifier.source} · ${r.qualifier.quality}`
+          ? formatRecommendationQualifier(r.qualifier)
           : ''
         const result = drawScheduleEntry({
           doc,
@@ -530,6 +549,41 @@ export async function buildExportPdf({
 }
 
 // ── Page builders ──────────────────────────────────────────────────
+
+// v1.0.12 Bug 25 — recommendation qualifier display normalization.
+//
+// The Phase 13 §6.B.01 qualifier-write gate downgrades any persona-
+// emitted DESIGNER+VERIFIED claim to DESIGNER+ASSUMED (audit signal:
+// "model attempted designer-source on a derived rec without an
+// actual architect verification"). Storing DESIGNER+ASSUMED is the
+// right audit state — it preserves the attempted-but-blocked
+// posture — but rendering "DESIGNER · ASSUMED" on the result-page
+// recommendation card mis-signals to the bauherr that an architect
+// has touched the project when none has.
+//
+// Render-time normalization: when source=DESIGNER + quality=ASSUMED
+// AND no actual designer verification has fired (i.e., the qualifier
+// was set by the gate's downgrade path, not by a human designer),
+// display as "LEGAL · CALCULATED" — the qualifier that matches the
+// recommendation's actual derivation provenance (persona model
+// computation against state). The DB row is unchanged.
+//
+// Future enhancement: if state.designer_verifications gains an
+// explicit per-rec ledger, we can disambiguate "true DESIGNER+ASSUMED"
+// (architect explicitly assumed a value) from "gate-downgraded
+// DESIGNER+ASSUMED" (persona attempted DESIGNER+VERIFIED, gate
+// enforced ASSUMED). Until then, the safer assumption is
+// gate-downgraded — that's the only path that produces this state
+// today.
+function formatRecommendationQualifier(q: {
+  source: string
+  quality: string
+}): string {
+  if (q.source === 'DESIGNER' && q.quality === 'ASSUMED') {
+    return 'LEGAL · CALCULATED'
+  }
+  return `${q.source} · ${q.quality}`
+}
 
 function startPage(doc: PDFDocument): { page: PDFPage; y: number } {
   const page = doc.addPage([PAGE_WIDTH, PAGE_HEIGHT])
