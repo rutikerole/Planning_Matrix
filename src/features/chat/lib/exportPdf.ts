@@ -266,20 +266,55 @@ export async function buildExportPdf({
   const bundeslandCodeUpper = (project.bundesland ?? '').toUpperCase()
   let executivePage: PDFPage | null = null
   let executivePageNumber = 0
-  const recs = (state.recommendations ?? []).slice().sort((a, b) => a.rank - b.rank).slice(0, 3)
-  if (recs.length > 0) {
+  // v1.0.16 Bug 31 fix — Executive's "Top 3" reads from the SAME
+  // merged source as Section VIII body recommendations: stored
+  // state.recommendations FIRST (rank-sorted), then smart-suggestion
+  // matches appended. v1.0.15's executive read state.recommendations
+  // only and rendered a single card on projects (like NRW × T-03
+  // Königsallee) where the GEG rec was the only persisted entry —
+  // the other two visible recs lived in smartPicks.
+  const sortedRecs = (state.recommendations ?? [])
+    .slice()
+    .sort((a, b) => a.rank - b.rank)
+  const smartPicksForExec = pickSmartSuggestions({
+    project,
+    state: state as ProjectState,
+  })
+  type ExecSource =
+    | { kind: 'rec'; rec: NonNullable<ProjectState['recommendations']>[number] }
+    | { kind: 'smart'; pick: ReturnType<typeof pickSmartSuggestions>[number] }
+  const mergedSources: ExecSource[] = [
+    ...sortedRecs.map((rec) => ({ kind: 'rec' as const, rec })),
+    ...smartPicksForExec.map((pick) => ({ kind: 'smart' as const, pick })),
+  ]
+  const topThreeSources = mergedSources.slice(0, 3)
+  if (topThreeSources.length > 0) {
     executivePage = doc.addPage([PDF_PAGE_WIDTH, PDF_PAGE_HEIGHT])
     executivePageNumber = doc.getPageCount()
-    const topThree: ExecutiveRec[] = recs.map((r) => {
-      const title = (lang === 'en' ? r.title_en : r.title_de) ?? ''
-      const body = (lang === 'en' ? r.detail_en : r.detail_de) ?? ''
+    const topThree: ExecutiveRec[] = topThreeSources.map((src) => {
+      if (src.kind === 'rec') {
+        const title = (lang === 'en' ? src.rec.title_en : src.rec.title_de) ?? ''
+        const body = (lang === 'en' ? src.rec.detail_en : src.rec.detail_de) ?? ''
+        return {
+          title,
+          body,
+          priority: inferPriority(title, body),
+          // v1.0.16 Bug 32 fix — use the shared formatQualifier so
+          // DESIGNER+ASSUMED downgrades to LEGAL · CALCULATED here
+          // exactly like Section VIII does (and like the result-page
+          // SuggestionCard does).
+          sourceLabel: src.rec.qualifier
+            ? formatRecommendationQualifier(src.rec.qualifier)
+            : undefined,
+        }
+      }
+      const title = (lang === 'en' ? src.pick.titleEn : src.pick.titleDe) ?? ''
+      const body = (lang === 'en' ? src.pick.bodyEn : src.pick.bodyDe) ?? ''
       return {
         title,
         body,
         priority: inferPriority(title, body),
-        sourceLabel: r.qualifier
-          ? `${r.qualifier.source} · ${r.qualifier.quality}`
-          : undefined,
+        sourceLabel: 'LEGAL · CALCULATED',
       }
     })
     renderExecutiveBody(executivePage, editorialFonts, pdfStrings, {

@@ -2322,6 +2322,23 @@ async function runStaticGate() {
     },
   ]))
 
+  // ── v1.0.16 Bug 31 — Executive merges recs + smartPicks (top 3) ──
+  const exportPdfForBug31 = await readFileText('src/features/chat/lib/exportPdf.ts')
+  results.push(failures('v1.0.16 Bug 31: executive topThree merges recommendations + smartPicks', [
+    {
+      ok: /pickSmartSuggestions\(\{[\s\S]{0,200}project,[\s\S]{0,200}state:/.test(exportPdfForBug31),
+      msg: 'executive build path must call pickSmartSuggestions (same source as Section VIII)',
+    },
+    {
+      ok: /mergedSources\s*:\s*ExecSource\[\]|mergedSources\.slice\(0,\s*3\)/.test(exportPdfForBug31),
+      msg: 'executive build merges recs + smartPicks then slices to 3',
+    },
+    {
+      ok: /kind:\s*'rec'/.test(exportPdfForBug31) && /kind:\s*'smart'/.test(exportPdfForBug31),
+      msg: 'ExecSource discriminates rec vs smart so the renderer gets unified ExecutiveRec shape',
+    },
+  ]))
+
   // ── v1.0.15 — Renaissance Part 2A executive renderer ─────────────
   const executiveV15 = await readFileText('src/features/chat/lib/pdfSections/executive.ts')
   results.push(failures('v1.0.15: pdfSections/executive.ts renders Section 01 (Top 3)', [
