@@ -90,6 +90,30 @@ const EN: PdfStrings = {
   'areas.b.title': 'Building law · Bauordnungsrecht',
   'areas.c.title': 'Other requirements · Sonstige Vorgaben',
   'areas.empty': 'No content recorded yet — continue the consultation.',
+
+  // ─── v1.0.16 Renaissance Part 2B — Costs ──────────────────────
+  'costs.kicker': 'SECTION 03 · COSTS',
+  'costs.title': 'Estimated cost range',
+  'costs.basisTemplate':
+    'Computed from {n} m² façade · HOAI Zone III · {state} regional BKI factor',
+  'costs.th.item': 'ITEM',
+  'costs.th.basis': 'BASIS',
+  'costs.th.range': 'EUR RANGE',
+  'costs.total': 'Total (estimated)',
+  'costs.notes.h': 'NOTES',
+  'costs.notes.b':
+    'Orientation values · not binding quotes. Ranges reflect HOAI minima/maxima and typical regional market rates. Final figures depend on the actual fee agreement and the selected Leistungsphasen.',
+  'costs.items.architect': 'Architect (LP 1–4)',
+  'costs.items.architect.basis': 'HOAI Zone III · phases 1–4',
+  'costs.items.structural': 'Structural engineering',
+  'costs.items.structural.basis': '§ 68 BauO {state} certification',
+  'costs.items.surveying': 'Surveying (ÖbVI)',
+  'costs.items.surveying.basis': 'Official site plan',
+  'costs.items.energy': 'Energy consultation',
+  'costs.items.energy.basis': 'GEG 2024 thermal certificate',
+  'costs.items.authority': 'Authority fees',
+  'costs.items.authority.basis': 'Bauamt + neighbour involvement',
+  'costs.empty': 'No cost rows recorded yet.',
 }
 
 const DE: PdfStrings = {
@@ -158,6 +182,30 @@ const DE: PdfStrings = {
   'areas.b.title': 'Bauordnungsrecht',
   'areas.c.title': 'Sonstige Vorgaben',
   'areas.empty': 'Noch kein Inhalt erfasst — Konsultation fortsetzen.',
+
+  // ─── v1.0.16 Renaissance Part 2B — Costs ──────────────────────
+  'costs.kicker': 'ABSCHNITT 03 · KOSTEN',
+  'costs.title': 'Geschätzte Kostenspanne',
+  'costs.basisTemplate':
+    'Berechnet aus {n} m² Fassade · HOAI Zone III · {state} BKI-Faktor',
+  'costs.th.item': 'POSITION',
+  'costs.th.basis': 'GRUNDLAGE',
+  'costs.th.range': 'EUR-SPANNE',
+  'costs.total': 'Gesamt (geschätzt)',
+  'costs.notes.h': 'HINWEISE',
+  'costs.notes.b':
+    'Orientierungswerte · keine verbindlichen Angebote. Spannen spiegeln HOAI-Mindest-/Höchstsätze und typische regionale Marktpreise wider. Endgültige Beträge hängen von der Honorarvereinbarung und den gewählten Leistungsphasen ab.',
+  'costs.items.architect': 'Architekt:in (LP 1–4)',
+  'costs.items.architect.basis': 'HOAI Zone III · LP 1–4',
+  'costs.items.structural': 'Tragwerksplanung',
+  'costs.items.structural.basis': '§ 68 BauO {state} Nachweis',
+  'costs.items.surveying': 'Vermessung (ÖbVI)',
+  'costs.items.surveying.basis': 'Amtlicher Lageplan',
+  'costs.items.energy': 'Energieberatung',
+  'costs.items.energy.basis': 'GEG 2024 Wärmeschutznachweis',
+  'costs.items.authority': 'Behördengebühren',
+  'costs.items.authority.basis': 'Bauamtsgebühr + Nachbarbeteiligung',
+  'costs.empty': 'Noch keine Kostenzeilen erfasst.',
 }
 
 export const PDF_STRINGS: Record<PdfLang, PdfStrings> = { en: EN, de: DE }
