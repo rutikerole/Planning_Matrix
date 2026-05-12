@@ -2178,6 +2178,24 @@ async function runStaticGate() {
     },
   ]))
 
+  // ── v1.0.14 Bug 30 — font instance consolidation ─────────────────
+  const primitivesV14 = await readFileText('src/features/chat/lib/pdfPrimitives.ts')
+  const exportPdfV14Bug30 = await readFileText('src/features/chat/lib/exportPdf.ts')
+  results.push(failures('v1.0.14 Bug 30: resolveEditorialFonts accepts pre-loaded BrandFonts', [
+    {
+      ok: /export async function resolveEditorialFonts\(\s*doc:\s*PDFDocument,\s*pre\?:/.test(primitivesV14),
+      msg: 'resolveEditorialFonts must accept optional pre-loaded brand fonts',
+    },
+    {
+      ok: /const brand = pre \?\? \(await loadBrandFonts\(doc\)\)/.test(primitivesV14),
+      msg: 'helper must reuse pre-loaded fonts when supplied; only load anew when missing',
+    },
+    {
+      ok: /resolveEditorialFonts\(doc, fonts\)/.test(exportPdfV14Bug30),
+      msg: 'exportPdf assembly must thread the existing fonts (loadBrandFonts result) into resolveEditorialFonts',
+    },
+  ]))
+
   // ── v1.0.14 Bug 29 — Bauherr name resolution via auth profile ────
   const exportMenuV14 = await readFileText('src/features/result/components/ExportMenu.tsx')
   const exportPdfV14Bug29 = await readFileText('src/features/chat/lib/exportPdf.ts')

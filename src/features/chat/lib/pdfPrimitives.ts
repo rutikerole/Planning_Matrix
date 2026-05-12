@@ -61,13 +61,26 @@ export interface EditorialFonts {
 
 /**
  * Resolve the editorial font trio from the brand-fonts loader.
- * Wraps loadBrandFonts so section renderers don't need to know about
- * fontkit / pdf-lib's font-embed plumbing.
+ *
+ * v1.0.13 called loadBrandFonts on every invocation. The assembly
+ * (exportPdf) ALSO called loadBrandFonts directly for body pages,
+ * so the same PDFDocument ended up with two independent font embeds
+ * for the same TTFs — increasing subset/encoding surface area and
+ * making it possible for the body pages' PDFFont instances to lose
+ * the v1.0.12 safe() ligature-guard guarantees in subtle ways.
+ *
+ * v1.0.14 Bug 30 fix: accept an OPTIONAL pre-loaded BrandFonts. When
+ * the assembly already has one, pass it in and we just rebind the
+ * existing PDFFont instances into the editorial view — no second
+ * embed, no font duplication. Backward compat: a missing arg
+ * triggers the original loadBrandFonts call so non-assembly callers
+ * still work standalone.
  */
 export async function resolveEditorialFonts(
   doc: PDFDocument,
+  pre?: { inter: PDFFont; interMedium: PDFFont; serifItalic: PDFFont },
 ): Promise<EditorialFonts> {
-  const brand = await loadBrandFonts(doc)
+  const brand = pre ?? (await loadBrandFonts(doc))
   return {
     sans: brand.inter,
     sansMedium: brand.interMedium,

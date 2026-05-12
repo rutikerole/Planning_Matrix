@@ -197,7 +197,16 @@ export async function buildExportPdf({
   // /procedures/team/recommendations/keyData/audit) render unchanged
   // from v1.0.12 — Renaissance Parts 2-4 (v1.0.14+) redesign each
   // section after Rutik's visual checkpoint on this Part 1.
-  const editorialFonts = await resolveEditorialFonts(doc)
+  // v1.0.14 Bug 30 — pass the already-loaded BrandFonts into
+  // resolveEditorialFonts so cover/TOC and body share the SAME
+  // PDFFont instances. Previously each call to loadBrandFonts
+  // produced an independent font embed; the duplicate embeds
+  // appear to have been the root cause of body-page ligature
+  // corruption regressing in v1.0.13 (safe() wiring stayed intact;
+  // the bug was upstream of safe() — pdf-lib was choosing different
+  // subsets for the same TTFs depending on which embed code path
+  // touched each character).
+  const editorialFonts = await resolveEditorialFonts(doc, fonts)
   const pdfStrings = resolvePdfStrings(lang as PdfLang)
   const projectTitleForCover = project.name
   const bundeslandName = getStateLocalization(project.bundesland).labelDe
