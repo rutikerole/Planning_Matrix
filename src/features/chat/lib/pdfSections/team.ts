@@ -17,12 +17,16 @@ import {
   MARGIN,
   PAGE_HEIGHT,
   PAGE_WIDTH,
-  PILL_ACTIVE,
+  PILL_CALC_BG,
+  PILL_CALC_FG,
+  PILL_LEGAL_BG,
+  PILL_LEGAL_FG,
   drawEditorialTitle,
   drawFooter,
   drawHairline,
   drawKicker,
   drawPaperBackground,
+  drawPriorityPill,
   drawSafeText,
   drawWrappedText,
   type EditorialFonts,
@@ -31,6 +35,10 @@ import { pdfStr, type PdfStrings } from '../pdfStrings'
 
 export interface SpecialistRow {
   title: string
+  needed: boolean
+  rationale: string
+  /** Localized badge label, e.g. "NEEDED" / "NOT NEEDED" / "ERFORDERLICH". */
+  badgeLabel: string
 }
 
 export interface TeamData {
@@ -83,22 +91,57 @@ export function renderTeamBody(
     })
     cursor -= 22
   } else {
-    data.specialists.forEach((s) => {
-      page.drawCircle({
-        x: MARGIN + 3,
-        y: cursor + 4,
-        size: 1.5,
-        color: PILL_ACTIVE,
-      })
-      drawSafeText(page, s.title, {
-        x: MARGIN + 14,
+    const specialistMaxWidth = PAGE_WIDTH - 2 * MARGIN
+    data.specialists.forEach((s, idx) => {
+      // Number prefix in italic-serif
+      drawSafeText(page, `0${idx + 1}`.slice(-2), {
+        x: MARGIN,
         y: cursor,
-        size: 11,
-        font: fonts.sans,
+        size: 13,
+        font: fonts.serifItalic,
+        color: CLAY,
+        safe: fonts.safe,
+      })
+      // Title
+      const titleX = MARGIN + 26
+      drawSafeText(page, s.title, {
+        x: titleX,
+        y: cursor,
+        size: 12,
+        font: fonts.sansMedium,
         color: INK,
         safe: fonts.safe,
       })
-      cursor -= 16
+      const titleWidth = fonts.sansMedium.widthOfTextAtSize(
+        fonts.safe(s.title),
+        12,
+      )
+      // NEEDED / NOT NEEDED badge — green for needed, amber-on-light for not.
+      const bg = s.needed ? PILL_CALC_BG : PILL_LEGAL_BG
+      const fg = s.needed ? PILL_CALC_FG : PILL_LEGAL_FG
+      drawPriorityPill(page, titleX + titleWidth + 10, cursor, s.badgeLabel, {
+        bg,
+        fg,
+        font: fonts.sansMedium,
+        size: 9,
+        safe: fonts.safe,
+      })
+      // Rationale wrap
+      const rationaleEnd = drawWrappedText(
+        page,
+        titleX,
+        cursor - 16,
+        s.rationale,
+        {
+          maxWidth: specialistMaxWidth - 26,
+          lineHeight: 14,
+          font: fonts.sans,
+          size: 10,
+          color: CLAY,
+          safe: fonts.safe,
+        },
+      )
+      cursor = rationaleEnd - 8
     })
     cursor -= 8
   }

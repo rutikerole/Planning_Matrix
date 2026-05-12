@@ -187,6 +187,11 @@ async function runLocale(lang: 'en' | 'de'): Promise<{ passed: number; failed: n
         'energy consultant',
         'building permit',
         'certification',
+        // v1.0.18 Bug 36 guard — both specialists must appear
+        'Energy consultant',
+        'Structural engineer',
+        'NEEDED',
+        'NOT NEEDED',
       ]),
     )
   } else {
@@ -202,6 +207,11 @@ async function runLocale(lang: 'en' | 'de'): Promise<{ passed: number; failed: n
         'identifiziert',
         'Pflicht',
         'Energieausweis',
+        // v1.0.18 Bug 36 guard — both specialists must appear
+        'Energieberater',
+        'Tragwerksplaner',
+        'ERFORDERLICH',
+        'NICHT ERFORDERLICH',
       ]),
     )
   }

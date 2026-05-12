@@ -65,7 +65,26 @@
       ],
       "documents": [],
       "specialists": [],
-      "roles": []
+      "roles": [
+        {
+          "id": "role-energy",
+          "title_de": "Energieberater:in (GEG)",
+          "title_en": "Energy consultant (GEG)",
+          "needed": true,
+          "rationale_de": "GEG-Renovierungspflicht greift bei Eingriffen in die Gebäudehülle.",
+          "rationale_en": "GEG renovation obligation applies when the building envelope is affected.",
+          "qualifier": { "source": "LEGAL", "quality": "CALCULATED" }
+        },
+        {
+          "id": "role-structural",
+          "title_de": "Tragwerksplaner:in",
+          "title_en": "Structural engineer",
+          "needed": false,
+          "rationale_de": "Nur erforderlich, wenn tragende Elemente betroffen sind.",
+          "rationale_en": "Only required if load-bearing elements are affected.",
+          "qualifier": { "source": "LEGAL", "quality": "ASSUMED" }
+        }
+      ]
     },
     "created_at": "2026-04-15T10:00:00.000Z",
     "updated_at": "2026-05-12T10:00:00.000Z"

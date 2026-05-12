@@ -470,10 +470,20 @@ export async function buildExportPdf({
   // ── Page VII: Team & Stakeholders ──────────────────────────────
   const teamPage = doc.addPage([PDF_PAGE_WIDTH, PDF_PAGE_HEIGHT])
   const teamPageNumber = doc.getPageCount()
+  // v1.0.18 Bug 36 — render ALL specialists with needed/not-needed
+  // badge + rationale. v1.0.17 filtered to r.needed only which
+  // dropped not-needed specialists entirely.
   const specialistRows: SpecialistRow[] = roles
-    .filter((r) => r.needed)
+    .slice()
+    .sort((a, b) => (a.needed === b.needed ? 0 : a.needed ? -1 : 1))
     .map((r) => ({
       title: (lang === 'en' ? r.title_en : r.title_de) ?? '',
+      needed: r.needed,
+      rationale:
+        ((lang === 'en' ? r.rationale_en : r.rationale_de) ?? r.rationale_de ?? ''),
+      badgeLabel: r.needed
+        ? lang === 'en' ? 'NEEDED' : 'ERFORDERLICH'
+        : lang === 'en' ? 'NOT NEEDED' : 'NICHT ERFORDERLICH',
     }))
   renderTeamBody(teamPage, editorialFonts, pdfStrings, {
     specialists: specialistRows,
