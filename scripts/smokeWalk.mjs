@@ -3038,15 +3038,25 @@ async function runStaticGate() {
       msg: 'Section VIII recommendations loop must call formatQualifier (renamed in v1.0.16)',
     },
   ]))
-  results.push(failures('v1.0.12 Bug 26: section VI (Documents) always renders for gap-free I..X numbering', [
+  // v1.0.17 — Bug 26 intent now lives in pdfSections/procedures.ts:
+  // the renderer ALWAYS renders the Documents sub-section (gap-free
+  // numbering preserved); empty-state placeholder is in pdfStrings
+  // 'docs.empty' (EN + DE).
+  const stringsForBug26 = await readFileText('src/features/chat/lib/pdfStrings.ts')
+  const proceduresSrcForBug26 = await readFileText('src/features/chat/lib/pdfSections/procedures.ts')
+  results.push(failures('v1.0.12 Bug 26 + v1.0.17: Documents always renders via pdfSections/procedures.ts', [
     {
-      ok: /\/\/ v1\.0\.12 Bug 26 — ALWAYS render section VI/.test(exportPdfSrcForV12),
-      msg: 'docs section must carry the v1.0.12 Bug 26 docstring',
+      ok: /docs\.empty[\s\S]{0,200}continue the consultation/.test(stringsForBug26) &&
+          /docs\.empty[\s\S]{0,200}Konsultation fortsetzen/.test(stringsForBug26),
+      msg: 'docs.empty placeholder declared bilingual in pdfStrings',
     },
     {
-      ok: /'- No documents recorded yet\.'.*'-? Noch keine Dokumente erfasst/s.test(exportPdfSrcForV12) ||
-          /No documents recorded yet/.test(exportPdfSrcForV12),
-      msg: 'docs section must render an empty-state placeholder when docs.length === 0',
+      ok: /pdfStr\(strings,\s*'docs\.empty'\)/.test(proceduresSrcForBug26),
+      msg: 'procedures renderer references docs.empty for the empty-state placeholder',
+    },
+    {
+      ok: /pdfStr\(strings,\s*'docs\.kicker'\)/.test(proceduresSrcForBug26),
+      msg: 'procedures renderer ALWAYS renders the Documents sub-section (kicker present)',
     },
   ]))
 
@@ -3736,33 +3746,43 @@ async function runStaticGate() {
           /'timeline\.kicker':\s*'ABSCHNITT 04 · ZEITPLAN'/.test(stringsForV16Sec),
       msg: 'PDF must render section IV (Timeline / Zeitplan) in both languages via renderTimelineBody',
     },
+    // v1.0.17 — Sections V-XI now live in pdfSections/*.ts editorial
+    // renderers + pdfStrings kicker keys. Check the new homes.
     {
-      ok: /'V\s+PROCEDURES'/.test(exportPdfSrc) && /'V\s+VERFAHREN'/.test(exportPdfSrc),
-      msg: 'Procedures section must be renumbered V',
+      ok: /'proc\.kicker':\s*'SECTION 05 · PROCEDURES'/.test(stringsForV16Sec) &&
+          /'proc\.kicker':\s*'ABSCHNITT 05 · VERFAHREN'/.test(stringsForV16Sec),
+      msg: 'Procedures section V kickers bilingual in pdfStrings',
     },
     {
-      ok: /'VI\s+DOCUMENTS'/.test(exportPdfSrc) && /'VI\s+DOKUMENTE'/.test(exportPdfSrc),
-      msg: 'Documents section must be renumbered VI',
+      ok: /'docs\.kicker':\s*'SECTION 06 · DOCUMENTS'/.test(stringsForV16Sec) &&
+          /'docs\.kicker':\s*'ABSCHNITT 06 · DOKUMENTE'/.test(stringsForV16Sec),
+      msg: 'Documents section VI kickers bilingual in pdfStrings',
     },
     {
-      ok: /'VII\s+TEAM\s+&\s+STAKEHOLDERS'/.test(exportPdfSrc) && /'VII\s+TEAM\s+&\s+BETEILIGTE'/.test(exportPdfSrc),
-      msg: 'Specialists section must be renamed "Team & Stakeholders" and renumbered VII',
+      ok: /'team\.kicker':\s*'SECTION 07 · TEAM & STAKEHOLDERS'/.test(stringsForV16Sec) &&
+          /'team\.kicker':\s*'ABSCHNITT 07 · TEAM & BETEILIGTE'/.test(stringsForV16Sec),
+      msg: 'Team & Stakeholders section VII kickers bilingual in pdfStrings',
     },
     {
-      ok: /STAKEHOLDERS_PDF\b/.test(exportPdfSrc),
-      msg: 'PDF must define STAKEHOLDERS_PDF constant (4-actor cards)',
+      ok: /team\.role\.owner/.test(stringsForV16Sec) &&
+          /team\.role\.architect/.test(stringsForV16Sec) &&
+          /team\.role\.engineers/.test(stringsForV16Sec) &&
+          /team\.role\.authority/.test(stringsForV16Sec),
+      msg: '4-actor stakeholders cards (owner/architect/engineers/authority) declared as pdfStrings keys',
     },
     {
-      ok: /'VIII\s+RECOMMENDATIONS'/.test(exportPdfSrc) && /'VIII\s+EMPFEHLUNGEN'/.test(exportPdfSrc),
-      msg: 'PDF must add section VIII (Recommendations / Empfehlungen)',
+      ok: /'recs\.kicker':\s*'SECTION 08 · RECOMMENDATIONS'/.test(stringsForV16Sec) &&
+          /'recs\.kicker':\s*'ABSCHNITT 08 · EMPFEHLUNGEN'/.test(stringsForV16Sec),
+      msg: 'Recommendations section VIII kickers bilingual in pdfStrings',
     },
     {
       ok: /pickSmartSuggestions/.test(exportPdfSrc),
       msg: 'PDF Recommendations section must include smart suggestions via pickSmartSuggestions',
     },
     {
-      ok: /'IX\s+KEY\s+DATA'/.test(exportPdfSrc) && /'IX\s+ECKDATEN'/.test(exportPdfSrc),
-      msg: 'Key Data section must be renumbered IX',
+      ok: /'data\.kicker':\s*'SECTION 09 · KEY DATA'/.test(stringsForV16Sec) &&
+          /'data\.kicker':\s*'ABSCHNITT 09 · ECKDATEN'/.test(stringsForV16Sec),
+      msg: 'Key Data section IX kickers bilingual in pdfStrings',
     },
     {
       ok: /'X\s+AUDIT\s+LOG'/.test(exportPdfSrc) && /'X\s+AUDITSPUR'/.test(exportPdfSrc),

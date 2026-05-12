@@ -22,7 +22,7 @@ import { PDFDocument, rgb, type PDFPage } from 'pdf-lib'
 import { loadBrandFonts, type BrandFonts } from '@/lib/fontLoader'
 import { factLabel, factValueWithUnit } from '@/lib/factLabel'
 import type { MessageRow, ProjectRow } from '@/types/db'
-import type { AreaState, ProjectState } from '@/types/projectState'
+import type { ProjectState } from '@/types/projectState'
 // v1.0.6 Bug 2 — PDF brief now mirrors the Cost & Timeline, Team &
 // Stakeholders, and Suggestions/Recommendations surfaces. Imports use
 // the same engines as the result-page tabs so the two surfaces cannot
@@ -79,6 +79,36 @@ import {
   renderTimelineFooter,
 } from './pdfSections/timeline'
 import {
+  renderProceduresBody,
+  renderProceduresFooter,
+  type ProcRow,
+  type DocRow,
+  type ProcStatus,
+} from './pdfSections/procedures'
+import {
+  renderTeamBody,
+  renderTeamFooter,
+  type SpecialistRow,
+} from './pdfSections/team'
+import {
+  renderRecsBody,
+  renderRecsFooter,
+  type RecRow,
+} from './pdfSections/recommendations'
+import {
+  renderKeyDataBody,
+  renderKeyDataFooter,
+  type KeyDataRow,
+} from './pdfSections/keyData'
+import {
+  renderVerificationBody,
+  renderVerificationFooter,
+} from './pdfSections/verification'
+import {
+  renderGlossaryBody,
+  renderGlossaryFooter,
+} from './pdfSections/glossary'
+import {
   pdfStr,
   resolvePdfStrings,
   type PdfLang,
@@ -128,47 +158,9 @@ const PAGE_WIDTH = 595.28 // A4 portrait in points
 const PAGE_HEIGHT = 841.89
 const MARGIN = 56
 
-const STATE_LABELS_DE: Record<AreaState, string> = {
-  ACTIVE: 'AKTIV',
-  PENDING: 'AUSSTEHEND',
-  VOID: 'NICHT ERMITTELBAR',
-}
-
-// v1.0.6 Bug 2 — stakeholder block mirrors src/features/result/components/
-// tabs/TeamTab.tsx:STAKEHOLDERS verbatim so the PDF cannot drift from the
-// in-app card grid. Four-actor mental model: Owner / Architect /
-// Engineers / Building authority.
-const STAKEHOLDERS_PDF: ReadonlyArray<{
-  titleDe: string
-  titleEn: string
-  detailDe: string
-  detailEn: string
-}> = [
-  {
-    titleDe: 'Bauherr:in',
-    titleEn: 'Owner',
-    detailDe: 'Sie. Beauftragt das Vorhaben, trägt die Kosten, entscheidet.',
-    detailEn: 'You. Commissions the project, carries the costs, decides.',
-  },
-  {
-    titleDe: 'Architekt:in',
-    titleEn: 'Architect',
-    detailDe: 'Bauvorlageberechtigt. Reicht im Namen der Bauherrschaft ein.',
-    detailEn: "Licensed for submissions. Files on the owner's behalf.",
-  },
-  {
-    titleDe: 'Fachplaner:innen',
-    titleEn: 'Engineers',
-    detailDe: 'Tragwerksplanung, Energieberatung, Brandschutz, Vermessung.',
-    detailEn: 'Structural, energy, fire protection, surveying.',
-  },
-  {
-    titleDe: 'Bauamt',
-    titleEn: 'Building authority',
-    detailDe: 'Kommunale Genehmigungsbehörde. Prüft und entscheidet.',
-    detailEn: 'Municipal permitting body. Reviews and decides.',
-  },
-]
+// v1.0.17 — STATE_LABELS_DE + STAKEHOLDERS_PDF retired alongside
+// the v1.0.6 schedule-block path. Section VII (Team) now sources
+// from pdfStrings team.role.* keys via pdfSections/team.ts.
 
 /**
  * Build the PDF and return its bytes. Caller pipes to a Blob + saveAs.
@@ -445,246 +437,130 @@ export async function buildExportPdf({
   const roles = resolvedRoles.roles
   const facts = state.facts ?? []
 
-  // v1.0.6 Bug 2 — TOC re-ordering: Procedures becomes V, Documents
-  // becomes VI, Specialists becomes VII (renamed Team & Stakeholders),
-  // then VIII Recommendations, IX Key Data. Audit log stays last as X.
-  if (procs.length + docs.length + roles.length + facts.length > 0) {
-    let { page, y } = startPage(doc)
-    drawSectionHeader(page, fonts, y, lang === 'en' ? 'V  PROCEDURES' : 'V  VERFAHREN')
-    y -= 30
-    if (procs.length === 0) {
-      page.drawText(safe(lang === 'en' ? '- None recorded.' : '- Noch nicht erfasst.'), {
-        x: MARGIN + 40,
-        y,
-        size: 11,
-        font: fonts.serifItalic,
-        color: CLAY,
-      })
-      y -= 24
-    } else {
-      for (const p of procs) {
-        const result = drawScheduleEntry({
-          doc,
-          page,
-          fonts,
-          y,
-          index: procs.indexOf(p) + 1,
-          title: lang === 'en' ? p.title_en : p.title_de,
-          meta: STATE_LABELS_DE[p.status as AreaState] ?? p.status.toUpperCase(),
-          body: (lang === 'en' ? p.rationale_en : p.rationale_de) ?? '',
-          qualifier: `${p.qualifier.source} · ${p.qualifier.quality}`,
-        })
-        page = result.page
-        y = result.y
-      }
-    }
+  // v1.0.17 Renaissance Part 3 — Sections V-XI editorial renderers.
+  // The v1.0.6 schedule-block path (drawScheduleEntry + STAKEHOLDERS_PDF
+  // + manual wrapText) is retired. Each section now renders on its own
+  // page via the dedicated pdfSections/*.ts editorial renderer with
+  // 2-pass footer (Path A pattern).
 
-    // v1.0.12 Bug 26 — ALWAYS render section VI (Documents) so the
-    // I..X numbering has no gaps. Previously the section was
-    // conditional on docs.length > 0, which produced "V → VII → ..."
-    // numbering on projects where the persona hadn't emitted any
-    // documents yet. Empty state surfaces "(no documents recorded yet)"
-    // honestly instead of skipping the header.
-    {
-      ;({ page, y } = ensureSpace(doc, page, y, 80))
-      y -= 12
-      drawSectionHeader(
-        page,
-        fonts,
-        y,
-        lang === 'en' ? 'VI  DOCUMENTS' : 'VI  DOKUMENTE',
-      )
-      y -= 30
-      if (docs.length === 0) {
-        page.drawText(
-          safe(lang === 'en' ? '- No documents recorded yet.' : '- Noch keine Dokumente erfasst.'),
-          {
-            x: MARGIN + 40,
-            y,
-            size: 11,
-            font: fonts.serifItalic,
-            color: CLAY,
-          },
-        )
-        y -= 24
-      }
-      for (const d of docs) {
-        const result = drawScheduleEntry({
-          doc,
-          page,
-          fonts,
-          y,
-          index: docs.indexOf(d) + 1,
-          title: lang === 'en' ? d.title_en : d.title_de,
-          meta: d.status.toUpperCase(),
-          body:
-            d.required_for.length > 0
-              ? `${lang === 'en' ? 'Required for' : 'Erforderlich für'}: ${d.required_for.join(', ')}`
-              : '',
-          qualifier: `${d.qualifier.source} · ${d.qualifier.quality}`,
-        })
-        page = result.page
-        y = result.y
-      }
+  // ── Page V: Procedures + VI: Documents (one page) ──────────────
+  const proceduresPage = doc.addPage([PDF_PAGE_WIDTH, PDF_PAGE_HEIGHT])
+  const proceduresPageNumber = doc.getPageCount()
+  const procRows: ProcRow[] = procs.map((p) => {
+    const status: ProcStatus =
+      p.status === 'erforderlich'
+        ? 'required'
+        : p.status === 'nicht_erforderlich'
+          ? 'exempt'
+          : 'optional'
+    return {
+      title: (lang === 'en' ? p.title_en : p.title_de) ?? '',
+      body: (lang === 'en' ? p.rationale_en : p.rationale_de) ?? '',
+      status,
+      qualifier: p.qualifier,
     }
+  })
+  const docRows: DocRow[] = docs.map((d) => ({
+    title: (lang === 'en' ? d.title_en : d.title_de) ?? '',
+  }))
+  renderProceduresBody(proceduresPage, editorialFonts, pdfStrings, {
+    templateLabel,
+    bundeslandCode: bundeslandCodeUpper,
+    procedures: procRows,
+    documents: docRows,
+  })
 
-    // v1.0.6 Bug 2 — VII renamed Specialists → "Team & Stakeholders"
-    // and extended with the four-actor stakeholder cards from
-    // src/features/result/components/tabs/TeamTab.tsx. The section
-    // always renders (so the Bauherr / Architekt / Fachplaner / Bauamt
-    // narrative carries through even when roles[] is empty).
-    ;({ page, y } = ensureSpace(doc, page, y, 80))
-    y -= 12
-    drawSectionHeader(
-      page,
-      fonts,
-      y,
-      lang === 'en' ? 'VII  TEAM & STAKEHOLDERS' : 'VII  TEAM & BETEILIGTE',
-    )
-    y -= 30
-    if (roles.length > 0) {
-      const sorted = roles
-        .slice()
-        .sort((a, b) => (a.needed === b.needed ? 0 : a.needed ? -1 : 1))
-      for (const r of sorted) {
-        const tag = r.needed
-          ? lang === 'en' ? 'NEEDED' : 'ERFORDERLICH'
-          : lang === 'en' ? 'NOT NEEDED' : 'NICHT ERFORDERLICH'
-        const result = drawScheduleEntry({
-          doc,
-          page,
-          fonts,
-          y,
-          index: sorted.indexOf(r) + 1,
-          title: lang === 'en' ? r.title_en : r.title_de,
-          meta: tag,
-          body:
-            (lang === 'en' ? r.rationale_en || r.rationale_de : r.rationale_de) ?? '',
-          qualifier: `${r.qualifier.source} · ${r.qualifier.quality}`,
-        })
-        page = result.page
-        y = result.y
-      }
-      ;({ page, y } = ensureSpace(doc, page, y, 30))
-      y -= 6
-    }
-    // Stakeholder block — always renders.
-    const stakeEyebrow = lang === 'en' ? 'STAKEHOLDERS' : 'BETEILIGTE'
-    page.drawText(safe(stakeEyebrow), {
-      x: MARGIN,
-      y,
-      size: 9,
-      font: fonts.interMedium,
-      color: CLAY,
-      opacity: 0.85,
-    })
-    y -= 16
-    for (const s of STAKEHOLDERS_PDF) {
-      ;({ page, y } = ensureSpace(doc, page, y, 40))
-      page.drawText(safe(lang === 'en' ? s.titleEn : s.titleDe), {
-        x: MARGIN + 32,
-        y,
-        size: 11,
-        font: fonts.interMedium,
-        color: INK,
-      })
-      y -= 14
-      const detail = wrapText(lang === 'en' ? s.detailEn : s.detailDe, 76)
-      for (const line of detail) {
-        page.drawText(safe(line), {
-          x: MARGIN + 32,
-          y,
-          size: 10,
-          font: fonts.inter,
-          color: INK,
-          opacity: 0.75,
-        })
-        y -= 13
-      }
-      y -= 6
-    }
+  // ── Page VII: Team & Stakeholders ──────────────────────────────
+  const teamPage = doc.addPage([PDF_PAGE_WIDTH, PDF_PAGE_HEIGHT])
+  const teamPageNumber = doc.getPageCount()
+  const specialistRows: SpecialistRow[] = roles
+    .filter((r) => r.needed)
+    .map((r) => ({
+      title: (lang === 'en' ? r.title_en : r.title_de) ?? '',
+    }))
+  renderTeamBody(teamPage, editorialFonts, pdfStrings, {
+    specialists: specialistRows,
+  })
 
-    // v1.0.6 Bug 2 — VIII RECOMMENDATIONS. Lists ALL recommendations
-    // (not just the TOP-3 from page 2) plus smart suggestions matched
-    // for the project. Each entry carries WHY + qualifier so the PDF
-    // mirrors the in-app Suggestions tab.
-    const recs = (state.recommendations ?? []).slice().sort((a, b) => a.rank - b.rank)
-    const smartPicks = pickSmartSuggestions({ project, state: state as ProjectState })
-    if (recs.length > 0 || smartPicks.length > 0) {
-      ;({ page, y } = ensureSpace(doc, page, y, 80))
-      y -= 12
-      drawSectionHeader(
-        page,
-        fonts,
-        y,
-        lang === 'en' ? 'VIII  RECOMMENDATIONS' : 'VIII  EMPFEHLUNGEN',
-      )
-      y -= 30
-      recs.forEach((r, idx) => {
-        const qualLabel = r.qualifier
+  // ── Page VIII: Recommendations (all, prioritised) ──────────────
+  const recsPage = doc.addPage([PDF_PAGE_WIDTH, PDF_PAGE_HEIGHT])
+  const recsPageNumber = doc.getPageCount()
+  const allRecs = (state.recommendations ?? [])
+    .slice()
+    .sort((a, b) => a.rank - b.rank)
+  const allSmartPicks = pickSmartSuggestions({
+    project,
+    state: state as ProjectState,
+  })
+  const recsRows: RecRow[] = [
+    ...allRecs.map((r) => {
+      const title = (lang === 'en' ? r.title_en : r.title_de) ?? ''
+      const body = (lang === 'en' ? r.detail_en : r.detail_de) ?? ''
+      return {
+        title,
+        body,
+        qualifierLabel: r.qualifier
           ? formatQualifier(r.qualifier)
-          : ''
-        const result = drawScheduleEntry({
-          doc,
-          page,
-          fonts,
-          y,
-          index: idx + 1,
-          title: lang === 'en' ? r.title_en : r.title_de,
-          meta: '',
-          body: (lang === 'en' ? r.detail_en : r.detail_de) ?? '',
-          qualifier: qualLabel,
-        })
-        page = result.page
-        y = result.y
-      })
-      // Smart suggestions appended below the explicit recs (continues
-      // the index across the section so the document reads as one
-      // recommendations list).
-      smartPicks.forEach((s, idx) => {
-        const result = drawScheduleEntry({
-          doc,
-          page,
-          fonts,
-          y,
-          index: recs.length + idx + 1,
-          title: lang === 'en' ? s.titleEn : s.titleDe,
-          meta: lang === 'en' ? 'SMART · WHY' : 'SMART · WARUM',
-          body: `${lang === 'en' ? s.bodyEn : s.bodyDe}  ·  ${lang === 'en' ? s.reasoningEn : s.reasoningDe}`,
-          qualifier: 'LEGAL · CALCULATED',
-        })
-        page = result.page
-        y = result.y
-      })
-    }
-
-    if (facts.length > 0) {
-      ;({ page, y } = ensureSpace(doc, page, y, 80))
-      y -= 12
-      drawSectionHeader(
-        page,
-        fonts,
-        y,
-        lang === 'en' ? 'IX  KEY DATA' : 'IX  ECKDATEN',
-      )
-      y -= 30
-      for (const f of facts) {
-        const result = drawScheduleEntry({
-          doc,
-          page,
-          fonts,
-          y,
-          index: facts.indexOf(f) + 1,
-          title: factLabel(f.key, lang).label,
-          meta: '',
-          body: factValueWithUnit(f.key, f.value, lang),
-          qualifier: `${f.qualifier.source} · ${f.qualifier.quality}`,
-        })
-        page = result.page
-        y = result.y
+          : 'LEGAL · CALCULATED',
+        priority: inferPriority(title, body),
       }
-    }
+    }),
+    ...allSmartPicks.map((s) => {
+      const title = (lang === 'en' ? s.titleEn : s.titleDe) ?? ''
+      const body = `${lang === 'en' ? s.bodyEn : s.bodyDe}  ·  ${lang === 'en' ? s.reasoningEn : s.reasoningDe}`
+      return {
+        title,
+        body,
+        qualifierLabel: 'LEGAL · CALCULATED',
+        priority: inferPriority(title, body),
+      }
+    }),
+  ]
+  renderRecsBody(recsPage, editorialFonts, pdfStrings, {
+    templateLabel,
+    bundeslandCode: bundeslandCodeUpper,
+    rows: recsRows,
+  })
+
+  // ── Page IX: Key Data (facts table) ────────────────────────────
+  const keyDataPage = doc.addPage([PDF_PAGE_WIDTH, PDF_PAGE_HEIGHT])
+  const keyDataPageNumber = doc.getPageCount()
+  const keyDataRows: KeyDataRow[] = facts.map((f) => ({
+    field: factLabel(f.key, lang).label,
+    value: factValueWithUnit(f.key, f.value, lang),
+    qualifier: f.qualifier,
+  }))
+  renderKeyDataBody(keyDataPage, editorialFonts, pdfStrings, {
+    templateLabel,
+    bundeslandCode: bundeslandCodeUpper,
+    rows: keyDataRows,
+  })
+
+  // ── Page X: Verification (status panel + signature block) ──────
+  const verificationPage = doc.addPage([PDF_PAGE_WIDTH, PDF_PAGE_HEIGHT])
+  const verificationPageNumber = doc.getPageCount()
+  let verifiedCount = 0
+  let calculatedCount = 0
+  let assumedCount = 0
+  for (const f of facts) {
+    if (f.qualifier?.quality === 'VERIFIED') verifiedCount++
+    else if (f.qualifier?.quality === 'CALCULATED') calculatedCount++
+    else if (f.qualifier?.quality === 'ASSUMED') assumedCount++
   }
+  renderVerificationBody(verificationPage, editorialFonts, pdfStrings, {
+    templateLabel,
+    bundeslandCode: bundeslandCodeUpper,
+    verifiedCount,
+    calculatedCount,
+    assumedCount,
+  })
+
+  // ── Page XI: Glossary ──────────────────────────────────────────
+  const glossaryPage = doc.addPage([PDF_PAGE_WIDTH, PDF_PAGE_HEIGHT])
+  const glossaryPageNumber = doc.getPageCount()
+  renderGlossaryBody(glossaryPage, editorialFonts, pdfStrings, {
+    bundeslandCode: bundeslandCodeUpper,
+  })
 
   // ── Audit log ──────────────────────────────────────────────────
   // v1.0.6 Bug 2 — renumbered to X; if the list is truncated to 30,
@@ -773,6 +649,12 @@ export async function buildExportPdf({
   if (areasPage) editorialPages.add(areasPage)
   editorialPages.add(costsPage)
   editorialPages.add(timelinePage)
+  editorialPages.add(proceduresPage)
+  editorialPages.add(teamPage)
+  editorialPages.add(recsPage)
+  editorialPages.add(keyDataPage)
+  editorialPages.add(verificationPage)
+  editorialPages.add(glossaryPage)
   allPages.forEach((p, i) => {
     if (i <= 1) return // skip cover + TOC
     if (editorialPages.has(p)) return // skip v1.0.15 editorial pages
@@ -848,6 +730,36 @@ export async function buildExportPdf({
     docNo,
     totalPages,
     pageNumber: timelinePageNumber,
+  })
+  renderProceduresFooter(proceduresPage, editorialFonts, pdfStrings, {
+    docNo,
+    totalPages,
+    pageNumber: proceduresPageNumber,
+  })
+  renderTeamFooter(teamPage, editorialFonts, pdfStrings, {
+    docNo,
+    totalPages,
+    pageNumber: teamPageNumber,
+  })
+  renderRecsFooter(recsPage, editorialFonts, pdfStrings, {
+    docNo,
+    totalPages,
+    pageNumber: recsPageNumber,
+  })
+  renderKeyDataFooter(keyDataPage, editorialFonts, pdfStrings, {
+    docNo,
+    totalPages,
+    pageNumber: keyDataPageNumber,
+  })
+  renderVerificationFooter(verificationPage, editorialFonts, pdfStrings, {
+    docNo,
+    totalPages,
+    pageNumber: verificationPageNumber,
+  })
+  renderGlossaryFooter(glossaryPage, editorialFonts, pdfStrings, {
+    docNo,
+    totalPages,
+    pageNumber: glossaryPageNumber,
   })
 
   return await doc.save()
@@ -957,110 +869,9 @@ function drawSectionHeader(page: PDFPage, fonts: BrandFonts, y: number, title: s
   })
 }
 
-interface ScheduleEntryArgs {
-  doc: PDFDocument
-  page: PDFPage
-  fonts: BrandFonts
-  y: number
-  index: number
-  title: string
-  meta: string
-  body: string
-  qualifier: string
-}
-
-function drawScheduleEntry({
-  doc,
-  page,
-  fonts,
-  y,
-  index,
-  title,
-  meta,
-  body,
-  qualifier,
-}: ScheduleEntryArgs): { page: PDFPage; y: number } {
-  // Need at minimum ~64 px of vertical space.
-  ;({ page, y } = ensureSpace(doc, page, y, 64))
-
-  // Italic Serif row index in 24px column on the left
-  page.drawText(safe(String(index).padStart(2, '0')), {
-    x: MARGIN,
-    y: y - 2,
-    size: 11,
-    font: fonts.serifItalic,
-    color: CLAY,
-    opacity: 0.55,
-  })
-
-  // Title
-  page.drawText(safe(title), {
-    x: MARGIN + 32,
-    y,
-    size: 12,
-    font: fonts.interMedium,
-    color: INK,
-    maxWidth: PAGE_WIDTH - MARGIN * 2 - 100 - 32,
-  })
-  if (meta) {
-    page.drawText(safe(meta), {
-      x: PAGE_WIDTH - MARGIN - 100,
-      y,
-      size: 9,
-      font: fonts.interMedium,
-      color: CLAY,
-    })
-  }
-  y -= 16
-
-  if (body) {
-    const wrapped = wrapText(body, 72)
-    wrapped.slice(0, 3).forEach((line) => {
-      page.drawText(safe(line), {
-        x: MARGIN + 32,
-        y,
-        size: 10,
-        font: fonts.inter,
-        color: INK,
-        opacity: 0.7,
-      })
-      y -= 13
-    })
-  }
-
-  if (qualifier) {
-    page.drawText(safe(qualifier), {
-      x: MARGIN + 32,
-      y,
-      size: 8,
-      font: fonts.serifItalic,
-      color: CLAY,
-      opacity: 0.7,
-    })
-    y -= 14
-  }
-
-  y -= 6
-  return { page, y }
-}
-
-// ── Helpers ────────────────────────────────────────────────────────
-
-function wrapText(text: string, charsPerLine: number): string[] {
-  const words = text.split(/\s+/)
-  const lines: string[] = []
-  let cur = ''
-  for (const w of words) {
-    if (cur.length + w.length + 1 > charsPerLine) {
-      lines.push(cur)
-      cur = w
-    } else {
-      cur = cur ? `${cur} ${w}` : w
-    }
-  }
-  if (cur) lines.push(cur)
-  return lines
-}
+// v1.0.17 — drawScheduleEntry + wrapText retired alongside the
+// v1.0.6 schedule-block path. Editorial section renderers use the
+// drawWrappedText primitive (pdfPrimitives.ts) instead.
 
 function formatDate(iso: string, lang: 'de' | 'en'): string {
   const d = new Date(iso)
