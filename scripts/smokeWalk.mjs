@@ -2439,6 +2439,43 @@ async function runStaticGate() {
     },
   ]))
 
+  // ── v1.0.19 canonical procedure resolver ────────────────────────
+  const resolveProcSrc = await readFileText('src/legal/resolveProcedure.ts')
+  results.push(failures('v1.0.19 Bug 40: resolveProcedure canonical resolver', [
+    {
+      ok: /export function resolveProcedure\(c: ProcedureCase\)/.test(resolveProcSrc),
+      msg: 'resolveProcedure(c: ProcedureCase): ProcedureDecision exported',
+    },
+    {
+      ok: /export interface ProcedureDecision[\s\S]{0,400}kind:\s*ProcedureKind[\s\S]{0,200}citation:\s*string[\s\S]{0,200}reasoning_de:\s*string[\s\S]{0,200}reasoning_en:\s*string/.test(resolveProcSrc),
+      msg: 'ProcedureDecision shape has kind / citation / reasoning_de / reasoning_en',
+    },
+    {
+      ok: /'verfahrensfrei'/.test(resolveProcSrc) &&
+          /'vereinfachtes'/.test(resolveProcSrc) &&
+          /'standard'/.test(resolveProcSrc) &&
+          /'bauvoranfrage'/.test(resolveProcSrc),
+      msg: 'ProcedureKind union covers 4 outcomes (verfahrensfrei / vereinfachtes / standard / bauvoranfrage)',
+    },
+    {
+      ok: /'§ 62 BauO NRW'/.test(resolveProcSrc),
+      msg: 'NRW Sanierung outer-shell-only path cites § 62 BauO NRW (verfahrensfrei)',
+    },
+    {
+      ok: /denkmalschutz\s*\|\|\s*c\.ensembleschutz/.test(resolveProcSrc),
+      msg: 'Denkmalschutz / Ensembleschutz triggers standard permit',
+    },
+    {
+      ok: /export function intentFromTemplate/.test(resolveProcSrc),
+      msg: 'intentFromTemplate(templateId) maps TemplateId → ProcedureIntent',
+    },
+    {
+      ok: /export function procedureLabel/.test(resolveProcSrc) &&
+          /export function procedureStatusLabel/.test(resolveProcSrc),
+      msg: 'procedureLabel + procedureStatusLabel localization helpers exported',
+    },
+  ]))
+
   // ── v1.0.17 runtime smoke harness exists ──────────────────────────
   const fs2 = await import('node:fs')
   const smokePdfTextExists = fs2.existsSync(`${REPO_ROOT}/scripts/smoke-pdf-text.mts`)
