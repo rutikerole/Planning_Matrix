@@ -2476,6 +2476,35 @@ async function runStaticGate() {
     },
   ]))
 
+  // ── v1.0.19 requiredDocumentsForCase resolver ────────────────────
+  const reqDocsSrc = await readFileText('src/legal/requiredDocuments.ts')
+  results.push(failures('v1.0.19 Bug 41+42: requiredDocumentsForCase resolver', [
+    {
+      ok: /export function requiredDocumentsForCase\(c: DocumentCase\)/.test(reqDocsSrc),
+      msg: 'requiredDocumentsForCase exported',
+    },
+    {
+      ok: /'§ 48 GEG'/.test(reqDocsSrc) && /'§ 80 GEG'/.test(reqDocsSrc),
+      msg: 'GEG-Wärmeschutznachweis (§ 48 GEG) + Energieausweis (§ 80 GEG) cited (Bug 41 promotion)',
+    },
+    {
+      ok: /'BauVorlVO NRW § 3'/.test(reqDocsSrc),
+      msg: 'NRW Bauvorlagenverordnung § 3 cited for Lageplan / Bauzeichnungen / Baubeschreibung',
+    },
+    {
+      ok: /key: 'lageplan'/.test(reqDocsSrc) &&
+          /key: 'bauzeichnungen'/.test(reqDocsSrc) &&
+          /key: 'baubeschreibung'/.test(reqDocsSrc) &&
+          /key: 'geg_waermeschutznachweis'/.test(reqDocsSrc) &&
+          /key: 'energieausweis'/.test(reqDocsSrc),
+      msg: 'core document keys present (lageplan / bauzeichnungen / baubeschreibung / geg_waermeschutznachweis / energieausweis)',
+    },
+    {
+      ok: /procedureKind === 'verfahrensfrei'[\s\S]{0,500}anzeige_formular/.test(reqDocsSrc),
+      msg: 'verfahrensfrei branch emits Anzeige-Formular (not Bauantragsformular)',
+    },
+  ]))
+
   // ── v1.0.17 runtime smoke harness exists ──────────────────────────
   const fs2 = await import('node:fs')
   const smokePdfTextExists = fs2.existsSync(`${REPO_ROOT}/scripts/smoke-pdf-text.mts`)
