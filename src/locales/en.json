@@ -838,7 +838,8 @@
       "noPlot": "Without a plot, areas A (planning law) and C (further requirements) cannot yet be assessed. We work with assumptions and flag the gap.",
       "bundesland": {
         "label": "Federal state",
-        "hint": "Pre-selected from the address — adjust if needed."
+        "hint": "Pre-selected from the address — adjust if needed.",
+        "detected": "Detected from postcode {{plz}}. Change if this is wrong."
       },
       "bplan": {
         "loading": "Checking the development plan…",

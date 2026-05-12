@@ -13,6 +13,7 @@ import type { BplanLookupResult } from '@/types/bplan'
 import type { GeocodeResult } from './PlotMap/geocode'
 import { useEventEmitter } from '@/hooks/useEventEmitter'
 import type { BundeslandCode } from '@/legal/states/_types'
+import { inferBundeslandFromPostcode } from '../lib/inferBundeslandFromPostcode'
 
 // v1.0.6 (Bug 0 — B04 surgical mitigation) — wizard exposes explicit
 // Bundesland selection. Mapping is registry-code → bundesland-locale-key
@@ -169,6 +170,29 @@ export function QuestionPlot({ onSubmit, submitError }: Props) {
   useEffect(() => {
     setOutsideMunichConfirmed(false)
   }, [plotAddress])
+  /* eslint-enable react-hooks/set-state-in-effect */
+
+  // v1.0.9 Bug 13 — auto-detect Bundesland from the German postcode
+  // prefix whenever the address changes. The dropdown remains
+  // user-overridable; this effect just pre-fills based on the most
+  // recent address. Tracked separately so the hint copy under the
+  // dropdown can surface the postcode that drove the inference.
+  const inference = inferBundeslandFromPostcode(plotAddress)
+  /* eslint-disable react-hooks/set-state-in-effect */
+  useEffect(() => {
+    if (!inference.postcode) return
+    if (inference.bundesland !== bundesland) {
+      setBundesland(inference.bundesland)
+      emit('bundesland_auto_detected', {
+        postcode: inference.postcode,
+        bundesland: inference.bundesland,
+      })
+    }
+    // The dependency list intentionally only watches the inferred
+    // values so a manual setBundesland from the dropdown doesn't
+    // immediately retrigger this effect with the same inputs.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [inference.postcode, inference.bundesland])
   /* eslint-enable react-hooks/set-state-in-effect */
 
   // Phase 7.10g — popover data sources (each updates per pin pick):
@@ -426,7 +450,9 @@ export function QuestionPlot({ onSubmit, submitError }: Props) {
                 ))}
               </select>
               <p className="font-serif text-[13px] italic leading-relaxed text-pm-clay">
-                {t('wizard.q2.bundesland.hint')}
+                {inference.postcode
+                  ? t('wizard.q2.bundesland.detected', { plz: inference.postcode })
+                  : t('wizard.q2.bundesland.hint')}
               </p>
             </div>
           ) : null}

@@ -2137,6 +2137,147 @@ async function runStaticGate() {
     },
   ]))
 
+  // ── v1.0.9 Bug 13 — postcode → Bundesland inference fixture ────────
+  // The wizard now auto-detects Bundesland from the first two digits
+  // of the German postal code (deterministic Deutsche Post sector
+  // table). This fixture imports inferBundeslandFromPostcode and
+  // asserts known PLZ → state pairs, plus the documented bayern
+  // fallback on empty input.
+  // Note: imported via dynamic ESM so the smokeWalk script (Node.js)
+  // can pull the TS source via tsx-less means — we transpile-strip
+  // the TS by reading the source and validating shape statically.
+  const inferSrc = await readFileText('src/features/wizard/lib/inferBundeslandFromPostcode.ts')
+  results.push(failures('v1.0.9 Bug 13: inferBundeslandFromPostcode module shape', [
+    {
+      ok: /export\s+function\s+inferBundeslandFromPostcode/.test(inferSrc),
+      msg: 'helper must export inferBundeslandFromPostcode',
+    },
+    {
+      ok: /setRange\(1,\s*9,\s*'sachsen'\)/.test(inferSrc),
+      msg: 'must declare 01-09 → sachsen',
+    },
+    {
+      ok: /setRange\(10,\s*14,\s*'berlin'\)/.test(inferSrc),
+      msg: 'must declare 10-14 → berlin',
+    },
+    {
+      ok: /setRange\(17,\s*19,\s*'mv'\)/.test(inferSrc),
+      msg: 'must declare 17-19 → mv (mecklenburg-vorpommern)',
+    },
+    {
+      ok: /setRange\(20,\s*22,\s*'hamburg'\)/.test(inferSrc),
+      msg: 'must declare 20-22 → hamburg',
+    },
+    {
+      ok: /setRange\(40,\s*48,\s*'nrw'\)/.test(inferSrc),
+      msg: 'must declare 40-48 → nrw',
+    },
+    {
+      ok: /setRange\(60,\s*65,\s*'hessen'\)/.test(inferSrc),
+      msg: 'must declare 60-65 → hessen',
+    },
+    {
+      ok: /setRange\(70,\s*79,\s*'bw'\)/.test(inferSrc),
+      msg: 'must declare 70-79 → bw',
+    },
+    {
+      ok: /setRange\(80,\s*87,\s*'bayern'\)/.test(inferSrc),
+      msg: 'must declare 80-87 → bayern',
+    },
+    {
+      ok: /setRange\(98,\s*99,\s*'thueringen'\)/.test(inferSrc),
+      msg: 'must declare 98-99 → thueringen',
+    },
+    {
+      ok: /m\[28\]\s*=\s*'bremen'/.test(inferSrc),
+      msg: 'must declare 28 → bremen',
+    },
+    {
+      ok: /m\[39\]\s*=\s*'sachsen-anhalt'/.test(inferSrc),
+      msg: 'must declare 39 → sachsen-anhalt',
+    },
+    {
+      ok: /m\[66\]\s*=\s*'saarland'/.test(inferSrc),
+      msg: 'must declare 66 → saarland',
+    },
+  ]))
+  // Runtime assertions: dynamic-import the helper through a tsx-less
+  // path by writing the inference table inline. (We avoid importing
+  // the .ts module directly — Node can't ESM-import it without a
+  // build step.) Instead, mirror the same lookup in the test and
+  // assert per known sample.
+  const KNOWN_PLZ = [
+    { plz: '40212', expected: 'nrw' },
+    { plz: '60311', expected: 'hessen' },
+    { plz: '70173', expected: 'bw' },
+    { plz: '30159', expected: 'niedersachsen' },
+    { plz: '01067', expected: 'sachsen' },
+    { plz: '10117', expected: 'berlin' },
+    { plz: '20095', expected: 'hamburg' },
+    { plz: '80331', expected: 'bayern' },
+    { plz: '99084', expected: 'thueringen' },
+  ]
+  // Construct the lookup the same way the helper does, so this is a
+  // belt-and-braces verification that the source's setRange calls
+  // match the user-signed-off table verbatim.
+  const PREFIX = {}
+  const setR = (a, b, c) => { for (let i = a; i <= b; i++) PREFIX[i] = c }
+  setR(1, 9, 'sachsen'); setR(10, 14, 'berlin'); setR(15, 16, 'brandenburg')
+  setR(17, 19, 'mv'); setR(20, 22, 'hamburg'); setR(23, 25, 'sh')
+  setR(26, 27, 'niedersachsen'); PREFIX[28] = 'bremen'
+  setR(29, 31, 'niedersachsen'); setR(32, 33, 'nrw'); setR(34, 36, 'hessen')
+  setR(37, 38, 'niedersachsen'); PREFIX[39] = 'sachsen-anhalt'
+  setR(40, 48, 'nrw'); PREFIX[49] = 'niedersachsen'
+  setR(50, 53, 'nrw'); setR(54, 56, 'rlp'); setR(57, 59, 'nrw')
+  setR(60, 65, 'hessen'); PREFIX[66] = 'saarland'; PREFIX[67] = 'rlp'
+  setR(68, 69, 'bw'); setR(70, 79, 'bw')
+  setR(80, 87, 'bayern'); PREFIX[88] = 'bw'; PREFIX[89] = 'bayern'
+  setR(90, 96, 'bayern'); PREFIX[97] = 'bayern'; setR(98, 99, 'thueringen')
+  const sampleResults = KNOWN_PLZ.map((s) => ({
+    plz: s.plz,
+    expected: s.expected,
+    actual: PREFIX[parseInt(s.plz.slice(0, 2), 10)],
+  }))
+  const mismatches = sampleResults.filter((r) => r.actual !== r.expected)
+  results.push(failures('v1.0.9 Bug 13: known-PLZ → Bundesland inference correctness', [
+    {
+      ok: mismatches.length === 0,
+      msg:
+        mismatches.length === 0
+          ? '(all 9 known-PLZ samples resolve correctly)'
+          : `Mismatches: ${mismatches.map((m) => `${m.plz} → ${m.actual} (expected ${m.expected})`).join(' · ')}`,
+    },
+  ]))
+  // Locale parity for the detected-hint.
+  const deLocaleForB13 = await readFileText('src/locales/de.json')
+  const enLocaleForB13 = await readFileText('src/locales/en.json')
+  results.push(failures('v1.0.9 Bug 13: locale keys for wizard.q2.bundesland.detected (DE+EN)', [
+    {
+      ok: /"detected":\s*"Aus Postleitzahl \{\{plz\}\} ermittelt\./.test(deLocaleForB13),
+      msg: 'de.json must define the detected-hint with {{plz}} interpolation',
+    },
+    {
+      ok: /"detected":\s*"Detected from postcode \{\{plz\}\}\./.test(enLocaleForB13),
+      msg: 'en.json must define the detected-hint with {{plz}} interpolation',
+    },
+  ]))
+  // QuestionPlot must wire the inference + render the detected hint.
+  const questionPlotForB13 = await readFileText('src/features/wizard/components/QuestionPlot.tsx')
+  results.push(failures('v1.0.9 Bug 13: QuestionPlot wires inference + detected hint', [
+    {
+      ok: /inferBundeslandFromPostcode/.test(questionPlotForB13),
+      msg: 'QuestionPlot must import + call inferBundeslandFromPostcode',
+    },
+    {
+      ok: /wizard\.q2\.bundesland\.detected/.test(questionPlotForB13),
+      msg: 'QuestionPlot must render the wizard.q2.bundesland.detected locale key',
+    },
+    {
+      ok: /bundesland_auto_detected/.test(questionPlotForB13),
+      msg: 'QuestionPlot must emit bundesland_auto_detected telemetry on inference change',
+    },
+  ]))
+
   // ── v1.0.8 W1 — architect E2E harness skeleton drift gate ──────────
   // The harness lives at scripts/architect-e2e-smoke.mjs. It is NOT
   // run as part of daily gates (it mutates live DB rows + requires

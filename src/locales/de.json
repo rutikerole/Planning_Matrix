@@ -838,7 +838,8 @@
       "noPlot": "Ohne Grundstück können Bereich A (Planungsrecht) und C (sonstige Vorgaben) noch nicht ermittelt werden. Wir arbeiten mit Annahmen und markieren die Lücke.",
       "bundesland": {
         "label": "Bundesland",
-        "hint": "Aus der Adresse vorausgewählt — bei Bedarf anpassen."
+        "hint": "Aus der Adresse vorausgewählt — bei Bedarf anpassen.",
+        "detected": "Aus Postleitzahl {{plz}} ermittelt. Anpassen falls falsch."
       },
       "bplan": {
         "loading": "Bebauungsplan wird geprüft…",
