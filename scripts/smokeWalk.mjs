@@ -3785,8 +3785,13 @@ async function runStaticGate() {
       msg: 'Key Data section IX kickers bilingual in pdfStrings',
     },
     {
-      ok: /'X\s+AUDIT\s+LOG'/.test(exportPdfSrc) && /'X\s+AUDITSPUR'/.test(exportPdfSrc),
-      msg: 'Audit Log section must be renumbered X',
+      // v1.0.17 — Audit log REMOVED from PDF (client-internal History
+      // only). Section X is now Verification; Section XI is Glossary.
+      // Fixture asserts the removal: no audit kicker in pdfStrings,
+      // no event-rendering loop in assembly.
+      ok: !/'audit\.kicker':/.test(stringsForV16Sec) &&
+          !/lang === 'en' \? 'X  AUDIT LOG'/.test(exportPdfSrc),
+      msg: 'v1.0.17: Audit log removed from PDF (kept in in-app History view only)',
     },
     {
       // v1.0.13 — assertion broadened: v1.0.6 skipped only the cover
@@ -3798,8 +3803,10 @@ async function runStaticGate() {
       msg: 'Vorläufig footer must be drawn on every non-cover (v1.0.6) or non-cover/TOC (v1.0.13) page',
     },
     {
-      ok: /Showing last 30 of/.test(exportPdfSrc),
-      msg: 'Audit log must surface "showing last 30 of N" when truncated',
+      // v1.0.17 — "Showing last 30 of N" audit truncation message
+      // removed alongside the audit log section.
+      ok: !/Showing last 30 of/.test(exportPdfSrc),
+      msg: 'v1.0.17: audit truncation message removed (audit log no longer in PDF)',
     },
   ]))
 

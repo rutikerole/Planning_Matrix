@@ -19,7 +19,7 @@
 // ───────────────────────────────────────────────────────────────────────
 
 import { PDFDocument, rgb, type PDFPage } from 'pdf-lib'
-import { loadBrandFonts, type BrandFonts } from '@/lib/fontLoader'
+import { loadBrandFonts } from '@/lib/fontLoader'
 import { factLabel, factValueWithUnit } from '@/lib/factLabel'
 import type { MessageRow, ProjectRow } from '@/types/db'
 import type { ProjectState } from '@/types/projectState'
@@ -150,12 +150,9 @@ interface BuildArgs {
 }
 
 // ── Color tokens (mirrored from globals.css) ───────────────────────
-const INK = rgb(0.13, 0.14, 0.16) // hsl(220 16% 11%)
 const CLAY = rgb(0.51, 0.41, 0.32) // hsl(25 30% 38%)
-const CLAY_DEEP = rgb(0.36, 0.31, 0.25) // hsl(25 32% 28%)
 
 const PAGE_WIDTH = 595.28 // A4 portrait in points
-const PAGE_HEIGHT = 841.89
 const MARGIN = 56
 
 // v1.0.17 — STATE_LABELS_DE + STAKEHOLDERS_PDF retired alongside
@@ -562,69 +559,15 @@ export async function buildExportPdf({
     bundeslandCode: bundeslandCodeUpper,
   })
 
-  // ── Audit log ──────────────────────────────────────────────────
-  // v1.0.6 Bug 2 — renumbered to X; if the list is truncated to 30,
-  // the eyebrow surfaces "showing last 30 of N" so the reader knows
-  // the export is partial.
-  if (events.length > 0) {
-    let { page, y } = startPage(doc)
-    drawSectionHeader(
-      page,
-      fonts,
-      y,
-      lang === 'en' ? 'X  AUDIT LOG' : 'X  AUDITSPUR',
-    )
-    y -= 18
-    if (events.length > 30) {
-      page.drawText(
-        safe(
-          lang === 'en'
-            ? `Showing last 30 of ${events.length} events.`
-            : `Letzte 30 von ${events.length} Ereignissen.`,
-        ),
-        {
-          x: MARGIN,
-          y,
-          size: 9,
-          font: fonts.serifItalic,
-          color: CLAY,
-          opacity: 0.7,
-        },
-      )
-      y -= 14
-    }
-    for (const ev of events.slice(0, 30)) {
-      ;({ page, y } = ensureSpace(doc, page, y, 30))
-      const when = formatDateTime(ev.created_at, lang)
-      page.drawText(safe(when), {
-        x: MARGIN,
-        y,
-        size: 9,
-        font: fonts.serifItalic,
-        color: CLAY_DEEP,
-      })
-      page.drawText(safe(`${ev.triggered_by}  ·  ${ev.event_type}`), {
-        x: MARGIN + 130,
-        y,
-        size: 10,
-        font: fonts.inter,
-        color: INK,
-      })
-      y -= 14
-      if (ev.reason) {
-        page.drawText(safe(ev.reason), {
-          x: MARGIN + 130,
-          y,
-          size: 9,
-          font: fonts.serifItalic,
-          color: rgb(0.13, 0.14, 0.16),
-          opacity: 0.55,
-        })
-        y -= 14
-      }
-      y -= 4
-    }
-  }
+  // v1.0.17 — Audit log REMOVED from PDF. Per the user's intent
+  // (originally tabled in v1.0.14, finalized here): audit history
+  // is client-internal value, not part of the deliverable. The
+  // in-app History view (chat surface) retains the full audit
+  // trail unchanged. PDF now ends at Section 11 (Glossary).
+  // The `events` BuildArgs parameter is retained for backward
+  // compatibility — callers still pass it; the assembly just no
+  // longer consumes it.
+  void events
 
   // ── Page footers (every page) ──────────────────────────────────
   // v1.0.6 Bug 2 — every page now carries the locked Vorläufig footer
@@ -834,44 +777,11 @@ function computeTocPageNumbers(
 // renderer + body Section VIII + future v1.0.17 renderers all
 // consume the same DESIGNER+ASSUMED → LEGAL · CALCULATED normalization.
 
-function startPage(doc: PDFDocument): { page: PDFPage; y: number } {
-  const page = doc.addPage([PAGE_WIDTH, PAGE_HEIGHT])
-  return { page, y: PAGE_HEIGHT - MARGIN }
-}
-
-function ensureSpace(
-  doc: PDFDocument,
-  page: PDFPage,
-  y: number,
-  needed: number,
-): { page: PDFPage; y: number } {
-  if (y - needed > MARGIN + 30) return { page, y }
-  return startPage(doc)
-}
-
-
-function drawSectionHeader(page: PDFPage, fonts: BrandFonts, y: number, title: string) {
-  // Italic Serif numeral + uppercase tracked title
-  page.drawText(safe(title), {
-    x: MARGIN,
-    y,
-    size: 11,
-    font: fonts.interMedium,
-    color: CLAY,
-    opacity: 0.85,
-  })
-  page.drawLine({
-    start: { x: MARGIN, y: y - 6 },
-    end: { x: PAGE_WIDTH - MARGIN, y: y - 6 },
-    thickness: 0.5,
-    color: INK,
-    opacity: 0.18,
-  })
-}
-
-// v1.0.17 — drawScheduleEntry + wrapText retired alongside the
-// v1.0.6 schedule-block path. Editorial section renderers use the
-// drawWrappedText primitive (pdfPrimitives.ts) instead.
+// v1.0.17 — startPage / ensureSpace / drawSectionHeader /
+// drawScheduleEntry / wrapText / formatDateTime all retired with
+// the v1.0.6 schedule-block path and audit log removal. Editorial
+// renderers use the drawWrappedText primitive + Path-A 2-pass
+// footer pattern.
 
 function formatDate(iso: string, lang: 'de' | 'en'): string {
   const d = new Date(iso)
@@ -880,17 +790,5 @@ function formatDate(iso: string, lang: 'de' | 'en'): string {
     day: '2-digit',
     month: 'long',
     year: 'numeric',
-  })
-}
-
-function formatDateTime(iso: string, lang: 'de' | 'en'): string {
-  const d = new Date(iso)
-  if (Number.isNaN(d.getTime())) return ''
-  return d.toLocaleString(lang === 'en' ? 'en-GB' : 'de-DE', {
-    day: '2-digit',
-    month: 'short',
-    year: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
   })
 }
