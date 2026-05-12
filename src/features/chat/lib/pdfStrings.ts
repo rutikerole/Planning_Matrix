@@ -132,6 +132,69 @@ const EN: PdfStrings = {
   'timeline.milestone': 'Approval milestone',
   'timeline.milestone.detail':
     '— Baugenehmigung issued at end of week ≈ 22',
+
+  // ─── v1.0.17 Renaissance Part 3 — Recommendations ─────────────
+  'recs.kicker': 'SECTION 08 · RECOMMENDATIONS',
+  'recs.title': 'Recommendations · prioritised',
+  'recs.empty': 'No recommendations recorded yet.',
+
+  // ─── v1.0.17 — Key Data ───────────────────────────────────────
+  'data.kicker': 'SECTION 09 · KEY DATA',
+  'data.title': 'Project data · qualifier table',
+  'data.th.field': 'FIELD',
+  'data.th.value': 'VALUE',
+  'data.th.qualifier': 'QUALIFIER',
+  'data.empty': 'No facts recorded yet.',
+
+  // ─── v1.0.17 — Verification ───────────────────────────────────
+  'verif.kicker': 'SECTION 10 · VERIFICATION',
+  'verif.title': 'Verification status & signature',
+  'verif.sub':
+    'This brief is preliminary. Final figures require architect (Bauvorlageberechtigte/r) confirmation against the authoritative § citations.',
+  'verif.status.h': 'VERIFICATION STATUS',
+  'verif.status.body':
+    'Pending architect confirmation. All values derived from persona model computation against state.',
+  'verif.dq.h': 'DATA QUALITY',
+  'verif.dq.legend.verified': 'verified',
+  'verif.dq.legend.calculated': 'calculated',
+  'verif.dq.legend.assumed': 'assumed',
+  'sig.architect': 'Architect (Bauvorlageberechtigte/r)',
+  'sig.chamber': 'Chamber stamp · registration no.',
+  'sig.date': 'Date',
+
+  // ─── v1.0.17 — Procedures + Documents ─────────────────────────
+  'proc.kicker': 'SECTION 05 · PROCEDURES',
+  'proc.title': 'Permit path',
+  'proc.empty': 'No procedure identified yet.',
+  'proc.status.required': 'REQUIRED',
+  'proc.status.optional': 'OPTIONAL',
+  'proc.status.exempt': 'EXEMPT',
+  'docs.kicker': 'SECTION 06 · DOCUMENTS',
+  'docs.title': 'Submission documents',
+  'docs.empty': 'No documents recorded yet — continue the consultation.',
+
+  // ─── v1.0.17 — Team & Stakeholders ────────────────────────────
+  'team.kicker': 'SECTION 07 · TEAM & STAKEHOLDERS',
+  'team.title': 'Team & stakeholders',
+  'team.specialists.h': 'SPECIALISTS',
+  'team.specialists.empty': 'No specialists identified yet.',
+  'team.stakeholders.h': 'STAKEHOLDERS',
+  'team.role.owner': 'Owner (Bauherr:in)',
+  'team.role.owner.body':
+    'Commissions the project, carries the costs, makes decisions.',
+  'team.role.architect': 'Architect',
+  'team.role.architect.body':
+    'Submission-authorized. Files the Bauantrag on the owner’s behalf.',
+  'team.role.engineers': 'Engineers',
+  'team.role.engineers.body':
+    'Structural · energy · fire-protection · surveying specialists.',
+  'team.role.authority': 'Building authority',
+  'team.role.authority.body':
+    'Municipal Bauamt. Reviews submission and decides.',
+
+  // ─── v1.0.17 — Glossary ───────────────────────────────────────
+  'glossary.kicker': 'SECTION 11 · GLOSSARY',
+  'glossary.title': 'German legal terms',
 }
 
 const DE: PdfStrings = {
@@ -242,6 +305,71 @@ const DE: PdfStrings = {
   'timeline.milestone': 'Genehmigungs-Meilenstein',
   'timeline.milestone.detail':
     '— Baugenehmigung erteilt zum Ende von Woche ≈ 22',
+
+  // ─── v1.0.17 Renaissance Part 3 — Recommendations ─────────────
+  'recs.kicker': 'ABSCHNITT 08 · EMPFEHLUNGEN',
+  'recs.title': 'Empfehlungen · priorisiert',
+  'recs.empty': 'Noch keine Empfehlungen erfasst.',
+
+  // ─── v1.0.17 — Key Data ───────────────────────────────────────
+  'data.kicker': 'ABSCHNITT 09 · ECKDATEN',
+  'data.title': 'Projektdaten · Qualifikatorentabelle',
+  'data.th.field': 'FELD',
+  'data.th.value': 'WERT',
+  'data.th.qualifier': 'QUALIFIKATOR',
+  'data.empty': 'Noch keine Fakten erfasst.',
+
+  // ─── v1.0.17 — Verification ───────────────────────────────────
+  'verif.kicker': 'ABSCHNITT 10 · VERIFIZIERUNG',
+  'verif.title': 'Verifizierungsstatus & Unterschrift',
+  'verif.sub':
+    'Dieses Briefing ist vorläufig. Endgültige Werte erfordern die Bestätigung einer/eines bauvorlageberechtigten Architekt:in gegen die maßgeblichen § Anker.',
+  'verif.status.h': 'VERIFIZIERUNGSSTATUS',
+  'verif.status.body':
+    'Architekt:in-Bestätigung ausstehend. Alle Werte abgeleitet aus Persona-Modell-Berechnung gegen den Stand.',
+  'verif.dq.h': 'DATENQUALITÄT',
+  'verif.dq.legend.verified': 'verifiziert',
+  'verif.dq.legend.calculated': 'berechnet',
+  'verif.dq.legend.assumed': 'angenommen',
+  'sig.architect': 'Architekt:in (Bauvorlageberechtigte/r)',
+  'sig.chamber': 'Kammerstempel · Eintragungs-Nr.',
+  'sig.date': 'Datum',
+
+  // ─── v1.0.17 — Procedures + Documents ─────────────────────────
+  'proc.kicker': 'ABSCHNITT 05 · VERFAHREN',
+  'proc.title': 'Genehmigungspfad',
+  'proc.empty': 'Noch kein Verfahren identifiziert.',
+  'proc.status.required': 'ERFORDERLICH',
+  'proc.status.optional': 'OPTIONAL',
+  'proc.status.exempt': 'BEFREIT',
+  'docs.kicker': 'ABSCHNITT 06 · DOKUMENTE',
+  'docs.title': 'Einreichungs-Dokumente',
+  'docs.empty':
+    'Noch keine Dokumente erfasst — Konsultation fortsetzen.',
+
+  // ─── v1.0.17 — Team & Stakeholders ────────────────────────────
+  'team.kicker': 'ABSCHNITT 07 · TEAM & BETEILIGTE',
+  'team.title': 'Team & Beteiligte',
+  'team.specialists.h': 'FACHPLANER:INNEN',
+  'team.specialists.empty':
+    'Noch keine Fachplaner:innen identifiziert.',
+  'team.stakeholders.h': 'BETEILIGTE',
+  'team.role.owner': 'Bauherr:in',
+  'team.role.owner.body':
+    'Beauftragt das Vorhaben, trägt die Kosten, entscheidet.',
+  'team.role.architect': 'Architekt:in',
+  'team.role.architect.body':
+    'Bauvorlageberechtigt. Reicht den Bauantrag im Namen der Bauherrschaft ein.',
+  'team.role.engineers': 'Fachplaner:innen',
+  'team.role.engineers.body':
+    'Tragwerksplanung · Energieberatung · Brandschutz · Vermessung.',
+  'team.role.authority': 'Bauamt',
+  'team.role.authority.body':
+    'Kommunale Genehmigungsbehörde. Prüft und entscheidet.',
+
+  // ─── v1.0.17 — Glossary ───────────────────────────────────────
+  'glossary.kicker': 'ABSCHNITT 11 · GLOSSAR',
+  'glossary.title': 'Deutsche Rechtsbegriffe',
 }
 
 export const PDF_STRINGS: Record<PdfLang, PdfStrings> = { en: EN, de: DE }
