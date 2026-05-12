@@ -2255,6 +2255,73 @@ async function runStaticGate() {
     },
   ]))
 
+  // ── v1.0.16 architectural invariant — zero raw page.drawText in
+  //    section renderers. ENDS the ligature regression cycle by
+  //    making the bypass structurally impossible at the file level. ─
+  const fs = await import('node:fs')
+  const path = await import('node:path')
+  const sectionsDir = `${REPO_ROOT}/src/features/chat/lib/pdfSections`
+  const sectionFiles = fs.readdirSync(sectionsDir).filter((f) => f.endsWith('.ts'))
+  const sectionViolations = []
+  for (const fname of sectionFiles) {
+    const src = fs.readFileSync(path.join(sectionsDir, fname), 'utf-8')
+    const matches = src.match(/page\.drawText\s*\(/g)
+    if (matches && matches.length > 0) {
+      sectionViolations.push(`${fname}: ${matches.length} raw page.drawText call(s)`)
+    }
+  }
+  results.push(failures('v1.0.16: zero raw page.drawText in pdfSections/*.ts (architectural invariant)', [
+    {
+      ok: sectionViolations.length === 0,
+      msg: sectionViolations.length === 0
+        ? `${sectionFiles.length} section renderer(s) scanned — none bypass safe()`
+        : `architectural fix broken — ${sectionViolations.join(' · ')}. Use drawSafeText or a typed primitive.`,
+    },
+  ]))
+
+  // Architectural fixture: drawSafeText primitive exported + the
+  // EditorialFonts.safe field is required, so callers cannot
+  // accidentally drop sanitization.
+  const primForArch = await readFileText('src/features/chat/lib/pdfPrimitives.ts')
+  results.push(failures('v1.0.16: drawSafeText + EditorialFonts.safe enforce sanitization at compile time', [
+    {
+      ok: /export\s+function\s+drawSafeText\s*\(/.test(primForArch),
+      msg: 'drawSafeText primitive exported from pdfPrimitives',
+    },
+    {
+      ok: /export\s+interface\s+DrawSafeTextOpts[\s\S]{0,500}safe:\s*SafeTextFn/.test(primForArch),
+      msg: 'DrawSafeTextOpts requires safe: SafeTextFn (compile-time enforcement)',
+    },
+    {
+      ok: /export\s+interface\s+EditorialFonts[\s\S]{0,800}safe:\s*SafeTextFn/.test(primForArch),
+      msg: 'EditorialFonts carries safe: SafeTextFn so renderers always have access',
+    },
+    {
+      ok: /resolveEditorialFonts[\s\S]{0,400}safe:\s*resolveSafeTextFn/.test(primForArch),
+      msg: 'resolveEditorialFonts populates fonts.safe from resolveSafeTextFn',
+    },
+  ]))
+
+  // Section renderers MUST consume drawSafeText for one-off draws.
+  // Asserts each renderer imports drawSafeText (proof they're not
+  // tempted to fall back to raw page.drawText).
+  const renderersExpectingSafeImport = ['cover.ts', 'executive.ts', 'areas.ts']
+  const safeImportViolations = []
+  for (const fname of renderersExpectingSafeImport) {
+    const src = fs.readFileSync(path.join(sectionsDir, fname), 'utf-8')
+    if (!/drawSafeText/.test(src)) {
+      safeImportViolations.push(`${fname} does not import drawSafeText`)
+    }
+  }
+  results.push(failures('v1.0.16: cover/executive/areas renderers consume drawSafeText', [
+    {
+      ok: safeImportViolations.length === 0,
+      msg: safeImportViolations.length === 0
+        ? 'all 3 renderers reference drawSafeText'
+        : safeImportViolations.join(' · '),
+    },
+  ]))
+
   // ── v1.0.15 — Renaissance Part 2A executive renderer ─────────────
   const executiveV15 = await readFileText('src/features/chat/lib/pdfSections/executive.ts')
   results.push(failures('v1.0.15: pdfSections/executive.ts renders Section 01 (Top 3)', [
