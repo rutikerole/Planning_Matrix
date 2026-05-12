@@ -1716,7 +1716,7 @@
       "costSub": "(HOAI fees · construction not included)",
       "sumLabel": "Sum (estimated)",
       "confidenceLine": "Estimate confidence: ±25 %",
-      "caveat": "These figures are orientation values based on typical Bayern fee tables for projects of this class."
+      "caveat": "These figures are orientation values based on HOAI fee tables for projects of this class."
     },
     "risks": {
       "eyebrow": "What still to verify",
@@ -1956,7 +1956,7 @@
         "costEyebrow": "Cost range",
         "confidence": "Estimate confidence: ±25%",
         "totalEstimated": "Total (estimated)",
-        "caveat": "Orientation values from typical Bayern HOAI fees · not binding quotes.",
+        "caveat": "Orientation values from the HOAI fee tables · not binding quotes.",
         "computedFromTooltip": "Computed from: {{inputs}}",
         "timelineEyebrow": "Procedure duration",
         "totalDuration": "Total",

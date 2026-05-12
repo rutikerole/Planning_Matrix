@@ -918,7 +918,7 @@ function drawCostsPage(
   ]
   for (const row of rows) {
     ;({ page, y } = ensureSpace(doc, page, y, 36))
-    const rationale = findCostRationale(row.key)
+    const rationale = findCostRationale(row.key, project.bundesland)
     page.drawText(safe(lang === 'en' ? row.labelEn : row.labelDe), {
       x: MARGIN,
       y,

@@ -1716,7 +1716,7 @@
       "costSub": "(Honorare nach HOAI · ohne Bauleistung)",
       "sumLabel": "Summe (geschätzt)",
       "confidenceLine": "Sicherheit der Schätzung: ±25 %",
-      "caveat": "Diese Werte sind Orientierungswerte basierend auf typischen Bayern-Honoraren für Vorhaben dieser Klasse."
+      "caveat": "Diese Werte sind Orientierungswerte basierend auf HOAI-Honorartafeln für Vorhaben dieser Klasse."
     },
     "risks": {
       "eyebrow": "Was noch zu prüfen ist",
@@ -1956,7 +1956,7 @@
         "costEyebrow": "Kostenrahmen",
         "confidence": "Sicherheit der Schätzung: ±25 %",
         "totalEstimated": "Summe (geschätzt)",
-        "caveat": "Orientierungswerte basierend auf typischen Bayern-Honoraren · keine verbindlichen Quoten.",
+        "caveat": "Orientierungswerte aus den HOAI-Honorartafeln · keine verbindlichen Quoten.",
         "computedFromTooltip": "Berechnet aus: {{inputs}}",
         "timelineEyebrow": "Verfahrensdauer",
         "totalDuration": "Gesamt",

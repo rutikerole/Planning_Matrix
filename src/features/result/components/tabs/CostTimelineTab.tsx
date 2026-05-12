@@ -108,7 +108,9 @@ export function CostTimelineTab({ project, state }: Props) {
             const startPct = (bucket.min / maxBar) * 100
             const widthPct = ((bucket.max - bucket.min) / maxBar) * 100
             const rationale =
-              line.key !== 'total' ? findCostRationale(line.key) : undefined
+              line.key !== 'total'
+                ? findCostRationale(line.key, project.bundesland)
+                : undefined
             return (
               <div
                 key={line.key}
