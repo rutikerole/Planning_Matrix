@@ -461,7 +461,7 @@ shipped in Phase 13 Week 4). What's missing is the cron harness
 
 ## 9. Operational responsibilities — split between engineering and client
 
-The **v1.0.10 tag is the production-ready release**. The version
+The **v1.0.11 tag is the production-ready release**. The version
 ladder:
   • v1.0   = engineering milestone (complete feature scope).
   • v1.0.1 = invite-flow security hardening (owner-check on share,
@@ -488,6 +488,35 @@ ladder:
   • v1.0.5 = Layer-C citation firewall (allowedCitations runtime
              positive-list enforcement; closes PROD_READINESS_AUDIT
              B3).
+  • v1.0.11 = PDF deliverable hardening (2 fix commits + docs).
+              Production verification of v1.0.10 on NRW × T-03
+              (Königsallee, project 5c610d71-…) surfaced two P0
+              blockers in the PDF export pipeline.
+              Bug 22: PDF text-extracted as "conċrmed" / "PČicht" /
+              "Čoor" / "identiċziert" across every page. Root
+              cause: the brand-TTF path (Inter from public/fonts/)
+              bypassed sanitization entirely; fontkit's layout()
+              applied OpenType `liga` GSUB at PDF embed time,
+              substituting ﬁ/ﬂ ligature glyphs whose ToUnicode
+              mapping resolved to substitute codepoints in PDF
+              viewers. Fix: extracted `decomposeLigatures` (always
+              runs, both font paths) + `preventBrandLigatures`
+              (brand-TTF only — injects U+200C ZWNJ between f+i/l/f
+              to break GSUB substitution).
+              Bug 24: cost engine ignored user's fassadenflaeche_m2
+              input on T-03 Sanierung (numeric value, unit in key)
+              and silently fell back to BASE_AREA_SQM=180. Fix:
+              `resolveAreaSqmByTemplate` + per-template field map;
+              wired into both cost callers ahead of the corpus
+              regex.
+              v1.0.12 backlog (intentionally deferred, NOT touched
+              in this sprint per discipline): Bug 17 [P2] team-tab
+              Bayern audit, Bug 18 [P1] PDF full-section re-audit,
+              Bug 20 [P2] procedure-tab caveat audit, Bug 23 [P1]
+              persona-output Schwabing/BLfD leak, Bug 25 [P3]
+              recommendation qualifier DESIGNER+ASSUMED edge case,
+              Bug 26 [P3] PDF section numbering skips VI.
+              Bayern SHA preserved.
   • v1.0.10 = state-parameterization sprint (6 commits). The
               Düsseldorf NRW × T-03 smoke walk on v1.0.9 surfaced
               that the persona-chat layer was state-correct

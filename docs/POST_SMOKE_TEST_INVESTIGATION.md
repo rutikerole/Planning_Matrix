@@ -4,6 +4,55 @@
 > Bayern SHA `b18d3f7f9a6fe238c18cec5361d30ea3a547e46b1ef2b16a1e74c533aacb3471`
 > verified MATCH at start AND end of read pass. No code edits.
 
+## V1.0.11 RESOLVED FINDINGS — PDF deliverable hardening
+
+Production verification of v1.0.10 on NRW × T-03 Königsallee
+project (5c610d71-…) surfaced two P0 PDF blockers:
+
+| # | Bug                                          | Severity | v1.0.11 commit                                                |
+| - | -------------------------------------------- | -------- | ------------------------------------------------------------- |
+| 22 | PDF ligature corruption (conċrmed / PČicht / Čoor / certiċed) | P0 | `66f0d51 fix(pdf): prevent fontkit ligature substitution + always-on ligature decomposition` |
+| 24 | Cost engine ignores T-03 fassadenflaeche_m2, falls back to default 180 m² | P0 | `95523f4 fix(cost): per-template cost-basis field resolver — T-03 reads fassadenflaeche_m2` |
+
+Root causes:
+
+- **Bug 22**: brand-TTF path bypassed `safe()` entirely
+  (`safe = (s) => s`). fontkit's text layout applied OpenType
+  `liga` GSUB substitution at PDF embed time, replacing "fi"/"fl"
+  with ﬁ/ﬂ ligature glyphs. PDF viewers' text-extraction layer
+  mapped those glyphs back to substitute codepoints (ċ / Č) via
+  the embedded font's ToUnicode CMap. Fix splits the sanitizer
+  into `decomposeLigatures` (always-on, both paths, strips
+  U+FB00..U+FB05) and `preventBrandLigatures` (brand-TTF-only,
+  injects U+200C ZWNJ to break GSUB substitution chain — ZWNJ
+  is outside WinAnsi range so it MUST NOT run on the fallback).
+
+- **Bug 24**: `detectAreaSqm(corpus)` regex requires a unit
+  suffix on the value (`<digits>\s*<unit>`), which works for
+  T-01/T-02 neubau where the persona emits "180 m²" as a string,
+  but misses T-03's `fassadenflaeche_m2 = 220` (numeric value
+  with the unit encoded in the KEY). Fix: per-template fact-key
+  map `COST_BASIS_FIELD_BY_TEMPLATE` + `resolveAreaSqmByTemplate`
+  function called ahead of the corpus regex in both cost callers.
+  T-03 is empirically confirmed; other templates have
+  user-supplied conventions in the map that gracefully no-op
+  when the persona emits a different key.
+
+**v1.0.12 backlog (deferred per sprint discipline):**
+- Bug 17 [P2]: Team-tab Bayern hardcodes audit
+- Bug 18 [P1]: PDF full-section state-parameterization re-audit
+- Bug 20 [P2]: Procedure-tab caveat audit beyond v1.0.10 closures
+- Bug 23 [P1]: persona-output Schwabing/BLfD scrub (chat-layer
+  Bayern entity names beyond §§ — extend the v1.0.6 anti-leak)
+- Bug 25 [P3]: Recommendation qualifier wrong (DESIGNER+ASSUMED
+  edge case)
+- Bug 26 [P3]: PDF section numbering skips VI
+
+Bayern SHA `b18d3f7f9a6fe238c18cec5361d30ea3a547e46b1ef2b16a1e74c533aacb3471`
+held across both v1.0.11 commits.
+
+---
+
 ## V1.0.10 RESOLVED FINDINGS — state-parameterization sprint
 
 Rutik's Düsseldorf NRW × T-03 walk on v1.0.9 (project
