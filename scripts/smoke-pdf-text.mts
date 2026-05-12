@@ -261,6 +261,29 @@ async function runLocale(lang: 'en' | 'de'): Promise<{ passed: number; failed: n
             !/§\s*64\s+BauO\s+NRW\s+REQUIRED/u.test(text),
       msg: 'no contradictory § 64 + ERFORDERLICH/REQUIRED for verfahrensfrei case (Bug 40 guard)',
     },
+    // v1.0.19 Bug 41+42 — Documents auto-populated
+    {
+      pass: lang === 'en'
+        ? /Site plan|site plan|Lageplan/u.test(text)
+        : /Lageplan/u.test(text),
+      msg: 'Lageplan (ÖbVI) present in Documents',
+    },
+    {
+      pass: lang === 'en'
+        ? /thermal-insulation|Wärmeschutznachweis/u.test(text)
+        : /Wärmeschutznachweis/u.test(text),
+      msg: 'GEG-Wärmeschutznachweis present in Documents (Bug 41 promotion)',
+    },
+    {
+      pass: lang === 'en'
+        ? /Energy certificate|Energieausweis/u.test(text)
+        : /Energieausweis/u.test(text),
+      msg: 'Energieausweis present in Documents',
+    },
+    {
+      pass: !/No documents recorded yet|Noch keine Dokumente erfasst/u.test(text),
+      msg: 'Documents page no longer empty (Bug 42 guard)',
+    },
   ]
 
   // Language-specific assertions

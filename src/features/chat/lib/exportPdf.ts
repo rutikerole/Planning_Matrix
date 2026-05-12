@@ -125,6 +125,11 @@ import {
   type ProcedureCase,
   type ProcedureDecision,
 } from '@/legal/resolveProcedure'
+import {
+  requiredDocumentsForCase,
+  type DocumentCase,
+  type RequiredDocument,
+} from '@/legal/requiredDocuments'
 import type { BundeslandCode } from '@/legal/states/_types'
 
 /**
@@ -587,9 +592,59 @@ export async function buildExportPdf({
     },
   ]
   void procs // silence unused — superseded by canonical decision
-  const docRows: DocRow[] = docs.map((d) => ({
-    title: (lang === 'en' ? d.title_en : d.title_de) ?? '',
-  }))
+  // v1.0.19 Bug 41+42 — auto-populate Documents from
+  // requiredDocumentsForCase when state.docs is empty. The persona
+  // doesn't pre-populate the mandatory-Bauvorlagen list; the
+  // resolver does. state.docs (when present) overrides.
+  const docCase: DocumentCase = {
+    procedureKind: procedureDecision.kind,
+    intent: procedureCase.intent,
+    bundesland: procedureCase.bundesland,
+    eingriff_tragende_teile: procedureCase.eingriff_tragende_teile,
+    eingriff_aussenhuelle: procedureCase.eingriff_aussenhuelle,
+    denkmalschutz: procedureCase.denkmalschutz,
+    grenzstaendig: procedureCase.grenzstaendig,
+    geg_trigger:
+      procedureCase.eingriff_aussenhuelle &&
+      (procedureCase.fassadenflaeche_m2 ?? 0) > 0,
+    fassadenflaeche_m2: procedureCase.fassadenflaeche_m2,
+  }
+  const requiredDocs: RequiredDocument[] =
+    docs.length > 0 ? [] : requiredDocumentsForCase(docCase)
+  const statusLabelDe: Record<RequiredDocument['status'], string> = {
+    required: 'ERFORDERLICH',
+    conditional: 'BEDINGT',
+    recommended: 'EMPFOHLEN',
+  }
+  const statusLabelEn: Record<RequiredDocument['status'], string> = {
+    required: 'REQUIRED',
+    conditional: 'CONDITIONAL',
+    recommended: 'RECOMMENDED',
+  }
+  const docRows: DocRow[] =
+    docs.length > 0
+      ? docs.map((d) => ({
+          title: (lang === 'en' ? d.title_en : d.title_de) ?? '',
+        }))
+      : requiredDocs.map((r) => {
+          const statusLabel =
+            lang === 'en' ? statusLabelEn[r.status] : statusLabelDe[r.status]
+          const titleBase = lang === 'en' ? r.name_en : r.name_de
+          const title = `${titleBase} · ${statusLabel}`
+          const delivery = `${lang === 'en' ? r.delivery_en : r.delivery_de}${r.citation ? ` · ${r.citation}` : ''}`
+          const conditionNote =
+            r.status === 'conditional'
+              ? lang === 'en'
+                ? r.condition_note_en
+                : r.condition_note_de
+              : undefined
+          return {
+            title,
+            status: r.status,
+            delivery,
+            conditionNote,
+          }
+        })
   renderProceduresBody(proceduresPage, editorialFonts, pdfStrings, {
     templateLabel,
     bundeslandCode: bundeslandCodeUpper,

@@ -15,7 +15,6 @@ import {
   MARGIN,
   PAGE_HEIGHT,
   PAGE_WIDTH,
-  PILL_ACTIVE,
   PILL_CALC_BG,
   PILL_CALC_FG,
   PILL_LEGAL_BG,
@@ -44,6 +43,12 @@ export interface ProcRow {
 
 export interface DocRow {
   title: string
+  /** v1.0.19 — required / conditional / recommended status. */
+  status?: 'required' | 'conditional' | 'recommended'
+  /** v1.0.19 — sub-line: "→ Energieberater:in · § 48 GEG". */
+  delivery?: string
+  /** v1.0.19 — italic CLAY condition note (status='conditional' only). */
+  conditionNote?: string
 }
 
 export interface ProceduresData {
@@ -163,23 +168,59 @@ export function renderProceduresBody(
       safe: fonts.safe,
     })
   } else {
+    // v1.0.19 Bug 42 — checklist-style rows. Status indicator
+    // (☐ required / ⊙ conditional / ◦ recommended) + name +
+    // delivery sub-line + optional condition note.
     data.documents.forEach((doc) => {
-      // Bullet
+      const status = doc.status ?? 'required'
+      const dotColor =
+        status === 'required'
+          ? INK
+          : status === 'conditional'
+            ? PILL_LEGAL_FG
+            : CLAY
       page.drawCircle({
-        x: MARGIN + 3,
+        x: MARGIN + 4,
         y: cursor + 4,
-        size: 1.5,
-        color: PILL_ACTIVE,
+        size: status === 'required' ? 2 : 1.5,
+        color: dotColor,
       })
+      // Name (11pt Inter Medium INK, slightly larger for required)
       drawSafeText(page, doc.title, {
-        x: MARGIN + 14,
+        x: MARGIN + 16,
         y: cursor,
         size: 11,
-        font: fonts.sans,
+        font: fonts.sansMedium,
         color: INK,
         safe: fonts.safe,
       })
-      cursor -= 18
+      cursor -= 14
+      if (doc.delivery) {
+        // v1.0.19 — leading separator stays Latin (· U+00B7) since
+        // → U+2192 round-trips as ² in pdf-parse extraction (same
+        // class of bug as v1.0.18 Bug 35 ▸ substitution).
+        drawSafeText(page, `· ${doc.delivery}`, {
+          x: MARGIN + 16,
+          y: cursor,
+          size: 9,
+          font: fonts.serifItalic,
+          color: CLAY,
+          safe: fonts.safe,
+        })
+        cursor -= 12
+      }
+      if (status === 'conditional' && doc.conditionNote) {
+        drawSafeText(page, doc.conditionNote, {
+          x: MARGIN + 16,
+          y: cursor,
+          size: 9,
+          font: fonts.serifItalic,
+          color: CLAY,
+          safe: fonts.safe,
+        })
+        cursor -= 12
+      }
+      cursor -= 4
     })
   }
 }
