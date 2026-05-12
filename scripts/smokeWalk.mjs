@@ -2153,6 +2153,48 @@ async function runStaticGate() {
     },
   ]))
 
+  // ── v1.0.11 Bug 24 — per-template cost-basis field resolver ───────
+  // The cost engine's detectAreaSqm regex requires a unit suffix on
+  // the value; T-03 Sanierung's persona emits fassadenflaeche_m2 as
+  // a NUMERIC value (unit encoded in key, not value), so the regex
+  // missed it and fell back to BASE_AREA_SQM=180. Fix: per-template
+  // lookup map + resolver function tried BEFORE the corpus regex.
+  const costSrcForB24 = await readFileText('src/features/result/lib/costNormsMuenchen.ts')
+  results.push(failures('v1.0.11 Bug 24: resolveAreaSqmByTemplate + per-template field map', [
+    {
+      ok: /export\s+function\s+resolveAreaSqmByTemplate/.test(costSrcForB24),
+      msg: 'costNormsMuenchen must export resolveAreaSqmByTemplate',
+    },
+    {
+      ok: /COST_BASIS_FIELD_BY_TEMPLATE/.test(costSrcForB24),
+      msg: 'per-template field map must be declared',
+    },
+    {
+      ok: /'T-03':\s*\['fassadenflaeche_m2'\]/.test(costSrcForB24),
+      msg: 'T-03 mapping must point at fassadenflaeche_m2 (NRW Königsallee evidence)',
+    },
+    {
+      ok: /'T-01':\s*\[/.test(costSrcForB24) && /'T-08':\s*\[/.test(costSrcForB24),
+      msg: 'all 8 templates must have a mapping entry (T-01..T-08)',
+    },
+    {
+      ok: /n\s*>=\s*20\s*&&\s*n\s*<=\s*5000/.test(costSrcForB24),
+      msg: 'resolver must apply the same 20..5000 envelope as detectAreaSqm',
+    },
+  ]))
+  const costTabSrcForB24 = await readFileText('src/features/result/components/tabs/CostTimelineTab.tsx')
+  const pdfSrcForB24 = await readFileText('src/features/chat/lib/exportPdf.ts')
+  results.push(failures('v1.0.11 Bug 24: both cost callers wire resolveAreaSqmByTemplate before detectAreaSqm', [
+    {
+      ok: /resolveAreaSqmByTemplate\(state\.facts,\s*state\.templateId\)\s*\?\?\s*detectAreaSqm\(corpus\)/.test(costTabSrcForB24),
+      msg: 'CostTimelineTab must call resolveAreaSqmByTemplate first, then fall back to detectAreaSqm',
+    },
+    {
+      ok: /resolveAreaSqmByTemplate\(state\.facts,\s*state\.templateId\)\s*\?\?\s*detectAreaSqm\(corpus\)/.test(pdfSrcForB24),
+      msg: 'exportPdf must call resolveAreaSqmByTemplate first, then fall back to detectAreaSqm',
+    },
+  ]))
+
   // ── v1.0.11 Bug 22 — PDF ligature corruption fix ──────────────────
   // The brand-TTF path previously bypassed sanitization entirely, so
   // pdf-lib + fontkit could auto-apply OpenType `liga` GSUB. The

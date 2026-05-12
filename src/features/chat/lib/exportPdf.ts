@@ -35,6 +35,7 @@ import {
   detectKlasse,
   detectProcedure,
   formatEurRange,
+  resolveAreaSqmByTemplate,
   resolveInputs,
 } from '@/features/result/lib/costNormsMuenchen'
 import {
@@ -910,7 +911,11 @@ function drawCostsPage(
     .join(' ')
     .toLowerCase()
   const klasse = detectKlasse(corpus)
-  const areaSqm = detectAreaSqm(corpus)
+  // v1.0.11 Bug 24 — per-template field map first, corpus regex
+  // fallback. See CostTimelineTab.tsx for the same wiring + rationale.
+  const areaSqm =
+    resolveAreaSqmByTemplate(state.facts, state.templateId) ??
+    detectAreaSqm(corpus)
   const opts = { areaSqm, bundesland: project.bundesland }
   const cost = buildCostBreakdown(procedure, klasse, opts)
   const inputs = resolveInputs(procedure, klasse, opts)

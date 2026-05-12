@@ -248,6 +248,17 @@ export function describeCostInputs(
  * Phase 8.1 (A.4) — best-effort area lookup from project facts.
  * Returns undefined when no area fact is present so callers fall
  * back to the BASE_AREA_SQM default.
+ *
+ * v1.0.11 Bug 24 — corpus regex requires a unit suffix
+ * (`<digits> m²/m2/qm/...`), which works for templates whose
+ * persona emits area as a string with inline unit (T-01 / T-02
+ * neubau typically: "180 m²"). T-03 Sanierung's persona emits
+ * `fassadenflaeche_m2 = 220` as a numeric value with the unit
+ * encoded in the KEY not the value — corpus regex misses it,
+ * function returns undefined, caller falls back to default 180.
+ * Use `resolveAreaSqmByTemplate` BEFORE this function for
+ * templates with declared cost-basis fields; this corpus-regex
+ * remains as the universal backstop.
  */
 export function detectAreaSqm(corpus: string): number | undefined {
   const m = corpus.match(/(\d{2,4})\s*(?:m²|m2|qm|sqm|quadratmeter)/i)
@@ -255,6 +266,78 @@ export function detectAreaSqm(corpus: string): number | undefined {
   const n = parseInt(m[1], 10)
   if (Number.isNaN(n) || n < 20 || n > 5000) return undefined
   return n
+}
+
+/**
+ * v1.0.11 Bug 24 — per-template cost-basis field map. For each
+ * template, declares the projects.state.facts[?].key whose
+ * NUMERIC value drives the cost engine's area input.
+ *
+ * Empirically confirmed:
+ *   - T-03 Sanierung → fassadenflaeche_m2 (NRW × T-03 Königsallee
+ *                       project 5c610d71 user input 220 m²).
+ *
+ * User-supplied guesses (will work when the persona actually emits
+ * the named key; otherwise the lookup misses and the caller falls
+ * back to detectAreaSqm. No regression vs v1.0.10):
+ *   - T-01 / T-02 Neubau-EFH/MFH → wohnflaeche
+ *   - T-04 Umnutzung             → nutzflaeche_m2
+ *   - T-05 Abbruch               → bruttoraumflaeche_m3 (volume)
+ *   - T-06 Aufstockung           → aufstockung_flaeche_m2
+ *   - T-07 Anbau                 → anbau_flaeche_m2
+ *   - T-08 Sonstiges             → flaeche_m2 (generic)
+ *
+ * The empirical inventory should be widened in v1.0.12 once the
+ * persona's actual fact-key conventions per template are verified
+ * via production smoke walks on T-01..T-08.
+ */
+const COST_BASIS_FIELD_BY_TEMPLATE: Partial<Record<TemplateId, readonly string[]>> = {
+  // Lists are tried in order; first numeric hit wins.
+  'T-01': ['wohnflaeche', 'wohnflaeche_m2'],
+  'T-02': ['wohnflaeche', 'wohnflaeche_m2'],
+  'T-03': ['fassadenflaeche_m2'],
+  'T-04': ['nutzflaeche_m2', 'nutzflaeche'],
+  'T-05': ['bruttoraumflaeche_m3'],
+  'T-06': ['aufstockung_flaeche_m2'],
+  'T-07': ['anbau_flaeche_m2'],
+  'T-08': ['flaeche_m2'],
+}
+
+interface CostBasisFactCandidate {
+  key: string
+  value: unknown
+}
+
+/**
+ * v1.0.11 Bug 24 — template-aware area resolver. Looks up the
+ * template's declared cost-basis fact-key list and returns the
+ * first numeric value found in `facts`. Returns undefined when no
+ * matching fact exists — caller falls back to detectAreaSqm
+ * (corpus regex) and ultimately BASE_AREA_SQM=180.
+ *
+ * Range guard: same 20..5000 envelope as detectAreaSqm so an
+ * out-of-band numeric (e.g. accidental year 1970) doesn't poison
+ * the cost engine.
+ */
+export function resolveAreaSqmByTemplate(
+  facts: ReadonlyArray<CostBasisFactCandidate> | undefined,
+  templateId: TemplateId | null | undefined,
+): number | undefined {
+  if (!facts || !templateId) return undefined
+  const keys = COST_BASIS_FIELD_BY_TEMPLATE[templateId]
+  if (!keys) return undefined
+  for (const key of keys) {
+    const fact = facts.find((f) => f.key === key)
+    if (!fact) continue
+    let n: number | undefined
+    if (typeof fact.value === 'number') n = fact.value
+    else if (typeof fact.value === 'string') {
+      const parsed = parseFloat(fact.value)
+      if (Number.isFinite(parsed)) n = parsed
+    }
+    if (n != null && Number.isFinite(n) && n >= 20 && n <= 5000) return n
+  }
+  return undefined
 }
 
 /** Format a EUR range like "€ 8.000 – 14.000" (DE) or "€8,000 – 14,000" (EN). */

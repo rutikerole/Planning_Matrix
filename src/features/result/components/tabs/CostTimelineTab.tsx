@@ -8,6 +8,7 @@ import {
   detectKlasse,
   detectProcedure,
   formatEurRange,
+  resolveAreaSqmByTemplate,
   resolveInputs,
   type CostBreakdown,
 } from '../../lib/costNormsMuenchen'
@@ -78,7 +79,13 @@ export function CostTimelineTab({ project, state }: Props) {
     .join(' ')
     .toLowerCase()
   const klasse = detectKlasse(corpus)
-  const areaSqm = detectAreaSqm(corpus)
+  // v1.0.11 Bug 24 — try the per-template field map first (catches
+  // T-03's fassadenflaeche_m2 numeric value where the corpus regex
+  // misses), then fall back to the corpus regex (Bayern T-01 path
+  // and any template whose persona emits unit-suffixed strings).
+  const areaSqm =
+    resolveAreaSqmByTemplate(state.facts, state.templateId) ??
+    detectAreaSqm(corpus)
   const opts = { areaSqm, bundesland: project.bundesland }
   const cost = buildCostBreakdown(procedure, klasse, opts)
   const inputs = resolveInputs(procedure, klasse, opts)
