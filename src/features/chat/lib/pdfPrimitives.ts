@@ -20,7 +20,15 @@
 // for the page itself.
 // ───────────────────────────────────────────────────────────────────────
 
-import { rgb, type PDFDocument, type PDFFont, type PDFPage } from 'pdf-lib'
+import {
+  PDFName,
+  PDFString,
+  rgb,
+  type PDFArray,
+  type PDFDocument,
+  type PDFFont,
+  type PDFPage,
+} from 'pdf-lib'
 import { loadBrandFonts } from '@/lib/fontLoader'
 import {
   decomposeLigatures,
@@ -665,6 +673,81 @@ export function drawStatusLegend(
     })
     cursor = cursor - labelWidth - 18
     if (i > 0) cursor -= 4
+  }
+}
+
+// ─── v1.0.18 primitive — citation hyperlink overlay ────────────────
+
+/**
+ * v1.0.18 Feature 3 — render text and overlay a link annotation on
+ * a sub-range of that text. Used by section renderers to make §
+ * citations clickable. text renders as a single drawText call (so
+ * layout is unaffected); the link annotation is then appended to
+ * the page's Annots array at the citation's bounding rect.
+ *
+ * `linkText` MUST appear in `text` at index `linkIndex`. The
+ * primitive computes the link rect from the font's width of the
+ * preceding text + the link text itself.
+ */
+export interface DrawLinkAnnotationOpts {
+  /** Document — needed to create the annotation PDFDict. */
+  doc: import('pdf-lib').PDFDocument
+  /** Page on which the text was drawn. */
+  page: PDFPage
+  /** Origin x of the surrounding text run. */
+  x: number
+  /** Baseline y of the text run (pdf-lib's drawText coordinate). */
+  y: number
+  /** The full text rendered. */
+  text: string
+  /** The substring inside text to make a link. */
+  linkText: string
+  /** Index of linkText in text (caller pre-computed). */
+  linkIndex: number
+  font: PDFFont
+  size: number
+  /** Destination URL. */
+  uri: string
+  /** Sanitization fn (must match the safe used on the text draw). */
+  safe: SafeTextFn
+}
+
+/**
+ * Overlay a Link annotation with URI action on the given page at
+ * the bounding rect of a substring of already-rendered text. The
+ * substring is identified by its index in the FULL source text; the
+ * primitive computes the substring's x-range by measuring the
+ * sanitized prefix width.
+ */
+export function addLinkAnnotation(opts: DrawLinkAnnotationOpts): void {
+  const { doc, page, x, y, text, linkText, linkIndex, font, size, uri, safe } = opts
+  const safePrefix = safe(text.slice(0, linkIndex))
+  const safeLink = safe(linkText)
+  const prefixWidth = font.widthOfTextAtSize(safePrefix, size)
+  const linkWidth = font.widthOfTextAtSize(safeLink, size)
+  const x1 = x + prefixWidth
+  const y1 = y - size * 0.2
+  const x2 = x1 + linkWidth
+  const y2 = y + size * 0.9
+  const ctx = doc.context
+  const annot = ctx.obj({
+    Type: 'Annot',
+    Subtype: 'Link',
+    Rect: [x1, y1, x2, y2],
+    A: ctx.obj({
+      Type: 'Action',
+      S: 'URI',
+      URI: PDFString.of(uri),
+    }),
+    Border: [0, 0, 0],
+  })
+  const annotRef = ctx.register(annot)
+  const annotsName = PDFName.of('Annots')
+  const existing = page.node.lookup(annotsName) as PDFArray | undefined
+  if (existing) {
+    existing.push(annotRef)
+  } else {
+    page.node.set(annotsName, ctx.obj([annotRef]))
   }
 }
 

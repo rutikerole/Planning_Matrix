@@ -573,6 +573,9 @@ export async function buildExportPdf({
     templateLabel,
     bundeslandCode: bundeslandCodeUpper,
     rows: keyDataRows,
+    // v1.0.18 Feature 3 — pass doc so the renderer can register
+    // link annotations on § citations in the value column.
+    doc,
   })
 
   // ── Page X: Verification (status panel + signature block) ──────

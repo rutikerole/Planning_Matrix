@@ -153,12 +153,50 @@ async function extractPdfText(bytes: Uint8Array): Promise<string> {
   return result.text as string
 }
 
+/**
+ * v1.0.18 Feature 3 — count URI link annotations in a rendered PDF.
+ * pdf-parse doesn't expose annotations, so we re-parse via pdf-lib
+ * and walk the page tree's Annots arrays.
+ */
+async function countUriAnnotations(bytes: Uint8Array): Promise<number> {
+  const { PDFDocument, PDFName, PDFDict, PDFString, PDFHexString } =
+    await import('pdf-lib')
+  const doc = await PDFDocument.load(bytes)
+  let count = 0
+  for (const page of doc.getPages()) {
+    const annots = page.node.lookup(PDFName.of('Annots'))
+    if (!annots || typeof (annots as { asArray?: unknown }).asArray !== 'function')
+      continue
+    const arr = (annots as { asArray: () => Array<unknown> }).asArray()
+    for (const item of arr) {
+      // Resolve indirect reference if needed
+      const resolved =
+        item && typeof (item as { tag?: string }).tag === 'string'
+          ? doc.context.lookup(item as never)
+          : item
+      if (!(resolved instanceof PDFDict)) continue
+      const action = resolved.lookup(PDFName.of('A'))
+      if (!(action instanceof PDFDict)) continue
+      const subtype = action.lookup(PDFName.of('S'))
+      if (!(subtype instanceof PDFName)) continue
+      if (subtype.asString() !== '/URI') continue
+      const uri = action.lookup(PDFName.of('URI'))
+      if (uri instanceof PDFString || uri instanceof PDFHexString) {
+        count++
+      }
+    }
+  }
+  return count
+}
+
 async function runLocale(lang: 'en' | 'de'): Promise<{ passed: number; failed: number }> {
   console.log(`\n[smoke-pdf-text] rendering ${lang}…`)
   const pdfBytes = await renderFixturePdf(lang)
   console.log(`[smoke-pdf-text] ${lang} PDF: ${pdfBytes.length} bytes`)
   const text = await extractPdfText(pdfBytes)
   console.log(`[smoke-pdf-text] ${lang} extracted text: ${text.length} chars`)
+  const uriCount = await countUriAnnotations(pdfBytes)
+  console.log(`[smoke-pdf-text] ${lang} URI annotations: ${uriCount}`)
 
   // Common assertions
   let assertions: Assertion[] = [
@@ -196,6 +234,13 @@ async function runLocale(lang: 'en' | 'de'): Promise<{ passed: number; failed: n
         ? /SCAN TO OPEN/u.test(text)
         : /PROJEKT ÖFFNEN/u.test(text),
       msg: 'QR code label present on cover',
+    },
+    // v1.0.18 Feature 3 — § citation hyperlinks. The Key Data
+    // fixture has "verfahrensfrei nach § 62 BauO NRW" which
+    // should emit at least 1 URI annotation.
+    {
+      pass: uriCount >= 1,
+      msg: `at least 1 URI link annotation present (found ${uriCount})`,
     },
   ]
 

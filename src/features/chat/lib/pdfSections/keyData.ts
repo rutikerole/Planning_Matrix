@@ -11,13 +11,14 @@
 // shape (field label localized, value stringified, qualifier raw).
 // ───────────────────────────────────────────────────────────────────────
 
-import { type PDFPage } from 'pdf-lib'
+import { type PDFDocument, type PDFPage } from 'pdf-lib'
 import {
   CLAY,
   INK,
   MARGIN,
   PAGE_HEIGHT,
   PAGE_WIDTH,
+  addLinkAnnotation,
   drawEditorialTitle,
   drawFooter,
   drawHairline,
@@ -28,6 +29,7 @@ import {
   type EditorialFonts,
 } from '../pdfPrimitives'
 import { pdfStr, type PdfStrings } from '../pdfStrings'
+import { findCitations } from '../pdfCitations'
 
 export interface KeyDataRow {
   field: string
@@ -39,6 +41,9 @@ export interface KeyDataData {
   templateLabel: string
   bundeslandCode: string
   rows: ReadonlyArray<KeyDataRow>
+  /** v1.0.18 Feature 3 — PDFDocument needed to register link
+   *  annotations on detected § citations in value column. */
+  doc?: PDFDocument
 }
 
 export interface KeyDataFooterData {
@@ -143,6 +148,29 @@ export function renderKeyDataBody(
       color: INK,
       safe: fonts.safe,
     })
+
+    // v1.0.18 Feature 3 — overlay link annotations on any § citation
+    // inside the value. Skipped when caller didn't pass doc (the
+    // annotation requires the PDFDocument's context).
+    if (data.doc) {
+      const citations = findCitations(row.value, data.bundeslandCode)
+      for (const cite of citations) {
+        if (!cite.url) continue
+        addLinkAnnotation({
+          doc: data.doc,
+          page,
+          x: colValueX,
+          y: rowY,
+          text: row.value,
+          linkText: cite.text,
+          linkIndex: cite.start,
+          font: fonts.sansMedium,
+          size: 11,
+          uri: cite.url,
+          safe: fonts.safe,
+        })
+      }
+    }
 
     const valueWidth = fonts.sansMedium.widthOfTextAtSize(
       fonts.safe(row.value),
