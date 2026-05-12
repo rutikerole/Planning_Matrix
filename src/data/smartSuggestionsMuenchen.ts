@@ -115,7 +115,7 @@ export const SMART_SUGGESTIONS_MUENCHEN: SmartSuggestion[] = [
     reasoningDe: 'Bayern Klimaschutzgesetz schreibt PV bei jedem Wohnneubau vor.',
     reasoningEn: 'Bayern Klimaschutzgesetz mandates PV on every new residential build.',
     intents: ['neubau_einfamilienhaus', 'neubau_mehrfamilienhaus'],
-    bundeslaender: ['Bayern'],
+    bundeslaender: ['bayern'],
     relevanceWeight: 1.5,
     verifyBeforePublicLaunch: true,
   },
@@ -161,7 +161,7 @@ export const SMART_SUGGESTIONS_MUENCHEN: SmartSuggestion[] = [
     reasoningDe: 'BayDSchG-Erlaubnis stapelt sich auf die Baugenehmigung — sequentiell zu beantragen.',
     reasoningEn: 'BayDSchG permits stack on top of the building permit — sequential application.',
     intents: ['sanierung', 'umnutzung', 'abbruch'],
-    bundeslaender: ['Bayern'],
+    bundeslaender: ['bayern'],
     relevanceWeight: 1.3,
     verifyBeforePublicLaunch: true,
   },
@@ -177,7 +177,7 @@ export const SMART_SUGGESTIONS_MUENCHEN: SmartSuggestion[] = [
       'The Baulastenverzeichnis can reveal public-law obligations that transfer with ownership. Inspect before purchase.',
     reasoningDe: 'Verborgene Wegerechte oder Stellplatznachweise können das Vorhaben kippen.',
     reasoningEn: 'Hidden rights of way or parking allocations can derail the project.',
-    bundeslaender: ['Bayern'],
+    bundeslaender: ['bayern'],
     verifyBeforePublicLaunch: true,
   },
   {
@@ -192,7 +192,7 @@ export const SMART_SUGGESTIONS_MUENCHEN: SmartSuggestion[] = [
       "Munich's StPlS 926 (amended October 2025) sets 1 parking space per dwelling and allows public-transit reductions. Note: § 3 GBS has been suspended in Munich since 1 October 2025 — StPlS 926 is the governing source.",
     reasoningDe: 'StPlS 926 löst seit 10/2025 die GBS in München ab — Quelle aktualisieren.',
     reasoningEn: 'StPlS 926 has replaced GBS in Munich since 10/2025 — update your source.',
-    bundeslaender: ['Bayern'],
+    bundeslaender: ['bayern'],
     verifyBeforePublicLaunch: true,
   },
   {
@@ -207,7 +207,7 @@ export const SMART_SUGGESTIONS_MUENCHEN: SmartSuggestion[] = [
       "Since December 2025, Munich's tree-protection ordinance (901) covers all trees with a trunk circumference of 60 cm or more (measured at 100 cm height). A tree survey before site work helps surface felling permits or protective requirements early.",
     reasoningDe: 'Baumkartierung früh erspart spätere Auflagen oder Verzögerungen.',
     reasoningEn: 'A tree survey early avoids later restrictions or delays.',
-    bundeslaender: ['Bayern'],
+    bundeslaender: ['bayern'],
     verifyBeforePublicLaunch: true,
   },
   {
@@ -238,7 +238,7 @@ export const SMART_SUGGESTIONS_MUENCHEN: SmartSuggestion[] = [
       'Briefing direct neighbours before application reduces objection risk under BayBO Art. 66.',
     reasoningDe: 'BayBO Art. 66 gibt Nachbarn ein Widerspruchsrecht — Vorabinformation entschärft.',
     reasoningEn: 'BayBO Art. 66 grants neighbours an objection right — early notice defuses it.',
-    bundeslaender: ['Bayern'],
+    bundeslaender: ['bayern'],
     verifyBeforePublicLaunch: true,
   },
 
@@ -257,7 +257,7 @@ export const SMART_SUGGESTIONS_MUENCHEN: SmartSuggestion[] = [
       'Baumschutzverordnung 901 gilt seit 12/2025 für jeden Baum mit ≥ 60 cm Umfang — Kartierung sollte vor LP 4 fertig sein.',
     reasoningEn:
       "Munich's Baumschutzverordnung 901 (effective Dec 2025) covers every tree with ≥ 60 cm circumference — survey should complete before LP 4.",
-    bundeslaender: ['Bayern'],
+    bundeslaender: ['bayern'],
     evidenceFacts: [{ key: 'baumschutz_betroffen' }],
     relevanceWeight: 1.4,
     verifyBeforePublicLaunch: true,
@@ -276,7 +276,7 @@ export const SMART_SUGGESTIONS_MUENCHEN: SmartSuggestion[] = [
       'Ensemble-Status entscheidet über Pflichtdokumente und Verfahrensart — späte Klärung verzögert das gesamte Verfahren.',
     reasoningEn:
       'Ensemble status determines required documents and procedure type — late clarification delays the whole process.',
-    bundeslaender: ['Bayern'],
+    bundeslaender: ['bayern'],
     evidenceFacts: [
       { key: 'ensemble_schwabing_geprueft', expectedValue: false },
     ],
@@ -298,7 +298,7 @@ export const SMART_SUGGESTIONS_MUENCHEN: SmartSuggestion[] = [
     reasoningEn:
       "PV concept is a required component — missing it makes the application incomplete.",
     intents: ['neubau_einfamilienhaus', 'neubau_mehrfamilienhaus'],
-    bundeslaender: ['Bayern'],
+    bundeslaender: ['bayern'],
     relevanceWeight: 1.3,
     verifyBeforePublicLaunch: true,
   },
@@ -316,7 +316,7 @@ export const SMART_SUGGESTIONS_MUENCHEN: SmartSuggestion[] = [
       'Ohne aktuellen Lageplan keine vollständige Antragstellung — typische Verzögerungsursache.',
     reasoningEn:
       'No current site plan = incomplete application — classic source of delay.',
-    bundeslaender: ['Bayern'],
+    bundeslaender: ['bayern'],
     intents: [
       'neubau_einfamilienhaus',
       'neubau_mehrfamilienhaus',
@@ -340,7 +340,7 @@ export const SMART_SUGGESTIONS_MUENCHEN: SmartSuggestion[] = [
     reasoningEn:
       'Demolition notification is procedurally separate from the building permit — easy to forget.',
     intents: ['neubau_einfamilienhaus', 'neubau_mehrfamilienhaus', 'umnutzung'],
-    bundeslaender: ['Bayern'],
+    bundeslaender: ['bayern'],
     evidenceFacts: [{ key: 'bestandsgebaeude_abbruch_geplant' }],
     relevanceWeight: 1.4,
     verifyBeforePublicLaunch: true,
@@ -377,7 +377,7 @@ export const SMART_SUGGESTIONS_MUENCHEN: SmartSuggestion[] = [
       'Versicherungsbeginn vor Spatenstich verhindert Deckungslücken in der Anlaufphase.',
     reasoningEn:
       'Policy start before ground-breaking prevents coverage gaps during the kickoff phase.',
-    bundeslaender: ['Bayern'],
+    bundeslaender: ['bayern'],
     relevanceWeight: 1.1,
     verifyBeforePublicLaunch: true,
   },
@@ -395,7 +395,7 @@ export const SMART_SUGGESTIONS_MUENCHEN: SmartSuggestion[] = [
       'StPlS 926 ist seit 10/2025 in Kraft — Format des Nachweises ist neu, Bauamt prüft strikt.',
     reasoningEn:
       'StPlS 926 has been in force since 10/2025 — the proof format is new and the Bauamt reviews strictly.',
-    bundeslaender: ['Bayern'],
+    bundeslaender: ['bayern'],
     evidenceFacts: [{ key: 'stellplatz_anzahl_geplant' }],
     relevanceWeight: 1.2,
     verifyBeforePublicLaunch: true,
