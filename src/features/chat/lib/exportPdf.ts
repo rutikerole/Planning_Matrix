@@ -439,23 +439,18 @@ export async function buildExportPdf({
             reason: decisionReason,
           }
         }
-        if (k === 'C') {
-          // v1.0.19 Bug 43 — Abstandsflächen-Hinweis. When façade
-          // work is in scope, surface § 6 Abs. 8 BauO NRW
-          // 25-cm-Dämmungs-Privileg as a flagged risk so the
-          // bauherr knows to verify Nachbarbeteiligung if
-          // grenzständig. v1.0.18 had this invisible.
-          let reason = a.reason ?? ''
-          if (
-            procedureCase.eingriff_aussenhuelle &&
-            (procedureCase.fassadenflaeche_m2 ?? 0) > 0
-          ) {
-            const hinweis =
-              lang === 'en'
-                ? 'Abstandsflächen note: external insulation may project into Abstandsfläche. § 6 Abs. 8 BauO NRW permits up to 25 cm thermal-insulation projection without neighbour consent under conditions — verify with Bauamt + Nachbarbeteiligung if grenzständig.'
-                : 'Abstandsflächen-Hinweis: Außendämmung kann in Abstandsfläche ragen. § 6 Abs. 8 BauO NRW erlaubt bis 25 cm Dämmungsprojektion ohne Nachbarunterschrift unter Auflagen — mit Bauamt + ggf. Nachbarbeteiligung verifizieren bei grenzständiger Lage.'
-            reason = reason ? `${reason} ${hinweis}` : hinweis
-          }
+        if (k === 'A') {
+          // v1.0.19 Bug 44 — qualifier honesty. The system has not
+          // verified the specific Bebauungsplan / Gestaltungssatzung
+          // for this parcel. Until state carries a bebauungsplan_id
+          // (v1.0.22+), Area A's planungsrechtliche assertion is
+          // ASSUMED, not CALCULATED. Append a Stadtarchiv verification
+          // caveat to the body.
+          const caveat =
+            lang === 'en'
+              ? 'Verify specific Bebauungsplan and Gestaltungssatzung with Stadtarchiv Düsseldorf — Königsallee lies in a regulated Innenstadt zone. LEGAL · ASSUMED until verified.'
+              : 'Konkreten Bebauungsplan und Gestaltungssatzung mit Stadtarchiv Düsseldorf abklären — Königsallee liegt in regulierter Innenstadtlage. LEGAL · ASSUMED bis verifiziert.'
+          const reason = a.reason ? `${a.reason} ${caveat}` : caveat
           return {
             key: k,
             title: pdfStr(pdfStrings, `areas.${k.toLowerCase()}.title`),
@@ -463,11 +458,23 @@ export async function buildExportPdf({
             reason,
           }
         }
+        // k === 'C' — Bug 43 Abstandsflächen-Hinweis
+        let reason = a.reason ?? ''
+        if (
+          procedureCase.eingriff_aussenhuelle &&
+          (procedureCase.fassadenflaeche_m2 ?? 0) > 0
+        ) {
+          const hinweis =
+            lang === 'en'
+              ? 'Abstandsflächen note: external insulation may project into Abstandsfläche. § 6 Abs. 8 BauO NRW permits up to 25 cm thermal-insulation projection without neighbour consent under conditions — verify with Bauamt + Nachbarbeteiligung if grenzständig.'
+              : 'Abstandsflächen-Hinweis: Außendämmung kann in Abstandsfläche ragen. § 6 Abs. 8 BauO NRW erlaubt bis 25 cm Dämmungsprojektion ohne Nachbarunterschrift unter Auflagen — mit Bauamt + ggf. Nachbarbeteiligung verifizieren bei grenzständiger Lage.'
+          reason = reason ? `${reason} ${hinweis}` : hinweis
+        }
         return {
           key: k,
           title: pdfStr(pdfStrings, `areas.${k.toLowerCase()}.title`),
           state: a.state,
-          reason: a.reason,
+          reason,
         }
       })
     renderAreasBody(areasPage, editorialFonts, pdfStrings, {

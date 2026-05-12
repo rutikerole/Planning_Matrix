@@ -293,6 +293,15 @@ async function runLocale(lang: 'en' | 'de'): Promise<{ passed: number; failed: n
       pass: /§\s*6\s*Abs\.\s*8\s+BauO\s+NRW/u.test(text),
       msg: '§ 6 Abs. 8 BauO NRW 25-cm-Dämmungs-Privileg cited',
     },
+    // v1.0.19 Bug 44 — Area A qualifier honesty + Stadtarchiv caveat
+    {
+      pass: /Stadtarchiv/u.test(text),
+      msg: 'Stadtarchiv Düsseldorf verification caveat present in Areas A',
+    },
+    {
+      pass: /LEGAL\s*·\s*ASSUMED/u.test(text),
+      msg: 'Area A qualifier honestly tagged LEGAL · ASSUMED (Bug 44)',
+    },
   ]
 
   // Language-specific assertions
