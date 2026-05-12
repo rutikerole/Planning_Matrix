@@ -2153,6 +2153,82 @@ async function runStaticGate() {
     },
   ]))
 
+  // ── v1.0.13 — PDF Renaissance Part 1: primitives module ─────────────
+  const primitivesSrc = await readFileText('src/features/chat/lib/pdfPrimitives.ts')
+  results.push(failures('v1.0.13: pdfPrimitives exports color + layout constants', [
+    {
+      ok: /export const PAPER = rgb\(0\.961,\s*0\.937,\s*0\.875\)/.test(primitivesSrc),
+      msg: 'PAPER must equal rgb(0.961, 0.937, 0.875) [#F5EFDF]',
+    },
+    {
+      ok: /export const INK = rgb\(0\.157,\s*0\.169,\s*0\.184\)/.test(primitivesSrc),
+      msg: 'INK must equal rgb(0.157, 0.169, 0.184) [hsl(220 16% 11%)]',
+    },
+    {
+      ok: /export const CLAY = rgb\(0\.494,\s*0\.396,\s*0\.282\)/.test(primitivesSrc),
+      msg: 'CLAY must equal rgb(0.494, 0.396, 0.282) [hsl(25 30% 38%)]',
+    },
+    {
+      ok: /export const PAGE_WIDTH = 595\.28/.test(primitivesSrc) &&
+          /export const PAGE_HEIGHT = 841\.89/.test(primitivesSrc),
+      msg: 'A4 portrait dimensions (595.28 × 841.89) exported',
+    },
+    {
+      ok: /export const MARGIN = 48/.test(primitivesSrc),
+      msg: 'MARGIN = 48 exported',
+    },
+  ]))
+  results.push(failures('v1.0.13: pdfPrimitives exports all primitive helpers', [
+    {
+      ok: /export function drawPaperBackground/.test(primitivesSrc),
+      msg: 'drawPaperBackground exported',
+    },
+    {
+      ok: /export function drawHairline/.test(primitivesSrc),
+      msg: 'drawHairline exported (thickness default 0.5)',
+    },
+    {
+      ok: /export function drawDottedLeader/.test(primitivesSrc),
+      msg: 'drawDottedLeader exported (4pt spacing for TOC lines)',
+    },
+    {
+      ok: /export function drawKicker/.test(primitivesSrc),
+      msg: 'drawKicker exported',
+    },
+    {
+      ok: /export function drawEditorialTitle/.test(primitivesSrc),
+      msg: 'drawEditorialTitle exported (26pt italic serif)',
+    },
+    {
+      ok: /export function drawCoverTitle/.test(primitivesSrc),
+      msg: 'drawCoverTitle exported (36pt italic serif)',
+    },
+    {
+      ok: /export function drawMonoMeta/.test(primitivesSrc),
+      msg: 'drawMonoMeta exported',
+    },
+    {
+      ok: /export function drawLabelValue/.test(primitivesSrc),
+      msg: 'drawLabelValue exported',
+    },
+    {
+      ok: /export function drawSectionHeader/.test(primitivesSrc),
+      msg: 'drawSectionHeader exported',
+    },
+    {
+      ok: /export function drawFooter/.test(primitivesSrc),
+      msg: 'drawFooter exported',
+    },
+    {
+      ok: /export function drawTocLine/.test(primitivesSrc),
+      msg: 'drawTocLine exported',
+    },
+    {
+      ok: /export async function resolveEditorialFonts/.test(primitivesSrc),
+      msg: 'resolveEditorialFonts exported (font facade over loadBrandFonts)',
+    },
+  ]))
+
   // ── v1.0.12 Bugs 25 + 26 — PDF qualifier normalization + section numbering ─
   const exportPdfSrcForV12 = await readFileText('src/features/chat/lib/exportPdf.ts')
   results.push(failures('v1.0.12 Bug 25: formatRecommendationQualifier normalizes DESIGNER+ASSUMED → LEGAL · CALCULATED', [
