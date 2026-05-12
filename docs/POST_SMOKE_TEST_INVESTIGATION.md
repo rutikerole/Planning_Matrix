@@ -4,6 +4,78 @@
 > Bayern SHA `b18d3f7f9a6fe238c18cec5361d30ea3a547e46b1ef2b16a1e74c533aacb3471`
 > verified MATCH at start AND end of read pass. No code edits.
 
+## V1.0.20 SHIPPED — Cosmetic Polish Sprint (3 finishes)
+
+After v1.0.19 closed the legal-correctness P0s, three small finishes
+complete the "feels professional" look without touching legal logic
+or architecture:
+
+**Polish 1 — Paragraph breaks on Area A + C bodies.** v1.0.19
+caveats were inline-concatenated to original Area body text with
+a space separator, reading as one cramped paragraph. drawWrappedText
+now honors `\n\n` as a paragraph separator with proportional
+vertical gap (default = lineHeight × 0.5). Area A + C bodies use
+the separator. estimateLineCount in areas.ts sizes cards accordingly
+(adds 7pt per paragraph break).
+
+**Polish 2 — DE qualifier pill i18n.** Every qualifier pill in the
+DE PDF previously rendered English labels — a visible translation
+gap that signaled "AI tool, not localized properly" to a German
+Bauamt clerk. New layer:
+
+| Source / Quality | EN | DE |
+|---|---|---|
+| qualifier.source.CLIENT | CLIENT | BAUHERR |
+| qualifier.source.LEGAL | LEGAL | RECHTLICH |
+| qualifier.source.DESIGNER | DESIGNER | ARCHITEKT:IN |
+| qualifier.source.AUTHORITY | AUTHORITY | BEHÖRDE |
+| qualifier.quality.CALCULATED | CALCULATED | BERECHNET |
+| qualifier.quality.ASSUMED | ASSUMED | ANGENOMMEN |
+| qualifier.quality.VERIFIED | VERIFIED | VERIFIZIERT |
+| qualifier.quality.DECIDED | DECIDED | ENTSCHIEDEN |
+
+`getQualifierLabel(source, quality, strings)` + `formatQualifier(q,
+strings?)` overload route every qualifier display through locale
+resolution. v1.0.12 Bug 25 DESIGNER+ASSUMED → LEGAL+CALCULATED
+normalization happens BEFORE the locale lookup, so the gate-
+downgrade case shows the right label in both locales. Every pill
+call site (keyData / procedures / executive / recommendations +
+the Area A Stadtarchiv caveat body) routes through the strings
+table. Width-estimation in keyData uses the localized label so
+overflow detection still works correctly in DE.
+
+**Polish 3 — Bauherr signature row on Verification page.** A
+Bauantrag requires Bauherr co-signature per BauO NRW; without it
+the Bauamt rejects the submission. v1.0.18's Verification page
+had Architect + Chamber-stamp signature fields but missed the
+Bauherr row. New full-width third row stacks below: 13pt Inter
+Medium INK pre-printed Bauherr name (resolved per v1.0.14 Bug 29
+fallback chain: profile.full_name → user_metadata → email
+local-part), drawSignatureField with sig.bauherr / sig.date
+labels, 9pt italic-serif CLAY co-signature note ("Co-signature
+required for Bauantrag." / "Mit-Unterschrift erforderlich für
+Bauantrag.").
+
+**Runtime smoke gate**: 96/96 EN+DE (up from 82/82). 14 new asserts:
+- Area A renders as two paragraphs (observation + caveat) on both
+  locales
+- Localized qualifier pills present in DE (BAUHERR · VERIFIZIERT,
+  RECHTLICH · BERECHNET, etc.)
+- NEGATIVE: DE PDF has ZERO English qualifier pill labels
+- Bauherr name + signature label + co-signature note present on
+  Verification page in both locales
+
+**Architectural note**: locale resolution is now first-class in
+the qualifier path. Same shape as Phase 0.B v1.0.16 architectural
+fix (ctx.safe baked into primitives) — make the right thing the
+default, the wrong thing a TS compile error. formatQualifier with
+strings overload is the v1.0.20 equivalent.
+
+**~8 commits + this doc.** Bayern SHA `b18d3f7f...c3471` preserved
+start + end of every commit. Bundle 269.1 KB gz unchanged.
+
+---
+
 ## V1.0.19 SHIPPED — Legal Consistency Sprint (5 bug closures)
 
 Four-hat audit (architect + Tragwerksplaner + Bauamt clerk +

@@ -2439,6 +2439,68 @@ async function runStaticGate() {
     },
   ]))
 
+  // ── v1.0.20 cosmetic polish drift bundle ────────────────────────
+  const primForV20 = await readFileText('src/features/chat/lib/pdfPrimitives.ts')
+  const stringsForV20 = await readFileText('src/features/chat/lib/pdfStrings.ts')
+  const verifForV20 = await readFileText('src/features/chat/lib/pdfSections/verification.ts')
+  results.push(failures('v1.0.20 Polish 1: drawWrappedText paragraphGap support', [
+    {
+      ok: /paragraphGap\?:\s*number/.test(primForV20),
+      msg: 'WrappedTextOpts gains optional paragraphGap field',
+    },
+    {
+      ok: /split\(\/\\n\\n\+\/\)/.test(primForV20),
+      msg: 'drawWrappedText splits input on /\\n\\n+/',
+    },
+  ]))
+  results.push(failures('v1.0.20 Polish 2: qualifier i18n + getQualifierLabel', [
+    {
+      ok: /'qualifier\.source\.CLIENT':\s*'CLIENT'/.test(stringsForV20) &&
+          /'qualifier\.source\.CLIENT':\s*'BAUHERR'/.test(stringsForV20),
+      msg: 'qualifier.source.CLIENT bilingual (EN CLIENT / DE BAUHERR)',
+    },
+    {
+      ok: /'qualifier\.source\.LEGAL':\s*'RECHTLICH'/.test(stringsForV20),
+      msg: 'qualifier.source.LEGAL DE = RECHTLICH',
+    },
+    {
+      ok: /'qualifier\.quality\.CALCULATED':\s*'BERECHNET'/.test(stringsForV20) &&
+          /'qualifier\.quality\.ASSUMED':\s*'ANGENOMMEN'/.test(stringsForV20) &&
+          /'qualifier\.quality\.VERIFIED':\s*'VERIFIZIERT'/.test(stringsForV20) &&
+          /'qualifier\.quality\.DECIDED':\s*'ENTSCHIEDEN'/.test(stringsForV20),
+      msg: 'all 4 quality DE translations declared (BERECHNET/ANGENOMMEN/VERIFIZIERT/ENTSCHIEDEN)',
+    },
+    {
+      ok: /export function getQualifierLabel\(/.test(primForV20),
+      msg: 'getQualifierLabel helper exported',
+    },
+    {
+      ok: /export function formatQualifier\([\s\S]{0,200}strings\?:\s*Record/.test(primForV20),
+      msg: 'formatQualifier accepts optional strings parameter (locale-aware overload)',
+    },
+  ]))
+  results.push(failures('v1.0.20 Polish 3: Bauherr signature row on Verification page', [
+    {
+      ok: /'sig\.bauherr':\s*'Bauherr · Owner'/.test(stringsForV20) &&
+          /'sig\.bauherr':\s*'Bauherr:in'/.test(stringsForV20),
+      msg: 'sig.bauherr bilingual',
+    },
+    {
+      ok: /'sig\.bauherr\.note':\s*'Co-signature required/.test(stringsForV20) &&
+          /'sig\.bauherr\.note':\s*'Mit-Unterschrift erforderlich/.test(stringsForV20),
+      msg: 'sig.bauherr.note bilingual',
+    },
+    {
+      ok: /bauherrName\?:\s*string/.test(verifForV20),
+      msg: 'VerificationData.bauherrName field declared',
+    },
+    {
+      ok: /pdfStr\(strings,\s*'sig\.bauherr'\)/.test(verifForV20) &&
+          /pdfStr\(strings,\s*'sig\.bauherr\.note'\)/.test(verifForV20),
+      msg: 'verification renderer references sig.bauherr + sig.bauherr.note',
+    },
+  ]))
+
   // ── v1.0.19 canonical procedure resolver ────────────────────────
   const resolveProcSrc = await readFileText('src/legal/resolveProcedure.ts')
   results.push(failures('v1.0.19 Bug 40: resolveProcedure canonical resolver', [
@@ -2638,7 +2700,9 @@ async function runStaticGate() {
       msg: 'exportPdf imports formatQualifier from ./pdfPrimitives',
     },
     {
-      ok: /formatQualifier\(src\.rec\.qualifier\)/.test(exportPdfForBug32),
+      // v1.0.20 Polish 2 — formatQualifier signature gained
+      // optional strings param; accept both call forms.
+      ok: /formatQualifier\(src\.rec\.qualifier(,\s*pdfStrings)?\)/.test(exportPdfForBug32),
       msg: 'executive build path applies formatQualifier to persisted recommendation qualifiers',
     },
   ]))
@@ -3096,12 +3160,19 @@ async function runStaticGate() {
       msg: 'helper must guard the gate-downgrade case',
     },
     {
-      ok: /return\s+'LEGAL\s+·\s+CALCULATED'/.test(primSrcForV12),
-      msg: 'helper must map gate-downgrade to LEGAL · CALCULATED display',
+      // v1.0.20 Polish 2 — normalization preserved but expressed as
+      // a `{ source: 'LEGAL', quality: 'CALCULATED' }` object literal
+      // (the result then routes through getQualifierLabel for locale
+      // resolution). Accept either form.
+      ok: /return\s+'LEGAL\s+·\s+CALCULATED'/.test(primSrcForV12) ||
+          /source:\s*'LEGAL',\s*quality:\s*'CALCULATED'/.test(primSrcForV12),
+      msg: 'helper must map gate-downgrade to LEGAL · CALCULATED (v1.0.16 literal or v1.0.20 normalized object form)',
     },
     {
-      ok: /formatQualifier\(r\.qualifier\)/.test(exportPdfSrcForV12),
-      msg: 'Section VIII recommendations loop must call formatQualifier (renamed in v1.0.16)',
+      // v1.0.20 Polish 2 — formatQualifier signature gained
+      // optional strings param; accept both call forms.
+      ok: /formatQualifier\(r\.qualifier(,\s*pdfStrings)?\)/.test(exportPdfSrcForV12),
+      msg: 'Section VIII recommendations loop must call formatQualifier (renamed in v1.0.16, strings overload v1.0.20)',
     },
   ]))
   // v1.0.17 — Bug 26 intent now lives in pdfSections/procedures.ts:

@@ -461,15 +461,12 @@ shipped in Phase 13 Week 4). What's missing is the cron harness
 
 ## 9. Operational responsibilities — split between engineering and client
 
-**v1.0.19 IS THE NEW PRODUCTION-READY RELEASE.** Closes 5 legal-
-correctness bugs surfaced by a four-hat audit (architect +
-Tragwerksplaner + Bauamt + Architektenkammer) of v1.0.18: the
-internal procedure contradiction that would have caused a NRW
-Bauamt clerk to reject the brief on sight, the Documents page
-showing "No documents recorded yet" for a project with 7+ knowable
-mandatory Bauvorlagen, the invisible Abstandsflächen risk, and the
-overconfident Area A planungsrechtliche assertion. Runtime smoke
-gate verifies cross-page consistency at 82/82. The version ladder:
+**v1.0.20 IS THE NEW PRODUCTION-READY RELEASE.** Cosmetic polish on
+top of v1.0.19's legal correctness: paragraph breaks on Area A + C
+bodies, DE qualifier pill i18n (every qualifier label now renders
+in German on the DE PDF), and the Bauherr signature row on the
+Verification page. Runtime smoke gate at 96/96 EN+DE. The version
+ladder:
   • v1.0   = engineering milestone (complete feature scope).
   • v1.0.1 = invite-flow security hardening (owner-check on share,
              role-check on accept, 7-day TTL on invites).
@@ -716,6 +713,54 @@ gate verifies cross-page consistency at 82/82. The version ladder:
               - v1.0.18: Recommendations + Key Data (Sections VIII-IX)
               - v1.0.19: Verification + Glossary + audit log + runtime
                 smoke:pdf-text
+  • v1.0.20 = Cosmetic Polish Sprint — 3 finishes (~8 commits + docs).
+              No legal logic changes, no new sections. Three small
+              items that complete the "feels professional" look:
+              POLISH 1 — Paragraph breaks on Area A + C bodies.
+              v1.0.19 caveat (Stadtarchiv) + Abstandsflächen-Hinweis
+              were inline-concatenated to original body text reading
+              as one cramped paragraph. drawWrappedText now honors
+              \\n\\n as paragraph separator with proportional gap
+              (default lineHeight × 0.5). Area A + C bodies use the
+              separator; estimateLineCount sizes cards accordingly.
+              POLISH 2 — DE qualifier pill i18n. 8 new pdfStrings
+              keys (qualifier.source.{CLIENT,LEGAL,DESIGNER,
+              AUTHORITY} + qualifier.quality.{CALCULATED,ASSUMED,
+              VERIFIED,DECIDED}) with DE translations (BAUHERR,
+              RECHTLICH, ARCHITEKT:IN, BEHÖRDE / BERECHNET,
+              ANGENOMMEN, VERIFIZIERT, ENTSCHIEDEN). New
+              getQualifierLabel(source, quality, strings) helper +
+              formatQualifier(q, strings?) overload route every
+              qualifier display through locale resolution. v1.0.12
+              Bug 25 DESIGNER+ASSUMED → LEGAL+CALCULATED normalization
+              applied BEFORE locale lookup so the gate-downgrade case
+              shows the right label in both locales. Every
+              qualifier-pill call site (keyData/procedures/executive/
+              recommendations + Area A caveat body) wires the
+              strings table.
+              POLISH 3 — Bauherr signature row on Verification page.
+              The Bauantrag requires Bauherr co-signature per BauO
+              NRW; v1.0.18 had Architect + Chamber stamp signatures
+              but missed it. New full-width third signature row:
+              13pt Inter Medium INK pre-printed Bauherr name (from
+              v1.0.14 Bug 29 fallback chain), drawSignatureField,
+              9pt italic-serif CLAY co-signature note. Two new
+              pdfStrings keys (sig.bauherr + sig.bauherr.note)
+              bilingual.
+              Smoke gate: 96/96 EN+DE (was 82/82). 14 new asserts
+              this sprint covering paragraph breaks, localized
+              qualifiers, Bauherr signature presence, negative
+              guards (DE PDF has ZERO English qualifier pill labels).
+              Bayern SHA preserved. Bundle 269.1 KB gz unchanged.
+              v1.0.21+ backlog (each its own sprint, none block
+              client delivery):
+              - v1.0.21: Vorhabensbeschreibung formal project
+                description + Risikoregister Section XII + Bayern
+                resolveProcedure migration
+              - v1.0.22: KfW BEG 458 + § 35c EStG + iSFP-Bonus
+                funding specifics + Bauvoranfrage on edge cases
+              - v1.0.23: Bebauungsplan ID + Flurstück + Gebäudeklasse
+                fields + Brandschutz implications
   • v1.0.19 = Legal Consistency Sprint — 5 bug closures (~8 commits
               + docs). Four-hat audit (architect + Tragwerksplaner +
               Bauamt + Architektenkammer) of v1.0.18 production PDF
