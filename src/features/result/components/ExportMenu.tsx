@@ -32,7 +32,7 @@ interface Props {
   onInspectDataFlow: () => void
 }
 
-type Action = 'pdf' | 'md' | 'json' | 'share'
+type Action = 'pdf-en' | 'pdf-de' | 'md' | 'json' | 'share'
 
 /**
  * Phase 8 — "Take it home" overflow menu in the workspace footer. Reuses
@@ -65,9 +65,17 @@ export function ExportMenu({
     setBusy(action)
     const startedAt = Date.now()
     try {
-      if (action === 'pdf') {
+      if (action === 'pdf-en' || action === 'pdf-de') {
+        // v1.0.13 — DE/EN export-time locale picker. Action variant
+        // forces the lang override regardless of UI locale.
+        const exportLang: 'de' | 'en' = action === 'pdf-de' ? 'de' : 'en'
         const { buildExportPdf } = await import('@/features/chat/lib/exportPdf')
-        const bytes = await buildExportPdf({ project, messages, events, lang })
+        const bytes = await buildExportPdf({
+          project,
+          messages,
+          events,
+          lang: exportLang,
+        })
         download(
           new Blob([bytes as BlobPart], { type: 'application/pdf' }),
           buildExportFilename(project.name, 'pdf'),
@@ -76,6 +84,7 @@ export function ExportMenu({
           latency_ms: Date.now() - startedAt,
           file_bytes:
             (bytes as Uint8Array | ArrayBuffer | undefined)?.byteLength ?? null,
+          locale: exportLang,
         })
       } else if (action === 'md') {
         const md = buildExportMarkdown({ project, events, lang })
@@ -141,13 +150,39 @@ export function ExportMenu({
         sideOffset={10}
         className="min-w-[260px] rounded-[var(--pm-radius-card)]"
       >
+        {/* v1.0.13 — split the PDF action into EN / DE so the user
+            chooses the export locale at click time. UI locale still
+            drives the default visually (selected first item matches
+            the user's current i18n locale), but both options are
+            always available. */}
         <DropdownMenuItem
-          onSelect={() => void trigger('pdf')}
+          onSelect={() => void trigger(lang === 'de' ? 'pdf-de' : 'pdf-en')}
           className="gap-3"
         >
           <FileText aria-hidden="true" className="size-4 text-clay/85" />
-          <span className="flex-1">{t('result.export.pdf.title')}</span>
-          {busy === 'pdf' && <span className="text-[11px] italic text-clay/85">…</span>}
+          <span className="flex-1">
+            {t('result.export.pdf.title')}
+            <span className="ml-2 font-mono text-[10px] uppercase tracking-[0.18em] text-clay/70">
+              {lang === 'de' ? 'DE' : 'EN'}
+            </span>
+          </span>
+          {(busy === 'pdf-en' || busy === 'pdf-de') && (
+            <span className="text-[11px] italic text-clay/85">…</span>
+          )}
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          onSelect={() =>
+            void trigger(lang === 'de' ? 'pdf-en' : 'pdf-de')
+          }
+          className="gap-3"
+        >
+          <FileText aria-hidden="true" className="size-4 text-clay/55" />
+          <span className="flex-1 text-clay/85">
+            {t('result.export.pdf.title')}
+            <span className="ml-2 font-mono text-[10px] uppercase tracking-[0.18em] text-clay/70">
+              {lang === 'de' ? 'EN' : 'DE'}
+            </span>
+          </span>
         </DropdownMenuItem>
         <DropdownMenuItem
           onSelect={() => void trigger('md')}

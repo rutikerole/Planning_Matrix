@@ -2153,6 +2153,31 @@ async function runStaticGate() {
     },
   ]))
 
+  // ── v1.0.13 — PDF Renaissance Part 1: DE/EN export picker ─────────
+  const exportMenuSrc = await readFileText('src/features/result/components/ExportMenu.tsx')
+  results.push(failures('v1.0.13: ExportMenu offers EN + DE PDF variants', [
+    {
+      ok: /'pdf-en'\s*\|\s*'pdf-de'/.test(exportMenuSrc),
+      msg: 'Action type union must include both pdf-en and pdf-de variants',
+    },
+    {
+      ok: /pdf-de.*'de'.*'en'/s.test(exportMenuSrc) || /exportLang.*=.*action\s*===\s*'pdf-de'\s*\?\s*'de'\s*:\s*'en'/s.test(exportMenuSrc),
+      msg: 'exportLang must resolve pdf-de → "de" and pdf-en → "en"',
+    },
+    {
+      ok: /buildExportPdf\(\{[^}]*lang:\s*exportLang/.test(exportMenuSrc),
+      msg: 'buildExportPdf must receive the picker-derived lang, not the UI lang',
+    },
+    {
+      ok: /locale:\s*exportLang/.test(exportMenuSrc),
+      msg: 'telemetry event must include locale field',
+    },
+    {
+      ok: (exportMenuSrc.match(/<DropdownMenuItem[\s\S]*?onSelect=\{[^}]*trigger\([^)]*pdf-/g) ?? []).length >= 2,
+      msg: 'two DropdownMenuItems wire the pdf-en + pdf-de triggers',
+    },
+  ]))
+
   // ── v1.0.13 — PDF Renaissance Part 1: assembly wire-up ────────────
   const assemblySrc = await readFileText('src/features/chat/lib/exportPdf.ts')
   results.push(failures('v1.0.13: exportPdf wires renderCoverPage + renderTocPage', [
