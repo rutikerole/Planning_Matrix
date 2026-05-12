@@ -4,6 +4,116 @@
 > Bayern SHA `b18d3f7f9a6fe238c18cec5361d30ea3a547e46b1ef2b16a1e74c533aacb3471`
 > verified MATCH at start AND end of read pass. No code edits.
 
+## V1.0.17 SHIPPED — PDF Renaissance Part 3 FINAL + permanent ligature kill
+
+The chronic ligature regression cycle that ran from v1.0.11 through
+v1.0.16 is DEAD. Empirical proof: 38 of 38 runtime PDF-extraction
+assertions pass on both EN and DE.
+
+**The root cause we missed for 5 versions:**
+
+pdf-lib's CustomFontEmbedder (node_modules/pdf-lib/cjs/core/embedders/
+CustomFontEmbedder.js:8) implements `encodeText(text)` as:
+
+```js
+var glyphs = this.font.layout(text, this.fontFeatures).glyphs;
+```
+
+fontkit's `layout(text, features?)` applies GSUB lookups by default
+— turning the SOURCE BYTES "confirmation" into a GLYPH SEQUENCE
+containing an fi-ligature glyph inside the PDF stream. Every JS-
+layer fix from v1.0.11 to v1.0.16 (decomposeLigatures,
+preventBrandLigatures ZWNJ injection, drawSafeText enforcement,
+ctx.safe baked into primitives) operated UPSTREAM of fontkit's
+layout call, which then happily re-applied the ligature
+substitution on whatever text it received.
+
+The user's empirical re-export of v1.0.16 Königsallee showed ċ /
+Č / PČicht corruption on every page despite all source-level drift
+checks passing — because the corruption happens INSIDE pdf-lib's
+embed call, not in our JS pipeline.
+
+**The fix (one option pdf-lib already exposed):**
+
+```ts
+await doc.embedFont(buffer, {
+  features: { liga: false, dlig: false, clig: false },
+})
+```
+
+pdf-lib's `EmbedFontOptions.features` field is threaded directly
+to fontkit's `layout(text, this.fontFeatures)` call. Setting
+liga/dlig/clig to false disables the OpenType ligature substitution
+at the fontkit layer. kern (positional kerning, no glyph
+substitution) stays on. Applied to all four brand embeds in
+fontLoader.ts:
+
+| Embed | Features |
+|-------|----------|
+| inter (Inter Regular) | `{ liga: false, dlig: false, clig: false }` |
+| interMedium (Inter Medium) | same |
+| serifItalic (Instrument Serif Italic) | same |
+| serif (Instrument Serif Regular) | same |
+
+Single 12-line change supersedes the entire v1.0.11→v1.0.16
+sanitizer pipeline at the encoding layer. The JS sanitizer
+pipeline (decomposeLigatures + the v1.0.16 architectural fix)
+stays in place as defense-in-depth — decomposes any literal U+FB0x
+codepoints that might appear in source/persona content.
+
+**Runtime smoke gate (smoke:pdf-text, the 5th daily gate):**
+
+scripts/smoke-pdf-text.mts runs via npx tsx, renders the fixture
+PDF (NRW × T-03 Königsallee) via Node + pdf-lib (using a fetch
+shim that maps /fonts/*.ttf → public/fonts/), extracts text via
+pdf-parse 2.x (PDFParse class API), and asserts:
+
+- ZERO U+200C zero-width non-joiner
+- ZERO U+FB00..U+FB05 literal ligature codepoints
+- ZERO ċ (U+010B) / Č (U+010C) / Ĉ (U+0108) glyph corruption
+- Presence of high-value fi/fl/ff words:
+  EN: certified · certification · energy consultant · building permit
+  DE: Verfahrensfreiheit · identifiziert · Pflicht · Energieausweis
+- Presence of ≈ (U+2248) and m² (U+00B2) symbols
+- Cross-locale section title rendering
+
+**Empirical result on v1.0.17 HEAD: 38/38 pass.**
+
+The ≈-rendered-as-² bug from v1.0.16 was a side-effect of the
+same GSUB layer — disabling liga also cleaned the cmap fallback
+chain so ≈ now resolves to its proper Inter glyph. No separate
+substitution table needed.
+
+**6 remaining section renderers shipped:**
+
+| # | Section                  | Renderer                          |
+|---|--------------------------|-----------------------------------|
+| 05 | Procedures              | pdfSections/procedures.ts (combined with 06) |
+| 06 | Documents               | pdfSections/procedures.ts (one page)         |
+| 07 | Team & Stakeholders     | pdfSections/team.ts                          |
+| 08 | Recommendations         | pdfSections/recommendations.ts               |
+| 09 | Key Data                | pdfSections/keyData.ts                       |
+| 10 | Verification            | pdfSections/verification.ts                  |
+| 11 | Glossary                | pdfSections/glossary.ts                      |
+
+Audit log REMOVED from PDF (client-internal History only).
+Cover page ≈ symbol restored as a side-effect of the font fix.
+
+**New primitives:**
+
+- drawQualifierPill — color-coded source · quality (CLIENT blue /
+  LEGAL VERIFIED deep green / LEGAL CALCULATED light green / LEGAL
+  ASSUMED amber / DESIGNER outline / AUTHORITY deep blue)
+- drawStackedBar — horizontal multi-color stacked bar (data quality)
+- drawSignatureField — 56pt blank + 0.5pt INK underline + label/sublabel
+
+**~17-commit sprint shipped.**
+
+Bayern SHA `b18d3f7f9a6fe238c18cec5361d30ea3a547e46b1ef2b16a1e74c533aacb3471`
+preserved at start AND end of every commit. Bundle 269.1 KB gz.
+
+---
+
 ## V1.0.16 SHIPPED — PDF Renaissance Part 2B + architectural ligature-regression KILL
 
 Empirical re-walk of v1.0.15 NRW × T-03 Königsallee EN export
