@@ -2255,6 +2255,190 @@ async function runStaticGate() {
     },
   ]))
 
+  // ── v1.0.16 — Costs page strings (EN + DE) ──────────────────────
+  const stringsV16Costs = await readFileText('src/features/chat/lib/pdfStrings.ts')
+  results.push(failures('v1.0.16: pdfStrings extends EN + DE with costs.* keys', [
+    {
+      ok: /'costs\.kicker':\s*'SECTION 03 · COSTS'/.test(stringsV16Costs) &&
+          /'costs\.kicker':\s*'ABSCHNITT 03 · KOSTEN'/.test(stringsV16Costs),
+      msg: 'costs.kicker bilingual',
+    },
+    {
+      ok: /'costs\.title':\s*'Estimated cost range'/.test(stringsV16Costs) &&
+          /'costs\.title':\s*'Geschätzte Kostenspanne'/.test(stringsV16Costs),
+      msg: 'costs.title bilingual',
+    },
+    {
+      ok: /'costs\.basisTemplate':[\s\S]{0,100}\{n\} m² façade[\s\S]{0,80}\{state\}/.test(stringsV16Costs) &&
+          /'costs\.basisTemplate':[\s\S]{0,100}\{n\} m² Fassade[\s\S]{0,80}\{state\}/.test(stringsV16Costs),
+      msg: 'costs.basisTemplate carries {n} m²/Fassade and {state} substitution tokens in both locales',
+    },
+    {
+      ok: /'costs\.th\.item':/.test(stringsV16Costs) &&
+          /'costs\.th\.basis':/.test(stringsV16Costs) &&
+          /'costs\.th\.range':/.test(stringsV16Costs),
+      msg: 'costs.th.{item,basis,range} column headers declared',
+    },
+    {
+      ok: /'costs\.items\.architect':/.test(stringsV16Costs) &&
+          /'costs\.items\.structural':/.test(stringsV16Costs) &&
+          /'costs\.items\.surveying':/.test(stringsV16Costs) &&
+          /'costs\.items\.energy':/.test(stringsV16Costs) &&
+          /'costs\.items\.authority':/.test(stringsV16Costs),
+      msg: 'costs.items.{architect,structural,surveying,energy,authority} all declared',
+    },
+    {
+      ok: /'costs\.notes\.h':/.test(stringsV16Costs) &&
+          /'costs\.notes\.b':/.test(stringsV16Costs),
+      msg: 'costs.notes.h + costs.notes.b declared',
+    },
+  ]))
+
+  // ── v1.0.16 — Timeline page strings (EN + DE) ────────────────────
+  results.push(failures('v1.0.16: pdfStrings extends EN + DE with timeline.* keys', [
+    {
+      ok: /'timeline\.kicker':\s*'SECTION 04 · TIMELINE'/.test(stringsV16Costs) &&
+          /'timeline\.kicker':\s*'ABSCHNITT 04 · ZEITPLAN'/.test(stringsV16Costs),
+      msg: 'timeline.kicker bilingual',
+    },
+    {
+      ok: /'timeline\.title':\s*'Estimated timeline'/.test(stringsV16Costs) &&
+          /'timeline\.title':\s*'Geschätzter Zeitplan'/.test(stringsV16Costs),
+      msg: 'timeline.title bilingual',
+    },
+    {
+      ok: /'timeline\.weekLabel':\s*'WEEK'/.test(stringsV16Costs) &&
+          /'timeline\.weekLabel':\s*'WOCHE'/.test(stringsV16Costs),
+      msg: 'timeline.weekLabel localized for the Gantt ruler',
+    },
+    {
+      ok: /'timeline\.phase\.prep':/.test(stringsV16Costs) &&
+          /'timeline\.phase\.submit':/.test(stringsV16Costs) &&
+          /'timeline\.phase\.review':/.test(stringsV16Costs) &&
+          /'timeline\.phase\.fixes':/.test(stringsV16Costs),
+      msg: 'timeline.phase.{prep,submit,review,fixes} all declared',
+    },
+    {
+      ok: /'timeline\.milestone':/.test(stringsV16Costs) &&
+          /'timeline\.milestone\.detail':/.test(stringsV16Costs),
+      msg: 'timeline.milestone + milestone.detail declared',
+    },
+  ]))
+
+  // ── v1.0.16 — New primitives (table / notes / Gantt) ─────────────
+  const primV16 = await readFileText('src/features/chat/lib/pdfPrimitives.ts')
+  results.push(failures('v1.0.16: pdfPrimitives exports table + Gantt primitives', [
+    {
+      ok: /export function drawTable\(/.test(primV16) &&
+          /TableRow|TableColumn/.test(primV16),
+      msg: 'drawTable exported with TableColumn/TableRow shape',
+    },
+    {
+      ok: /export function drawNotesBlock\(/.test(primV16) &&
+          /borderColor|CLAY[\s\S]{0,200}width:\s*2/.test(primV16),
+      msg: 'drawNotesBlock exported with 2pt CLAY left accent',
+    },
+    {
+      ok: /export function drawWeekRuler\(/.test(primV16) &&
+          /weekLabel/.test(primV16),
+      msg: 'drawWeekRuler exported with localized weekLabel prefix',
+    },
+    {
+      ok: /export function drawGanttRow\(/.test(primV16) &&
+          /kind:\s*'work'\s*\|\s*'wait'/.test(primV16),
+      msg: 'drawGanttRow exported with work/wait kind discriminator',
+    },
+    {
+      ok: /export function drawMilestoneCallout\(/.test(primV16) &&
+          /drawSvgPath/.test(primV16),
+      msg: 'drawMilestoneCallout exported with svgPath diamond glyph',
+    },
+    {
+      ok: /export const AMBER\b/.test(primV16),
+      msg: 'AMBER accent constant exported (shared with executive high-priority accent)',
+    },
+  ]))
+
+  // ── v1.0.16 — Costs + Timeline renderers ─────────────────────────
+  const costsV16 = await readFileText('src/features/chat/lib/pdfSections/costs.ts')
+  const timelineV16 = await readFileText('src/features/chat/lib/pdfSections/timeline.ts')
+  results.push(failures('v1.0.16: pdfSections/costs.ts renders Section 03 (Costs)', [
+    {
+      ok: /export function renderCostsBody\(/.test(costsV16),
+      msg: 'renderCostsBody exported',
+    },
+    {
+      ok: /export function renderCostsFooter\(/.test(costsV16),
+      msg: 'renderCostsFooter exported (Path A 2-pass split)',
+    },
+    {
+      ok: /drawTable\(\{/.test(costsV16) && /widthFraction:\s*0\.4/.test(costsV16),
+      msg: 'costs renderer uses drawTable with 3-column layout (40/35/25 widths)',
+    },
+    {
+      ok: /drawNotesBlock\(/.test(costsV16),
+      msg: 'costs renderer ends with drawNotesBlock for the NOTES caption',
+    },
+    {
+      ok: /\{n\}/.test(costsV16) && /\{state\}/.test(costsV16),
+      msg: 'costs renderer substitutes {n} and {state} in the basisTemplate string',
+    },
+  ]))
+  results.push(failures('v1.0.16: pdfSections/timeline.ts renders Section 04 (Timeline)', [
+    {
+      ok: /export function renderTimelineBody\(/.test(timelineV16),
+      msg: 'renderTimelineBody exported',
+    },
+    {
+      ok: /export function renderTimelineFooter\(/.test(timelineV16),
+      msg: 'renderTimelineFooter exported (Path A 2-pass split)',
+    },
+    {
+      ok: /drawWeekRuler\(/.test(timelineV16) &&
+          /drawGanttRow\(/.test(timelineV16) &&
+          /drawMilestoneCallout\(/.test(timelineV16),
+      msg: 'timeline renderer uses all three v1.0.16 Gantt primitives',
+    },
+    {
+      ok: /DEFAULT_TIMELINE_PHASES/.test(timelineV16) &&
+          /startWeek:\s*0,\s*endWeek:\s*12/.test(timelineV16),
+      msg: 'DEFAULT_TIMELINE_PHASES set for T-03 default schedule (prep 0-12)',
+    },
+  ]))
+
+  // ── v1.0.16 — Assembly wire-up for costs + timeline ──────────────
+  const assemblyV16 = await readFileText('src/features/chat/lib/exportPdf.ts')
+  results.push(failures('v1.0.16: exportPdf wires renderCostsBody + renderTimelineBody', [
+    {
+      ok: /import \{[^}]*renderCostsBody[^}]*\}\s+from\s+['"]\.\/pdfSections\/costs['"]/s.test(assemblyV16),
+      msg: 'exportPdf imports renderCostsBody from ./pdfSections/costs',
+    },
+    {
+      ok: /import \{[^}]*renderTimelineBody[^}]*\}\s+from\s+['"]\.\/pdfSections\/timeline['"]/s.test(assemblyV16),
+      msg: 'exportPdf imports renderTimelineBody from ./pdfSections/timeline',
+    },
+    {
+      ok: /renderCostsBody\(costsPage/.test(assemblyV16) &&
+          /renderCostsFooter\(costsPage/.test(assemblyV16),
+      msg: 'exportPdf calls renderCostsBody + renderCostsFooter (2-pass)',
+    },
+    {
+      ok: /renderTimelineBody\(timelinePage/.test(assemblyV16) &&
+          /renderTimelineFooter\(timelinePage/.test(assemblyV16),
+      msg: 'exportPdf calls renderTimelineBody + renderTimelineFooter (2-pass)',
+    },
+    {
+      ok: !/function drawCostsPage\(/.test(assemblyV16) &&
+          !/function drawTimelinePage\(/.test(assemblyV16),
+      msg: 'v1.0.6 drawCostsPage + drawTimelinePage retired (replaced by editorial renderers)',
+    },
+    {
+      ok: /editorialPages\.add\(costsPage\)/.test(assemblyV16) &&
+          /editorialPages\.add\(timelinePage\)/.test(assemblyV16),
+      msg: 'footer-loop skips costs + timeline editorial pages',
+    },
+  ]))
+
   // ── v1.0.16 architectural invariant — zero raw page.drawText in
   //    section renderers. ENDS the ligature regression cycle by
   //    making the bypass structurally impossible at the file level. ─
