@@ -1,13 +1,21 @@
 import type { Procedure } from '@/types/projectState'
+import { getStateLocalization } from '@/legal/stateLocalization'
 
 /**
  * Phase 8.1 (A.3) — baseline `Procedure[]` inferred from intent +
  * Bundesland when persona hasn't yet emitted any procedures.
  *
- * Conservative defaults per Bayern practice. The procedure card in
- * the UI shows a "wahrscheinlich · pending architect confirmation"
- * pill on baseline rows; the architect's confirmation overrides at
- * the persona-emit moment.
+ * v1.0.10 — was Bayern-hardcoded ("BayBO Art. 58") regardless of
+ * project bundesland through v1.0.9. The Düsseldorf NRW smoke walk
+ * surfaced "Simplified building permit · BayBO Art. 58" on an NRW
+ * project. Fix: read state-localization pack (procedure pack +
+ * structural-cert citation) and parameterize the baseline accordingly.
+ * Bayern projects render unchanged (BayBO Art. 58 / 57 / 59); NRW
+ * gets § 64 BauO NRW, Hessen § 65 HBO, etc.
+ *
+ * The procedure card in the UI shows a "wahrscheinlich · pending
+ * architect confirmation" pill on baseline rows; the architect's
+ * confirmation overrides at the persona-emit moment.
  *
  * verifyBeforePublicLaunch — orientation only.
  */
@@ -46,7 +54,20 @@ export function deriveBaselineProcedure({
   intent,
   bundesland,
 }: Args): Procedure[] {
-  void bundesland // v1 only ships Bayern; future Phase 9 expands.
+  const loc = getStateLocalization(bundesland)
+  const simp = loc.procedure.simplified
+  const free = loc.procedure.free
+  const reg = loc.procedure.regular
+  // Compose "title · citation" string when a citation is available
+  // (substantive states); fall back to bare procedure name for stubs.
+  const compose = (
+    p: { nameDe: string; nameEn: string; citation: string } | null,
+  ) => ({
+    de: p ? (p.citation ? `${p.nameDe} · ${p.citation}` : p.nameDe) : '',
+    en: p ? (p.citation ? `${p.nameEn} · ${p.citation}` : p.nameEn) : '',
+  })
+  const tSimp = compose(simp)
+  const tFree = compose(free)
 
   switch (intent) {
     case 'neubau_einfamilienhaus':
@@ -56,48 +77,54 @@ export function deriveBaselineProcedure({
       return [
         baselineProcedure(
           'P-Vereinfacht',
-          'Vereinfachtes Baugenehmigungsverfahren · BayBO Art. 58',
-          'Simplified building permit · BayBO Art. 58',
-          'Standardpfad für Wohnvorhaben in Gebäudeklasse 1–3; entfällt nur bei Sonderbauten oder bei Genehmigungsfreistellung nach Art. 57.',
-          'Standard path for residential projects in building class 1–3; replaced only by Sonderbau scope or permit-exemption under Art. 57.',
+          tSimp.de,
+          tSimp.en,
+          `Standardpfad für Wohnvorhaben in Gebäudeklasse 1–3 in ${loc.labelDe}; entfällt bei Sonderbauten oder Freistellungs-Konstellationen.`,
+          `Standard path for residential projects in building class 1–3 in ${loc.labelEn}; replaced by Sonderbau scope or permit-exemption cases.`,
         ),
-        baselineProcedure(
-          'P-Freistellung',
-          'Genehmigungsfreistellung · BayBO Art. 57',
-          'Permit exemption · BayBO Art. 57',
-          'Möglich, wenn ein qualifizierter Bebauungsplan vorliegt und das Vorhaben dessen Festsetzungen einhält.',
-          'Available when a qualified Bebauungsplan exists and the project complies with its provisions.',
-        ),
+        ...(free
+          ? [
+              baselineProcedure(
+                'P-Freistellung',
+                tFree.de,
+                tFree.en,
+                `Möglich, wenn die Voraussetzungen der ${loc.labelDe}-LBO erfüllt sind (qualifizierter Bebauungsplan etc.).`,
+                `Available when the ${loc.labelEn} LBO preconditions are met (qualified Bebauungsplan etc.).`,
+              ),
+            ]
+          : []),
       ]
     case 'sanierung':
     case 'umnutzung':
       return [
         baselineProcedure(
           'P-Vereinfacht',
-          'Vereinfachtes Baugenehmigungsverfahren · BayBO Art. 58',
-          'Simplified building permit · BayBO Art. 58',
-          'Bei strukturellen oder nutzungsändernden Eingriffen Pflicht. Geringfügige Maßnahmen können verfahrensfrei sein (Art. 57 Abs. 1 Nr. 6).',
-          'Required for structural or use-change interventions. Minor measures may be permit-free (Art. 57(1)(6)).',
+          tSimp.de,
+          tSimp.en,
+          `Bei strukturellen oder nutzungsändernden Eingriffen Pflicht. Geringfügige Maßnahmen können nach ${loc.labelDe}-LBO verfahrensfrei sein.`,
+          `Required for structural or use-change interventions. Minor measures may be permit-free under the ${loc.labelEn} LBO.`,
         ),
       ]
     case 'abbruch':
       return [
         baselineProcedure(
           'P-Abbruch',
-          'Abbruchanzeige bzw. Genehmigung · BayBO Art. 57 / 60',
-          'Demolition notification or permit · BayBO Art. 57 / 60',
-          'Bis 300 m³ umbauter Raum genügt eine Anzeige; darüber Baugenehmigung erforderlich.',
-          'Up to 300 m³ enclosed volume a notification suffices; above that a full permit is required.',
+          // Abbruch typically follows the state's regular procedure
+          // path; show the regular permit pack here.
+          reg.citation ? `${reg.nameDe} · ${reg.citation}` : reg.nameDe,
+          reg.citation ? `${reg.nameEn} · ${reg.citation}` : reg.nameEn,
+          `Abbruch-Anzeige bzw. Baugenehmigung nach ${loc.labelDe}-LBO; Schwelle und Form variieren je Land.`,
+          `Demolition notification or building permit per the ${loc.labelEn} LBO; threshold and form vary by state.`,
         ),
       ]
     default:
       return [
         baselineProcedure(
           'P-Vereinfacht',
-          'Vereinfachtes Baugenehmigungsverfahren · BayBO Art. 58',
-          'Simplified building permit · BayBO Art. 58',
-          'Standardpfad für die meisten Bauvorhaben in Bayern.',
-          'Standard path for most construction projects in Bayern.',
+          tSimp.de,
+          tSimp.en,
+          `Standardpfad für die meisten Bauvorhaben in ${loc.labelDe}.`,
+          `Standard path for most construction projects in ${loc.labelEn}.`,
         ),
       ]
   }
