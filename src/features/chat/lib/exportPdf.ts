@@ -389,7 +389,7 @@ export async function buildExportPdf({
           // exactly like Section VIII does (and like the result-page
           // SuggestionCard does).
           sourceLabel: src.rec.qualifier
-            ? formatQualifier(src.rec.qualifier)
+            ? formatQualifier(src.rec.qualifier, pdfStrings)
             : undefined,
         }
       }
@@ -399,7 +399,7 @@ export async function buildExportPdf({
         title,
         body,
         priority: inferPriority(title, body),
-        sourceLabel: 'LEGAL · CALCULATED',
+        sourceLabel: formatQualifier({ source: 'LEGAL', quality: 'CALCULATED' }, pdfStrings),
       }
     })
     renderExecutiveBody(executivePage, editorialFonts, pdfStrings, {
@@ -446,10 +446,16 @@ export async function buildExportPdf({
           // (v1.0.22+), Area A's planungsrechtliche assertion is
           // ASSUMED, not CALCULATED. Append a Stadtarchiv verification
           // caveat to the body.
+          // v1.0.20 Polish 2 — qualifier label in caveat body is now
+          // locale-resolved alongside the rest of the prose.
+          const assumedLabel = formatQualifier(
+            { source: 'LEGAL', quality: 'ASSUMED' },
+            pdfStrings,
+          )
           const caveat =
             lang === 'en'
-              ? 'Verify specific Bebauungsplan and Gestaltungssatzung with Stadtarchiv Düsseldorf — Königsallee lies in a regulated Innenstadt zone. LEGAL · ASSUMED until verified.'
-              : 'Konkreten Bebauungsplan und Gestaltungssatzung mit Stadtarchiv Düsseldorf abklären — Königsallee liegt in regulierter Innenstadtlage. LEGAL · ASSUMED bis verifiziert.'
+              ? `Verify specific Bebauungsplan and Gestaltungssatzung with Stadtarchiv Düsseldorf — Königsallee lies in a regulated Innenstadt zone. ${assumedLabel} until verified.`
+              : `Konkreten Bebauungsplan und Gestaltungssatzung mit Stadtarchiv Düsseldorf abklären — Königsallee liegt in regulierter Innenstadtlage. ${assumedLabel} bis verifiziert.`
           // v1.0.20 — \n\n paragraph break so the caveat renders as
           // its own block instead of an inline continuation.
           const reason = a.reason ? `${a.reason}\n\n${caveat}` : caveat
@@ -727,8 +733,8 @@ export async function buildExportPdf({
         title,
         body,
         qualifierLabel: r.qualifier
-          ? formatQualifier(r.qualifier)
-          : 'LEGAL · CALCULATED',
+          ? formatQualifier(r.qualifier, pdfStrings)
+          : formatQualifier({ source: 'LEGAL', quality: 'CALCULATED' }, pdfStrings),
         priority: inferPriority(title, body),
       }
     }),
@@ -738,7 +744,7 @@ export async function buildExportPdf({
       return {
         title,
         body,
-        qualifierLabel: 'LEGAL · CALCULATED',
+        qualifierLabel: formatQualifier({ source: 'LEGAL', quality: 'CALCULATED' }, pdfStrings),
         priority: inferPriority(title, body),
       }
     }),

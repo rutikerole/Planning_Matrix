@@ -311,8 +311,30 @@ async function runLocale(lang: 'en' | 'de'): Promise<{ passed: number; failed: n
       msg: 'Area A renders as two paragraphs (observation + Stadtarchiv caveat)',
     },
     {
-      pass: /LEGAL\s*·\s*ASSUMED/u.test(text),
-      msg: 'Area A qualifier honestly tagged LEGAL · ASSUMED (Bug 44)',
+      pass: lang === 'en'
+        ? /LEGAL\s*·\s*ASSUMED/u.test(text)
+        : /RECHTLICH\s*·\s*ANGENOMMEN/u.test(text),
+      msg: 'Area A qualifier honestly tagged ASSUMED (Bug 44, localized for v1.0.20 Polish 2)',
+    },
+    // v1.0.20 Polish 2 — qualifier pills localized in DE PDF
+    {
+      pass: lang === 'en'
+        ? /CLIENT\s*·\s*VERIFIED/u.test(text)
+        : /BAUHERR\s*·\s*VERIFIZIERT/u.test(text),
+      msg: 'CLIENT · VERIFIED qualifier renders localized',
+    },
+    {
+      pass: lang === 'en'
+        ? /LEGAL\s*·\s*CALCULATED/u.test(text)
+        : /RECHTLICH\s*·\s*BERECHNET/u.test(text),
+      msg: 'LEGAL · CALCULATED qualifier renders localized',
+    },
+    {
+      // DE PDF must NOT show English qualifier labels in pill positions
+      pass: lang === 'en'
+        ? true
+        : !/CLIENT\s*·\s*VERIFIED|LEGAL\s*·\s*CALCULATED|LEGAL\s*·\s*ASSUMED/u.test(text),
+      msg: 'DE PDF has zero English qualifier pill labels',
     },
   ]
 

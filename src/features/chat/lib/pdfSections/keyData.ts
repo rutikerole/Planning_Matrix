@@ -26,6 +26,7 @@ import {
   drawPaperBackground,
   drawQualifierPill,
   drawSafeText,
+  getQualifierLabel,
   type EditorialFonts,
 } from '../pdfPrimitives'
 import { pdfStr, type PdfStrings } from '../pdfStrings'
@@ -180,8 +181,10 @@ export function renderKeyDataBody(
     // Estimate pill width to know if it fits before the page right
     // edge. drawQualifierPill returns its consumed width; here we
     // approximate via text-width + padX*2 + small fudge.
+    // v1.0.20 — width estimation now uses the localized label so
+    // overflow detection works in both locales.
     const pillTextWidth = fonts.sansMedium.widthOfTextAtSize(
-      `${row.qualifier.source} · ${row.qualifier.quality}`,
+      getQualifierLabel(row.qualifier.source, row.qualifier.quality, strings),
       9,
     )
     const pillWidth = pillTextWidth + 12
@@ -191,6 +194,7 @@ export function renderKeyDataBody(
         quality: row.qualifier.quality,
         font: fonts.sansMedium,
         safe: fonts.safe,
+        strings,
       })
       rowY -= 22
     } else {
@@ -201,6 +205,7 @@ export function renderKeyDataBody(
         quality: row.qualifier.quality,
         font: fonts.sansMedium,
         safe: fonts.safe,
+        strings,
       })
       rowY -= 36
     }
