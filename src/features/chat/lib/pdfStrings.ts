@@ -171,7 +171,7 @@ const EN: PdfStrings = {
   'proc.empty': 'No procedure identified yet.',
   'proc.status.required': 'REQUIRED',
   'proc.status.optional': 'OPTIONAL',
-  'proc.status.exempt': 'EXEMPT',
+  'proc.status.exempt': 'PERMIT-FREE',
   'docs.kicker': 'SECTION 06 · DOCUMENTS',
   'docs.title': 'Submission documents',
   'docs.empty': 'No documents recorded yet — continue the consultation.',
@@ -347,7 +347,7 @@ const DE: PdfStrings = {
   'proc.empty': 'Noch kein Verfahren identifiziert.',
   'proc.status.required': 'ERFORDERLICH',
   'proc.status.optional': 'OPTIONAL',
-  'proc.status.exempt': 'BEFREIT',
+  'proc.status.exempt': 'VERFAHRENSFREI',
   'docs.kicker': 'ABSCHNITT 06 · DOKUMENTE',
   'docs.title': 'Einreichungs-Dokumente',
   'docs.empty':

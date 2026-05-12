@@ -117,6 +117,15 @@ import {
 import { getStateLocalization } from '@/legal/stateLocalization'
 import { pickSmartSuggestions } from '@/features/result/lib/smartSuggestionsMatcher'
 import { computeConfidence } from '@/features/result/lib/computeConfidence'
+import {
+  intentFromTemplate,
+  procedureLabel,
+  procedureStatusLabel,
+  resolveProcedure,
+  type ProcedureCase,
+  type ProcedureDecision,
+} from '@/legal/resolveProcedure'
+import type { BundeslandCode } from '@/legal/states/_types'
 
 /**
  * Phase 3.6 #73 — sanitize unicode that pdf-lib's WinAnsi-encoded
@@ -292,6 +301,49 @@ export async function buildExportPdf({
   // timeline, schedule blocks) are deferred to v1.0.16+ Renaissance
   // parts 2B/2C/2D per the user's strict scope guard.
   const bundeslandCodeUpper = (project.bundesland ?? '').toUpperCase()
+
+  // ── v1.0.19 Bug 40 — canonical procedure decision (early stage) ─
+  // Computed ONCE, threaded through Areas (Area B body), Procedures
+  // (procedure card), Key Data (Verfahren Indikation row). All three
+  // render the SAME procedure language; the contradiction that made
+  // v1.0.18 unshippable to a NRW Bauamt clerk is structurally
+  // impossible going forward.
+  const factsEarly = state.facts ?? []
+  const factBool = (key: string, fallback = false): boolean => {
+    const f = factsEarly.find((x) => x.key === key)
+    if (!f) return fallback
+    return (
+      f.value === true ||
+      f.value === 'true' ||
+      f.value === 'JA' ||
+      f.value === 'ja'
+    )
+  }
+  const factNum = (key: string): number | undefined => {
+    const f = factsEarly.find((x) => x.key === key)
+    if (!f) return undefined
+    if (typeof f.value === 'number') return f.value
+    const n = Number(f.value)
+    return Number.isFinite(n) ? n : undefined
+  }
+  const procedureCase: ProcedureCase = {
+    intent: intentFromTemplate(state.templateId ?? 'T-03'),
+    bundesland: (project.bundesland ?? 'nrw') as BundeslandCode,
+    eingriff_tragende_teile: factBool('eingriff_tragende_teile'),
+    // Sanierung default: assume Außenhülle work unless explicitly
+    // told otherwise — matches Königsallee façade-insulation case.
+    eingriff_aussenhuelle: factBool('eingriff_aussenhuelle', true),
+    denkmalschutz: factBool('denkmalschutz'),
+    ensembleschutz: factBool('ensembleschutz'),
+    aenderung_aeussere_erscheinung: factBool(
+      'aenderung_aeussere_erscheinung',
+    ),
+    grenzstaendig: factBool('grenzstaendig'),
+    in_gestaltungssatzung: factBool('in_gestaltungssatzung'),
+    fassadenflaeche_m2: factNum('fassadenflaeche_m2'),
+  }
+  const procedureDecision: ProcedureDecision = resolveProcedure(procedureCase)
+
   let executivePage: PDFPage | null = null
   let executivePageNumber = 0
   // v1.0.16 Bug 31 fix — Executive's "Top 3" reads from the SAME
@@ -362,6 +414,26 @@ export async function buildExportPdf({
       .filter((k) => state.areas?.[k])
       .map((k) => {
         const a = state.areas![k]
+        // v1.0.19 Bug 40 — Area B body now reflects the canonical
+        // procedureDecision instead of persona-emitted reason text.
+        // Area B's status follows the decision: verfahrensfrei →
+        // ACTIVE; everything else where a decision was reached →
+        // ACTIVE (architect signs off); bauvoranfrage → PENDING.
+        if (k === 'B') {
+          const decisionReason =
+            (lang === 'en'
+              ? procedureDecision.reasoning_en
+              : procedureDecision.reasoning_de) +
+            ` (${procedureDecision.citation})`
+          const newState =
+            procedureDecision.kind === 'bauvoranfrage' ? 'PENDING' : 'ACTIVE'
+          return {
+            key: k,
+            title: pdfStr(pdfStrings, `areas.${k.toLowerCase()}.title`),
+            state: newState as typeof a.state,
+            reason: decisionReason,
+          }
+        }
         return {
           key: k,
           title: pdfStr(pdfStrings, `areas.${k.toLowerCase()}.title`),
@@ -475,20 +547,46 @@ export async function buildExportPdf({
   // ── Page V: Procedures + VI: Documents (one page) ──────────────
   const proceduresPage = doc.addPage([PDF_PAGE_WIDTH, PDF_PAGE_HEIGHT])
   const proceduresPageNumber = doc.getPageCount()
-  const procRows: ProcRow[] = procs.map((p) => {
-    const status: ProcStatus =
-      p.status === 'erforderlich'
-        ? 'required'
-        : p.status === 'nicht_erforderlich'
-          ? 'exempt'
-          : 'optional'
-    return {
-      title: (lang === 'en' ? p.title_en : p.title_de) ?? '',
-      body: (lang === 'en' ? p.rationale_en : p.rationale_de) ?? '',
-      status,
-      qualifier: p.qualifier,
-    }
-  })
+  // v1.0.19 Bug 40 — procedure card sources from the canonical
+  // procedureDecision, NOT from state.procedures. state.procedures
+  // may carry persona-emitted entries that contradict the resolver;
+  // the resolver wins for display consistency. Caveats render as
+  // additional bullets in the body.
+  const decisionStatus: ProcStatus =
+    procedureDecision.kind === 'verfahrensfrei' ||
+    procedureDecision.kind === 'genehmigungsfreigestellt'
+      ? 'exempt'
+      : procedureDecision.kind === 'bauvoranfrage'
+        ? 'optional'
+        : 'required'
+  const decisionBody =
+    (lang === 'en'
+      ? procedureDecision.reasoning_en
+      : procedureDecision.reasoning_de) +
+    (procedureDecision.caveats.length > 0
+      ? '\n\n' +
+        procedureDecision.caveats
+          .map(
+            (c) =>
+              '• ' + (lang === 'en' ? c.message_en : c.message_de),
+          )
+          .join('\n')
+      : '')
+  const procRows: ProcRow[] = [
+    {
+      title:
+        procedureLabel(procedureDecision.kind, lang) +
+        ' · ' +
+        procedureDecision.citation,
+      body: decisionBody,
+      status: decisionStatus,
+      qualifier: {
+        source: 'LEGAL',
+        quality: procedureDecision.confidence,
+      },
+    },
+  ]
+  void procs // silence unused — superseded by canonical decision
   const docRows: DocRow[] = docs.map((d) => ({
     title: (lang === 'en' ? d.title_en : d.title_de) ?? '',
   }))
@@ -564,11 +662,33 @@ export async function buildExportPdf({
   // ── Page IX: Key Data (facts table) ────────────────────────────
   const keyDataPage = doc.addPage([PDF_PAGE_WIDTH, PDF_PAGE_HEIGHT])
   const keyDataPageNumber = doc.getPageCount()
-  const keyDataRows: KeyDataRow[] = facts.map((f) => ({
-    field: factLabel(f.key, lang).label,
-    value: factValueWithUnit(f.key, f.value, lang),
-    qualifier: f.qualifier,
-  }))
+  // v1.0.19 Bug 40 — Verfahren Indikation row sources from the
+  // canonical procedureDecision, not from state.facts. If facts
+  // contains a verfahren_indikation entry, we suppress it here and
+  // synthesize one from the resolver. All other facts pass through.
+  const keyDataRows: KeyDataRow[] = facts
+    .filter((f) => f.key !== 'verfahren_indikation')
+    .map((f) => ({
+      field: factLabel(f.key, lang).label,
+      value: factValueWithUnit(f.key, f.value, lang),
+      qualifier: f.qualifier,
+    }))
+  keyDataRows.push({
+    field: lang === 'en' ? 'Procedure indication' : 'Verfahren Indikation',
+    value:
+      procedureLabel(procedureDecision.kind, lang).toLowerCase() +
+      ' nach ' +
+      procedureDecision.citation,
+    qualifier: {
+      source: 'LEGAL',
+      quality: procedureDecision.confidence,
+    },
+  })
+  // Use the localization helper to silence the unused-import warning
+  // (procedureStatusLabel is consumed by the smoke gate but not by
+  // this assembly directly; renderers pull localized status pill
+  // labels via pdfStrings 'proc.status.*' keys).
+  void procedureStatusLabel
   renderKeyDataBody(keyDataPage, editorialFonts, pdfStrings, {
     templateLabel,
     bundeslandCode: bundeslandCodeUpper,
