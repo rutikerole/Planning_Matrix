@@ -147,7 +147,7 @@ export function renderRecsBody(
       safe: fonts.safe,
     })
     // Qualifier line
-    drawSafeText(page, `▸ ${rec.qualifierLabel}`, {
+    drawSafeText(page, `· ${rec.qualifierLabel}`, {
       x: titleX,
       y: bodyEndY - 2,
       size: 10,

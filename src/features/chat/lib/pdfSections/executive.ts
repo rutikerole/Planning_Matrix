@@ -239,7 +239,7 @@ export function renderExecutiveBody(
       let chipX = titleX
       const chipY = bodyEndY - 4
       if (rec.sourceLabel) {
-        const chipText = `▸ ${rec.sourceLabel}`
+        const chipText = `· ${rec.sourceLabel}`
         drawSafeText(page, chipText, {
           x: chipX,
           y: chipY,
@@ -252,7 +252,7 @@ export function renderExecutiveBody(
           fonts.sans.widthOfTextAtSize(fonts.safe(chipText), 11) + 18
       }
       if (rec.whenLabel) {
-        const chipText = `▸ ${rec.whenLabel}`
+        const chipText = `· ${rec.whenLabel}`
         drawSafeText(page, chipText, {
           x: chipX,
           y: chipY,

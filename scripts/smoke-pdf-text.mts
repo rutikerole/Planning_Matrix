@@ -167,6 +167,10 @@ async function runLocale(lang: 'en' | 'de'): Promise<{ passed: number; failed: n
     { pass: /Planning\s*Matrix|PLANNING\s*MATRIX/u.test(text), msg: 'wordmark rendered' },
     { pass: /≈/u.test(text), msg: '≈ (U+2248) almost-equals symbol intact in timeline subtitle' },
     { pass: /m²/u.test(text), msg: 'm² (U+00B2 superscript) intact in costs subtitle' },
+    // v1.0.18 Bug 35 — context-checked: " ² " with leading + trailing
+    // space is ALWAYS a bug (legitimate m² has no leading space).
+    { pass: !/\s²\s/u.test(text), msg: 'no orphan ² substitutions (v1.0.18 Bug 35 guard)' + (/\s²\s/u.test(text) ? ` — context: "${text.match(/.{0,20}\s²\s.{0,20}/u)?.[0] ?? ''}"` : '') },
+    { pass: !/\s²LEGAL|\s²CLIENT|\s²DESIGNER/u.test(text), msg: 'no ² before qualifier labels' },
   ]
 
   // Language-specific assertions

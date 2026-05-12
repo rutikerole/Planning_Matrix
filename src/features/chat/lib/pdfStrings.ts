@@ -119,7 +119,7 @@ const EN: PdfStrings = {
   'timeline.kicker': 'SECTION 04 · TIMELINE',
   'timeline.title': 'Estimated timeline',
   'timeline.sub':
-    'Total duration ≈ 4–6 months · subject to authority workload',
+    'Total duration ~ 4–6 months · subject to authority workload',
   'timeline.weekLabel': 'WEEK',
   'timeline.phase.prep': 'Preparation · LP 1–4',
   'timeline.phase.prep.duration': '8–14 weeks',
@@ -292,7 +292,7 @@ const DE: PdfStrings = {
   'timeline.kicker': 'ABSCHNITT 04 · ZEITPLAN',
   'timeline.title': 'Geschätzter Zeitplan',
   'timeline.sub':
-    'Gesamtdauer ≈ 4–6 Monate · abhängig von Behördenauslastung',
+    'Gesamtdauer ca. 4–6 Monate · abhängig von Behördenauslastung',
   'timeline.weekLabel': 'WOCHE',
   'timeline.phase.prep': 'Vorbereitung · LP 1–4',
   'timeline.phase.prep.duration': '8–14 Wochen',

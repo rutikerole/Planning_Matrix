@@ -122,7 +122,7 @@ export function renderProceduresBody(
         color: INK,
         safe: fonts.safe,
       })
-      drawSafeText(page, `▸ ${formatQualifier(proc.qualifier)}`, {
+      drawSafeText(page, `· ${formatQualifier(proc.qualifier)}`, {
         x: MARGIN,
         y: bodyEndY - 2,
         size: 10,
