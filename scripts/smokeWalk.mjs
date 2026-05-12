@@ -2153,6 +2153,41 @@ async function runStaticGate() {
     },
   ]))
 
+  // ── v1.0.12 Bug 22 regression closure — kill ZWNJ injection ───────
+  // v1.0.11 preventBrandLigatures injected U+200C between f+i/l/f
+  // pairs to break OpenType `liga` GSUB. Inter TTF subset lacks a
+  // U+200C glyph → pdf-lib + fontkit fell back to .notdef → Inter
+  // rendered .notdef as a SPACE-WIDTH glyph. Every f+i/l/f pair
+  // rendered with a visible space: "conf irmed" / "Pf licht" /
+  // "f loor" / "Eingrif f" across every PDF page.
+  // Path A: no-op the helper. pdf-lib's font.encodeText looks up
+  // glyph indices per character — it does NOT invoke fontkit's
+  // shaping layout (where GSUB `liga` would apply). Plain ASCII
+  // "fi" / "fl" / "ff" passed to drawText embeds as separate glyph
+  // indices for f / i / l / f; no ligature glyph is placed in the
+  // content stream. ToUnicode CMap pdf-lib generates maps each
+  // glyph back to its source character, so text extraction yields
+  // clean "fi" / "fl" / "ff" regardless of viewer display-time
+  // shaping. decomposeLigatures (above) still runs ALWAYS to strip
+  // any literal U+FB0x codepoints from persona-emitted content.
+  const winAnsiSafeSrcV12 = await readFileText('src/lib/winAnsiSafe.ts')
+  results.push(failures('v1.0.12 Bug 22 regression: preventBrandLigatures no-ops ZWNJ', [
+    {
+      ok: /return\s+text\s*\n?\s*\}\s*$/m.test(winAnsiSafeSrcV12) ||
+          /export\s+function\s+preventBrandLigatures\s*\([^)]*\)\s*:\s*string\s*\{[\s\S]{0,200}return\s+text\s*\n/.test(winAnsiSafeSrcV12),
+      msg: 'preventBrandLigatures body must be a no-op (return text;)',
+    },
+    {
+      ok: !/'f‌\$1'/.test(winAnsiSafeSrcV12) &&
+          !/'f‌\$1'/.test(winAnsiSafeSrcV12),
+      msg: 'preventBrandLigatures must NOT inject U+200C between letter pairs (v1.0.11 regression)',
+    },
+    {
+      ok: /v1\.0\.12 path A/.test(winAnsiSafeSrcV12) || /v1\.0\.12 Bug 22 regression closure/.test(winAnsiSafeSrcV12),
+      msg: 'helper docstring must record the v1.0.12 Path A decision (rationale for the no-op)',
+    },
+  ]))
+
   // ── v1.0.11 Bug 24 — per-template cost-basis field resolver ───────
   // The cost engine's detectAreaSqm regex requires a unit suffix on
   // the value; T-03 Sanierung's persona emits fassadenflaeche_m2 as
