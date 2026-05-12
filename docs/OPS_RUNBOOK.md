@@ -275,23 +275,29 @@ Phases 11–13 and ship as-known into v1. Each row says what the
 issue is, what its real-world impact is, and what the fix path
 looks like post-v1.
 
-### B04 — `projects.bundesland` partly decorative
+### B04 — `projects.bundesland` partly decorative — CLOSED in v1.0.9
 
 - **Where:** previously `src/features/wizard/hooks/useCreateProject.ts:184`,
   hardcoded to `'bayern'`.
-- **v1.0.6 surgical mitigation:** wizard exposes an explicit
-  Bundesland dropdown in Q2 (`src/features/wizard/components/
+- **v1.0.6 surgical mitigation (Bug 0):** wizard exposes a 16-option
+  explicit Bundesland dropdown in Q2 (`src/features/wizard/components/
   QuestionPlot.tsx`); `useCreateProject` writes the user's selection
-  through to `projects.bundesland`. 16 options, default 'bayern'.
-  Hessen × T-03 re-walk against v1.0.6 confirms a project at
-  Frankfurt + bundesland=hessen lands `bundesland='hessen'` in DB.
-- **v1.1 scope:** full address-to-state inference (PLZ → Bundesland
-  + automatic preselection in the dropdown).
-- **Historical impact (closed in v1.0.6):** non-Bayern projects
-  couldn't be created via the wizard. The 5 substantive Phase-12
-  states and 11 stub StateDeltas were unreachable from production
-  traffic; every project resolved to BAYERN_DELTA. Hessen × T-03
-  smoke walk caught this empirically.
+  through to `projects.bundesland`. Hessen × T-03 walk confirmed it
+  worked when the user manually changed the dropdown.
+- **v1.0.9 closure (Bug 13):** dropdown now auto-pre-selects from
+  the address's German PLZ first-two-digits (Deutsche Post sector
+  table). The hint below the dropdown reads "Detected from postcode
+  {{plz}}. Change if this is wrong." for non-empty addresses. Users
+  entering "Marktplatz 2, 40213 Düsseldorf" now get bundesland=nrw
+  in DB by default; manual override still available for border
+  cases. Inference helper: `src/features/wizard/lib/
+  inferBundeslandFromPostcode.ts`. 9 known-PLZ resolution samples
+  pinned via smokeWalk drift fixture.
+- **Historical impact (now fully closed):** non-Bayern projects
+  couldn't be created via the wizard. Every project resolved to
+  BAYERN_DELTA. Hessen × T-03 walk caught the symptom; v1.0.6
+  Bug 0 provided manual control; v1.0.9 Bug 13 closed the UX gap
+  with auto-detection.
 
 ### B10 — Tracer FK ordering chronic
 

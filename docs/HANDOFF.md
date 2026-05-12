@@ -461,7 +461,7 @@ shipped in Phase 13 Week 4). What's missing is the cron harness
 
 ## 9. Operational responsibilities — split between engineering and client
 
-The **v1.0.8 tag is the production-ready release**. The version
+The **v1.0.9 tag is the production-ready release**. The version
 ladder:
   • v1.0   = engineering milestone (complete feature scope).
   • v1.0.1 = invite-flow security hardening (owner-check on share,
@@ -488,6 +488,17 @@ ladder:
   • v1.0.5 = Layer-C citation firewall (allowedCitations runtime
              positive-list enforcement; closes PROD_READINESS_AUDIT
              B3).
+  • v1.0.9 = wizard Bundesland auto-detection (1 fix commit +
+             docs). The Düsseldorf NRW smoke walk surfaced v1.0.8's
+             dropdown defaulting to 'bayern' regardless of address,
+             silently creating Bayern projects for non-Bayern
+             addresses. Fix: deterministic first-two-digits-of-
+             PLZ → Bundesland lookup (Deutsche Post postal-sector
+             table). Wizard pre-selects the dropdown on every
+             address change; hint copy switches to "Detected from
+             postcode {{plz}}. Change if this is wrong." User
+             remains free to override for border cases. Closes
+             B04's residual UX gap. Bayern SHA preserved.
   • v1.0.8 = coverage-expansion sprint (4 commits, harnesses
              BUILT but not yet RUN against live production).
              W1: scripts/architect-e2e-smoke.mjs — 7-phase live

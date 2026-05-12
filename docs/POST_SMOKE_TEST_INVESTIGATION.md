@@ -4,6 +4,32 @@
 > Bayern SHA `b18d3f7f9a6fe238c18cec5361d30ea3a547e46b1ef2b16a1e74c533aacb3471`
 > verified MATCH at start AND end of read pass. No code edits.
 
+## V1.0.9 RESOLVED FINDING — Düsseldorf NRW smoke walk
+
+Rutik ran a Düsseldorf NRW smoke against v1.0.8 and observed the
+wizard's Bundesland dropdown defaulting to 'bayern' regardless of
+the typed address. The persona's moderator turn then explicitly
+said "our advisory covers Bavaria" on a clearly NRW project.
+
+| # | Bug                                                | Severity | v1.0.9 commit                                  |
+| - | -------------------------------------------------- | -------- | ---------------------------------------------- |
+| 13 | Wizard Bundesland dropdown stays at 'bayern' default | P1      | `7738069 fix(wizard): auto-detect Bundesland from German postcode prefix` |
+
+Root cause: v1.0.6 Bug 0 added the dropdown but no address-to-state
+inference. Default was 'bayern'; users who didn't notice the
+dropdown silently created Bayern projects.
+
+Fix: deterministic Deutsche Post postal-sector lookup
+(`src/features/wizard/lib/inferBundeslandFromPostcode.ts`).
+Pre-selects the dropdown on every address change; hint copy
+surfaces the detected PLZ verbatim. Manual override preserved
+for border-case properties.
+
+Bayern SHA `b18d3f7f9a6fe238c18cec5361d30ea3a547e46b1ef2b16a1e74c533aacb3471`
+held.
+
+---
+
 ## V1.0.7 RESOLVED FINDINGS — post-v1.0.6 visibility-gap closure
 
 Rutik's post-v1.0.6 live-deploy observation on existing Hessen
