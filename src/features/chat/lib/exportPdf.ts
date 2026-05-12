@@ -115,6 +115,7 @@ import {
 } from './pdfStrings'
 import { getStateLocalization } from '@/legal/stateLocalization'
 import { pickSmartSuggestions } from '@/features/result/lib/smartSuggestionsMatcher'
+import { computeConfidence } from '@/features/result/lib/computeConfidence'
 
 /**
  * Phase 3.6 #73 — sanitize unicode that pdf-lib's WinAnsi-encoded
@@ -232,6 +233,11 @@ export async function buildExportPdf({
   // Cover page (page 1). totalPages placeholder; finalizePageFooters
   // will rewrite once doc is fully built.
   const coverPage = doc.addPage([PDF_PAGE_WIDTH, PDF_PAGE_HEIGHT])
+  // v1.0.18 Feature 2 — surface composite confidence score on cover.
+  // Same number that the result-page header renders, sourced from
+  // the single computeConfidence helper (qualifier-aggregate +
+  // section-completeness weighted composite).
+  const confidencePercent = computeConfidence(state as ProjectState)
   renderCoverPage(coverPage, editorialFonts, pdfStrings, {
     projectTitle: projectTitleForCover,
     address: project.plot_address ?? '',
@@ -242,6 +248,7 @@ export async function buildExportPdf({
     revision,
     bauherrName,
     totalPages: 0,
+    confidencePercent,
   })
 
   // TOC page (page 2) — body sections start on page 3. Approximate

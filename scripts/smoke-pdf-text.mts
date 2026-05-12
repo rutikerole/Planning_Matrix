@@ -183,6 +183,13 @@ async function runLocale(lang: 'en' | 'de'): Promise<{ passed: number; failed: n
         : /GÜLTIG 30 TAGE/u.test(text),
       msg: 'validity stamp present on cover',
     },
+    // v1.0.18 Feature 2 — confidence column present on cover
+    {
+      pass: lang === 'en'
+        ? /CONFIDENCE/u.test(text) && /\d+%/u.test(text)
+        : /VERTRAUEN/u.test(text) && /\d+%/u.test(text),
+      msg: 'confidence column + percent value on cover',
+    },
   ]
 
   // Language-specific assertions

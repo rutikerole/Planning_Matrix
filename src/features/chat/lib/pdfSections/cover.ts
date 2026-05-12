@@ -51,6 +51,9 @@ export interface CoverData {
    *  no longer carries page-number copy. v1.0.13 used this field for
    *  an unresolved-total placeholder that v1.0.14 retired (Path A). */
   totalPages: number
+  /** v1.0.18 Feature 2 — composite confidence 0..100. Displayed as
+   *  4th column in metadata grid. */
+  confidencePercent: number
 }
 
 export function renderCoverPage(
@@ -130,9 +133,12 @@ export function renderCoverPage(
     opacity: 0.55,
   })
 
-  // 3-column metadata grid (BUNDESLAND / TEMPLATE / CREATED).
+  // v1.0.18 Feature 2 — 4-column metadata grid (BUNDESLAND /
+  // TEMPLATE / CREATED / CONFIDENCE). Previously 3-column; the
+  // 4th cell surfaces the composite confidence score so the
+  // bauherr knows the deliverable's signal strength at a glance.
   const gridTopY = midY - 110
-  const colWidth = (PAGE_WIDTH - 2 * MARGIN) / 3
+  const colWidth = (PAGE_WIDTH - 2 * MARGIN) / 4
   drawLabelValue(
     page,
     MARGIN,
@@ -155,6 +161,14 @@ export function renderCoverPage(
     gridTopY,
     pdfStr(strings, 'cover.createdLabel'),
     data.createdDate,
+    fonts,
+  )
+  drawLabelValue(
+    page,
+    MARGIN + 3 * colWidth,
+    gridTopY,
+    pdfStr(strings, 'cover.confidenceLabel'),
+    `${data.confidencePercent}%`,
     fonts,
   )
 
