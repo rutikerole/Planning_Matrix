@@ -21,6 +21,7 @@
     "freshness:report": "node scripts/freshness-check.mjs --report-only",
     "smoke:citations": "node scripts/smokeWalk.mjs",
     "smoke:citations:live": "node scripts/smokeWalk.mjs --live",
+    "smoke:pdf-text": "npx tsx scripts/smoke-pdf-text.mts",
     "smoke:architect-e2e": "node scripts/architect-e2e-smoke.mjs",
     "smoke:matrix": "node scripts/smoke-walk-matrix.mjs",
     "verify:bayern-sha": "node scripts/verify-bayern-sha.mjs",

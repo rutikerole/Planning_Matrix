@@ -2439,6 +2439,30 @@ async function runStaticGate() {
     },
   ]))
 
+  // ── v1.0.17 runtime smoke harness exists ──────────────────────────
+  const fs2 = await import('node:fs')
+  const smokePdfTextExists = fs2.existsSync(`${REPO_ROOT}/scripts/smoke-pdf-text.mts`)
+  const fixtureExists = fs2.existsSync(`${REPO_ROOT}/test/fixtures/nrw-t03-koenigsallee.json`)
+  const pkgJsonV17 = await readFileText('package.json')
+  results.push(failures('v1.0.17: smoke:pdf-text runtime gate (5th daily gate)', [
+    {
+      ok: smokePdfTextExists,
+      msg: 'scripts/smoke-pdf-text.mts present',
+    },
+    {
+      ok: fixtureExists,
+      msg: 'test/fixtures/nrw-t03-koenigsallee.json fixture present',
+    },
+    {
+      ok: /"smoke:pdf-text":\s*"npx tsx scripts\/smoke-pdf-text\.mts"/.test(pkgJsonV17),
+      msg: 'package.json declares smoke:pdf-text npm script',
+    },
+    {
+      ok: /"pdf-parse":/.test(pkgJsonV17),
+      msg: 'pdf-parse devDep declared',
+    },
+  ]))
+
   // ── v1.0.17 permanent ligature kill — embedFont features.liga=false ──
   const fontLoaderSrc = await readFileText('src/lib/fontLoader.ts')
   results.push(failures('v1.0.17: embedFont passes features.liga=false to disable GSUB at fontkit layer', [

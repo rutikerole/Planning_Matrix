@@ -34,7 +34,7 @@ export function factLabel(key: string, locale: FactLocale): FactLabel {
   const upperHit = table[upperKey]
   if (upperHit) return upperHit
 
-  if (import.meta.env.DEV && !warned.has(key)) {
+  if (import.meta.env?.DEV && !warned.has(key)) {
     warned.add(key)
     console.warn(
       `[factLabel] unmapped key: ${key}. Falling back to humanizer. ` +
