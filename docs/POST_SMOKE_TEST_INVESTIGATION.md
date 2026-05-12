@@ -4,6 +4,81 @@
 > Bayern SHA `b18d3f7f9a6fe238c18cec5361d30ea3a547e46b1ef2b16a1e74c533aacb3471`
 > verified MATCH at start AND end of read pass. No code edits.
 
+## V1.0.16 SHIPPED — PDF Renaissance Part 2B + architectural ligature-regression KILL
+
+Empirical re-walk of v1.0.15 NRW × T-03 Königsallee EN export
+surfaced 4 P0 regressions that v1.0.15 either introduced or failed
+to close:
+
+| # | Bug                                                | Severity | Root cause                                                                                                            | Closure                                                                                                                                                                                                                       |
+|---|----------------------------------------------------|----------|-----------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| 31 | Executive renders 1 card, not 3                    | P0       | v1.0.15 wired the Executive to `state.recommendations.slice(0,3)`. Königsallee had only 1 stored rec; the other 2 visible "Top 3" entries lived in `pickSmartSuggestions`. Section VIII page 7 merged both sources; Executive did not. | Executive build path mirrors Section VIII: `sortedRecs ++ smartPicksForExec`, sliced to 3. `ExecSource` discriminated union maps each kind to `ExecutiveRec`. Drift fixture pins the merge.                                  |
+| 32 | DESIGNER · ASSUMED on Executive top card           | P0       | `formatRecommendationQualifier` was a private function in exportPdf.ts. Only Section VIII could call it. v1.0.15's Executive built `sourceLabel` inline as `${q.source} · ${q.quality}` — bypassing the DESIGNER+ASSUMED → LEGAL · CALCULATED downgrade. | Moved + renamed to `formatQualifier` in pdfPrimitives.ts. Executive imports + applies it for persisted recs (smart picks get static "LEGAL · CALCULATED"). v1.0.12 Bug 25 fixture updated to assert the new home.            |
+| 33 | Ligature corruption on new pages 3 + 4             | P0       | `safe` lived as a module-level `let` in exportPdf.ts (line 91). Section renderers (cover/executive/areas) are pure functions in pdfSections/ — they physically cannot see the closure. Each called `page.drawText` raw, producing ċ/Č/PČicht glyph substitutions. | **ARCHITECTURAL FIX** (the long-term defense). See narrative below.                                                                                                                                                            |
+| 34 | Ligature corruption ALSO on old plain-text pages 5-10 | P0       | Same systemic flaw — v1.0.14 Bug 30 fixed the duplicate-font-embed half but left the closure scoping unchanged. Subsequent refactors (v1.0.15 font consolidation) preserved the architectural smell. | Same architectural fix forces the sanitizer into the type system so it can never silently drop. Empirical confirmation deferred to Rutik's re-export verification.                                                              |
+
+**The architectural fix (kills the regression cycle for good).**
+
+`safe` is no longer a closure callers might or might not see. It's
+a required field on `EditorialFonts` (the render context every
+renderer already takes), populated by `resolveEditorialFonts` from
+a new factory `resolveSafeTextFn(usingFallback)` in pdfPrimitives.
+Every text-drawing primitive (drawKicker / drawEditorialTitle /
+drawMonoMeta / drawLabelValue / drawFooter / drawTocLine /
+drawWrappedText / drawPriorityPill / drawCircularBadge /
+drawStatusLegend) applies `fonts.safe` internally. Section renderers
+that need a one-off draw must use the new `drawSafeText` primitive,
+whose opts shape requires `safe: SafeTextFn` — a missing safe is a
+TypeScript compile error.
+
+The cover.ts / executive.ts / areas.ts renderers were refactored to
+consume the new API (6 + 5 + 2 raw `page.drawText` calls,
+respectively, → all routed through `drawSafeText` + primitives).
+exportPdf.ts's module-level `let safe` now reassigns from
+`resolveSafeTextFn(fonts.usingFallback)` — same factory the
+EditorialFonts.safe field uses, so body-page drawText calls and
+editorial renderer drawText calls are guaranteed to apply the same
+pipeline.
+
+The structural guardrail is a filesystem-scan drift fixture:
+`grep -rn 'page\.drawText' src/features/chat/lib/pdfSections/`
+must return ZERO matches. Future v1.0.17+ renderers
+(procedures/team/recommendations/keyData/verification/glossary)
+CANNOT introduce ligature regressions because they cannot call
+drawText raw — the fixture fails at commit time.
+
+**13-commit sprint shipped:**
+
+| #  | Sprint commit                                                       |
+|----|---------------------------------------------------------------------|
+| 1  | feat(pdf): architectural fix — ctx.safe baked into primitives        |
+| 2  | test(pdf): drift fixture pinning the v1.0.16 architectural invariant |
+| 3  | fix(pdf): Bug 31 — executive merges recs + smartPicks for top 3       |
+| 4  | fix(pdf): Bug 32 — formatQualifier unified in pdfPrimitives           |
+| 5  | feat(pdf): costs page strings                                        |
+| 6  | feat(pdf): drawTable + drawNotesBlock primitives                      |
+| 7  | feat(pdf): costs page renderer                                        |
+| 8  | feat(pdf): timeline page strings                                      |
+| 9  | feat(pdf): timeline primitives (Gantt + week ruler + milestone)       |
+| 10 | feat(pdf): timeline page renderer                                     |
+| 11 | feat(pdf): wire costs + timeline into exportPdf assembly              |
+| 12 | test(pdf): comprehensive drift fixtures for v1.0.16                   |
+| 13 | docs(v1.0.16): record Renaissance Part 2B sprint outcomes (this)      |
+
+Plus the annotated tag.
+
+**What's left for v1.0.17+:** procedures + documents + team
+(Sections V-VII), recommendations + key data (Sections VIII-IX),
+verification + glossary + audit log (Section X). Still v1.0.12
+plain-text. Each its own 2-page sprint with its own Rutik
+checkpoint.
+
+Bayern SHA `b18d3f7f9a6fe238c18cec5361d30ea3a547e46b1ef2b16a1e74c533aacb3471`
+preserved at start AND end of every commit. Bundle 269.1 KB gz /
+300 KB ceiling.
+
+---
+
 ## V1.0.15 SHIPPED — PDF Renaissance Part 2A (Executive + Areas)
 
 Tightly scoped follow-on to v1.0.14: ONLY the executive (Section 01

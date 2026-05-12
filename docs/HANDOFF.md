@@ -461,11 +461,12 @@ shipped in Phase 13 Week 4). What's missing is the cron harness
 
 ## 9. Operational responsibilities — split between engineering and client
 
-The **v1.0.14 tag is the production-ready release**. v1.0.15 ships
-the first two editorial PDF pages (executive + areas) but the
-remaining seven body sections are still in v1.0.12 plain-text state,
-so v1.0.14 stays the last "all body sections coherent" tag until
-v1.0.16+ closes the rest of the Renaissance. The version ladder:
+The **v1.0.14 tag is the production-ready release**. v1.0.15 +
+v1.0.16 ship the first four editorial PDF pages (executive + areas
++ costs + timeline) but pages 7+ are still in v1.0.12 plain-text
+state, so v1.0.14 stays the last "all body sections coherent" tag
+until v1.0.17+ closes the rest of the Renaissance. The version
+ladder:
   • v1.0   = engineering milestone (complete feature scope).
   • v1.0.1 = invite-flow security hardening (owner-check on share,
              role-check on accept, 7-day TTL on invites).
@@ -606,6 +607,112 @@ v1.0.16+ closes the rest of the Renaissance. The version ladder:
               verification / glossary untouched. Those land in
               v1.0.16+. Bayern SHA preserved both ends of every
               commit. Bundle 269.1 KB gz (300 KB ceiling).
+  • v1.0.16 = PDF Renaissance Part 2B — Costs + Timeline pages +
+              architectural ligature-regression KILL (13 commits +
+              docs). Empirical re-walk of v1.0.15 NRW × T-03
+              Königsallee surfaced 4 P0 regressions: Bug 31
+              (Executive renders 1 card not 3 — wrong data source),
+              Bug 32 (DESIGNER · ASSUMED on Executive — bypassed
+              formatRecommendationQualifier), Bug 33 (ligature
+              corruption on new pages 3+4 — renderers called
+              page.drawText raw, bypassing safe()), Bug 34 (ligature
+              corruption ALSO on old pages 5-10 — same systemic
+              flaw).
+              ARCHITECTURAL FIX (the long-term defense):
+              - SafeTextFn type + resolveSafeTextFn(usingFallback)
+                factory in pdfPrimitives.ts — single source of truth
+                for the sanitization pipeline.
+              - EditorialFonts gains a REQUIRED safe: SafeTextFn
+                field, populated by resolveEditorialFonts via the
+                factory.
+              - New drawSafeText primitive — section renderers'
+                one-off draws route through this; the required safe
+                field on opts means forgetting sanitization is a
+                TypeScript compile error.
+              - All existing text-drawing primitives (drawKicker /
+                drawEditorialTitle / drawCoverTitle / drawMonoMeta /
+                drawLabelValue / drawFooter / drawTocLine /
+                drawWrappedText / drawPriorityPill /
+                drawCircularBadge / drawStatusLegend) apply
+                fonts.safe internally.
+              - exportPdf.ts's local `safe` closure now sources from
+                resolveSafeTextFn — same fn that EditorialFonts.safe
+                carries to renderers, so body + editorial pages can
+                never drift.
+              - Drift fixture: filesystem scan asserts ZERO raw
+                page.drawText calls in any *.ts file under
+                pdfSections/. Future v1.0.17+ renderers physically
+                cannot bypass safe().
+              Bug 31 closed: Executive's "Top 3" now reads from the
+              SAME merged source as body Section VIII —
+              state.recommendations ++ pickSmartSuggestions, sliced
+              to 3. ExecSource discriminated union maps each kind
+              ('rec' | 'smart') to the unified ExecutiveRec shape.
+              Smart picks get a static "LEGAL · CALCULATED"
+              qualifier; persisted recs route through formatQualifier.
+              Bug 32 closed: formatRecommendationQualifier moved
+              from exportPdf.ts to pdfPrimitives.ts and renamed
+              formatQualifier (shorter, generic). Executive + Section
+              VIII + future v1.0.17+ renderers all consume the same
+              DESIGNER+ASSUMED → LEGAL · CALCULATED normalization.
+              Bug 33 + 34 closed permanently by the architectural
+              fix above. No section renderer can ever call
+              page.drawText raw again — fixture pins the invariant.
+              v1.0.16 NEW primitives (pdfPrimitives.ts extensions):
+              - drawSafeText (architectural enforcement primitive)
+              - drawTable (header + body rows + optional basisRow
+                sub-line + totalRow with INK divider + tabular
+                right-aligned values)
+              - drawNotesBlock (2pt CLAY border-left + 11pt CLAY
+                kicker + 11pt INK body via drawWrappedText)
+              - drawWeekRuler (monospace week-number labels at ticks
+                + CLAY hairline, localized WEEK/WOCHE prefix)
+              - drawGanttRow (header label/duration + paper-tinted
+                track + work/wait kind-coded fill bar)
+              - drawMilestoneCallout (2pt AMBER border-left + amber
+                diamond via drawSvgPath + label + detail)
+              - AMBER color constant (shared with executive's
+                high-priority accent)
+              - formatQualifier (moved from exportPdf.ts)
+              - resolveSafeTextFn (single sanitizer factory)
+              Costs page (pdfSections/costs.ts): kicker + 26pt
+              italic-serif title + right-anchored template · state
+              meta + 11pt CLAY italic-serif subtitle with {n}m²
+              façade / {state} BKI substitution + drawTable with 3
+              columns (ITEM 40% / BASIS 35% / EUR RANGE 25% right-
+              aligned) where each main row carries an italic-serif
+              CLAY basis sub-line (HOAI Zone / § citation) + total
+              row with 1pt INK divider + right-aligned tabular
+              value + drawNotesBlock NOTES caption. CostsData built
+              from the existing v1.0.11 cost composer
+              (buildCostBreakdown + resolveAreaSqmByTemplate +
+              formatEurRange) — no engine duplication, no drift from
+              the result-page tab.
+              Timeline page (pdfSections/timeline.ts): kicker +
+              title + subtitle + drawWeekRuler at y≈695 ticks every
+              4 weeks + 4 stacked drawGanttRow rows (prep 0-12 work
+              / submit 12-13 work / review 13-21 wait / fixes 21-23
+              work) + drawMilestoneCallout for Baugenehmigung at
+              week 22. DEFAULT_TIMELINE_PHASES / _TOTAL_WEEKS /
+              _MILESTONE_WEEK exported as immutable T-03 schedule
+              template (per-template parameterization is v1.0.17+
+              scope).
+              Assembly wire-up: drawCostsPage + drawTimelinePage
+              retired alongside their orphan imports
+              (describeCostInputs / resolveInputs / PROCEDURE_PHASES
+              / totalPhaseWeight / findCostRationale). Footer-loop
+              teaches itself to skip costs + timeline pages via the
+              editorialPages PDFPage-ref Set.
+              Strict scope guard observed: procedures / documents /
+              team / recommendations / keyData / verification /
+              glossary untouched (those land in v1.0.17+). Bayern
+              SHA preserved both ends of every commit. Bundle
+              269.1 KB gz.
+              v1.0.17+ backlog (each its own 2-page sprint):
+              - v1.0.17: Procedures + Documents + Team (Sections V-VII)
+              - v1.0.18: Recommendations + Key Data (Sections VIII-IX)
+              - v1.0.19: Verification + Glossary + audit log + runtime
+                smoke:pdf-text
   • v1.0.13 = PDF Renaissance Part 1 — foundations + cover + TOC +
               DE/EN export picker (7 commits + docs). Mixed-state
               PDF intentional this sprint: new cover + TOC are
