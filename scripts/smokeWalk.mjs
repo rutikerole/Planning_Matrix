@@ -2178,6 +2178,28 @@ async function runStaticGate() {
     },
   ]))
 
+  // ── v1.0.14 Bug 28 — cover/TOC footer split (Path A) ─────────────
+  const coverSrcV14 = await readFileText('src/features/chat/lib/pdfSections/cover.ts')
+  const tocSrcV14 = await readFileText('src/features/chat/lib/pdfSections/toc.ts')
+  results.push(failures('v1.0.14 Bug 28: cover + TOC export footer renderers separately', [
+    {
+      ok: /export function renderCoverFooter/.test(coverSrcV14),
+      msg: 'cover.ts must export renderCoverFooter (Path A split)',
+    },
+    {
+      ok: /export function renderTocFooter/.test(tocSrcV14),
+      msg: 'toc.ts must export renderTocFooter (Path A split)',
+    },
+    {
+      ok: !/1\s*\/\s*\?/.test(coverSrcV14),
+      msg: 'cover.ts must NOT contain the "1 / ?" placeholder (renderCoverPage no longer draws footer)',
+    },
+    {
+      ok: !/tocPageNumber.*\/\s*\?/.test(tocSrcV14),
+      msg: 'toc.ts must NOT contain the "X / ?" placeholder',
+    },
+  ]))
+
   // ── v1.0.13 — PDF Renaissance Part 1: assembly wire-up ────────────
   const assemblySrc = await readFileText('src/features/chat/lib/exportPdf.ts')
   results.push(failures('v1.0.13: exportPdf wires renderCoverPage + renderTocPage', [
@@ -2202,8 +2224,15 @@ async function runStaticGate() {
       msg: 'computeTocPageNumbers helper defined for TocData.pageNumbers map',
     },
     {
-      ok: /function finalizePageFooters/.test(assemblySrc),
-      msg: 'finalizePageFooters helper defined for "X / N" placeholder rewrite',
+      // v1.0.14 Bug 28 Path A split — finalizePageFooters mask-and-
+      // redraw helper retired in favor of split-render. Accept either
+      // (1) the v1.0.13 helper still present, OR (2) the v1.0.14
+      // renderCoverFooter + renderTocFooter pair both wired in
+      // assembly post-body.
+      ok: /function finalizePageFooters/.test(assemblySrc) ||
+          (/renderCoverFooter\(coverPage/.test(assemblySrc) &&
+            /renderTocFooter\(tocPage/.test(assemblySrc)),
+      msg: 'either finalizePageFooters (v1.0.13) OR renderCoverFooter + renderTocFooter (v1.0.14 Bug 28 split) wired',
     },
     {
       ok: !/^async function drawTitlePage/m.test(assemblySrc),

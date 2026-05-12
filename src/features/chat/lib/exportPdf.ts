@@ -38,21 +38,23 @@ import {
   resolveAreaSqmByTemplate,
   resolveInputs,
 } from '@/features/result/lib/costNormsMuenchen'
-// v1.0.13 — PDF Renaissance Part 1 imports.
+// v1.0.13 → v1.0.14 — PDF Renaissance Part 2 imports. The
+// PDF_CLAY / PDF_MARGIN / PDF_PAPER aliases that v1.0.13 used for
+// the mask-and-redraw finalizePageFooters helper were dropped in
+// the v1.0.14 Bug 28 Path A split (cover/TOC footers now render
+// AFTER total page count is known, so no placeholder + no mask).
 import {
-  CLAY as PDF_CLAY,
-  MARGIN as PDF_MARGIN,
   PAGE_HEIGHT as PDF_PAGE_HEIGHT,
   PAGE_WIDTH as PDF_PAGE_WIDTH,
-  PAPER as PDF_PAPER,
   resolveEditorialFonts,
 } from './pdfPrimitives'
 import {
   deriveDocNo,
   formatCoverDate,
+  renderCoverFooter,
   renderCoverPage,
 } from './pdfSections/cover'
-import { renderTocPage } from './pdfSections/toc'
+import { renderTocFooter, renderTocPage } from './pdfSections/toc'
 import {
   pdfStr,
   resolvePdfStrings,
@@ -612,8 +614,11 @@ export async function buildExportPdf({
     })
   })
 
-  // v1.0.13 — back-fill the TOC page now that we know the total
-  // page count + per-section approximate page indices.
+  // v1.0.14 Bug 28 fix — back-fill the TOC body THEN draw cover + TOC
+  // footers AFTER total page count is known. v1.0.13's placeholder-
+  // then-mask approach left visible "X / ?" residue above the
+  // PAPER-mask rectangle; the Path A split renders footer ONLY after
+  // we know the total, so no placeholder is ever drawn.
   const totalPages = allPages.length
   renderTocPage(tocPage, editorialFonts, pdfStrings, {
     pageNumbers: computeTocPageNumbers(state),
@@ -621,12 +626,15 @@ export async function buildExportPdf({
     totalPages,
     tocPageNumber: 2,
   })
-
-  // v1.0.13 — finalize cover + TOC page-X-of-Y placeholders now that
-  // totalPages is known. Both pages embedded "X / ?" because they
-  // rendered before body sections existed; mask the placeholder
-  // region with PAPER and redraw with the correct total.
-  finalizePageFooters(doc, totalPages, editorialFonts.sans)
+  renderCoverFooter(coverPage, editorialFonts, pdfStrings, {
+    bauherrName,
+    totalPages,
+  })
+  renderTocFooter(tocPage, editorialFonts, pdfStrings, {
+    docNo,
+    totalPages,
+    tocPageNumber: 2,
+  })
 
   return await doc.save()
 }
@@ -692,43 +700,6 @@ function computeTocPageNumbers(
   }
 }
 
-/**
- * v1.0.13 — mask + redraw the page-X-of-Y footer text on every page
- * so the cover + TOC's "1 / ?" / "2 / ?" placeholders become correct
- * totals. Body pages use the v1.0.6 footer style at y=28 (handled
- * separately in the allPages loop); this finalize pass only touches
- * the cover + TOC's MARGIN+14 footer.
- */
-function finalizePageFooters(
-  doc: PDFDocument,
-  totalPages: number,
-  sansFont: import('pdf-lib').PDFFont,
-): void {
-  const pages = doc.getPages()
-  for (let i = 0; i < pages.length && i < 2; i++) {
-    const page = pages[i]
-    const pageNum = i + 1
-    const pageText = `${pageNum} / ${totalPages}`
-    // Mask the placeholder by drawing PAPER over the right edge
-    // where "X / ?" was rendered.
-    page.drawRectangle({
-      x: PDF_PAGE_WIDTH - PDF_MARGIN - 100,
-      y: PDF_MARGIN + 8,
-      width: 100,
-      height: 14,
-      color: PDF_PAPER,
-    })
-    // Redraw with the correct total.
-    const w = sansFont.widthOfTextAtSize(pageText, 10)
-    page.drawText(pageText, {
-      x: PDF_PAGE_WIDTH - PDF_MARGIN - w,
-      y: PDF_MARGIN + 14,
-      size: 10,
-      font: sansFont,
-      color: PDF_CLAY,
-    })
-  }
-}
 
 // ── Page builders ──────────────────────────────────────────────────
 

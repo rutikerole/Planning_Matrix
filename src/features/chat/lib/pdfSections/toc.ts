@@ -107,17 +107,25 @@ export function renderTocPage(
     )
   }
 
-  // Footer: docNo / preliminary / page X / Y
-  const pageText =
-    data.totalPages > 0
-      ? `${data.tocPageNumber} / ${data.totalPages}`
-      : `${data.tocPageNumber} / ?`
+  // v1.0.14 Bug 28 fix — footer is NOT drawn here. renderTocFooter
+  // is invoked AFTER total page count is known.
+  void PAGE_WIDTH
+}
+
+/**
+ * v1.0.14 Bug 28 fix — Path A split. Renders the TOC page footer
+ * AFTER the assembly knows the resolved total page count.
+ */
+export function renderTocFooter(
+  page: PDFPage,
+  fonts: EditorialFonts,
+  strings: PdfStrings,
+  data: { docNo: string; totalPages: number; tocPageNumber: number },
+): void {
   drawFooter(page, {
     left: data.docNo,
     center: pdfStr(strings, 'footer.preliminary'),
-    right: pageText,
+    right: `${data.tocPageNumber} / ${data.totalPages}`,
     fonts,
   })
-  // Suppress unused-import warning if PAGE_WIDTH ever drops.
-  void PAGE_WIDTH
 }

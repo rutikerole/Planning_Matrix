@@ -11,11 +11,11 @@
 // resolved CoverData. Caller (exportPdf.ts) is responsible for adding
 // the page to the document and computing CoverData.
 //
-// PAGE-NUMBER FINALIZATION: this renderer emits a "1 / ?" placeholder
-// in the bottom-right footer cell. After all pages render, the
-// assembly calls finalizePageFooters(...) to overwrite every page's
-// footer with the real total. v1.0.13's TOC + cover share this
-// finalize pass.
+// v1.0.14 Bug 28 — Path A split. The cover body no longer draws its
+// own footer. The assembly calls renderCoverFooter(...) AFTER total
+// page count is known so no placeholder is ever drawn (v1.0.13's
+// placeholder-then-mask approach left visible residue above the
+// mask rectangle).
 // ───────────────────────────────────────────────────────────────────────
 
 import { rgb, type PDFPage } from 'pdf-lib'
@@ -46,8 +46,9 @@ export interface CoverData {
   docNo: string
   revision: string
   bauherrName: string
-  /** Total pages — pass 0 to emit the "1 / ?" placeholder, then
-   *  finalizePageFooters rewrites it once the doc is fully built. */
+  /** Total pages — surfaced separately to renderCoverFooter; the body
+   *  no longer carries page-number copy. v1.0.13 used this field for
+   *  an unresolved-total placeholder that v1.0.14 retired (Path A). */
   totalPages: number
 }
 
@@ -153,13 +154,31 @@ export function renderCoverPage(
     fonts,
   )
 
-  // ─── Bottom footer ─────────────────────────────────────────────
+  // v1.0.14 Bug 28 fix — footer is NOT drawn here. Footer is drawn
+  // by renderCoverFooter AFTER total page count is known, so the
+  // page never carries an unresolved-total placeholder that
+  // v1.0.13's mask helper couldn't fully erase (resolved total was
+  // drawn over the placeholder but the placeholder's top edge
+  // remained visible above the mask rectangle).
+}
+
+/**
+ * v1.0.14 Bug 28 fix — Path A split. Renders the cover page footer
+ * AFTER the assembly knows the resolved total page count, so no
+ * placeholder is ever drawn. Called from buildExportPdf once the
+ * document is fully assembled.
+ */
+export function renderCoverFooter(
+  page: PDFPage,
+  fonts: EditorialFonts,
+  strings: PdfStrings,
+  data: { bauherrName: string; totalPages: number },
+): void {
   drawHairline(page, MARGIN, MARGIN + 28, PAGE_WIDTH - MARGIN, { color: CLAY })
 
   const bauherrText = `${pdfStr(strings, 'cover.bauherrLabel')} · ${data.bauherrName}`
   const preliminaryText = pdfStr(strings, 'cover.preliminary')
-  const pageText =
-    data.totalPages > 0 ? `1 / ${data.totalPages}` : '1 / ?'
+  const pageText = `1 / ${data.totalPages}`
 
   page.drawText(bauherrText, {
     x: MARGIN,
