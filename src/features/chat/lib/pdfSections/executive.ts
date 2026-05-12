@@ -40,6 +40,7 @@ import {
   drawMonoMeta,
   drawPaperBackground,
   drawPriorityPill,
+  drawSafeText,
   drawWrappedText,
   type EditorialFonts,
 } from '../pdfPrimitives'
@@ -144,12 +145,13 @@ export function renderExecutiveBody(
 
   // Empty state
   if (data.topThree.length === 0) {
-    page.drawText(pdfStr(strings, 'exec.empty'), {
+    drawSafeText(page, pdfStr(strings, 'exec.empty'), {
       x: MARGIN,
       y: PAGE_HEIGHT / 2,
       size: 12,
       font: fonts.serifItalic,
       color: CLAY,
+      safe: fonts.safe,
     })
     return
   }
@@ -185,30 +187,35 @@ export function renderExecutiveBody(
 
     // Italic-serif numeral on the left
     const numText = `0${idx + 1}`
-    page.drawText(numText, {
+    drawSafeText(page, numText, {
       x: MARGIN + 18,
       y: cursor - 30,
       size: 28,
       font: fonts.serifItalic,
       color: CLAY,
+      safe: fonts.safe,
     })
 
     // Title row
     const titleX = MARGIN + 60
-    page.drawText(rec.title, {
+    drawSafeText(page, rec.title, {
       x: titleX,
       y: cursor - 22,
       size: 14,
       font: fonts.sansMedium,
       color: INK,
+      safe: fonts.safe,
     })
-    const titleWidth = fonts.sansMedium.widthOfTextAtSize(rec.title, 14)
+    const titleWidth = fonts.sansMedium.widthOfTextAtSize(
+      fonts.safe(rec.title),
+      14,
+    )
     drawPriorityPill(
       page,
       titleX + titleWidth + 10,
       cursor - 22,
       priorityLabel,
-      { bg: pillBg, fg: pillFg, font: fonts.sansMedium, size: 10 },
+      { bg: pillBg, fg: pillFg, font: fonts.sansMedium, size: 10, safe: fonts.safe },
     )
 
     // Body wrapped
@@ -223,6 +230,7 @@ export function renderExecutiveBody(
         font: fonts.sans,
         size: 12,
         color: INK,
+        safe: fonts.safe,
       },
     )
 
@@ -232,23 +240,26 @@ export function renderExecutiveBody(
       const chipY = bodyEndY - 4
       if (rec.sourceLabel) {
         const chipText = `▸ ${rec.sourceLabel}`
-        page.drawText(chipText, {
+        drawSafeText(page, chipText, {
           x: chipX,
           y: chipY,
           size: 11,
           font: fonts.sans,
           color: CLAY,
+          safe: fonts.safe,
         })
-        chipX += fonts.sans.widthOfTextAtSize(chipText, 11) + 18
+        chipX +=
+          fonts.sans.widthOfTextAtSize(fonts.safe(chipText), 11) + 18
       }
       if (rec.whenLabel) {
         const chipText = `▸ ${rec.whenLabel}`
-        page.drawText(chipText, {
+        drawSafeText(page, chipText, {
           x: chipX,
           y: chipY,
           size: 11,
           font: fonts.sans,
           color: CLAY,
+          safe: fonts.safe,
         })
       }
     }
@@ -267,6 +278,7 @@ export function renderExecutiveBody(
     font: fonts.serifItalic,
     size: 11,
     color: CLAY,
+    safe: fonts.safe,
   })
 }
 

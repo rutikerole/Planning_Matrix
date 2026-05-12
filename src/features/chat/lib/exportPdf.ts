@@ -21,7 +21,6 @@
 import { PDFDocument, rgb, type PDFPage } from 'pdf-lib'
 import { loadBrandFonts, type BrandFonts } from '@/lib/fontLoader'
 import { factLabel, factValueWithUnit } from '@/lib/factLabel'
-import { winAnsiSafe, decomposeLigatures, preventBrandLigatures } from '@/lib/winAnsiSafe'
 import type { MessageRow, ProjectRow } from '@/types/db'
 import type { AreaState, ProjectState } from '@/types/projectState'
 // v1.0.6 Bug 2 — PDF brief now mirrors the Cost & Timeline, Team &
@@ -47,6 +46,7 @@ import {
   PAGE_HEIGHT as PDF_PAGE_HEIGHT,
   PAGE_WIDTH as PDF_PAGE_WIDTH,
   resolveEditorialFonts,
+  resolveSafeTextFn,
 } from './pdfPrimitives'
 import {
   deriveDocNo,
@@ -187,9 +187,13 @@ export async function buildExportPdf({
   // text-extraction layer as "ċ" / "Č" / similar substitute
   // codepoints. ZWNJ is outside WinAnsi so the fallback path
   // skips it (winAnsiSafe already strips zero-widths there).
-  safe = fonts.usingFallback
-    ? (s: string) => winAnsiSafe(decomposeLigatures(s))
-    : (s: string) => preventBrandLigatures(decomposeLigatures(s))
+  // v1.0.16 architectural fix — single source of truth. Sanitizer
+  // factory lives in pdfPrimitives.ts (resolveSafeTextFn) and is the
+  // same fn that EditorialFonts.safe carries to section renderers,
+  // so body-page drawText calls (still in this file) and editorial
+  // renderer drawText calls (in pdfSections/*.ts via drawSafeText)
+  // are guaranteed to apply the same pipeline.
+  safe = resolveSafeTextFn(fonts.usingFallback)
 
   const state = (project.state ?? {}) as Partial<ProjectState>
 

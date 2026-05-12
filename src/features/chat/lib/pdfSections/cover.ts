@@ -32,6 +32,7 @@ import {
   drawLabelValue,
   drawMonoMeta,
   drawPaperBackground,
+  drawSafeText,
   type EditorialFonts,
 } from '../pdfPrimitives'
 import type { PdfStrings } from '../pdfStrings'
@@ -80,19 +81,21 @@ export function renderCoverPage(
   })
 
   // Wordmark to the right of the logo.
-  page.drawText(pdfStr(strings, 'cover.wordmark'), {
+  drawSafeText(page, pdfStr(strings, 'cover.wordmark'), {
     x: MARGIN + 38,
     y: logoTopY - 10,
     size: 13,
     font: fonts.sansMedium,
     color: INK,
+    safe: fonts.safe,
   })
-  page.drawText(pdfStr(strings, 'cover.tagline'), {
+  drawSafeText(page, pdfStr(strings, 'cover.tagline'), {
     x: MARGIN + 38,
     y: logoTopY - 26,
     size: 11,
     font: fonts.sans,
     color: CLAY,
+    safe: fonts.safe,
   })
 
   // Right-aligned DOC NO + REVISION mono meta.
@@ -109,12 +112,13 @@ export function renderCoverPage(
   const midY = 540
   drawKicker(page, MARGIN, midY, pdfStr(strings, 'cover.kicker'), fonts)
   drawCoverTitle(page, MARGIN, midY - 36, data.projectTitle, fonts)
-  page.drawText(data.address, {
+  drawSafeText(page, data.address, {
     x: MARGIN,
     y: midY - 56,
     size: 15,
     font: fonts.sans,
     color: INK,
+    safe: fonts.safe,
   })
 
   // 60pt INK hairline below the address.
@@ -180,28 +184,38 @@ export function renderCoverFooter(
   const preliminaryText = pdfStr(strings, 'cover.preliminary')
   const pageText = `1 / ${data.totalPages}`
 
-  page.drawText(bauherrText, {
+  // Pre-sanitize ONLY for width measurement. drawSafeText re-applies
+  // fonts.safe internally (idempotent) so the rendered string is
+  // consistent with the measured width.
+  const preliminaryWidth = fonts.sans.widthOfTextAtSize(
+    fonts.safe(preliminaryText),
+    10,
+  )
+  const pageWidth = fonts.sans.widthOfTextAtSize(fonts.safe(pageText), 10)
+
+  drawSafeText(page, bauherrText, {
     x: MARGIN,
     y: MARGIN + 14,
     size: 10,
     font: fonts.sans,
     color: CLAY,
+    safe: fonts.safe,
   })
-  const prelimWidth = fonts.sans.widthOfTextAtSize(preliminaryText, 10)
-  page.drawText(preliminaryText, {
-    x: (PAGE_WIDTH - prelimWidth) / 2,
+  drawSafeText(page, preliminaryText, {
+    x: (PAGE_WIDTH - preliminaryWidth) / 2,
     y: MARGIN + 14,
     size: 10,
     font: fonts.sans,
     color: CLAY,
+    safe: fonts.safe,
   })
-  const pageWidth = fonts.sans.widthOfTextAtSize(pageText, 10)
-  page.drawText(pageText, {
+  drawSafeText(page, pageText, {
     x: PAGE_WIDTH - MARGIN - pageWidth,
     y: MARGIN + 14,
     size: 10,
     font: fonts.sans,
     color: CLAY,
+    safe: fonts.safe,
   })
 }
 

@@ -22,6 +22,11 @@
 
 import { rgb, type PDFDocument, type PDFFont, type PDFPage } from 'pdf-lib'
 import { loadBrandFonts } from '@/lib/fontLoader'
+import {
+  decomposeLigatures,
+  preventBrandLigatures,
+  winAnsiSafe,
+} from '@/lib/winAnsiSafe'
 
 // ─── Color constants ──────────────────────────────────────────────────
 // Atelier mode design DNA, ported to pdf-lib's rgb() (0..1 floats).
@@ -49,7 +54,18 @@ export const PAGE_HEIGHT = 841.89
 export const MARGIN = 48
 export const GUTTER = 16
 
-// ─── Font facade ──────────────────────────────────────────────────────
+// ─── Font + sanitization facade ───────────────────────────────────────
+//
+// v1.0.16 — every text-drawing primitive applies `safe` internally so
+// section renderers physically cannot bypass the ligature-decomposition
+// + WinAnsi-safe + brand-ligature-prevention pipeline. Bug 22 / Bug 30
+// / Bug 33 / Bug 34 were all variants of the same architectural flaw:
+// `safe` lived as a module-local closure in exportPdf.ts, so pure
+// section renderers (cover/toc/executive/areas) called page.drawText
+// raw and re-introduced corrupted ligature output on every new
+// renderer or font refactor. v1.0.16 bakes it into EditorialFonts.
+export type SafeTextFn = (s: string) => string
+
 export interface EditorialFonts {
   /** Inter Regular — paragraphs, captions, body. */
   sans: PDFFont
@@ -57,6 +73,31 @@ export interface EditorialFonts {
   sansMedium: PDFFont
   /** Instrument Serif Italic — editorial headers (cover title, section h1). */
   serifItalic: PDFFont
+  /**
+   * v1.0.16 — ligature/encoding sanitizer pipeline. Every text-drawing
+   * primitive in this module calls fonts.safe(text) before passing to
+   * page.drawText. Section renderers MUST use drawSafeText (also in
+   * this module) for any one-off draws; the smoke-walk drift fixture
+   * asserts zero raw `page.drawText` calls outside pdfPrimitives.ts.
+   */
+  safe: SafeTextFn
+}
+
+/**
+ * v1.0.16 — single source of truth for PDF text sanitization. On the
+ * brand-TTF path (Inter + Instrument Serif via fontkit), composes
+ * decomposeLigatures (always-on, strips U+FB00..U+FB05) with
+ * preventBrandLigatures (injects ZWNJ between f+i/l/f to prevent
+ * fontkit's GSUB layer from applying OpenType `liga` substitution
+ * at embed time). On the Helvetica fallback path, composes
+ * decomposeLigatures with winAnsiSafe (strips zero-widths + ASCIIfies
+ * unsupported codepoints).
+ */
+export function resolveSafeTextFn(usingFallback: boolean): SafeTextFn {
+  if (usingFallback) {
+    return (s: string) => winAnsiSafe(decomposeLigatures(s))
+  }
+  return (s: string) => preventBrandLigatures(decomposeLigatures(s))
 }
 
 /**
@@ -78,17 +119,56 @@ export interface EditorialFonts {
  */
 export async function resolveEditorialFonts(
   doc: PDFDocument,
-  pre?: { inter: PDFFont; interMedium: PDFFont; serifItalic: PDFFont },
+  pre?: {
+    inter: PDFFont
+    interMedium: PDFFont
+    serifItalic: PDFFont
+    usingFallback: boolean
+  },
 ): Promise<EditorialFonts> {
   const brand = pre ?? (await loadBrandFonts(doc))
   return {
     sans: brand.inter,
     sansMedium: brand.interMedium,
     serifItalic: brand.serifItalic,
+    safe: resolveSafeTextFn(brand.usingFallback),
   }
 }
 
 // ─── Primitives ───────────────────────────────────────────────────────
+
+/**
+ * v1.0.16 — enforcement primitive. Section renderers that need a
+ * one-off page.drawText call must route through this helper. The
+ * required `safe` field on opts means forgetting to sanitize is a
+ * TypeScript compile error, not a silent runtime regression.
+ */
+export interface DrawSafeTextOpts {
+  x: number
+  y: number
+  size: number
+  font: PDFFont
+  color: ReturnType<typeof rgb>
+  opacity?: number
+  maxWidth?: number
+  safe: SafeTextFn
+}
+
+export function drawSafeText(
+  page: PDFPage,
+  text: string,
+  opts: DrawSafeTextOpts,
+): void {
+  page.drawText(opts.safe(text), {
+    x: opts.x,
+    y: opts.y,
+    size: opts.size,
+    font: opts.font,
+    color: opts.color,
+    opacity: opts.opacity,
+    maxWidth: opts.maxWidth,
+  })
+}
 
 /** Fill the page with PAPER. Call once per page before any content. */
 export function drawPaperBackground(page: PDFPage): void {
@@ -157,7 +237,7 @@ export function drawKicker(
   text: string,
   fonts: EditorialFonts,
 ): void {
-  page.drawText(text, {
+  page.drawText(fonts.safe(text), {
     x,
     y,
     size: 10,
@@ -177,7 +257,7 @@ export function drawEditorialTitle(
   text: string,
   fonts: EditorialFonts,
 ): void {
-  page.drawText(text, {
+  page.drawText(fonts.safe(text), {
     x,
     y,
     size: 26,
@@ -194,7 +274,7 @@ export function drawCoverTitle(
   text: string,
   fonts: EditorialFonts,
 ): void {
-  page.drawText(text, {
+  page.drawText(fonts.safe(text), {
     x,
     y,
     size: 36,
@@ -218,9 +298,10 @@ export function drawMonoMeta(
   opts: MonoMetaOpts = {},
 ): void {
   const size = opts.size ?? 11
+  const safe = fonts.safe(text)
   if (opts.align === 'right') {
-    const w = fonts.sans.widthOfTextAtSize(text, size)
-    page.drawText(text, {
+    const w = fonts.sans.widthOfTextAtSize(safe, size)
+    page.drawText(safe, {
       x: x - w,
       y,
       size,
@@ -228,7 +309,7 @@ export function drawMonoMeta(
       color: CLAY,
     })
   } else {
-    page.drawText(text, { x, y, size, font: fonts.sans, color: CLAY })
+    page.drawText(safe, { x, y, size, font: fonts.sans, color: CLAY })
   }
 }
 
@@ -244,14 +325,14 @@ export function drawLabelValue(
   value: string,
   fonts: EditorialFonts,
 ): void {
-  page.drawText(label, {
+  page.drawText(fonts.safe(label), {
     x,
     y,
     size: 10,
     font: fonts.sansMedium,
     color: CLAY,
   })
-  page.drawText(value, {
+  page.drawText(fonts.safe(value), {
     x,
     y: y - 16,
     size: 12,
@@ -290,23 +371,27 @@ export interface FooterOpts {
  */
 export function drawFooter(page: PDFPage, opts: FooterOpts): void {
   drawHairline(page, MARGIN, MARGIN + 28, PAGE_WIDTH - MARGIN)
-  page.drawText(opts.left, {
+  const safe = opts.fonts.safe
+  const left = safe(opts.left)
+  const center = safe(opts.center)
+  const right = safe(opts.right)
+  page.drawText(left, {
     x: MARGIN,
     y: MARGIN + 14,
     size: 9,
     font: opts.fonts.sans,
     color: CLAY,
   })
-  const cw = opts.fonts.sans.widthOfTextAtSize(opts.center, 9)
-  page.drawText(opts.center, {
+  const cw = opts.fonts.sans.widthOfTextAtSize(center, 9)
+  page.drawText(center, {
     x: (PAGE_WIDTH - cw) / 2,
     y: MARGIN + 14,
     size: 9,
     font: opts.fonts.sans,
     color: CLAY,
   })
-  const rw = opts.fonts.sans.widthOfTextAtSize(opts.right, 9)
-  page.drawText(opts.right, {
+  const rw = opts.fonts.sans.widthOfTextAtSize(right, 9)
+  page.drawText(right, {
     x: PAGE_WIDTH - MARGIN - rw,
     y: MARGIN + 14,
     size: 9,
@@ -378,6 +463,9 @@ export interface PriorityPillOpts {
   bg: ReturnType<typeof rgb>
   fg: ReturnType<typeof rgb>
   font: PDFFont
+  /** v1.0.16 — sanitization fn from EditorialFonts.safe. Required so
+   *  the call site cannot accidentally skip ligature decomposition. */
+  safe: SafeTextFn
   size?: number
   padX?: number
   padY?: number
@@ -400,7 +488,8 @@ export function drawPriorityPill(
   const size = opts.size ?? 10
   const padX = opts.padX ?? 8
   const padY = opts.padY ?? 3
-  const textWidth = opts.font.widthOfTextAtSize(text, size)
+  const safe = opts.safe(text)
+  const textWidth = opts.font.widthOfTextAtSize(safe, size)
   const w = textWidth + padX * 2
   const h = size + padY * 2
   page.drawRectangle({
@@ -410,7 +499,7 @@ export function drawPriorityPill(
     height: h,
     color: opts.bg,
   })
-  page.drawText(text, {
+  page.drawText(safe, {
     x: x + padX,
     y,
     size,
@@ -424,6 +513,8 @@ export interface CircularBadgeOpts {
   fillColor: ReturnType<typeof rgb>
   textColor: ReturnType<typeof rgb>
   font: PDFFont
+  /** v1.0.16 — sanitization fn from EditorialFonts.safe. */
+  safe: SafeTextFn
   size?: number
 }
 
@@ -441,8 +532,9 @@ export function drawCircularBadge(
 ): void {
   page.drawCircle({ x: cx, y: cy, size: radius, color: opts.fillColor })
   const size = opts.size ?? 13
-  const letterWidth = opts.font.widthOfTextAtSize(letter, size)
-  page.drawText(letter, {
+  const safe = opts.safe(letter)
+  const letterWidth = opts.font.widthOfTextAtSize(safe, size)
+  page.drawText(safe, {
     x: cx - letterWidth / 2,
     y: cy - size / 2 + 1,
     size,
@@ -457,6 +549,9 @@ export interface WrappedTextOpts {
   font: PDFFont
   size: number
   color: ReturnType<typeof rgb>
+  /** v1.0.16 — sanitization fn from EditorialFonts.safe. Applied
+   *  per-line so word-wrap math uses the same string drawText receives. */
+  safe: SafeTextFn
 }
 
 /**
@@ -474,7 +569,8 @@ export function drawWrappedText(
   text: string,
   opts: WrappedTextOpts,
 ): number {
-  const words = text.split(/\s+/)
+  const sanitized = opts.safe(text)
+  const words = sanitized.split(/\s+/)
   let line = ''
   let cursor = y
   for (const word of words) {
@@ -521,8 +617,9 @@ export function drawStatusLegend(
   let cursor = rightX
   for (let i = items.length - 1; i >= 0; i--) {
     const item = items[i]
-    const labelWidth = fonts.sans.widthOfTextAtSize(item.label, 10)
-    page.drawText(item.label, {
+    const label = fonts.safe(item.label)
+    const labelWidth = fonts.sans.widthOfTextAtSize(label, 10)
+    page.drawText(label, {
       x: cursor - labelWidth,
       y,
       size: 10,
@@ -556,8 +653,12 @@ export function drawTocLine(
   const titleX = MARGIN + 36
   const refRight = PAGE_WIDTH - MARGIN
 
+  const safeNum = fonts.safe(num)
+  const safeTitle = fonts.safe(title)
+  const safePageRef = fonts.safe(pageRef)
+
   // 2-digit numeral, CLAY 11pt.
-  page.drawText(num, {
+  page.drawText(safeNum, {
     x: numX,
     y,
     size: 11,
@@ -566,19 +667,19 @@ export function drawTocLine(
   })
 
   // Title in Inter Regular 13pt INK.
-  page.drawText(title, {
+  page.drawText(safeTitle, {
     x: titleX,
     y,
     size: 13,
     font: fonts.sans,
     color: INK,
   })
-  const titleWidth = fonts.sans.widthOfTextAtSize(title, 13)
+  const titleWidth = fonts.sans.widthOfTextAtSize(safeTitle, 13)
 
   // Page ref right-aligned.
-  const refWidth = fonts.sans.widthOfTextAtSize(pageRef, 13)
+  const refWidth = fonts.sans.widthOfTextAtSize(safePageRef, 13)
   const refX = refRight - refWidth
-  page.drawText(pageRef, {
+  page.drawText(safePageRef, {
     x: refX,
     y,
     size: 13,

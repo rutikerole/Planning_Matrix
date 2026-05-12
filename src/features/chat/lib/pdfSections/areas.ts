@@ -39,6 +39,7 @@ import {
   drawMonoMeta,
   drawPaperBackground,
   drawPriorityPill,
+  drawSafeText,
   drawStatusLegend,
   drawWrappedText,
   type EditorialFonts,
@@ -124,12 +125,13 @@ export function renderAreasBody(
 
   // Empty state
   if (data.rows.length === 0) {
-    page.drawText(pdfStr(strings, 'areas.empty'), {
+    drawSafeText(page, pdfStr(strings, 'areas.empty'), {
       x: MARGIN,
       y: PAGE_HEIGHT / 2,
       size: 12,
       font: fonts.serifItalic,
       color: CLAY,
+      safe: fonts.safe,
     })
     return
   }
@@ -169,18 +171,23 @@ export function renderAreasBody(
       textColor: row.state === 'VOID' ? PILL_LEGAL_BG : INK,
       font: fonts.sansMedium,
       size: 14,
+      safe: fonts.safe,
     })
 
     // Title to the right of the badge
     const titleX = MARGIN + 56
-    page.drawText(row.title, {
+    drawSafeText(page, row.title, {
       x: titleX,
       y: cursor - 22,
       size: 14,
       font: fonts.sansMedium,
       color: INK,
+      safe: fonts.safe,
     })
-    const titleWidth = fonts.sansMedium.widthOfTextAtSize(row.title, 14)
+    const titleWidth = fonts.sansMedium.widthOfTextAtSize(
+      fonts.safe(row.title),
+      14,
+    )
 
     // Status pill
     drawPriorityPill(page, titleX + titleWidth + 12, cursor - 22, statusLabel, {
@@ -188,6 +195,7 @@ export function renderAreasBody(
       fg: pillFg,
       font: fonts.sansMedium,
       size: 10,
+      safe: fonts.safe,
     })
 
     // Reason paragraph — italic-serif CLAY, wrapped
@@ -198,6 +206,7 @@ export function renderAreasBody(
         font: fonts.serifItalic,
         size: 11,
         color: CLAY,
+        safe: fonts.safe,
       })
     }
 
@@ -218,6 +227,7 @@ export function renderAreasBody(
       font: fonts.serifItalic,
       size: 11,
       color: CLAY,
+      safe: fonts.safe,
     },
   )
 }

@@ -2813,23 +2813,38 @@ async function runStaticGate() {
       msg: 'preventBrandLigatures must document the ZWNJ rationale',
     },
   ]))
+  // v1.0.16 Bug 33+34 architectural fix — the sanitizer composition
+  // moved from a module-level closure in exportPdf.ts to a factory
+  // (resolveSafeTextFn) in pdfPrimitives.ts. exportPdf.ts now SOURCES
+  // its `safe` from that factory; section renderers source it from
+  // EditorialFonts.safe. The fixture pins the pipeline at its new
+  // home so refactors can't silently drop a branch.
+  const primForSanitizer = await readFileText('src/features/chat/lib/pdfPrimitives.ts')
   const exportPdfSrcForB22 = await readFileText('src/features/chat/lib/exportPdf.ts')
-  results.push(failures('v1.0.11 Bug 22: exportPdf wires sanitizer regardless of font path', [
+  results.push(failures('v1.0.11 Bug 22 + v1.0.16 architectural fix: sanitizer factory composes both font paths', [
     {
-      ok: /decomposeLigatures/.test(exportPdfSrcForB22),
-      msg: 'exportPdf must import decomposeLigatures',
+      ok: /decomposeLigatures/.test(primForSanitizer),
+      msg: 'pdfPrimitives must import decomposeLigatures',
     },
     {
-      ok: /preventBrandLigatures/.test(exportPdfSrcForB22),
-      msg: 'exportPdf must import preventBrandLigatures',
+      ok: /preventBrandLigatures/.test(primForSanitizer),
+      msg: 'pdfPrimitives must import preventBrandLigatures',
     },
     {
-      ok: /fonts\.usingFallback[\s\S]{0,400}winAnsiSafe\(decomposeLigatures/.test(exportPdfSrcForB22),
-      msg: 'fallback path must compose winAnsiSafe(decomposeLigatures(s))',
+      ok: /winAnsiSafe\(decomposeLigatures/.test(primForSanitizer),
+      msg: 'fallback path must compose winAnsiSafe(decomposeLigatures(s)) inside resolveSafeTextFn',
     },
     {
-      ok: /preventBrandLigatures\(decomposeLigatures/.test(exportPdfSrcForB22),
-      msg: 'brand-TTF path must compose preventBrandLigatures(decomposeLigatures(s))',
+      ok: /preventBrandLigatures\(decomposeLigatures/.test(primForSanitizer),
+      msg: 'brand-TTF path must compose preventBrandLigatures(decomposeLigatures(s)) inside resolveSafeTextFn',
+    },
+    {
+      ok: /export\s+function\s+resolveSafeTextFn\s*\(/.test(primForSanitizer),
+      msg: 'resolveSafeTextFn must be exported from pdfPrimitives',
+    },
+    {
+      ok: /resolveSafeTextFn\(fonts\.usingFallback\)/.test(exportPdfSrcForB22),
+      msg: 'exportPdf must source its local safe closure from resolveSafeTextFn (single source of truth)',
     },
   ]))
   // Inter TTFs must remain present in public/fonts/ — fontLoader.ts
