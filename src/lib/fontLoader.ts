@@ -82,10 +82,31 @@ export async function loadBrandFonts(doc: PDFDocument): Promise<BrandFonts> {
   const helvBold = await doc.embedFont(StandardFonts.HelveticaBold)
   const helvOblique = await doc.embedFont(StandardFonts.HelveticaOblique)
 
-  const inter = buffers[0] ? await doc.embedFont(buffers[0]) : helv
-  const interMedium = buffers[1] ? await doc.embedFont(buffers[1]) : helvBold
-  const serifItalic = buffers[2] ? await doc.embedFont(buffers[2]) : helvOblique
-  const serif = buffers[3] ? await doc.embedFont(buffers[3]) : helv
+  // v1.0.17 PERMANENT LIGATURE KILL. pdf-lib's embedFont accepts a
+  // `features` object that is forwarded to fontkit's layout() call
+  // (CustomFontEmbedder.js:8 — `this.font.layout(text, this.fontFeatures)`).
+  // Setting liga/dlig/clig to false disables the GSUB ligature
+  // substitution at PDF-embed time — the source of the ċ/Č/PČicht
+  // glyph corruption v1.0.11→v1.0.16 chased through JS sanitizers.
+  // kern stays on (kerning is purely positional, not a glyph
+  // substitution — it doesn't corrupt text extraction).
+  const noLigatures = {
+    liga: false,
+    dlig: false,
+    clig: false,
+  } as const
+  const inter = buffers[0]
+    ? await doc.embedFont(buffers[0], { features: noLigatures })
+    : helv
+  const interMedium = buffers[1]
+    ? await doc.embedFont(buffers[1], { features: noLigatures })
+    : helvBold
+  const serifItalic = buffers[2]
+    ? await doc.embedFont(buffers[2], { features: noLigatures })
+    : helvOblique
+  const serif = buffers[3]
+    ? await doc.embedFont(buffers[3], { features: noLigatures })
+    : helv
 
   return {
     inter,
