@@ -102,7 +102,7 @@ const EN: PdfStrings = {
   'costs.total': 'Total (estimated)',
   'costs.notes.h': 'NOTES',
   'costs.notes.b':
-    'Orientation values · not binding quotes. Ranges reflect HOAI minima/maxima and typical regional market rates. Final figures depend on the actual fee agreement and the selected Leistungsphasen.',
+    'Orientation values · not binding quotes. Ranges reflect HOAI minima/maxima and typical regional market rates. Final figures depend on the architect-specific fee agreement and the selected Leistungsphasen.',
   'costs.items.architect': 'Architect (LP 1–4)',
   'costs.items.architect.basis': 'HOAI Zone III · phases 1–4',
   'costs.items.structural': 'Structural engineering',
@@ -275,7 +275,7 @@ const DE: PdfStrings = {
   'costs.total': 'Gesamt (geschätzt)',
   'costs.notes.h': 'HINWEISE',
   'costs.notes.b':
-    'Orientierungswerte · keine verbindlichen Angebote. Spannen spiegeln HOAI-Mindest-/Höchstsätze und typische regionale Marktpreise wider. Endgültige Beträge hängen von der Honorarvereinbarung und den gewählten Leistungsphasen ab.',
+    'Orientierungswerte · keine verbindlichen Angebote. Spannen spiegeln HOAI-Mindest-/Höchstsätze und typische regionale Marktpreise wider. Endgültige Beträge hängen von der konkreten Architekt:in-Honorarvereinbarung und den gewählten Leistungsphasen ab.',
   'costs.items.architect': 'Architekt:in (LP 1–4)',
   'costs.items.architect.basis': 'HOAI Zone III · LP 1–4',
   'costs.items.structural': 'Tragwerksplanung',
