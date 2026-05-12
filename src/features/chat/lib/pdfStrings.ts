@@ -37,6 +37,9 @@ const EN: PdfStrings = {
   'cover.createdLabel': 'CREATED',
   'cover.bauherrLabel': 'BAUHERR',
   'cover.preliminary': 'PRELIMINARY — pending architect confirmation',
+  'cover.validity.template': 'VALID FOR 30 DAYS · expires {date}',
+  'cover.confidenceLabel': 'CONFIDENCE',
+  'cover.qrLabel': 'SCAN TO OPEN PROJECT',
 
   // ─── Template intent labels ────────────────────────────────────
   'template.T-01': 'T-01 · New build (EFH)',
@@ -210,6 +213,9 @@ const DE: PdfStrings = {
   'cover.createdLabel': 'ERSTELLT',
   'cover.bauherrLabel': 'BAUHERR',
   'cover.preliminary': 'VORLÄUFIG — Architekt:in-Bestätigung ausstehend',
+  'cover.validity.template': 'GÜLTIG 30 TAGE · läuft ab {date}',
+  'cover.confidenceLabel': 'VERTRAUEN',
+  'cover.qrLabel': 'PROJEKT ÖFFNEN',
 
   // ─── Template intent labels ────────────────────────────────────
   'template.T-01': 'T-01 · Neubau (EFH)',

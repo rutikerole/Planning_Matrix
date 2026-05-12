@@ -176,6 +176,13 @@ async function runLocale(lang: 'en' | 'de'): Promise<{ passed: number; failed: n
     // "BauOLEGAL" (no-space concatenations would only happen on
     // overflow).
     { pass: !/NRWLEGAL|BauOLEGAL/u.test(text), msg: 'no value/qualifier collision (Bug 37 guard)' },
+    // v1.0.18 Feature 4 — validity stamp present on cover
+    {
+      pass: lang === 'en'
+        ? /VALID FOR 30 DAYS/u.test(text)
+        : /GÜLTIG 30 TAGE/u.test(text),
+      msg: 'validity stamp present on cover',
+    },
   ]
 
   // Language-specific assertions

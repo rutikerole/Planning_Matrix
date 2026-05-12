@@ -649,9 +649,15 @@ export async function buildExportPdf({
     totalPages,
     tocPageNumber: 2,
   })
+  // v1.0.18 Feature 4 — validity stamp. generatedAt + 30 days, per-
+  // locale formatted ("11 June 2026" / "11. Juni 2026").
+  const validUntilDate = new Date()
+  validUntilDate.setUTCDate(validUntilDate.getUTCDate() + 30)
+  const validUntilLabel = formatCoverDate(validUntilDate.toISOString(), lang as PdfLang)
   renderCoverFooter(coverPage, editorialFonts, pdfStrings, {
     bauherrName,
     totalPages,
+    validUntilLabel,
   })
   renderTocFooter(tocPage, editorialFonts, pdfStrings, {
     docNo,

@@ -176,7 +176,12 @@ export function renderCoverFooter(
   page: PDFPage,
   fonts: EditorialFonts,
   strings: PdfStrings,
-  data: { bauherrName: string; totalPages: number },
+  data: {
+    bauherrName: string
+    totalPages: number
+    /** v1.0.18 Feature 4 — pre-formatted expiry date in locale. */
+    validUntilLabel?: string
+  },
 ): void {
   drawHairline(page, MARGIN, MARGIN + 28, PAGE_WIDTH - MARGIN, { color: CLAY })
 
@@ -217,6 +222,26 @@ export function renderCoverFooter(
     color: CLAY,
     safe: fonts.safe,
   })
+
+  // v1.0.18 Feature 4 — validity stamp below the preliminary line.
+  // Centered, same mono 10pt CLAY style. Substitutes {date} with the
+  // pre-formatted per-locale expiry from BuildArgs.
+  if (data.validUntilLabel) {
+    const validityRaw = pdfStr(strings, 'cover.validity.template')
+    const validityText = validityRaw.replace(/\{date\}/g, data.validUntilLabel)
+    const validityWidth = fonts.sans.widthOfTextAtSize(
+      fonts.safe(validityText),
+      9,
+    )
+    drawSafeText(page, validityText, {
+      x: (PAGE_WIDTH - validityWidth) / 2,
+      y: MARGIN - 2,
+      size: 9,
+      font: fonts.sans,
+      color: CLAY,
+      safe: fonts.safe,
+    })
+  }
 }
 
 /**
