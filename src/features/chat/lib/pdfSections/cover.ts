@@ -186,6 +186,36 @@ export function renderCoverPage(
  * placeholder is ever drawn. Called from buildExportPdf once the
  * document is fully assembled.
  */
+/**
+ * v1.0.18 Feature 1 — draws the project QR code on the cover.
+ * Caller (exportPdf assembly) embeds the PNG via doc.embedPng
+ * (async) and passes the PDFImage handle here. Renderer stays
+ * synchronous. Position: above the bottom footer row, right side
+ * of the page.
+ */
+export function renderCoverQr(
+  page: PDFPage,
+  fonts: EditorialFonts,
+  strings: PdfStrings,
+  image: import('pdf-lib').PDFImage,
+): void {
+  const size = 64
+  const x = PAGE_WIDTH - MARGIN - size
+  const y = MARGIN + 80
+  page.drawImage(image, { x, y, width: size, height: size })
+  // 9pt CLAY label above the QR.
+  const label = pdfStr(strings, 'cover.qrLabel')
+  const labelWidth = fonts.sans.widthOfTextAtSize(fonts.safe(label), 9)
+  drawSafeText(page, label, {
+    x: x + size - labelWidth,
+    y: y + size + 8,
+    size: 9,
+    font: fonts.sansMedium,
+    color: CLAY,
+    safe: fonts.safe,
+  })
+}
+
 export function renderCoverFooter(
   page: PDFPage,
   fonts: EditorialFonts,

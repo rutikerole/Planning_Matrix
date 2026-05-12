@@ -190,6 +190,13 @@ async function runLocale(lang: 'en' | 'de'): Promise<{ passed: number; failed: n
         : /VERTRAUEN/u.test(text) && /\d+%/u.test(text),
       msg: 'confidence column + percent value on cover',
     },
+    // v1.0.18 Feature 1 — QR code label present on cover
+    {
+      pass: lang === 'en'
+        ? /SCAN TO OPEN/u.test(text)
+        : /PROJEKT ÖFFNEN/u.test(text),
+      msg: 'QR code label present on cover',
+    },
   ]
 
   // Language-specific assertions

@@ -52,6 +52,7 @@ import {
   formatCoverDate,
   renderCoverFooter,
   renderCoverPage,
+  renderCoverQr,
 } from './pdfSections/cover'
 import { renderTocFooter, renderTocPage } from './pdfSections/toc'
 import {
@@ -250,6 +251,30 @@ export async function buildExportPdf({
     totalPages: 0,
     confidencePercent,
   })
+
+  // v1.0.18 Feature 1 — QR code linking to the project's web URL.
+  // Dynamic-import qrcode so the dependency only ships when the
+  // user actually exports a PDF (matches the pdf-lib/fontkit
+  // lazy-loading pattern).
+  try {
+    const QRCode = (await import('qrcode')).default
+    const qrUrl = `https://planning-matrix.app/project/${project.id}`
+    const qrPngBytes: Uint8Array = await QRCode.toBuffer(qrUrl, {
+      type: 'png',
+      errorCorrectionLevel: 'M',
+      margin: 0,
+      width: 256,
+    })
+    const qrImage = await doc.embedPng(qrPngBytes)
+    renderCoverQr(coverPage, editorialFonts, pdfStrings, qrImage)
+  } catch (err) {
+    // Non-fatal: if qrcode generation fails (e.g. environment without
+    // the optional canvas dependency), the cover renders without the
+    // QR. The smoke gate catches the absence on the production path.
+    if (typeof console !== 'undefined') {
+      console.warn('[exportPdf] QR code generation failed:', err)
+    }
+  }
 
   // TOC page (page 2) — body sections start on page 3. Approximate
   // page numbers for sections that still inline-flow through the
