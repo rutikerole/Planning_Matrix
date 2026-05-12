@@ -461,13 +461,15 @@ shipped in Phase 13 Week 4). What's missing is the cron harness
 
 ## 9. Operational responsibilities — split between engineering and client
 
-**v1.0.18 IS THE NEW PRODUCTION-READY RELEASE.** Builds on v1.0.17's
-PDF Renaissance with 4 bug closures (²-substitution / specialists
-filter / Key Data overflow / costs notes wording) and 4 Tier 1
-client value-adds (30-day validity stamp, confidence score on
-cover, QR code on cover, § citation hyperlinks). Runtime smoke
-gate empirically verifies every assertion at 60/60. The version
-ladder:
+**v1.0.19 IS THE NEW PRODUCTION-READY RELEASE.** Closes 5 legal-
+correctness bugs surfaced by a four-hat audit (architect +
+Tragwerksplaner + Bauamt + Architektenkammer) of v1.0.18: the
+internal procedure contradiction that would have caused a NRW
+Bauamt clerk to reject the brief on sight, the Documents page
+showing "No documents recorded yet" for a project with 7+ knowable
+mandatory Bauvorlagen, the invisible Abstandsflächen risk, and the
+overconfident Area A planungsrechtliche assertion. Runtime smoke
+gate verifies cross-page consistency at 82/82. The version ladder:
   • v1.0   = engineering milestone (complete feature scope).
   • v1.0.1 = invite-flow security hardening (owner-check on share,
              role-check on accept, 7-day TTL on invites).
@@ -714,6 +716,75 @@ ladder:
               - v1.0.18: Recommendations + Key Data (Sections VIII-IX)
               - v1.0.19: Verification + Glossary + audit log + runtime
                 smoke:pdf-text
+  • v1.0.19 = Legal Consistency Sprint — 5 bug closures (~8 commits
+              + docs). Four-hat audit (architect + Tragwerksplaner +
+              Bauamt + Architektenkammer) of v1.0.18 production PDF
+              exposed legal-correctness defects that made the brief
+              unshippable to a real NRW Bauaufsicht clerk:
+              - Bug 40 [P0]: three pages contradicted each other on
+                the same project's Verfahrensart (Areas B said
+                verfahrensfrei, Procedures said § 64 ERFORDERLICH,
+                Key Data said verfahrensfrei). Three renderers each
+                derived the procedure independently from different
+                state fields. Fix: new resolveProcedure(c) in
+                src/legal/resolveProcedure.ts is the single source
+                of truth. exportPdf computes ProcedureDecision once
+                and overrides all three renderers' content so
+                pages 4 / 7 / 10 ALWAYS agree.
+              - Bug 41 [P0]: Wärmeschutznachweis was a soft "engage
+                an energy consultant" suggestion. Now first-class
+                'required' document with § 48 GEG citation.
+              - Bug 42 [P0]: Documents page rendered "No documents
+                recorded yet" for projects where the required list
+                is deterministic. New requiredDocumentsForCase(c)
+                resolver in src/legal/requiredDocuments.ts returns
+                canonical Bauvorlagen per case. Documents page now
+                auto-populates with checklist-style rows: status
+                indicator + name + delivery sub-line + § citation.
+                Königsallee fixture renders 7 docs (Lageplan,
+                Bauzeichnungen, Baubeschreibung, Anzeige-Formular,
+                Wärmeschutznachweis, Energieausweis, Asbest-
+                Voruntersuchung).
+              - Bug 43 [P1]: Abstandsflächen invisible for façade
+                insulation. Now appended to Area C body with § 6
+                Abs. 8 BauO NRW 25-cm Dämmungs-Privileg citation.
+              - Bug 44 [P1]: Area A "planungsrechtlich keine
+                Hindernisse" tagged LEGAL · CALCULATED was
+                overconfident — the system has not verified the
+                specific Bebauungsplan/Gestaltungssatzung for the
+                Königsallee parcel. Downgraded to LEGAL · ASSUMED
+                with explicit "Verify with Stadtarchiv Düsseldorf"
+                caveat. v1.0.22+ will add bebauungsplan_id state
+                + flip back to CALCULATED once verified.
+              NEW CANONICAL RESOLVERS (src/legal/):
+              - resolveProcedure.ts: ProcedureCase → ProcedureDecision
+                { kind, citation, reasoning_de/_en, confidence,
+                caveats }. NRW Sanierung fully encoded. Other
+                Bundesländer + non-NRW intents return generic
+                'standard' + bebauungsplan_specific caveat. Bayern
+                detectProcedure path deliberately NOT migrated —
+                BAYERN_DELTA + MUENCHEN_BLOCK locked, additive
+                only. v1.0.20+ unifies.
+              - requiredDocuments.ts: DocumentCase → RequiredDocument[]
+                with status (required/conditional/recommended) +
+                delivery_de/_en + § citation. NRW T-03 baseline.
+              SMOKE GATE: cross-page consistency asserts (≥3
+              occurrences of "permit-free"/"verfahrensfrei" + ≥3
+              occurrences of "§ 62 BauO NRW" + NEGATIVE assert no
+              "§ 64 ERFORDERLICH/REQUIRED" leak). Documents
+              presence asserts (Lageplan, Wärmeschutznachweis,
+              Energieausweis, no "No documents recorded yet").
+              Abstandsflächen-Hinweis present. Area A
+              Stadtarchiv + LEGAL · ASSUMED present. 82/82 EN+DE.
+              Bayern SHA preserved. Bundle 269.1 KB gz.
+              v1.0.20+ backlog (each its own sprint):
+              - v1.0.20: Vorhabensbeschreibung section + Risk Register
+                Section XII + Bayern resolveProcedure migration
+              - v1.0.21: Funding specifics (KfW BEG 458 + NRW.BANK +
+                § 35c EStG + iSFP-Bonus) + DE qualifier i18n +
+                Bauherr signature block
+              - v1.0.22: Bebauungsplan ID + Flurstück + Gebäudeklasse
+                fields on Key Data
   • v1.0.18 = Bug fixes + Tier 1 client value adds (9 commits + docs).
               Empirical v1.0.17 Königsallee re-export confirmed the
               Renaissance landed but surfaced 4 bugs:

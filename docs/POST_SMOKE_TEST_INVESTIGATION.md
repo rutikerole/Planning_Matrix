@@ -4,6 +4,56 @@
 > Bayern SHA `b18d3f7f9a6fe238c18cec5361d30ea3a547e46b1ef2b16a1e74c533aacb3471`
 > verified MATCH at start AND end of read pass. No code edits.
 
+## V1.0.19 SHIPPED — Legal Consistency Sprint (5 bug closures)
+
+Four-hat audit (architect + Tragwerksplaner + Bauamt clerk +
+Architektenkammer) of the v1.0.18 production PDF exposed
+legal-correctness defects that would have caused a NRW Bauamt
+to reject the brief outright:
+
+| # | Bug | Severity | Root cause | Closure |
+|---|-----|----------|-----------|---------|
+| 40 | Procedure contradiction across pages 4/7/10 | P0 | Three renderers each derived Verfahrensart independently — Areas B said verfahrensfrei, Procedures said § 64 ERFORDERLICH, Key Data said verfahrensfrei | New `src/legal/resolveProcedure.ts` is single source of truth. exportPdf computes ProcedureDecision once; threads through Areas B body, Procedure card, Key Data row. All three render identical procedure language + § citation. |
+| 41 | Wärmeschutznachweis treated as soft suggestion | P0 | GEG-Nachweis appeared only as a "engage energy consultant" recommendation, not as the mandatory Bauvorlage it is by § 48 GEG | Promoted to first-class `required` status in `requiredDocumentsForCase`. § 48 GEG + § 80 GEG cited. |
+| 42 | Documents page empty for deterministic case | P0 | Renderer read `state.docs` which the persona doesn't auto-populate; mandatory list is deterministic from (procedureKind, intent, bundesland, eingriff flags, GEG trigger, baujahr) | New `src/legal/requiredDocuments.ts` resolver returns canonical Bauvorlagen list. Documents page auto-populates with checklist rows (status indicator + name + delivery sub-line + § citation). |
+| 43 | Abstandsflächen invisible | P1 | Façade insulation typically adds 14–20 cm; § 6 Abs. 8 BauO NRW 25-cm privilege rule never surfaced | Appended to Area C body when `eingriff_aussenhuelle && fassadenflaeche_m2 > 0`. Both locales cite § 6 Abs. 8 BauO NRW. |
+| 44 | Area A LEGAL · CALCULATED overconfident | P1 | Generic § 30 BauGB rule applied without verifying specific Bebauungsplan/Gestaltungssatzung for Königsallee parcel | Caveat appended to Area A body: "Verify with Stadtarchiv Düsseldorf — Königsallee in regulated Innenstadt zone. LEGAL · ASSUMED until verified." |
+
+**Architectural pattern (single source of truth for legal claims):**
+
+v1.0.11→v1.0.16 had a similar systemic flaw at the font-encoding
+layer (ligature corruption from independent sanitizer pipelines).
+The procedure contradiction is the same class of bug at the
+LEGAL layer: three renderers reaching for the same decision via
+different paths. The fix shape is identical: introduce a single
+canonical resolver, make every consumer call it, gate the
+invariant via runtime smoke.
+
+resolveProcedure / requiredDocumentsForCase set the architecture
+for future legal resolvers (Abstandsflächen check, Gebäudeklasse
+classification, Brandschutz requirements) in v1.0.20+.
+
+**Bayern path scope guard:** Bayern's existing detectProcedure in
+costNormsMuenchen.ts is deliberately NOT migrated this sprint.
+BAYERN_DELTA + MUENCHEN_BLOCK + composeLegalContext stay locked
+(Bayern SHA `b18d3f7f...c3471` invariant). resolveProcedure
+handles NRW Sanierung + NRW Neubau; other Bundesländer fall
+through to a generic 'standard' with a bebauungsplan_specific
+caveat so the brief is honest about the resolver not yet covering
+the case. v1.0.20+ unifies once all 16 states are encoded.
+
+**Runtime smoke gate** gains cross-page consistency asserts (≥3
+occurrences of "permit-free"/"verfahrensfrei" + ≥3 occurrences of
+"§ 62 BauO NRW" + NEGATIVE assert no "§ 64 ERFORDERLICH/REQUIRED"
+leak). 82/82 EN+DE pass on HEAD.
+
+**~8 commits + this doc.**
+
+Bayern SHA preserved start + end of every commit. Bundle 269.1 KB
+gz unchanged.
+
+---
+
 ## V1.0.18 SHIPPED — Bug fixes + Tier 1 client value adds
 
 Empirical v1.0.17 NRW × T-03 Königsallee re-export confirmed the
