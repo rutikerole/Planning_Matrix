@@ -2178,6 +2178,35 @@ async function runStaticGate() {
     },
   ]))
 
+  // ── v1.0.15 — Renaissance Part 2A primitives (cards/pills/badges) ─
+  const primV15 = await readFileText('src/features/chat/lib/pdfPrimitives.ts')
+  results.push(failures('v1.0.15: pdfPrimitives exports new section-renderer primitives', [
+    {
+      ok: /export function drawCard\(/.test(primV15) &&
+          /borderSide:\s*'left'\s*\|\s*'full'\s*\|\s*'none'/.test(primV15),
+      msg: 'drawCard exported with left|full|none borderSide opts',
+    },
+    {
+      ok: /export function drawPriorityPill\(/.test(primV15) &&
+          /return\s+w/.test(primV15),
+      msg: 'drawPriorityPill exported, returns consumed width for chaining',
+    },
+    {
+      ok: /export function drawCircularBadge\(/.test(primV15),
+      msg: 'drawCircularBadge exported (filled circle + centered letter)',
+    },
+    {
+      ok: /export function drawWrappedText\(/.test(primV15) &&
+          /widthOfTextAtSize/.test(primV15),
+      msg: 'drawWrappedText exported with word-wrap word-break logic',
+    },
+    {
+      ok: /export function drawStatusLegend\(/.test(primV15) &&
+          /rightX/.test(primV15),
+      msg: 'drawStatusLegend exported with right-anchored layout',
+    },
+  ]))
+
   // ── v1.0.14 Bug 30 — font instance consolidation ─────────────────
   const primitivesV14 = await readFileText('src/features/chat/lib/pdfPrimitives.ts')
   const exportPdfV14Bug30 = await readFileText('src/features/chat/lib/exportPdf.ts')

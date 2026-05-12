@@ -315,6 +315,231 @@ export function drawFooter(page: PDFPage, opts: FooterOpts): void {
   })
 }
 
+// ─── v1.0.15 primitives — cards / pills / badges / wrapped text ──────
+
+export interface CardOpts {
+  x: number
+  y: number
+  w: number
+  h: number
+  /** 'left' = accent stripe down the left edge only; 'full' = thin
+   *  border on all four sides; 'none' = no border (fill only). */
+  borderSide: 'left' | 'full' | 'none'
+  borderColor?: ReturnType<typeof rgb>
+  borderWidth?: number
+  /** Optional fill color. Skip for transparent (paper background
+   *  shows through). */
+  fillColor?: ReturnType<typeof rgb> | null
+  /** Reserved for callers — primitives don't auto-pad text but the
+   *  field is part of the contract so section renderers can store
+   *  their pad value next to the card definition for stacking. */
+  padding?: number
+}
+
+/**
+ * Card primitive — paper-tinted rect with optional accent border.
+ * `y` is the TOP of the card (so y - h is the bottom). pdf-lib's
+ * drawRectangle treats `y` as the bottom edge, so we translate.
+ */
+export function drawCard(page: PDFPage, opts: CardOpts): void {
+  const { x, y, w, h } = opts
+  const rectY = y - h
+  if (opts.fillColor) {
+    page.drawRectangle({ x, y: rectY, width: w, height: h, color: opts.fillColor })
+  }
+  if (opts.borderSide === 'full') {
+    const color = opts.borderColor ?? CLAY
+    const t = opts.borderWidth ?? 0.5
+    // Four hairlines forming the rectangle outline.
+    drawHairline(page, x, y, x + w, { color, thickness: t, opacity: 0.85 })
+    drawHairline(page, x, rectY, x + w, { color, thickness: t, opacity: 0.85 })
+    page.drawLine({
+      start: { x, y: rectY }, end: { x, y },
+      color, thickness: t, opacity: 0.85,
+    })
+    page.drawLine({
+      start: { x: x + w, y: rectY }, end: { x: x + w, y },
+      color, thickness: t, opacity: 0.85,
+    })
+  } else if (opts.borderSide === 'left') {
+    const color = opts.borderColor ?? CLAY
+    const t = opts.borderWidth ?? 3
+    page.drawRectangle({
+      x: x,
+      y: rectY,
+      width: t,
+      height: h,
+      color,
+    })
+  }
+}
+
+export interface PriorityPillOpts {
+  bg: ReturnType<typeof rgb>
+  fg: ReturnType<typeof rgb>
+  font: PDFFont
+  size?: number
+  padX?: number
+  padY?: number
+}
+
+/**
+ * Pill primitive — small rounded-rect label. pdf-lib has no native
+ * rounded-rect at modest cost; we draw a flat rectangle with hair-
+ * line edges as the visual approximation, which reads as a "pill"
+ * within the editorial design language. Returns the consumed width
+ * so callers can chain pills horizontally.
+ */
+export function drawPriorityPill(
+  page: PDFPage,
+  x: number,
+  y: number,
+  text: string,
+  opts: PriorityPillOpts,
+): number {
+  const size = opts.size ?? 10
+  const padX = opts.padX ?? 8
+  const padY = opts.padY ?? 3
+  const textWidth = opts.font.widthOfTextAtSize(text, size)
+  const w = textWidth + padX * 2
+  const h = size + padY * 2
+  page.drawRectangle({
+    x,
+    y: y - padY - 2,
+    width: w,
+    height: h,
+    color: opts.bg,
+  })
+  page.drawText(text, {
+    x: x + padX,
+    y,
+    size,
+    font: opts.font,
+    color: opts.fg,
+  })
+  return w
+}
+
+export interface CircularBadgeOpts {
+  fillColor: ReturnType<typeof rgb>
+  textColor: ReturnType<typeof rgb>
+  font: PDFFont
+  size?: number
+}
+
+/**
+ * Filled-circle badge with a single uppercase letter centered.
+ * Used for the Areas page A · B · C badges.
+ */
+export function drawCircularBadge(
+  page: PDFPage,
+  cx: number,
+  cy: number,
+  radius: number,
+  letter: string,
+  opts: CircularBadgeOpts,
+): void {
+  page.drawCircle({ x: cx, y: cy, size: radius, color: opts.fillColor })
+  const size = opts.size ?? 13
+  const letterWidth = opts.font.widthOfTextAtSize(letter, size)
+  page.drawText(letter, {
+    x: cx - letterWidth / 2,
+    y: cy - size / 2 + 1,
+    size,
+    font: opts.font,
+    color: opts.textColor,
+  })
+}
+
+export interface WrappedTextOpts {
+  maxWidth: number
+  lineHeight: number
+  font: PDFFont
+  size: number
+  color: ReturnType<typeof rgb>
+}
+
+/**
+ * Word-wrap a paragraph to maxWidth, drawing each line at lineHeight
+ * spacing. `y` is the baseline of the FIRST line; returns the y after
+ * the LAST line's descender so callers can stack content below.
+ *
+ * Word-break only — no hyphenation. If a single word exceeds maxWidth
+ * (unlikely with German legal §§), it's drawn anyway and overflows.
+ */
+export function drawWrappedText(
+  page: PDFPage,
+  x: number,
+  y: number,
+  text: string,
+  opts: WrappedTextOpts,
+): number {
+  const words = text.split(/\s+/)
+  let line = ''
+  let cursor = y
+  for (const word of words) {
+    const candidate = line ? `${line} ${word}` : word
+    const w = opts.font.widthOfTextAtSize(candidate, opts.size)
+    if (w > opts.maxWidth && line) {
+      page.drawText(line, {
+        x, y: cursor,
+        size: opts.size, font: opts.font, color: opts.color,
+      })
+      cursor -= opts.lineHeight
+      line = word
+    } else {
+      line = candidate
+    }
+  }
+  if (line) {
+    page.drawText(line, {
+      x, y: cursor,
+      size: opts.size, font: opts.font, color: opts.color,
+    })
+    cursor -= opts.lineHeight
+  }
+  return cursor
+}
+
+export interface StatusLegendItem {
+  color: ReturnType<typeof rgb>
+  label: string
+}
+
+/**
+ * Inline horizontal legend (dot + label, repeating). `rightX` is the
+ * RIGHT edge anchor; items render right-to-left from that anchor.
+ * Used on the Areas page top-right corner.
+ */
+export function drawStatusLegend(
+  page: PDFPage,
+  rightX: number,
+  y: number,
+  items: ReadonlyArray<StatusLegendItem>,
+  fonts: EditorialFonts,
+): void {
+  let cursor = rightX
+  for (let i = items.length - 1; i >= 0; i--) {
+    const item = items[i]
+    const labelWidth = fonts.sans.widthOfTextAtSize(item.label, 10)
+    page.drawText(item.label, {
+      x: cursor - labelWidth,
+      y,
+      size: 10,
+      font: fonts.sans,
+      color: CLAY,
+    })
+    page.drawCircle({
+      x: cursor - labelWidth - 8,
+      y: y + 3,
+      size: 3,
+      color: item.color,
+    })
+    cursor = cursor - labelWidth - 18
+    if (i > 0) cursor -= 4
+  }
+}
+
 /**
  * One TOC row: monospace numeral + title + dotted leader + page ref.
  * Returns the y-cursor after the row (drop by ~22pt for next row).
