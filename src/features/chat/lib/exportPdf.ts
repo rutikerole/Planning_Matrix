@@ -21,7 +21,7 @@
 import { PDFDocument, rgb, type PDFPage } from 'pdf-lib'
 import { loadBrandFonts, type BrandFonts } from '@/lib/fontLoader'
 import { factLabel, factValueWithUnit } from '@/lib/factLabel'
-import { winAnsiSafe } from '@/lib/winAnsiSafe'
+import { winAnsiSafe, decomposeLigatures, preventBrandLigatures } from '@/lib/winAnsiSafe'
 import type { MessageRow, ProjectRow } from '@/types/db'
 import type { AreaState, ProjectState } from '@/types/projectState'
 // v1.0.6 Bug 2 — PDF brief now mirrors the Cost & Timeline, Team &
@@ -143,7 +143,18 @@ export async function buildExportPdf({
   doc.setProducer('Planning Matrix')
 
   const fonts = await loadBrandFonts(doc)
-  safe = fonts.usingFallback ? winAnsiSafe : (s: string) => s
+  // v1.0.11 Bug 22 — ALWAYS decompose literal U+FB0x ligature
+  // codepoints regardless of font path. On the brand-TTF path
+  // (Inter + Instrument Serif) ALSO inject ZWNJ between f+i/l/f
+  // letter pairs to prevent fontkit's layout() from applying
+  // OpenType `liga` GSUB substitution at PDF embed time — the
+  // ligature glyphs otherwise round-trip through some PDF viewers'
+  // text-extraction layer as "ċ" / "Č" / similar substitute
+  // codepoints. ZWNJ is outside WinAnsi so the fallback path
+  // skips it (winAnsiSafe already strips zero-widths there).
+  safe = fonts.usingFallback
+    ? (s: string) => winAnsiSafe(decomposeLigatures(s))
+    : (s: string) => preventBrandLigatures(decomposeLigatures(s))
 
   const state = (project.state ?? {}) as Partial<ProjectState>
 

@@ -2153,6 +2153,74 @@ async function runStaticGate() {
     },
   ]))
 
+  // ── v1.0.11 Bug 22 — PDF ligature corruption fix ──────────────────
+  // The brand-TTF path previously bypassed sanitization entirely, so
+  // pdf-lib + fontkit could auto-apply OpenType `liga` GSUB. The
+  // resulting PDF text-extracted as "conċrmed" / "PČicht" / "Čoor"
+  // (PDF viewers' ToUnicode mapping resolved ligature glyphs to
+  // substitute codepoints). Fix:
+  //   (1) decomposeLigatures runs ALWAYS (both font paths)
+  //   (2) preventBrandLigatures injects ZWNJ between f+i/l/f on the
+  //       brand-TTF path only (ZWNJ is outside WinAnsi so MUST NOT
+  //       run on fallback)
+  const winAnsiSafeSrc = await readFileText('src/lib/winAnsiSafe.ts')
+  results.push(failures('v1.0.11 Bug 22: winAnsiSafe exports decomposeLigatures + preventBrandLigatures', [
+    {
+      ok: /export\s+function\s+decomposeLigatures/.test(winAnsiSafeSrc),
+      msg: 'decomposeLigatures must be exported',
+    },
+    {
+      ok: /export\s+function\s+preventBrandLigatures/.test(winAnsiSafeSrc),
+      msg: 'preventBrandLigatures must be exported',
+    },
+    {
+      ok: /U\+FB00/.test(winAnsiSafeSrc) && /U\+FB05/.test(winAnsiSafeSrc),
+      msg: 'helpers must reference the full U+FB00..U+FB05 ligature range',
+    },
+    {
+      ok: /U\+200C/.test(winAnsiSafeSrc) && /default-ignorable/.test(winAnsiSafeSrc),
+      msg: 'preventBrandLigatures must document the ZWNJ rationale',
+    },
+  ]))
+  const exportPdfSrcForB22 = await readFileText('src/features/chat/lib/exportPdf.ts')
+  results.push(failures('v1.0.11 Bug 22: exportPdf wires sanitizer regardless of font path', [
+    {
+      ok: /decomposeLigatures/.test(exportPdfSrcForB22),
+      msg: 'exportPdf must import decomposeLigatures',
+    },
+    {
+      ok: /preventBrandLigatures/.test(exportPdfSrcForB22),
+      msg: 'exportPdf must import preventBrandLigatures',
+    },
+    {
+      ok: /fonts\.usingFallback[\s\S]{0,400}winAnsiSafe\(decomposeLigatures/.test(exportPdfSrcForB22),
+      msg: 'fallback path must compose winAnsiSafe(decomposeLigatures(s))',
+    },
+    {
+      ok: /preventBrandLigatures\(decomposeLigatures/.test(exportPdfSrcForB22),
+      msg: 'brand-TTF path must compose preventBrandLigatures(decomposeLigatures(s))',
+    },
+  ]))
+  // Inter TTFs must remain present in public/fonts/ — fontLoader.ts
+  // fetches them at runtime, so a missing TTF silently downgrades to
+  // Helvetica fallback. Pin presence so the brand path stays live.
+  const interRegularExists = (await import('node:fs')).existsSync(
+    `${REPO_ROOT}/public/fonts/Inter-Regular.ttf`,
+  )
+  const interMediumExists = (await import('node:fs')).existsSync(
+    `${REPO_ROOT}/public/fonts/Inter-Medium.ttf`,
+  )
+  results.push(failures('v1.0.11 Bug 22: brand Inter TTFs present in public/fonts/', [
+    {
+      ok: interRegularExists,
+      msg: 'public/fonts/Inter-Regular.ttf must be present (brand body font)',
+    },
+    {
+      ok: interMediumExists,
+      msg: 'public/fonts/Inter-Medium.ttf must be present (brand emphasis font)',
+    },
+  ]))
+
   // ── v1.0.10 — state-parameterization sprint drift fixtures ────────
   // Foundation: src/legal/stateLocalization.ts exposes
   // getStateLocalization(bundesland) returning procedure/structuralCert/
