@@ -165,6 +165,8 @@ async function runLocale(lang: 'en' | 'de'): Promise<{ passed: number; failed: n
     ...assertNoCorruption(text),
     { pass: /Königsallee/u.test(text), msg: 'project address rendered' },
     { pass: /Planning\s*Matrix|PLANNING\s*MATRIX/u.test(text), msg: 'wordmark rendered' },
+    { pass: /≈/u.test(text), msg: '≈ (U+2248) almost-equals symbol intact in timeline subtitle' },
+    { pass: /m²/u.test(text), msg: 'm² (U+00B2 superscript) intact in costs subtitle' },
   ]
 
   // Language-specific assertions
