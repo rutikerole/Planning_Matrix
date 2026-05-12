@@ -29,13 +29,11 @@ import type { AreaState, ProjectState } from '@/types/projectState'
 // drift.
 import {
   buildCostBreakdown,
-  describeCostInputs,
   detectAreaSqm,
   detectKlasse,
   detectProcedure,
   formatEurRange,
   resolveAreaSqmByTemplate,
-  resolveInputs,
 } from '@/features/result/lib/costNormsMuenchen'
 // v1.0.13 → v1.0.14 — PDF Renaissance Part 2 imports. The
 // PDF_CLAY / PDF_MARGIN / PDF_PAPER aliases that v1.0.13 used for
@@ -68,16 +66,24 @@ import {
   type AreaRow,
 } from './pdfSections/areas'
 import {
+  renderCostsBody,
+  renderCostsFooter,
+  type CostsData,
+  type CostsItem,
+} from './pdfSections/costs'
+import {
+  DEFAULT_TIMELINE_MILESTONE_WEEK,
+  DEFAULT_TIMELINE_PHASES,
+  DEFAULT_TIMELINE_TOTAL_WEEKS,
+  renderTimelineBody,
+  renderTimelineFooter,
+} from './pdfSections/timeline'
+import {
   pdfStr,
   resolvePdfStrings,
   type PdfLang,
 } from './pdfStrings'
 import { getStateLocalization } from '@/legal/stateLocalization'
-import {
-  PROCEDURE_PHASES,
-  totalPhaseWeight,
-} from '@/features/result/lib/composeTimeline'
-import { findCostRationale } from '@/data/costRationales'
 import { pickSmartSuggestions } from '@/features/result/lib/smartSuggestionsMatcher'
 
 /**
@@ -349,15 +355,81 @@ export async function buildExportPdf({
     })
   }
 
-  // ── Page 4: Costs (III COSTS) ──────────────────────────────────
-  // v1.0.6 Bug 2 — mirror src/features/result/components/tabs/
-  // CostTimelineTab.tsx. The numeric engine is the same; the PDF
-  // surface adds the per-row rationale next to the EUR range and
-  // calls out the inputs that drove the multiplier.
-  drawCostsPage(doc, fonts, project, state, lang)
+  // ── Page 5: Costs (Section 03) ─────────────────────────────────
+  // v1.0.16 Renaissance Part 2B. Replaces v1.0.6's plain-text
+  // drawCostsPage with the editorial pdfSections/costs.ts renderer.
+  // The numeric engine (buildCostBreakdown + resolveAreaSqmByTemplate)
+  // is unchanged — only the surface treatment is new, so the PDF +
+  // result-page CostTimelineTab still consume identical data.
+  const procedures = state.procedures ?? []
+  const primaryRationale =
+    procedures.find((p) => p.status === 'erforderlich')?.rationale_de ??
+    procedures[0]?.rationale_de ??
+    ''
+  const procedure = detectProcedure(primaryRationale)
+  const corpus = (state.facts ?? [])
+    .map((f) => `${f.key} ${typeof f.value === 'string' ? f.value : ''}`)
+    .join(' ')
+    .toLowerCase()
+  const klasse = detectKlasse(corpus)
+  const areaSqm =
+    resolveAreaSqmByTemplate(state.facts, state.templateId) ??
+    detectAreaSqm(corpus) ??
+    0
+  const costOpts = { areaSqm, bundesland: project.bundesland }
+  const costBreakdown = buildCostBreakdown(procedure, klasse, costOpts)
+  const costItems: CostsItem[] = [
+    {
+      labelKey: 'costs.items.architect',
+      basisKey: 'costs.items.architect.basis',
+      range: formatEurRange(costBreakdown.architekt, lang),
+    },
+    {
+      labelKey: 'costs.items.structural',
+      basisKey: 'costs.items.structural.basis',
+      range: formatEurRange(costBreakdown.tragwerksplanung, lang),
+    },
+    {
+      labelKey: 'costs.items.surveying',
+      basisKey: 'costs.items.surveying.basis',
+      range: formatEurRange(costBreakdown.vermessung, lang),
+    },
+    {
+      labelKey: 'costs.items.energy',
+      basisKey: 'costs.items.energy.basis',
+      range: formatEurRange(costBreakdown.energieberatung, lang),
+    },
+    {
+      labelKey: 'costs.items.authority',
+      basisKey: 'costs.items.authority.basis',
+      range: formatEurRange(costBreakdown.behoerdengebuehren, lang),
+    },
+  ]
+  const costsData: CostsData = {
+    areaSqm,
+    bundeslandCode: bundeslandCodeUpper,
+    templateLabel,
+    items: costItems,
+    total: formatEurRange(costBreakdown.total, lang),
+  }
+  const costsPage = doc.addPage([PDF_PAGE_WIDTH, PDF_PAGE_HEIGHT])
+  const costsPageNumber = doc.getPageCount()
+  renderCostsBody(costsPage, editorialFonts, pdfStrings, costsData)
 
-  // ── Page 5: Timeline (IV TIMELINE) ─────────────────────────────
-  drawTimelinePage(doc, fonts, lang)
+  // ── Page 6: Timeline (Section 04) ──────────────────────────────
+  // v1.0.16 Renaissance Part 2B. Replaces v1.0.6's plain-text
+  // drawTimelinePage with the editorial Gantt-style pdfSections/
+  // timeline.ts renderer. Phase set is the DEFAULT_TIMELINE_PHASES
+  // (T-03 schedule); per-template parameterization is v1.0.17+.
+  const timelinePage = doc.addPage([PDF_PAGE_WIDTH, PDF_PAGE_HEIGHT])
+  const timelinePageNumber = doc.getPageCount()
+  renderTimelineBody(timelinePage, editorialFonts, pdfStrings, {
+    templateLabel,
+    bundeslandCode: bundeslandCodeUpper,
+    phases: DEFAULT_TIMELINE_PHASES,
+    totalWeeks: DEFAULT_TIMELINE_TOTAL_WEEKS,
+    milestoneWeek: DEFAULT_TIMELINE_MILESTONE_WEEK,
+  })
 
   // ── Schedule sections ──────────────────────────────────────────
   // Phase 8.5 (A.3): read through the resolve* helpers so PDF + result
@@ -699,6 +771,8 @@ export async function buildExportPdf({
   const editorialPages = new Set<PDFPage>()
   if (executivePage) editorialPages.add(executivePage)
   if (areasPage) editorialPages.add(areasPage)
+  editorialPages.add(costsPage)
+  editorialPages.add(timelinePage)
   allPages.forEach((p, i) => {
     if (i <= 1) return // skip cover + TOC
     if (editorialPages.has(p)) return // skip v1.0.15 editorial pages
@@ -765,6 +839,16 @@ export async function buildExportPdf({
       pageNumber: areasPageNumber,
     })
   }
+  renderCostsFooter(costsPage, editorialFonts, pdfStrings, {
+    docNo,
+    totalPages,
+    pageNumber: costsPageNumber,
+  })
+  renderTimelineFooter(timelinePage, editorialFonts, pdfStrings, {
+    docNo,
+    totalPages,
+    pageNumber: timelinePageNumber,
+  })
 
   return await doc.save()
 }
@@ -853,221 +937,6 @@ function ensureSpace(
   return startPage(doc)
 }
 
-
-// v1.0.6 Bug 2 — Costs page (III). Mirrors src/features/result/components/
-// tabs/CostTimelineTab.tsx. Same heuristic engine (buildCostBreakdown +
-// resolveInputs), same per-row rationale (findCostRationale), same
-// "Computed from: …" inputs line. Each row prints the label, the
-// rationale below it, and the EUR range right-aligned.
-function drawCostsPage(
-  doc: PDFDocument,
-  fonts: BrandFonts,
-  project: ProjectRow,
-  state: Partial<ProjectState>,
-  lang: 'de' | 'en',
-): void {
-  let { page, y } = startPage(doc)
-  drawSectionHeader(
-    page,
-    fonts,
-    y,
-    lang === 'en' ? 'III  COSTS' : 'III  KOSTEN',
-  )
-  y -= 30
-  const procedures = state.procedures ?? []
-  const primaryRationale =
-    procedures.find((p) => p.status === 'erforderlich')?.rationale_de ??
-    procedures[0]?.rationale_de ??
-    ''
-  const procedure = detectProcedure(primaryRationale)
-  const corpus = (state.facts ?? [])
-    .map((f) => `${f.key} ${typeof f.value === 'string' ? f.value : ''}`)
-    .join(' ')
-    .toLowerCase()
-  const klasse = detectKlasse(corpus)
-  // v1.0.11 Bug 24 — per-template field map first, corpus regex
-  // fallback. See CostTimelineTab.tsx for the same wiring + rationale.
-  const areaSqm =
-    resolveAreaSqmByTemplate(state.facts, state.templateId) ??
-    detectAreaSqm(corpus)
-  const opts = { areaSqm, bundesland: project.bundesland }
-  const cost = buildCostBreakdown(procedure, klasse, opts)
-  const inputs = resolveInputs(procedure, klasse, opts)
-  const inputsLabel = describeCostInputs(inputs, lang)
-
-  const rows: Array<{
-    key: 'architekt' | 'tragwerksplanung' | 'vermessung' | 'energieberatung' | 'behoerdengebuehren'
-    labelDe: string
-    labelEn: string
-  }> = [
-    { key: 'architekt', labelDe: 'Architekt:in (LP 1–4)', labelEn: 'Architect (LP 1–4)' },
-    { key: 'tragwerksplanung', labelDe: 'Tragwerksplanung', labelEn: 'Structural engineering' },
-    { key: 'vermessung', labelDe: 'Vermessung', labelEn: 'Surveying' },
-    { key: 'energieberatung', labelDe: 'Energieberatung', labelEn: 'Energy consultation' },
-    { key: 'behoerdengebuehren', labelDe: 'Behördengebühren', labelEn: 'Authority fees' },
-  ]
-  for (const row of rows) {
-    ;({ page, y } = ensureSpace(doc, page, y, 36))
-    const rationale = findCostRationale(row.key, project.bundesland)
-    page.drawText(safe(lang === 'en' ? row.labelEn : row.labelDe), {
-      x: MARGIN,
-      y,
-      size: 11,
-      font: fonts.interMedium,
-      color: INK,
-    })
-    page.drawText(safe(formatEurRange(cost[row.key], lang)), {
-      x: PAGE_WIDTH - MARGIN - 140,
-      y,
-      size: 11,
-      font: fonts.serifItalic,
-      color: CLAY_DEEP,
-    })
-    y -= 13
-    if (rationale) {
-      page.drawText(
-        safe(lang === 'en' ? rationale.rationaleEn : rationale.rationaleDe),
-        {
-          x: MARGIN,
-          y,
-          size: 9,
-          font: fonts.serifItalic,
-          color: CLAY,
-          opacity: 0.85,
-          maxWidth: PAGE_WIDTH - MARGIN * 2 - 160,
-        },
-      )
-      y -= 12
-    }
-    y -= 6
-  }
-  // Total row
-  page.drawLine({
-    start: { x: MARGIN, y: y + 4 },
-    end: { x: PAGE_WIDTH - MARGIN, y: y + 4 },
-    thickness: 0.5,
-    color: INK,
-    opacity: 0.18,
-  })
-  y -= 8
-  page.drawText(safe(lang === 'en' ? 'Total (estimated)' : 'Summe (geschätzt)'), {
-    x: MARGIN,
-    y,
-    size: 12,
-    font: fonts.interMedium,
-    color: INK,
-  })
-  page.drawText(safe(formatEurRange(cost.total, lang)), {
-    x: PAGE_WIDTH - MARGIN - 140,
-    y,
-    size: 12,
-    font: fonts.interMedium,
-    color: CLAY_DEEP,
-  })
-  y -= 22
-  // Inputs caption — verbatim parity with the in-app tooltip.
-  page.drawText(
-    safe(
-      `${lang === 'en' ? 'Computed from' : 'Berechnet aus'}: ${inputsLabel}`,
-    ),
-    {
-      x: MARGIN,
-      y,
-      size: 9,
-      font: fonts.serifItalic,
-      color: CLAY,
-      opacity: 0.85,
-      maxWidth: PAGE_WIDTH - MARGIN * 2,
-    },
-  )
-}
-
-// v1.0.6 Bug 2 — Timeline page (IV). Mirrors the Procedure Duration
-// section of CostTimelineTab. Five phases (Preparation / Submission /
-// Review / Corrections / Approval) plus total.
-function drawTimelinePage(
-  doc: PDFDocument,
-  fonts: BrandFonts,
-  lang: 'de' | 'en',
-): void {
-  let { page, y } = startPage(doc)
-  drawSectionHeader(
-    page,
-    fonts,
-    y,
-    lang === 'en' ? 'IV  TIMELINE' : 'IV  ZEITRAHMEN',
-  )
-  y -= 30
-  const totalWeight = totalPhaseWeight()
-  for (const phase of PROCEDURE_PHASES) {
-    ;({ page, y } = ensureSpace(doc, page, y, 28))
-    const widthPct = Math.round((phase.weight / totalWeight) * 100)
-    page.drawText(safe(lang === 'en' ? phase.labelEn : phase.labelDe), {
-      x: MARGIN,
-      y,
-      size: 11,
-      font: fonts.interMedium,
-      color: INK,
-    })
-    page.drawText(safe(lang === 'en' ? phase.rangeEn : phase.rangeDe), {
-      x: PAGE_WIDTH - MARGIN - 140,
-      y,
-      size: 11,
-      font: fonts.serifItalic,
-      color: CLAY_DEEP,
-    })
-    y -= 12
-    // Bar
-    page.drawRectangle({
-      x: MARGIN,
-      y: y + 2,
-      width: ((PAGE_WIDTH - MARGIN * 2 - 160) * widthPct) / 100,
-      height: 4,
-      color: CLAY,
-      opacity: 0.55,
-    })
-    y -= 18
-  }
-  // Total
-  page.drawLine({
-    start: { x: MARGIN, y: y + 4 },
-    end: { x: PAGE_WIDTH - MARGIN, y: y + 4 },
-    thickness: 0.5,
-    color: INK,
-    opacity: 0.18,
-  })
-  y -= 8
-  page.drawText(safe(lang === 'en' ? 'Total duration' : 'Gesamtdauer'), {
-    x: MARGIN,
-    y,
-    size: 12,
-    font: fonts.interMedium,
-    color: INK,
-  })
-  page.drawText(safe(lang === 'en' ? '~ 4–6 months' : 'ca. 4–6 Monate'), {
-    x: PAGE_WIDTH - MARGIN - 140,
-    y,
-    size: 12,
-    font: fonts.interMedium,
-    color: CLAY_DEEP,
-  })
-  y -= 22
-  page.drawText(
-    safe(
-      lang === 'en'
-        ? 'subject to authority workload'
-        : 'abhängig von der Auslastung der Behörde',
-    ),
-    {
-      x: MARGIN,
-      y,
-      size: 9,
-      font: fonts.serifItalic,
-      color: CLAY,
-      opacity: 0.85,
-    },
-  )
-}
 
 function drawSectionHeader(page: PDFPage, fonts: BrandFonts, y: number, title: string) {
   // Italic Serif numeral + uppercase tracked title

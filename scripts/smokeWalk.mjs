@@ -3489,14 +3489,23 @@ async function runStaticGate() {
   // footer. Drift gates assert each new section's TOC label is in the
   // exporter source.
   const exportPdfSrc = await readFileText('src/features/chat/lib/exportPdf.ts')
+  // v1.0.16 — Sections III + IV moved from plain-text drawCostsPage /
+  // drawTimelinePage to editorial pdfSections/costs.ts + timeline.ts.
+  // Check the new home: assembly wires the renderers, strings table
+  // declares the localized kickers.
+  const stringsForV16Sec = await readFileText('src/features/chat/lib/pdfStrings.ts')
   results.push(failures('v1.0.6 Bug 2: PDF exporter ships every result-page section', [
     {
-      ok: /'III\s+COSTS'/.test(exportPdfSrc) && /'III\s+KOSTEN'/.test(exportPdfSrc),
-      msg: 'PDF must render section III (Costs / Kosten) in both languages',
+      ok: /renderCostsBody\(costsPage/.test(exportPdfSrc) &&
+          /'costs\.kicker':\s*'SECTION 03 · COSTS'/.test(stringsForV16Sec) &&
+          /'costs\.kicker':\s*'ABSCHNITT 03 · KOSTEN'/.test(stringsForV16Sec),
+      msg: 'PDF must render section III (Costs / Kosten) in both languages via renderCostsBody',
     },
     {
-      ok: /'IV\s+TIMELINE'/.test(exportPdfSrc) && /'IV\s+ZEITRAHMEN'/.test(exportPdfSrc),
-      msg: 'PDF must render section IV (Timeline / Zeitrahmen) in both languages',
+      ok: /renderTimelineBody\(timelinePage/.test(exportPdfSrc) &&
+          /'timeline\.kicker':\s*'SECTION 04 · TIMELINE'/.test(stringsForV16Sec) &&
+          /'timeline\.kicker':\s*'ABSCHNITT 04 · ZEITPLAN'/.test(stringsForV16Sec),
+      msg: 'PDF must render section IV (Timeline / Zeitplan) in both languages via renderTimelineBody',
     },
     {
       ok: /'V\s+PROCEDURES'/.test(exportPdfSrc) && /'V\s+VERFAHREN'/.test(exportPdfSrc),
