@@ -2153,6 +2153,39 @@ async function runStaticGate() {
     },
   ]))
 
+  // ── v1.0.13 — PDF Renaissance Part 1: assembly wire-up ────────────
+  const assemblySrc = await readFileText('src/features/chat/lib/exportPdf.ts')
+  results.push(failures('v1.0.13: exportPdf wires renderCoverPage + renderTocPage', [
+    {
+      ok: /import \{[^}]*renderCoverPage[^}]*\}\s*from\s*['"]\.\/pdfSections\/cover['"]/.test(assemblySrc),
+      msg: 'exportPdf imports renderCoverPage from ./pdfSections/cover',
+    },
+    {
+      ok: /import \{[^}]*renderTocPage[^}]*\}\s*from\s*['"]\.\/pdfSections\/toc['"]/.test(assemblySrc),
+      msg: 'exportPdf imports renderTocPage from ./pdfSections/toc',
+    },
+    {
+      ok: /renderCoverPage\(\s*coverPage/.test(assemblySrc),
+      msg: 'exportPdf calls renderCoverPage(coverPage, ...)',
+    },
+    {
+      ok: /renderTocPage\(\s*tocPage/.test(assemblySrc),
+      msg: 'exportPdf calls renderTocPage(tocPage, ...) AFTER body for back-fill',
+    },
+    {
+      ok: /function computeTocPageNumbers/.test(assemblySrc),
+      msg: 'computeTocPageNumbers helper defined for TocData.pageNumbers map',
+    },
+    {
+      ok: /function finalizePageFooters/.test(assemblySrc),
+      msg: 'finalizePageFooters helper defined for "X / N" placeholder rewrite',
+    },
+    {
+      ok: !/^async function drawTitlePage/m.test(assemblySrc),
+      msg: 'v1.0.6 drawTitlePage removed (renderCoverPage supersedes)',
+    },
+  ]))
+
   // ── v1.0.13 — PDF Renaissance Part 1: TOC section renderer ────────
   const tocSrc = await readFileText('src/features/chat/lib/pdfSections/toc.ts')
   results.push(failures('v1.0.13: pdfSections/toc.ts exports renderTocPage with 11 entries', [
@@ -3107,8 +3140,13 @@ async function runStaticGate() {
       msg: 'Audit Log section must be renumbered X',
     },
     {
-      ok: /Vorläufig - bestätigt durch/.test(exportPdfSrc) && /if \(i > 0\)/.test(exportPdfSrc),
-      msg: 'Vorläufig footer must be drawn on every non-cover page',
+      // v1.0.13 — assertion broadened: v1.0.6 skipped only the cover
+      // page (i > 0); v1.0.13 skips cover + TOC (i <= 1 return). The
+      // Vorläufig copy still appears on every non-cover/TOC page;
+      // we accept either guard form.
+      ok: /Vorläufig - bestätigt durch/.test(exportPdfSrc) &&
+          (/if \(i > 0\)/.test(exportPdfSrc) || /if \(i <= 1\)\s*return/.test(exportPdfSrc)),
+      msg: 'Vorläufig footer must be drawn on every non-cover (v1.0.6) or non-cover/TOC (v1.0.13) page',
     },
     {
       ok: /Showing last 30 of/.test(exportPdfSrc),

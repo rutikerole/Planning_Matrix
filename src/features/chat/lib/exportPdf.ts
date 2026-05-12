@@ -38,6 +38,27 @@ import {
   resolveAreaSqmByTemplate,
   resolveInputs,
 } from '@/features/result/lib/costNormsMuenchen'
+// v1.0.13 — PDF Renaissance Part 1 imports.
+import {
+  CLAY as PDF_CLAY,
+  MARGIN as PDF_MARGIN,
+  PAGE_HEIGHT as PDF_PAGE_HEIGHT,
+  PAGE_WIDTH as PDF_PAGE_WIDTH,
+  PAPER as PDF_PAPER,
+  resolveEditorialFonts,
+} from './pdfPrimitives'
+import {
+  deriveDocNo,
+  formatCoverDate,
+  renderCoverPage,
+} from './pdfSections/cover'
+import { renderTocPage } from './pdfSections/toc'
+import {
+  pdfStr,
+  resolvePdfStrings,
+  type PdfLang,
+} from './pdfStrings'
+import { getStateLocalization } from '@/legal/stateLocalization'
 import {
   PROCEDURE_PHASES,
   totalPhaseWeight,
@@ -159,10 +180,53 @@ export async function buildExportPdf({
 
   const state = (project.state ?? {}) as Partial<ProjectState>
 
-  // ── Page 1: title ──────────────────────────────────────────────
-  await drawTitlePage(doc, fonts, project, lang)
+  // ── v1.0.13 PDF Renaissance Part 1: Cover + TOC ────────────────
+  // Replaces the v1.0.6 drawTitlePage with the approved-prototype
+  // cover page rendered via renderCoverPage primitive. New TOC page
+  // inserts at page 2. Body sections (executive/areas/costs/timeline
+  // /procedures/team/recommendations/keyData/audit) render unchanged
+  // from v1.0.12 — Renaissance Parts 2-4 (v1.0.14+) redesign each
+  // section after Rutik's visual checkpoint on this Part 1.
+  const editorialFonts = await resolveEditorialFonts(doc)
+  const pdfStrings = resolvePdfStrings(lang as PdfLang)
+  const projectTitleForCover = project.name
+  const bundeslandName = getStateLocalization(project.bundesland).labelDe
+  const templateIntentKey = `template.${state.templateId ?? 'T-01'}`
+  const templateLabel = pdfStr(pdfStrings, templateIntentKey)
+  const createdDate = formatCoverDate(project.created_at, lang as PdfLang)
+  const docNo = deriveDocNo(
+    project.id,
+    project.created_at,
+    projectTitleForCover,
+  )
+  const revision = pdfStr(pdfStrings, 'cover.revisionValue')
+  // ProjectRow has owner_id but no owner_name surface. v1.0.13 ships
+  // the localized "Bauherr" label as a placeholder; v1.0.14+ may
+  // join to profiles for the actual owner name.
+  const bauherrName = lang === 'de' ? 'Bauherr' : 'Owner'
 
-  // ── Page 2: TOP-3 ──────────────────────────────────────────────
+  // Cover page (page 1). totalPages placeholder; finalizePageFooters
+  // will rewrite once doc is fully built.
+  const coverPage = doc.addPage([PDF_PAGE_WIDTH, PDF_PAGE_HEIGHT])
+  renderCoverPage(coverPage, editorialFonts, pdfStrings, {
+    projectTitle: projectTitleForCover,
+    address: project.plot_address ?? '',
+    bundeslandName,
+    templateLabel,
+    createdDate,
+    docNo,
+    revision,
+    bauherrName,
+    totalPages: 0,
+  })
+
+  // TOC page (page 2) — body sections start on page 3. Approximate
+  // page numbers for sections that still inline-flow through the
+  // v1.0.12 body (verification + glossary point at the last-known
+  // body page; v1.0.14+ adds dedicated pages).
+  const tocPage = doc.addPage([PDF_PAGE_WIDTH, PDF_PAGE_HEIGHT])
+
+  // ── Body: existing v1.0.12 rendering, shifted by 2 (cover + TOC) ─
   const recs = (state.recommendations ?? []).slice().sort((a, b) => a.rank - b.rank).slice(0, 3)
   if (recs.length > 0) {
     drawTop3Page(doc, fonts, recs, lang)
@@ -516,17 +580,20 @@ export async function buildExportPdf({
     lang === 'en'
       ? 'Preliminary - to be confirmed by a certified architect (Bauvorlageberechtigte/r).'
       : 'Vorläufig - bestätigt durch eine/n bauvorlageberechtigte/n Architekt/in.'
+  // v1.0.13 — skip the existing y=28/y=44 footers on pages 1 (cover)
+  // and 2 (TOC). Those pages have their own MARGIN+14 footers
+  // rendered by renderCoverPage / renderTocPage. Body pages 3+ keep
+  // the v1.0.6 footer styling unchanged for this checkpoint sprint.
   allPages.forEach((p, i) => {
-    if (i > 0) {
-      p.drawText(safe(vorlaeufig), {
-        x: MARGIN,
-        y: 44,
-        size: 8,
-        font: fonts.serifItalic,
-        color: CLAY,
-        maxWidth: PAGE_WIDTH - MARGIN * 2,
-      })
-    }
+    if (i <= 1) return // skip cover + TOC
+    p.drawText(safe(vorlaeufig), {
+      x: MARGIN,
+      y: 44,
+      size: 8,
+      font: fonts.serifItalic,
+      color: CLAY,
+      maxWidth: PAGE_WIDTH - MARGIN * 2,
+    })
     p.drawText(safe(footer), {
       x: MARGIN,
       y: 28,
@@ -545,7 +612,122 @@ export async function buildExportPdf({
     })
   })
 
+  // v1.0.13 — back-fill the TOC page now that we know the total
+  // page count + per-section approximate page indices.
+  const totalPages = allPages.length
+  renderTocPage(tocPage, editorialFonts, pdfStrings, {
+    pageNumbers: computeTocPageNumbers(state),
+    docNo,
+    totalPages,
+    tocPageNumber: 2,
+  })
+
+  // v1.0.13 — finalize cover + TOC page-X-of-Y placeholders now that
+  // totalPages is known. Both pages embedded "X / ?" because they
+  // rendered before body sections existed; mask the placeholder
+  // region with PAPER and redraw with the correct total.
+  finalizePageFooters(doc, totalPages, editorialFonts.sans)
+
   return await doc.save()
+}
+
+/**
+ * v1.0.13 — best-effort per-section page indices for the TOC.
+ * Body sections still flow inline with ensureSpace breaks (v1.0.12
+ * behaviour, untouched this sprint), so the actual page indices vary
+ * with state size. For Königsallee-sized projects the executive
+ * (TOP-3) lands page 3, areas page 4, costs page 5, timeline page 6,
+ * procedures+ start page 7+. Sections not yet present in the body
+ * (verification, glossary) point at the last-known body page.
+ *
+ * v1.0.14+ replaces this approximation with real per-section page
+ * tracking when each section gets its own dedicated renderer.
+ */
+function computeTocPageNumbers(
+  state: Partial<ProjectState>,
+): {
+  executive: number
+  areas: number
+  costs: number
+  timeline: number
+  procedures: number
+  documents: number
+  team: number
+  recommendations: number
+  keyData: number
+  verification: number
+  glossary: number
+} {
+  // Heuristic page-shift: each "explicit" section adds one page; the
+  // inline-flow body sections (procedures..audit) crowd on ~3 pages.
+  const hasTop3 = (state.recommendations ?? []).length > 0
+  const hasAreas = !!state.areas
+  const exec = 3
+  const areas = exec + (hasTop3 ? 1 : 0)
+  const costs = areas + (hasAreas ? 1 : 0)
+  const timeline = costs + 1
+  // Inline flow: procedures + documents + team + recommendations +
+  // keyData typically fit pages 7-9 for medium projects.
+  const procedures = timeline + 1
+  const documents = procedures
+  const team = procedures + 1
+  const recommendations = team
+  const keyData = recommendations + 1
+  // Verification + glossary are v1.0.14+ scope; point at last-known
+  // page so the TOC entries render but don't lie about page numbers.
+  const verification = keyData
+  const glossary = keyData
+  return {
+    executive: exec,
+    areas,
+    costs,
+    timeline,
+    procedures,
+    documents,
+    team,
+    recommendations,
+    keyData,
+    verification,
+    glossary,
+  }
+}
+
+/**
+ * v1.0.13 — mask + redraw the page-X-of-Y footer text on every page
+ * so the cover + TOC's "1 / ?" / "2 / ?" placeholders become correct
+ * totals. Body pages use the v1.0.6 footer style at y=28 (handled
+ * separately in the allPages loop); this finalize pass only touches
+ * the cover + TOC's MARGIN+14 footer.
+ */
+function finalizePageFooters(
+  doc: PDFDocument,
+  totalPages: number,
+  sansFont: import('pdf-lib').PDFFont,
+): void {
+  const pages = doc.getPages()
+  for (let i = 0; i < pages.length && i < 2; i++) {
+    const page = pages[i]
+    const pageNum = i + 1
+    const pageText = `${pageNum} / ${totalPages}`
+    // Mask the placeholder by drawing PAPER over the right edge
+    // where "X / ?" was rendered.
+    page.drawRectangle({
+      x: PDF_PAGE_WIDTH - PDF_MARGIN - 100,
+      y: PDF_MARGIN + 8,
+      width: 100,
+      height: 14,
+      color: PDF_PAPER,
+    })
+    // Redraw with the correct total.
+    const w = sansFont.widthOfTextAtSize(pageText, 10)
+    page.drawText(pageText, {
+      x: PDF_PAGE_WIDTH - PDF_MARGIN - w,
+      y: PDF_MARGIN + 14,
+      size: 10,
+      font: sansFont,
+      color: PDF_CLAY,
+    })
+  }
 }
 
 // ── Page builders ──────────────────────────────────────────────────
@@ -600,133 +782,6 @@ function ensureSpace(
   return startPage(doc)
 }
 
-async function drawTitlePage(
-  doc: PDFDocument,
-  fonts: BrandFonts,
-  project: ProjectRow,
-  lang: 'de' | 'en',
-) {
-  const { page } = startPage(doc)
-
-  // Wordmark up top
-  page.drawText(safe('Planning Matrix'), {
-    x: MARGIN,
-    y: PAGE_HEIGHT - MARGIN - 6,
-    size: 11,
-    font: fonts.interMedium,
-    color: INK,
-  })
-
-  // Eyebrow
-  page.drawText(
-    safe(
-      lang === 'en' ? 'PROJECT  ·  EXPORTED PROJECT BRIEF' : 'PROJEKT  ·  EXPORT-BRIEFING',
-    ),
-    {
-      x: MARGIN,
-      y: PAGE_HEIGHT / 2 + 60,
-      size: 10,
-      font: fonts.interMedium,
-      color: CLAY,
-    },
-  )
-
-  // Intent (display)
-  page.drawText(safe(project.name), {
-    x: MARGIN,
-    y: PAGE_HEIGHT / 2 + 20,
-    size: 28,
-    font: fonts.serif,
-    color: INK,
-  })
-
-  // Address
-  if (project.plot_address) {
-    page.drawText(safe(project.plot_address), {
-      x: MARGIN,
-      y: PAGE_HEIGHT / 2 - 8,
-      size: 14,
-      font: fonts.serifItalic,
-      color: rgb(0.13, 0.14, 0.16),
-      opacity: 0.65,
-    })
-  }
-
-  // Hairline
-  page.drawLine({
-    start: { x: MARGIN, y: PAGE_HEIGHT / 2 - 30 },
-    end: { x: MARGIN + 96, y: PAGE_HEIGHT / 2 - 30 },
-    thickness: 0.5,
-    color: INK,
-    opacity: 0.25,
-  })
-
-  // Created
-  page.drawText(
-    safe(`${lang === 'en' ? 'Created' : 'Erstellt'}: ${formatDate(project.created_at, lang)}`),
-    {
-      x: MARGIN,
-      y: PAGE_HEIGHT / 2 - 50,
-      size: 10,
-      font: fonts.inter,
-      color: INK_MUTED,
-      opacity: 0.7,
-    },
-  )
-
-  // Axonometric placeholder — simple hand-drawn building glyph
-  drawAxonometricGlyph(page, MARGIN, PAGE_HEIGHT / 2 - 200, 120)
-
-  // Footer caveat. Em-dashes flattened to hyphens unconditionally so
-  // the literal copy doesn't depend on the runtime sanitizer being
-  // active; safe() also runs in case the source ever drifts.
-  // Umlauts are Latin-1 and survive Helvetica intact.
-  page.drawText(
-    safe(
-      lang === 'en'
-        ? 'Preliminary - to be confirmed by a certified architect (Bauvorlageberechtigte/r).'
-        : 'Vorläufig - bestätigt durch eine/n bauvorlageberechtigte/n Architekt/in.',
-    ),
-    {
-      x: MARGIN,
-      y: MARGIN + 56,
-      size: 9,
-      font: fonts.serifItalic,
-      color: CLAY,
-      maxWidth: PAGE_WIDTH - MARGIN * 2,
-    },
-  )
-}
-
-function drawAxonometricGlyph(page: PDFPage, x: number, y: number, size: number) {
-  // Simple isometric cube — three parallelograms in drafting-blue.
-  const s = size / 16
-  const stroke = (
-    p1: [number, number],
-    p2: [number, number],
-    opacity = 0.55,
-  ) => {
-    page.drawLine({
-      start: { x: x + p1[0] * s, y: y - p1[1] * s + size },
-      end: { x: x + p2[0] * s, y: y - p2[1] * s + size },
-      thickness: 1.25,
-      color: DRAFTING_BLUE,
-      opacity,
-    })
-  }
-  // Front face
-  stroke([3, 8], [10, 8])
-  stroke([10, 8], [10, 14])
-  stroke([10, 14], [3, 14])
-  stroke([3, 14], [3, 8])
-  // Right face
-  stroke([10, 8], [13, 5])
-  stroke([13, 5], [13, 11])
-  stroke([13, 11], [10, 14])
-  // Top face
-  stroke([3, 8], [6, 5])
-  stroke([6, 5], [13, 5])
-}
 
 function drawTop3Page(
   doc: PDFDocument,
