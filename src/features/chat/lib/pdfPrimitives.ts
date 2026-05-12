@@ -668,6 +668,176 @@ export function drawStatusLegend(
   }
 }
 
+// ─── v1.0.17 primitives — qualifier pill + stacked bar + signature ─
+
+const PILL_VERIFIED_BG = rgb(0.85, 0.93, 0.85)
+const PILL_VERIFIED_FG = rgb(0.13, 0.32, 0.05)
+const PILL_AUTHORITY_BG = rgb(0.87, 0.91, 0.97)
+const PILL_AUTHORITY_FG = rgb(0.07, 0.24, 0.5)
+const PILL_DESIGNER_BORDER = CLAY
+
+export interface QualifierPillOpts {
+  source: string
+  quality: string
+  font: PDFFont
+  safe: SafeTextFn
+  size?: number
+  padX?: number
+  padY?: number
+}
+
+/**
+ * v1.0.17 — render the source · quality qualifier as a color-coded
+ * pill. Same role as drawPriorityPill but the bg/fg colors are
+ * derived from the source field:
+ *   CLIENT · *           → blue (PILL_CLIENT_*)
+ *   LEGAL · VERIFIED     → deep green (PILL_VERIFIED_*)
+ *   LEGAL · CALCULATED   → light green (PILL_CALC_*)
+ *   LEGAL · ASSUMED      → amber (PILL_LEGAL_*)
+ *   DESIGNER · *         → outline only (no fill, CLAY border)
+ *   AUTHORITY · *        → deep blue (PILL_AUTHORITY_*)
+ * Returns consumed width so callers can right-align.
+ */
+export function drawQualifierPill(
+  page: PDFPage,
+  x: number,
+  y: number,
+  opts: QualifierPillOpts,
+): number {
+  const { source, quality, font, safe } = opts
+  const size = opts.size ?? 9
+  const padX = opts.padX ?? 6
+  const padY = opts.padY ?? 3
+  const text = `${source} · ${quality}`
+  const safeText = safe(text)
+  const textWidth = font.widthOfTextAtSize(safeText, size)
+  const w = textWidth + padX * 2
+  const h = size + padY * 2
+
+  let bg: ReturnType<typeof rgb> | null = null
+  let fg: ReturnType<typeof rgb>
+  let drawBorder = false
+  if (source === 'CLIENT') {
+    bg = PILL_CLIENT_BG
+    fg = PILL_CLIENT_FG
+  } else if (source === 'LEGAL') {
+    if (quality === 'VERIFIED') {
+      bg = PILL_VERIFIED_BG
+      fg = PILL_VERIFIED_FG
+    } else if (quality === 'CALCULATED') {
+      bg = PILL_CALC_BG
+      fg = PILL_CALC_FG
+    } else {
+      bg = PILL_LEGAL_BG
+      fg = PILL_LEGAL_FG
+    }
+  } else if (source === 'AUTHORITY') {
+    bg = PILL_AUTHORITY_BG
+    fg = PILL_AUTHORITY_FG
+  } else if (source === 'DESIGNER') {
+    drawBorder = true
+    fg = CLAY
+  } else {
+    bg = PILL_LEGAL_BG
+    fg = PILL_LEGAL_FG
+  }
+
+  if (bg) {
+    page.drawRectangle({ x, y: y - padY - 2, width: w, height: h, color: bg })
+  }
+  if (drawBorder) {
+    const borderY = y - padY - 2
+    const t = 0.5
+    drawHairline(page, x, borderY, x + w, { color: PILL_DESIGNER_BORDER, thickness: t, opacity: 0.85 })
+    drawHairline(page, x, borderY + h, x + w, { color: PILL_DESIGNER_BORDER, thickness: t, opacity: 0.85 })
+    page.drawLine({ start: { x, y: borderY }, end: { x, y: borderY + h }, color: PILL_DESIGNER_BORDER, thickness: t, opacity: 0.85 })
+    page.drawLine({ start: { x: x + w, y: borderY }, end: { x: x + w, y: borderY + h }, color: PILL_DESIGNER_BORDER, thickness: t, opacity: 0.85 })
+  }
+  page.drawText(safeText, { x: x + padX, y, size, font, color: fg })
+  return w
+}
+
+export interface StackedBarSegment {
+  fraction: number
+  color: ReturnType<typeof rgb>
+  label?: string
+}
+
+/**
+ * v1.0.17 — horizontal stacked bar. Segments render left-to-right;
+ * each segment width = fraction * total width. Used on Verification
+ * page for the data-quality breakdown (verified/calculated/assumed
+ * Hamilton percentages).
+ */
+export function drawStackedBar(
+  page: PDFPage,
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+  segments: ReadonlyArray<StackedBarSegment>,
+): void {
+  let cursorX = x
+  for (const seg of segments) {
+    const segW = seg.fraction * width
+    page.drawRectangle({
+      x: cursorX,
+      y,
+      width: segW,
+      height,
+      color: seg.color,
+    })
+    cursorX += segW
+  }
+}
+
+export interface SignatureFieldOpts {
+  x: number
+  y: number
+  width: number
+  label: string
+  sublabel?: string
+  fonts: EditorialFonts
+}
+
+/**
+ * v1.0.17 — empty signature field. Renders a 56pt-tall blank space
+ * + 0.5pt INK hairline at the bottom + label below the line +
+ * optional sublabel (e.g. "Date" or "Chamber stamp · registration
+ * no.") in CLAY. Returns endY for stacking.
+ */
+export function drawSignatureField(
+  page: PDFPage,
+  opts: SignatureFieldOpts,
+): { endY: number } {
+  const { x, y, width, label, sublabel, fonts } = opts
+  const safe = fonts.safe
+  const lineY = y - 56
+  drawHairline(page, x, lineY, x + width, {
+    color: INK,
+    thickness: 0.5,
+    opacity: 0.85,
+  })
+  page.drawText(safe(label), {
+    x,
+    y: lineY - 14,
+    size: 10,
+    font: fonts.sansMedium,
+    color: INK,
+  })
+  if (sublabel) {
+    page.drawText(safe(sublabel), {
+      x,
+      y: lineY - 28,
+      size: 9,
+      font: fonts.sans,
+      color: CLAY,
+    })
+    return { endY: lineY - 36 }
+  }
+  return { endY: lineY - 22 }
+}
+
 // ─── v1.0.16 primitives — Gantt timeline (Timeline page) ────────────
 
 // Amber accent for milestone diamond / callout border (shared with the
