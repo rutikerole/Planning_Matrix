@@ -50,6 +50,24 @@ export function DataQualityDonut({ state }: Props) {
         : 0,
     },
   ]
+  // v1.0.10 Bug 21 — independent Math.round per slice could sum to
+  // 101 or 99 (Rutik's evidence: "65% + 12% + 24% = 101%"). Apply
+  // the largest-remainder method (Hamilton) so the three labels
+  // sum to exactly 100 when total > 0. The donut arcs themselves
+  // continue to use the raw fractions for proportional widths; only
+  // the legend integer labels are reconciled.
+  const integerPercents: number[] = (() => {
+    if (!total) return slices.map(() => 0)
+    const raw = slices.map((s) => s.pct * 100)
+    const floors = raw.map(Math.floor)
+    const remainders = raw.map((r, i) => ({ idx: i, rem: r - floors[i] }))
+    const sumFloor = floors.reduce((a, b) => a + b, 0)
+    const distribute = Math.max(0, Math.min(slices.length, 100 - sumFloor))
+    remainders.sort((a, b) => b.rem - a.rem || a.idx - b.idx)
+    const out = floors.slice()
+    for (let i = 0; i < distribute; i++) out[remainders[i].idx] += 1
+    return out
+  })()
 
   let offset = 0
 
@@ -99,7 +117,7 @@ export function DataQualityDonut({ state }: Props) {
         })}
       </svg>
       <ul className="flex flex-col gap-1 text-[11px]">
-        {slices.map((slice) => (
+        {slices.map((slice, i) => (
           <li key={slice.key} className="flex items-center gap-2 leading-snug">
             <span
               aria-hidden="true"
@@ -107,7 +125,7 @@ export function DataQualityDonut({ state }: Props) {
             />
             <span className="text-clay/85 flex-1">{t(slice.labelKey)}</span>
             <span className="font-medium text-ink/85 tabular-nums">
-              {total ? `${Math.round(slice.pct * 100)}%` : '—'}
+              {total ? `${integerPercents[i]}%` : '—'}
             </span>
           </li>
         ))}
