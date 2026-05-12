@@ -668,6 +668,199 @@ export function drawStatusLegend(
   }
 }
 
+// ─── v1.0.16 primitives — Gantt timeline (Timeline page) ────────────
+
+// Amber accent for milestone diamond / callout border (shared with the
+// executive page's "high" priority color).
+export const AMBER = rgb(0.729, 0.459, 0.09)
+
+export interface WeekRulerOpts {
+  x: number
+  y: number
+  width: number
+  /** e.g. [0, 4, 8, 12, 16, 20, 24] — labels emitted at each tick. */
+  weeks: ReadonlyArray<number>
+  /** Localized "WEEK" / "WOCHE" label prefixing the first tick. */
+  weekLabel: string
+  fonts: EditorialFonts
+}
+
+/**
+ * Horizontal ruler with monospace week-number labels at evenly-
+ * spaced positions above a CLAY hairline. First label includes the
+ * localized "WEEK 0" / "WOCHE 0" prefix.
+ */
+export function drawWeekRuler(
+  page: PDFPage,
+  opts: WeekRulerOpts,
+): void {
+  const { x, y, width, weeks, weekLabel, fonts } = opts
+  const last = weeks[weeks.length - 1]
+  const safe = fonts.safe
+  weeks.forEach((w, idx) => {
+    const tickX = x + (w / last) * width
+    const label = idx === 0 ? `${weekLabel} ${w}` : String(w)
+    page.drawText(safe(label), {
+      x: tickX,
+      y,
+      size: 9,
+      font: fonts.sans,
+      color: CLAY,
+    })
+    page.drawLine({
+      start: { x: tickX, y: y - 6 },
+      end: { x: tickX, y: y - 10 },
+      color: CLAY,
+      thickness: 0.5,
+      opacity: 0.55,
+    })
+  })
+  drawHairline(page, x, y - 6, x + width)
+}
+
+export interface GanttRowOpts {
+  x: number
+  y: number
+  width: number
+  label: string
+  duration: string
+  startWeek: number
+  endWeek: number
+  totalWeeks: number
+  /** 'work' draws INK fill; 'wait' draws CLAY fill (lighter visual
+   *  weight for review/idle phases). */
+  kind: 'work' | 'wait'
+  fonts: EditorialFonts
+}
+
+/**
+ * One Gantt row: header line (label left + duration right) above a
+ * track (paper-tinted) with a colored fill bar from startWeek/totalWeeks
+ * to endWeek/totalWeeks. Returns the y-cursor below the bar.
+ */
+export function drawGanttRow(
+  page: PDFPage,
+  opts: GanttRowOpts,
+): { endY: number } {
+  const { x, y, width, label, duration, startWeek, endWeek, totalWeeks, kind, fonts } = opts
+  const safe = fonts.safe
+
+  // Header: label left, duration right.
+  page.drawText(safe(label), {
+    x,
+    y,
+    size: 12,
+    font: fonts.sansMedium,
+    color: INK,
+  })
+  const durTxt = safe(duration)
+  const durWidth = fonts.sans.widthOfTextAtSize(durTxt, 12)
+  page.drawText(durTxt, {
+    x: x + width - durWidth,
+    y,
+    size: 12,
+    font: fonts.sans,
+    color: CLAY,
+  })
+
+  // Track + fill (12pt tall, 8pt below the header).
+  const trackY = y - 20
+  const trackH = 12
+  // Track (paper-tinted, very subtle).
+  page.drawRectangle({
+    x,
+    y: trackY,
+    width,
+    height: trackH,
+    color: rgb(0.92, 0.9, 0.84),
+  })
+  // Fill bar.
+  const barX = x + (startWeek / totalWeeks) * width
+  const barW = ((endWeek - startWeek) / totalWeeks) * width
+  page.drawRectangle({
+    x: barX,
+    y: trackY,
+    width: barW,
+    height: trackH,
+    color: kind === 'work' ? INK : CLAY,
+    opacity: kind === 'work' ? 1 : 0.45,
+  })
+
+  return { endY: trackY - 8 }
+}
+
+export interface MilestoneCalloutOpts {
+  x: number
+  y: number
+  width: number
+  label: string
+  detail: string
+  fonts: EditorialFonts
+}
+
+/**
+ * Approval-milestone callout — 2pt AMBER border-left + filled amber
+ * diamond + 12pt INK label + 12pt CLAY detail to the right. Returns
+ * the y-cursor below the callout's bottom.
+ */
+export function drawMilestoneCallout(
+  page: PDFPage,
+  opts: MilestoneCalloutOpts,
+): { endY: number } {
+  const { x, y, width, label, detail, fonts } = opts
+  const safe = fonts.safe
+  const blockH = 28
+  const top = y
+  const bottom = top - blockH
+
+  // 2pt AMBER left accent.
+  page.drawRectangle({
+    x,
+    y: bottom,
+    width: 2,
+    height: blockH,
+    color: AMBER,
+  })
+
+  // 8×8 amber diamond (rotated square approximated with two
+  // triangles via four-point poly).
+  const diamondCx = x + 16
+  const diamondCy = top - 14
+  const ds = 4 // half-size
+  page.drawSvgPath(
+    `M ${diamondCx} ${diamondCy - ds} L ${diamondCx + ds} ${diamondCy} L ${diamondCx} ${diamondCy + ds} L ${diamondCx - ds} ${diamondCy} Z`,
+    {
+      color: AMBER,
+      borderWidth: 0,
+    },
+  )
+
+  // Label + detail.
+  const textX = x + 30
+  page.drawText(safe(label), {
+    x: textX,
+    y: top - 16,
+    size: 12,
+    font: fonts.sansMedium,
+    color: INK,
+  })
+  const labelW = fonts.sansMedium.widthOfTextAtSize(safe(label), 12)
+  page.drawText(safe(detail), {
+    x: textX + labelW + 6,
+    y: top - 16,
+    size: 12,
+    font: fonts.sans,
+    color: CLAY,
+  })
+
+  // Suppress unused-var (width is part of the contract for symmetry
+  // with the other v1.0.16 primitives, even though this primitive
+  // doesn't constrain to width — callers compute their own layout).
+  void width
+
+  return { endY: bottom - 8 }
+}
+
 // ─── v1.0.16 primitives — table + notes block (Costs page) ──────────
 
 export interface TableColumn {
