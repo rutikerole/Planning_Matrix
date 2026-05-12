@@ -2255,6 +2255,89 @@ async function runStaticGate() {
     },
   ]))
 
+  // ── v1.0.15 — Renaissance Part 2A executive renderer ─────────────
+  const executiveV15 = await readFileText('src/features/chat/lib/pdfSections/executive.ts')
+  results.push(failures('v1.0.15: pdfSections/executive.ts renders Section 01 (Top 3)', [
+    {
+      ok: /export function renderExecutiveBody\(/.test(executiveV15),
+      msg: 'renderExecutiveBody exported',
+    },
+    {
+      ok: /export function renderExecutiveFooter\(/.test(executiveV15),
+      msg: 'renderExecutiveFooter exported (Path A split: footer drawn after total page count is resolved)',
+    },
+    {
+      ok: /export function inferPriority\(/.test(executiveV15) &&
+          /'high'|'beforeAward'|'confirm'/.test(executiveV15),
+      msg: 'inferPriority heuristic exported with high/beforeAward/confirm buckets',
+    },
+    {
+      ok: /drawCard\(\s*page,\s*\{[^}]*borderSide:\s*'left'/s.test(executiveV15),
+      msg: 'each priority card uses drawCard with left accent border',
+    },
+    {
+      ok: /drawPriorityPill\(/.test(executiveV15) && /drawWrappedText\(/.test(executiveV15),
+      msg: 'card draws priority pill + wrapped body via v1.0.15 primitives',
+    },
+  ]))
+
+  // ── v1.0.15 — Renaissance Part 2A areas renderer ─────────────────
+  const areasV15 = await readFileText('src/features/chat/lib/pdfSections/areas.ts')
+  results.push(failures('v1.0.15: pdfSections/areas.ts renders Section 02 (A·B·C status)', [
+    {
+      ok: /export function renderAreasBody\(/.test(areasV15),
+      msg: 'renderAreasBody exported',
+    },
+    {
+      ok: /export function renderAreasFooter\(/.test(areasV15),
+      msg: 'renderAreasFooter exported (Path A split)',
+    },
+    {
+      ok: /drawCircularBadge\(/.test(areasV15),
+      msg: 'areas renderer uses drawCircularBadge for A/B/C badge',
+    },
+    {
+      ok: /drawStatusLegend\(/.test(areasV15),
+      msg: 'areas renderer draws status legend (ACTIVE/PENDING/VOID dot key)',
+    },
+    {
+      ok: /BADGE_COLOR_BY_STATE|PILL_BG_BY_STATE/.test(areasV15),
+      msg: 'state → color mapping table declared (no inline magic colors)',
+    },
+  ]))
+
+  // ── v1.0.15 — Renaissance Part 2A assembly wire-up ───────────────
+  const assemblyV15 = await readFileText('src/features/chat/lib/exportPdf.ts')
+  results.push(failures('v1.0.15: exportPdf wires renderExecutiveBody + renderAreasBody', [
+    {
+      ok: /import \{[^}]*renderExecutiveBody[^}]*\}\s*from\s*['"]\.\/pdfSections\/executive['"]/s.test(assemblyV15),
+      msg: 'exportPdf imports renderExecutiveBody from ./pdfSections/executive',
+    },
+    {
+      ok: /import \{[^}]*renderAreasBody[^}]*\}\s*from\s*['"]\.\/pdfSections\/areas['"]/s.test(assemblyV15),
+      msg: 'exportPdf imports renderAreasBody from ./pdfSections/areas',
+    },
+    {
+      ok: /renderExecutiveBody\(executivePage/.test(assemblyV15) &&
+          /renderExecutiveFooter\(executivePage/.test(assemblyV15),
+      msg: 'exportPdf calls renderExecutiveBody + renderExecutiveFooter (2-pass)',
+    },
+    {
+      ok: /renderAreasBody\(areasPage/.test(assemblyV15) &&
+          /renderAreasFooter\(areasPage/.test(assemblyV15),
+      msg: 'exportPdf calls renderAreasBody + renderAreasFooter (2-pass)',
+    },
+    {
+      ok: !/function drawTop3Page\(/.test(assemblyV15) &&
+          !/function drawBereichePage\(/.test(assemblyV15),
+      msg: 'v1.0.12 drawTop3Page + drawBereichePage retired (replaced by editorial renderers)',
+    },
+    {
+      ok: /editorialPages\.add\(executivePage\)|editorialPages\.has\(p\)/.test(assemblyV15),
+      msg: 'footer-loop skips editorial pages so legacy y=28/y=44 footer does not stamp over them',
+    },
+  ]))
+
   // ── v1.0.14 Bug 30 — font instance consolidation ─────────────────
   const primitivesV14 = await readFileText('src/features/chat/lib/pdfPrimitives.ts')
   const exportPdfV14Bug30 = await readFileText('src/features/chat/lib/exportPdf.ts')
