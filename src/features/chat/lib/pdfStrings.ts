@@ -66,6 +66,30 @@ const EN: PdfStrings = {
   // ─── Footer (every page) ───────────────────────────────────────
   'footer.preliminary': 'PRELIMINARY — pending architect confirmation',
   'footer.generatedAt': 'Generated',
+
+  // ─── v1.0.15 Renaissance Part 2A — Executive ───────────────────
+  'exec.kicker': 'SECTION 01 · EXECUTIVE',
+  'exec.title': 'Top 3 next steps',
+  'exec.footer':
+    'Recommendations derived from § 30 BauGB · § 62/64 BauO {state} · § 48 GEG · pending architect verification.',
+  'exec.empty': 'No recommendations recorded yet.',
+  'prio.high': 'HIGH PRIORITY',
+  'prio.beforeAward': 'BEFORE AWARD',
+  'prio.confirm': 'CONFIRM',
+
+  // ─── v1.0.15 Renaissance Part 2A — Areas ──────────────────────
+  'areas.kicker': 'SECTION 02 · LEGAL AREAS',
+  'areas.title': 'A · B · C status',
+  'areas.legend.active': 'active',
+  'areas.legend.pending': 'pending',
+  'areas.legend.void': 'void',
+  'areas.status.active': 'ACTIVE',
+  'areas.status.pending': 'PENDING',
+  'areas.status.void': 'VOID',
+  'areas.a.title': 'Planning law · Planungsrecht',
+  'areas.b.title': 'Building law · Bauordnungsrecht',
+  'areas.c.title': 'Other requirements · Sonstige Vorgaben',
+  'areas.empty': 'No content recorded yet — continue the consultation.',
 }
 
 const DE: PdfStrings = {
@@ -110,6 +134,30 @@ const DE: PdfStrings = {
   // ─── Footer ────────────────────────────────────────────────────
   'footer.preliminary': 'VORLÄUFIG — Architekt:in-Bestätigung ausstehend',
   'footer.generatedAt': 'Erstellt',
+
+  // ─── v1.0.15 Renaissance Part 2A — Executive ───────────────────
+  'exec.kicker': 'ABSCHNITT 01 · ZUSAMMENFASSUNG',
+  'exec.title': 'Die 3 nächsten Schritte',
+  'exec.footer':
+    'Empfehlungen abgeleitet aus § 30 BauGB · § 62/64 BauO {state} · § 48 GEG · Architekt:in-Verifizierung ausstehend.',
+  'exec.empty': 'Noch keine Empfehlungen erfasst.',
+  'prio.high': 'HOHE PRIORITÄT',
+  'prio.beforeAward': 'VOR VERGABE',
+  'prio.confirm': 'BESTÄTIGEN',
+
+  // ─── v1.0.15 Renaissance Part 2A — Areas ──────────────────────
+  'areas.kicker': 'ABSCHNITT 02 · RECHTSBEREICHE',
+  'areas.title': 'A · B · C Status',
+  'areas.legend.active': 'aktiv',
+  'areas.legend.pending': 'offen',
+  'areas.legend.void': 'nichtig',
+  'areas.status.active': 'AKTIV',
+  'areas.status.pending': 'OFFEN',
+  'areas.status.void': 'NICHTIG',
+  'areas.a.title': 'Planungsrecht',
+  'areas.b.title': 'Bauordnungsrecht',
+  'areas.c.title': 'Sonstige Vorgaben',
+  'areas.empty': 'Noch kein Inhalt erfasst — Konsultation fortsetzen.',
 }
 
 export const PDF_STRINGS: Record<PdfLang, PdfStrings> = { en: EN, de: DE }

@@ -2178,6 +2178,54 @@ async function runStaticGate() {
     },
   ]))
 
+  // ── v1.0.15 — Renaissance Part 2A strings (executive + areas) ────
+  const stringsV15 = await readFileText('src/features/chat/lib/pdfStrings.ts')
+  results.push(failures('v1.0.15: pdfStrings extends EN + DE with executive + areas keys', [
+    {
+      ok: /'exec\.kicker':\s*'SECTION 01 · EXECUTIVE'/.test(stringsV15) &&
+          /'exec\.kicker':\s*'ABSCHNITT 01 · ZUSAMMENFASSUNG'/.test(stringsV15),
+      msg: 'exec.kicker present in both EN and DE',
+    },
+    {
+      ok: /'exec\.title':\s*'Top 3 next steps'/.test(stringsV15) &&
+          /'exec\.title':\s*'Die 3 nächsten Schritte'/.test(stringsV15),
+      msg: 'exec.title bilingual',
+    },
+    {
+      ok: /'prio\.high':\s*'HIGH PRIORITY'/.test(stringsV15) &&
+          /'prio\.high':\s*'HOHE PRIORITÄT'/.test(stringsV15),
+      msg: 'prio.high bilingual',
+    },
+    {
+      ok: /'prio\.beforeAward':\s*'BEFORE AWARD'/.test(stringsV15) &&
+          /'prio\.beforeAward':\s*'VOR VERGABE'/.test(stringsV15),
+      msg: 'prio.beforeAward bilingual',
+    },
+    {
+      ok: /'prio\.confirm':\s*'CONFIRM'/.test(stringsV15) &&
+          /'prio\.confirm':\s*'BESTÄTIGEN'/.test(stringsV15),
+      msg: 'prio.confirm bilingual',
+    },
+    {
+      ok: /'areas\.kicker':\s*'SECTION 02 · LEGAL AREAS'/.test(stringsV15) &&
+          /'areas\.kicker':\s*'ABSCHNITT 02 · RECHTSBEREICHE'/.test(stringsV15),
+      msg: 'areas.kicker bilingual',
+    },
+    {
+      ok: /'areas\.title':\s*'A · B · C status'/.test(stringsV15) &&
+          /'areas\.title':\s*'A · B · C Status'/.test(stringsV15),
+      msg: 'areas.title bilingual',
+    },
+    {
+      ok: /'areas\.legend\.active':/.test(stringsV15) &&
+          /'areas\.status\.active':/.test(stringsV15) &&
+          /'areas\.a\.title':/.test(stringsV15) &&
+          /'areas\.b\.title':/.test(stringsV15) &&
+          /'areas\.c\.title':/.test(stringsV15),
+      msg: 'areas.legend / areas.status / areas.{a,b,c}.title all declared',
+    },
+  ]))
+
   // ── v1.0.15 — Renaissance Part 2A primitives (cards/pills/badges) ─
   const primV15 = await readFileText('src/features/chat/lib/pdfPrimitives.ts')
   results.push(failures('v1.0.15: pdfPrimitives exports new section-renderer primitives', [
