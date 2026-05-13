@@ -890,8 +890,17 @@ export async function buildExportPdf({
   // canonical procedureDecision, not from state.facts. If facts
   // contains a verfahren_indikation entry, we suppress it here and
   // synthesize one from the resolver. All other facts pass through.
+  // v1.0.23 Bug N — filter system flags from the user-facing Key
+  // Data table. The wizard's "outside München acknowledged" flag is
+  // a Munich-coverage-mode internal state marker, not a user-facing
+  // fact; it surfaced as "Plot · Outside Munich Acknowledged" on
+  // v1.0.20 PDFs. Filter rules live in
+  // src/legal/systemFlagFilter.ts so the rule list is testable +
+  // shared with any future UI table that walks state.facts.
+  const { isSystemFlagKey } = await import('@/legal/systemFlagFilter')
   const keyDataRows: KeyDataRow[] = facts
     .filter((f) => f.key !== 'verfahren_indikation')
+    .filter((f) => !isSystemFlagKey(f.key))
     .map((f) => ({
       field: factLabel(f.key, lang).label,
       value: factValueWithUnit(f.key, f.value, lang),

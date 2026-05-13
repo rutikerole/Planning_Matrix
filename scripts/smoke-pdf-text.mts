@@ -605,6 +605,14 @@ async function runCrossStateBleed(): Promise<{ passed: number; failed: number }>
     const noZeroM2Msg = `Berlin ${lang}: no literal "0 m² Fassade/façade" leak (Bug L guard)`
     if (noZeroM2) { console.log(`  ✓ ${noZeroM2Msg}`); passed++ }
     else { console.log(`  ✗ ${noZeroM2Msg}`); failed++ }
+    // v1.0.23 Bug N — system flags must never reach user-facing
+    // tables. The wizard-internal "outside München acknowledged"
+    // marker is the prototypical leak; any future system.*/
+    // _acknowledged key is filtered by the same gate.
+    const noSystemFlag = !/Outside Munich Acknowledged|Outside München Acknowledged/iu.test(text)
+    const noSystemFlagMsg = `Berlin ${lang}: no "Outside Munich Acknowledged" system flag leak (Bug N)`
+    if (noSystemFlag) { console.log(`  ✓ ${noSystemFlagMsg}`); passed++ }
+    else { console.log(`  ✗ ${noSystemFlagMsg}`); failed++ }
     // v1.0.22 Bug I — Cost basis line uses honest baseline framing,
     // not the v1.0.20 "regional BKI factor (Berlin)" string that
     // promised a regional adjustment the formula does not apply.
@@ -676,6 +684,34 @@ async function runCrossStateBleed(): Promise<{ passed: number; failed: number }>
 // guard. Verifies the fire threshold + EN placeholder + DE passthrough
 // in one go so smoke-pdf-text guards against any future regression on
 // the rules without needing a full persona-output round-trip.
+// v1.0.23 Bug N — unit-style tests for system-flag filter.
+async function runSystemFlagFilterUnit(): Promise<{ passed: number; failed: number }> {
+  console.log(`\n[smoke-pdf-text] system-flag filter (Bug N)…`)
+  const { isSystemFlagKey } = await import('../src/legal/systemFlagFilter.ts')
+  let passed = 0
+  let failed = 0
+  const cases: Array<{ key: string; expect: boolean }> = [
+    { key: 'plot.outside_munich_acknowledged', expect: true },
+    { key: 'system.coverage_mode', expect: true },
+    { key: '_internal_render_token', expect: true },
+    { key: '_system_seed', expect: true },
+    { key: 'gdpr.acknowledged', expect: true },
+    { key: 'opt_in_acknowledged', expect: true },
+    { key: 'fassadenflaeche_m2', expect: false },
+    { key: 'klasse', expect: false },
+    { key: 'denkmalschutz', expect: false },
+    { key: 'mk_gebietsart', expect: false },
+  ]
+  for (const c of cases) {
+    const got = isSystemFlagKey(c.key)
+    const ok = got === c.expect
+    const msg = `isSystemFlagKey('${c.key}') === ${c.expect}`
+    if (ok) { console.log(`  ✓ ${msg}`); passed++ }
+    else { console.log(`  ✗ ${msg} (got ${got})`); failed++ }
+  }
+  return { passed, failed }
+}
+
 // v1.0.22 Bug B — assertion that the Overview DataQualityDonut, the
 // cover confidence percent, and the PDF verification page all source
 // from aggregateQualifiers(state) with the SAME denominator. The bug
@@ -932,6 +968,7 @@ async function main(): Promise<void> {
   const germanLeak = await runGermanLeakGuardUnit()
   const qualifierUnit = await runQualifierNormalizeUnit()
   const denominator = await runDenominatorUnit()
+  const sysFlag = await runSystemFlagFilterUnit()
   const totalFailed =
     en.failed +
     de.failed +
@@ -939,7 +976,8 @@ async function main(): Promise<void> {
     gkUnit.failed +
     germanLeak.failed +
     qualifierUnit.failed +
-    denominator.failed
+    denominator.failed +
+    sysFlag.failed
   const totalPassed =
     en.passed +
     de.passed +
@@ -947,7 +985,8 @@ async function main(): Promise<void> {
     gkUnit.passed +
     germanLeak.passed +
     qualifierUnit.passed +
-    denominator.passed
+    denominator.passed +
+    sysFlag.passed
   console.log(`\n[smoke-pdf-text] ${totalPassed} passed · ${totalFailed} failed`)
   if (totalFailed > 0) {
     console.log('[smoke-pdf-text] FAIL — see violations above.')
