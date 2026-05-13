@@ -459,6 +459,13 @@ async function runCrossStateBleed(): Promise<{ passed: number; failed: number }>
       { rx: /§\s*68\s+BauO\s+NRW/u, label: '§ 68 BauO NRW (NRW-only structural §)' },
       { rx: /§\s*64\s+BauO\s+NRW/u, label: '§ 64 BauO NRW (NRW-only permit form §)' },
       { rx: /Untere\s+Denkmalbehörde\s+\(Stadt\s+Düsseldorf\)/u, label: 'Untere Denkmalbehörde Düsseldorf (NRW-only)' },
+      // v1.0.21 Commit 4 (Bug 23c — risk register)
+      { rx: /\bBLfD\b/u, label: 'BLfD (Bayern-only monument authority)' },
+      { rx: /\bSchwabing\b/u, label: 'Schwabing (München district)' },
+      { rx: /\bMaxvorstadt\b/u, label: 'Maxvorstadt (München district)' },
+      { rx: /\bStPlS\s*926\b/u, label: 'StPlS 926 (München-only Stellplatzsatzung)' },
+      { rx: /\bLHM\b/u, label: 'LHM (Landeshauptstadt München — Bayern-only)' },
+      { rx: /Bauamt-Sommerrotation\s+München|Munich\s+Bauamt\s+summer\s+rotation/u, label: 'München Bauamt rotation risk (Bayern-only)' },
     ]
     for (const { rx, label } of forbiddenTokens) {
       const hit = rx.test(text)

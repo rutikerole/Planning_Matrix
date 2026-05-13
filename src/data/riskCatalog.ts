@@ -79,6 +79,11 @@ export const RISK_CATALOG: RiskCatalogEntry[] = [
     verifyBeforePublicLaunch: true,
   },
   {
+    // v1.0.21 Bug 23c — StPlS 926 + LHM are München-specific; Bayern-
+    // only filter prevents leak onto Berlin / NRW / Hessen projects.
+    // Other states have their own Stellplatzsatzung; the GENERIC
+    // parking-shortfall risk surfaces via risk-stellplatz-generic
+    // below until per-state Stellplatzsatzung names are wired.
     id: 'risk-stellplatz',
     titleDe: 'Stellplatz-Engpass',
     titleEn: 'Parking shortfall',
@@ -86,10 +91,29 @@ export const RISK_CATALOG: RiskCatalogEntry[] = [
     impact: 2,
     evidencePattern: /stellplatz|stpls|gbs/i,
     bumpedLikelihood: 3,
+    bundeslaender: ['bayern'],
     unriskDe:
       'StPlS 926 prüfen; ÖPNV-bedingte Reduktion oder Ablöseverhandlung mit der LHM.',
     unriskEn:
       'Check StPlS 926; negotiate public-transit reduction or commutation with the city.',
+    verifyBeforePublicLaunch: true,
+  },
+  {
+    // v1.0.21 Bug 23c — generic parking-shortfall risk for non-Bayern
+    // projects. Body text avoids the München-specific StPlS 926
+    // anchor and points the user at the local Stellplatzsatzung.
+    id: 'risk-stellplatz-generic',
+    titleDe: 'Stellplatz-Engpass',
+    titleEn: 'Parking shortfall',
+    baseLikelihood: 2,
+    impact: 2,
+    evidencePattern: /stellplatz|parking/i,
+    bumpedLikelihood: 3,
+    bundeslaender: ['nrw', 'berlin', 'hamburg', 'bremen', 'hessen', 'niedersachsen', 'bw', 'brandenburg', 'mv', 'rlp', 'saarland', 'sachsen', 'sachsen-anhalt', 'sh', 'thueringen'],
+    unriskDe:
+      'Lokale Stellplatzsatzung prüfen; ÖPNV-bedingte Reduktionen oder Ablöseverhandlung mit der Kommune.',
+    unriskEn:
+      "Check the local parking ordinance; negotiate public-transit reductions or commutation with the municipality.",
     verifyBeforePublicLaunch: true,
   },
   {
@@ -146,6 +170,9 @@ export const RISK_CATALOG: RiskCatalogEntry[] = [
     verifyBeforePublicLaunch: true,
   },
   {
+    // v1.0.21 Bug 23c — "LHM" (Landeshauptstadt München) is Bayern/
+    // München-specific. Non-Bayern projects get the generic version
+    // below.
     id: 'risk-altlast',
     titleDe: 'Altlasten / Bodenverdacht',
     titleEn: 'Contaminated soil suspicion',
@@ -153,10 +180,26 @@ export const RISK_CATALOG: RiskCatalogEntry[] = [
     impact: 3,
     evidencePattern: /altlast|brownfield|gewerbe.*bestand/i,
     bumpedLikelihood: 2,
+    bundeslaender: ['bayern'],
     unriskDe:
       'Boden-Vorerkundung vor Aushub; Altlastenkataster der LHM einsehen.',
     unriskEn:
       'Soil pre-investigation before excavation; consult the city contaminated-sites register.',
+    verifyBeforePublicLaunch: true,
+  },
+  {
+    id: 'risk-altlast-generic',
+    titleDe: 'Altlasten / Bodenverdacht',
+    titleEn: 'Contaminated soil suspicion',
+    baseLikelihood: 1,
+    impact: 3,
+    evidencePattern: /altlast|brownfield|gewerbe.*bestand/i,
+    bumpedLikelihood: 2,
+    bundeslaender: ['nrw', 'berlin', 'hamburg', 'bremen', 'hessen', 'niedersachsen', 'bw', 'brandenburg', 'mv', 'rlp', 'saarland', 'sachsen', 'sachsen-anhalt', 'sh', 'thueringen'],
+    unriskDe:
+      'Boden-Vorerkundung vor Aushub; kommunales Altlastenkataster einsehen.',
+    unriskEn:
+      'Soil pre-investigation before excavation; consult the local contaminated-sites register.',
     verifyBeforePublicLaunch: true,
   },
   {
@@ -174,6 +217,11 @@ export const RISK_CATALOG: RiskCatalogEntry[] = [
 
   // ── Phase 8.5 (D.3) — München-specific risks ──────────────────────────
   {
+    // v1.0.21 Bug 23c — Schwabing / Maxvorstadt / Lehel are München
+    // districts; BLfD is the Bayerisches Landesamt für Denkmalpflege.
+    // Bayern-only filter prevents this risk from firing on Berlin /
+    // NRW / Hessen / NS / BW projects. The pure-Denkmalschutz risk
+    // (risk-denkmal) already fires generically across states.
     id: 'risk-schwabing-ensemble',
     titleDe: 'Schwabing-Ensemble-Schutz',
     titleEn: 'Schwabing ensemble protection',
@@ -181,6 +229,7 @@ export const RISK_CATALOG: RiskCatalogEntry[] = [
     impact: 3,
     evidencePattern: /ensemble|schwabing|maxvorstadt|lehel/i,
     bumpedLikelihood: 3,
+    bundeslaender: ['bayern'],
     unriskDe:
       'BLfD-Anfrage zum Ensemble-Schutz absetzen, bevor LP 3 startet — die Antwort braucht 4–6 Wochen.',
     unriskEn:
@@ -202,6 +251,8 @@ export const RISK_CATALOG: RiskCatalogEntry[] = [
     verifyBeforePublicLaunch: true,
   },
   {
+    // v1.0.21 Bug 23c — StPlS 926 is the Stellplatzsatzung of the
+    // Landeshauptstadt München. Bayern-only.
     id: 'risk-stps926-novellation',
     titleDe: 'StPlS-926-Auslegungs­änderungen',
     titleEn: 'StPlS 926 interpretation changes',
@@ -209,6 +260,7 @@ export const RISK_CATALOG: RiskCatalogEntry[] = [
     impact: 2,
     evidencePattern: /stellplatz|stpls|926|gbs|u-bahn|öpnv|oepnv/i,
     bumpedLikelihood: 3,
+    bundeslaender: ['bayern'],
     unriskDe:
       'Stellplatznachweis nach StPlS 926 (Stand Oktober 2025) erstellen; ÖPNV-Reduktion explizit dokumentieren.',
     unriskEn:
@@ -216,11 +268,13 @@ export const RISK_CATALOG: RiskCatalogEntry[] = [
     verifyBeforePublicLaunch: true,
   },
   {
+    // v1.0.21 Bug 23c — explicit München reference. Bayern-only.
     id: 'risk-bauamt-sommer-rotation',
     titleDe: 'Bauamt-Sommerrotation München',
     titleEn: "Munich Bauamt summer rotation",
     baseLikelihood: 2,
     impact: 1,
+    bundeslaender: ['bayern'],
     unriskDe:
       'Einreichung außerhalb der Sommer-Reduktion (15.07–01.09) planen; sonst Pufferzeiten verdoppeln.',
     unriskEn:
@@ -228,6 +282,12 @@ export const RISK_CATALOG: RiskCatalogEntry[] = [
     verifyBeforePublicLaunch: true,
   },
   {
+    // v1.0.21 Bug 23c — PV-Pflicht under BayBO Art. 44a is Bayern-
+    // specific. Other states have their own PV obligations (BW
+    // Klimaschutz- und Klimawandelanpassungsgesetz, NRW BauO § 42a
+    // for some classes, Berlin Solargesetz, etc.) — those will get
+    // their own risks in v1.0.22+. For now, the BayBO Art. 44a risk
+    // is filtered to Bayern.
     id: 'risk-pv-pflicht-vollzug',
     titleDe: 'PV-Pflicht-Vollzugsrisiko',
     titleEn: 'PV requirement enforcement risk',
@@ -235,6 +295,7 @@ export const RISK_CATALOG: RiskCatalogEntry[] = [
     impact: 2,
     evidencePattern: /pv|photovoltaik|art\.?\s*44a|44 a/i,
     bumpedLikelihood: 3,
+    bundeslaender: ['bayern'],
     unriskDe:
       'PV-Konzept im Antrag dokumentieren — Anlagen­leistung, Montagekonzept, Anschlussart. Späte Korrekturen kosten Zeit.',
     unriskEn:
@@ -254,7 +315,11 @@ export const RISK_CATALOG: RiskCatalogEntry[] = [
       'Nachbarn vor Antragstellung informieren (Vorgespräch + Unterschriften). § 34 BauGB triggert dichte Stadtteile zuverlässig zu Widerspruchsverfahren.',
     unriskEn:
       'Brief neighbours before filing (pre-meeting + signatures). § 34 BauGB reliably triggers objection proceedings in dense districts.',
-    bundeslaender: ['Bayern'],
+    // v1.0.21 Bug 23c — lowercase 'bayern' matches projects.bundesland;
+    // the uppercase 'Bayern' typo (v1.0.20 and earlier) caused the
+    // composeRisks filter to silently miss, so this Maxvorstadt risk
+    // was firing on every project regardless of bundesland.
+    bundeslaender: ['bayern'],
     verifyBeforePublicLaunch: true,
   },
   {
