@@ -100,6 +100,72 @@ export interface ProcedureCase {
   grenzstaendig?: boolean
   in_gestaltungssatzung?: boolean
   fassadenflaeche_m2?: number
+  // v1.0.21 Bug E — hard-blocker fact channels. When any of these is
+  // set, the resolver short-circuits to a 'bauvoranfrage' decision
+  // with explicit blocker reasoning so the Procedure tab + PDF page 7
+  // + Top-3 cannot quietly emit "Simplified building permit · REQUIRED"
+  // on an inadmissible project.
+  /** MK-Gebietsart (Kerngebiet) — admissibility depends on §§ 7
+   *  BauNVO + local Bebauungsplan, must be cleared before any
+   *  procedure determination. */
+  mk_gebietsart?: boolean
+  /** Composite hard-blocker flag set by upstream Planungsrecht
+   *  reasoning (e.g. by the chat persona) — used as an escape hatch
+   *  when the specific blocker isn't enumerated here yet. */
+  bauvoranfrage_hard_blocker?: boolean
+  /** Sonderbau scope (e.g. residential ≥ 60 Stellplätze, hotels,
+   *  schools) — § 50 BauO NRW / Art. 2 Abs. 4 BayBO etc.; triggers
+   *  Sonderbauverfahren that this resolver does not yet cover. */
+  sonderbau_scope?: boolean
+}
+
+// v1.0.21 Bug E — describe an active hard blocker for the renderer.
+export interface ProcedureHardBlocker {
+  /** Slug for the blocker type. */
+  kind: 'mk_gebietsart' | 'denkmalschutz' | 'bauvoranfrage_hard_blocker' | 'sonderbau_scope'
+  labelDe: string
+  labelEn: string
+}
+
+export function detectHardBlockers(c: ProcedureCase): ProcedureHardBlocker[] {
+  const out: ProcedureHardBlocker[] = []
+  if (c.mk_gebietsart) {
+    out.push({
+      kind: 'mk_gebietsart',
+      labelDe: 'MK-Gebietsart (Kerngebiet — § 7 BauNVO + B-Plan-Klärung)',
+      labelEn: 'MK use-type (Kerngebiet — § 7 BauNVO + B-Plan clarification)',
+    })
+  }
+  if (c.denkmalschutz) {
+    out.push({
+      kind: 'denkmalschutz',
+      labelDe: 'Denkmalschutz (denkmalrechtliche Erlaubnis vor Bauantrag)',
+      labelEn: 'Denkmalschutz (heritage consent required before permit)',
+    })
+  }
+  if (c.sonderbau_scope) {
+    out.push({
+      kind: 'sonderbau_scope',
+      labelDe: 'Sonderbau-Tatbestand (eigene Verfahrensregeln)',
+      labelEn: 'Sonderbau scope (separate procedure)',
+    })
+  }
+  if (
+    c.bauvoranfrage_hard_blocker &&
+    !out.some(
+      (b) =>
+        b.kind === 'mk_gebietsart' ||
+        b.kind === 'denkmalschutz' ||
+        b.kind === 'sonderbau_scope',
+    )
+  ) {
+    out.push({
+      kind: 'bauvoranfrage_hard_blocker',
+      labelDe: 'Planungsrechtlicher Hard Blocker (Bauvoranfrage erforderlich)',
+      labelEn: 'Planning-law hard blocker (pre-decision required)',
+    })
+  }
+  return out
 }
 
 export interface ProcedureDecision {
@@ -155,12 +221,50 @@ export function procedureStatusLabel(
 /**
  * Resolve the procedure decision for a given case.
  *
- * NRW Sanierung baseline is fully encoded. Other Bundesländer +
- * other intents return a conservative 'standard' decision with a
- * bebauungsplan_specific caveat so the brief is honest about the
- * resolver not yet covering the case.
+ * v1.0.21 Bug E — hard blockers short-circuit. If MK-Gebietsart,
+ * Denkmalschutz, Sonderbau-Scope, or a generic
+ * bauvoranfrage_hard_blocker fact is set, the resolver returns a
+ * 'bauvoranfrage' decision with explicit blocker reasoning that lists
+ * every blocker found, and tags the qualifier ASSUMED (not
+ * CALCULATED) because the system has no calculation when blocked.
+ * This prevents the v1.0.20 regression where Berlin × T-01 with two
+ * hard blockers still rendered "Simplified building permit · REQUIRED".
+ *
+ * NRW Sanierung baseline is fully encoded after the hard-blocker
+ * short-circuit. Other Bundesländer + other intents return a
+ * conservative 'standard' decision with a bebauungsplan_specific
+ * caveat so the brief is honest about the resolver not yet covering
+ * the case.
  */
 export function resolveProcedure(c: ProcedureCase): ProcedureDecision {
+  // v1.0.21 Bug E — hard blockers first; no procedure can be decided
+  // until they are cleared.
+  const blockers = detectHardBlockers(c)
+  if (blockers.length > 0) {
+    const blockerListDe = blockers.map((b) => b.labelDe).join(' · ')
+    const blockerListEn = blockers.map((b) => b.labelEn).join(' · ')
+    return {
+      kind: 'bauvoranfrage',
+      citation:
+        c.bundesland === 'nrw'
+          ? '§ 71 BauO NRW (Bauvoranfrage)'
+          : c.bundesland === 'bayern'
+            ? 'BayBO Art. 71 (Vorbescheid)'
+            : 'state-specific Voranfrage/Vorbescheid §',
+      reasoning_de: `Verfahrensbestimmung zurückgestellt — Hard Blocker identifiziert: ${blockerListDe}. Verfahren kann erst nach Klärung der Zulässigkeit durch die zuständige Behörde (Bauvoranfrage) bestimmt werden.`,
+      reasoning_en: `Procedure determination deferred — hard blocker(s) identified: ${blockerListEn}. The procedure cannot be set until the responsible authority confirms admissibility via a pre-decision (Bauvoranfrage / Vorbescheid).`,
+      confidence: 'ASSUMED',
+      caveats: [
+        {
+          kind: 'bebauungsplan_specific',
+          message_de:
+            'Vorhabenkonzept kann unzulässig sein — vor jeder weiteren Planung Bauvoranfrage stellen.',
+          message_en:
+            'Project as currently scoped may be inadmissible — file a pre-decision (Bauvoranfrage) before any further planning.',
+        },
+      ],
+    }
+  }
   if (c.bundesland === 'nrw' && c.intent === 'sanierung') {
     return resolveNrwSanierung(c)
   }

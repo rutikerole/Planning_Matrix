@@ -493,6 +493,29 @@ async function runCrossStateBleed(): Promise<{ passed: number; failed: number }>
       console.log(`  ✗ ${stadtarchivMsg}`)
       failed++
     }
+    // v1.0.21 Bug E — Berlin fixture has mk_gebietsart + denkmalschutz
+    // + bauvoranfrage_hard_blocker set. Procedure card MUST surface
+    // "Procedure determination deferred" (EN) / "Verfahrens­bestimmung
+    // zurückgestellt" (DE) and MUST NOT surface "Simplified building
+    // permit · REQUIRED". Top-3 MUST carry the word BLOCKER.
+    const deferredRe = lang === 'en'
+      ? /Procedure determination deferred/u
+      : /Verfahrens\s*bestimmung\s+zurückgestellt/u
+    const deferredHit = deferredRe.test(text)
+    const deferredMsg = `Berlin ${lang}: procedure card surfaces "Procedure determination deferred" (Bug E)`
+    if (deferredHit) { console.log(`  ✓ ${deferredMsg}`); passed++ }
+    else { console.log(`  ✗ ${deferredMsg}`); failed++ }
+    const noSimplifiedRequired =
+      lang === 'en'
+        ? !/Simplified building permit\s*·\s*REQUIRED/u.test(text)
+        : !/Vereinfachtes Baugenehmigungsverfahren\s*·\s*ERFORDERLICH/u.test(text)
+    const noSimplifiedMsg = `Berlin ${lang}: no "Simplified permit · REQUIRED" while hard blockers active (Bug E guard)`
+    if (noSimplifiedRequired) { console.log(`  ✓ ${noSimplifiedMsg}`); passed++ }
+    else { console.log(`  ✗ ${noSimplifiedMsg}`); failed++ }
+    const blockerInTop3 = /\bBLOCKER\b/u.test(text)
+    const blockerMsg = `Berlin ${lang}: Top-3 surfaces the word BLOCKER (Bug E)`
+    if (blockerInTop3) { console.log(`  ✓ ${blockerMsg}`); passed++ }
+    else { console.log(`  ✗ ${blockerMsg}`); failed++ }
   }
   return { passed, failed }
 }

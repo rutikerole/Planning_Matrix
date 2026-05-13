@@ -348,8 +348,30 @@ export async function buildExportPdf({
     grenzstaendig: factBool('grenzstaendig'),
     in_gestaltungssatzung: factBool('in_gestaltungssatzung'),
     fassadenflaeche_m2: factNum('fassadenflaeche_m2'),
+    // v1.0.21 Bug E — hard-blocker channels. When set, resolveProcedure
+    // returns 'bauvoranfrage' with explicit blocker reasoning instead
+    // of quietly emitting "vereinfachtes ERFORDERLICH".
+    mk_gebietsart: factBool('mk_gebietsart'),
+    bauvoranfrage_hard_blocker: factBool('bauvoranfrage_hard_blocker'),
+    sonderbau_scope: factBool('sonderbau_scope'),
   }
   const procedureDecision: ProcedureDecision = resolveProcedure(procedureCase)
+  // v1.0.21 Bug E — derive an explicit BLOCKER summary that the
+  // Executive Top-3 + Procedure card surface prominently.
+  const { detectHardBlockers } = await import('@/legal/resolveProcedure')
+  const hardBlockers = detectHardBlockers(procedureCase)
+  const blockerLeadDe =
+    hardBlockers.length > 0
+      ? `BLOCKER — Bauvoranfrage zur zuständigen Behörde erforderlich, bevor weitere Planung beginnt. Vorhaben in der bisher konzipierten Form möglicherweise unzulässig (${hardBlockers
+          .map((b) => b.labelDe)
+          .join(' · ')}).`
+      : null
+  const blockerLeadEn =
+    hardBlockers.length > 0
+      ? `BLOCKER — file a pre-decision query with the responsible authority before any further planning. Project as currently scoped may be inadmissible (${hardBlockers
+          .map((b) => b.labelEn)
+          .join(' · ')}).`
+      : null
 
   let executivePage: PDFPage | null = null
   let executivePageNumber = 0
@@ -370,10 +392,21 @@ export async function buildExportPdf({
   type ExecSource =
     | { kind: 'rec'; rec: NonNullable<ProjectState['recommendations']>[number] }
     | { kind: 'smart'; pick: ReturnType<typeof pickSmartSuggestions>[number] }
+    | { kind: 'blocker'; title: string; body: string }
   const mergedSources: ExecSource[] = [
     ...sortedRecs.map((rec) => ({ kind: 'rec' as const, rec })),
     ...smartPicksForExec.map((pick) => ({ kind: 'smart' as const, pick })),
   ]
+  // v1.0.21 Bug E — when hard blockers are active, prepend a BLOCKER
+  // card to the Top-3 so the bauherr cannot miss the escalation. The
+  // softer "Obtain B-Plan information" baseline reads as a routine
+  // step; this card escalates explicitly.
+  if (hardBlockers.length > 0) {
+    const title =
+      lang === 'en' ? 'BLOCKER — Bauvoranfrage required' : 'BLOCKER — Bauvoranfrage erforderlich'
+    const body = lang === 'en' ? blockerLeadEn ?? '' : blockerLeadDe ?? ''
+    mergedSources.unshift({ kind: 'blocker', title, body })
+  }
   const topThreeSources = mergedSources.slice(0, 3)
   if (topThreeSources.length > 0) {
     executivePage = doc.addPage([PDF_PAGE_WIDTH, PDF_PAGE_HEIGHT])
@@ -393,6 +426,18 @@ export async function buildExportPdf({
           sourceLabel: src.rec.qualifier
             ? formatQualifier(src.rec.qualifier, pdfStrings)
             : undefined,
+        }
+      }
+      if (src.kind === 'blocker') {
+        // v1.0.21 Bug E — BLOCKER card forces priority high and tags
+        // the qualifier LEGAL · ASSUMED so the bauherr reads it as
+        // "the system cannot verify admissibility" rather than as a
+        // calculated recommendation.
+        return {
+          title: src.title,
+          body: src.body,
+          priority: inferPriority(src.title, src.body),
+          sourceLabel: formatQualifier({ source: 'LEGAL', quality: 'ASSUMED' }, pdfStrings),
         }
       }
       const title = (lang === 'en' ? src.pick.titleEn : src.pick.titleDe) ?? ''
@@ -647,12 +692,20 @@ export async function buildExportPdf({
           )
           .join('\n')
       : '')
+  // v1.0.21 Bug E — when hard blockers are active, surface "Procedure
+  // determination deferred" as the card title (instead of just
+  // "Bauvoranfrage empfohlen") so the bauherr cannot mistake the row
+  // for a routine procedure listing. The body already carries the
+  // explicit blocker list from resolveProcedure.
+  const procRowTitle =
+    hardBlockers.length > 0
+      ? (lang === 'en'
+          ? `Procedure determination deferred · ${procedureDecision.citation}`
+          : `Verfahrensbestimmung zurückgestellt · ${procedureDecision.citation}`)
+      : procedureLabel(procedureDecision.kind, lang) + ' · ' + procedureDecision.citation
   const procRows: ProcRow[] = [
     {
-      title:
-        procedureLabel(procedureDecision.kind, lang) +
-        ' · ' +
-        procedureDecision.citation,
+      title: procRowTitle,
       body: decisionBody,
       status: decisionStatus,
       qualifier: {
