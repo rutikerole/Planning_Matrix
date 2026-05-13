@@ -104,6 +104,11 @@ const EN: PdfStrings = {
   // framing replaces it. See docs/cost-formula.md.
   'costs.basisTemplate':
     'Computed from {n} m² façade · HOAI Zone III · German baseline (regional variance ±10%)',
+  // v1.0.23 Bug L — honest no-area fallback when fassadenflaeche_m2 is
+  // unset or zero. Replaces the v1.0.20-era "Computed from 0 m² façade"
+  // leak that read as a measurement rather than a missing-data marker.
+  'costs.basisTemplate.noArea':
+    'Computed from floor area only (façade area not captured) · HOAI Zone III · German baseline (regional variance ±10%)',
   'costs.th.item': 'ITEM',
   'costs.th.basis': 'BASIS',
   'costs.th.range': 'EUR RANGE',
@@ -293,6 +298,9 @@ const DE: PdfStrings = {
   // v1.0.22 Bug I — see EN counterpart above. Honest baseline framing.
   'costs.basisTemplate':
     'Berechnet aus {n} m² Fassade · HOAI Zone III · deutscher Basiswert (regionale Varianz ±10%)',
+  // v1.0.23 Bug L — see EN counterpart above.
+  'costs.basisTemplate.noArea':
+    'Berechnet ausschließlich aus Wohnfläche (Fassade noch nicht erfasst) · HOAI Zone III · deutscher Basiswert (regionale Varianz ±10%)',
   'costs.th.item': 'POSITION',
   'costs.th.basis': 'GRUNDLAGE',
   'costs.th.range': 'EUR-SPANNE',

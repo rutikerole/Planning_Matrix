@@ -590,6 +590,21 @@ async function runCrossStateBleed(): Promise<{ passed: number; failed: number }>
     const noAutoLageplanMsg = `Berlin ${lang}: no Amtlicher Lageplan · ERFORDERLICH row on blocked project (Bug F guard)`
     if (noAutoLageplan) { console.log(`  ✓ ${noAutoLageplanMsg}`); passed++ }
     else { console.log(`  ✗ ${noAutoLageplanMsg}`); failed++ }
+    // v1.0.23 Bug L — when fassadenflaeche_m2 (T-03) or wohnflaeche
+    // (T-01) is unset and detectAreaSqm finds no corpus match, the
+    // cost basis line uses the honest no-area phrasing instead of
+    // "Computed from 0 m² façade" / "Berechnet aus 0 m² Fassade".
+    const noAreaRe = lang === 'en'
+      ? /façade area not captured|floor area only/u
+      : /Fassade noch nicht erfasst|ausschließlich aus Wohnfläche/u
+    const noAreaHit = noAreaRe.test(text)
+    const noAreaMsg = `Berlin ${lang}: cost basis renders honest no-area fallback (Bug L)`
+    if (noAreaHit) { console.log(`  ✓ ${noAreaMsg}`); passed++ }
+    else { console.log(`  ✗ ${noAreaMsg}`); failed++ }
+    const noZeroM2 = !/\b0\s*m²\s*(?:façade|Fassade)/u.test(text)
+    const noZeroM2Msg = `Berlin ${lang}: no literal "0 m² Fassade/façade" leak (Bug L guard)`
+    if (noZeroM2) { console.log(`  ✓ ${noZeroM2Msg}`); passed++ }
+    else { console.log(`  ✗ ${noZeroM2Msg}`); failed++ }
     // v1.0.22 Bug I — Cost basis line uses honest baseline framing,
     // not the v1.0.20 "regional BKI factor (Berlin)" string that
     // promised a regional adjustment the formula does not apply.

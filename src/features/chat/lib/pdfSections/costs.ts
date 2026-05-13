@@ -90,7 +90,14 @@ export function renderCostsBody(
   })
 
   // ─── Subtitle with {n}/{state} substitution ─────────────────────
-  const basisRaw = pdfStr(strings, 'costs.basisTemplate')
+  // v1.0.23 Bug L — honest fallback when the façade area is unset
+  // or zero. v1.0.20 rendered "Computed from 0 m² façade" verbatim;
+  // v1.0.23 substitutes a no-area phrasing so the bauherr does not
+  // read "0 m²" as a measurement.
+  const basisRaw =
+    data.areaSqm > 0
+      ? pdfStr(strings, 'costs.basisTemplate')
+      : pdfStr(strings, 'costs.basisTemplate.noArea')
   const basisText = basisRaw
     .replace(/\{n\}/g, String(data.areaSqm))
     .replace(/\{state\}/g, data.bundeslandCode)
