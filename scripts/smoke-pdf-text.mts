@@ -528,6 +528,34 @@ async function runCrossStateBleed(): Promise<{ passed: number; failed: number }>
     const blockerMsg = `Berlin ${lang}: Top-3 surfaces the word BLOCKER (Bug E)`
     if (blockerInTop3) { console.log(`  ✓ ${blockerMsg}`); passed++ }
     else { console.log(`  ✗ ${blockerMsg}`); failed++ }
+    // v1.0.22 Bug F — Berlin fixture has hard blockers active, so
+    // the Documents section must collapse to the "pending
+    // Bauvoranfrage" placeholder rather than confidently enumerating
+    // five required Anlagen. Negative guard: no auto-list of named
+    // Anlagen leaks through.
+    const docBlockedRe = lang === 'en'
+      ? /Document requirements pending Bauvoranfrage resolution/u
+      : /Dokumentenanforderungen ausstehend.{0,40}Bauvoranfrage/u
+    const docBlockedHit = docBlockedRe.test(text)
+    const docBlockedMsg = `Berlin ${lang}: Documents collapse to Bauvoranfrage placeholder (Bug F + Bug E)`
+    if (docBlockedHit) { console.log(`  ✓ ${docBlockedMsg}`); passed++ }
+    else { console.log(`  ✗ ${docBlockedMsg}`); failed++ }
+    // v1.0.22 Bug F — no auto-listed Anlagen leak through the
+    // blocker placeholder. Lageplan + Bauzeichnungen + Baubeschreibung
+    // are the three always-required items requiredDocumentsForCase
+    // would emit when not blocked; on the Berlin blocked fixture
+    // none must appear in the rendered PDF.
+    // Match Documents-section format only: title · ERFORDERLICH/REQUIRED.
+    // The string "Amtlicher Lageplan" appears elsewhere (cost item
+    // label, role rationale, stateLocalization surveying note) on
+    // every NRW/Bayern project; only the Documents-section auto-list
+    // would format it as "Amtlicher Lageplan · ERFORDERLICH".
+    const noAutoLageplan =
+      !/Amtlicher Lageplan\s*·\s*(?:ERFORDERLICH|REQUIRED)/u.test(text) &&
+      !/Official site plan\s*·\s*(?:ERFORDERLICH|REQUIRED)/u.test(text)
+    const noAutoLageplanMsg = `Berlin ${lang}: no Amtlicher Lageplan · ERFORDERLICH row on blocked project (Bug F guard)`
+    if (noAutoLageplan) { console.log(`  ✓ ${noAutoLageplanMsg}`); passed++ }
+    else { console.log(`  ✗ ${noAutoLageplanMsg}`); failed++ }
     // v1.0.22 Bug C — Berlin fixture has no Höhe and no Geschosse
     // facts, so deriveGebaeudeklasse returns honest deferral. The
     // PDF Key Data table must surface the deferral phrase (no

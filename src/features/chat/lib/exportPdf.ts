@@ -137,6 +137,7 @@ import {
   type DocumentCase,
   type RequiredDocument,
 } from '@/legal/requiredDocuments'
+import { resolveDocuments } from '@/features/result/lib/resolveDocuments'
 import type { BundeslandCode } from '@/legal/states/_types'
 
 /**
@@ -724,6 +725,12 @@ export async function buildExportPdf({
   // requiredDocumentsForCase when state.docs is empty. The persona
   // doesn't pre-populate the mandatory-Bauvorlagen list; the
   // resolver does. state.docs (when present) overrides.
+  // v1.0.22 Bug F — the resolver now routes through resolveDocuments
+  // so the UI ProcedureDocumentsTab + this PDF section consume the
+  // SAME shape; v1.0.21 Bug E's hard-blocker state propagates here so
+  // a blocked project surfaces a single placeholder row instead of
+  // confidently enumerating 5 required Anlagen on an inadmissible
+  // scope.
   const docCase: DocumentCase = {
     procedureKind: procedureDecision.kind,
     intent: procedureCase.intent,
@@ -737,8 +744,12 @@ export async function buildExportPdf({
       (procedureCase.fassadenflaeche_m2 ?? 0) > 0,
     fassadenflaeche_m2: procedureCase.fassadenflaeche_m2,
   }
-  const requiredDocs: RequiredDocument[] =
-    docs.length > 0 ? [] : requiredDocumentsForCase(docCase)
+  const resolvedDocs = resolveDocuments(project, state)
+  const requiredDocs: RequiredDocument[] = resolvedDocs.blockedByVoranfrage
+    ? []
+    : docs.length > 0
+      ? []
+      : requiredDocumentsForCase(docCase)
   const statusLabelDe: Record<RequiredDocument['status'], string> = {
     required: 'ERFORDERLICH',
     conditional: 'BEDINGT',
@@ -749,8 +760,21 @@ export async function buildExportPdf({
     conditional: 'CONDITIONAL',
     recommended: 'RECOMMENDED',
   }
-  const docRows: DocRow[] =
-    docs.length > 0
+  // v1.0.22 Bug F — when hard blockers are active, replace the
+  // 5-document auto-population with a single placeholder row so the
+  // PDF does not confidently enumerate Anlagen on a project whose
+  // admissibility is unresolved.
+  const docRows: DocRow[] = resolvedDocs.blockedByVoranfrage
+    ? [{
+        title: lang === 'en'
+          ? resolvedDocs.blockedLabelEn
+          : resolvedDocs.blockedLabelDe,
+        status: 'conditional',
+        delivery: lang === 'en'
+          ? 'Hard blocker active — pre-decision required first.'
+          : 'Hard Blocker aktiv — Bauvoranfrage zuerst erforderlich.',
+      }]
+    : docs.length > 0
       ? docs.map((d) => ({
           title: (lang === 'en' ? d.title_en : d.title_de) ?? '',
         }))

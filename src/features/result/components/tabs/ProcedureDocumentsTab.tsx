@@ -10,6 +10,7 @@ import type {
 } from '@/types/projectState'
 import { PROCEDURE_PHASES, totalPhaseWeight } from '../../lib/composeTimeline'
 import { useResolvedProcedures } from '../../hooks/useResolvedProcedures'
+import { resolveDocuments } from '../../lib/resolveDocuments'
 import {
   VorlaeufigFooter,
   isPending,
@@ -39,6 +40,16 @@ export function ProcedureDocumentsTab({ project, state }: Props) {
   const [openDocId, setOpenDocId] = useState<string | null>(null)
 
   const resolved = useResolvedProcedures(project, state)
+  // v1.0.22 Bug F — UI tab now reads from the same resolveDocuments
+  // resolver that the PDF page 7 consumes. Required Anlagen surface as
+  // first-class rows even when state.documents is empty; uploaded
+  // files merge in alongside. Hard-blocker state (v1.0.21 Bug E)
+  // collapses both sections to a single "pending Voranfrage" placeholder
+  // so the bauherr sees the same escalation across UI + PDF.
+  const resolvedDocs = useMemo(
+    () => resolveDocuments(project, state),
+    [project, state],
+  )
   const documents = useMemo(() => state.documents ?? [], [state.documents])
   const primary =
     resolved.procedures.find((p) => p.status === 'erforderlich') ??
@@ -120,10 +131,49 @@ export function ProcedureDocumentsTab({ project, state }: Props) {
           >
             {t('result.workspace.procedure.docsEyebrow')}
           </p>
+          {/* v1.0.22 Bug F — count line reads from the unified resolver
+            * so UI tab and PDF page 7 cannot disagree. Required Anlagen
+            * + on-file files + outstanding gap surface explicitly. */}
           <span className="font-serif italic text-[11px] text-clay/85">
-            {t('result.workspace.procedure.docsCount', { count: documents.length })}
+            {resolvedDocs.blockedByVoranfrage
+              ? lang === 'en' ? resolvedDocs.blockedLabelEn : resolvedDocs.blockedLabelDe
+              : `${resolvedDocs.totalRequired} ${lang === 'en' ? 'required' : 'erforderlich'} · ${resolvedDocs.totalOnFile} ${lang === 'en' ? 'on file' : 'auf Akte'} · ${resolvedDocs.outstanding} ${lang === 'en' ? 'outstanding' : 'offen'}`}
           </span>
         </header>
+        {/* v1.0.22 Bug F — required documents from the resolver render
+          * inline so the UI tab matches the PDF page 7 list. Hidden
+          * when the project is hard-blocker-gated (the blocked label
+          * lives in the header count line above). */}
+        {!resolvedDocs.blockedByVoranfrage && resolvedDocs.required.length > 0 && documents.length === 0 && (
+          <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mt-1">
+            {resolvedDocs.required.map((r) => (
+              <li
+                key={`req-${r.key}`}
+                className="border border-ink/12 rounded-[10px] bg-paper-card p-4 flex flex-col gap-2"
+              >
+                <div className="flex items-start gap-2">
+                  <FileText aria-hidden="true" className="size-3.5 shrink-0 text-clay/85 mt-0.5" />
+                  <p className="text-[13px] font-medium text-ink leading-snug min-w-0 break-words">
+                    {lang === 'en' ? r.name_en : r.name_de}
+                  </p>
+                </div>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <Tag tone={r.status === 'recommended' ? 'muted' : 'warning'}>
+                    {r.status === 'required'
+                      ? lang === 'en' ? 'required' : 'erforderlich'
+                      : r.status === 'conditional'
+                        ? lang === 'en' ? 'conditional' : 'bedingt'
+                        : lang === 'en' ? 'recommended' : 'empfohlen'}
+                  </Tag>
+                  <span className="text-[10.5px] italic text-clay/85 leading-snug">
+                    {lang === 'en' ? r.delivery_en : r.delivery_de}
+                    {r.citation ? ` · ${r.citation}` : ''}
+                  </span>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
         <div className="flex flex-wrap gap-2">
           {(['all', 'erforderlich', 'liegt_vor', 'eingereicht', 'genehmigt'] as const).map(
             (key) => (
