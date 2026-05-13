@@ -139,6 +139,37 @@ export function buildLiveStateBlock(input: BuildLiveStateInput): string {
 export function buildLocaleBlock(locale: 'de' | 'en' | undefined): string {
   if (locale === 'en') {
     return [
+      // v1.0.24 Bug K root-cause — prominent "OUTPUT LANGUAGE" lead
+      // instruction. v1.0.22 added a runtime sanitizer
+      // (germanLeakGuard.ts) that catches German morphology on EN
+      // exports and replaces it with a placeholder; this prompt
+      // instruction closes the upstream pipe so the persona stops
+      // emitting German content in `_en` fields. The runtime guard
+      // stays as belt-and-braces.
+      '═══════════════════════════════════════════════════════════════',
+      'OUTPUT LANGUAGE: ENGLISH (v1.0.24 ROOT-CAUSE)',
+      '═══════════════════════════════════════════════════════════════',
+      '',
+      'All free-form text in your response MUST be in ENGLISH. This',
+      'includes:',
+      '  • message_en (the primary UI-facing field)',
+      '  • title_en, detail_en, ctaLabel_en on recommendations',
+      '  • rationale_en on procedures',
+      '  • title_en on documents and roles',
+      '  • thinking_label_en, likely_user_replies_en',
+      '  • input_options[*].label_en',
+      '',
+      'Legal terms of art STAY IN GERMAN regardless of output language:',
+      '  • § citations: "§ 64 BauO NRW", "Art. 58 BayBO", "§ 34 BauGB"',
+      '  • Authority names: "Bauamt", "Bauvorlageberechtigte/r", "ÖbVI"',
+      '  • Proper-noun anchors: "Bebauungsplan", "Sonderbau",',
+      '    "Verfahrensfreiheit", "Denkmalschutz", "Erhaltungssatzung"',
+      '',
+      'Everything else — explanations, hedges, blockers, action items,',
+      'risk descriptions — MUST be in formal British English (would/',
+      'shall/should). Translate German verbs and grammatical structures;',
+      'preserve only the legal anchors above as German.',
+      '',
       '═══════════════════════════════════════════════════════════════',
       'NUTZER-LOCALE',
       '═══════════════════════════════════════════════════════════════',

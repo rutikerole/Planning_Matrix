@@ -4152,6 +4152,33 @@ async function runStaticGate() {
     },
   ]))
 
+  // ── v1.0.24 Bug K root-cause — persona-prompt lang-context ──────────
+  const systemPromptSrc = await readFileText('supabase/functions/chat-turn/systemPrompt.ts')
+  const germanLeakGuardSrc = await readFileText('src/legal/germanLeakGuard.ts')
+  results.push(failures('v1.0.24 Bug K root-cause: persona-prompt lang-context + runtime guard', [
+    {
+      ok: /OUTPUT LANGUAGE: ENGLISH/.test(systemPromptSrc),
+      msg: 'buildLocaleBlock(en) must lead with prominent "OUTPUT LANGUAGE: ENGLISH" instruction',
+    },
+    {
+      ok: /Legal terms of art STAY IN GERMAN/.test(systemPromptSrc),
+      msg: 'buildLocaleBlock(en) must list legal-term-of-art exceptions (§ citations, authority names, etc.)',
+    },
+    {
+      ok: /Bebauungsplan|Verfahrensfreiheit|Denkmalschutz/.test(systemPromptSrc) &&
+          /buildLocaleBlock/.test(systemPromptSrc),
+      msg: 'buildLocaleBlock(en) names at least one canonical German legal anchor that stays untranslated',
+    },
+    {
+      ok: /export function sanitizeGermanContentOnEnglish/.test(germanLeakGuardSrc),
+      msg: 'runtime guard sanitizeGermanContentOnEnglish must still exist (belt-and-braces; v1.0.22 invariant)',
+    },
+    {
+      ok: /FIRE_THRESHOLD\s*=\s*2/.test(germanLeakGuardSrc),
+      msg: 'runtime guard FIRE_THRESHOLD must still be 2 (no false-positive single-anchor downgrade)',
+    },
+  ]))
+
   return results
 }
 
