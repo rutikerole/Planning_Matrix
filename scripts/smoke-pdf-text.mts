@@ -449,6 +449,10 @@ async function runCrossStateBleed(): Promise<{ passed: number; failed: number }>
       // v1.0.21 Commit 1 (Bug 23-PRIME)
       { rx: /\bStadtarchiv\s+Düsseldorf\b/u, label: 'Stadtarchiv Düsseldorf (NRW-only)' },
       { rx: /\bKönigsallee\b/u, label: 'Königsallee (NRW-only)' },
+      // v1.0.21 Commit 2 (Bug 23 — specialists)
+      { rx: /\bBayBO\s+Art\.\s*61\b/u, label: 'BayBO Art. 61 (Bayern-only permit-submission §)' },
+      { rx: /\bBayBO\s+Art\.\s*62\b/u, label: 'BayBO Art. 62 (Bayern-only structural-cert §)' },
+      { rx: /Pflicht für Neubauten in Bayern|mandatory for new builds in Bayern/u, label: 'Bayern-only surveyor mandate' },
     ]
     for (const { rx, label } of forbiddenTokens) {
       const hit = rx.test(text)

@@ -1,14 +1,23 @@
 import type { Role } from '@/types/projectState'
+import { getStateCitations, type StateCitationPack } from '@/legal/stateCitations'
 
 /**
  * Phase 8.1 (A.1) — baseline `Role[]` inferred from project intent +
  * Bundesland when persona hasn't yet emitted any roles.
  *
+ * v1.0.21 Bug 23 — baseline rationales now key the permit-submission
+ * § and structural-cert § off the project's Bundesland. v1.0.20 and
+ * earlier hard-coded BayBO Art. 61 / Art. 62 for every project, which
+ * surfaced as a literal BayBO citation on Berlin / NRW / Hessen
+ * projects (Bug 23 from the v1.0.20 smoke walk). Bayern fixtures
+ * continue to render BayBO §§ verbatim; non-Bayern fixtures render
+ * the state-correct §, or an honest-deferral phrase for unverified
+ * stub states.
+ *
  * The baseline is intentionally conservative: 5 roles for a new
  * residential build (architekt, tragwerksplaner, energieberater,
- * vermesser, bauamt — the canonical Bayern EFH/MFH set), and a
- * smaller set for sanierung / umnutzung / abbruch where some specialists
- * are situational rather than reliably required.
+ * vermesser, bauamt), and a smaller set for sanierung / umnutzung /
+ * abbruch where some specialists are situational.
  *
  * Every baseline role carries `qualifier: { source: 'LEGAL', quality:
  * 'CALCULATED', setBy: 'system' }` so the UI can render a clay-tint
@@ -33,6 +42,7 @@ const baselineRole = (
   title_en: string,
   rationale_de: string,
   rationale_en: string,
+  bundeslandLabelDe: string,
 ): Role => ({
   id,
   title_de,
@@ -45,25 +55,26 @@ const baselineRole = (
     quality: 'CALCULATED',
     setAt: NOW(),
     setBy: 'system',
-    reason:
-      'Baseline für Bayern abgeleitet — wird durch konkrete Berater:innen-Empfehlungen überschrieben.',
+    reason: `Baseline für ${bundeslandLabelDe} abgeleitet — wird durch konkrete Berater:innen-Empfehlungen überschrieben.`,
   },
 })
 
-const NEW_BUILD_ROLES = (): Role[] => [
+const NEW_BUILD_ROLES = (citations: StateCitationPack): Role[] => [
   baselineRole(
     'R-Architekt',
     'Architekt:in',
     'Architect',
-    'Bauvorlageberechtigt nach BayBO Art. 61; reicht den Antrag ein.',
-    'Licensed for permit submissions under BayBO Art. 61.',
+    `Bauvorlageberechtigt nach ${citations.permitSubmissionCitation}; reicht den Antrag ein.`,
+    `Licensed for permit submissions under ${citations.permitSubmissionCitation}.`,
+    citations.labelDe,
   ),
   baselineRole(
     'R-Tragwerksplaner',
     'Tragwerksplaner:in',
     'Structural engineer',
-    'Standsicherheitsnachweis nach BayBO Art. 62.',
-    'Structural certification under BayBO Art. 62.',
+    `Standsicherheitsnachweis nach ${citations.structuralCertCitation}.`,
+    `Structural certification under ${citations.structuralCertCitation}.`,
+    citations.labelDe,
   ),
   baselineRole(
     'R-Energieberater',
@@ -71,13 +82,15 @@ const NEW_BUILD_ROLES = (): Role[] => [
     'Energy consultant',
     'Wärmeschutznachweis nach GEG 2024 — Bestandteil des Antrags.',
     'Thermal protection certification under GEG 2024 — required for the application.',
+    citations.labelDe,
   ),
   baselineRole(
     'R-Vermesser',
     'Vermesser:in',
     'Surveyor',
-    'Amtlicher Lageplan; bei Neubauten in Bayern Pflicht.',
-    'Official site plan; mandatory for new builds in Bayern.',
+    `Amtlicher Lageplan; bei Neubauten in ${citations.labelDe} Pflicht.`,
+    `Official site plan; mandatory for new builds in ${citations.labelEn}.`,
+    citations.labelDe,
   ),
   baselineRole(
     'R-Bauamt',
@@ -85,16 +98,18 @@ const NEW_BUILD_ROLES = (): Role[] => [
     'Building authority',
     'Kommunale Genehmigungsbehörde — prüft und entscheidet.',
     'Municipal permitting body — reviews and decides.',
+    citations.labelDe,
   ),
 ]
 
-const RENOVATION_ROLES = (): Role[] => [
+const RENOVATION_ROLES = (citations: StateCitationPack): Role[] => [
   baselineRole(
     'R-Architekt',
     'Architekt:in',
     'Architect',
-    'Bestandsaufnahme + Antragstellung; bauvorlageberechtigt nach BayBO Art. 61.',
-    'Existing-condition survey + permit submission; licensed under BayBO Art. 61.',
+    `Bestandsaufnahme + Antragstellung; bauvorlageberechtigt nach ${citations.permitSubmissionCitation}.`,
+    `Existing-condition survey + permit submission; licensed under ${citations.permitSubmissionCitation}.`,
+    citations.labelDe,
   ),
   baselineRole(
     'R-Tragwerksplaner',
@@ -102,6 +117,7 @@ const RENOVATION_ROLES = (): Role[] => [
     'Structural engineer',
     'Bei strukturellen Eingriffen Pflicht — Standsicherheitsnachweis.',
     'Required for any structural intervention — load-path certification.',
+    citations.labelDe,
   ),
   baselineRole(
     'R-Energieberater',
@@ -109,6 +125,7 @@ const RENOVATION_ROLES = (): Role[] => [
     'Energy consultant',
     'Bei wesentlichen Sanierungen GEG-Nachweis erforderlich.',
     'GEG certificate required for major renovations.',
+    citations.labelDe,
   ),
   baselineRole(
     'R-Bauamt',
@@ -116,16 +133,18 @@ const RENOVATION_ROLES = (): Role[] => [
     'Building authority',
     'Kommunale Genehmigungsbehörde — prüft und entscheidet.',
     'Municipal permitting body — reviews and decides.',
+    citations.labelDe,
   ),
 ]
 
-const DEMOLITION_ROLES = (): Role[] => [
+const DEMOLITION_ROLES = (citations: StateCitationPack): Role[] => [
   baselineRole(
     'R-Architekt',
     'Architekt:in',
     'Architect',
     'Antragstellung Abbruch + Entsorgungskonzept.',
     'Demolition application + waste-management concept.',
+    citations.labelDe,
   ),
   baselineRole(
     'R-Tragwerksplaner',
@@ -133,6 +152,7 @@ const DEMOLITION_ROLES = (): Role[] => [
     'Structural engineer',
     'Beurteilung der Standsicherheit während des Abbruchs.',
     'Structural assessment of stability during demolition.',
+    citations.labelDe,
   ),
   baselineRole(
     'R-Bauamt',
@@ -140,27 +160,24 @@ const DEMOLITION_ROLES = (): Role[] => [
     'Building authority',
     'Abbruchanzeige bzw. Genehmigung je nach Größe.',
     'Demolition notification or permit depending on size.',
+    citations.labelDe,
   ),
 ]
 
 export function deriveBaselineRoles({ intent, bundesland }: Args): Role[] {
-  // v1 only ships Bayern baselines; other Länder fall through to the
-  // new-build set as the safest default. Once Phase 9 expands beyond
-  // Bayern this conditional becomes a Bundesland switch.
-  void bundesland
-
+  const citations = getStateCitations(bundesland)
   switch (intent) {
     case 'neubau_einfamilienhaus':
     case 'neubau_mehrfamilienhaus':
     case 'aufstockung':
     case 'anbau':
-      return NEW_BUILD_ROLES()
+      return NEW_BUILD_ROLES(citations)
     case 'sanierung':
     case 'umnutzung':
-      return RENOVATION_ROLES()
+      return RENOVATION_ROLES(citations)
     case 'abbruch':
-      return DEMOLITION_ROLES()
+      return DEMOLITION_ROLES(citations)
     default:
-      return NEW_BUILD_ROLES()
+      return NEW_BUILD_ROLES(citations)
   }
 }

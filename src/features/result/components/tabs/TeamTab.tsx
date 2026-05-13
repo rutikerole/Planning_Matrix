@@ -3,7 +3,7 @@ import type { ProjectRow } from '@/types/db'
 import type { ProjectState, Role } from '@/types/projectState'
 import { RoleGlyph } from '../RoleGlyphs'
 import { inferRoleGlyphKey } from '../RoleGlyphs.helpers'
-import { ROLE_EFFORT_LOOKUP, type RoleKey } from '../../lib/roleEffortLookup'
+import { getRoleEffortLookup, type RoleKey } from '../../lib/roleEffortLookup'
 import { useResolvedRoles } from '../../hooks/useResolvedRoles'
 import {
   VorlaeufigFooter,
@@ -99,6 +99,7 @@ export function TeamTab({ project, state }: Props) {
                 role={role}
                 lang={lang}
                 isBaseline={!resolved.isFromState}
+                bundesland={project.bundesland}
               />
             ))}
           </ul>
@@ -143,14 +144,19 @@ function RoleCard({
   role,
   lang,
   isBaseline,
+  bundesland,
 }: {
   role: Role
   lang: 'de' | 'en'
   isBaseline: boolean
+  bundesland: string
 }) {
   const { t } = useTranslation()
   const glyphKey = inferRoleGlyphKey(role.title_de)
-  const lookup = ROLE_EFFORT_LOOKUP[glyphKey as RoleKey]
+  // v1.0.21 Bug 23 — lookup is now state-aware. The qualification
+  // line (BayBO Art. 61 etc.) resolves against the project's
+  // Bundesland instead of being hard-coded Bayern.
+  const lookup = getRoleEffortLookup(bundesland)[glyphKey as RoleKey]
   const title =
     lang === 'en'
       ? lookup?.titleEn ?? role.title_en

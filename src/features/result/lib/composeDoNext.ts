@@ -1,6 +1,7 @@
 import type { ProjectRow } from '@/types/db'
 import type { ProjectState } from '@/types/projectState'
 import { computeOpenItems } from './computeOpenItems'
+import { getStateCitations } from '@/legal/stateCitations'
 
 export type DoNextSource = 'recommendation' | 'openItem' | 'baseline'
 
@@ -122,6 +123,9 @@ function baselineFor(project: ProjectRow, lang: 'de' | 'en'): BaselineStep[] {
   const intent = project.intent
   const isNewBuild = intent.startsWith('neubau_') || intent === 'aufstockung' || intent === 'anbau'
   const isReno = intent === 'sanierung' || intent === 'umnutzung'
+  // v1.0.21 Bug 23 — permit-submission § + DSchG short name resolve
+  // from the project's Bundesland instead of hard-coded Bayern.
+  const c = getStateCitations(project.bundesland)
 
   if (isNewBuild) {
     return lang === 'en'
@@ -134,7 +138,7 @@ function baselineFor(project: ProjectRow, lang: 'de' | 'en'): BaselineStep[] {
           {
             id: 'arch',
             title: 'Engage an architect for LP 1–2 and B-Plan check',
-            detail: 'Bauvorlageberechtigt is required by BayBO Art. 61; pick early so they can scope the procedure.',
+            detail: `Bauvorlageberechtigt is required by ${c.permitSubmissionCitation}; pick early so they can scope the procedure.`,
           },
           {
             id: 'energy',
@@ -151,7 +155,7 @@ function baselineFor(project: ProjectRow, lang: 'de' | 'en'): BaselineStep[] {
           {
             id: 'arch',
             title: 'Architekt:in für LP 1–2 und B-Plan-Prüfung beauftragen',
-            detail: 'Bauvorlageberechtigt nach BayBO Art. 61 zwingend — frühzeitig binden.',
+            detail: `Bauvorlageberechtigt nach ${c.permitSubmissionCitation} zwingend — frühzeitig binden.`,
           },
           {
             id: 'energy',
@@ -177,7 +181,7 @@ function baselineFor(project: ProjectRow, lang: 'de' | 'en'): BaselineStep[] {
           {
             id: 'denkmal',
             title: 'Check heritage-protection status',
-            detail: 'BayDSchG permits stack on top of the building permit; check before scoping.',
+            detail: `${c.denkmalSchutzAct} permits stack on top of the building permit; check before scoping.`,
           },
         ]
       : [
@@ -194,7 +198,7 @@ function baselineFor(project: ProjectRow, lang: 'de' | 'en'): BaselineStep[] {
           {
             id: 'denkmal',
             title: 'Denkmalschutz-Status prüfen',
-            detail: 'Erlaubnis nach BayDSchG kommt zusätzlich zur Baugenehmigung — frühzeitig klären.',
+            detail: `Erlaubnis nach ${c.denkmalSchutzAct} kommt zusätzlich zur Baugenehmigung — frühzeitig klären.`,
           },
         ]
   }
