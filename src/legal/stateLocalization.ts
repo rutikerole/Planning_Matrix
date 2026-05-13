@@ -108,8 +108,8 @@ const BAYERN: StateLocalization = {
     en: 'Official site plan with elevation points — mandatory for new builds.',
   },
   costFactorLabel: {
-    de: 'HOAI Honorarzone III · Leistungsphasen 1–4 · skaliert mit Wohnfläche × regionalem BKI-Faktor (Bayern).',
-    en: 'HOAI fee zone III · service phases 1–4 · scales with floor area × regional BKI factor (Bavaria).',
+    de: 'HOAI Honorarzone III · Leistungsphasen 1–4 · deutscher Basiswert (regionale Varianz ±10%; staatsspezifische BKI-Anpassung in Vorbereitung).',
+    en: 'HOAI fee zone III · service phases 1–4 · German baseline (regional variance ±10%; state-specific BKI adjustment in preparation).',
   },
   pdfCaveat: {
     de: 'Orientierungswerte aus HOAI-Honorartafel · keine verbindlichen Angebote.',
@@ -167,8 +167,8 @@ const NRW: StateLocalization = {
     en: 'Official site plan from a public-licensed surveyor (ÖbVI) — mandatory in the permit process.',
   },
   costFactorLabel: {
-    de: 'HOAI Honorarzone III · Leistungsphasen 1–4 · skaliert mit Wohnfläche × regionalem BKI-Faktor (NRW).',
-    en: 'HOAI fee zone III · service phases 1–4 · scales with floor area × regional BKI factor (NRW).',
+    de: 'HOAI Honorarzone III · Leistungsphasen 1–4 · deutscher Basiswert (regionale Varianz ±10%; staatsspezifische BKI-Anpassung in Vorbereitung).',
+    en: 'HOAI fee zone III · service phases 1–4 · German baseline (regional variance ±10%; state-specific BKI adjustment in preparation).',
   },
   pdfCaveat: {
     de: 'Orientierungswerte aus HOAI-Honorartafel · keine verbindlichen Angebote.',
@@ -222,8 +222,8 @@ const BW: StateLocalization = {
     en: 'Site plan per LBOVVO — mandatory for new builds and larger extensions.',
   },
   costFactorLabel: {
-    de: 'HOAI Honorarzone III · Leistungsphasen 1–4 · skaliert mit Wohnfläche × regionalem BKI-Faktor (BW).',
-    en: 'HOAI fee zone III · service phases 1–4 · scales with floor area × regional BKI factor (BW).',
+    de: 'HOAI Honorarzone III · Leistungsphasen 1–4 · deutscher Basiswert (regionale Varianz ±10%; staatsspezifische BKI-Anpassung in Vorbereitung).',
+    en: 'HOAI fee zone III · service phases 1–4 · German baseline (regional variance ±10%; state-specific BKI adjustment in preparation).',
   },
   pdfCaveat: {
     de: 'Orientierungswerte aus HOAI-Honorartafel · keine verbindlichen Angebote.',
@@ -277,8 +277,8 @@ const HESSEN: StateLocalization = {
     en: 'Official site plan from a public-licensed surveyor — mandatory in the permit process.',
   },
   costFactorLabel: {
-    de: 'HOAI Honorarzone III · Leistungsphasen 1–4 · skaliert mit Wohnfläche × regionalem BKI-Faktor (Hessen).',
-    en: 'HOAI fee zone III · service phases 1–4 · scales with floor area × regional BKI factor (Hesse).',
+    de: 'HOAI Honorarzone III · Leistungsphasen 1–4 · deutscher Basiswert (regionale Varianz ±10%; staatsspezifische BKI-Anpassung in Vorbereitung).',
+    en: 'HOAI fee zone III · service phases 1–4 · German baseline (regional variance ±10%; state-specific BKI adjustment in preparation).',
   },
   pdfCaveat: {
     de: 'Orientierungswerte aus HOAI-Honorartafel · keine verbindlichen Angebote.',
@@ -332,8 +332,8 @@ const NIEDERSACHSEN: StateLocalization = {
     en: 'Official site plan from a public-licensed surveyor — mandatory in the permit process.',
   },
   costFactorLabel: {
-    de: 'HOAI Honorarzone III · Leistungsphasen 1–4 · skaliert mit Wohnfläche × regionalem BKI-Faktor (Niedersachsen).',
-    en: 'HOAI fee zone III · service phases 1–4 · scales with floor area × regional BKI factor (Lower Saxony).',
+    de: 'HOAI Honorarzone III · Leistungsphasen 1–4 · deutscher Basiswert (regionale Varianz ±10%; staatsspezifische BKI-Anpassung in Vorbereitung).',
+    en: 'HOAI fee zone III · service phases 1–4 · German baseline (regional variance ±10%; state-specific BKI adjustment in preparation).',
   },
   pdfCaveat: {
     de: 'Orientierungswerte aus HOAI-Honorartafel · keine verbindlichen Angebote.',
@@ -381,9 +381,13 @@ function makeStub(bundesland: BundeslandCode, labelDe: string, labelEn: string):
       de: 'Amtlicher Lageplan — Pflicht im Baugenehmigungsverfahren.',
       en: 'Official site plan — mandatory in the permit process.',
     },
+    // v1.0.22 Bug I — stub-state costFactorLabel uses the same
+    // honest-baseline framing as substantive states. The state name
+    // ({labelDe}/{labelEn}) was previously interpolated to imply
+    // regional differentiation that the cost engine does not apply.
     costFactorLabel: {
-      de: `HOAI Honorarzone III · Leistungsphasen 1–4 · skaliert mit Wohnfläche × regionalem BKI-Faktor (${labelDe}).`,
-      en: `HOAI fee zone III · service phases 1–4 · scales with floor area × regional BKI factor (${labelEn}).`,
+      de: 'HOAI Honorarzone III · Leistungsphasen 1–4 · deutscher Basiswert (regionale Varianz ±10%; staatsspezifische BKI-Anpassung in Vorbereitung).',
+      en: 'HOAI fee zone III · service phases 1–4 · German baseline (regional variance ±10%; state-specific BKI adjustment in preparation).',
     },
     pdfCaveat: {
       de: 'Orientierungswerte aus HOAI-Honorartafel · keine verbindlichen Angebote.',

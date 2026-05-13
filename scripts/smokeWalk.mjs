@@ -2269,9 +2269,14 @@ async function runStaticGate() {
       msg: 'costs.title bilingual',
     },
     {
-      ok: /'costs\.basisTemplate':[\s\S]{0,100}\{n\} m² façade[\s\S]{0,80}\{state\}/.test(stringsV16Costs) &&
-          /'costs\.basisTemplate':[\s\S]{0,100}\{n\} m² Fassade[\s\S]{0,80}\{state\}/.test(stringsV16Costs),
-      msg: 'costs.basisTemplate carries {n} m²/Fassade and {state} substitution tokens in both locales',
+      // v1.0.22 Bug I — {state} interpolation in costs.basisTemplate
+      // was retired. The honest-baseline framing dropped the per-state
+      // suffix because the cost engine REGION_MULT does not actually
+      // apply a state-specific factor. {n} m² façade substitution is
+      // preserved.
+      ok: /'costs\.basisTemplate':[\s\S]{0,200}\{n\} m² façade[\s\S]{0,200}German baseline/.test(stringsV16Costs) &&
+          /'costs\.basisTemplate':[\s\S]{0,200}\{n\} m² Fassade[\s\S]{0,200}deutscher Basiswert/.test(stringsV16Costs),
+      msg: 'costs.basisTemplate carries {n} m²/Fassade tokens + honest baseline framing in both locales (Bug I)',
     },
     {
       ok: /'costs\.th\.item':/.test(stringsV16Costs) &&

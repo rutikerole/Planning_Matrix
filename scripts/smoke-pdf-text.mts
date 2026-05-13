@@ -590,6 +590,31 @@ async function runCrossStateBleed(): Promise<{ passed: number; failed: number }>
     const noAutoLageplanMsg = `Berlin ${lang}: no Amtlicher Lageplan · ERFORDERLICH row on blocked project (Bug F guard)`
     if (noAutoLageplan) { console.log(`  ✓ ${noAutoLageplanMsg}`); passed++ }
     else { console.log(`  ✗ ${noAutoLageplanMsg}`); failed++ }
+    // v1.0.22 Bug I — Cost basis line uses honest baseline framing,
+    // not the v1.0.20 "regional BKI factor (Berlin)" string that
+    // promised a regional adjustment the formula does not apply.
+    // pdf-parse may split the rendered line across newlines on wrap;
+    // use a token-pair check ([\s\S]) to survive that.
+    const honestBasisRe = lang === 'en'
+      ? /German\s+baseline[\s\S]{0,30}regional\s+variance/u
+      : /deutscher\s+Basiswert[\s\S]{0,30}regionale\s+Varianz/u
+    const honestBasisHit = honestBasisRe.test(text)
+    const honestBasisMsg = `Berlin ${lang}: cost basis line uses honest "German baseline" framing (Bug I)`
+    if (honestBasisHit) { console.log(`  ✓ ${honestBasisMsg}`); passed++ }
+    else {
+      const ctx = lang === 'en'
+        ? text.match(/Computed[\s\S]{0,200}/u)?.[0]
+        : text.match(/Berechnet[\s\S]{0,200}/u)?.[0]
+      console.log(`  ✗ ${honestBasisMsg} — context: ${JSON.stringify(ctx ?? '(not found)')}`)
+      failed++
+    }
+    const noRegionalBkiRe = lang === 'en'
+      ? /regional BKI factor/u
+      : /regionalem BKI-Faktor/u
+    const noRegionalBkiHit = !noRegionalBkiRe.test(text)
+    const noRegionalBkiMsg = `Berlin ${lang}: no misleading "regional BKI factor" label (Bug I guard)`
+    if (noRegionalBkiHit) { console.log(`  ✓ ${noRegionalBkiMsg}`); passed++ }
+    else { console.log(`  ✗ ${noRegionalBkiMsg}`); failed++ }
     // v1.0.22 Bug C — Berlin fixture has no Höhe and no Geschosse
     // facts, so deriveGebaeudeklasse returns honest deferral. The
     // PDF Key Data table must surface the deferral phrase (no

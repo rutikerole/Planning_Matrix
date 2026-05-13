@@ -97,8 +97,13 @@ const EN: PdfStrings = {
   // ─── v1.0.16 Renaissance Part 2B — Costs ──────────────────────
   'costs.kicker': 'SECTION 03 · COSTS',
   'costs.title': 'Estimated cost range',
+  // v1.0.22 Bug I — drop the "{state} regional BKI factor" framing.
+  // The cost engine REGION_MULT table maps Bayern → 1.0 and silently
+  // falls through to 1.0 for every other state; the label promised a
+  // regional adjustment the formula does not apply. Honest baseline
+  // framing replaces it. See docs/cost-formula.md.
   'costs.basisTemplate':
-    'Computed from {n} m² façade · HOAI Zone III · {state} regional BKI factor',
+    'Computed from {n} m² façade · HOAI Zone III · German baseline (regional variance ±10%)',
   'costs.th.item': 'ITEM',
   'costs.th.basis': 'BASIS',
   'costs.th.range': 'EUR RANGE',
@@ -285,8 +290,9 @@ const DE: PdfStrings = {
   // ─── v1.0.16 Renaissance Part 2B — Costs ──────────────────────
   'costs.kicker': 'ABSCHNITT 03 · KOSTEN',
   'costs.title': 'Geschätzte Kostenspanne',
+  // v1.0.22 Bug I — see EN counterpart above. Honest baseline framing.
   'costs.basisTemplate':
-    'Berechnet aus {n} m² Fassade · HOAI Zone III · {state} BKI-Faktor',
+    'Berechnet aus {n} m² Fassade · HOAI Zone III · deutscher Basiswert (regionale Varianz ±10%)',
   'costs.th.item': 'POSITION',
   'costs.th.basis': 'GRUNDLAGE',
   'costs.th.range': 'EUR-SPANNE',
