@@ -34,6 +34,27 @@ export function factLabel(key: string, locale: FactLocale): FactLabel {
   const upperHit = table[upperKey]
   if (upperHit) return upperHit
 
+  // v1.0.23 Bug S — cross-language fallback. When the requested
+  // locale's table has no entry, try the other table before falling
+  // through to the humanizer. Prevents German-morphology labels
+  // like "Eingriff Tragende Teile" from showing up on EN exports
+  // when only the DE entry exists. The bracketed prefix surfaces
+  // the gap in dev so the missing locale entry can be added.
+  const otherTable = locale === 'en' ? factLabelsDe : factLabelsEn
+  const crossHit = otherTable[key] ?? otherTable[upperKey]
+  if (crossHit) {
+    if (import.meta.env?.DEV && !warned.has(key)) {
+      warned.add(key)
+      console.warn(
+        `[factLabel] key '${key}' has no ${locale} entry; falling back ` +
+          `to ${locale === 'en' ? 'de' : 'en'} label.`,
+      )
+    }
+    return import.meta.env?.DEV
+      ? { ...crossHit, label: `[i18n] ${crossHit.label}` }
+      : crossHit
+  }
+
   if (import.meta.env?.DEV && !warned.has(key)) {
     warned.add(key)
     console.warn(

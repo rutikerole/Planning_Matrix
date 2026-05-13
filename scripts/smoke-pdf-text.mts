@@ -695,6 +695,57 @@ async function runCrossStateBleed(): Promise<{ passed: number; failed: number }>
 // guard. Verifies the fire threshold + EN placeholder + DE passthrough
 // in one go so smoke-pdf-text guards against any future regression on
 // the rules without needing a full persona-output round-trip.
+// v1.0.23 Bug S — factLabels coverage on PDF page 10. The current
+// fixture keys (fassadenflaeche_m2, klasse, denkmalschutz,
+// ensembleschutz, eingriff_tragende_teile, eingriff_aussenhuelle,
+// mk_gebietsart, bauvoranfrage_hard_blocker, aenderung_aeussere_
+// erscheinung, energiestandard) must surface in both locales with
+// proper labels — no humanize fallback ("Eingriff Tragende Teile",
+// "Mk Gebietsart") leaking on the rendered PDF.
+async function runFactLabelCoverageUnit(): Promise<{ passed: number; failed: number }> {
+  console.log(`\n[smoke-pdf-text] factLabels coverage (Bug S)…`)
+  const { factLabel } = await import('../src/lib/factLabel.ts')
+  const { factLabelsDe } = await import('../src/locales/factLabels.de.ts')
+  const { factLabelsEn } = await import('../src/locales/factLabels.en.ts')
+  let passed = 0
+  let failed = 0
+  // Curated list — every fact key in the two smoke fixtures.
+  const KEYS = [
+    'fassadenflaeche_m2',
+    'klasse',
+    'energiestandard',
+    'denkmalschutz',
+    'ensembleschutz',
+    'eingriff_tragende_teile',
+    'eingriff_aussenhuelle',
+    'aenderung_aeussere_erscheinung',
+    'mk_gebietsart',
+    'bauvoranfrage_hard_blocker',
+  ]
+  // Compute the humanize-fallback label exactly the way
+  // src/lib/factLabel.ts:humanize does so the detector is precise.
+  const humanize = (k: string): string =>
+    k.split('.').map((seg) =>
+      seg.split('_').map((w) => {
+        if (w.length === 0) return w
+        if (w === w.toUpperCase() && w.length <= 4) return w
+        return w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()
+      }).join(' '),
+    ).join(' · ')
+  for (const lang of ['de', 'en'] as const) {
+    const table = lang === 'en' ? factLabelsEn : factLabelsDe
+    for (const key of KEYS) {
+      const result = factLabel(key, lang)
+      const explicitlyRegistered = key in table || key.toUpperCase() in table
+      const usesHumanize = !explicitlyRegistered && result.label === humanize(key)
+      const msg = `${lang}: factLabel('${key}') is registered (got '${result.label}')`
+      if (explicitlyRegistered && !usesHumanize) { console.log(`  ✓ ${msg}`); passed++ }
+      else { console.log(`  ✗ ${msg}`); failed++ }
+    }
+  }
+  return { passed, failed }
+}
+
 // v1.0.23 Bug R — DESIGNER source must downgrade to LEGAL when no
 // designer is invited. Renders both fixtures (Berlin / NRW with no
 // invitedDesigner) and asserts no DESIGNER pill renders on page 10.
@@ -1051,6 +1102,7 @@ async function main(): Promise<void> {
   const sysFlag = await runSystemFlagFilterUnit()
   const verifiedBanner = await runVerifiedBannerCheck()
   const designerDowngrade = await runDesignerDowngradeCheck()
+  const factLabelCoverage = await runFactLabelCoverageUnit()
   const totalFailed =
     en.failed +
     de.failed +
@@ -1061,7 +1113,8 @@ async function main(): Promise<void> {
     denominator.failed +
     sysFlag.failed +
     verifiedBanner.failed +
-    designerDowngrade.failed
+    designerDowngrade.failed +
+    factLabelCoverage.failed
   const totalPassed =
     en.passed +
     de.passed +
@@ -1072,7 +1125,8 @@ async function main(): Promise<void> {
     denominator.passed +
     sysFlag.passed +
     verifiedBanner.passed +
-    designerDowngrade.passed
+    designerDowngrade.passed +
+    factLabelCoverage.passed
   console.log(`\n[smoke-pdf-text] ${totalPassed} passed · ${totalFailed} failed`)
   if (totalFailed > 0) {
     console.log('[smoke-pdf-text] FAIL — see violations above.')

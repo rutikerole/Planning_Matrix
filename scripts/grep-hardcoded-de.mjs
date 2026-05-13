@@ -34,6 +34,13 @@ const ALLOWLIST = [
   'src/features/architect/',
   'src/locales/de.json',
   'src/locales/factLabels.de.ts',
+  // v1.0.23 Bug S — factLabels.en.ts carries canonical German legal-
+  // domain terms inside English labels ("Bebauungsplan ID",
+  // "Sonderbau scope", "MK use-type (§ 7 BauNVO)"). These are
+  // intentional — there is no clean EN equivalent for the German §
+  // anchors and Bauantrag-specific concepts. Same allowlist pattern
+  // as composeExecutiveRead.ts and the chat-side legal modules.
+  'src/locales/factLabels.en.ts',
   'src/data/factsMuenchen.ts',
   'src/data/smartSuggestionsMuenchen.ts',
   // Sommelier-locked: specialist tag's role-label map is German by

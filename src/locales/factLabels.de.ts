@@ -254,4 +254,33 @@ export const factLabelsDe: Record<string, FactLabel> = {
     label: 'Bauvorlageberechtigte/r Architekt:in zugeordnet',
   },
   'PARTIES.ARCHITEKT.SOURCE': { label: 'Architekten-Quelle (BAYAK / privat)' },
+
+  // ── v1.0.23 Bug S — snake_case fact keys emitted by current
+  //    fixtures and chat-turn persona output. Both `key` and `KEY`
+  //    are registered so the case-insensitive lookup in factLabel.ts
+  //    hits via the upperKey fallback when the persona ships keys
+  //    in either casing.
+  'fassadenflaeche_m2': { label: 'Fassadenfläche', unit: 'm²' },
+  'wohnflaeche': { label: 'Wohnfläche', unit: 'm²' },
+  'wohnflaeche_m2': { label: 'Wohnfläche', unit: 'm²' },
+  'nutzflaeche_m2': { label: 'Nutzfläche', unit: 'm²' },
+  'klasse': { label: 'Gebäudeklasse' },
+  'energiestandard': { label: 'Energiestandard' },
+  'denkmalschutz': { label: 'Denkmalschutz' },
+  'ensembleschutz': { label: 'Ensemble-Denkmalschutz' },
+  'eingriff_tragende_teile': { label: 'Eingriff in tragende Teile' },
+  'eingriff_aussenhuelle': { label: 'Eingriff in die Außenhülle' },
+  'aenderung_aeussere_erscheinung': { label: 'Änderung des äußeren Erscheinungsbildes' },
+  'mk_gebietsart': { label: 'MK-Gebietsart (§ 7 BauNVO)' },
+  'bauvoranfrage_hard_blocker': { label: 'Bauvoranfrage erforderlich (Hard Blocker)' },
+  'sonderbau_scope': { label: 'Sonderbau-Tatbestand' },
+  'grenzstaendig': { label: 'Grenzständige Bebauung' },
+  'in_gestaltungssatzung': { label: 'In Gestaltungssatzung' },
+  'traufhoehe_m': { label: 'Traufhöhe', unit: 'm' },
+  'geschosse': { label: 'Geschosse' },
+  'vollgeschosse_oberirdisch': { label: 'Vollgeschosse (oberirdisch)' },
+  'freistehend': { label: 'Freistehend' },
+  'nutzungseinheiten_anzahl': { label: 'Anzahl Nutzungseinheiten' },
+  'nutzungseinheiten_groesse_max_m2': { label: 'Max. Nutzungseinheit', unit: 'm²' },
+  'bebauungsplan_id': { label: 'Bebauungsplan-ID' },
 }

@@ -244,4 +244,32 @@ export const factLabelsEn: Record<string, FactLabel> = {
     label: 'Certified architect assigned',
   },
   'PARTIES.ARCHITEKT.SOURCE': { label: 'Architect source (BAYAK / private)' },
+
+  // ── v1.0.23 Bug S — snake_case fact keys emitted by current
+  //    fixtures and chat-turn persona output. Both `key` and `KEY`
+  //    are registered (the upperKey fallback in factLabel.ts hits
+  //    the latter when the persona ships keys in either casing).
+  'fassadenflaeche_m2': { label: 'Façade area', unit: 'm²' },
+  'wohnflaeche': { label: 'Living area', unit: 'm²' },
+  'wohnflaeche_m2': { label: 'Living area', unit: 'm²' },
+  'nutzflaeche_m2': { label: 'Net floor area', unit: 'm²' },
+  'klasse': { label: 'Building class' },
+  'energiestandard': { label: 'Energy standard' },
+  'denkmalschutz': { label: 'Heritage protection' },
+  'ensembleschutz': { label: 'Ensemble heritage protection' },
+  'eingriff_tragende_teile': { label: 'Intervention in load-bearing elements' },
+  'eingriff_aussenhuelle': { label: 'Intervention in external envelope' },
+  'aenderung_aeussere_erscheinung': { label: 'Change to external appearance' },
+  'mk_gebietsart': { label: 'MK use-type (§ 7 BauNVO)' },
+  'bauvoranfrage_hard_blocker': { label: 'Pre-decision required (hard blocker)' },
+  'sonderbau_scope': { label: 'Sonderbau scope' },
+  'grenzstaendig': { label: 'Parcel-edge construction' },
+  'in_gestaltungssatzung': { label: 'In Gestaltungssatzung' },
+  'traufhoehe_m': { label: 'Eaves height', unit: 'm' },
+  'geschosse': { label: 'Storeys' },
+  'vollgeschosse_oberirdisch': { label: 'Full storeys (above grade)' },
+  'freistehend': { label: 'Freestanding' },
+  'nutzungseinheiten_anzahl': { label: 'Number of units' },
+  'nutzungseinheiten_groesse_max_m2': { label: 'Max unit size', unit: 'm²' },
+  'bebauungsplan_id': { label: 'Bebauungsplan ID' },
 }
