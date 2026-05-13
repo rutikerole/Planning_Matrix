@@ -695,6 +695,79 @@ async function runCrossStateBleed(): Promise<{ passed: number; failed: number }>
 // guard. Verifies the fire threshold + EN placeholder + DE passthrough
 // in one go so smoke-pdf-text guards against any future regression on
 // the rules without needing a full persona-output round-trip.
+// v1.0.23 Bug D — address blob parser unit tests. The parser must
+// split canonical German addresses into street/hausnummer/plz/stadt
+// AND must refuse to parse blobs that lack a PLZ (5-digit code).
+async function runAddressParserUnit(): Promise<{ passed: number; failed: number }> {
+  console.log(`\n[smoke-pdf-text] address parser (Bug D)…`)
+  const { parseAddressBlob, plzMatchesBundesland } = await import(
+    '../src/lib/addressParser.ts'
+  )
+  let passed = 0
+  let failed = 0
+  const cases: Array<{
+    blob: string
+    expect:
+      | { parsed: true; street: string; hausnummer: string; plz: string; stadt: string }
+      | { parsed: false }
+  }> = [
+    {
+      blob: 'Pariser Platz 1, 10117 Berlin',
+      expect: { parsed: true, street: 'Pariser Platz', hausnummer: '1', plz: '10117', stadt: 'Berlin' },
+    },
+    {
+      blob: 'Königsallee 30, 40212 Düsseldorf',
+      expect: { parsed: true, street: 'Königsallee', hausnummer: '30', plz: '40212', stadt: 'Düsseldorf' },
+    },
+    {
+      blob: 'Hauptstraße 12a, 80331 München',
+      expect: { parsed: true, street: 'Hauptstraße', hausnummer: '12a', plz: '80331', stadt: 'München' },
+    },
+    {
+      blob: 'just a string',
+      expect: { parsed: false },
+    },
+  ]
+  for (const c of cases) {
+    const result = parseAddressBlob(c.blob)
+    let ok = false
+    let msg = ''
+    if (c.expect.parsed === false) {
+      ok = result.parsed === false
+      msg = `parseAddressBlob('${c.blob}') refuses malformed input`
+    } else {
+      ok =
+        result.parsed === true &&
+        result.street === c.expect.street &&
+        result.hausnummer === c.expect.hausnummer &&
+        result.plz === c.expect.plz &&
+        result.stadt === c.expect.stadt
+      msg = `parseAddressBlob('${c.blob}') → { ${c.expect.street}, ${c.expect.hausnummer}, ${c.expect.plz}, ${c.expect.stadt} }`
+    }
+    if (ok) { console.log(`  ✓ ${msg}`); passed++ }
+    else {
+      console.log(`  ✗ ${msg} (got ${JSON.stringify(result)})`)
+      failed++
+    }
+  }
+  // PLZ-bundesland cross-check spot tests.
+  const plzCases: Array<{ plz: string; bundesland: string; expect: boolean | null }> = [
+    { plz: '80331', bundesland: 'bayern', expect: true },
+    { plz: '10117', bundesland: 'berlin', expect: true },
+    { plz: '40212', bundesland: 'nrw', expect: true },
+    { plz: '80331', bundesland: 'berlin', expect: false },
+    { plz: '10117', bundesland: 'bayern', expect: false },
+  ]
+  for (const c of plzCases) {
+    const got = plzMatchesBundesland(c.plz, c.bundesland)
+    const ok = got === c.expect
+    const msg = `plzMatchesBundesland('${c.plz}', '${c.bundesland}') === ${c.expect}`
+    if (ok) { console.log(`  ✓ ${msg}`); passed++ }
+    else { console.log(`  ✗ ${msg} (got ${got})`); failed++ }
+  }
+  return { passed, failed }
+}
+
 // v1.0.23 Bug O — glossary page 12 must reflect the project's
 // bundesland. Federal entries (BauGB, GEG, HOAI, BKI, ÖbVI, LP, KfW,
 // Bauamt, Bauvorlageberechtigte, Verfahrensfreiheit) always present;
@@ -1145,6 +1218,7 @@ async function main(): Promise<void> {
   const designerDowngrade = await runDesignerDowngradeCheck()
   const factLabelCoverage = await runFactLabelCoverageUnit()
   const glossaryStateAware = await runGlossaryStateAwareCheck()
+  const addressParser = await runAddressParserUnit()
   const totalFailed =
     en.failed +
     de.failed +
@@ -1157,7 +1231,8 @@ async function main(): Promise<void> {
     verifiedBanner.failed +
     designerDowngrade.failed +
     factLabelCoverage.failed +
-    glossaryStateAware.failed
+    glossaryStateAware.failed +
+    addressParser.failed
   const totalPassed =
     en.passed +
     de.passed +
@@ -1170,7 +1245,8 @@ async function main(): Promise<void> {
     verifiedBanner.passed +
     designerDowngrade.passed +
     factLabelCoverage.passed +
-    glossaryStateAware.passed
+    glossaryStateAware.passed +
+    addressParser.passed
   console.log(`\n[smoke-pdf-text] ${totalPassed} passed · ${totalFailed} failed`)
   if (totalFailed > 0) {
     console.log('[smoke-pdf-text] FAIL — see violations above.')
