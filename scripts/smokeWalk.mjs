@@ -4152,6 +4152,31 @@ async function runStaticGate() {
     },
   ]))
 
+  // ── v1.0.24 Bug D wizard integration — parser wired into hook ──────
+  const useCreateProjectSrc = await readFileText('src/features/wizard/hooks/useCreateProject.ts')
+  results.push(failures('v1.0.24 Bug D: parseAddressBlob wired into wizard submission path', [
+    {
+      ok: /import\s*\{[^}]*parseAddressBlob[^}]*\}\s+from\s+['"]@\/lib\/addressParser['"]/.test(useCreateProjectSrc),
+      msg: 'useCreateProject must import parseAddressBlob (top-level)',
+    },
+    {
+      ok: /parseAddressBlob\s*\(\s*input\.plotAddress\s*\)/.test(useCreateProjectSrc),
+      msg: 'useCreateProject must call parseAddressBlob on the submitted plotAddress',
+    },
+    {
+      ok: /PLOT\.ADDRESS\.STREET[\s\S]{0,400}PLOT\.ADDRESS\.HOUSENUMBER[\s\S]{0,400}PLOT\.ADDRESS\.POSTALCODE[\s\S]{0,400}PLOT\.ADDRESS\.CITY/.test(useCreateProjectSrc),
+      msg: 'useCreateProject must seed structured PLOT.ADDRESS.* facts on successful parse',
+    },
+    {
+      ok: /plzMatchesBundesland/.test(useCreateProjectSrc),
+      msg: 'useCreateProject must run the PLZ-bundesland sanity check',
+    },
+    {
+      ok: /PLOT\.ADDRESS\.PLZ_BUNDESLAND_MISMATCH/.test(useCreateProjectSrc),
+      msg: 'useCreateProject must surface PLZ-bundesland mismatch as a LEGAL/ASSUMED fact',
+    },
+  ]))
+
   // ── v1.0.24 Bug K root-cause — persona-prompt lang-context ──────────
   const systemPromptSrc = await readFileText('supabase/functions/chat-turn/systemPrompt.ts')
   const germanLeakGuardSrc = await readFileText('src/legal/germanLeakGuard.ts')

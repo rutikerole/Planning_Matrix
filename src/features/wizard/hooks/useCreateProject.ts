@@ -10,6 +10,7 @@ import { initialProjectState } from '@/lib/projectStateHelpers'
 import { selectTemplate, type Intent } from '../lib/selectTemplate'
 import { deriveName } from '../lib/deriveName'
 import type { BundeslandCode } from '@/legal/states/_types'
+import { parseAddressBlob, plzMatchesBundesland } from '@/lib/addressParser'
 
 export type CreateProjectStatus =
   | 'idle'
@@ -127,6 +128,64 @@ export function useCreateProject() {
     const seededFacts: Fact[] = input.bplanResult
       ? bplanToFacts(input.bplanResult, nowIso)
       : []
+    // v1.0.24 Bug D wizard integration — parse the address blob into
+    // structured facts. The raw blob still goes to projects.plot_address
+    // (existing column, backward-compat); the parsed components seed
+    // the corresponding PLOT.ADDRESS.* facts so downstream consumers
+    // (PLZ-district resolver, persona prompt's plot-state summary)
+    // can read structured shape without re-parsing. When the parser
+    // refuses (missing PLZ or malformed), no structured facts are
+    // seeded — the chat-turn pipeline still receives the raw blob.
+    //
+    // Qualifier: BAUHERR + DECIDED when the parse is complete (all 4
+    // fields non-empty); BAUHERR + ASSUMED when partial. The v1.0.22
+    // Bug Q + v1.0.24 extension gates do not touch CLIENT+DECIDED, so
+    // these facts pass through unchanged.
+    if (input.hasPlot && input.plotAddress) {
+      const parsed = parseAddressBlob(input.plotAddress)
+      if (parsed.parsed === true) {
+        const addrQuality = parsed.isComplete ? 'DECIDED' as const : 'ASSUMED' as const
+        const addrReason = parsed.isComplete
+          ? 'Adresse vom Bauherrn vollständig geparst (Pariser-Platz-1-10117-Berlin-Form).'
+          : 'Adresse vom Bauherrn nur teilweise geparst — Architekt:in bestätigt fehlende Komponenten.'
+        const addrQual = {
+          source: 'CLIENT' as const,
+          quality: addrQuality,
+          setAt: nowIso,
+          setBy: 'user' as const,
+          reason: addrReason,
+        }
+        if (parsed.street) {
+          seededFacts.push({ key: 'PLOT.ADDRESS.STREET', value: parsed.street, qualifier: addrQual })
+        }
+        if (parsed.hausnummer) {
+          seededFacts.push({ key: 'PLOT.ADDRESS.HOUSENUMBER', value: parsed.hausnummer, qualifier: addrQual })
+        }
+        if (parsed.plz) {
+          seededFacts.push({ key: 'PLOT.ADDRESS.POSTALCODE', value: parsed.plz, qualifier: addrQual })
+        }
+        if (parsed.stadt) {
+          seededFacts.push({ key: 'PLOT.ADDRESS.CITY', value: parsed.stadt, qualifier: addrQual })
+        }
+        // PLZ-bundesland sanity check. When the PLZ does not match the
+        // selected Bundesland, surface as an ASSUMED fact for the chat
+        // persona to flag in its first-turn response.
+        const plzOk = plzMatchesBundesland(parsed.plz, input.bundesland)
+        if (plzOk === false) {
+          seededFacts.push({
+            key: 'PLOT.ADDRESS.PLZ_BUNDESLAND_MISMATCH',
+            value: true,
+            qualifier: {
+              source: 'LEGAL' as const,
+              quality: 'ASSUMED' as const,
+              setAt: nowIso,
+              setBy: 'system' as const,
+              reason: `PLZ ${parsed.plz} fällt nicht in den Bereich von ${input.bundesland} — Architekt:in bitte verifizieren.`,
+            },
+          })
+        }
+      }
+    }
     // Phase 5 — when the user proceeded past the soft Münchner-PLZ
     // gate, record the acknowledgement as a CLIENT/DECIDED fact. The
     // system prompt's live-state block will surface this so the model
