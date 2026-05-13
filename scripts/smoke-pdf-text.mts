@@ -636,6 +636,48 @@ async function runCrossStateBleed(): Promise<{ passed: number; failed: number }>
 // guard. Verifies the fire threshold + EN placeholder + DE passthrough
 // in one go so smoke-pdf-text guards against any future regression on
 // the rules without needing a full persona-output round-trip.
+// v1.0.22 Bug B — assertion that the Overview DataQualityDonut, the
+// cover confidence percent, and the PDF verification page all source
+// from aggregateQualifiers(state) with the SAME denominator. The bug
+// in v1.0.20 was that the verification page walked facts only while
+// the donut walked all five qualifier-bearing categories.
+async function runDenominatorUnit(): Promise<{ passed: number; failed: number }> {
+  console.log(`\n[smoke-pdf-text] qualifier denominator unification (Bug B)…`)
+  const { aggregateQualifiers } = await import('../src/features/result/lib/qualifierAggregate.ts')
+  let passed = 0
+  let failed = 0
+  for (const [label, fixturePath] of [
+    ['NRW Königsallee', 'test/fixtures/nrw-t03-koenigsallee.json'],
+    ['Berlin Pariser Platz', 'test/fixtures/berlin-t01-pariser-platz.json'],
+  ] as const) {
+    const fixture = JSON.parse(readFileSync(join(REPO_ROOT, fixturePath), 'utf-8'))
+    const state = fixture.project.state ?? {}
+    const agg = aggregateQualifiers(state)
+    const factsLen = (state.facts ?? []).length
+    const procsLen = (state.procedures ?? []).length
+    const docsLen = (state.documents ?? []).length
+    const rolesLen = (state.roles ?? []).length
+    const recsLen = (state.recommendations ?? []).length
+    const expectedTotal = factsLen + procsLen + docsLen + rolesLen + recsLen
+    const totalsMatch = agg.total === expectedTotal
+    const msgT = `${label}: aggregateQualifiers walks all 5 categories (expected ${expectedTotal}, got ${agg.total})`
+    if (totalsMatch) { console.log(`  ✓ ${msgT}`); passed++ }
+    else { console.log(`  ✗ ${msgT}`); failed++ }
+    // The bucket counts must sum to total (no items dropped).
+    const sumOfCounts =
+      agg.counts.DECIDED +
+      agg.counts.CALCULATED +
+      agg.counts.VERIFIED +
+      agg.counts.ASSUMED +
+      agg.counts.UNKNOWN
+    const sumMatch = sumOfCounts === agg.total
+    const msgS = `${label}: bucket counts sum to total (sum ${sumOfCounts}, total ${agg.total})`
+    if (sumMatch) { console.log(`  ✓ ${msgS}`); passed++ }
+    else { console.log(`  ✗ ${msgS}`); failed++ }
+  }
+  return { passed, failed }
+}
+
 // v1.0.22 Bug Q — unit-style tests for the qualifier normalization
 // rules. Verifies CLIENT/USER/BAUHERR + VERIFIED gets downgraded to
 // DECIDED, DESIGNER + VERIFIED gets downgraded to DECIDED, and the
@@ -849,20 +891,23 @@ async function main(): Promise<void> {
   const gkUnit = await runDeriveGkUnit()
   const germanLeak = await runGermanLeakGuardUnit()
   const qualifierUnit = await runQualifierNormalizeUnit()
+  const denominator = await runDenominatorUnit()
   const totalFailed =
     en.failed +
     de.failed +
     bleed.failed +
     gkUnit.failed +
     germanLeak.failed +
-    qualifierUnit.failed
+    qualifierUnit.failed +
+    denominator.failed
   const totalPassed =
     en.passed +
     de.passed +
     bleed.passed +
     gkUnit.passed +
     germanLeak.passed +
-    qualifierUnit.passed
+    qualifierUnit.passed +
+    denominator.passed
   console.log(`\n[smoke-pdf-text] ${totalPassed} passed · ${totalFailed} failed`)
   if (totalFailed > 0) {
     console.log('[smoke-pdf-text] FAIL — see violations above.')

@@ -955,16 +955,28 @@ export async function buildExportPdf({
   })
 
   // ── Page X: Verification (status panel + signature block) ──────
+  // v1.0.22 Bug B — count Source: walk the same aggregator that the
+  // Overview DataQualityDonut + cover confidence percent consume so
+  // the three surfaces report consistent denominators. v1.0.20 walked
+  // facts only, which produced verification-page counts that visibly
+  // diverged from the donut (one project: donut 59/12/29 vs
+  // verification 0/33/67). The aggregator walks all five qualifier-
+  // bearing categories (facts + procedures + documents + roles +
+  // recommendations); the verification page now groups VERIFIED +
+  // DECIDED into the "verified" bucket (both indicate authoritative
+  // status), CALCULATED stays its own bucket, ASSUMED + UNKNOWN
+  // collapse to the "assumed" bucket — same grouping the donut uses.
   const verificationPage = doc.addPage([PDF_PAGE_WIDTH, PDF_PAGE_HEIGHT])
   const verificationPageNumber = doc.getPageCount()
-  let verifiedCount = 0
-  let calculatedCount = 0
-  let assumedCount = 0
-  for (const f of facts) {
-    if (f.qualifier?.quality === 'VERIFIED') verifiedCount++
-    else if (f.qualifier?.quality === 'CALCULATED') calculatedCount++
-    else if (f.qualifier?.quality === 'ASSUMED') assumedCount++
-  }
+  const { aggregateQualifiers: aggregateQualifiersFn } = await import(
+    '@/features/result/lib/qualifierAggregate'
+  )
+  const verificationAgg = aggregateQualifiersFn(state as ProjectState)
+  const verifiedCount =
+    verificationAgg.counts.VERIFIED + verificationAgg.counts.DECIDED
+  const calculatedCount = verificationAgg.counts.CALCULATED
+  const assumedCount =
+    verificationAgg.counts.ASSUMED + verificationAgg.counts.UNKNOWN
   renderVerificationBody(verificationPage, editorialFonts, pdfStrings, {
     templateLabel,
     bundeslandCode: bundeslandCodeUpper,
