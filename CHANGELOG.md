@@ -1,5 +1,127 @@
 # Changelog
 
+## v1.0.24 — Root-Cause Closure Sprint (2026-05-13)
+
+Closes 4 of 5 v1.0.22/23 follow-up items from BACKLOG.md. Each fix is
+upstream of an existing user-visible guard; the runtime guards stay
+(belt-and-braces) while the upstream pipes get cleaned. Bug I (Path A
+real BKI factors) honestly deferred — no authoritative source data
+exists in the repo as of v1.0.24.
+
+> **Empirical validation gap (acknowledged)**: v1.0.21 + v1.0.22 +
+> v1.0.23 + v1.0.24 have shipped 28 bug closures across 25 commits
+> without intervening end-to-end empirical validation against the
+> rendered PDF. All closures are fixture-validated. The next human
+> walk-through is the recommended trigger for any further sprint
+> scope. v1.0.25 should not ship until the empirical gate is struck.
+
+Sprint anchor:
+- Bayern composeLegalContext SHA `b18d3f7f9a6fe238c18cec5361d30ea3a547e46b1ef2b16a1e74c533aacb3471`
+  unchanged across all 4 commits.
+
+### Bugs fixed (in commit order)
+
+1. **Bug Q extension** — CLIENT/USER/BAUHERR+VERIFIED write-time gate.
+   `gateQualifiersByRole` in `src/lib/projectStateHelpers.ts`
+   extended. Client-side VERIFIED is downgraded to CLIENT+DECIDED at
+   chat-turn boundary. Asymmetry with DESIGNER+VERIFIED (kept at
+   +ASSUMED) is documented in the code — preserves Phase 13 §6.B.01
+   v1.0.16 Bug 32 display path. JS port in smokeWalk.mjs + Deno tests
+   in `qualifierGate.test.ts` updated in lock-step.
+2. **Bug R extension** — DESIGNER source downgrade now fires at Top-3
+   Executive + Section VIII Recommendations (in addition to v1.0.23's
+   Key Data path). `normalizeDesignerWithoutInLoop` is now a top-level
+   import in `exportPdf.ts`; `hasInvitedDesigner` computed once,
+   threaded into every qualifier-emit site.
+3. **Bug K root-cause** — chat-turn persona prompt's
+   `buildLocaleBlock(en)` in
+   `supabase/functions/chat-turn/systemPrompt.ts` leads with a
+   prominent "OUTPUT LANGUAGE: ENGLISH" banner that enumerates every
+   bilingual emit field + the legal-term-of-art exceptions (§
+   citations, authority names, proper-noun anchors). The runtime
+   guard (v1.0.22 `sanitizeGermanContentOnEnglish`) stays as
+   belt-and-braces.
+4. **Bug D wizard integration** — `parseAddressBlob` is now called on
+   wizard submission in `useCreateProject.ts`. PLOT.ADDRESS.STREET /
+   HOUSENUMBER / POSTALCODE / CITY facts are seeded as CLIENT/DECIDED
+   (or CLIENT/ASSUMED on partial parse). PLZ-bundesland sanity check
+   surfaces a LEGAL/ASSUMED mismatch fact when PLZ doesn't match
+   selected bundesland. UI confirmation step + lazy migration parked
+   for v1.0.25.
+
+### Bug I — Path A deferred (honest)
+
+Search of `src/features/result/lib/costNormsMuenchen.ts` + the
+codebase produced no authoritative per-state BKI factor data. The
+discipline anchor forbids fabricating cost multipliers for unverified
+regions (mirror of v1.0.21's "never fabricate §§ for unverified
+states"). Path A stays parked until source-cited per-state values +
+validation evidence against real architect quotes land. v1.0.22's
+Path B honest-baseline framing remains in effect.
+
+### Non-regression verification (v1.0.21/22/23 fixtures)
+
+Per sprint spec, before tagging:
+
+| Check | Result |
+|---|---|
+| Bayern SHA b18d3f7f...3471 | ✓ MATCH |
+| All 245 v1.0.23 pdf-text fixtures | ✓ pass (now 257 with sprint additions) |
+| Bug 23-PRIME: Berlin no "Stadtarchiv Düsseldorf" / "Königsallee" | ✓ held |
+| Bug 23: Berlin no "BayBO Art. 61" / "BayBO Art. 62" | ✓ held |
+| Bug 23b: Berlin no "BauVorlVO NRW" | ✓ held |
+| Bug 23c: Berlin no "Schwabing" / "BLfD" | ✓ held |
+| Bug 23d: Berlin no "BayDSchG" | ✓ held |
+| Bug E: Berlin "Procedure determination deferred" + BLOCKER, no "Simplified permit · REQUIRED" | ✓ held |
+| Bug M: Berlin confidence ≤ 45 (got 34); NRW ≥ 60 (got 72) | ✓ held |
+| Bug F: Berlin Documents → Bauvoranfrage placeholder | ✓ held |
+| Bayern verified fixture: BayBO + BLfD present; DESIGNER + AUTHORITY+VERIFIED preserved | ✓ held |
+
+### Gate status (final, on tag)
+
+| Gate                        | Status                              |
+| --------------------------- | ----------------------------------- |
+| `npm run verify:bayern-sha` | ✓ MATCH                             |
+| `npm run smoke:citations`   | ✓ static gate green (+15 new checks across Bug K + Bug D + Bug Q ext + Bug R ext drift) |
+| `npm run smoke:pdf-text`    | ✓ 257 passed · 0 failed (+12 over v1.0.23's 245) |
+| `npx tsc --noEmit`          | ✓ clean                             |
+| `npm run build`             | ✓ 274.2 KB gz (ceiling 300 KB)      |
+
+### Fixture growth this sprint
+
+- `smoke:pdf-text`: +12 unit assertions (245 → 257). Distribution:
+    - Bug Q ext: +6 (write-time gate matrix: CLIENT / BAUHERR / USER /
+      AUTHORITY / LEGAL / DECIDED no-op)
+    - Bug R ext: +6 (DESIGNER quality matrix with and without
+      invitedDesigner)
+    - Bug K: 0 pdf-text (no fixture impact — chat-turn not exercised)
+    - Bug D: 0 pdf-text (wizard fixture not in smoke harness)
+- `smoke:citations`: +15 new static checks (Bug Q ext JS-port + 2
+  fixture updates; Bug R ext drift on Bug 32 + Bug 25 anchors; Bug K
+  root drift on systemPrompt + germanLeakGuard; Bug D drift on
+  useCreateProject).
+
+### Autonomous decisions
+
+- **Bug Q ext**: I preserved the DESIGNER+VERIFIED → DESIGNER+ASSUMED
+  Phase 13 §6.B.01 invariant rather than switching DESIGNER to also
+  go to DECIDED. The asymmetry is documented inline and load-bearing.
+- **Bug R ext**: I changed the DESIGNER+ASSUMED display behavior
+  slightly. Pre-v1.0.24: v1.0.16 Bug 32 mapped DESIGNER+ASSUMED →
+  LEGAL+CALCULATED at render. Post-v1.0.24: `normalizeDesignerWithoutInLoop`
+  fires FIRST (DESIGNER+ASSUMED → LEGAL+ASSUMED), then formatQualifier
+  renders LEGAL+ASSUMED unchanged. User-facing change: clay ASSUMED
+  pill instead of green CALCULATED pill on no-invitedDesigner
+  projects.
+- **Bug K root**: I added the OUTPUT LANGUAGE banner BEFORE the
+  existing NUTZER-LOCALE German block rather than replacing it. The
+  existing block carries detailed PFLICHT lists; replacing risks
+  regression. The new lead is purely additive.
+- **Bug D**: I shipped the minimal-integration path (programmatic
+  parse + seed on submission) and parked the UI confirmation +
+  lazy migration. Rationale documented in BACKLOG.md.
+- **Bug I**: Honest deferral. No fabrication. Parked in BACKLOG.
+
 ## v1.0.23 — Cosmetic & Cleanup Sprint (2026-05-13)
 
 Closes the 8 remaining P2 cleanup bugs from BACKLOG.md, all surfaced

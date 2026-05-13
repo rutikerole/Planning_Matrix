@@ -1,9 +1,20 @@
-# Backlog — v1.0.24+ (features-only)
+# Backlog — v1.0.25+ (features + 1 deferred technical item)
 
 > The v1.0.20 testing sweep surfaced 24 bugs. v1.0.21 + v1.0.22 +
-> v1.0.23 closed all 24 across 21 commits (7 + 6 + 8). The remaining
-> items below are FEATURE requests + carry-forward enhancements,
-> not bugs. Each is scoped at the "dedicated sprint" level.
+> v1.0.23 closed all 24 across 21 commits (7 + 6 + 8). v1.0.24 added
+> root-cause closures for 4 of the 5 v1.0.22/23 follow-up items (Bug
+> Q + Bug R extensions, Bug K root, Bug D wizard integration) across
+> 4 commits — 28 closures across 25 commits total. The remaining
+> items below are FEATURE requests + 1 deferred technical item
+> (Bug I Path A) awaiting authoritative data + 3 sprint-deferred UI
+> tasks (Bug D UI, Bug D lazy migration, Bug K guard-hit-rate
+> validation).
+>
+> **Empirical validation gap**: v1.0.21 → v1.0.24 shipped 28 bug
+> closures without an intervening end-to-end PDF walk-through. The
+> next user-driven sweep is the recommended trigger for any further
+> sprint scope. v1.0.25 should not ship until the empirical gate is
+> struck.
 
 Sprint anchor reminder:
 - Bayern composeLegalContext SHA
@@ -61,55 +72,45 @@ separate surface that ships from the persona prompt; the
 chat-side audit is parked for the chat-side sprint that also
 addresses Bug 17.
 
-## v1.0.22 / v1.0.23 follow-ups
+## v1.0.22 / v1.0.23 / v1.0.24 follow-ups
 
-### Bug K root-cause persona-prompt fix
+### Bug I Path A — wire real regional BKI factors (STILL DEFERRED)
 
-v1.0.22 added a runtime guard
-(`sanitizeGermanContentOnEnglish`) that catches persona-emitted
-German content on EN export and renders an honest placeholder. The
-root-cause fix is a "respect lang context" instruction in the
-chat-turn persona prompt
-(`supabase/functions/chat-turn/*`). Land with empirical
-validation that no Bayern fixture is regressed.
-
-### Bug Q write-time gate extension
-
-v1.0.22 added a read-time normalization (in `getQualifierLabel`) so
-CLIENT+VERIFIED can never render. The write-time gate
-(`src/lib/projectStateHelpers.ts:gateQualifiersByRole`) currently
-catches only DESIGNER+VERIFIED — extend it to also block
-CLIENT/USER/BAUHERR + VERIFIED at chat-turn boundary, with
-empirical validation against the chat-turn fixtures.
-
-### Bug I Path A — wire real regional BKI factors
-
-v1.0.22's honest-baseline framing is Path B. Path A (real
-state-keyed BKI factors) lands when authoritative source-cited
-per-state values + validation evidence against real architect
-quotes are available. Replace `REGION_MULT` in
-`src/features/result/lib/costNormsMuenchen.ts` with the populated
+v1.0.22 shipped Path B (honest-baseline framing). v1.0.24 re-checked
+the codebase: no authoritative per-state BKI factor data has landed.
+Path A lands when source-cited per-state values + validation evidence
+against real architect quotes are available. Replace `REGION_MULT`
+in `src/features/result/lib/costNormsMuenchen.ts` with the populated
 table; revert `pdfStrings` / `costFactorLabel` / `docs/cost-formula.md`
 to the "regional factor documented" content.
 
-### Bug D wizard integration
+### Bug D wizard UI confirmation step (v1.0.25)
 
-v1.0.23 shipped `src/lib/addressParser.ts` as a tested helper. The
-wizard (`src/features/wizard/components/QuestionPlot.tsx`) still
-accepts the address blob verbatim. Wire `parseAddressBlob` into the
-wizard's submission flow with the "Parsed: …, looks right?" inline
-confirmation UI from the Bug D spec. Empirical validation: no
-existing project with a stored `plot_address` blob is regressed
-(parser falls back to the raw string on malformed inputs).
+v1.0.24 shipped the programmatic integration: `parseAddressBlob` is
+called on wizard submission and structured PLOT.ADDRESS.* facts are
+seeded. The "Parsed: street=X, plz=Y — looks right? [Yes / Edit]"
+inline confirmation UI in `QuestionPlot.tsx` is parked. Adding it
+requires empirical wizard-flow validation; the v1.0.24 scope was
+the minimal programmatic integration only.
 
-### Bug R Top-3 / Section VIII extension
+### Bug D wizard lazy migration on legacy project load (v1.0.25)
 
-v1.0.23's DESIGNER-source downgrade fires on the Key Data row only.
-Extend to the Top-3 Executive page and Section VIII Recommendations
-when a future smoke walk surfaces a DESIGNER-source leak there. The
-gate function (`normalizeDesignerWithoutInLoop` in
-`src/lib/qualifierNormalize.ts`) is ready; only the call-sites need
-adding.
+Existing projects shipped with only the raw `plot_address` blob (no
+structured PLOT.ADDRESS.* facts). v1.0.24 covers the new-project
+path only. Lazy migration — run `parseAddressBlob` on first load of
+a legacy project and write back structured facts as CLIENT/ASSUMED
+— is a separate read-path change that needs its own commit, plus
+empirical validation that no existing chat-turn flow is regressed.
+
+### Bug K runtime guard hit-rate validation (post-empirical-walk)
+
+v1.0.24 shipped the persona-prompt root-cause fix
+(`buildLocaleBlock(en)` lead with OUTPUT LANGUAGE: ENGLISH). The
+fixtures are pre-baked state JSON so the prompt fix is not exercised
+in smoke. After the next user-driven walk-through, measure the
+`sanitizeGermanContentOnEnglish` guard-hit count on EN exports;
+expect a drop relative to v1.0.23. If the count does NOT drop, the
+prompt fix did not reach the persona — investigate.
 
 ## Notes for the next sprint
 

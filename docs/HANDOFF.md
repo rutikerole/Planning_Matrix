@@ -461,7 +461,25 @@ shipped in Phase 13 Week 4). What's missing is the cron harness
 
 ## 9. Operational responsibilities — split between engineering and client
 
-**v1.0.23 IS THE NEW PRODUCTION-READY RELEASE.** Cosmetic & Cleanup
+**v1.0.24 IS THE NEW PRODUCTION-READY RELEASE.** Root-Cause Closure
+Sprint promotes 4 of the 5 v1.0.22/23 follow-up items from BACKLOG
+into root-cause fixes: Bug Q write-time gate extension
+(CLIENT/USER/BAUHERR+VERIFIED now blocked at chat-turn boundary,
+mirrors v1.0.22 read-time normalization); Bug R extension
+(`normalizeDesignerWithoutInLoop` now fires at Top-3 + Section VIII
+in addition to v1.0.23's Key Data path); Bug K root-cause (chat-turn
+persona prompt's `buildLocaleBlock(en)` leads with prominent OUTPUT
+LANGUAGE: ENGLISH instruction; runtime guard stays as belt-and-
+braces); Bug D wizard integration (`parseAddressBlob` now called on
+submission, structured PLOT.ADDRESS.* facts seeded). Bug I Path A
+deferred — no authoritative BKI data exists in the repo.
+**Empirical validation gap**: 28 closures across 25 commits without
+intervening end-to-end PDF walk-through; v1.0.25 should not ship
+until the empirical gate is struck. Runtime smoke gate at 257/257
+EN+DE (was 245; +12 sprint assertions). Bayern SHA preserved across
+all 4 commits. See `CHANGELOG.md` and `BACKLOG.md` at the repo root.
+
+**v1.0.23** (previous) — Cosmetic & Cleanup
 Sprint closes 8 P2 cleanup bugs (L "0 m² Fassade" / N system flag
 filter / P label width / J 30-day banner gating / R DESIGNER
 downgrade / S i18n label coverage / O state-aware glossary / D
@@ -470,8 +488,6 @@ bugs), every one of the 24 bugs surfaced by the v1.0.20 testing
 sweep is now CLOSED across 21 commits. New modules:
 `src/legal/systemFlagFilter.ts`, `src/lib/addressParser.ts`.
 Runtime smoke gate at 245/245 EN+DE (was 181; +64 sprint assertions).
-Bayern SHA preserved across every commit. See `CHANGELOG.md` and
-`BACKLOG.md` (now features-only) at the repo root.
 
 **v1.0.22** (previous) — Data Integrity Sprint
 closes 6 P1 defects deferred from v1.0.21 BACKLOG.md: Building class
