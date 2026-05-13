@@ -695,6 +695,48 @@ async function runCrossStateBleed(): Promise<{ passed: number; failed: number }>
 // guard. Verifies the fire threshold + EN placeholder + DE passthrough
 // in one go so smoke-pdf-text guards against any future regression on
 // the rules without needing a full persona-output round-trip.
+// v1.0.23 Bug R — DESIGNER source must downgrade to LEGAL when no
+// designer is invited. Renders both fixtures (Berlin / NRW with no
+// invitedDesigner) and asserts no DESIGNER pill renders on page 10.
+// The Bayern verified fixture HAS invitedDesigner, so DESIGNER pills
+// must continue to render (regression guard).
+async function runDesignerDowngradeCheck(): Promise<{ passed: number; failed: number }> {
+  console.log(`\n[smoke-pdf-text] DESIGNER source downgrade (Bug R)…`)
+  let passed = 0
+  let failed = 0
+  // Without invited designer → DESIGNER must be absent.
+  for (const [label, fixturePath] of [
+    ['Berlin', 'test/fixtures/berlin-t01-pariser-platz.json'],
+    ['NRW', 'test/fixtures/nrw-t03-koenigsallee.json'],
+  ] as const) {
+    for (const lang of ['en', 'de'] as const) {
+      const bytes = await renderFixturePdf(lang, fixturePath)
+      const text = await extractPdfText(bytes)
+      const designerPillRe = lang === 'en'
+        ? /\bDESIGNER\s*·/u
+        : /\bARCHITEKT:IN\s*·/u
+      const noDesignerHit = !designerPillRe.test(text)
+      const msg = `${label} ${lang}: no DESIGNER pill on project without invitedDesigner (Bug R)`
+      if (noDesignerHit) { console.log(`  ✓ ${msg}`); passed++ }
+      else { console.log(`  ✗ ${msg}`); failed++ }
+    }
+  }
+  // Bayern verified fixture HAS invitedDesigner → DESIGNER pill CAN
+  // render (regression guard — don't break the legitimate path).
+  for (const lang of ['en', 'de'] as const) {
+    const bytes = await renderFixturePdf(lang, 'test/fixtures/bayern-t03-verified.json')
+    const text = await extractPdfText(bytes)
+    const designerPillRe = lang === 'en'
+      ? /\bDESIGNER\s*·/u
+      : /\bARCHITEKT:IN\s*·/u
+    const designerHit = designerPillRe.test(text)
+    const msg = `Bayern verified ${lang}: DESIGNER pill renders when invitedDesigner set (Bug R regression guard)`
+    if (designerHit) { console.log(`  ✓ ${msg}`); passed++ }
+    else { console.log(`  ✗ ${msg}`); failed++ }
+  }
+  return { passed, failed }
+}
+
 // v1.0.23 Bug J — render the Bayern verified fixture and assert the
 // 30-day "GÜLTIG 30 TAGE" / "VALID FOR 30 DAYS" stamp is replaced by
 // the verification banner.
@@ -1008,6 +1050,7 @@ async function main(): Promise<void> {
   const denominator = await runDenominatorUnit()
   const sysFlag = await runSystemFlagFilterUnit()
   const verifiedBanner = await runVerifiedBannerCheck()
+  const designerDowngrade = await runDesignerDowngradeCheck()
   const totalFailed =
     en.failed +
     de.failed +
@@ -1017,7 +1060,8 @@ async function main(): Promise<void> {
     qualifierUnit.failed +
     denominator.failed +
     sysFlag.failed +
-    verifiedBanner.failed
+    verifiedBanner.failed +
+    designerDowngrade.failed
   const totalPassed =
     en.passed +
     de.passed +
@@ -1027,7 +1071,8 @@ async function main(): Promise<void> {
     qualifierUnit.passed +
     denominator.passed +
     sysFlag.passed +
-    verifiedBanner.passed
+    verifiedBanner.passed +
+    designerDowngrade.passed
   console.log(`\n[smoke-pdf-text] ${totalPassed} passed · ${totalFailed} failed`)
   if (totalFailed > 0) {
     console.log('[smoke-pdf-text] FAIL — see violations above.')

@@ -897,14 +897,29 @@ export async function buildExportPdf({
   // v1.0.20 PDFs. Filter rules live in
   // src/legal/systemFlagFilter.ts so the rule list is testable +
   // shared with any future UI table that walks state.facts.
+  // v1.0.23 Bug R — DESIGNER source downgrade when no designer in
+  // loop. project.invitedDesigner is the discriminant; when null/
+  // unset, any DESIGNER-source qualifier on a rendered row is
+  // re-mapped to LEGAL (quality preserved or downgraded to ASSUMED
+  // for DECIDED/VERIFIED). Rule lives in src/lib/qualifierNormalize
+  // alongside the Bug Q v1.0.22 normalization.
   const { isSystemFlagKey } = await import('@/legal/systemFlagFilter')
+  const { normalizeDesignerWithoutInLoop } = await import(
+    '@/lib/qualifierNormalize'
+  )
+  const hasInvitedDesigner = Boolean(
+    (project as { invitedDesigner?: string | null }).invitedDesigner,
+  )
   const keyDataRows: KeyDataRow[] = facts
     .filter((f) => f.key !== 'verfahren_indikation')
     .filter((f) => !isSystemFlagKey(f.key))
     .map((f) => ({
       field: factLabel(f.key, lang).label,
       value: factValueWithUnit(f.key, f.value, lang),
-      qualifier: f.qualifier,
+      qualifier: normalizeDesignerWithoutInLoop(
+        f.qualifier,
+        hasInvitedDesigner,
+      ),
     }))
   keyDataRows.push({
     field: lang === 'en' ? 'Procedure indication' : 'Verfahren Indikation',

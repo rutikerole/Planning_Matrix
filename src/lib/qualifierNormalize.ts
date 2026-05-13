@@ -88,3 +88,40 @@ export function withNormalizedQualifier<T extends { qualifier?: QualifierLike | 
     },
   } as T
 }
+
+// ───────────────────────────────────────────────────────────────────────
+// v1.0.23 Bug R — DESIGNER source downgrade when no designer in loop.
+//
+// The v1.0.16 Bug 32 helper already normalized DESIGNER+ASSUMED →
+// LEGAL+CALCULATED at display time (the gate-downgrade case where the
+// persona attempted DESIGNER+VERIFIED from a non-designer caller). On
+// projects without an invitedDesigner, ANY DESIGNER-sourced qualifier
+// should downgrade to LEGAL — there is no architect actually in the
+// loop to back the source claim.
+//
+// Rule (composes with normalizeQualifier above):
+//   • If !project.invitedDesigner AND source === DESIGNER:
+//       quality DECIDED   → LEGAL + ASSUMED
+//       quality CALCULATED → LEGAL + CALCULATED
+//       quality ASSUMED    → LEGAL + ASSUMED
+//       quality VERIFIED   → already gated by Bug Q to DESIGNER+DECIDED;
+//                            then this rule promotes DESIGNER+DECIDED
+//                            into LEGAL+ASSUMED downstream.
+// ───────────────────────────────────────────────────────────────────────
+
+export function normalizeDesignerWithoutInLoop(
+  q: QualifierLike | null | undefined,
+  hasInvitedDesigner: boolean,
+): { source: string; quality: string } {
+  if (!q) return { source: 'LEGAL', quality: 'CALCULATED' }
+  const source = String(q.source ?? '').toUpperCase() || 'LEGAL'
+  const quality = String(q.quality ?? '').toUpperCase() || 'CALCULATED'
+  if (hasInvitedDesigner) return { source, quality }
+  if (source !== 'DESIGNER' && source !== 'ARCHITEKT') return { source, quality }
+  // DESIGNER source with no designer in loop → LEGAL.
+  if (quality === 'CALCULATED') return { source: 'LEGAL', quality: 'CALCULATED' }
+  if (quality === 'DECIDED' || quality === 'VERIFIED') {
+    return { source: 'LEGAL', quality: 'ASSUMED' }
+  }
+  return { source: 'LEGAL', quality: 'ASSUMED' }
+}
