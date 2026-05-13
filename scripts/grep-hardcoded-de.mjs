@@ -41,6 +41,11 @@ const ALLOWLIST = [
   // anchors and Bauantrag-specific concepts. Same allowlist pattern
   // as composeExecutiveRead.ts and the chat-side legal modules.
   'src/locales/factLabels.en.ts',
+  // v1.0.23 Bug O — glossary.ts carries canonical bilingual entries
+  // (DE definition + EN definition per term). The DE half is German
+  // legal-domain text mirroring the EN side; same pattern as the
+  // chat-side legal modules.
+  'src/features/chat/lib/pdfSections/glossary.ts',
   'src/data/factsMuenchen.ts',
   'src/data/smartSuggestionsMuenchen.ts',
   // Sommelier-locked: specialist tag's role-label map is German by

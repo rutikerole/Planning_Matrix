@@ -1017,6 +1017,9 @@ export async function buildExportPdf({
   const glossaryPageNumber = doc.getPageCount()
   renderGlossaryBody(glossaryPage, editorialFonts, pdfStrings, {
     bundeslandCode: bundeslandCodeUpper,
+    // v1.0.23 Bug O — pass the lowercase code so the glossary can
+    // select state-aware entries via getStateCitations.
+    bundeslandLower: (project.bundesland ?? '').toLowerCase(),
   })
 
   // v1.0.17 — Audit log REMOVED from PDF. Per the user's intent

@@ -28,9 +28,15 @@ import {
   type EditorialFonts,
 } from '../pdfPrimitives'
 import { pdfStr, type PdfStrings } from '../pdfStrings'
+import { getStateCitations } from '@/legal/stateCitations'
 
 export interface GlossaryData {
   bundeslandCode: string
+  /** v1.0.23 Bug O — lowercase BundeslandCode (e.g. "nrw", "bayern",
+   *  "berlin") for resolving state-specific glossary entries via
+   *  stateCitations.ts. Falls back to legacy bundeslandCode-driven
+   *  {state} substitution when not provided. */
+  bundeslandLower?: string
 }
 
 export interface GlossaryFooterData {
@@ -47,26 +53,18 @@ interface GlossaryEntry {
   de: string
 }
 
-const ENTRIES: ReadonlyArray<GlossaryEntry> = [
+// v1.0.23 Bug O — federal-baseline glossary entries that apply to
+// every project regardless of bundesland.
+const FEDERAL_ENTRIES: ReadonlyArray<GlossaryEntry> = [
   {
     term: 'BauGB · Baugesetzbuch',
     en: 'Federal building code (planning law, e.g. § 30 inner-area development).',
     de: 'Bundesgesetz für das Bauplanungsrecht (z.B. § 30 Innenbereich).',
   },
   {
-    term: 'BauO {state} · Bauordnung',
-    en: 'State building code — how buildings must be built (e.g. § 62/64 BauO {state} procedure types).',
-    de: 'Landesbauordnung — bauordnungsrechtliche Vorgaben (z.B. § 62/64 BauO {state} Verfahrensarten).',
-  },
-  {
     term: 'GEG · Gebäudeenergiegesetz',
     en: 'Federal building energy law; § 48 governs renovation energy obligations.',
     de: 'Bundesgesetz zur Gebäudeenergie; § 48 regelt Modernisierungspflichten.',
-  },
-  {
-    term: 'LBO · Landesbauordnung',
-    en: 'Generic state-building-code term (synonym for BauO).',
-    de: 'Allgemeiner Begriff für die Landesbauordnung (Synonym für BauO).',
   },
   {
     term: 'HOAI · Honorarordnung',
@@ -75,8 +73,8 @@ const ENTRIES: ReadonlyArray<GlossaryEntry> = [
   },
   {
     term: 'BKI · Baukosteninformationszentrum',
-    en: 'German construction-cost benchmarking institute; regional BKI factors adjust HOAI estimates.',
-    de: 'Baukosteninformationszentrum; regionale BKI-Faktoren passen HOAI-Schätzungen an.',
+    en: 'German construction-cost benchmarking institute; regional BKI factors not yet wired in v1.0.23 — see docs/cost-formula.md.',
+    de: 'Baukosteninformationszentrum; regionale BKI-Faktoren noch nicht aktiv in v1.0.23 — siehe docs/cost-formula.md.',
   },
   {
     term: 'ÖbVI · Vermessungsingenieur',
@@ -110,6 +108,65 @@ const ENTRIES: ReadonlyArray<GlossaryEntry> = [
   },
 ]
 
+// v1.0.23 Bug O — state-aware entries appended after the federal
+// baseline. Substantive states get their canonical short names from
+// stateCitations.ts; stub states get the honest-deferral phrasing.
+function stateEntries(bundeslandLower: string | null | undefined): GlossaryEntry[] {
+  const cit = getStateCitations(bundeslandLower)
+  if (!cit.isSubstantive) {
+    return [
+      {
+        term: `BauO ${cit.labelDe} · Bauordnung`,
+        en: `${cit.labelEn} state building code — §§ not yet wired in v1.0.23. Verify with the ${cit.labelEn} Architektenkammer.`,
+        de: `Landesbauordnung ${cit.labelDe} — §§ noch nicht hinterlegt in v1.0.23. Mit ${cit.labelDe}-Architektenkammer abklären.`,
+      },
+      {
+        term: `${cit.denkmalSchutzAct.split(' (')[0]} · Denkmalschutz`,
+        en: `${cit.labelEn} monument-protection act — verified citations pending. Confirm with state Landesdenkmalamt.`,
+        de: `Denkmalschutzgesetz ${cit.labelDe} — verifizierte Zitate ausstehend. Mit Landesdenkmalamt abklären.`,
+      },
+    ]
+  }
+  // Substantive state — surface verified citations.
+  if (bundeslandLower === 'bayern') {
+    return [
+      {
+        term: 'BayBO · Bayerische Bauordnung',
+        en: 'Bavarian state building code (BayBO Art. 57 / Art. 58 verfahrensfrei + simplified procedure).',
+        de: 'Bayerische Bauordnung (BayBO Art. 57 / Art. 58 verfahrensfrei + vereinfachtes Verfahren).',
+      },
+      {
+        term: 'BayDSchG · Bayerisches Denkmalschutzgesetz',
+        en: 'Bavarian monument-protection act; Art. 6 governs permit requirements for listed buildings.',
+        de: 'Bayerisches Denkmalschutzgesetz; Art. 6 regelt Erlaubnispflichten für Denkmäler.',
+      },
+      {
+        term: 'BLfD · Landesamt für Denkmalpflege',
+        en: 'Bavarian State Office for Monument Preservation; reviews ensemble + listed-building cases.',
+        de: 'Bayerisches Landesamt für Denkmalpflege; prüft Ensembleschutz und Baudenkmäler.',
+      },
+    ]
+  }
+  return [
+    {
+      term: `${cit.bauVorlagenAct} · ${cit.labelDe}`,
+      en: `${cit.labelEn} state building code (e.g. ${cit.permitFormCitation} permit form, ${cit.structuralCertCitation} structural).`,
+      de: `Landesbauordnung ${cit.labelDe} (z.B. ${cit.permitFormCitation} Bauantrag, ${cit.structuralCertCitation} Tragwerk).`,
+    },
+    {
+      term: `${cit.denkmalSchutzAct} · Denkmalschutz`,
+      en: `${cit.labelEn} monument-protection act; consult ${cit.denkmalAuthorityEn}.`,
+      de: `${cit.denkmalAuthorityDe}; ${cit.denkmalSchutzAct} regelt Erlaubnispflichten.`,
+    },
+  ]
+}
+
+function getEntriesForBundesland(
+  bundeslandLower: string | null | undefined,
+): ReadonlyArray<GlossaryEntry> {
+  return [...FEDERAL_ENTRIES, ...stateEntries(bundeslandLower)]
+}
+
 export function renderGlossaryBody(
   page: PDFPage,
   fonts: EditorialFonts,
@@ -135,7 +192,12 @@ export function renderGlossaryBody(
   // than threading a `lang` arg through.
   const isDe = pdfStr(strings, 'glossary.kicker').startsWith('ABSCHNITT')
 
-  ENTRIES.forEach((entry, idx) => {
+  // v1.0.23 Bug O — state-aware entry list. Federal terms always
+  // present; state-specific BauO + DSchG entries derived from
+  // stateCitations.ts. Stub states render the honest-deferral
+  // phrasing rather than fabricated §§.
+  const entries = getEntriesForBundesland(data.bundeslandLower)
+  entries.forEach((entry, idx) => {
     const col = idx % 2
     const row = Math.floor(idx / 2)
     const cellX = MARGIN + col * (cellW + 16)

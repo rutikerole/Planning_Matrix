@@ -695,6 +695,47 @@ async function runCrossStateBleed(): Promise<{ passed: number; failed: number }>
 // guard. Verifies the fire threshold + EN placeholder + DE passthrough
 // in one go so smoke-pdf-text guards against any future regression on
 // the rules without needing a full persona-output round-trip.
+// v1.0.23 Bug O — glossary page 12 must reflect the project's
+// bundesland. Federal entries (BauGB, GEG, HOAI, BKI, ÖbVI, LP, KfW,
+// Bauamt, Bauvorlageberechtigte, Verfahrensfreiheit) always present;
+// state-specific BauO + DSchG entries swap per bundesland.
+async function runGlossaryStateAwareCheck(): Promise<{ passed: number; failed: number }> {
+  console.log(`\n[smoke-pdf-text] glossary state-awareness (Bug O)…`)
+  let passed = 0
+  let failed = 0
+  // NRW: BauO NRW present; BayBO / BLfD absent.
+  const nrwBytes = await renderFixturePdf('de', 'test/fixtures/nrw-t03-koenigsallee.json')
+  const nrwText = await extractPdfText(nrwBytes)
+  const nrwBauO = /BauO NRW/u.test(nrwText)
+  const nrwNoBaybo = !/BayBO/u.test(nrwText) && !/BLfD/u.test(nrwText)
+  const nrwBauGB = /BauGB/u.test(nrwText)
+  if (nrwBauO) { console.log(`  ✓ NRW: glossary contains 'BauO NRW' (Bug O)`); passed++ }
+  else { console.log(`  ✗ NRW: glossary contains 'BauO NRW' (Bug O)`); failed++ }
+  if (nrwNoBaybo) { console.log(`  ✓ NRW: glossary does NOT contain BayBO/BLfD (Bug O guard)`); passed++ }
+  else { console.log(`  ✗ NRW: glossary does NOT contain BayBO/BLfD (Bug O guard)`); failed++ }
+  if (nrwBauGB) { console.log(`  ✓ NRW: glossary contains 'BauGB' (federal, always)`); passed++ }
+  else { console.log(`  ✗ NRW: glossary contains 'BauGB' (federal, always)`); failed++ }
+  // Bayern verified: BayBO + BLfD MUST be present (legitimate state).
+  const bayBytes = await renderFixturePdf('de', 'test/fixtures/bayern-t03-verified.json')
+  const bayText = await extractPdfText(bayBytes)
+  const bayBayBO = /BayBO/u.test(bayText)
+  const bayBLfD = /BLfD/u.test(bayText)
+  if (bayBayBO) { console.log(`  ✓ Bayern: glossary contains 'BayBO' (Bug O)`); passed++ }
+  else { console.log(`  ✗ Bayern: glossary contains 'BayBO' (Bug O)`); failed++ }
+  if (bayBLfD) { console.log(`  ✓ Bayern: glossary contains 'BLfD' (Bug O)`); passed++ }
+  else { console.log(`  ✗ Bayern: glossary contains 'BLfD' (Bug O)`); failed++ }
+  // Berlin: honest-deferral phrasing.
+  const berBytes = await renderFixturePdf('de', 'test/fixtures/berlin-t01-pariser-platz.json')
+  const berText = await extractPdfText(berBytes)
+  const berBauOBln = /BauO Berlin/u.test(berText)
+  const berNoBayBO = !/BayBO/u.test(berText) && !/BLfD/u.test(berText) && !/BauO NRW/u.test(berText)
+  if (berBauOBln) { console.log(`  ✓ Berlin: glossary mentions BauO Berlin (Bug O)`); passed++ }
+  else { console.log(`  ✗ Berlin: glossary mentions BauO Berlin (Bug O)`); failed++ }
+  if (berNoBayBO) { console.log(`  ✓ Berlin: glossary does NOT contain BayBO/BLfD/BauO NRW (Bug O guard)`); passed++ }
+  else { console.log(`  ✗ Berlin: glossary does NOT contain BayBO/BLfD/BauO NRW (Bug O guard)`); failed++ }
+  return { passed, failed }
+}
+
 // v1.0.23 Bug S — factLabels coverage on PDF page 10. The current
 // fixture keys (fassadenflaeche_m2, klasse, denkmalschutz,
 // ensembleschutz, eingriff_tragende_teile, eingriff_aussenhuelle,
@@ -1103,6 +1144,7 @@ async function main(): Promise<void> {
   const verifiedBanner = await runVerifiedBannerCheck()
   const designerDowngrade = await runDesignerDowngradeCheck()
   const factLabelCoverage = await runFactLabelCoverageUnit()
+  const glossaryStateAware = await runGlossaryStateAwareCheck()
   const totalFailed =
     en.failed +
     de.failed +
@@ -1114,7 +1156,8 @@ async function main(): Promise<void> {
     sysFlag.failed +
     verifiedBanner.failed +
     designerDowngrade.failed +
-    factLabelCoverage.failed
+    factLabelCoverage.failed +
+    glossaryStateAware.failed
   const totalPassed =
     en.passed +
     de.passed +
@@ -1126,7 +1169,8 @@ async function main(): Promise<void> {
     sysFlag.passed +
     verifiedBanner.passed +
     designerDowngrade.passed +
-    factLabelCoverage.passed
+    factLabelCoverage.passed +
+    glossaryStateAware.passed
   console.log(`\n[smoke-pdf-text] ${totalPassed} passed · ${totalFailed} failed`)
   if (totalFailed > 0) {
     console.log('[smoke-pdf-text] FAIL — see violations above.')
