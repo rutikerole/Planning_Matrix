@@ -14,7 +14,6 @@
       "templateId": "T-01",
       "facts": [
         { "key": "fassadenflaeche_m2", "value": 180, "qualifier": { "source": "CLIENT", "quality": "VERIFIED" } },
-        { "key": "klasse", "value": "Gebaeudeklasse 3", "qualifier": { "source": "LEGAL", "quality": "CALCULATED" } },
         { "key": "energiestandard", "value": "GEG 2024 Mindestanforderung", "qualifier": { "source": "LEGAL", "quality": "VERIFIED" } },
         { "key": "denkmalschutz", "value": true, "qualifier": { "source": "LEGAL", "quality": "ASSUMED" } },
         { "key": "ensembleschutz", "value": false, "qualifier": { "source": "LEGAL", "quality": "ASSUMED" } },

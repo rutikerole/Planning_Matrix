@@ -11,6 +11,11 @@ import {
 import { useResolvedRoles } from '../../hooks/useResolvedRoles'
 import { useResolvedProcedures } from '../../hooks/useResolvedProcedures'
 import { computeOpenItems } from '../../lib/computeOpenItems'
+import {
+  deriveGebaeudeklasse,
+  deriveGkInputFromFacts,
+  formatGebaeudeklasseValue,
+} from '@/legal/deriveGebaeudeklasse'
 
 interface Props {
   project: ProjectRow
@@ -50,10 +55,20 @@ export function AtAGlance({ project, state }: Props) {
   // GK 3. The persona may emit any of several keys
   // (gebaeudeklasse_geplant / gebaeudeklasse_hypothese / geb_klasse_…),
   // or describe it only in message_de without emitting a fact at all.
-  // We try the explicit keys first, then fall back to deriving from
-  // storey count + building height (BayBO Art. 2(3) thresholds).
-  const klasseValue = resolveBuildingClass(facts, lang) ??
-    t('result.workspace.ataglance.tbd')
+  // v1.0.22 Bug C — explicit-key path stays; the geometric fallback
+  // now routes through the unified deriveGebaeudeklasse (MBO § 2 Abs. 3)
+  // so reasoning + qualifier are visible to the bauherr. Honest
+  // deferral phrase when Höhe AND Geschosse are both missing — no
+  // fabricated GK number.
+  const explicitKlasse = resolveBuildingClass(facts, lang)
+  const derivedKlasse = deriveGebaeudeklasse(
+    deriveGkInputFromFacts(facts, state.templateId ?? null),
+  )
+  const klasseValue = explicitKlasse
+    ? explicitKlasse
+    : derivedKlasse.klasse != null
+      ? formatGebaeudeklasseValue(derivedKlasse, lang)
+      : t('result.workspace.ataglance.tbd')
 
   // Cost — reuse the München heuristic engine, now with area + zone +
   // region inputs flowing through (A.4).
@@ -157,34 +172,13 @@ function resolveBuildingClass(
   if (regexHit && typeof regexHit.value === 'string') {
     return prettyClass(regexHit.value)
   }
-
-  // 3. Derive from height + storeys per BayBO Art. 2(3).
-  const heightFact = facts.find((f) =>
-    /bauwerks_hoehe_m|gebaeude_hoehe_m|height_m/i.test(f.key),
-  )
-  const storeyFact = facts.find((f) =>
-    /vollgeschosse_oberirdisch|geschoss(zahl)?|storeys/i.test(f.key),
-  )
-  const height = numericValue(heightFact?.value)
-  const storeys = numericValue(storeyFact?.value)
-  const derived = deriveGkFromGeometry(height, storeys)
-  if (derived) {
-    const note = lang === 'en' ? 'derived' : 'abgeleitet'
-    return `${derived} · ${note}`
-  }
-  return null
-}
-
-function deriveGkFromGeometry(
-  heightM: number | null,
-  storeys: number | null,
-): string | null {
-  if (heightM != null && heightM > 13) return 'GK 5'
-  if (heightM != null && heightM > 7) return 'GK 4'
-  if (storeys != null && storeys >= 4) return 'GK 4'
-  if (storeys != null && storeys >= 3) return 'GK 3'
-  if (storeys != null && storeys === 2) return 'GK 2'
-  if (storeys != null && storeys === 1) return 'GK 1'
+  // v1.0.22 Bug C — the geometric fallback (deriveGkFromGeometry)
+  // was retired in favour of the unified MBO § 2 Abs. 3 derivation in
+  // src/legal/deriveGebaeudeklasse.ts. The caller now consumes that
+  // helper directly so the GK row carries reasoning + qualifier
+  // alongside the number, and honest deferral fires when Höhe AND
+  // Geschosse are both missing.
+  void lang
   return null
 }
 
@@ -201,11 +195,4 @@ function prettyClass(raw: string): string {
   return trimmed
 }
 
-function numericValue(value: unknown): number | null {
-  if (typeof value === 'number') return value
-  if (typeof value === 'string') {
-    const n = parseFloat(value.replace(',', '.'))
-    return Number.isFinite(n) ? n : null
-  }
-  return null
-}
+// v1.0.22 — numericValue retired alongside deriveGkFromGeometry.

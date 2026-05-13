@@ -528,6 +528,29 @@ async function runCrossStateBleed(): Promise<{ passed: number; failed: number }>
     const blockerMsg = `Berlin ${lang}: Top-3 surfaces the word BLOCKER (Bug E)`
     if (blockerInTop3) { console.log(`  ✓ ${blockerMsg}`); passed++ }
     else { console.log(`  ✗ ${blockerMsg}`); failed++ }
+    // v1.0.22 Bug C — Berlin fixture has no Höhe and no Geschosse
+    // facts, so deriveGebaeudeklasse returns honest deferral. The
+    // PDF Key Data table must surface the deferral phrase (no
+    // fabricated GK number).
+    const gkDeferRe = lang === 'en'
+      ? /eaves height not recorded/u
+      : /Traufhöhe nicht erfasst/u
+    const gkDeferHit = gkDeferRe.test(text)
+    const gkDeferMsg = `Berlin ${lang}: Gebäudeklasse honest-deferral row present (Bug C)`
+    if (gkDeferHit) { console.log(`  ✓ ${gkDeferMsg}`); passed++ }
+    else {
+      const ctxIdx = lang === 'de' ? text.indexOf('Gebäudeklasse') : text.indexOf('Building class')
+      const ctx = ctxIdx >= 0 ? text.slice(Math.max(0, ctxIdx - 40), ctxIdx + 300) : '(label not found)'
+      console.log(`  ✗ ${gkDeferMsg} — context: ${JSON.stringify(ctx)}`)
+      failed++
+    }
+    // v1.0.22 Bug C — Berlin fixture must NOT contain a fabricated
+    // GK number. The derivation returned klasse=null so no "GK N"
+    // string from the derived row.
+    const noFabricatedGk = !/\bGK\s+[1-5]\s*·\s*(?:CALCULATED|ASSUMED|BERECHNET|ANGENOMMEN)/u.test(text)
+    const noFabricatedGkMsg = `Berlin ${lang}: no fabricated GK number when Höhe is unknown (Bug C guard)`
+    if (noFabricatedGk) { console.log(`  ✓ ${noFabricatedGkMsg}`); passed++ }
+    else { console.log(`  ✗ ${noFabricatedGkMsg}`); failed++ }
     // v1.0.21 Bug M — Berlin fixture has 2 active hard blockers
     // (mk_gebietsart + denkmalschutz). Confidence must be ≤ 45% per
     // the multiplicative-penalty design in docs/confidence-formula.md.
@@ -542,12 +565,99 @@ async function runCrossStateBleed(): Promise<{ passed: number; failed: number }>
   return { passed, failed }
 }
 
+// v1.0.22 Bug C — unit-style tests for deriveGebaeudeklasse with
+// synthetic inputs. Lighter than 4 extra PDF renders; verifies the
+// MBO § 2 Abs. 3 logic directly. The end-to-end Berlin + NRW PDF
+// assertions in runLocale + runCrossStateBleed cover the rendering
+// integration.
+async function runDeriveGkUnit(): Promise<{ passed: number; failed: number }> {
+  console.log(`\n[smoke-pdf-text] Gebäudeklasse derivation (MBO § 2 Abs. 3)…`)
+  const { deriveGebaeudeklasse } = await import('../src/legal/deriveGebaeudeklasse.ts')
+  let passed = 0
+  let failed = 0
+  const cases: Array<{
+    name: string
+    input: Parameters<typeof deriveGebaeudeklasse>[0]
+    expectKlasse: number | null
+    expectQualifier: 'CALCULATED' | 'ASSUMED'
+  }> = [
+    {
+      name: '2-storey EFH 6m eaves freistehend → GK 1',
+      input: {
+        hoeheM: 6,
+        geschosse: 2,
+        freistehend: true,
+        nutzungseinheitenAnzahl: 1,
+        nutzungseinheitenGroesseMaxM2: 180,
+        templateId: 'T-01',
+      },
+      expectKlasse: 1,
+      expectQualifier: 'CALCULATED',
+    },
+    {
+      name: '2-storey EFH 9m eaves freistehend → GK 4',
+      input: {
+        hoeheM: 9,
+        geschosse: 2,
+        freistehend: true,
+        nutzungseinheitenAnzahl: 1,
+        nutzungseinheitenGroesseMaxM2: 180,
+        templateId: 'T-01',
+      },
+      expectKlasse: 4,
+      expectQualifier: 'CALCULATED',
+    },
+    {
+      name: '4-storey MFH 12m eaves → GK 4',
+      input: {
+        hoeheM: 12,
+        geschosse: 4,
+        freistehend: false,
+        nutzungseinheitenAnzahl: 8,
+        nutzungseinheitenGroesseMaxM2: 120,
+        templateId: 'T-02',
+      },
+      expectKlasse: 4,
+      expectQualifier: 'CALCULATED',
+    },
+    {
+      name: '6-storey MFH 18m eaves → GK 5',
+      input: {
+        hoeheM: 18,
+        geschosse: 6,
+        freistehend: false,
+        nutzungseinheitenAnzahl: 12,
+        nutzungseinheitenGroesseMaxM2: 130,
+        templateId: 'T-02',
+      },
+      expectKlasse: 5,
+      expectQualifier: 'CALCULATED',
+    },
+    {
+      name: 'EFH unknown eaves → honest deferral (klasse=null)',
+      input: { templateId: 'T-01' },
+      expectKlasse: null,
+      expectQualifier: 'ASSUMED',
+    },
+  ]
+  for (const c of cases) {
+    const result = deriveGebaeudeklasse(c.input)
+    const ok =
+      result.klasse === c.expectKlasse && result.qualifier === c.expectQualifier
+    const msg = `${c.name} (got klasse=${result.klasse ?? 'null'} qualifier=${result.qualifier})`
+    if (ok) { console.log(`  ✓ ${msg}`); passed++ }
+    else { console.log(`  ✗ ${msg}`); failed++ }
+  }
+  return { passed, failed }
+}
+
 async function main(): Promise<void> {
   const en = await runLocale('en')
   const de = await runLocale('de')
   const bleed = await runCrossStateBleed()
-  const totalFailed = en.failed + de.failed + bleed.failed
-  const totalPassed = en.passed + de.passed + bleed.passed
+  const gkUnit = await runDeriveGkUnit()
+  const totalFailed = en.failed + de.failed + bleed.failed + gkUnit.failed
+  const totalPassed = en.passed + de.passed + bleed.passed + gkUnit.passed
   console.log(`\n[smoke-pdf-text] ${totalPassed} passed · ${totalFailed} failed`)
   if (totalFailed > 0) {
     console.log('[smoke-pdf-text] FAIL — see violations above.')

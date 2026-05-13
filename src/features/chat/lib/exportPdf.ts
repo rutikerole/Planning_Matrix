@@ -117,6 +117,11 @@ import {
 import { getStateLocalization } from '@/legal/stateLocalization'
 import { getStateCitations } from '@/legal/stateCitations'
 import { sanitizeCrossStateBleed } from '@/legal/crossStateBleedGuard'
+import {
+  deriveGebaeudeklasse,
+  deriveGkInputFromFacts,
+  formatGebaeudeklasseValue,
+} from '@/legal/deriveGebaeudeklasse'
 import { pickSmartSuggestions } from '@/features/result/lib/smartSuggestionsMatcher'
 import { computeConfidence } from '@/features/result/lib/computeConfidence'
 import {
@@ -862,6 +867,38 @@ export async function buildExportPdf({
       quality: procedureDecision.confidence,
     },
   })
+  // v1.0.22 Bug C — derived Gebäudeklasse row. Only inject when the
+  // facts table has no explicit klasse-bearing fact (those already
+  // render via the generic factLabel/factValueWithUnit path), so the
+  // existing NRW fixture's explicit "Gebaeudeklasse 3" entry continues
+  // to render unchanged. The derived row carries the MBO § 2 Abs. 3
+  // reasoning inline and tags the qualifier CALCULATED or ASSUMED per
+  // derivation discipline. Honest deferral phrase when Höhe AND
+  // Geschosse are both missing — never a fabricated GK number.
+  const hasExplicitKlasse = facts.some((f) =>
+    /^(?:gebaeudeklasse|geb_klasse|gk_|klasse$)/i.test(f.key),
+  )
+  if (!hasExplicitKlasse) {
+    const derived = deriveGebaeudeklasse(
+      deriveGkInputFromFacts(
+        facts as Array<{ key: string; value: unknown }>,
+        state.templateId ?? null,
+      ),
+    )
+    const gkValue = formatGebaeudeklasseValue(derived, lang)
+    const reasoningSuffix =
+      derived.klasse != null
+        ? ' · ' + (lang === 'en' ? derived.reasoningEn : derived.reasoningDe)
+        : ''
+    keyDataRows.push({
+      field: lang === 'en' ? 'Building class' : 'Gebäudeklasse',
+      value: gkValue + reasoningSuffix,
+      qualifier: {
+        source: 'LEGAL',
+        quality: derived.qualifier,
+      },
+    })
+  }
   // Use the localization helper to silence the unused-import warning
   // (procedureStatusLabel is consumed by the smoke gate but not by
   // this assembly directly; renderers pull localized status pill
