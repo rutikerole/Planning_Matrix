@@ -115,6 +115,8 @@ import {
   type PdfLang,
 } from './pdfStrings'
 import { getStateLocalization } from '@/legal/stateLocalization'
+import { getStateCitations } from '@/legal/stateCitations'
+import { sanitizeCrossStateBleed } from '@/legal/crossStateBleedGuard'
 import { pickSmartSuggestions } from '@/features/result/lib/smartSuggestionsMatcher'
 import { computeConfidence } from '@/features/result/lib/computeConfidence'
 import {
@@ -448,14 +450,21 @@ export async function buildExportPdf({
           // caveat to the body.
           // v1.0.20 Polish 2 — qualifier label in caveat body is now
           // locale-resolved alongside the rest of the prose.
+          // v1.0.21 Bug 23-PRIME — Stadtarchiv reference + Innenstadt
+          // wording are state-derived. v1.0.20 hardcoded "Stadtarchiv
+          // Düsseldorf — Königsallee lies in a regulated Innenstadt
+          // zone" for every project regardless of bundesland; on a
+          // Berlin project the Düsseldorf string surfaced verbatim
+          // (Bug 23-PRIME from the v1.0.20 smoke walk).
           const assumedLabel = formatQualifier(
             { source: 'LEGAL', quality: 'ASSUMED' },
             pdfStrings,
           )
+          const citations = getStateCitations(project.bundesland)
           const caveat =
             lang === 'en'
-              ? `Verify specific Bebauungsplan and Gestaltungssatzung with Stadtarchiv Düsseldorf — Königsallee lies in a regulated Innenstadt zone. ${assumedLabel} until verified.`
-              : `Konkreten Bebauungsplan und Gestaltungssatzung mit Stadtarchiv Düsseldorf abklären — Königsallee liegt in regulierter Innenstadtlage. ${assumedLabel} bis verifiziert.`
+              ? `Verify specific Bebauungsplan and Gestaltungssatzung with Stadtarchiv ${citations.archivCity} — confirm any Erhaltungs- or Gestaltungssatzung that applies at the parcel. ${assumedLabel} until verified.`
+              : `Konkreten Bebauungsplan und Gestaltungssatzung mit Stadtarchiv ${citations.archivCity} abklären — etwaige Erhaltungs- oder Gestaltungssatzung für das Grundstück prüfen. ${assumedLabel} bis verifiziert.`
           // v1.0.20 — \n\n paragraph break so the caveat renders as
           // its own block instead of an inline continuation.
           const reason = a.reason ? `${a.reason}\n\n${caveat}` : caveat
@@ -467,24 +476,44 @@ export async function buildExportPdf({
           }
         }
         // k === 'C' — Bug 43 Abstandsflächen-Hinweis
+        // v1.0.21 Bug 23-PRIME — § citation is state-derived. v1.0.19
+        // hardcoded "§ 6 Abs. 8 BauO NRW" verbatim for every project
+        // regardless of bundesland; on a Berlin project the NRW
+        // citation surfaced on Area C. NRW retains the verbatim
+        // 25-cm-Privileg wording because that specific clause is
+        // NRW-unique; other states render a generic Abstandsflächen
+        // pointer with the state-correct §.
         let reason = a.reason ?? ''
         if (
           procedureCase.eingriff_aussenhuelle &&
           (procedureCase.fassadenflaeche_m2 ?? 0) > 0
         ) {
+          const citations = getStateCitations(project.bundesland)
           const hinweis =
-            lang === 'en'
-              ? 'Abstandsflächen note: external insulation may project into Abstandsfläche. § 6 Abs. 8 BauO NRW permits up to 25 cm thermal-insulation projection without neighbour consent under conditions — verify with Bauamt + Nachbarbeteiligung if grenzständig.'
-              : 'Abstandsflächen-Hinweis: Außendämmung kann in Abstandsfläche ragen. § 6 Abs. 8 BauO NRW erlaubt bis 25 cm Dämmungsprojektion ohne Nachbarunterschrift unter Auflagen — mit Bauamt + ggf. Nachbarbeteiligung verifizieren bei grenzständiger Lage.'
+            project.bundesland === 'nrw'
+              ? lang === 'en'
+                ? 'Abstandsflächen note: external insulation may project into Abstandsfläche. § 6 Abs. 8 BauO NRW permits up to 25 cm thermal-insulation projection without neighbour consent under conditions — verify with Bauamt + Nachbarbeteiligung if grenzständig.'
+                : 'Abstandsflächen-Hinweis: Außendämmung kann in Abstandsfläche ragen. § 6 Abs. 8 BauO NRW erlaubt bis 25 cm Dämmungsprojektion ohne Nachbarunterschrift unter Auflagen — mit Bauamt + ggf. Nachbarbeteiligung verifizieren bei grenzständiger Lage.'
+              : lang === 'en'
+                ? `Abstandsflächen note: external insulation may project into Abstandsfläche. ${citations.abstandsFlaechenCitation} governs the setback rule for ${citations.labelEn} — verify the local insulation projection allowance with the Bauamt and Nachbarbeteiligung if grenzständig.`
+                : `Abstandsflächen-Hinweis: Außendämmung kann in Abstandsfläche ragen. ${citations.abstandsFlaechenCitation} regelt die Abstandsflächen in ${citations.labelDe} — den landesspezifischen Dämmungs-Projektionsspielraum mit Bauamt und Nachbarbeteiligung abklären, insbesondere bei grenzständiger Lage.`
           // v1.0.20 — \n\n paragraph break so the Hinweis renders
           // as its own block, not inline with the area observation.
           reason = reason ? `${reason}\n\n${hinweis}` : hinweis
         }
+        // v1.0.21 Bug 23-PRIME — runtime cross-state bleed guard on
+        // persona-emitted reason text. Belt-and-braces: any state-
+        // unique token from a state OTHER than project.bundesland is
+        // logged + replaced with an honest generic fallback.
+        const guardedReason = sanitizeCrossStateBleed(
+          reason,
+          (project.bundesland ?? 'bayern') as BundeslandCode,
+        )
         return {
           key: k,
           title: pdfStr(pdfStrings, `areas.${k.toLowerCase()}.title`),
           state: a.state,
-          reason,
+          reason: guardedReason,
         }
       })
     renderAreasBody(areasPage, editorialFonts, pdfStrings, {

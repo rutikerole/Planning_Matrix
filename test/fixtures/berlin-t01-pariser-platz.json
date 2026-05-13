@@ -1,0 +1,52 @@
+{
+  "_comment": "v1.0.21 — Berlin × T-01 Pariser Platz fixture. Mirrors the smoke walk that surfaced the Bug 23-family cross-state bleed (Düsseldorf string + BayBO Art. 61/62 + BauVorlVO NRW + Schwabing/BLfD + BayDSchG) on a Berlin project. Used by scripts/smoke-pdf-text.mts to assert that none of those other-state tokens appear in the rendered Berlin PDF. Hard blocker fields populated so Bug E + Bug M fixtures share this fixture.",
+  "project": {
+    "id": "be-fixture-pariser-platz",
+    "owner_id": "fixture-owner",
+    "intent": "neubau_einfamilienhaus",
+    "has_plot": true,
+    "plot_address": "Pariser Platz 1, 10117 Berlin",
+    "bundesland": "berlin",
+    "template_id": "T-01",
+    "name": "Neubau-EFH Pariser Platz",
+    "status": "active",
+    "state": {
+      "templateId": "T-01",
+      "facts": [
+        { "key": "fassadenflaeche_m2", "value": 180, "qualifier": { "source": "CLIENT", "quality": "VERIFIED" } },
+        { "key": "klasse", "value": "Gebaeudeklasse 3", "qualifier": { "source": "LEGAL", "quality": "CALCULATED" } },
+        { "key": "energiestandard", "value": "GEG 2024 Mindestanforderung", "qualifier": { "source": "LEGAL", "quality": "VERIFIED" } },
+        { "key": "denkmalschutz", "value": true, "qualifier": { "source": "LEGAL", "quality": "ASSUMED" } },
+        { "key": "ensembleschutz", "value": false, "qualifier": { "source": "LEGAL", "quality": "ASSUMED" } },
+        { "key": "eingriff_tragende_teile", "value": true, "qualifier": { "source": "CLIENT", "quality": "VERIFIED" } },
+        { "key": "eingriff_aussenhuelle", "value": true, "qualifier": { "source": "CLIENT", "quality": "VERIFIED" } },
+        { "key": "mk_gebietsart", "value": true, "qualifier": { "source": "LEGAL", "quality": "ASSUMED" } },
+        { "key": "bauvoranfrage_hard_blocker", "value": true, "qualifier": { "source": "LEGAL", "quality": "CALCULATED" } }
+      ],
+      "areas": {
+        "A": { "state": "PENDING", "reason": "Innenbereich nach § 30 BauGB. Bebauungsplan zulässig." },
+        "B": { "state": "PENDING", "reason": "Verfahrensart nicht bestimmt — Hard Blocker auf Planungsrecht." },
+        "C": { "state": "PENDING", "reason": "GEG 2024 Energieausweis erforderlich. § 48 GEG Nachweis Pflicht." }
+      },
+      "recommendations": [
+        {
+          "id": "rec-1",
+          "rank": 1,
+          "title_de": "Bauvoranfrage stellen",
+          "title_en": "File pre-decision query",
+          "detail_de": "Vor weiteren Schritten Bauvoranfrage beim Bezirksamt Mitte einreichen, da MK-Gebietsart + Denkmalschutz Hard Blocker auslösen.",
+          "detail_en": "Before further planning, file a pre-decision query with Bezirksamt Mitte — MK use-type plus Denkmalschutz form a hard blocker.",
+          "qualifier": { "source": "LEGAL", "quality": "CALCULATED" }
+        }
+      ],
+      "procedures": [],
+      "documents": [],
+      "specialists": [],
+      "roles": []
+    },
+    "created_at": "2026-05-13T10:00:00.000Z",
+    "updated_at": "2026-05-13T10:00:00.000Z"
+  },
+  "messages": [],
+  "events": []
+}

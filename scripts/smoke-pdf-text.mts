@@ -56,8 +56,11 @@ const nodeFontLoader: FontBytesLoader = {
 }
 
 // ─── Fixture loading + PDF rendering ────────────────────────────────
-async function renderFixturePdf(lang: 'en' | 'de'): Promise<Uint8Array> {
-  const fixturePath = join(REPO_ROOT, 'test/fixtures/nrw-t03-koenigsallee.json')
+async function renderFixturePdf(
+  lang: 'en' | 'de',
+  fixtureFile: string = 'test/fixtures/nrw-t03-koenigsallee.json',
+): Promise<Uint8Array> {
+  const fixturePath = join(REPO_ROOT, fixtureFile)
   const fixture = JSON.parse(readFileSync(fixturePath, 'utf-8'))
 
   // Inject the Node font loader by monkey-patching the module's
@@ -412,11 +415,74 @@ async function runLocale(lang: 'en' | 'de'): Promise<{ passed: number; failed: n
   return { passed, failed }
 }
 
+// v1.0.21 — cross-state bleed runner.
+//
+// Renders a non-NRW project (Berlin × T-01 Pariser Platz) and asserts
+// that every NRW-only / Bayern-only / BW-only token is absent. This is
+// the smoke-side guard against Bug 23-PRIME (Düsseldorf string on a
+// Berlin project), Bug 23 (BayBO Art. 61/62 on every project), Bug 23b
+// (BauVorlVO NRW on every project), Bug 23c (Schwabing/BLfD on every
+// project), Bug 23d (BayDSchG on non-Bayern), and any future cross-
+// state leak.
+//
+// Token list mirrors crossStateBleedGuard.TOKENS — the harness asserts
+// the guard + the upstream state-aware sources are working in concert.
+async function runCrossStateBleed(): Promise<{ passed: number; failed: number }> {
+  console.log(`\n[smoke-pdf-text] cross-state bleed (Berlin × T-01)…`)
+  const fixtureFile = 'test/fixtures/berlin-t01-pariser-platz.json'
+  let passed = 0
+  let failed = 0
+  for (const lang of ['en', 'de'] as const) {
+    const pdfBytes = await renderFixturePdf(lang, fixtureFile)
+    const text = await extractPdfText(pdfBytes)
+    console.log(`[smoke-pdf-text] berlin ${lang} text: ${text.length} chars`)
+    // Tokens are added progressively, one commit per bug. The set
+    // below tracks the leaks closed so far:
+    //   v1.0.21 Commit 1 (Bug 23-PRIME) — Stadtarchiv Düsseldorf + Königsallee
+    //   v1.0.21 Commit 2 (Bug 23)       — BayBO Art. 61/62 + Bayern-specific role text
+    //   v1.0.21 Commit 3 (Bug 23b)      — BauVorlVO NRW + DSchG NRW + § N BauO NRW
+    //   v1.0.21 Commit 4 (Bug 23c)      — BLfD + Schwabing/Maxvorstadt/Lehel + StPlS 926
+    //   v1.0.21 Commit 5 (Bug 23d)      — BayDSchG outside Bayern
+    // Each subsequent commit extends this list. Bayern-state tokens
+    // appear on a Berlin project ONLY when the leak is still open.
+    const forbiddenTokens: Array<{ rx: RegExp; label: string }> = [
+      // v1.0.21 Commit 1 (Bug 23-PRIME)
+      { rx: /\bStadtarchiv\s+Düsseldorf\b/u, label: 'Stadtarchiv Düsseldorf (NRW-only)' },
+      { rx: /\bKönigsallee\b/u, label: 'Königsallee (NRW-only)' },
+    ]
+    for (const { rx, label } of forbiddenTokens) {
+      const hit = rx.test(text)
+      const msg = `Berlin ${lang}: no ${label} leak`
+      if (!hit) {
+        console.log(`  ✓ ${msg}`)
+        passed++
+      } else {
+        const ctx = text.match(new RegExp(`.{0,40}${rx.source}.{0,40}`, 'u'))
+        console.log(`  ✗ ${msg}${ctx ? ` — context: "${ctx[0]}"` : ''}`)
+        failed++
+      }
+    }
+    // Positive assertion: the Stadtarchiv caveat MUST mention Berlin's
+    // archive (since archivCity for Berlin === 'Berlin').
+    const stadtarchivBerlinPresent = /\bStadtarchiv\s+Berlin\b/u.test(text)
+    const stadtarchivMsg = `Berlin ${lang}: Stadtarchiv Berlin (state-correct archive) present`
+    if (stadtarchivBerlinPresent) {
+      console.log(`  ✓ ${stadtarchivMsg}`)
+      passed++
+    } else {
+      console.log(`  ✗ ${stadtarchivMsg}`)
+      failed++
+    }
+  }
+  return { passed, failed }
+}
+
 async function main(): Promise<void> {
   const en = await runLocale('en')
   const de = await runLocale('de')
-  const totalFailed = en.failed + de.failed
-  const totalPassed = en.passed + de.passed
+  const bleed = await runCrossStateBleed()
+  const totalFailed = en.failed + de.failed + bleed.failed
+  const totalPassed = en.passed + de.passed + bleed.passed
   console.log(`\n[smoke-pdf-text] ${totalPassed} passed · ${totalFailed} failed`)
   if (totalFailed > 0) {
     console.log('[smoke-pdf-text] FAIL — see violations above.')
