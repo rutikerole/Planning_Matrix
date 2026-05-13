@@ -1,0 +1,90 @@
+// ───────────────────────────────────────────────────────────────────────
+// v1.0.22 Bug Q — VERIFIED qualifier authority guard.
+//
+// The v1.0.20 Berlin × T-01 PDF rendered "Lage Charakteristik" with
+// qualifier BAUHERR · VERIFIZIERT. Bauherr/user chatter is at best
+// DECIDED — VERIFIED requires an explicit authority signal (Bauamt /
+// ÖbVI report / architect chamber stamp / verified §§ resolver).
+//
+// Two-layer defense:
+//   Layer 1 (write-time)  — gateQualifiersByRole in
+//                           src/lib/projectStateHelpers.ts catches
+//                           qualifier-write attempts at the chat-turn
+//                           Edge Function boundary. v1.0.22 extends
+//                           that gate so non-AUTHORITY/non-DESIGNER
+//                           callers cannot mint VERIFIED on facts.
+//   Layer 2 (read-time)   — this module's normalizeQualifier function
+//                           runs at PDF / UI render time on any
+//                           qualifier loaded from projects.state.
+//                           Defends against (a) pre-v1.0.22 state
+//                           rows with promoted CLIENT+VERIFIED that
+//                           pre-date the write gate, (b) any future
+//                           caller that skips the write gate (defense
+//                           in depth).
+//
+// Rules enforced (normalize-down only, never normalize-up):
+//   • CLIENT  + VERIFIED → CLIENT  + DECIDED
+//   • DESIGNER + VERIFIED → DESIGNER + DECIDED
+//     (architect-loop verification ships post-v1.0.22; until then
+//     DESIGNER tops out at DECIDED at the project level)
+//   • LEGAL   + VERIFIED → LEGAL   + VERIFIED (verified-citation
+//     resolver path is legitimate; leave untouched)
+//   • AUTHORITY + VERIFIED → AUTHORITY + VERIFIED (Bauamt response,
+//     ÖbVI report — legitimate VERIFIED)
+// ───────────────────────────────────────────────────────────────────────
+
+export interface QualifierLike {
+  source?: string
+  quality?: string
+}
+
+export interface QualifierNormalization {
+  source: string
+  quality: string
+  /** True when the input was changed. */
+  downgraded: boolean
+}
+
+/**
+ * Apply the v1.0.22 Bug Q downgrade rules to a qualifier shape.
+ * Returns a normalized { source, quality, downgraded } tuple. The
+ * downgraded flag is used by telemetry callers (e.g. the verification-
+ * page tally) to count read-time normalizations.
+ */
+export function normalizeQualifier(
+  q: QualifierLike | null | undefined,
+): QualifierNormalization {
+  const source = String(q?.source ?? '').toUpperCase()
+  const quality = String(q?.quality ?? '').toUpperCase()
+  if (quality !== 'VERIFIED') {
+    return { source, quality, downgraded: false }
+  }
+  if (source === 'CLIENT' || source === 'USER' || source === 'BAUHERR') {
+    return { source: 'CLIENT', quality: 'DECIDED', downgraded: true }
+  }
+  if (source === 'DESIGNER' || source === 'ARCHITEKT') {
+    return { source: 'DESIGNER', quality: 'DECIDED', downgraded: true }
+  }
+  return { source, quality, downgraded: false }
+}
+
+/**
+ * Apply normalization in-place to a qualifier-bearing object. Used by
+ * the PDF / UI render layer to ensure rendered pills reflect the
+ * authority-guard rules without mutating the input projects.state row.
+ * Returns a fresh shallow-copy so callers can substitute it.
+ */
+export function withNormalizedQualifier<T extends { qualifier?: QualifierLike | null }>(
+  obj: T,
+): T {
+  const norm = normalizeQualifier(obj.qualifier)
+  if (!norm.downgraded) return obj
+  return {
+    ...obj,
+    qualifier: {
+      ...obj.qualifier,
+      source: norm.source,
+      quality: norm.quality,
+    },
+  } as T
+}

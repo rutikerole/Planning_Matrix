@@ -142,10 +142,26 @@ export function getQualifierLabel(
   quality: string,
   strings: Record<string, string>,
 ): string {
+  // v1.0.22 Bug Q — render-time authority guard. Applied at the
+  // lowest read-only level so both formatQualifier and direct pill
+  // renderers (e.g. drawQualifierPill width estimation in
+  // pdfSections/keyData.ts) see the normalized values. See
+  // src/lib/qualifierNormalize.ts for the rule rationale.
+  let nSource = source
+  let nQuality = quality
+  if (quality === 'VERIFIED') {
+    if (source === 'CLIENT' || source === 'USER' || source === 'BAUHERR') {
+      nSource = 'CLIENT'
+      nQuality = 'DECIDED'
+    } else if (source === 'DESIGNER' || source === 'ARCHITEKT') {
+      nSource = 'DESIGNER'
+      nQuality = 'DECIDED'
+    }
+  }
   const sourceLabel =
-    strings[`qualifier.source.${source}`] ?? source
+    strings[`qualifier.source.${nSource}`] ?? nSource
   const qualityLabel =
-    strings[`qualifier.quality.${quality}`] ?? quality
+    strings[`qualifier.quality.${nQuality}`] ?? nQuality
   return `${sourceLabel} · ${qualityLabel}`
 }
 
@@ -160,10 +176,24 @@ export function formatQualifier(
   // re-cast as LEGAL · CALCULATED for display (the gate-downgrade
   // case where the persona attempted DESIGNER+VERIFIED but the
   // qualifier-write gate enforced ASSUMED).
-  const normalized =
+  // v1.0.22 Bug Q — render-time authority guard. Pre-v1.0.22 state
+  // rows may carry CLIENT+VERIFIED or DESIGNER+VERIFIED that pre-date
+  // the v1.0.22 write-gate extension. Normalize at display time so
+  // the rendered pill never shows an unverified-source promotion to
+  // VERIFIED. Allowed VERIFIED paths: LEGAL+VERIFIED (verified-
+  // citation resolver) and AUTHORITY+VERIFIED (Bauamt / ÖbVI response).
+  let normalized: { source: string; quality: string } =
     q.source === 'DESIGNER' && q.quality === 'ASSUMED'
       ? { source: 'LEGAL', quality: 'CALCULATED' }
       : q
+  if (normalized.quality === 'VERIFIED') {
+    const src = normalized.source
+    if (src === 'CLIENT' || src === 'USER' || src === 'BAUHERR') {
+      normalized = { source: 'CLIENT', quality: 'DECIDED' }
+    } else if (src === 'DESIGNER' || src === 'ARCHITEKT') {
+      normalized = { source: 'DESIGNER', quality: 'DECIDED' }
+    }
+  }
   if (strings) {
     return getQualifierLabel(normalized.source, normalized.quality, strings)
   }

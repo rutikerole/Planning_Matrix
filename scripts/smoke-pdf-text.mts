@@ -332,11 +332,15 @@ async function runLocale(lang: 'en' | 'de'): Promise<{ passed: number; failed: n
       msg: 'Area A qualifier honestly tagged ASSUMED (Bug 44, localized for v1.0.20 Polish 2)',
     },
     // v1.0.20 Polish 2 — qualifier pills localized in DE PDF
+    // v1.0.22 Bug Q — assertion updated to track the post-Bug Q
+    // normalization. CLIENT-source qualifiers can no longer reach
+    // VERIFIED; pre-existing fixture rows with CLIENT+VERIFIED are
+    // normalized at render to CLIENT+DECIDED (BAUHERR · ENTSCHIEDEN).
     {
       pass: lang === 'en'
-        ? /CLIENT\s*·\s*VERIFIED/u.test(text)
-        : /BAUHERR\s*·\s*VERIFIZIERT/u.test(text),
-      msg: 'CLIENT · VERIFIED qualifier renders localized',
+        ? /CLIENT\s*·\s*DECIDED/u.test(text)
+        : /BAUHERR\s*·\s*ENTSCHIEDEN/u.test(text),
+      msg: 'CLIENT · DECIDED qualifier renders localized (post-Bug Q normalization)',
     },
     {
       pass: lang === 'en'
@@ -632,6 +636,89 @@ async function runCrossStateBleed(): Promise<{ passed: number; failed: number }>
 // guard. Verifies the fire threshold + EN placeholder + DE passthrough
 // in one go so smoke-pdf-text guards against any future regression on
 // the rules without needing a full persona-output round-trip.
+// v1.0.22 Bug Q — unit-style tests for the qualifier normalization
+// rules. Verifies CLIENT/USER/BAUHERR + VERIFIED gets downgraded to
+// DECIDED, DESIGNER + VERIFIED gets downgraded to DECIDED, and the
+// legitimate paths (LEGAL + VERIFIED, AUTHORITY + VERIFIED) pass
+// through unchanged.
+async function runQualifierNormalizeUnit(): Promise<{ passed: number; failed: number }> {
+  console.log(`\n[smoke-pdf-text] qualifier normalization (Bug Q)…`)
+  const { normalizeQualifier } = await import('../src/lib/qualifierNormalize.ts')
+  let passed = 0
+  let failed = 0
+  const cases: Array<{
+    name: string
+    input: { source: string; quality: string }
+    expectSource: string
+    expectQuality: string
+    expectDowngraded: boolean
+  }> = [
+    {
+      name: 'CLIENT + VERIFIED → CLIENT + DECIDED',
+      input: { source: 'CLIENT', quality: 'VERIFIED' },
+      expectSource: 'CLIENT',
+      expectQuality: 'DECIDED',
+      expectDowngraded: true,
+    },
+    {
+      name: 'BAUHERR + VERIFIED → CLIENT + DECIDED (alias map)',
+      input: { source: 'BAUHERR', quality: 'VERIFIED' },
+      expectSource: 'CLIENT',
+      expectQuality: 'DECIDED',
+      expectDowngraded: true,
+    },
+    {
+      name: 'USER + VERIFIED → CLIENT + DECIDED (alias map)',
+      input: { source: 'USER', quality: 'VERIFIED' },
+      expectSource: 'CLIENT',
+      expectQuality: 'DECIDED',
+      expectDowngraded: true,
+    },
+    {
+      name: 'DESIGNER + VERIFIED → DESIGNER + DECIDED (no architect loop yet)',
+      input: { source: 'DESIGNER', quality: 'VERIFIED' },
+      expectSource: 'DESIGNER',
+      expectQuality: 'DECIDED',
+      expectDowngraded: true,
+    },
+    {
+      name: 'AUTHORITY + VERIFIED → AUTHORITY + VERIFIED (passthrough)',
+      input: { source: 'AUTHORITY', quality: 'VERIFIED' },
+      expectSource: 'AUTHORITY',
+      expectQuality: 'VERIFIED',
+      expectDowngraded: false,
+    },
+    {
+      name: 'LEGAL + VERIFIED → LEGAL + VERIFIED (passthrough)',
+      input: { source: 'LEGAL', quality: 'VERIFIED' },
+      expectSource: 'LEGAL',
+      expectQuality: 'VERIFIED',
+      expectDowngraded: false,
+    },
+    {
+      name: 'CLIENT + DECIDED → CLIENT + DECIDED (no-op when not VERIFIED)',
+      input: { source: 'CLIENT', quality: 'DECIDED' },
+      expectSource: 'CLIENT',
+      expectQuality: 'DECIDED',
+      expectDowngraded: false,
+    },
+  ]
+  for (const c of cases) {
+    const result = normalizeQualifier(c.input)
+    const ok =
+      result.source === c.expectSource &&
+      result.quality === c.expectQuality &&
+      result.downgraded === c.expectDowngraded
+    const msg = `${c.name}`
+    if (ok) { console.log(`  ✓ ${msg}`); passed++ }
+    else {
+      console.log(`  ✗ ${msg} (got source=${result.source} quality=${result.quality} downgraded=${result.downgraded})`)
+      failed++
+    }
+  }
+  return { passed, failed }
+}
+
 async function runGermanLeakGuardUnit(): Promise<{ passed: number; failed: number }> {
   console.log(`\n[smoke-pdf-text] German-leak guard (Bug K)…`)
   const { sanitizeGermanContentOnEnglish } = await import('../src/legal/germanLeakGuard.ts')
@@ -761,10 +848,21 @@ async function main(): Promise<void> {
   const bleed = await runCrossStateBleed()
   const gkUnit = await runDeriveGkUnit()
   const germanLeak = await runGermanLeakGuardUnit()
+  const qualifierUnit = await runQualifierNormalizeUnit()
   const totalFailed =
-    en.failed + de.failed + bleed.failed + gkUnit.failed + germanLeak.failed
+    en.failed +
+    de.failed +
+    bleed.failed +
+    gkUnit.failed +
+    germanLeak.failed +
+    qualifierUnit.failed
   const totalPassed =
-    en.passed + de.passed + bleed.passed + gkUnit.passed + germanLeak.passed
+    en.passed +
+    de.passed +
+    bleed.passed +
+    gkUnit.passed +
+    germanLeak.passed +
+    qualifierUnit.passed
   console.log(`\n[smoke-pdf-text] ${totalPassed} passed · ${totalFailed} failed`)
   if (totalFailed > 0) {
     console.log('[smoke-pdf-text] FAIL — see violations above.')
