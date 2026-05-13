@@ -1,5 +1,126 @@
 # Changelog
 
+## v1.0.23 — Cosmetic & Cleanup Sprint (2026-05-13)
+
+Closes the 8 remaining P2 cleanup bugs from BACKLOG.md, all surfaced
+by the v1.0.20 NRW × T-01 + Berlin × T-01 testing sweep. Combined
+with v1.0.21 (7 bugs) and v1.0.22 (6 bugs), every one of the 24
+originally-surfaced bugs from that sweep is now closed.
+
+Sprint anchor:
+- Bayern composeLegalContext SHA `b18d3f7f9a6fe238c18cec5361d30ea3a547e46b1ef2b16a1e74c533aacb3471`
+  unchanged across every commit.
+
+### Bugs fixed (in commit order)
+
+1. **Bug L** — "0 m² Fassade" placeholder leak. PDF cost basis line
+   renders "Computed from floor area only (façade area not captured)"
+   / "Berechnet ausschließlich aus Wohnfläche (Fassade noch nicht
+   erfasst)" when `fassadenflaeche_m2` is unset or zero. New
+   `costs.basisTemplate.noArea` pdfStrings keys (EN + DE).
+2. **Bug N** — system flag filter. New
+   `src/legal/systemFlagFilter.ts` with explicit allowlist + prefix/
+   suffix rules. PDF Key Data table filters keys matching
+   `plot.outside_munich_acknowledged`, `system.*`, `_internal*`,
+   `_system*`, `*_acknowledged`, `*.acknowledged` before rendering.
+3. **Bug P** — label width truncation. Top-3 Executive + Section
+   VIII Recommendations renderers measure pill width + wrap to a
+   half-line below the title when overflow would clip. "HOHE
+   PRIORITÄT" and "CONFIRM" now render in full.
+4. **Bug J** — 30-day banner gating. Cover footer renders
+   "ARCHITECT-VERIFIED" / "SUBMITTED · Bauamt confirmation on file"
+   when an AUTHORITY+VERIFIED or DESIGNER+VERIFIED fact qualifier is
+   present (or project.status is submitted/approved). The 30-day
+   validity stamp is suppressed on verified projects.
+5. **Bug R** — DESIGNER source downgrade when no designer in loop.
+   New `normalizeDesignerWithoutInLoop` in
+   `src/lib/qualifierNormalize.ts`. PDF Key Data renders
+   `LEGAL · CALCULATED` instead of `DESIGNER · DECIDED` on projects
+   without an `invitedDesigner` field set. Bayern verified fixture
+   (with `invitedDesigner`) continues to render `DESIGNER ·`
+   qualifiers — regression guard.
+6. **Bug S** — i18n label coverage. 22 new entries each in
+   `factLabels.de.ts` + `factLabels.en.ts` covering the v1.0.21/22
+   snake_case fact keys. Cross-language fallback added to
+   `factLabel.ts` — when the requested locale's table misses, fall
+   back to the other locale's entry (with `[i18n]` prefix in dev) so
+   no humanize-fallback labels surface in production rendered text.
+7. **Bug O** — state-aware glossary entries. PDF page 12 now
+   filters its 12-entry list by project bundesland. Federal entries
+   (BauGB, GEG, HOAI, BKI, ÖbVI, LP, KfW, Bauamt,
+   Bauvorlageberechtigte/r, Verfahrensfreiheit) always render;
+   state-specific BauO + DSchG entries swap per state via
+   `getStateCitations`. Stub states render honest-deferral phrasing.
+   Bayern adds BayBO + BayDSchG + BLfD entries.
+8. **Bug D** — deterministic address blob parser. New
+   `src/lib/addressParser.ts` with `parseAddressBlob` returning
+   `ParsedAddress { street, hausnummer, plz, stadt }` or
+   `UnparsedAddress { fallbackToStructured: true }` on malformed
+   input. `plzMatchesBundesland` cross-check for downstream
+   sanity-warning UX. Parser shipped + tested; wizard wiring parked
+   for v1.0.24.
+
+### New files
+
+- `src/legal/systemFlagFilter.ts` — user-facing-table filter rules.
+- `src/lib/addressParser.ts` — deterministic address blob parser.
+- `test/fixtures/bayern-t03-verified.json` — Bayern Sanierung
+  fixture with AUTHORITY+VERIFIED qualifier + invitedDesigner.
+
+### Gate status (final, on tag)
+
+| Gate                        | Status                              |
+| --------------------------- | ----------------------------------- |
+| `npm run verify:bayern-sha` | ✓ MATCH                             |
+| `npm run smoke:citations`   | ✓ static gate green                 |
+| `npm run smoke:pdf-text`    | ✓ 245 passed · 0 failed (+64 over v1.0.22's 181) |
+| `npx tsc --noEmit`          | ✓ clean                             |
+| `npm run build`             | ✓ 273.4 KB gz (ceiling 300 KB)      |
+
+### Fixture growth this sprint
+
+- `smoke:pdf-text`: +64 assertions (181 → 245). Distribution by
+  commit:
+    - Bug L: +4 (honest no-area + no-0m² × langs)
+    - Bug N: +12 (10 unit cases + 2 PDF render × langs)
+    - Bug P: +2 (full priority label × langs)
+    - Bug J: +4 (verified banner + no-30-day × langs)
+    - Bug R: +6 (no-DESIGNER × 2 fixtures × langs + regression)
+    - Bug S: +20 (factLabel coverage × 10 keys × 2 locales)
+    - Bug O: +7 (NRW + Bayern + Berlin state-aware checks)
+    - Bug D: +9 (4 parse cases + 5 PLZ-bundesland)
+- `smoke:citations`: 0 new static checks (Bug O allowlist update
+  preserves the existing gate).
+
+### Autonomous decisions
+
+- **Bug L**: Gated only on the cost-basis line. `factValueWithUnit`
+  doesn't currently emit "0 X unit" for any rendered fact; wider
+  audit parked for v1.0.24 if a future smoke walk surfaces another
+  instance.
+- **Bug N**: Extracted filter into `src/legal/systemFlagFilter.ts`
+  module so future UI tables (LedgerPeek facts column, etc.) can
+  adopt the same gate by import.
+- **Bug P**: Wrap-below approach chosen over widen-pill — more
+  robust to future label additions.
+- **Bug J**: ARCHITEKT treated as alias of DESIGNER (canonical Source
+  enum). Persona-emitted ARCHITEKT is chat-turn-normalized to
+  DESIGNER before state persistence.
+- **Bug R**: Gate applied at Key Data render path only; Top-3 +
+  Section VIII rows don't currently carry DESIGNER source on the
+  smoke fixtures. v1.0.24 can extend if a future smoke walk surfaces
+  a leak there.
+- **Bug S**: Registered snake_case fact keys directly instead of
+  converting to DOMAIN.SUBKEY shape — chat-turn persona emits
+  snake_case as the canonical key.
+- **Bug O**: BKI glossary entry rolled the v1.0.22 Path B honesty
+  notice into the definition itself, so the bauherr reading the
+  glossary sees the same discipline as the cost-formula label.
+- **Bug D**: Parser shipped + tested as a pure helper. Wizard
+  integration parked for v1.0.24 — the wizard's current
+  blob-verbatim flow needs empirical validation before swapping in
+  the parsed shape.
+
 ## v1.0.22 — Data Integrity Sprint (2026-05-13)
 
 Closes 6 P1 data-integrity defects deferred from the v1.0.21 BACKLOG:

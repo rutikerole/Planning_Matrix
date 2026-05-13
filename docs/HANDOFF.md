@@ -461,7 +461,19 @@ shipped in Phase 13 Week 4). What's missing is the cron harness
 
 ## 9. Operational responsibilities — split between engineering and client
 
-**v1.0.22 IS THE NEW PRODUCTION-READY RELEASE.** Data Integrity Sprint
+**v1.0.23 IS THE NEW PRODUCTION-READY RELEASE.** Cosmetic & Cleanup
+Sprint closes 8 P2 cleanup bugs (L "0 m² Fassade" / N system flag
+filter / P label width / J 30-day banner gating / R DESIGNER
+downgrade / S i18n label coverage / O state-aware glossary / D
+address parser). Combined with v1.0.21 (7 bugs) and v1.0.22 (6
+bugs), every one of the 24 bugs surfaced by the v1.0.20 testing
+sweep is now CLOSED across 21 commits. New modules:
+`src/legal/systemFlagFilter.ts`, `src/lib/addressParser.ts`.
+Runtime smoke gate at 245/245 EN+DE (was 181; +64 sprint assertions).
+Bayern SHA preserved across every commit. See `CHANGELOG.md` and
+`BACKLOG.md` (now features-only) at the repo root.
+
+**v1.0.22** (previous) — Data Integrity Sprint
 closes 6 P1 defects deferred from v1.0.21 BACKLOG.md: Building class
 derivation (C), Documents UI/PDF unification (F), i18n leak guard on
 persona output (K), VERIFIED qualifier authority guard (Q),
@@ -470,8 +482,7 @@ New modules: `src/legal/deriveGebaeudeklasse.ts` (MBO § 2 Abs. 3),
 `src/legal/germanLeakGuard.ts`, `src/lib/qualifierNormalize.ts`,
 `src/features/result/lib/resolveDocuments.ts`,
 `docs/cost-formula.md`. Runtime smoke gate at 181/181 EN+DE (was 144;
-+37 sprint assertions). Bayern SHA preserved across every commit.
-See `CHANGELOG.md` and `BACKLOG.md` at the repo root.
++37 sprint assertions).
 
 **v1.0.21** (previous) — Bundesland Truth Sprint closes 7 P0/P1
 defects (5 cross-state bleed + Hard Blocker propagation + Confidence
