@@ -453,6 +453,12 @@ async function runCrossStateBleed(): Promise<{ passed: number; failed: number }>
       { rx: /\bBayBO\s+Art\.\s*61\b/u, label: 'BayBO Art. 61 (Bayern-only permit-submission §)' },
       { rx: /\bBayBO\s+Art\.\s*62\b/u, label: 'BayBO Art. 62 (Bayern-only structural-cert §)' },
       { rx: /Pflicht für Neubauten in Bayern|mandatory for new builds in Bayern/u, label: 'Bayern-only surveyor mandate' },
+      // v1.0.21 Commit 3 (Bug 23b — documents)
+      { rx: /\bBauVorlVO\s+NRW\b/u, label: 'BauVorlVO NRW (NRW-only Bauvorlagenverordnung)' },
+      { rx: /\bDSchG\s+NRW\b/u, label: 'DSchG NRW (NRW-only monument-protection act)' },
+      { rx: /§\s*68\s+BauO\s+NRW/u, label: '§ 68 BauO NRW (NRW-only structural §)' },
+      { rx: /§\s*64\s+BauO\s+NRW/u, label: '§ 64 BauO NRW (NRW-only permit form §)' },
+      { rx: /Untere\s+Denkmalbehörde\s+\(Stadt\s+Düsseldorf\)/u, label: 'Untere Denkmalbehörde Düsseldorf (NRW-only)' },
     ]
     for (const { rx, label } of forbiddenTokens) {
       const hit = rx.test(text)

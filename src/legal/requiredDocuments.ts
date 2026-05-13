@@ -24,6 +24,7 @@ import type {
   ProcedureIntent,
   ProcedureKind,
 } from './resolveProcedure'
+import { getStateCitations } from './stateCitations'
 
 export type DocumentStatus = 'required' | 'conditional' | 'recommended'
 
@@ -74,6 +75,42 @@ export function requiredDocumentsForCase(
   c: DocumentCase,
 ): RequiredDocument[] {
   const out: RequiredDocument[] = []
+  // v1.0.21 Bug 23b — every § citation now resolves from the project's
+  // Bundesland. v1.0.19/v1.0.20 hard-coded NRW citations
+  // (BauVorlVO NRW § 3, § 64 BauO NRW, § 68 BauO NRW, § 14 BauO NRW,
+  // § 6 BauO NRW, DSchG NRW § 9) — which surfaced verbatim on Berlin
+  // / Bayern / Hessen PDFs. Bayern projects continue to render BayBO
+  // §§ verbatim through the citation pack; substantive non-Bayern
+  // states render state-correct §§; stub states render honest-
+  // deferral phrases.
+  const cit = getStateCitations(c.bundesland)
+  const bauVorl = `${cit.bauVorlagenAct}${cit.isSubstantive ? ' § 3' : ''}`
+  const permitFreeNotificationCitation = cit.isSubstantive
+    ? c.bundesland === 'nrw'
+      ? '§ 62 BauO NRW'
+      : c.bundesland === 'bayern'
+        ? 'BayBO Art. 57'
+        : c.bundesland === 'bw'
+          ? '§ 50 LBO BW'
+          : c.bundesland === 'hessen'
+            ? '§ 63 HBO'
+            : '§ 60 NBauO'
+    : cit.permitFormCitation
+  const brandschutzCitation = cit.isSubstantive
+    ? c.bundesland === 'nrw'
+      ? '§ 14 BauO NRW'
+      : c.bundesland === 'bayern'
+        ? 'BayBO Art. 12'
+        : c.bundesland === 'bw'
+          ? '§ 15 LBO BW'
+          : c.bundesland === 'hessen'
+            ? '§ 14 HBO'
+            : '§ 14 NBauO'
+    : cit.permitFormCitation
+  const denkmalAuthorityCity = `Untere Denkmalbehörde (Stadt ${cit.archivCity})`
+  const denkmalCitation = cit.isSubstantive
+    ? `${cit.denkmalSchutzAct} § 9`
+    : cit.denkmalSchutzAct
 
   // ── Always-required (regardless of procedure kind) ──────────────
   out.push({
@@ -83,7 +120,7 @@ export function requiredDocumentsForCase(
     status: 'required',
     delivery_de: 'Öffentlich bestellte:r Vermessungsingenieur:in (ÖbVI), max. 6 Monate alt',
     delivery_en: 'Publicly licensed surveyor (ÖbVI), no older than 6 months',
-    citation: 'BauVorlVO NRW § 3',
+    citation: bauVorl,
   })
   out.push({
     key: 'bauzeichnungen',
@@ -92,7 +129,7 @@ export function requiredDocumentsForCase(
     status: 'required',
     delivery_de: 'Architekt:in',
     delivery_en: 'Architect',
-    citation: 'BauVorlVO NRW § 3',
+    citation: bauVorl,
   })
   out.push({
     key: 'baubeschreibung',
@@ -101,7 +138,7 @@ export function requiredDocumentsForCase(
     status: 'required',
     delivery_de: 'Architekt:in',
     delivery_en: 'Architect',
-    citation: 'BauVorlVO NRW § 3',
+    citation: bauVorl,
   })
 
   // ── Procedure-specific formular ────────────────────────────────
@@ -113,7 +150,7 @@ export function requiredDocumentsForCase(
       status: 'required',
       delivery_de: 'Architekt:in oder Bauherr:in',
       delivery_en: 'Architect or owner',
-      citation: '§ 62 BauO NRW',
+      citation: permitFreeNotificationCitation,
     })
   } else {
     out.push({
@@ -123,7 +160,7 @@ export function requiredDocumentsForCase(
       status: 'required',
       delivery_de: 'Bauvorlageberechtigte:r Architekt:in',
       delivery_en: 'Submission-authorized architect',
-      citation: '§ 64 BauO NRW',
+      citation: cit.permitFormCitation,
     })
   }
 
@@ -158,7 +195,7 @@ export function requiredDocumentsForCase(
       status: 'required',
       delivery_de: 'Tragwerksplaner:in',
       delivery_en: 'Structural engineer',
-      citation: '§ 68 BauO NRW',
+      citation: cit.structuralCertCitation,
     })
     out.push({
       key: 'brandschutznachweis',
@@ -167,7 +204,7 @@ export function requiredDocumentsForCase(
       status: 'conditional',
       delivery_de: 'Brandschutzplaner:in oder Architekt:in (je Gebäudeklasse)',
       delivery_en: 'Fire-protection engineer or architect (per Gebäudeklasse)',
-      citation: '§ 14 BauO NRW',
+      citation: brandschutzCitation,
       condition_note_de:
         'Erforderlich ab Gebäudeklasse 3; bei GK 1+2 zumeist im Bauantrag erfasst.',
       condition_note_en:
@@ -180,6 +217,16 @@ export function requiredDocumentsForCase(
     c.grenzstaendig ||
     (c.eingriff_aussenhuelle && (c.fassadenflaeche_m2 ?? 0) > 100)
   ) {
+    const nrwPrivileg =
+      c.bundesland === 'nrw'
+        ? {
+            de: 'Bei Dämmungsstärke > 25 cm oder grenzständiger Lage; § 6 Abs. 8 BauO NRW erlaubt sonst Privileg.',
+            en: 'When insulation thickness > 25 cm or parcel-edge location; § 6 Abs. 8 BauO NRW grants exemption otherwise.',
+          }
+        : {
+            de: `Bei grenzständiger Lage oder Dämmungsstärke > 25 cm — landesspezifische Abstandsflächen­regel ${cit.abstandsFlaechenCitation} mit Bauamt prüfen.`,
+            en: `At parcel-edge location or insulation thickness > 25 cm — verify state setback rule ${cit.abstandsFlaechenCitation} with the local Bauamt.`,
+          }
     out.push({
       key: 'abstandsflaechen',
       name_de: 'Abstandsflächenberechnung',
@@ -187,11 +234,9 @@ export function requiredDocumentsForCase(
       status: 'conditional',
       delivery_de: 'Architekt:in',
       delivery_en: 'Architect',
-      citation: '§ 6 BauO NRW',
-      condition_note_de:
-        'Bei Dämmungsstärke > 25 cm oder grenzständiger Lage; § 6 Abs. 8 BauO NRW erlaubt sonst Privileg.',
-      condition_note_en:
-        'When insulation thickness > 25 cm or parcel-edge location; § 6 Abs. 8 BauO NRW grants exemption otherwise.',
+      citation: cit.abstandsFlaechenCitation,
+      condition_note_de: nrwPrivileg.de,
+      condition_note_en: nrwPrivileg.en,
     })
   }
 
@@ -202,14 +247,13 @@ export function requiredDocumentsForCase(
       name_de: 'Erlaubnis der Denkmalschutzbehörde',
       name_en: 'Heritage authority consent',
       status: 'required',
-      delivery_de: 'Untere Denkmalbehörde (Stadt Düsseldorf)',
+      delivery_de: denkmalAuthorityCity,
       delivery_en: 'Local heritage authority',
-      citation: 'DSchG NRW § 9',
+      citation: denkmalCitation,
     })
   }
 
   // ── Recommended: Asbest/PCB-Voruntersuchung ────────────────────
-  // Düsseldorf Altbau (Königsallee) is almost always pre-1995.
   if (c.baujahr_pre_1995 !== false) {
     out.push({
       key: 'asbest_voruntersuchung',

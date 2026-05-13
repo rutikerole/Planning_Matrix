@@ -2550,8 +2550,23 @@ async function runStaticGate() {
       msg: 'GEG-Wärmeschutznachweis (§ 48 GEG) + Energieausweis (§ 80 GEG) cited (Bug 41 promotion)',
     },
     {
-      ok: /'BauVorlVO NRW § 3'/.test(reqDocsSrc),
-      msg: 'NRW Bauvorlagenverordnung § 3 cited for Lageplan / Bauzeichnungen / Baubeschreibung',
+      // v1.0.21 Bug 23b — citation is no longer a literal in
+      // requiredDocuments.ts; it resolves from stateCitations.ts via
+      // getStateCitations(bundesland).bauVorlagenAct. The NRW
+      // bauVorlagenAct is 'BauVorlVO NRW' and is appended with ' § 3'
+      // for substantive states inside requiredDocumentsForCase.
+      ok: /citation:\s*bauVorl/.test(reqDocsSrc) &&
+          /import\s*\{\s*getStateCitations\s*\}/.test(reqDocsSrc),
+      msg: 'Lageplan / Bauzeichnungen / Baubeschreibung cite via getStateCitations (Bug 23b — state-aware)',
+    },
+    {
+      // v1.0.21 Bug 23b — NRW Bauvorlagenverordnung name still in the
+      // state-citation registry so the renderer's NRW branch surfaces
+      // "BauVorlVO NRW § 3" verbatim for NRW projects.
+      ok: /bauVorlagenAct:\s*'BauVorlVO NRW'/.test(
+        await readFileText('src/legal/stateCitations.ts')
+      ),
+      msg: 'BauVorlVO NRW registered in stateCitations.ts',
     },
     {
       ok: /key: 'lageplan'/.test(reqDocsSrc) &&
