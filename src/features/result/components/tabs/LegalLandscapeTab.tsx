@@ -38,6 +38,7 @@ export function LegalLandscapeTab({ project, state }: Props) {
   const domains = composeLegalDomains(
     { ...state, areas: resolvedAreas.areas },
     lang,
+    project.bundesland,
   )
 
   return (

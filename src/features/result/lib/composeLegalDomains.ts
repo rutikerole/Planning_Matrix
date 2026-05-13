@@ -1,4 +1,5 @@
 import type { ProjectState } from '@/types/projectState'
+import { getStateCitations } from '@/legal/stateCitations'
 
 export type LegalRelevance = 'HIGH' | 'PARTIAL' | 'NONE'
 
@@ -34,7 +35,19 @@ export interface LegalDomain {
 export function composeLegalDomains(
   state: Partial<ProjectState>,
   lang: 'de' | 'en',
+  bundesland?: string | null,
 ): LegalDomain[] {
+  // v1.0.21 Bug 23d — bundesland is now an explicit input. The
+  // Denkmalschutz row in Domain C cites the state-specific
+  // Denkmalschutzgesetz short name (BayDSchG / DSchG NRW / DSchG Bln /
+  // HDSchG / NDSchG / DSchG BW / honest-deferral phrase for stub
+  // states) instead of the generic "Denkmalschutz" label that v1.0.20
+  // emitted on every project. Domain B's BayBO matchers are gated to
+  // bayern projects so a Berlin / NRW project never surfaces a BayBO
+  // row even if a stray BayBO Art. * fragment slipped into the
+  // corpus.
+  const citations = getStateCitations(bundesland)
+  const isBayern = (bundesland ?? '').toLowerCase() === 'bayern'
   const facts = state.facts ?? []
   const procedures = state.procedures ?? []
   const documents = state.documents ?? []
@@ -100,41 +113,48 @@ export function composeLegalDomains(
           : 'NONE'
 
   // Domain B — Bauordnungsrecht
+  // v1.0.21 Bug 23d — BayBO matchers gated to bayern. Non-Bayern
+  // projects no longer surface BayBO rows even if a stray BayBO
+  // citation slipped through the persona's anti-Bayern-leak shield;
+  // state-specific LBO matchers for the other 15 bundeslaender will
+  // be wired in v1.0.22+.
   const bRows: LegalDomainRow[] = []
-  if (has(/baybo\s*art\.?\s*2\b/)) {
-    bRows.push({
-      label: 'BayBO Art. 2',
-      relevance: 'HIGH',
-      status: lang === 'en' ? 'building class' : 'Gebäudeklasse',
-    })
-  }
-  if (has(/baybo\s*art\.?\s*58\b/)) {
-    bRows.push({
-      label: 'BayBO Art. 58',
-      relevance: 'HIGH',
-      status: lang === 'en' ? 'simplified procedure' : 'vereinfachtes Verfahren',
-    })
-  }
-  if (has(/baybo\s*art\.?\s*57\b/)) {
-    bRows.push({
-      label: 'BayBO Art. 57',
-      relevance: 'PARTIAL',
-      status: lang === 'en' ? 'permit exemption check' : 'Genehmigungsfreistellung',
-    })
-  }
-  if (has(/baybo\s*art\.?\s*60\b/)) {
-    bRows.push({
-      label: 'BayBO Art. 60',
-      relevance: 'HIGH',
-      status: lang === 'en' ? 'full permit' : 'Baugenehmigungsverfahren',
-    })
-  }
-  if (has(/baybo\s*art\.?\s*6\b/)) {
-    bRows.push({
-      label: 'BayBO Art. 6',
-      relevance: 'PARTIAL',
-      status: lang === 'en' ? 'setbacks' : 'Abstandsflächen',
-    })
+  if (isBayern) {
+    if (has(/baybo\s*art\.?\s*2\b/)) {
+      bRows.push({
+        label: 'BayBO Art. 2',
+        relevance: 'HIGH',
+        status: lang === 'en' ? 'building class' : 'Gebäudeklasse',
+      })
+    }
+    if (has(/baybo\s*art\.?\s*58\b/)) {
+      bRows.push({
+        label: 'BayBO Art. 58',
+        relevance: 'HIGH',
+        status: lang === 'en' ? 'simplified procedure' : 'vereinfachtes Verfahren',
+      })
+    }
+    if (has(/baybo\s*art\.?\s*57\b/)) {
+      bRows.push({
+        label: 'BayBO Art. 57',
+        relevance: 'PARTIAL',
+        status: lang === 'en' ? 'permit exemption check' : 'Genehmigungsfreistellung',
+      })
+    }
+    if (has(/baybo\s*art\.?\s*60\b/)) {
+      bRows.push({
+        label: 'BayBO Art. 60',
+        relevance: 'HIGH',
+        status: lang === 'en' ? 'full permit' : 'Baugenehmigungsverfahren',
+      })
+    }
+    if (has(/baybo\s*art\.?\s*6\b/)) {
+      bRows.push({
+        label: 'BayBO Art. 6',
+        relevance: 'PARTIAL',
+        status: lang === 'en' ? 'setbacks' : 'Abstandsflächen',
+      })
+    }
   }
   if (has(/\bgeg\b/)) {
     bRows.push({
@@ -169,9 +189,14 @@ export function composeLegalDomains(
       status: lang === 'en' ? 'municipal' : 'kommunal',
     })
   }
-  if (has(/denkmal|baydschg/)) {
+  if (has(/denkmal|baydschg|dschg/)) {
+    // v1.0.21 Bug 23d — row label is the state-specific
+    // Denkmalschutzgesetz short name (BayDSchG / DSchG NRW / DSchG Bln /
+    // HDSchG / NDSchG / DSchG BW), so a Berlin project no longer
+    // surfaces "BayDSchG" as its monument-protection citation. Stub
+    // states render the honest-deferral wording from the citation pack.
     cRows.push({
-      label: 'Denkmalschutz',
+      label: citations.denkmalSchutzAct,
       relevance: 'HIGH',
       status: lang === 'en' ? 'listed building applicable' : 'denkmalrechtlich',
     })

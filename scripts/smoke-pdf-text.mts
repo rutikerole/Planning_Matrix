@@ -466,6 +466,9 @@ async function runCrossStateBleed(): Promise<{ passed: number; failed: number }>
       { rx: /\bStPlS\s*926\b/u, label: 'StPlS 926 (München-only Stellplatzsatzung)' },
       { rx: /\bLHM\b/u, label: 'LHM (Landeshauptstadt München — Bayern-only)' },
       { rx: /Bauamt-Sommerrotation\s+München|Munich\s+Bauamt\s+summer\s+rotation/u, label: 'München Bauamt rotation risk (Bayern-only)' },
+      // v1.0.21 Commit 5 (Bug 23d — Legal Landscape DSchG)
+      { rx: /\bBayDSchG\b/u, label: 'BayDSchG (Bayern-only monument-protection act)' },
+      { rx: /\bBayerisches\s+Denkmalschutzgesetz\b/u, label: 'Bayerisches Denkmalschutzgesetz (Bayern-only)' },
     ]
     for (const { rx, label } of forbiddenTokens) {
       const hit = rx.test(text)
