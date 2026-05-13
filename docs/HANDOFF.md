@@ -461,7 +461,20 @@ shipped in Phase 13 Week 4). What's missing is the cron harness
 
 ## 9. Operational responsibilities — split between engineering and client
 
-**v1.0.20 IS THE NEW PRODUCTION-READY RELEASE.** Cosmetic polish on
+**v1.0.21 IS THE NEW PRODUCTION-READY RELEASE.** Bundesland Truth
+Sprint closes 7 P0/P1 defects (5 cross-state bleed + Hard Blocker
+propagation + Confidence formula penalty) surfaced by the v1.0.20
+NRW × T-01 Königsallee 30 (11 bugs) and Berlin × T-01 Pariser Platz
+1 (13 bugs) test cells. Every PDF section that used to render
+hard-coded Bayern or NRW § citations is now state-aware via the new
+`src/legal/stateCitations.ts` pack; the BLOCKER card prepends the
+Top-3 when MK-Gebietsart / Denkmalschutz / Sonderbau / catch-all
+hard-blocker flags fire; confidence applies a 0.70-per-blocker
+multiplicative penalty (floor 25) to reflect structural unknown.
+Runtime smoke gate at 144/144 EN+DE (was 96; +48 sprint assertions).
+See `CHANGELOG.md` and `BACKLOG.md` at the repo root.
+
+**v1.0.20** (previous) — Cosmetic polish on
 top of v1.0.19's legal correctness: paragraph breaks on Area A + C
 bodies, DE qualifier pill i18n (every qualifier label now renders
 in German on the DE PDF), and the Bauherr signature row on the
