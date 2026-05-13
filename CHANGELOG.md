@@ -1,5 +1,109 @@
 # Changelog
 
+## v1.0.22 — Data Integrity Sprint (2026-05-13)
+
+Closes 6 P1 data-integrity defects deferred from the v1.0.21 BACKLOG:
+Building class derivation (C), Documents UI/PDF unification (F),
+i18n leak on persona output (K), VERIFIED qualifier authority guard
+(Q), Donut/cover denominator unification (B), and Cost-formula
+honesty (I).
+
+Sprint anchor:
+- Bayern composeLegalContext SHA `b18d3f7f9a6fe238c18cec5361d30ea3a547e46b1ef2b16a1e74c533aacb3471`
+  unchanged across every commit.
+
+### Bugs fixed (in commit order)
+
+1. **Bug C** — Unified MBO § 2 Abs. 3 Gebäudeklasse derivation.
+   `src/legal/deriveGebaeudeklasse.ts` (new) returns
+   `{ klasse, qualifier, reasoning }`. Threaded through UI overview
+   (AtAGlance) and PDF Key Data. Honest deferral when Höhe AND
+   Geschosse are both missing — never a fabricated GK number.
+2. **Bug F** — Documents UI/PDF unification via new
+   `src/features/result/lib/resolveDocuments.ts`. Both surfaces
+   consume the same envelope (required + on-file + blockedByVoranfrage).
+   When v1.0.21 Bug E's hard blockers fire, both surfaces collapse
+   to a single "pending Bauvoranfrage" placeholder.
+3. **Bug K** — i18n leak on dynamic persona output.
+   `src/legal/germanLeakGuard.ts` (new) runtime guard
+   `sanitizeGermanContentOnEnglish` scans for ≥ 2 German morphology
+   tokens on EN exports and renders an honest placeholder
+   ("(German content; English translation pending)") rather than
+   surfacing mixed-language strings. Applied to Top-3 + Recommendations
+   surfaces.
+4. **Bug Q** — VERIFIED qualifier authority guard.
+   `src/lib/qualifierNormalize.ts` (new) + extended
+   `getQualifierLabel` in pdfPrimitives. CLIENT / USER / BAUHERR +
+   VERIFIED → CLIENT + DECIDED; DESIGNER + VERIFIED → DESIGNER +
+   DECIDED (architect-loop verification ships post-v1.0.22).
+   LEGAL/AUTHORITY + VERIFIED pass through. Read-time defense in
+   depth on top of the write-time gate.
+5. **Bug B** — Donut/cover denominator unification. PDF Verification
+   page now sources from `aggregateQualifiers(state)` (all 5
+   categories) instead of walking facts only. Donut + cover percent +
+   verification page share the underlying counts.
+6. **Bug I** — Honest BKI regional-factor framing (Path B). Cost-row
+   labels in pdfStrings + stateLocalization rewritten to drop the
+   misleading "regional BKI factor (X)" claim. New text: "HOAI Zone
+   III · German baseline (regional variance ±10%)". `docs/cost-
+   formula.md` documents the decision and the Path A trigger for
+   v1.0.23+ once authoritative BKI data lands.
+
+### New files
+
+- `src/legal/deriveGebaeudeklasse.ts` — MBO § 2 Abs. 3 unified GK
+  derivation.
+- `src/legal/germanLeakGuard.ts` — runtime guard against German
+  morphology on EN exports.
+- `src/lib/qualifierNormalize.ts` — VERIFIED authority guard.
+- `src/features/result/lib/resolveDocuments.ts` — unified UI/PDF
+  document resolver.
+- `docs/cost-formula.md` — Path A/B rationale for the cost-formula
+  honest-framing decision.
+
+### Gate status (final, on tag)
+
+| Gate                        | Status                              |
+| --------------------------- | ----------------------------------- |
+| `npm run verify:bayern-sha` | ✓ MATCH                             |
+| `npm run smoke:citations`   | ✓ static gate green                 |
+| `npm run smoke:pdf-text`    | ✓ 181 passed · 0 failed (+37 over v1.0.21's 144) |
+| `npx tsc --noEmit`          | ✓ clean                             |
+| `npm run build`             | ✓ 272.7 KB gz (ceiling 300 KB)      |
+
+### Fixture growth this sprint
+
+- `smoke:pdf-text`: +37 assertions (144 → 181). Distribution by
+  commit:
+    - Bug C: +9 (5 unit cases + 4 PDF render: honest-deferral +
+      no-fabricated-GK × langs)
+    - Bug F: +4 (blocked placeholder + no auto-Lageplan × langs)
+    - Bug K: +9 (4 unit cases + 4 EN-leak + 1 DE regression)
+    - Bug Q: +7 (7 unit cases for normalization rules)
+    - Bug B: +4 (denominator structural assertions × 2 fixtures × 2
+      invariants)
+    - Bug I: +4 (honest baseline phrase + no BKI factor × langs)
+- `smoke:citations`: 2 static checks rewired to track v1.0.22
+  behavior (basisTemplate honest framing + Bug 41+42 already done
+  in v1.0.21).
+
+### Autonomous decisions
+
+- Bug K: persona-prompt fix (root-cause repair in chat-turn edge
+  function) deferred to v1.0.23 or a chat-side sprint. Runtime guard
+  is sufficient as a user-facing fix; full root-cause fix needs
+  separate empirical validation that no Bayern fixture is regressed.
+- Bug Q: read-time normalization applied (in getQualifierLabel)
+  rather than extending the chat-turn write-time gate. Same surface
+  covered; chat-turn gate extension parked for v1.0.23.
+- Bug I: Path B chosen per sprint spec recommendation. REGION_MULT
+  table preserved for Path A wiring once authoritative BKI data
+  lands; only the user-facing label is honest about the current
+  no-op state.
+- Bug C fixtures: 5 unit-style assertions in the smoke harness instead
+  of 4 extra PDF renders (would have added ~25 s per smoke run).
+  End-to-end PDF integration still tested on the Berlin fixture.
+
 ## v1.0.21 — Bundesland Truth Sprint (2026-05-13)
 
 Closes 7 P0/P1 defects surfaced by the v1.0.20 NRW × T-01 Königsallee
