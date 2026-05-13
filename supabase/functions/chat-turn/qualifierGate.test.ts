@@ -185,11 +185,13 @@ Deno.test('system caller passes through DESIGNER+VERIFIED unchanged', () => {
   assertEquals(tool.extracted_facts![0].quality, 'VERIFIED')
 })
 
-Deno.test('non-DESIGNER source untouched even on client', () => {
+// v1.0.24 Bug Q extension — CLIENT/USER/BAUHERR+VERIFIED is now
+// downgraded at write-time. Test split: legitimate sources stay
+// untouched; client-side sources are gated.
+Deno.test('LEGAL/AUTHORITY+VERIFIED untouched even on client (legitimate)', () => {
   const tool: RespondToolInput = {
     ...baseEnvelope,
     extracted_facts: [
-      { key: 'a', value: 1, source: 'CLIENT', quality: 'VERIFIED' },
       { key: 'b', value: 1, source: 'LEGAL', quality: 'VERIFIED' },
       { key: 'c', value: 1, source: 'AUTHORITY', quality: 'VERIFIED' },
     ],
@@ -199,6 +201,24 @@ Deno.test('non-DESIGNER source untouched even on client', () => {
   for (const f of tool.extracted_facts!) {
     assertEquals(f.quality, 'VERIFIED')
   }
+})
+
+Deno.test('client + CLIENT+VERIFIED → downgrade to CLIENT+DECIDED', () => {
+  const tool: RespondToolInput = {
+    ...baseEnvelope,
+    extracted_facts: [
+      { key: 'a', value: 1, source: 'CLIENT', quality: 'VERIFIED' },
+    ],
+  }
+  const events = gateQualifiersByRole(tool, 'client')
+  assertEquals(events.length, 1)
+  assertEquals(events[0].field, 'extracted_fact')
+  assertEquals(events[0].attempted_source, 'CLIENT')
+  assertEquals(events[0].attempted_quality, 'VERIFIED')
+  assertEquals(events[0].enforced_source, 'CLIENT')
+  assertEquals(events[0].enforced_quality, 'DECIDED')
+  assertEquals(tool.extracted_facts![0].source, 'CLIENT')
+  assertEquals(tool.extracted_facts![0].quality, 'DECIDED')
 })
 
 Deno.test('DESIGNER + non-VERIFIED quality untouched on client', () => {
@@ -245,19 +265,28 @@ Deno.test('engineer / authority caller behaves like client (downgrade)', () => {
   }
 })
 
-Deno.test('mixed payload: only the DESIGNER+VERIFIED entries are gated', () => {
+// v1.0.24 Bug Q extension — both DESIGNER+VERIFIED and CLIENT+VERIFIED
+// are now gated. LEGAL/AUTHORITY+VERIFIED and DESIGNER+ASSUMED pass
+// through.
+Deno.test('mixed payload: DESIGNER+VERIFIED and CLIENT+VERIFIED both gated', () => {
   const tool: RespondToolInput = {
     ...baseEnvelope,
     extracted_facts: [
-      { key: 'gated', value: 1, source: 'DESIGNER', quality: 'VERIFIED' },
-      { key: 'free-1', value: 1, source: 'CLIENT', quality: 'VERIFIED' },
-      { key: 'free-2', value: 1, source: 'DESIGNER', quality: 'ASSUMED' },
+      { key: 'gated-designer', value: 1, source: 'DESIGNER', quality: 'VERIFIED' },
+      { key: 'gated-client', value: 1, source: 'CLIENT', quality: 'VERIFIED' },
+      { key: 'free-designer', value: 1, source: 'DESIGNER', quality: 'ASSUMED' },
+      { key: 'free-authority', value: 1, source: 'AUTHORITY', quality: 'VERIFIED' },
     ],
   }
   const events = gateQualifiersByRole(tool, 'client')
-  assertEquals(events.length, 1)
-  assertEquals(events[0].item_id, 'gated')
+  assertEquals(events.length, 2)
+  // DESIGNER path → DESIGNER+ASSUMED
+  assertEquals(tool.extracted_facts![0].source, 'DESIGNER')
   assertEquals(tool.extracted_facts![0].quality, 'ASSUMED')
-  assertEquals(tool.extracted_facts![1].quality, 'VERIFIED')
+  // CLIENT path → CLIENT+DECIDED
+  assertEquals(tool.extracted_facts![1].source, 'CLIENT')
+  assertEquals(tool.extracted_facts![1].quality, 'DECIDED')
+  // Other paths untouched
   assertEquals(tool.extracted_facts![2].quality, 'ASSUMED')
+  assertEquals(tool.extracted_facts![3].quality, 'VERIFIED')
 })

@@ -929,6 +929,89 @@ async function runVerifiedBannerCheck(): Promise<{ passed: number; failed: numbe
   return { passed, failed }
 }
 
+// v1.0.24 Bug Q extension — write-time gate now blocks
+// CLIENT/USER/BAUHERR+VERIFIED in addition to DESIGNER+VERIFIED.
+// Tests confirm the TS impl (parallel to the Deno tests in
+// supabase/functions/chat-turn/qualifierGate.test.ts).
+async function runWriteTimeGateUnit(): Promise<{ passed: number; failed: number }> {
+  console.log(`\n[smoke-pdf-text] write-time qualifier gate (Bug Q ext)…`)
+  const { gateQualifiersByRole } = await import('../src/lib/projectStateHelpers.ts')
+  let passed = 0
+  let failed = 0
+  const mk = (source: string, quality: string) => ({
+    specialist: 'moderator' as const,
+    message_de: 'm',
+    message_en: 'm',
+    input_type: 'none' as const,
+    extracted_facts: [{ key: 'test_key', value: 1, source: source as never, quality: quality as never }],
+  })
+  const cases: Array<{
+    name: string
+    input: ReturnType<typeof mk>
+    expectEvents: number
+    expectSource: string
+    expectQuality: string
+  }> = [
+    {
+      name: 'CLIENT+VERIFIED → CLIENT+DECIDED (Bug Q ext)',
+      input: mk('CLIENT', 'VERIFIED'),
+      expectEvents: 1,
+      expectSource: 'CLIENT',
+      expectQuality: 'DECIDED',
+    },
+    {
+      name: 'BAUHERR+VERIFIED → CLIENT+DECIDED (alias)',
+      input: mk('BAUHERR', 'VERIFIED'),
+      expectEvents: 1,
+      expectSource: 'CLIENT',
+      expectQuality: 'DECIDED',
+    },
+    {
+      name: 'USER+VERIFIED → CLIENT+DECIDED (alias)',
+      input: mk('USER', 'VERIFIED'),
+      expectEvents: 1,
+      expectSource: 'CLIENT',
+      expectQuality: 'DECIDED',
+    },
+    {
+      name: 'AUTHORITY+VERIFIED → unchanged (legitimate signal)',
+      input: mk('AUTHORITY', 'VERIFIED'),
+      expectEvents: 0,
+      expectSource: 'AUTHORITY',
+      expectQuality: 'VERIFIED',
+    },
+    {
+      name: 'LEGAL+VERIFIED → unchanged (legitimate signal)',
+      input: mk('LEGAL', 'VERIFIED'),
+      expectEvents: 0,
+      expectSource: 'LEGAL',
+      expectQuality: 'VERIFIED',
+    },
+    {
+      name: 'CLIENT+DECIDED → unchanged (no-op when not VERIFIED)',
+      input: mk('CLIENT', 'DECIDED'),
+      expectEvents: 0,
+      expectSource: 'CLIENT',
+      expectQuality: 'DECIDED',
+    },
+  ]
+  for (const c of cases) {
+    const events = gateQualifiersByRole(c.input, 'client')
+    const fact = c.input.extracted_facts[0]
+    const ok =
+      events.length === c.expectEvents &&
+      fact.source === c.expectSource &&
+      fact.quality === c.expectQuality
+    const msg = `${c.name}`
+    if (ok) { console.log(`  ✓ ${msg}`); passed++ }
+    else {
+      console.log(`  ✗ ${msg} (got events=${events.length} source=${fact.source} quality=${fact.quality})`)
+      failed++
+    }
+  }
+  return { passed, failed }
+}
+
 // v1.0.23 Bug N — unit-style tests for system-flag filter.
 async function runSystemFlagFilterUnit(): Promise<{ passed: number; failed: number }> {
   console.log(`\n[smoke-pdf-text] system-flag filter (Bug N)…`)
@@ -1219,6 +1302,7 @@ async function main(): Promise<void> {
   const factLabelCoverage = await runFactLabelCoverageUnit()
   const glossaryStateAware = await runGlossaryStateAwareCheck()
   const addressParser = await runAddressParserUnit()
+  const writeTimeGate = await runWriteTimeGateUnit()
   const totalFailed =
     en.failed +
     de.failed +
@@ -1232,7 +1316,8 @@ async function main(): Promise<void> {
     designerDowngrade.failed +
     factLabelCoverage.failed +
     glossaryStateAware.failed +
-    addressParser.failed
+    addressParser.failed +
+    writeTimeGate.failed
   const totalPassed =
     en.passed +
     de.passed +
@@ -1246,7 +1331,8 @@ async function main(): Promise<void> {
     designerDowngrade.passed +
     factLabelCoverage.passed +
     glossaryStateAware.passed +
-    addressParser.passed
+    addressParser.passed +
+    writeTimeGate.passed
   console.log(`\n[smoke-pdf-text] ${totalPassed} passed · ${totalFailed} failed`)
   if (totalFailed > 0) {
     console.log('[smoke-pdf-text] FAIL — see violations above.')

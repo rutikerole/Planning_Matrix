@@ -81,8 +81,25 @@ export function gateQualifiersByRole(
   const events: QualifierDowngradeEvent[] = []
   if (callerRole === 'designer' || callerRole === 'system') return events
 
-  const REASON =
+  const REASON_DESIGNER =
     'DESIGNER+VERIFIED requires role=designer; downgraded to DESIGNER+ASSUMED per v1.5 §6.B.01.'
+
+  // v1.0.24 Bug Q extension — CLIENT-side VERIFIED gate.
+  //
+  // v1.0.22 Bug Q added render-time normalization (CLIENT/USER/BAUHERR
+  // × VERIFIED → CLIENT × DECIDED in getQualifierLabel). This commit
+  // closes the upstream pipe so the wrong qualifier never reaches
+  // projects.state. Asymmetry vs DESIGNER: client-side VERIFIED maps to
+  // DECIDED (the read-time target), while DESIGNER+VERIFIED maps to
+  // ASSUMED (the Phase 13 §6.B.01 invariant — preserves the existing
+  // downgrade-then-display-as-LEGAL+CALCULATED pattern via v1.0.16 Bug
+  // 32 normalization in pdfPrimitives.formatQualifier). Both paths
+  // converge at the rendered pill but for different upstream reasons.
+  const REASON_CLIENT =
+    'CLIENT/USER/BAUHERR+VERIFIED requires AUTHORITY source signal; downgraded to CLIENT+DECIDED per v1.0.22 Bug Q + v1.0.24 write-time extension.'
+  const CLIENT_SOURCES = ['CLIENT', 'USER', 'BAUHERR'] as const
+  const isClientSide = (s: string | undefined): s is 'CLIENT' =>
+    s != null && (CLIENT_SOURCES as readonly string[]).includes(s)
 
   // extracted_facts: source/quality top-level
   for (const f of toolInput.extracted_facts ?? []) {
@@ -95,9 +112,28 @@ export function gateQualifiersByRole(
         enforced_source: 'DESIGNER',
         enforced_quality: 'ASSUMED',
         caller_role: callerRole,
-        reason: REASON,
+        reason: REASON_DESIGNER,
       })
       f.quality = 'ASSUMED'
+    } else if (isClientSide(f.source) && f.quality === 'VERIFIED') {
+      events.push({
+        field: 'extracted_fact',
+        item_id: f.key,
+        attempted_source: f.source,
+        attempted_quality: 'VERIFIED',
+        enforced_source: 'CLIENT',
+        enforced_quality: 'DECIDED',
+        caller_role: callerRole,
+        reason: REASON_CLIENT,
+      })
+      f.source = 'CLIENT'
+      f.quality = 'DECIDED'
+      if (typeof console !== 'undefined') {
+        console.warn(
+          '[qualifierGate] client-side VERIFIED downgrade:',
+          { key: f.key, from: events[events.length - 1].attempted_source },
+        )
+      }
     }
   }
 
@@ -113,61 +149,67 @@ export function gateQualifiersByRole(
         enforced_source: 'DESIGNER',
         enforced_quality: 'ASSUMED',
         caller_role: callerRole,
-        reason: REASON,
+        reason: REASON_DESIGNER,
       })
       r.qualifier.quality = 'ASSUMED'
+    } else if (
+      r.qualifier?.source &&
+      isClientSide(r.qualifier.source) &&
+      r.qualifier?.quality === 'VERIFIED'
+    ) {
+      events.push({
+        field: 'recommendation',
+        item_id: r.id,
+        attempted_source: r.qualifier.source,
+        attempted_quality: 'VERIFIED',
+        enforced_source: 'CLIENT',
+        enforced_quality: 'DECIDED',
+        caller_role: callerRole,
+        reason: REASON_CLIENT,
+      })
+      r.qualifier.source = 'CLIENT'
+      r.qualifier.quality = 'DECIDED'
     }
   }
 
   // procedures / documents / roles: source + quality top-level on upserts
-  for (const p of toolInput.procedures_delta ?? []) {
-    if (p.op !== 'upsert') continue
-    if (p.source === 'DESIGNER' && p.quality === 'VERIFIED') {
-      events.push({
-        field: 'procedure',
-        item_id: p.id,
-        attempted_source: 'DESIGNER',
-        attempted_quality: 'VERIFIED',
-        enforced_source: 'DESIGNER',
-        enforced_quality: 'ASSUMED',
-        caller_role: callerRole,
-        reason: REASON,
-      })
-      p.quality = 'ASSUMED'
+  const gateTopLevel = (
+    arr: ReadonlyArray<{ op: string; source?: string; quality?: string; id: string }> | undefined,
+    field: QualifierFieldKind,
+  ) => {
+    for (const x of arr ?? []) {
+      if (x.op !== 'upsert') continue
+      if (x.source === 'DESIGNER' && x.quality === 'VERIFIED') {
+        events.push({
+          field,
+          item_id: x.id,
+          attempted_source: 'DESIGNER',
+          attempted_quality: 'VERIFIED',
+          enforced_source: 'DESIGNER',
+          enforced_quality: 'ASSUMED',
+          caller_role: callerRole,
+          reason: REASON_DESIGNER,
+        })
+        ;(x as { quality: Quality }).quality = 'ASSUMED'
+      } else if (isClientSide(x.source) && x.quality === 'VERIFIED') {
+        events.push({
+          field,
+          item_id: x.id,
+          attempted_source: x.source,
+          attempted_quality: 'VERIFIED',
+          enforced_source: 'CLIENT',
+          enforced_quality: 'DECIDED',
+          caller_role: callerRole,
+          reason: REASON_CLIENT,
+        })
+        ;(x as { source: Source; quality: Quality }).source = 'CLIENT'
+        ;(x as { quality: Quality }).quality = 'DECIDED'
+      }
     }
   }
-  for (const d of toolInput.documents_delta ?? []) {
-    if (d.op !== 'upsert') continue
-    if (d.source === 'DESIGNER' && d.quality === 'VERIFIED') {
-      events.push({
-        field: 'document',
-        item_id: d.id,
-        attempted_source: 'DESIGNER',
-        attempted_quality: 'VERIFIED',
-        enforced_source: 'DESIGNER',
-        enforced_quality: 'ASSUMED',
-        caller_role: callerRole,
-        reason: REASON,
-      })
-      d.quality = 'ASSUMED'
-    }
-  }
-  for (const r of toolInput.roles_delta ?? []) {
-    if (r.op !== 'upsert') continue
-    if (r.source === 'DESIGNER' && r.quality === 'VERIFIED') {
-      events.push({
-        field: 'role',
-        item_id: r.id,
-        attempted_source: 'DESIGNER',
-        attempted_quality: 'VERIFIED',
-        enforced_source: 'DESIGNER',
-        enforced_quality: 'ASSUMED',
-        caller_role: callerRole,
-        reason: REASON,
-      })
-      r.quality = 'ASSUMED'
-    }
-  }
+  gateTopLevel(toolInput.procedures_delta, 'procedure')
+  gateTopLevel(toolInput.documents_delta, 'document')
+  gateTopLevel(toolInput.roles_delta, 'role')
 
   return events
 }

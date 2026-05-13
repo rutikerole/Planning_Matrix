@@ -655,43 +655,49 @@ const TOOL_INPUT_FIXTURES = [
 // _delta upserts) plus the pass-through callers (designer, system).
 
 function gateQualifiersByRoleJS(toolInput, callerRole) {
+  // v1.0.24 Bug Q extension — mirrors the TS source's CLIENT-side
+  // gate. Keep this in lock-step with
+  // src/lib/projectStateHelpers.ts:gateQualifiersByRole.
   const events = []
   if (callerRole === 'designer' || callerRole === 'system') return events
-  const REASON =
-    'DESIGNER+VERIFIED requires role=designer; downgraded to DESIGNER+ASSUMED per v1.5 §6.B.01.'
-  for (const f of toolInput.extracted_facts ?? []) {
-    if (f.source === 'DESIGNER' && f.quality === 'VERIFIED') {
-      events.push({ field: 'extracted_fact', item_id: f.key })
-      f.quality = 'ASSUMED'
+  const CLIENT_SOURCES = new Set(['CLIENT', 'USER', 'BAUHERR'])
+  const gateOne = (obj, fieldKind, idKey) => {
+    if (!obj || obj.op === 'remove') return
+    const src = obj.source ?? obj.qualifier?.source
+    const qual = obj.quality ?? obj.qualifier?.quality
+    if (src === 'DESIGNER' && qual === 'VERIFIED') {
+      events.push({ field: fieldKind, item_id: obj[idKey] })
+      if (obj.qualifier) obj.qualifier.quality = 'ASSUMED'
+      else obj.quality = 'ASSUMED'
+      return
+    }
+    if (CLIENT_SOURCES.has(src) && qual === 'VERIFIED') {
+      events.push({ field: fieldKind, item_id: obj[idKey] })
+      if (obj.qualifier) {
+        obj.qualifier.source = 'CLIENT'
+        obj.qualifier.quality = 'DECIDED'
+      } else {
+        obj.source = 'CLIENT'
+        obj.quality = 'DECIDED'
+      }
     }
   }
+  for (const f of toolInput.extracted_facts ?? []) gateOne(f, 'extracted_fact', 'key')
   for (const r of toolInput.recommendations_delta ?? []) {
     if (r.op !== 'upsert') continue
-    if (r.qualifier?.source === 'DESIGNER' && r.qualifier?.quality === 'VERIFIED') {
-      events.push({ field: 'recommendation', item_id: r.id })
-      r.qualifier.quality = 'ASSUMED'
-    }
+    gateOne(r, 'recommendation', 'id')
   }
   for (const p of toolInput.procedures_delta ?? []) {
     if (p.op !== 'upsert') continue
-    if (p.source === 'DESIGNER' && p.quality === 'VERIFIED') {
-      events.push({ field: 'procedure', item_id: p.id })
-      p.quality = 'ASSUMED'
-    }
+    gateOne(p, 'procedure', 'id')
   }
   for (const d of toolInput.documents_delta ?? []) {
     if (d.op !== 'upsert') continue
-    if (d.source === 'DESIGNER' && d.quality === 'VERIFIED') {
-      events.push({ field: 'document', item_id: d.id })
-      d.quality = 'ASSUMED'
-    }
+    gateOne(d, 'document', 'id')
   }
   for (const r of toolInput.roles_delta ?? []) {
     if (r.op !== 'upsert') continue
-    if (r.source === 'DESIGNER' && r.quality === 'VERIFIED') {
-      events.push({ field: 'role', item_id: r.id })
-      r.quality = 'ASSUMED'
-    }
+    gateOne(r, 'role', 'id')
   }
   return events
 }
@@ -762,16 +768,46 @@ const QUALIFIER_GATE_FIXTURES = [
     expectFinalQuality: { kind: 'extracted_fact', key: 'k', quality: 'VERIFIED' },
   },
   {
-    label: 'client + non-DESIGNER source untouched',
+    // v1.0.24 Bug Q extension — CLIENT+VERIFIED is now downgraded at
+    // write-time (was untouched through v1.0.23). LEGAL+VERIFIED +
+    // AUTHORITY+VERIFIED stay untouched — legitimate signals.
+    label: 'client + LEGAL/AUTHORITY+VERIFIED untouched (legitimate)',
     role: 'client',
     input: {
       extracted_facts: [
-        { key: 'a', value: 1, source: 'CLIENT', quality: 'VERIFIED' },
         { key: 'b', value: 1, source: 'LEGAL', quality: 'VERIFIED' },
         { key: 'c', value: 1, source: 'AUTHORITY', quality: 'VERIFIED' },
       ],
     },
     expectEventCount: 0,
+  },
+  {
+    // v1.0.24 Bug Q extension — CLIENT/USER/BAUHERR+VERIFIED gate.
+    // Per v1.0.22 read-time normalization in getQualifierLabel,
+    // client-side VERIFIED is structurally impossible: no Bauamt or
+    // architect chamber signoff backs the claim. Write-time gate
+    // downgrades to CLIENT+DECIDED so the wrong qualifier never
+    // reaches projects.state.
+    label: 'client + CLIENT+VERIFIED extracted_fact → 1 downgrade event',
+    role: 'client',
+    input: {
+      extracted_facts: [
+        { key: 'a', value: 1, source: 'CLIENT', quality: 'VERIFIED' },
+      ],
+    },
+    expectEventCount: 1,
+    expectFinalQuality: { kind: 'extracted_fact', key: 'a', quality: 'DECIDED' },
+  },
+  {
+    label: 'client + BAUHERR/USER alias gates same as CLIENT',
+    role: 'client',
+    input: {
+      extracted_facts: [
+        { key: 'b', value: 1, source: 'BAUHERR', quality: 'VERIFIED' },
+        { key: 'u', value: 1, source: 'USER', quality: 'VERIFIED' },
+      ],
+    },
+    expectEventCount: 2,
   },
   {
     label: 'client + DESIGNER + non-VERIFIED quality untouched',
@@ -818,17 +854,21 @@ const QUALIFIER_GATE_FIXTURES = [
     expectEventCount: 1,
   },
   {
-    label: 'mixed payload: only DESIGNER+VERIFIED entries are gated',
+    // v1.0.24 Bug Q extension — DESIGNER+VERIFIED and CLIENT+VERIFIED
+    // are BOTH gated. DESIGNER+ASSUMED passes through (already
+    // downgraded). The mixed-payload fixture now expects 2 events.
+    label: 'mixed payload: DESIGNER+VERIFIED and CLIENT+VERIFIED both gated',
     role: 'client',
     input: {
       extracted_facts: [
-        { key: 'gated', value: 1, source: 'DESIGNER', quality: 'VERIFIED' },
-        { key: 'free-1', value: 1, source: 'CLIENT', quality: 'VERIFIED' },
-        { key: 'free-2', value: 1, source: 'DESIGNER', quality: 'ASSUMED' },
+        { key: 'gated-designer', value: 1, source: 'DESIGNER', quality: 'VERIFIED' },
+        { key: 'gated-client', value: 1, source: 'CLIENT', quality: 'VERIFIED' },
+        { key: 'free-designer', value: 1, source: 'DESIGNER', quality: 'ASSUMED' },
+        { key: 'free-authority', value: 1, source: 'AUTHORITY', quality: 'VERIFIED' },
       ],
     },
-    expectEventCount: 1,
-    expectFinalQuality: { kind: 'extracted_fact', key: 'gated', quality: 'ASSUMED' },
+    expectEventCount: 2,
+    expectFinalQuality: { kind: 'extracted_fact', key: 'gated-client', quality: 'DECIDED' },
   },
 ]
 
