@@ -929,6 +929,79 @@ async function runVerifiedBannerCheck(): Promise<{ passed: number; failed: numbe
   return { passed, failed }
 }
 
+// v1.0.24 Bug R extension — normalizeDesignerWithoutInLoop now fires
+// at Top-3 + Section VIII (in addition to v1.0.23's Key Data path).
+// Unit-tests the gate function across the full quality matrix so a
+// future maintainer touching Top-3 / Section VIII / KeyData can't
+// silently regress.
+async function runDesignerExtUnit(): Promise<{ passed: number; failed: number }> {
+  console.log(`\n[smoke-pdf-text] DESIGNER-without-in-loop gate matrix (Bug R ext)…`)
+  const { normalizeDesignerWithoutInLoop } = await import('../src/lib/qualifierNormalize.ts')
+  let passed = 0
+  let failed = 0
+  const cases: Array<{
+    name: string
+    input: { source: string; quality: string }
+    hasInvitedDesigner: boolean
+    expectSource: string
+    expectQuality: string
+  }> = [
+    {
+      name: 'DESIGNER+CALCULATED, no designer → LEGAL+CALCULATED',
+      input: { source: 'DESIGNER', quality: 'CALCULATED' },
+      hasInvitedDesigner: false,
+      expectSource: 'LEGAL',
+      expectQuality: 'CALCULATED',
+    },
+    {
+      name: 'DESIGNER+DECIDED, no designer → LEGAL+ASSUMED',
+      input: { source: 'DESIGNER', quality: 'DECIDED' },
+      hasInvitedDesigner: false,
+      expectSource: 'LEGAL',
+      expectQuality: 'ASSUMED',
+    },
+    {
+      name: 'DESIGNER+ASSUMED, no designer → LEGAL+ASSUMED',
+      input: { source: 'DESIGNER', quality: 'ASSUMED' },
+      hasInvitedDesigner: false,
+      expectSource: 'LEGAL',
+      expectQuality: 'ASSUMED',
+    },
+    {
+      name: 'DESIGNER+VERIFIED, no designer → LEGAL+ASSUMED',
+      input: { source: 'DESIGNER', quality: 'VERIFIED' },
+      hasInvitedDesigner: false,
+      expectSource: 'LEGAL',
+      expectQuality: 'ASSUMED',
+    },
+    {
+      name: 'DESIGNER+CALCULATED, WITH designer → DESIGNER+CALCULATED (regression guard)',
+      input: { source: 'DESIGNER', quality: 'CALCULATED' },
+      hasInvitedDesigner: true,
+      expectSource: 'DESIGNER',
+      expectQuality: 'CALCULATED',
+    },
+    {
+      name: 'LEGAL+CALCULATED unchanged regardless of designer state',
+      input: { source: 'LEGAL', quality: 'CALCULATED' },
+      hasInvitedDesigner: false,
+      expectSource: 'LEGAL',
+      expectQuality: 'CALCULATED',
+    },
+  ]
+  for (const c of cases) {
+    const result = normalizeDesignerWithoutInLoop(c.input, c.hasInvitedDesigner)
+    const ok = result.source === c.expectSource && result.quality === c.expectQuality
+    const msg = `${c.name}`
+    if (ok) { console.log(`  ✓ ${msg}`); passed++ }
+    else {
+      console.log(`  ✗ ${msg} (got source=${result.source} quality=${result.quality})`)
+      failed++
+    }
+  }
+  return { passed, failed }
+}
+
 // v1.0.24 Bug Q extension — write-time gate now blocks
 // CLIENT/USER/BAUHERR+VERIFIED in addition to DESIGNER+VERIFIED.
 // Tests confirm the TS impl (parallel to the Deno tests in
@@ -1303,6 +1376,7 @@ async function main(): Promise<void> {
   const glossaryStateAware = await runGlossaryStateAwareCheck()
   const addressParser = await runAddressParserUnit()
   const writeTimeGate = await runWriteTimeGateUnit()
+  const designerExt = await runDesignerExtUnit()
   const totalFailed =
     en.failed +
     de.failed +
@@ -1317,7 +1391,8 @@ async function main(): Promise<void> {
     factLabelCoverage.failed +
     glossaryStateAware.failed +
     addressParser.failed +
-    writeTimeGate.failed
+    writeTimeGate.failed +
+    designerExt.failed
   const totalPassed =
     en.passed +
     de.passed +
@@ -1332,7 +1407,8 @@ async function main(): Promise<void> {
     factLabelCoverage.passed +
     glossaryStateAware.passed +
     addressParser.passed +
-    writeTimeGate.passed
+    writeTimeGate.passed +
+    designerExt.passed
   console.log(`\n[smoke-pdf-text] ${totalPassed} passed · ${totalFailed} failed`)
   if (totalFailed > 0) {
     console.log('[smoke-pdf-text] FAIL — see violations above.')

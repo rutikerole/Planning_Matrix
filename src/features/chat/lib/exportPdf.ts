@@ -118,6 +118,7 @@ import { getStateLocalization } from '@/legal/stateLocalization'
 import { getStateCitations } from '@/legal/stateCitations'
 import { sanitizeCrossStateBleed } from '@/legal/crossStateBleedGuard'
 import { sanitizeGermanContentOnEnglish } from '@/legal/germanLeakGuard'
+import { normalizeDesignerWithoutInLoop } from '@/lib/qualifierNormalize'
 import {
   deriveGebaeudeklasse,
   deriveGkInputFromFacts,
@@ -217,6 +218,15 @@ export async function buildExportPdf({
   safe = resolveSafeTextFn(fonts.usingFallback)
 
   const state = (project.state ?? {}) as Partial<ProjectState>
+  // v1.0.24 Bug R extension — invitedDesigner discriminant computed
+  // once and threaded into every qualifier-emit site so the
+  // normalizeDesignerWithoutInLoop gate fires uniformly across Top-3
+  // Executive, Section VIII Recommendations, and Key Data. v1.0.23
+  // wired only the Key Data path; this commit closes the remaining
+  // surfaces.
+  const hasInvitedDesignerForRender = Boolean(
+    (project as { invitedDesigner?: string | null }).invitedDesigner,
+  )
 
   // ── v1.0.13 PDF Renaissance Part 1: Cover + TOC ────────────────
   // Replaces the v1.0.6 drawTitlePage with the approved-prototype
@@ -439,8 +449,17 @@ export async function buildExportPdf({
           // DESIGNER+ASSUMED downgrades to LEGAL · CALCULATED here
           // exactly like Section VIII does (and like the result-page
           // SuggestionCard does).
+          // v1.0.24 Bug R extension — pre-normalize via the no-designer-
+          // in-loop gate so DESIGNER source never reaches the Top-3
+          // card on projects without an invitedDesigner.
           sourceLabel: src.rec.qualifier
-            ? formatQualifier(src.rec.qualifier, pdfStrings)
+            ? formatQualifier(
+                normalizeDesignerWithoutInLoop(
+                  src.rec.qualifier,
+                  hasInvitedDesignerForRender,
+                ),
+                pdfStrings,
+              )
             : undefined,
         }
       }
@@ -860,8 +879,16 @@ export async function buildExportPdf({
       return {
         title,
         body,
+        // v1.0.24 Bug R extension — Section VIII Recommendations
+        // pre-normalize via no-designer-in-loop gate, same as Top-3.
         qualifierLabel: r.qualifier
-          ? formatQualifier(r.qualifier, pdfStrings)
+          ? formatQualifier(
+              normalizeDesignerWithoutInLoop(
+                r.qualifier,
+                hasInvitedDesignerForRender,
+              ),
+              pdfStrings,
+            )
           : formatQualifier({ source: 'LEGAL', quality: 'CALCULATED' }, pdfStrings),
         priority: inferPriority(title, body),
       }
@@ -904,12 +931,10 @@ export async function buildExportPdf({
   // for DECIDED/VERIFIED). Rule lives in src/lib/qualifierNormalize
   // alongside the Bug Q v1.0.22 normalization.
   const { isSystemFlagKey } = await import('@/legal/systemFlagFilter')
-  const { normalizeDesignerWithoutInLoop } = await import(
-    '@/lib/qualifierNormalize'
-  )
-  const hasInvitedDesigner = Boolean(
-    (project as { invitedDesigner?: string | null }).invitedDesigner,
-  )
+  // v1.0.24 Bug R extension — use the shared hasInvitedDesignerForRender
+  // computed at the top of buildExportPdf (Top-3 and Section VIII
+  // already consume it). normalizeDesignerWithoutInLoop is now a
+  // top-level import.
   const keyDataRows: KeyDataRow[] = facts
     .filter((f) => f.key !== 'verfahren_indikation')
     .filter((f) => !isSystemFlagKey(f.key))
@@ -918,7 +943,7 @@ export async function buildExportPdf({
       value: factValueWithUnit(f.key, f.value, lang),
       qualifier: normalizeDesignerWithoutInLoop(
         f.qualifier,
-        hasInvitedDesigner,
+        hasInvitedDesignerForRender,
       ),
     }))
   keyDataRows.push({

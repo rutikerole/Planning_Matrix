@@ -2762,8 +2762,15 @@ async function runStaticGate() {
     {
       // v1.0.20 Polish 2 — formatQualifier signature gained
       // optional strings param; accept both call forms.
-      ok: /formatQualifier\(src\.rec\.qualifier(,\s*pdfStrings)?\)/.test(exportPdfForBug32),
-      msg: 'executive build path applies formatQualifier to persisted recommendation qualifiers',
+      // v1.0.24 Bug R extension — formatQualifier is now wrapped in
+      // normalizeDesignerWithoutInLoop on the executive path so
+      // DESIGNER source can never reach Top-3 on a project without an
+      // invitedDesigner. Accept both the wrapped and unwrapped forms
+      // (drift fixture: the wrapper MUST be present somewhere in the
+      // executive build region).
+      ok: /formatQualifier\(\s*(?:normalizeDesignerWithoutInLoop\(\s*)?src\.rec\.qualifier/.test(exportPdfForBug32) &&
+          /normalizeDesignerWithoutInLoop\(\s*src\.rec\.qualifier/.test(exportPdfForBug32),
+      msg: 'executive build path applies formatQualifier + Bug R no-designer-in-loop gate to persisted recommendation qualifiers',
     },
   ]))
 
@@ -3231,8 +3238,11 @@ async function runStaticGate() {
     {
       // v1.0.20 Polish 2 — formatQualifier signature gained
       // optional strings param; accept both call forms.
-      ok: /formatQualifier\(r\.qualifier(,\s*pdfStrings)?\)/.test(exportPdfSrcForV12),
-      msg: 'Section VIII recommendations loop must call formatQualifier (renamed in v1.0.16, strings overload v1.0.20)',
+      // v1.0.24 Bug R extension — Section VIII now wraps with
+      // normalizeDesignerWithoutInLoop. Accept both call forms.
+      ok: (/formatQualifier\(\s*(?:normalizeDesignerWithoutInLoop\(\s*)?r\.qualifier/.test(exportPdfSrcForV12) &&
+           /normalizeDesignerWithoutInLoop\(\s*\n?\s*r\.qualifier/.test(exportPdfSrcForV12)),
+      msg: 'Section VIII recommendations loop must call formatQualifier + Bug R no-designer-in-loop gate',
     },
   ]))
   // v1.0.17 — Bug 26 intent now lives in pdfSections/procedures.ts:
