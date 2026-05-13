@@ -231,6 +231,18 @@ async function runLocale(lang: 'en' | 'de'): Promise<{ passed: number; failed: n
         : /VERTRAUEN/u.test(text) && /\d+%/u.test(text),
       msg: 'confidence column + percent value on cover',
     },
+    // v1.0.21 Bug M — NRW Königsallee fixture has 0 active hard
+    // blockers (denkmalschutz=false). Confidence must be ≥ 60% — i.e.
+    // the multiplicative penalty does NOT fire on a clean project.
+    // Regression guard.
+    (() => {
+      const pctMatch = text.match(/(\d{1,3})\s*%/u)
+      const pct = pctMatch ? parseInt(pctMatch[1] ?? '0', 10) : 0
+      return {
+        pass: pct >= 60,
+        msg: `confidence ≥ 60 on clean NRW project (got ${pct}, Bug M regression guard)`,
+      }
+    })(),
     // v1.0.18 Feature 1 — QR code label present on cover
     {
       pass: lang === 'en'
@@ -516,6 +528,16 @@ async function runCrossStateBleed(): Promise<{ passed: number; failed: number }>
     const blockerMsg = `Berlin ${lang}: Top-3 surfaces the word BLOCKER (Bug E)`
     if (blockerInTop3) { console.log(`  ✓ ${blockerMsg}`); passed++ }
     else { console.log(`  ✗ ${blockerMsg}`); failed++ }
+    // v1.0.21 Bug M — Berlin fixture has 2 active hard blockers
+    // (mk_gebietsart + denkmalschutz). Confidence must be ≤ 45% per
+    // the multiplicative-penalty design in docs/confidence-formula.md.
+    // The cover renders the percent next to "CONFIDENCE" (EN) /
+    // "VERTRAUEN" (DE); we extract it and assert the bound.
+    const pctMatch = text.match(/(\d{1,3})\s*%/u)
+    const confidencePct = pctMatch ? parseInt(pctMatch[1] ?? '0', 10) : 0
+    const confidenceMsg = `Berlin ${lang}: confidence ≤ 45 with 2 hard blockers (got ${confidencePct})`
+    if (confidencePct > 0 && confidencePct <= 45) { console.log(`  ✓ ${confidenceMsg}`); passed++ }
+    else { console.log(`  ✗ ${confidenceMsg}`); failed++ }
   }
   return { passed, failed }
 }

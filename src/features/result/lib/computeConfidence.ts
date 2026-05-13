@@ -2,6 +2,39 @@ import type { ProjectState } from '@/types/projectState'
 import { computeSectionCompleteness } from './computeSectionCompleteness'
 import { aggregateQualifiers } from './qualifierAggregate'
 
+// v1.0.21 Bug M — multiplicative penalty per active hard blocker.
+// 0.70 reflects the design decision documented in docs/confidence-
+// formula.md: each blocker fundamentally undermines the system's
+// ability to bound the procedure / cost / timeline, so a 30% knock-
+// down per blocker (composed across blockers via multiplication) is
+// proportional. Floor at 25 so a blocker-laden project still shows a
+// non-zero, non-misleading value the bauherr can interpret.
+const HARD_BLOCKER_PENALTY = 0.7
+const CONFIDENCE_FLOOR = 25
+
+function countHardBlockers(state: Partial<ProjectState>): number {
+  const facts = state.facts ?? []
+  const factBool = (key: string): boolean => {
+    const f = facts.find((x) => x.key === key)
+    if (!f) return false
+    return (
+      f.value === true ||
+      f.value === 'true' ||
+      f.value === 'JA' ||
+      f.value === 'ja'
+    )
+  }
+  let count = 0
+  if (factBool('mk_gebietsart')) count++
+  if (factBool('denkmalschutz')) count++
+  if (factBool('sonderbau_scope')) count++
+  // bauvoranfrage_hard_blocker is the catch-all flag; only count it
+  // when no specific blocker fact is set (mirrors detectHardBlockers
+  // in resolveProcedure.ts so the two surfaces agree on N).
+  if (factBool('bauvoranfrage_hard_blocker') && count === 0) count++
+  return count
+}
+
 export interface ConfidenceBreakdown {
   /** Composite percent shown in the header (0–100 integer). */
   total: number
@@ -75,10 +108,24 @@ export function computeConfidenceBreakdown(
     factScore = Math.round((sum / agg.total) * 100)
   }
   const sectionScore = computeSectionCompleteness(state).percent
-  const total =
+  const rawTotal =
     agg.total === 0 && sectionScore === 0
       ? 0
       : Math.round(factScore * FACT_WEIGHT + sectionScore * SECTION_WEIGHT)
+  // v1.0.21 Bug M — multiplicative hard-blocker penalty. v1.0.20
+  // Berlin × T-01 with 2 hard blockers rendered 79% confidence,
+  // basically identical to the NRW × T-01 baseline. The formula
+  // ignored blockers; the bauherr could not tell the project was at
+  // risk of being inadmissible. Each blocker now knocks 30% off the
+  // composite multiplicatively, with a 25% floor.
+  const blockerCount = countHardBlockers(state)
+  const total =
+    rawTotal > 0 && blockerCount > 0
+      ? Math.max(
+          CONFIDENCE_FLOOR,
+          Math.round(rawTotal * Math.pow(HARD_BLOCKER_PENALTY, blockerCount)),
+        )
+      : rawTotal
   return {
     total,
     factScore,
