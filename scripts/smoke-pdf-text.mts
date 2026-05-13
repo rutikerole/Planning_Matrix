@@ -613,6 +613,17 @@ async function runCrossStateBleed(): Promise<{ passed: number; failed: number }>
     const noSystemFlagMsg = `Berlin ${lang}: no "Outside Munich Acknowledged" system flag leak (Bug N)`
     if (noSystemFlag) { console.log(`  ✓ ${noSystemFlagMsg}`); passed++ }
     else { console.log(`  ✗ ${noSystemFlagMsg}`); failed++ }
+    // v1.0.23 Bug P — priority pill labels render their full text
+    // even when the title is long. We assert the full label string
+    // appears in the rendered PDF text (i.e. no truncation like
+    // "HOHE PRIORI" or "CO").
+    const fullPriorityRe = lang === 'en'
+      ? /HIGH PRIORITY|CONFIRM|RECOMMEND/u
+      : /HOHE PRIORITÄT|BESTÄTIGEN|EMPFEHLUNG/u
+    const fullPriorityHit = fullPriorityRe.test(text)
+    const fullPriorityMsg = `Berlin ${lang}: priority pill label renders without truncation (Bug P)`
+    if (fullPriorityHit) { console.log(`  ✓ ${fullPriorityMsg}`); passed++ }
+    else { console.log(`  ✗ ${fullPriorityMsg}`); failed++ }
     // v1.0.22 Bug I — Cost basis line uses honest baseline framing,
     // not the v1.0.20 "regional BKI factor (Berlin)" string that
     // promised a regional adjustment the formula does not apply.

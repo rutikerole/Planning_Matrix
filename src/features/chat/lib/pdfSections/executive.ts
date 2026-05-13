@@ -210,13 +210,36 @@ export function renderExecutiveBody(
       fonts.safe(rec.title),
       14,
     )
-    drawPriorityPill(
-      page,
-      titleX + titleWidth + 10,
-      cursor - 22,
-      priorityLabel,
-      { bg: pillBg, fg: pillFg, font: fonts.sansMedium, size: 10, safe: fonts.safe },
+    // v1.0.23 Bug P — same overflow-aware pill placement as
+    // recommendations.ts. Measure the pill, check against page right
+    // margin, wrap to a half-line below the title when it would
+    // otherwise overflow. Prevents "HOHE PRIORITÄT" / "CONFIRM"
+    // truncation observed on the v1.0.20 NRW + Berlin PDFs.
+    const pillTextWidth = fonts.sansMedium.widthOfTextAtSize(
+      fonts.safe(priorityLabel),
+      10,
     )
+    const pillTotalWidth = pillTextWidth + 16
+    const inlinePillX = titleX + titleWidth + 10
+    const pageRight = PAGE_WIDTH - MARGIN
+    const fitsInline = inlinePillX + pillTotalWidth <= pageRight
+    if (fitsInline) {
+      drawPriorityPill(
+        page,
+        inlinePillX,
+        cursor - 22,
+        priorityLabel,
+        { bg: pillBg, fg: pillFg, font: fonts.sansMedium, size: 10, safe: fonts.safe },
+      )
+    } else {
+      drawPriorityPill(
+        page,
+        titleX,
+        cursor - 40,
+        priorityLabel,
+        { bg: pillBg, fg: pillFg, font: fonts.sansMedium, size: 10, safe: fonts.safe },
+      )
+    }
 
     // Body wrapped
     const bodyEndY = drawWrappedText(

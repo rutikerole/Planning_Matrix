@@ -125,20 +125,56 @@ export function renderRecsBody(
       fonts.safe(rec.title),
       13,
     )
-    drawPriorityPill(
-      page,
-      titleX + titleWidth + 10,
-      cursor - 8,
-      pdfStr(strings, `prio.${rec.priority}`),
-      {
-        bg: PILL_BG_BY_PRIORITY[rec.priority],
-        fg: PILL_FG_BY_PRIORITY[rec.priority],
-        font: fonts.sansMedium,
-        size: 9,
-        safe: fonts.safe,
-      },
+    // v1.0.23 Bug P — pill width measurement + overflow wrap. v1.0.20
+    // pinned the pill at titleX + titleWidth + 10 and clipped when
+    // the combined width exceeded the page right margin — "HOHE
+    // PRIORITÄT" (DE) regularly overflowed the inner-text bounding
+    // box on long titles and rendered as "HOHE PRIORI" in the
+    // extracted text. v1.0.23 measures the pill text, checks for
+    // overflow against PAGE_WIDTH - MARGIN, and either pins inline
+    // (no overflow) or wraps the pill down a half-line so the full
+    // label always fits.
+    const priorityLabel = pdfStr(strings, `prio.${rec.priority}`)
+    const pillTextWidth = fonts.sansMedium.widthOfTextAtSize(
+      fonts.safe(priorityLabel),
+      9,
     )
-    const bodyEndY = drawWrappedText(page, titleX, cursor - 26, rec.body, {
+    const pillTotalWidth = pillTextWidth + 16
+    const inlinePillX = titleX + titleWidth + 10
+    const pageRight = PAGE_WIDTH - MARGIN
+    const fitsInline = inlinePillX + pillTotalWidth <= pageRight
+    let bodyOffsetY = 0
+    if (fitsInline) {
+      drawPriorityPill(
+        page,
+        inlinePillX,
+        cursor - 8,
+        priorityLabel,
+        {
+          bg: PILL_BG_BY_PRIORITY[rec.priority],
+          fg: PILL_FG_BY_PRIORITY[rec.priority],
+          font: fonts.sansMedium,
+          size: 9,
+          safe: fonts.safe,
+        },
+      )
+    } else {
+      drawPriorityPill(
+        page,
+        titleX,
+        cursor - 22,
+        priorityLabel,
+        {
+          bg: PILL_BG_BY_PRIORITY[rec.priority],
+          fg: PILL_FG_BY_PRIORITY[rec.priority],
+          font: fonts.sansMedium,
+          size: 9,
+          safe: fonts.safe,
+        },
+      )
+      bodyOffsetY = 18
+    }
+    const bodyEndY = drawWrappedText(page, titleX, cursor - 26 - bodyOffsetY, rec.body, {
       maxWidth: bodyMaxWidth,
       lineHeight: 14,
       font: fonts.sans,
