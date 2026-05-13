@@ -1,0 +1,39 @@
+{
+  "_comment": "v1.0.23 — Bayern × T-03 Sanierung fixture with AUTHORITY+VERIFIED qualifier on the bebauungsplan fact. Used by smoke-pdf-text to verify Bug J's coverage banner gating: the rendered cover must NOT show 'GÜLTIG 30 TAGE' on a verified project and MUST show the SUBMITTED / ARCHITECT-VERIFIED banner instead. Also used by Bug O glossary-state-aware test (BayBO / BLfD must appear) and Bug R DESIGNER-allowed regression guard (invitedDesigner is set, so DESIGNER source qualifiers are NOT downgraded).",
+  "project": {
+    "id": "by-fixture-verified",
+    "owner_id": "fixture-owner",
+    "intent": "sanierung",
+    "has_plot": true,
+    "plot_address": "Tengstraße 14, 80798 München",
+    "bundesland": "bayern",
+    "template_id": "T-03",
+    "name": "Sanierung Tengstraße",
+    "status": "active",
+    "invitedDesigner": "designer-uuid-fixture",
+    "state": {
+      "templateId": "T-03",
+      "facts": [
+        { "key": "bebauungsplan_id", "value": "B-Plan 1234/SCH", "qualifier": { "source": "AUTHORITY", "quality": "VERIFIED", "reason": "Vom Bauamt Schwabing bestätigt." } },
+        { "key": "denkmalschutz", "value": false, "qualifier": { "source": "LEGAL", "quality": "ASSUMED" } },
+        { "key": "eingriff_tragende_teile", "value": false, "qualifier": { "source": "CLIENT", "quality": "DECIDED" } },
+        { "key": "eingriff_aussenhuelle", "value": true, "qualifier": { "source": "CLIENT", "quality": "DECIDED" } },
+        { "key": "fassadenflaeche_m2", "value": 145, "qualifier": { "source": "DESIGNER", "quality": "DECIDED" } }
+      ],
+      "areas": {
+        "A": { "state": "ACTIVE", "reason": "Innenbereich nach § 34 BauGB. Bebauungsplan vom Bauamt bestätigt." },
+        "B": { "state": "ACTIVE", "reason": "Vereinfachtes Verfahren nach BayBO Art. 58." },
+        "C": { "state": "ACTIVE", "reason": "GEG 2024 Wärmeschutznachweis erforderlich." }
+      },
+      "recommendations": [],
+      "procedures": [],
+      "documents": [],
+      "specialists": [],
+      "roles": []
+    },
+    "created_at": "2026-04-01T10:00:00.000Z",
+    "updated_at": "2026-05-13T10:00:00.000Z"
+  },
+  "messages": [],
+  "events": []
+}

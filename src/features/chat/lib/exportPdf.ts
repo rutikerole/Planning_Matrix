@@ -1086,13 +1086,44 @@ export async function buildExportPdf({
   })
   // v1.0.18 Feature 4 — validity stamp. generatedAt + 30 days, per-
   // locale formatted ("11 June 2026" / "11. Juni 2026").
+  // v1.0.23 Bug J — gate the 30-day stamp on verification status.
+  // When any fact carries AUTHORITY+VERIFIED or ARCHITEKT+VERIFIED,
+  // or when project.status is submitted / approved, the cover shows
+  // the "architect-verified" / "submitted to Bauamt" banner instead.
+  // The 30-day "preliminary" framing reads as wrong on a project
+  // that has crossed the verification line.
+  const facts2 = state.facts ?? []
+  const hasAuthorityVerified = facts2.some(
+    (f) => f.qualifier?.source === 'AUTHORITY' && f.qualifier?.quality === 'VERIFIED',
+  )
+  // ARCHITEKT is a chat-time alias for DESIGNER (the canonical Source
+  // discriminant). Both spellings are accepted upstream; the Source
+  // type only enumerates the canonical 4-tuple.
+  const hasArchitektVerified = facts2.some(
+    (f) =>
+      f.qualifier?.source === 'DESIGNER' &&
+      f.qualifier?.quality === 'VERIFIED',
+  )
+  const projectStatus = (project as { status?: string }).status ?? 'active'
+  const isSubmitted = projectStatus === 'submitted' || projectStatus === 'approved'
+  let verifiedBannerLabel: string | undefined
+  if (hasAuthorityVerified || isSubmitted) {
+    verifiedBannerLabel = lang === 'en'
+      ? 'SUBMITTED · Bauamt confirmation on file'
+      : 'EINGEREICHT · Bauamt-Bestätigung liegt vor'
+  } else if (hasArchitektVerified) {
+    verifiedBannerLabel = lang === 'en'
+      ? 'ARCHITECT-VERIFIED · architect chamber signoff on file'
+      : 'ARCHITEKT-VERIFIZIERT · Architektenkammer-Signoff liegt vor'
+  }
   const validUntilDate = new Date()
   validUntilDate.setUTCDate(validUntilDate.getUTCDate() + 30)
   const validUntilLabel = formatCoverDate(validUntilDate.toISOString(), lang as PdfLang)
   renderCoverFooter(coverPage, editorialFonts, pdfStrings, {
     bauherrName,
     totalPages,
-    validUntilLabel,
+    validUntilLabel: verifiedBannerLabel ? undefined : validUntilLabel,
+    verifiedBannerLabel,
   })
   renderTocFooter(tocPage, editorialFonts, pdfStrings, {
     docNo,

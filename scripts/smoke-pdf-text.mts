@@ -695,6 +695,33 @@ async function runCrossStateBleed(): Promise<{ passed: number; failed: number }>
 // guard. Verifies the fire threshold + EN placeholder + DE passthrough
 // in one go so smoke-pdf-text guards against any future regression on
 // the rules without needing a full persona-output round-trip.
+// v1.0.23 Bug J — render the Bayern verified fixture and assert the
+// 30-day "GÜLTIG 30 TAGE" / "VALID FOR 30 DAYS" stamp is replaced by
+// the verification banner.
+async function runVerifiedBannerCheck(): Promise<{ passed: number; failed: number }> {
+  console.log(`\n[smoke-pdf-text] verified-project cover banner (Bug J)…`)
+  let passed = 0
+  let failed = 0
+  for (const lang of ['en', 'de'] as const) {
+    const bytes = await renderFixturePdf(lang, 'test/fixtures/bayern-t03-verified.json')
+    const text = await extractPdfText(bytes)
+    const verifiedRe = lang === 'en'
+      ? /ARCHITECT-VERIFIED|SUBMITTED · Bauamt/u
+      : /ARCHITEKT-VERIFIZIERT|EINGEREICHT · Bauamt/u
+    const verifiedHit = verifiedRe.test(text)
+    const verifiedMsg = `Bayern verified ${lang}: cover shows verification banner (Bug J)`
+    if (verifiedHit) { console.log(`  ✓ ${verifiedMsg}`); passed++ }
+    else { console.log(`  ✗ ${verifiedMsg}`); failed++ }
+    const no30 = lang === 'en'
+      ? !/VALID FOR 30 DAYS/u.test(text)
+      : !/GÜLTIG 30 TAGE/u.test(text)
+    const no30Msg = `Bayern verified ${lang}: no 30-day stamp on verified project (Bug J guard)`
+    if (no30) { console.log(`  ✓ ${no30Msg}`); passed++ }
+    else { console.log(`  ✗ ${no30Msg}`); failed++ }
+  }
+  return { passed, failed }
+}
+
 // v1.0.23 Bug N — unit-style tests for system-flag filter.
 async function runSystemFlagFilterUnit(): Promise<{ passed: number; failed: number }> {
   console.log(`\n[smoke-pdf-text] system-flag filter (Bug N)…`)
@@ -980,6 +1007,7 @@ async function main(): Promise<void> {
   const qualifierUnit = await runQualifierNormalizeUnit()
   const denominator = await runDenominatorUnit()
   const sysFlag = await runSystemFlagFilterUnit()
+  const verifiedBanner = await runVerifiedBannerCheck()
   const totalFailed =
     en.failed +
     de.failed +
@@ -988,7 +1016,8 @@ async function main(): Promise<void> {
     germanLeak.failed +
     qualifierUnit.failed +
     denominator.failed +
-    sysFlag.failed
+    sysFlag.failed +
+    verifiedBanner.failed
   const totalPassed =
     en.passed +
     de.passed +
@@ -997,7 +1026,8 @@ async function main(): Promise<void> {
     germanLeak.passed +
     qualifierUnit.passed +
     denominator.passed +
-    sysFlag.passed
+    sysFlag.passed +
+    verifiedBanner.passed
   console.log(`\n[smoke-pdf-text] ${totalPassed} passed · ${totalFailed} failed`)
   if (totalFailed > 0) {
     console.log('[smoke-pdf-text] FAIL — see violations above.')

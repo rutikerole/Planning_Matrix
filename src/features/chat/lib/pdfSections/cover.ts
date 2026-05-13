@@ -225,6 +225,12 @@ export function renderCoverFooter(
     totalPages: number
     /** v1.0.18 Feature 4 — pre-formatted expiry date in locale. */
     validUntilLabel?: string
+    /** v1.0.23 Bug J — when set, replaces the 30-day validity stamp
+     *  with a verification banner. Used when an architect / authority
+     *  signoff is present on the project (qualifier AUTHORITY+VERIFIED
+     *  or ARCHITEKT+VERIFIED) or when project.status is submitted /
+     *  approved. */
+    verifiedBannerLabel?: string
   },
 ): void {
   drawHairline(page, MARGIN, MARGIN + 28, PAGE_WIDTH - MARGIN, { color: CLAY })
@@ -268,17 +274,18 @@ export function renderCoverFooter(
   })
 
   // v1.0.18 Feature 4 — validity stamp below the preliminary line.
-  // Centered, same mono 10pt CLAY style. Substitutes {date} with the
-  // pre-formatted per-locale expiry from BuildArgs.
-  if (data.validUntilLabel) {
-    const validityRaw = pdfStr(strings, 'cover.validity.template')
-    const validityText = validityRaw.replace(/\{date\}/g, data.validUntilLabel)
-    const validityWidth = fonts.sans.widthOfTextAtSize(
-      fonts.safe(validityText),
-      9,
-    )
-    drawSafeText(page, validityText, {
-      x: (PAGE_WIDTH - validityWidth) / 2,
+  // v1.0.23 Bug J — gated on verification. When verifiedBannerLabel
+  // is set, the 30-day expiry stamp is replaced with the verification
+  // banner. The expiry stamp wouldn't make sense on a project where
+  // an architect or Bauamt has already signed off.
+  const bannerText = data.verifiedBannerLabel
+    ?? (data.validUntilLabel
+      ? pdfStr(strings, 'cover.validity.template').replace(/\{date\}/g, data.validUntilLabel)
+      : null)
+  if (bannerText) {
+    const bannerWidth = fonts.sans.widthOfTextAtSize(fonts.safe(bannerText), 9)
+    drawSafeText(page, bannerText, {
+      x: (PAGE_WIDTH - bannerWidth) / 2,
       y: MARGIN - 2,
       size: 9,
       font: fonts.sans,
