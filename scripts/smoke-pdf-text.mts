@@ -528,6 +528,36 @@ async function runCrossStateBleed(): Promise<{ passed: number; failed: number }>
     const blockerMsg = `Berlin ${lang}: Top-3 surfaces the word BLOCKER (Bug E)`
     if (blockerInTop3) { console.log(`  ✓ ${blockerMsg}`); passed++ }
     else { console.log(`  ✗ ${blockerMsg}`); failed++ }
+    // v1.0.22 Bug K — EN export must not surface German-verb content
+    // (persona-leak guard). The Berlin fixture's persona recommendations
+    // ship proper EN copy, so these tokens MUST NOT appear when
+    // lang === 'en'. On DE we expect them to appear naturally; the
+    // existing DE assertions reach that channel.
+    if (lang === 'en') {
+      const germanLeakTokens: Array<{ rx: RegExp; label: string }> = [
+        { rx: /\bfestgestellt\b/u, label: 'festgestellt (DE verb)' },
+        { rx: /\bbeschlossen\b/u, label: 'beschlossen (DE verb)' },
+        { rx: /\bidentifiziert\b/u, label: 'identifiziert (DE verb)' },
+        { rx: /\bdenkmalrechtliche\s+Erlaubnis\b/u, label: 'denkmalrechtliche Erlaubnis (DE phrase)' },
+      ]
+      for (const { rx, label } of germanLeakTokens) {
+        const hit = rx.test(text)
+        const msg = `Berlin en: no ${label} on EN export (Bug K)`
+        if (!hit) { console.log(`  ✓ ${msg}`); passed++ }
+        else {
+          const ctx = text.match(new RegExp(`.{0,40}${rx.source}.{0,40}`, 'u'))
+          console.log(`  ✗ ${msg} — context: "${ctx?.[0] ?? ''}"`)
+          failed++
+        }
+      }
+    } else {
+      // DE regression guard: confirm the DE PDF still has German
+      // morphology so we have not accidentally English-ified it.
+      const deRegression = /\berforderlich\b/u.test(text)
+      const msg = `Berlin de: DE export still carries German content (Bug K regression guard)`
+      if (deRegression) { console.log(`  ✓ ${msg}`); passed++ }
+      else { console.log(`  ✗ ${msg}`); failed++ }
+    }
     // v1.0.22 Bug F — Berlin fixture has hard blockers active, so
     // the Documents section must collapse to the "pending
     // Bauvoranfrage" placeholder rather than confidently enumerating
@@ -598,6 +628,52 @@ async function runCrossStateBleed(): Promise<{ passed: number; failed: number }>
 // MBO § 2 Abs. 3 logic directly. The end-to-end Berlin + NRW PDF
 // assertions in runLocale + runCrossStateBleed cover the rendering
 // integration.
+// v1.0.22 Bug K — unit-style assertion for the runtime German-leak
+// guard. Verifies the fire threshold + EN placeholder + DE passthrough
+// in one go so smoke-pdf-text guards against any future regression on
+// the rules without needing a full persona-output round-trip.
+async function runGermanLeakGuardUnit(): Promise<{ passed: number; failed: number }> {
+  console.log(`\n[smoke-pdf-text] German-leak guard (Bug K)…`)
+  const { sanitizeGermanContentOnEnglish } = await import('../src/legal/germanLeakGuard.ts')
+  let passed = 0
+  let failed = 0
+  const cases: Array<{ name: string; text: string; lang: 'en' | 'de'; expectPlaceholder: boolean }> = [
+    {
+      name: 'EN with 3 German content tokens → placeholder',
+      text: 'Zwei harte Blocker festgestellt — Voranfrage-Strategie beschlossen, Denkmalschutz identifiziert.',
+      lang: 'en',
+      expectPlaceholder: true,
+    },
+    {
+      name: 'EN with proper English content → passthrough',
+      text: 'Two hard blockers identified by the Bauamt; pre-decision recommended.',
+      lang: 'en',
+      expectPlaceholder: false,
+    },
+    {
+      name: 'DE with German content → passthrough (regression guard)',
+      text: 'Zwei harte Blocker festgestellt — Voranfrage erforderlich.',
+      lang: 'de',
+      expectPlaceholder: false,
+    },
+    {
+      name: 'EN with single legal anchor "Bauamt" → passthrough (no false-positive)',
+      text: 'Check with the local Bauamt before LP 3.',
+      lang: 'en',
+      expectPlaceholder: false,
+    },
+  ]
+  for (const c of cases) {
+    const result = sanitizeGermanContentOnEnglish(c.text, c.lang)
+    const isPlaceholder = /\(German content; English translation pending\)/.test(result)
+    const ok = c.expectPlaceholder ? isPlaceholder : !isPlaceholder
+    const msg = `${c.name}`
+    if (ok) { console.log(`  ✓ ${msg}`); passed++ }
+    else { console.log(`  ✗ ${msg} (got: ${JSON.stringify(result.slice(0, 60))})`); failed++ }
+  }
+  return { passed, failed }
+}
+
 async function runDeriveGkUnit(): Promise<{ passed: number; failed: number }> {
   console.log(`\n[smoke-pdf-text] Gebäudeklasse derivation (MBO § 2 Abs. 3)…`)
   const { deriveGebaeudeklasse } = await import('../src/legal/deriveGebaeudeklasse.ts')
@@ -684,8 +760,11 @@ async function main(): Promise<void> {
   const de = await runLocale('de')
   const bleed = await runCrossStateBleed()
   const gkUnit = await runDeriveGkUnit()
-  const totalFailed = en.failed + de.failed + bleed.failed + gkUnit.failed
-  const totalPassed = en.passed + de.passed + bleed.passed + gkUnit.passed
+  const germanLeak = await runGermanLeakGuardUnit()
+  const totalFailed =
+    en.failed + de.failed + bleed.failed + gkUnit.failed + germanLeak.failed
+  const totalPassed =
+    en.passed + de.passed + bleed.passed + gkUnit.passed + germanLeak.passed
   console.log(`\n[smoke-pdf-text] ${totalPassed} passed · ${totalFailed} failed`)
   if (totalFailed > 0) {
     console.log('[smoke-pdf-text] FAIL — see violations above.')

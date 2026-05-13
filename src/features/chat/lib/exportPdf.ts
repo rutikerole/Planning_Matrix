@@ -117,6 +117,7 @@ import {
 import { getStateLocalization } from '@/legal/stateLocalization'
 import { getStateCitations } from '@/legal/stateCitations'
 import { sanitizeCrossStateBleed } from '@/legal/crossStateBleedGuard'
+import { sanitizeGermanContentOnEnglish } from '@/legal/germanLeakGuard'
 import {
   deriveGebaeudeklasse,
   deriveGkInputFromFacts,
@@ -419,8 +420,17 @@ export async function buildExportPdf({
     executivePageNumber = doc.getPageCount()
     const topThree: ExecutiveRec[] = topThreeSources.map((src) => {
       if (src.kind === 'rec') {
-        const title = (lang === 'en' ? src.rec.title_en : src.rec.title_de) ?? ''
-        const body = (lang === 'en' ? src.rec.detail_en : src.rec.detail_de) ?? ''
+        // v1.0.22 Bug K — persona may emit German content in the _en
+        // field. Guard the rendered string so the EN PDF surfaces an
+        // honest placeholder rather than a confusing mixed-language line.
+        const title = sanitizeGermanContentOnEnglish(
+          (lang === 'en' ? src.rec.title_en : src.rec.title_de) ?? '',
+          lang,
+        )
+        const body = sanitizeGermanContentOnEnglish(
+          (lang === 'en' ? src.rec.detail_en : src.rec.detail_de) ?? '',
+          lang,
+        )
         return {
           title,
           body,
@@ -838,8 +848,15 @@ export async function buildExportPdf({
   })
   const recsRows: RecRow[] = [
     ...allRecs.map((r) => {
-      const title = (lang === 'en' ? r.title_en : r.title_de) ?? ''
-      const body = (lang === 'en' ? r.detail_en : r.detail_de) ?? ''
+      // v1.0.22 Bug K — same persona-leak guard as Top-3 above.
+      const title = sanitizeGermanContentOnEnglish(
+        (lang === 'en' ? r.title_en : r.title_de) ?? '',
+        lang,
+      )
+      const body = sanitizeGermanContentOnEnglish(
+        (lang === 'en' ? r.detail_en : r.detail_de) ?? '',
+        lang,
+      )
       return {
         title,
         body,
