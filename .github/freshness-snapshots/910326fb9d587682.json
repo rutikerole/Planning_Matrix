@@ -1,7 +1,7 @@
 {
   "url": "https://www.muenchen.info/plan/bebauungsplan/p_8362_1404a.pdf",
   "fingerprint": "7769b320dffc815de3cd0670c5aa29e95922b1434c89d3864e3aed67a079195a",
-  "lastChecked": "2026-05-10",
+  "lastChecked": "2026-05-17",
   "lastChanged": "2026-05-03",
   "statusHistory": [
     {
@@ -11,6 +11,10 @@
     {
       "status": "UNCHANGED",
       "date": "2026-05-10"
+    },
+    {
+      "status": "UNCHANGED",
+      "date": "2026-05-17"
     }
   ]
 }

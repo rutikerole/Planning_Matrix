@@ -1,7 +1,7 @@
 {
   "url": "https://www.muenchen.info/plan/bebauungsplan/t_8570_1781.pdf",
   "fingerprint": "a2517019c59ff961eb1826cff853a5a79869d9b59cc38015308c6f28766f5711",
-  "lastChecked": "2026-05-10",
+  "lastChecked": "2026-05-17",
   "lastChanged": "2026-05-03",
   "statusHistory": [
     {
@@ -11,6 +11,10 @@
     {
       "status": "UNCHANGED",
       "date": "2026-05-10"
+    },
+    {
+      "status": "UNCHANGED",
+      "date": "2026-05-17"
     }
   ]
 }

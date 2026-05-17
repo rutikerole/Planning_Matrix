@@ -1,7 +1,7 @@
 {
   "url": "https://www.muenchen.info/plan/bebauungsplan/t_7903_1065.pdf",
   "fingerprint": "7ae1667564cf1d38cc0d1ea846e3981e1f926b340f160055080431e76ef3e51c",
-  "lastChecked": "2026-05-10",
+  "lastChecked": "2026-05-17",
   "lastChanged": "2026-05-03",
   "statusHistory": [
     {
@@ -11,6 +11,10 @@
     {
       "status": "UNCHANGED",
       "date": "2026-05-10"
+    },
+    {
+      "status": "UNCHANGED",
+      "date": "2026-05-17"
     }
   ]
 }

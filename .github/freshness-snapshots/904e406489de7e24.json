@@ -1,7 +1,7 @@
 {
   "url": "https://www.muenchen.info/plan/bebauungsplan/t_6766_156.pdf",
   "fingerprint": "82a6c24882922badbeddd8eb0d78a76daf77125836362789375e49be44de7c31",
-  "lastChecked": "2026-05-10",
+  "lastChecked": "2026-05-17",
   "lastChanged": "2026-05-03",
   "statusHistory": [
     {
@@ -11,6 +11,10 @@
     {
       "status": "UNCHANGED",
       "date": "2026-05-10"
+    },
+    {
+      "status": "UNCHANGED",
+      "date": "2026-05-17"
     }
   ]
 }

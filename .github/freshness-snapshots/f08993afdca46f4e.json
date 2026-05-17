@@ -1,7 +1,7 @@
 {
   "url": "https://www.muenchen.info/plan/bebauungsplan/t_7634_343.pdf",
   "fingerprint": "490540a373f6be5d81d20150c94a3296b102cc371628ac444d5059b804a63f2d",
-  "lastChecked": "2026-05-10",
+  "lastChecked": "2026-05-17",
   "lastChanged": "2026-05-03",
   "statusHistory": [
     {
@@ -11,6 +11,10 @@
     {
       "status": "UNCHANGED",
       "date": "2026-05-10"
+    },
+    {
+      "status": "UNCHANGED",
+      "date": "2026-05-17"
     }
   ]
 }

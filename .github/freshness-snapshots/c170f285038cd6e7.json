@@ -1,7 +1,7 @@
 {
   "url": "https://www.bayernportal.de/dokumente/leistung/838645396458",
   "fingerprint": "ad475fe70f60f90498712920fdec1ea97440e5926c885350e8cb33e5379fef12",
-  "lastChecked": "2026-05-10",
+  "lastChecked": "2026-05-17",
   "lastChanged": "2026-05-10",
   "statusHistory": [
     {
@@ -15,6 +15,10 @@
     {
       "status": "CHANGED",
       "date": "2026-05-10"
+    },
+    {
+      "status": "UNCHANGED",
+      "date": "2026-05-17"
     }
   ]
 }

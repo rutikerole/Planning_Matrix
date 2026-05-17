@@ -1,8 +1,8 @@
 {
   "url": "https://www.bafa.de/DE/Energie/Energieberatung/Energieberatung_Wohngebaeude/energieberatung_wohngebaeude_node.html",
-  "fingerprint": "22cd46874fb580a05af1dd7fd4c94301d4409007223bb183ce67dcbfc1f33ca9",
-  "lastChecked": "2026-05-10",
-  "lastChanged": "2026-05-10",
+  "fingerprint": "bb323a2c62ce40ca4f3a3d69720683cb2bc21538e2d57b31b527af2ff9ca5feb",
+  "lastChecked": "2026-05-17",
+  "lastChanged": "2026-05-17",
   "statusHistory": [
     {
       "status": "UNCHANGED",
@@ -15,6 +15,10 @@
     {
       "status": "CHANGED",
       "date": "2026-05-10"
+    },
+    {
+      "status": "CHANGED",
+      "date": "2026-05-17"
     }
   ]
 }
