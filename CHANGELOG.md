@@ -1,5 +1,49 @@
 # Changelog
 
+## v1.0.26 — C11: 16-state PDF matrix + CI hardening (2026-05-24)
+
+Closes the deterministic-PDF-render coverage gap across all of Germany.
+Bug 26 (`§ 65 BauO {CODE}` citation fabrication) is now FULLY CLOSED across
+**all 16 Bundesländer**, not just the 2 stub states gated in v1.0.25.
+
+**Closed (verified — Bayern SHA MATCH every commit; build green; matrix 16/16):**
+- **Bug 11** — 16-state PDF smoke matrix. New `scripts/smoke-pdf-matrix.mts`
+  renders one plain-residential T-01 fixture per Bundesland + the canonical
+  `bayern-t03-verified` cell × DE/EN and asserts: no fabricated
+  `§ NN BauO {code}` citation (NRW carved out — its real code IS "BauO NRW"),
+  no Bayern-leak token in non-Bayern PDFs (BayBO/BLfD/Schwabing/München/…),
+  DE/EN section-header parity, no ligature corruption, a real §/Art. for the
+  5 substantive states, and honest "in Vorbereitung"/"being finalized" for
+  the 11 stubs. 16/16 green, both locales. States covered: bayern, nrw, bw,
+  hessen, niedersachsen (substantive); sachsen, brandenburg, thueringen,
+  sachsen-anhalt, rlp, saarland, sh, mv (Flächenland stubs); berlin, hamburg,
+  bremen (Stadtstaat stubs). 13 new fixtures authored; canonical slugs
+  verified (rlp/mv/sh — NOT the long forms — per `states/_types.ts:29-45`).
+- **Bug 48** — `verify:bayern-sha` wired into CI (`.github/workflows/test.yml`)
+  alongside `smoke:pdf-matrix` + `smoke:citations`. The P0 Bayern-SHA
+  invariant + 2 daily gates were manual-only; now CI-gated on every PR.
+- **Bug 26 (full closure)** — the v1.0.25 three-source fix (resolveProcedure
+  generic branch + Executive footer + structural cost-item, all driven off
+  `getStateLocalization`) is now proven by render on the 13 previously-
+  uncovered states. No source fabrication exists on the deterministic surface.
+
+The matrix run found **no source bug to fix** — the one issue surfaced was a
+harness false-positive (an overbroad proper-case "BauO {Land}" check colliding
+with the intentional Bug-O honest glossary term, `glossary.ts:119`), resolved
+in the harness, not source.
+
+**Deferred (honest — needs sourced data, no fabrication; see `docs/C11_DATA_GAPS.md`):**
+Bug 27 (München authority calendar on all states — generic label, not a brand
+leak; needs per-state calendars), Bug 35 / Bug I (state cost multiplier —
+honest baseline label shipped; needs sourced BKI), stub-state legal codes
+(generic "BauO {Land}" placeholders; need sourced §§), and the UI / data-
+bearing items (Bug 29 architect flow, Section XII / Vorhabensbeschreibung /
+KfW BEG 458).
+
+> **Verdict: full-Germany ship remains 🟡 not-GREEN.** v1.0.26 closes the
+> deterministic-render surface across all 16 states + hardens CI. The
+> legal-shield UI (Bug 29) and the data-bearing PDF sections remain open.
+
 ## v1.0.25 — Full-Germany Sprint (PARTIAL — deterministic-surface + schema tranche) (2026-05-24)
 
 Driven by docs/FULL_GERMANY_AUDIT.md + the five probe docs. This sprint

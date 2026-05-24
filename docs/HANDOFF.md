@@ -461,7 +461,33 @@ shipped in Phase 13 Week 4). What's missing is the cron harness
 
 ## 9. Operational responsibilities — split between engineering and client
 
-**v1.0.24 IS THE NEW PRODUCTION-READY RELEASE.** Root-Cause Closure
+**v1.0.26 (C11) IS THE CURRENT RELEASE.** The 16-state PDF smoke matrix
+(`scripts/smoke-pdf-matrix.mts`, CI-gated in `test.yml`) closes **Bug 11**
+(full-Germany PDF matrix) and **Bug 48** (`verify:bayern-sha` now a CI step,
+alongside `smoke:pdf-matrix` + `smoke:citations`). **Bug 26**
+(`§ 65 BauO {CODE}` fabrication) is FULLY CLOSED across all 16 Bundesländer —
+the v1.0.25 three-source fix is proven by render on the 13 previously-
+uncovered states (16/16 green, DE+EN). Bayern SHA `b18d3f7f...3471` held
+across all C11 commits.
+
+Still open (honest — surfaces the matrix cannot gate without sourced data;
+see `docs/C11_DATA_GAPS.md`):
+- **Bug 27** — München authority calendar applied to all states (generic
+  "Bauamt" label, not a brand leak; needs sourced per-state calendars · "C5").
+- **Bug 29** — architect verification flow unreachable in the UI ("C7/C8").
+- **Bug 35 / Bug I** — state cost multiplier; honest baseline label already
+  shipped; needs sourced BKI factors.
+- **Section XII Risk Register / Vorhabensbeschreibung / KfW BEG 458** —
+  data-bearing PDF sections; need sourced legal/financial data ("C9").
+- Bug 30 / 31 / 32 / 34 / 37 / 38 / 51 per `docs/FULL_GERMANY_AUDIT.md`.
+
+v1.0.25 (partial) shipped the deterministic-surface + schema tranche; v1.0.26
+closes the deterministic-render matrix gap + CI hardening. **Full-Germany ship
+remains 🟡 not-GREEN.**
+
+---
+
+**v1.0.24** (prior release) — Root-Cause Closure
 Sprint promotes 4 of the 5 v1.0.22/23 follow-up items from BACKLOG
 into root-cause fixes: Bug Q write-time gate extension
 (CLIENT/USER/BAUHERR+VERIFIED now blocked at chat-turn boundary,

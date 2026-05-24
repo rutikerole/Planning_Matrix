@@ -21,6 +21,20 @@ Sprint anchor reminder:
   `b18d3f7f9a6fe238c18cec5361d30ea3a547e46b1ef2b16a1e74c533aacb3471`
   must MATCH at start AND end of every commit in any future sprint.
 
+## Closed in v1.0.26 (C11)
+
+- **Bug 11 — 16-state PDF matrix** — CLOSED. `scripts/smoke-pdf-matrix.mts`
+  renders all 16 Bundesländer × DE/EN and gates fabrication + Bayern-leak +
+  DE/EN parity + ligatures; wired into CI. 16/16 green.
+- **Bug 48 — `verify:bayern-sha` into CI** — CLOSED. Now a CI step in
+  `.github/workflows/test.yml` (+ `smoke:pdf-matrix` + `smoke:citations`).
+- **Bug 26 — `§ 65 BauO {CODE}` fabrication** — FULLY CLOSED across all 16
+  states (v1.0.25 fixed the 3 render sources; v1.0.26 proves it by render).
+
+Still-open data gaps consciously NOT gated (need sourced data — see
+`docs/C11_DATA_GAPS.md`): Bug 27 (München calendar), Bug 35 / Bug I (cost
+multiplier), stub-state legal codes (generic "BauO {Land}" placeholders).
+
 ## Features
 
 ### Vorhabensbeschreibung — formal project description (v1.0.20 backlog)
