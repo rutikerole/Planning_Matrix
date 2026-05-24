@@ -22,6 +22,12 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      # v1.0.26 (C11 · audit Bug 48) — the Bayern composeLegalContext SHA is a
+      # P0 invariant (runbook-classified) but was NOT gated in CI. Run it
+      # BEFORE the build so any drift fails fast and cheap.
+      - name: Bayern SHA invariant
+        run: npm run verify:bayern-sha
+
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium webkit
 
@@ -41,6 +47,18 @@ jobs:
       # fabricated "§ NN BauO {UPPERCASE}" stub-state citations.
       - name: PDF smoke (render + Bug 26 fabrication guard)
         run: npm run smoke:pdf-text
+
+      # v1.0.26 (C11) — 16-state PDF render matrix. Renders one plain-residential
+      # T-01 per Bundesland + bayern-t03-verified × DE/EN and asserts no
+      # fabricated "§ NN BauO {code}" citation, no Bayern-leak token in
+      # non-Bayern PDFs, DE/EN parity, no ligature corruption, real §/Art. for
+      # substantive states, honest "in Vorbereitung" for stubs.
+      - name: PDF matrix (16-state · C11)
+        run: npm run smoke:pdf-matrix
+
+      # v1.0.26 (audit Band 11) — citation/source smoke; was manual-only.
+      - name: Citations smoke
+        run: npm run smoke:citations
 
       - name: Run Playwright
         run: npx playwright test
