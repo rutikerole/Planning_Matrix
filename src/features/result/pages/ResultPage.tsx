@@ -3,6 +3,7 @@ import { SEO } from '@/components/SEO'
 import { useProject } from '@/features/chat/hooks/useProject'
 import { useMessages } from '@/features/chat/hooks/useMessages'
 import { useProjectEvents } from '@/features/chat/hooks/useProjectEvents'
+import { useVerificationReactivity } from '../hooks/useVerificationReactivity'
 import type { MessageRow, ProjectRow } from '@/types/db'
 import { ResultWorkspace, type ResultSource } from '../components/ResultWorkspace'
 
@@ -37,6 +38,9 @@ export function ResultPage() {
   const { data: project } = useProject(projectId)
   const { data: messages } = useMessages(projectId)
   const { data: events } = useProjectEvents(projectId)
+  // C8 (Bug 32) — react to architect verification (owner mode only;
+  // SharedResultPage is a separate component and never mounts this).
+  useVerificationReactivity(projectId)
 
   if (!project) return null
 
