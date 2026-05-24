@@ -248,7 +248,22 @@ export function renderCoverFooter(
   )
   const pageWidth = fonts.sans.widthOfTextAtSize(fonts.safe(pageText), 10)
 
-  drawSafeText(page, bauherrText, {
+  // v1.0.28 Bug 59 — clamp a long Bauherr name so it doesn't overlap the
+  // centered "PRELIMINARY" footer cell (the footer is a 3-cell row;
+  // "BAUHERR · Rutik gorakshanath Erole" collided with the centre text).
+  const bauherrMaxWidth = (PAGE_WIDTH - preliminaryWidth) / 2 - MARGIN - 12
+  let bauherrClamped = bauherrText
+  if (fonts.sans.widthOfTextAtSize(fonts.safe(bauherrClamped), 10) > bauherrMaxWidth) {
+    while (
+      bauherrClamped.length > 1 &&
+      fonts.sans.widthOfTextAtSize(fonts.safe(`${bauherrClamped}…`), 10) > bauherrMaxWidth
+    ) {
+      bauherrClamped = bauherrClamped.slice(0, -1)
+    }
+    bauherrClamped = `${bauherrClamped.trimEnd()}…`
+  }
+
+  drawSafeText(page, bauherrClamped, {
     x: MARGIN,
     y: MARGIN + 14,
     size: 10,

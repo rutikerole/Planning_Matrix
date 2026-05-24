@@ -577,10 +577,19 @@ export async function buildExportPdf({
             pdfStrings,
           )
           const citations = getStateCitations(project.bundesland)
+          // v1.0.28 Bug 61 — resolve the archive city from the PROJECT
+          // address (e.g. "…, 53111 Bonn" → "Bonn"), falling back to the
+          // state-default archive city only when the address has no city.
+          // Pre-fix this hardcoded "Stadtarchiv Düsseldorf" on every NRW
+          // project regardless of the actual municipality.
+          const cityFromAddress = (project.plot_address ?? '')
+            .match(/\b\d{5}\s+([A-Za-zÄÖÜäöüß][A-Za-zÄÖÜäöüß .\-/]*?)\s*$/u)?.[1]
+            ?.trim()
+          const archivCity = cityFromAddress || citations.archivCity
           const caveat =
             lang === 'en'
-              ? `Verify specific Bebauungsplan and Gestaltungssatzung with Stadtarchiv ${citations.archivCity} — confirm any Erhaltungs- or Gestaltungssatzung that applies at the parcel. ${assumedLabel} until verified.`
-              : `Konkreten Bebauungsplan und Gestaltungssatzung mit Stadtarchiv ${citations.archivCity} abklären — etwaige Erhaltungs- oder Gestaltungssatzung für das Grundstück prüfen. ${assumedLabel} bis verifiziert.`
+              ? `Verify specific Bebauungsplan and Gestaltungssatzung with Stadtarchiv ${archivCity} — confirm any Erhaltungs- or Gestaltungssatzung that applies at the parcel. ${assumedLabel} until verified.`
+              : `Konkreten Bebauungsplan und Gestaltungssatzung mit Stadtarchiv ${archivCity} abklären — etwaige Erhaltungs- oder Gestaltungssatzung für das Grundstück prüfen. ${assumedLabel} bis verifiziert.`
           // v1.0.20 — \n\n paragraph break so the caveat renders as
           // its own block instead of an inline continuation.
           const reason = a.reason ? `${a.reason}\n\n${caveat}` : caveat
