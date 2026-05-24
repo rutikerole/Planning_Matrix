@@ -20,6 +20,7 @@ import {
   type ArchitectInviteErrorCode,
 } from '../src/features/result/lib/architectInviteApi.ts'
 import { computeVerificationRollup } from '../src/features/result/lib/verificationRollup.ts'
+import { erodeVerificationOnEdit } from '../src/lib/projectStateHelpers.ts'
 
 interface Tally {
   passed: number
@@ -193,8 +194,56 @@ function runRollup(): Tally {
   return t
 }
 
+function runErosion(): Tally {
+  console.log('\n[smoke-architect] erodeVerificationOnEdit (Commit 7 / Bug 32 erosion)…')
+  const t: Tally = { passed: 0, failed: 0 }
+  const verified = {
+    source: 'DESIGNER',
+    quality: 'VERIFIED',
+    setAt: '2026-05-20T00:00:00.000Z',
+    setBy: 'user',
+  }
+  const fact = (value: unknown, qualifier: unknown) =>
+    ({ key: 'plot.hoehe_m', value, qualifier }) as never
+
+  // Verified + value CHANGED → downgrade to DESIGNER+ASSUMED + reason.
+  const changed = erodeVerificationOnEdit(
+    fact(6, verified),
+    fact(9, { source: 'CLIENT', quality: 'DECIDED', setAt: 'x', setBy: 'assistant' }),
+  )
+  ok(t, changed.qualifier?.source === 'DESIGNER', 'changed value → source stays DESIGNER')
+  ok(t, changed.qualifier?.quality === 'ASSUMED', 'changed value → quality downgraded to ASSUMED')
+  ok(
+    t,
+    changed.qualifier?.reason === 'owner edited after verification, re-verification required',
+    'changed value → re-verification reason set',
+  )
+  ok(t, changed.value === 9, 'changed value → new value kept')
+
+  // Verified + SAME value → verification PRESERVED (not eroded by incoming).
+  const same = erodeVerificationOnEdit(
+    fact(6, verified),
+    fact(6, { source: 'CLIENT', quality: 'DECIDED', setAt: 'x', setBy: 'assistant' }),
+  )
+  ok(t, same.qualifier?.quality === 'VERIFIED', 'same value → verification preserved')
+  ok(t, same.qualifier?.source === 'DESIGNER', 'same value → source preserved DESIGNER')
+
+  // Not verified (LEGAL+ASSUMED) + changed value → incoming passes through.
+  const notVerified = erodeVerificationOnEdit(
+    fact(6, { source: 'LEGAL', quality: 'ASSUMED', setAt: 'x', setBy: 'assistant' }),
+    fact(9, { source: 'CLIENT', quality: 'DECIDED', setAt: 'x', setBy: 'assistant' }),
+  )
+  ok(
+    t,
+    notVerified.qualifier?.source === 'CLIENT' && notVerified.qualifier?.quality === 'DECIDED',
+    'non-verified existing → incoming qualifier untouched',
+  )
+
+  return t
+}
+
 function main(): void {
-  const sections: Tally[] = [runInviteParse(), runRollup()]
+  const sections: Tally[] = [runInviteParse(), runRollup(), runErosion()]
   const passed = sections.reduce((n, s) => n + s.passed, 0)
   const failed = sections.reduce((n, s) => n + s.failed, 0)
   console.log(`\n[smoke-architect] ${passed} passed · ${failed} failed`)

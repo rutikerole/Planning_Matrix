@@ -336,6 +336,41 @@ export function appendQuestionAsked(
 
 // ── Facts ──────────────────────────────────────────────────────────────
 
+/**
+ * C8 (Bug 32, erosion half) — when an owner edit changes the VALUE of a
+ * fact an architect had verified, the DESIGNER+VERIFIED qualifier must NOT
+ * silently ride along on the new value (stale verification). Downgrade to
+ * DESIGNER+ASSUMED + an explicit re-verification reason so the owner footer
+ * reverts to "Vorläufig" and the item re-surfaces for the architect.
+ *
+ * Server-side defense in depth: applyExtractedFacts runs inside the
+ * chat-turn write path (the Edge Function pipes deltas through this pure
+ * module), so an owner cannot bypass the downgrade via a direct write.
+ * Only erodes on an actual value change — a re-write of the SAME value
+ * preserves the verification.
+ */
+export function erodeVerificationOnEdit(existing: Fact, incoming: Fact): Fact {
+  const wasVerified =
+    existing.qualifier?.source === 'DESIGNER' &&
+    existing.qualifier?.quality === 'VERIFIED'
+  if (!wasVerified) return incoming
+  const valueChanged =
+    JSON.stringify(existing.value) !== JSON.stringify(incoming.value)
+  // Same value re-written → the architect verified THIS value; preserve it
+  // rather than letting the incoming (e.g. CLIENT) qualifier erode it.
+  if (!valueChanged) return { ...incoming, qualifier: existing.qualifier }
+  return {
+    ...incoming,
+    qualifier: {
+      source: 'DESIGNER',
+      quality: 'ASSUMED',
+      setAt: incoming.qualifier?.setAt ?? new Date().toISOString(),
+      setBy: incoming.qualifier?.setBy ?? 'assistant',
+      reason: 'owner edited after verification, re-verification required',
+    },
+  }
+}
+
 export function applyExtractedFacts(
   state: ProjectState,
   deltas: RespondToolInput['extracted_facts'] | undefined,
@@ -357,7 +392,9 @@ export function applyExtractedFacts(
       ...(d.evidence ? { evidence: d.evidence } : {}),
     }
     const idx = facts.findIndex((f) => f.key === d.key)
-    if (idx >= 0) facts[idx] = fact
+    // C8 (Bug 32, erosion half) — preserve-or-downgrade an architect's
+    // verification when the owner's edit changes the value.
+    if (idx >= 0) facts[idx] = erodeVerificationOnEdit(facts[idx], fact)
     else facts.push(fact)
   }
   return { ...state, facts }
