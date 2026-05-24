@@ -23,6 +23,7 @@ import { computeVerificationRollup } from '../src/features/result/lib/verificati
 import { erodeVerificationOnEdit } from '../src/lib/projectStateHelpers.ts'
 import { composeLegalDomains } from '../src/features/result/lib/composeLegalDomains.ts'
 import { composeRisks } from '../src/features/result/lib/composeRisks.ts'
+import { composeDoNext } from '../src/features/result/lib/composeDoNext.ts'
 import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'node:path'
@@ -321,6 +322,43 @@ function runRisks(): Tally {
   return t
 }
 
+function runDoNext(): Tally {
+  console.log('\n[smoke-architect] composeDoNext template-aware baseline (Commit 8 / Bug 56)…')
+  const t: Tally = { passed: 0, failed: 0 }
+  const titlesFor = (file: string, lang: 'de' | 'en') => {
+    const fx = JSON.parse(readFileSync(join(REPO_ROOT, file), 'utf-8'))
+    return composeDoNext({ project: fx.project, state: fx.project.state, lang, limit: 5 }).map(
+      (d) => d.title,
+    )
+  }
+  for (const lang of ['de', 'en'] as const) {
+    const t05 = titlesFor('test/fixtures/nrw-t05-bonn-verfahrensfrei.json', lang)
+    ok(
+      t,
+      t05.some((x) => /hazardous-materials survey|Schadstoffgutachten/i.test(x)),
+      `T-05 ${lang}: Do-Next leads with Schadstoffgutachten`,
+    )
+    ok(
+      t,
+      t05.some((x) => /demolition contractor|Abbruchunternehmen/i.test(x)),
+      `T-05 ${lang}: Do-Next includes demolition contractor`,
+    )
+    ok(
+      t,
+      !t05.some((x) => /scope the procedure|Verfahrenswahl binden/i.test(x)),
+      `T-05 ${lang}: Do-Next does NOT show the generic "engage architect to scope"`,
+    )
+  }
+  // T-01 neubau regression — baseline still leads with Bebauungsplan.
+  const t01 = titlesFor('test/fixtures/nrw-t01-duesseldorf-plain.json', 'en')
+  ok(
+    t,
+    t01.some((x) => /Bebauungsplan/i.test(x)),
+    'T-01 neubau: Do-Next still surfaces the Bebauungsplan baseline (no regression)',
+  )
+  return t
+}
+
 function main(): void {
   const sections: Tally[] = [
     runInviteParse(),
@@ -328,6 +366,7 @@ function main(): void {
     runErosion(),
     runLegalDomains(),
     runRisks(),
+    runDoNext(),
   ]
   const passed = sections.reduce((n, s) => n + s.passed, 0)
   const failed = sections.reduce((n, s) => n + s.failed, 0)

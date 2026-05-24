@@ -203,7 +203,51 @@ function baselineFor(project: ProjectRow, lang: 'de' | 'en'): BaselineStep[] {
         ]
   }
 
-  // demolition + sonstige fall through
+  // v1.0.28 Bug 56 — demolition got the generic "engage architect / pre-
+  // meeting Bauamt" steps, which are wrong for a verfahrensfrei Abbruch (no
+  // Bauantrag). Deterministic template-default next-steps: survey →
+  // contractor → confirm. (Bug 63: state.recommendations is empty because the
+  // persona doesn't emit recommendations_delta — flagged for v1.0.29; this
+  // deterministic baseline is the v1.0.28 mitigation for the Do-Next card.)
+  if (intent === 'abbruch') {
+    return lang === 'en'
+      ? [
+          {
+            id: 'schadstoff',
+            title: 'Commission a hazardous-materials survey',
+            detail: 'A Schadstoffkataster (GefStoffV) for asbestos/KMF/PCB drives the disposal scope + budget — do this first.',
+          },
+          {
+            id: 'contractor',
+            title: 'Engage a licensed demolition contractor',
+            detail: 'A qualified contractor executes under the survey findings + the KrWG §§ 7/8 disposal concept.',
+          },
+          {
+            id: 'confirm',
+            title: 'Confirm permit-free status with the building authority',
+            detail: 'A short confirmation with the lower building authority (and a chamber-registered architect) secures the verfahrensfrei verdict before work begins.',
+          },
+        ]
+      : [
+          {
+            id: 'schadstoff',
+            title: 'Schadstoffgutachten beauftragen',
+            detail: 'Ein Schadstoffkataster (GefStoffV) für Asbest/KMF/PCB bestimmt Entsorgungsumfang + Budget — zuerst erledigen.',
+          },
+          {
+            id: 'contractor',
+            title: 'Zugelassenes Abbruchunternehmen beauftragen',
+            detail: 'Das Unternehmen führt nach Gutachten + Entsorgungskonzept (KrWG §§ 7/8) aus.',
+          },
+          {
+            id: 'confirm',
+            title: 'Verfahrensfreiheit mit der Bauaufsicht bestätigen',
+            detail: 'Kurze Bestätigung bei der unteren Bauaufsichtsbehörde (ggf. mit kammereingetragener Architekt:in) vor Arbeitsbeginn.',
+          },
+        ]
+  }
+
+  // sonstige fall through
   return lang === 'en'
     ? [
         {
