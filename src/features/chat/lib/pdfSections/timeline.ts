@@ -56,6 +56,12 @@ export interface TimelineData {
   totalWeeks: number
   /** Approval-milestone week (e.g. 22). */
   milestoneWeek: number
+  /** v1.0.28 Bug 58 — optional pdfStrings key overrides so a
+   *  verfahrensfrei Abbruch (no Bauamt review cycle) can render its own
+   *  subtitle + completion milestone instead of the Bauantrag defaults. */
+  subKey?: string
+  milestoneLabelKey?: string
+  milestoneDetailKey?: string
 }
 
 export interface TimelineFooterData {
@@ -99,6 +105,36 @@ export const DEFAULT_TIMELINE_PHASES: ReadonlyArray<TimelinePhase> = [
   },
 ]
 
+// v1.0.28 Bug 58 — verfahrensfrei Abbruch (demolition) phase set. NO Bauamt
+// submission/review/corrections cycle — the work is survey → procurement →
+// demolition. Used when procedureDecision.kind === 'verfahrensfrei' for an
+// abbruch project (exportPdf gates it).
+export const VERFAHRENSFREI_DEMOLITION_PHASES: ReadonlyArray<TimelinePhase> = [
+  {
+    labelKey: 'timeline.demo.survey',
+    durationKey: 'timeline.demo.survey.duration',
+    startWeek: 0,
+    endWeek: 4,
+    kind: 'work',
+  },
+  {
+    labelKey: 'timeline.demo.procure',
+    durationKey: 'timeline.demo.procure.duration',
+    startWeek: 2,
+    endWeek: 6,
+    kind: 'work',
+  },
+  {
+    labelKey: 'timeline.demo.demolish',
+    durationKey: 'timeline.demo.demolish.duration',
+    startWeek: 6,
+    endWeek: 9,
+    kind: 'work',
+  },
+]
+export const DEMOLITION_TOTAL_WEEKS = 10
+export const DEMOLITION_MILESTONE_WEEK = 9
+
 export const DEFAULT_TIMELINE_TOTAL_WEEKS = 24
 export const DEFAULT_TIMELINE_MILESTONE_WEEK = 22
 
@@ -127,7 +163,7 @@ export function renderTimelineBody(
   })
 
   // ─── Subtitle ───────────────────────────────────────────────────
-  drawSafeText(page, pdfStr(strings, 'timeline.sub'), {
+  drawSafeText(page, pdfStr(strings, data.subKey ?? 'timeline.sub'), {
     x: MARGIN,
     y: headerY - 56,
     size: 11,
@@ -175,8 +211,8 @@ export function renderTimelineBody(
     x: rulerX,
     y: cursor - 12,
     width: rulerWidth,
-    label: pdfStr(strings, 'timeline.milestone'),
-    detail: pdfStr(strings, 'timeline.milestone.detail'),
+    label: pdfStr(strings, data.milestoneLabelKey ?? 'timeline.milestone'),
+    detail: pdfStr(strings, data.milestoneDetailKey ?? 'timeline.milestone.detail'),
     fonts,
   })
 }

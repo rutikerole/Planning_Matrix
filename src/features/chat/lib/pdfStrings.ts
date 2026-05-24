@@ -149,6 +149,18 @@ const EN: PdfStrings = {
   'timeline.milestone': 'Approval milestone',
   'timeline.milestone.detail':
     '— Baugenehmigung issued at end of week ≈ 22',
+  // v1.0.28 Bug 58 — verfahrensfrei demolition timeline (no Bauamt cycle).
+  'timeline.demo.sub':
+    'Total duration ~ 5–10 weeks · verfahrensfrei (no Bauamt review cycle)',
+  'timeline.demo.survey': 'Hazardous-materials survey',
+  'timeline.demo.survey.duration': '2–4 weeks',
+  'timeline.demo.procure': 'Contractor procurement',
+  'timeline.demo.procure.duration': '2–4 weeks',
+  'timeline.demo.demolish': 'Demolition + disposal',
+  'timeline.demo.demolish.duration': '1–2 weeks',
+  'timeline.demo.milestone': 'Completion milestone',
+  'timeline.demo.milestone.detail':
+    '— demolition complete around week ≈ 9 · no Baugenehmigung required (verfahrensfrei)',
 
   // ─── v1.0.17 Renaissance Part 3 — Recommendations ─────────────
   'recs.kicker': 'SECTION 08 · RECOMMENDATIONS',
@@ -345,6 +357,18 @@ const DE: PdfStrings = {
   'timeline.milestone': 'Genehmigungs-Meilenstein',
   'timeline.milestone.detail':
     '— Baugenehmigung erteilt zum Ende von Woche ≈ 22',
+  // v1.0.28 Bug 58 — verfahrensfreier Abbruch (kein Bauamt-Zyklus).
+  'timeline.demo.sub':
+    'Gesamtdauer ~ 5–10 Wochen · verfahrensfrei (keine Bauamt-Prüfung)',
+  'timeline.demo.survey': 'Schadstoffgutachten',
+  'timeline.demo.survey.duration': '2–4 Wochen',
+  'timeline.demo.procure': 'Beauftragung Abbruchunternehmen',
+  'timeline.demo.procure.duration': '2–4 Wochen',
+  'timeline.demo.demolish': 'Abbruch + Entsorgung',
+  'timeline.demo.demolish.duration': '1–2 Wochen',
+  'timeline.demo.milestone': 'Abschluss-Meilenstein',
+  'timeline.demo.milestone.detail':
+    '— Abbruch abgeschlossen etwa in Woche ≈ 9 · keine Baugenehmigung erforderlich (verfahrensfrei)',
 
   // ─── v1.0.17 Renaissance Part 3 — Recommendations ─────────────
   'recs.kicker': 'ABSCHNITT 08 · EMPFEHLUNGEN',

@@ -76,6 +76,9 @@ import {
   DEFAULT_TIMELINE_MILESTONE_WEEK,
   DEFAULT_TIMELINE_PHASES,
   DEFAULT_TIMELINE_TOTAL_WEEKS,
+  DEMOLITION_MILESTONE_WEEK,
+  DEMOLITION_TOTAL_WEEKS,
+  VERFAHRENSFREI_DEMOLITION_PHASES,
   renderTimelineBody,
   renderTimelineFooter,
 } from './pdfSections/timeline'
@@ -723,13 +726,35 @@ export async function buildExportPdf({
   // (T-03 schedule); per-template parameterization is v1.0.17+.
   const timelinePage = doc.addPage([PDF_PAGE_WIDTH, PDF_PAGE_HEIGHT])
   const timelinePageNumber = doc.getPageCount()
-  renderTimelineBody(timelinePage, editorialFonts, pdfStrings, {
-    templateLabel,
-    bundeslandCode: bundeslandCodeUpper,
-    phases: DEFAULT_TIMELINE_PHASES,
-    totalWeeks: DEFAULT_TIMELINE_TOTAL_WEEKS,
-    milestoneWeek: DEFAULT_TIMELINE_MILESTONE_WEEK,
-  })
+  // v1.0.28 Bug 58 — a verfahrensfrei Abbruch has NO Bauamt submission/
+  // review/corrections cycle; the Bauantrag Gantt (+ "Baugenehmigung issued"
+  // milestone) is wrong for it. Render the demolition phase set
+  // (survey → procurement → demolition, ~5-10 wks) instead.
+  const isVerfahrensfreiDemolition =
+    isDemolition && procedureDecision.kind === 'verfahrensfrei'
+  renderTimelineBody(
+    timelinePage,
+    editorialFonts,
+    pdfStrings,
+    isVerfahrensfreiDemolition
+      ? {
+          templateLabel,
+          bundeslandCode: bundeslandCodeUpper,
+          phases: VERFAHRENSFREI_DEMOLITION_PHASES,
+          totalWeeks: DEMOLITION_TOTAL_WEEKS,
+          milestoneWeek: DEMOLITION_MILESTONE_WEEK,
+          subKey: 'timeline.demo.sub',
+          milestoneLabelKey: 'timeline.demo.milestone',
+          milestoneDetailKey: 'timeline.demo.milestone.detail',
+        }
+      : {
+          templateLabel,
+          bundeslandCode: bundeslandCodeUpper,
+          phases: DEFAULT_TIMELINE_PHASES,
+          totalWeeks: DEFAULT_TIMELINE_TOTAL_WEEKS,
+          milestoneWeek: DEFAULT_TIMELINE_MILESTONE_WEEK,
+        },
+  )
 
   // ── Schedule sections ──────────────────────────────────────────
   // Phase 8.5 (A.3): read through the resolve* helpers so PDF + result
