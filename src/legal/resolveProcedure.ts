@@ -31,6 +31,7 @@
 
 import type { BundeslandCode } from './states/_types'
 import type { TemplateId } from '@/types/projectState'
+import { getStateLocalization } from './stateLocalization'
 
 export type ProcedureKind =
   | 'verfahrensfrei' // § 62/61 BauO — no permit needed
@@ -288,22 +289,43 @@ export function resolveProcedure(c: ProcedureCase): ProcedureDecision {
       ],
     }
   }
-  // Generic stub for unmigrated states/intents.
+  // Generic branch for unmigrated states/intents.
+  //
+  // v1.0.25 Bug 26 fix — was `§ 65 BauO ${c.bundesland.toUpperCase()}`,
+  // which fabricated non-existent citations for every stub state
+  // ("§ 65 BauO SACHSEN", "§ 65 BauO BERLIN", …) and shipped them to
+  // the PDF Areas-B body, Procedure card, and Key-Data row. Now drives
+  // the citation off getStateLocalization — the SAME source the result
+  // tab's deriveBaselineProcedure.ts:57-68 already uses — so the PDF
+  // and tab resolvers converge:
+  //   • substantive states (NRW/BW/Hessen/Niedersachsen) → real
+  //     regular-permit § from the localization pack;
+  //   • stub states (empty pack citation) → honest "Detail-Spezifika
+  //     in Vorbereitung" framing, NEVER a fabricated §.
+  // Bayern never reaches this branch (it resolves via detectProcedure
+  // in costNormsMuenchen.ts), so the Bayern SHA is untouched.
+  const loc = getStateLocalization(c.bundesland)
+  const reg = loc.procedure.regular
+  const hasCitation = reg.citation.trim().length > 0
   return {
     kind: 'standard',
-    citation: `§ 65 BauO ${c.bundesland.toUpperCase()}`,
-    reasoning_de:
-      'Verfahrensart vorbehaltlich detaillierter staatlicher Anwendungsregeln; reguläres Verfahren als Ausgangspunkt.',
-    reasoning_en:
-      'Procedure subject to detailed state-specific application rules; standard permit as starting point.',
+    citation: hasCitation
+      ? reg.citation
+      : `${reg.nameDe} — landesrechtliche Detail-Spezifika in Vorbereitung`,
+    reasoning_de: hasCitation
+      ? `Reguläres Baugenehmigungsverfahren (${reg.nameDe}, ${reg.citation}) als Ausgangspunkt; konkrete Verfahrensart mit dem lokalen Bauamt bestätigen.`
+      : `Verfahrensart für ${loc.labelDe} vorbehaltlich landesrechtlicher Detail-Spezifika (in Vorbereitung) — bitte mit dem lokalen Bauamt klären.`,
+    reasoning_en: hasCitation
+      ? `Standard building permit (${reg.nameEn}, ${reg.citation}) as the starting point; confirm the specific procedure with the local building authority.`
+      : `Procedure for ${loc.labelEn} subject to state-specific details (being finalized) — please confirm with the local building authority.`,
     confidence: 'ASSUMED',
     caveats: [
       {
         kind: 'bebauungsplan_specific',
         message_de:
-          'Spezifische Verfahrensart mit lokalem Bauamt klären — Resolver deckt diesen Fall noch nicht ab.',
+          'Spezifische Verfahrensart mit lokalem Bauamt klären — landesspezifische Detailregeln noch nicht vollständig hinterlegt.',
         message_en:
-          'Confirm specific procedure with the local building authority — resolver does not yet cover this case.',
+          'Confirm specific procedure with the local building authority — state-specific detail rules not yet fully encoded.',
       },
     ],
   }
