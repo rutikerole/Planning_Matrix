@@ -471,9 +471,12 @@ b18d3f7f...3471 held across all 8 commits.
 
 Pending manual steps (UNVERIFIED until done): apply
 `0035_realtime_projects.sql` via SQL Editor (realtime upgrade — focus-poll
-works without it); redeploy the `verify-fact` Edge Function (Deno; adds the
-reject action); run the e2e legal-shield smoke walk. A test architect needs
-a `profiles.role='designer'` account (manager-provisioned via SQL).
+works without it); **redeploy the `verify-fact` Edge Function** (Deno; adds the
+reject action — until then "Ablehnen" INVERTS to a verify); **redeploy the
+`chat-turn` Edge Function** (it bundles `projectStateHelpers.ts`, so the Bug-32
+erosion downgrade does NOT fire until chat-turn is redeployed); run the e2e
+legal-shield smoke walk. A test architect needs a `profiles.role='designer'`
+account (manager-provisioned via SQL). See docs/V1_0_27_BRUTAL_HONESTY_REPORT.md.
 
 Still open (data-bearing, sourced-data-gated; see docs/C11_DATA_GAPS.md):
 Bug 27 (München calendar · C5), Bug 35 / Bug I (cost multiplier), Section
