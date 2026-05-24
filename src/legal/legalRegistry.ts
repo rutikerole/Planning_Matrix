@@ -96,8 +96,12 @@ export function isRegisteredBundesland(bundesland: string | null | undefined): b
  * Resolve a `projects.bundesland` string to a StateDelta. Unknown
  * codes fall back to BAYERN_DELTA silently — the caller is expected
  * to gate on `isRegisteredBundesland(...)` first if it cares to
- * emit telemetry. Today the wizard hardcodes 'bayern' (audit B04,
- * held), so production traffic never hits the fallback.
+ * emit telemetry. Since v1.0.6 (B04) the wizard writes the user's
+ * explicit Bundesland (16-option dropdown + PLZ auto-detect), so
+ * production carries non-Bayern projects (NRW/Hessen/Berlin observed).
+ * The BAYERN_DELTA fallback is reached only for an unrecognized/empty
+ * code — which the column's NOT NULL default 'bayern' otherwise
+ * prevents — so all 16 registered codes resolve to their own delta.
  */
 export function resolveStateDelta(bundesland: string | null | undefined): StateDelta {
   const code = normalizeBundeslandCode(bundesland) as BundeslandCode

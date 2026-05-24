@@ -1,5 +1,48 @@
 # Changelog
 
+## v1.0.25 — Full-Germany Sprint (PARTIAL — deterministic-surface + schema tranche) (2026-05-24)
+
+Driven by docs/FULL_GERMANY_AUDIT.md + the five probe docs. This sprint
+landed the **bounded, fully-verifiable** subset of the 12-commit plan;
+the large feature commits remain open (see "Not in this release").
+
+**Closed (verified — tsc clean, smoke:pdf-text 276 passed, Bayern SHA
+MATCH on every commit):**
+- **Bug 39** — `0033_projects_state_version.sql` merged to main from
+  branch `feature/v1-0-6-race-fix` (idempotent; reconciles the prod
+  ghost deploy). *Apply via SQL Editor; not auto-applied.*
+- **Bug 26** — `§ 65 BauO {CODE}` citation fabrication. The smoke guard
+  surfaced **three** render sources (not one): `resolveProcedure`
+  generic branch, the Executive footer (`§ 62/64 BauO {state}`, also
+  wrong for Bayern), and the structural cost-item basis
+  (`§ 68 BauO {state}`). All now driven by `getStateLocalization` —
+  real §/Art. for substantive states, honest "Landesbauordnung {Land}"
+  / "in Vorbereitung" for stubs. New stub-state fixtures + a CI-wired
+  fabrication guard (`smoke:pdf-text`, Band 11's missing 5th gate).
+- **Bug 42** — city hardcode killed; `resolveCityFromPLZ` (Bayern-only,
+  PLZ-accurate) + `0034` cleanup migration for the frozen-`muenchen`
+  rows.
+- **Bug 28** — `REGION_MULT` lowercase-normalized; user-facing label
+  fixed (was "Bundesland-Faktor bayern").
+- **Bug 43** — corrected the false `winAnsiSafe` ligature rationale +
+  added a `decomposeLigatures` regression guard.
+- **Bug 50** — removed stale "wizard hardcodes 'bayern'" comments
+  (`legalRegistry.ts`, `systemPrompt.ts`).
+
+**NOT in this release (honestly deferred — large features / need
+sourced data / runtime validation):** Bug 27 (per-state authority
+calendar — needs sourced closure data), Bug 29/32/33/34 (architect
+invite UI + reactive footer + reject — codeable but e2e-unvalidatable
+here), Bug 31 (move leak guards into chat-turn + result UI), Bug 35/6b
+(cost-engine fallback removal), Section XII / Vorhabensbeschreibung /
+concrete KfW BEG 458 (need sourced legal/financial data — will not
+fabricate), Bug 11 (16-state PDF matrix), Bug 48 (bayern-sha into CI).
+
+> **Verdict: full-Germany ship remains 🟡 not-GREEN.** This tranche
+> hardens the deterministic surfaces + schema; the legal-shield UI and
+> the data-bearing sections are still open. No blanket "GREEN" is
+> claimed — see the per-item status in the session report.
+
 ## v1.0.24 — Root-Cause Closure Sprint (2026-05-13)
 
 Closes 4 of 5 v1.0.22/23 follow-up items from BACKLOG.md. Each fix is

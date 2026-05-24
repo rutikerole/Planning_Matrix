@@ -1,3 +1,13 @@
+> **⚠ SUPERSEDED 2026-05-24 by docs/FULL_GERMANY_AUDIT.md.** This v1.0.5
+> document predates the v1.0.6 B04 fix; its central claim that "the
+> wizard hardcodes `bundesland:'bayern'`" is **stale** (the wizard has
+> written the user's explicit Bundesland since v1.0.6 — confirmed by 5
+> non-Bayern prod projects, see docs/NON_BAYERN_PROD_FORENSICS.md).
+> For the current full-Germany picture use FULL_GERMANY_AUDIT.md and the
+> five probe docs (SCHEMA_DRIFT_RECONCILIATION, ARCHITECT_FLOW_DEADEND_
+> TRACE, NON_BAYERN_PROD_FORENSICS, LAYER_C_RESOLUTION_PROBE,
+> BUG_26_RENDER_REPRO). This file is retained for historical provenance.
+
 # Deliverable-vs-Shipped Gap Audit — v1.0.5
 
 ## V1.0.8 PARTIAL CLOSURE — harnesses BUILT, awaiting first run

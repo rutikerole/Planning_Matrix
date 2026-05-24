@@ -228,8 +228,9 @@ import { getTemplateBlock } from '../../../src/legal/templates/index.ts'
  *   Block 1 (persona prefix) — cache_control: ephemeral.
  *     SHARED + FEDERAL + state.systemBlock + state.cityBlock?
  *           + PERSONA_BEHAVIOUR + TEMPLATE_SHARED. Warms ONCE per
- *     bundesland across all templates and projects (today only
- *     Bayern is in production; the wizard hardcodes 'bayern').
+ *     bundesland across all templates and projects (Bayern dominates
+ *     production, but since v1.0.6 the wizard writes the user's
+ *     explicit Bundesland — non-Bayern projects exist).
  *
  *   Block 2 (per-template tail) — cache_control: ephemeral.
  *     getTemplateBlock(templateId). Warms PER TEMPLATE, hits cache
