@@ -1866,6 +1866,25 @@
         "recentSent": "Recently sent to:",
         "close": "Close"
       },
+      "inviteArchitect": {
+        "modalTitle": "Verification invitation",
+        "intro": "This link grants the recipient architect WRITE access to confirm facts in this matrix. It expires in 7 days. After they accept and verify items, the “Vorläufig” label clears on those items.",
+        "distinctNote": "Different from the read-only briefing link — this one grants verification (write) access.",
+        "linkLabel": "Verification link",
+        "copyCta": "Copy link",
+        "linkCopied": "Copied",
+        "expiresLine": "Expires {{date}}",
+        "emailLabel": "Architect's email (optional)",
+        "emailPlaceholder": "name@architekt.de",
+        "mailtoCta": "Open in mail client",
+        "subject": "Verification request — {{name}}",
+        "mailBody": "I'm inviting you to verify the planning matrix for {{name}}. As a certified architect, your confirmation lifts the “Vorläufig” status from items you confirm. The link expires {{expiry}}:\n\n{{acceptUrl}}",
+        "loading": "Generating invitation…",
+        "errorPrefix": "Could not create the invitation:",
+        "retry": "Try again",
+        "closeConfirm": "You haven't copied the verification link yet. Close anyway?",
+        "close": "Close"
+      },
       "footer": {
         "back": "↩ Back to consultation",
         "sendToArchitect": "Send to architect",

@@ -1866,6 +1866,25 @@
         "recentSent": "Zuletzt gesendet:",
         "close": "Schließen"
       },
+      "inviteArchitect": {
+        "modalTitle": "Verifizierungs-Einladung",
+        "intro": "Dieser Link gewährt der eingeladenen Architekt:in Schreibzugriff, um Festlegungen in dieser Matrix zu bestätigen. Er läuft in 7 Tagen ab. Sobald sie annimmt und Punkte bestätigt, entfällt der „Vorläufig“-Hinweis bei diesen Punkten.",
+        "distinctNote": "Anders als der schreibgeschützte Briefing-Link — dieser gewährt Verifizierungs- (Schreib-)Zugriff.",
+        "linkLabel": "Verifizierungs-Link",
+        "copyCta": "Link kopieren",
+        "linkCopied": "Kopiert",
+        "expiresLine": "Läuft ab am {{date}}",
+        "emailLabel": "E-Mail der Architekt:in (optional)",
+        "emailPlaceholder": "name@architekt.de",
+        "mailtoCta": "Im E-Mail-Programm öffnen",
+        "subject": "Verifizierungs-Anfrage — {{name}}",
+        "mailBody": "Ich lade Sie ein, die Planungsmatrix für {{name}} zu verifizieren. Als bauvorlageberechtigte Architekt:in hebt Ihre Bestätigung den „Vorläufig“-Status der von Ihnen bestätigten Punkte auf. Der Link läuft am {{expiry}} ab:\n\n{{acceptUrl}}",
+        "loading": "Einladung wird erstellt…",
+        "errorPrefix": "Einladung konnte nicht erstellt werden:",
+        "retry": "Erneut versuchen",
+        "closeConfirm": "Sie haben den Verifizierungs-Link noch nicht kopiert. Trotzdem schließen?",
+        "close": "Schließen"
+      },
       "footer": {
         "back": "↩ Zurück zur Beratung",
         "sendToArchitect": "An Architekt:in senden",
