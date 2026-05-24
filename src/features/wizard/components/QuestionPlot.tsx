@@ -258,17 +258,27 @@ export function QuestionPlot({ onSubmit, submitError }: Props) {
 
   const addressValid = isPlotAddressValid(plotAddress)
   const isMunich = addressValid && isMuenchenAddress(plotAddress)
+  // v1.0.28 Bug 55 — the warning was Munich-centric: it told users of
+  // FULLY-SUPPORTED substantive states (NRW/BW/Hessen/Niedersachsen) "we
+  // don't cover you" right as they started a covered project. Gate it by
+  // state tier: substantive states (incl. Bayern) carry full state-specific
+  // data and need no warning; only the stub states show the reduced-data
+  // note. bundesland is PLZ-inferred upstream.
+  const SUBSTANTIVE_STATES = new Set(['bayern', 'nrw', 'bw', 'hessen', 'niedersachsen'])
+  const isSubstantiveState =
+    bundesland != null && SUBSTANTIVE_STATES.has(bundesland.toLowerCase())
   const showFormatError = touched && hasPlot === true && !addressValid
-  // Show the soft outside-München warning only after the address looks
-  // structurally valid AND the user has touched the field — keeps the
-  // warning out of the way during fresh typing.
+  // Show the soft reduced-data warning only for stub states, after the
+  // address looks structurally valid.
   const showOutsideMunichWarning =
-    hasPlot === true && addressValid && !isMunich
+    hasPlot === true && addressValid && !isMunich && !isSubstantiveState
 
   const canSubmit =
     intent !== null &&
     (hasPlot === false ||
-      (hasPlot === true && addressValid && (isMunich || outsideMunichConfirmed)))
+      (hasPlot === true &&
+        addressValid &&
+        (isMunich || isSubstantiveState || outsideMunichConfirmed)))
 
   const handleSubmit = () => {
     if (!intent) return

@@ -852,10 +852,10 @@
       "submit": "Set the table",
       "checkAddress": "Check address",
       "outsideMunich": {
-        "warning": "This address is outside the current coverage area (Munich).",
-        "detail": "Our preview release covers Munich only (postal codes 80331–81929) with full Bauamt, parking and preservation-ordinance data. Conversations for other municipalities run with a reduced dataset.",
+        "warning": "This state runs on federal-baseline data for now.",
+        "detail": "Substantive state-specific data (building authority, procedure §§, chamber, monument authority) is available for Bayern, NRW, Baden-Württemberg, Hessen and Niedersachsen. Other states use federal MBO defaults with explicit \"in Vorbereitung\" framing for state-specific details.",
         "confirmLink": "Continue anyway",
-        "confirmedNote": "Address outside Munich acknowledged — system runs with reduced dataset."
+        "confirmedNote": "Reduced dataset acknowledged — federal MBO defaults with \"in Vorbereitung\" framing for state-specific details."
       },
       "plot": {
         "head": "Location profile",

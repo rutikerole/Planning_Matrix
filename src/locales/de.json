@@ -852,10 +852,10 @@
       "submit": "Tisch decken",
       "checkAddress": "Adresse prüfen",
       "outsideMunich": {
-        "warning": "Diese Adresse liegt außerhalb des aktuellen Versorgungsgebiets (München).",
-        "detail": "Im Vorabbetrieb verfügen wir nur für München (PLZ 80331–81929) über vollständige Daten zu Bauamt, Stellplatz- und Erhaltungssatzungen. Für andere Kommunen läuft das Gespräch mit reduziertem Datenstand.",
+        "warning": "Dieses Bundesland läuft derzeit auf bundesrechtlicher Basis.",
+        "detail": "Substanzielle landesspezifische Daten (Bauamt, Verfahrens-§§, Architektenkammer, Denkmalbehörde) liegen für Bayern, NRW, Baden-Württemberg, Hessen und Niedersachsen vor. Andere Länder nutzen die bundesrechtliche MBO-Basis mit ausdrücklicher „in Vorbereitung“-Kennzeichnung für landesspezifische Details.",
         "confirmLink": "Trotzdem fortfahren",
-        "confirmedNote": "Adresse außerhalb München bestätigt — System läuft mit reduziertem Datenstand."
+        "confirmedNote": "Reduzierter Datenstand bestätigt — bundesrechtliche MBO-Basis mit „in Vorbereitung“-Kennzeichnung für landesspezifische Details."
       },
       "plot": {
         "head": "Standortprofil",
