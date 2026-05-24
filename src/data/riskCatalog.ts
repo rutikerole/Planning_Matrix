@@ -27,6 +27,15 @@ export interface RiskCatalogEntry {
   bumpedLikelihood?: 1 | 2 | 3
   /** Optional intent filter (most renovations carry statics-surprise risk; demos don't). */
   intents?: string[]
+  /** v1.0.28 Bug 57 — optional intent EXCLUDE list. The risk does NOT fire
+   *  for these intents (e.g. B-Plan / Bauamt-backlog risks are irrelevant
+   *  to a verfahrensfrei Abbruch with no Bauantrag). */
+  excludeIntents?: string[]
+  /** v1.0.28 Bug 57 — suppress when a boolean fact with this key is
+   *  explicitly false (e.g. Heritage risk must not fire when
+   *  denkmalschutz=false; also fixes the /denkmal/ regex matching the
+   *  negation "kein Denkmalschutz" in the corpus). */
+  suppressWhenFactFalse?: string
   /** Phase 8.5 (D.3) — optional Bundesland filter. Only fires when
    *  the project's bundesland appears in the array. */
   bundeslaender?: string[]
@@ -44,6 +53,9 @@ export const RISK_CATALOG: RiskCatalogEntry[] = [
     impact: 3,
     evidencePattern: /§\s*34|innenbereich|kein\s+b-plan/i,
     bumpedLikelihood: 3,
+    // v1.0.28 Bug 57 — a verfahrensfrei Abbruch files no Bauantrag, so a
+    // B-Plan late-discovery risk is irrelevant for demolition.
+    excludeIntents: ['abbruch'],
     unriskDe:
       'Bauamt-Vorbescheid einholen oder B-Plan-Anfrage frühzeitig stellen.',
     unriskEn:
@@ -58,6 +70,9 @@ export const RISK_CATALOG: RiskCatalogEntry[] = [
     impact: 3,
     evidencePattern: /denkmal|baydschg|ensemble/i,
     bumpedLikelihood: 3,
+    // v1.0.28 Bug 57 — do not fire when the user explicitly established no
+    // heritage protection (also fixes /denkmal/ matching "kein Denkmalschutz").
+    suppressWhenFactFalse: 'denkmalschutz',
     unriskDe:
       'Beim Landesamt für Denkmalpflege Auskunft anfordern, bevor LP 2 abgeschlossen ist.',
     unriskEn:
@@ -208,6 +223,8 @@ export const RISK_CATALOG: RiskCatalogEntry[] = [
     titleEn: 'Bauamt backlog',
     baseLikelihood: 2,
     impact: 1,
+    // v1.0.28 Bug 57 — verfahrensfrei Abbruch has no Bauamt review queue.
+    excludeIntents: ['abbruch'],
     unriskDe:
       'Realistische Pufferzeiten einplanen; vollständige Unterlagen erhöhen die Geschwindigkeit.',
     unriskEn:
@@ -342,12 +359,58 @@ export const RISK_CATALOG: RiskCatalogEntry[] = [
     titleEn: 'Pre-decision missed',
     baseLikelihood: 1,
     impact: 3,
+    // v1.0.28 Bug 57 — pre-decision (Bauvoranfrage) is a Bauantrag concept;
+    // irrelevant to a verfahrensfrei Abbruch.
+    excludeIntents: ['abbruch'],
     evidencePattern: /§\s*34|innenbereich|nicht.{0,8}qualifiziert|grenzwert/i,
     bumpedLikelihood: 2,
     unriskDe:
       'Bauvoranfrage nach BauGB § 34(1) vor LP 3 stellen — Klärung des Einfügungsgebots verhindert Komplettablehnung später.',
     unriskEn:
       "Request a pre-decision per BauGB § 34(1) before LP 3 — clarifying the Einfügungsgebot prevents full rejection later.",
+    verifyBeforePublicLaunch: true,
+  },
+
+  // ── v1.0.28 Bug 57 — T-05 Abbruch (demolition) risks ──────────────────
+  {
+    id: 'risk-schadstoff-abbruch',
+    titleDe: 'Schadstoff-Kostenüberschreitung',
+    titleEn: 'Hazardous-materials cost overrun',
+    baseLikelihood: 2,
+    impact: 3,
+    intents: ['abbruch'],
+    evidencePattern: /asbest|kmf|pcb|schadstoff|baujahr\s*19[0-8]/i,
+    bumpedLikelihood: 3,
+    unriskDe:
+      'Schadstoffkataster (GefStoffV) vor der Ausschreibung erstellen; Asbest-/KMF-/PCB-Sanierung separat ausweisen.',
+    unriskEn:
+      'Commission a hazardous-materials survey (GefStoffV) before tendering; price asbestos/KMF/PCB abatement separately.',
+    verifyBeforePublicLaunch: true,
+  },
+  {
+    id: 'risk-entsorgung-abbruch',
+    titleDe: 'Entsorgungskosten-Varianz',
+    titleEn: 'Disposal cost variance',
+    baseLikelihood: 2,
+    impact: 2,
+    intents: ['abbruch'],
+    unriskDe:
+      'Entsorgungskonzept nach KrWG §§ 7/8; getrennte Fraktionen + Nachweise mindern Deponiekosten.',
+    unriskEn:
+      'Waste-disposal concept per KrWG §§ 7/8; separated fractions + records reduce landfill costs.',
+    verifyBeforePublicLaunch: true,
+  },
+  {
+    id: 'risk-verfahrensfrei-reklassifizierung',
+    titleDe: 'Verfahrensfreiheit umgestuft',
+    titleEn: 'Permit-free reclassification',
+    baseLikelihood: 1,
+    impact: 2,
+    intents: ['abbruch'],
+    unriskDe:
+      'Verfahrensfreiheit vor Arbeitsbeginn mit der unteren Bauaufsichtsbehörde bestätigen — Sonderbau-Tatbestand oder GK-Schwelle kann eine Genehmigungspflicht auslösen.',
+    unriskEn:
+      'Confirm permit-free status with the lower building authority before work begins — a Sonderbau scope or GK threshold can reinstate a permit requirement.',
     verifyBeforePublicLaunch: true,
   },
 ]

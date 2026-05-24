@@ -41,6 +41,13 @@ export function composeRisks({ project, state, limit = 3 }: Args): {
   const scored: ScoredRisk[] = []
   for (const entry of RISK_CATALOG) {
     if (entry.intents && !entry.intents.includes(project.intent)) continue
+    // v1.0.28 Bug 57 — exclude intents (B-Plan/Bauamt-backlog don't apply to
+    // a verfahrensfrei Abbruch) + suppress a risk when a fact explicitly
+    // negates it (Heritage when denkmalschutz=false; also kills the
+    // /denkmal/-matches-"kein Denkmalschutz" false positive).
+    if (entry.excludeIntents?.includes(project.intent)) continue
+    if (entry.suppressWhenFactFalse && factIsFalse(state, entry.suppressWhenFactFalse))
+      continue
     if (entry.bundeslaender && !entry.bundeslaender.includes(project.bundesland))
       continue
 
@@ -70,6 +77,13 @@ export function composeRisks({ project, state, limit = 3 }: Args): {
     visible: scored.slice(0, limit),
     total: scored.length,
   }
+}
+
+/** v1.0.28 Bug 57 — true when a fact with `key` is explicitly false. */
+function factIsFalse(state: Partial<ProjectState>, key: string): boolean {
+  const f = (state.facts ?? []).find((x) => x.key === key)
+  if (!f) return false
+  return f.value === false || f.value === 'false' || f.value === 'NEIN' || f.value === 'nein'
 }
 
 function buildCorpus(state: Partial<ProjectState>): string {

@@ -22,6 +22,7 @@ import {
 import { computeVerificationRollup } from '../src/features/result/lib/verificationRollup.ts'
 import { erodeVerificationOnEdit } from '../src/lib/projectStateHelpers.ts'
 import { composeLegalDomains } from '../src/features/result/lib/composeLegalDomains.ts'
+import { composeRisks } from '../src/features/result/lib/composeRisks.ts'
 import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'node:path'
@@ -296,8 +297,38 @@ function runLegalDomains(): Tally {
   return t
 }
 
+function runRisks(): Tally {
+  console.log('\n[smoke-architect] composeRisks template/fact filtering (Commit 6 / Bug 57)…')
+  const t: Tally = { passed: 0, failed: 0 }
+  const risksFor = (file: string) => {
+    const fx = JSON.parse(readFileSync(join(REPO_ROOT, file), 'utf-8'))
+    const all = composeRisks({ project: fx.project, state: fx.project.state, limit: 30 })
+    return all.visible.map((r) => r.entry.id)
+  }
+  // T-05 demolition: demolition risks present; B-Plan/Heritage/Pre-decision/
+  // Bauamt-backlog suppressed.
+  const t05 = risksFor('test/fixtures/nrw-t05-bonn-verfahrensfrei.json')
+  ok(t, t05.some((i) => i === 'risk-schadstoff-abbruch'), 'T-05: hazardous-materials risk present')
+  ok(t, t05.some((i) => i === 'risk-entsorgung-abbruch'), 'T-05: disposal risk present')
+  ok(t, !t05.includes('risk-bplan-late-discovery'), 'T-05: B-Plan risk excluded')
+  ok(t, !t05.includes('risk-denkmal'), 'T-05: Heritage risk suppressed (denkmalschutz=false)')
+  ok(t, !t05.includes('risk-vorbescheid-versaeumt'), 'T-05: Pre-decision risk excluded')
+  ok(t, !t05.includes('risk-bauamt-auslastung'), 'T-05: Bauamt-backlog risk excluded')
+  // T-01 neubau regression: universal risks still fire.
+  const t01 = risksFor('test/fixtures/nrw-t01-duesseldorf-plain.json')
+  ok(t, t01.includes('risk-bplan-late-discovery'), 'T-01 neubau: B-Plan risk still fires (no regression)')
+  ok(t, !t01.includes('risk-schadstoff-abbruch'), 'T-01 neubau: demolition risk does NOT fire')
+  return t
+}
+
 function main(): void {
-  const sections: Tally[] = [runInviteParse(), runRollup(), runErosion(), runLegalDomains()]
+  const sections: Tally[] = [
+    runInviteParse(),
+    runRollup(),
+    runErosion(),
+    runLegalDomains(),
+    runRisks(),
+  ]
   const passed = sections.reduce((n, s) => n + s.passed, 0)
   const failed = sections.reduce((n, s) => n + s.failed, 0)
   console.log(`\n[smoke-architect] ${passed} passed · ${failed} failed`)
