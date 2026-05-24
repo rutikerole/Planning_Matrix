@@ -741,10 +741,7 @@ export async function buildExportPdf({
   // (survey → procurement → demolition, ~5-10 wks) instead.
   const isVerfahrensfreiDemolition =
     isDemolition && procedureDecision.kind === 'verfahrensfrei'
-  renderTimelineBody(
-    timelinePage,
-    editorialFonts,
-    pdfStrings,
+  renderTimelineBody(timelinePage, editorialFonts, pdfStrings,
     isVerfahrensfreiDemolition
       ? {
           templateLabel,
