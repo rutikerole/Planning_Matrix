@@ -121,28 +121,34 @@ export function decomposeLigatures(text: string): string {
  * / "Eingrif f" / "identif iziert" / "ef fizienz" — worse than the
  * original ċ/Č substitution this was meant to fix.
  *
- * v1.0.12 path A: no-op the helper. pdf-lib's drawText →
- * font.encodeText path iterates each character and looks up its
- * glyph index via the font's CMAP — it does NOT invoke fontkit's
- * shaping layout (which is where GSUB `liga` would apply). So plain
- * ASCII "fi" / "fl" / "ff" passed to drawText embeds as separate
- * glyph indices for f, i, l, f respectively. No ligature glyph is
- * ever placed in the content stream.
+ * v1.0.25 Bug 43 — CORRECTED RATIONALE. The earlier comment here
+ * claimed pdf-lib's drawText → font.encodeText "does NOT invoke
+ * fontkit's shaping layout". That is FALSE for pdf-lib 1.17.1:
+ * CustomFontEmbedder.encodeText calls
+ * `this.font.layout(text, this.fontFeatures)`, which DOES run
+ * fontkit's GSUB shaping — so `liga` WOULD fire if left enabled.
  *
- * If pdf viewers' display-time shaping re-applies the ligature
- * visually, the ToUnicode CMap pdf-lib generates still maps each
- * glyph back to its source character — so text extraction yields
- * clean "fi" / "fl" / "ff" regardless of the viewer's display.
+ * The actual, load-bearing fix is at EMBED time, in
+ * src/lib/fontLoader.ts: the brand TTFs are embedded with
+ * `features: { liga:false, dlig:false, clig:false }`. fontkit's
+ * setFeatureOverrides splices a falsy feature tag out of the shaping
+ * stage, so no ligature substitution ever occurs during layout().
  *
- * decomposeLigatures (above) still runs ALWAYS to strip any literal
- * U+FB0x ligature codepoints that may exist in persona-emitted
- * content or copy-pasted German. That helper is the actual defense.
+ * decomposeLigatures (above) is the SECONDARY defense — it strips any
+ * literal U+FB0x ligature codepoints in persona-emitted or copy-pasted
+ * German. Together (embed-flag + decompose) they keep extracted text
+ * clean ("fi"/"fl"/"ff", not ċ/Č).
  *
  * If a future viewer-side regression reintroduces ligature corruption
  * in extracted text, switch to Path B: re-subset Inter via
  * fonttools / fontkit and STRIP the GSUB liga lookup table at
  * subset time, then commit the subsetted TTFs to public/fonts/.
  */
+// ⚠ INTENTIONAL NO-OP (Bug 43). Kept only so the pdfPrimitives `safe`
+// pipeline signature stays stable (pdfPrimitives.ts:108). It provides
+// ZERO ligature defense — the real fix is the `features:{liga:false}`
+// embed flag in src/lib/fontLoader.ts. DO NOT remove that flag trusting
+// this function.
 export function preventBrandLigatures(text: string): string {
   return text
 }

@@ -786,6 +786,16 @@ async function runAddressParserUnit(): Promise<{ passed: number; failed: number 
     if (ok) { console.log(`  ✓ ${msg}`); passed++ }
     else { console.log(`  ✗ ${msg} (got ${got})`); failed++ }
   }
+  // v1.0.25 Bug 43 — decomposeLigatures regression guard (JS-layer
+  // secondary defense; fontLoader's features:{liga:false} embed flag is
+  // the primary fix). All U+FB00–FB05 must decompose to ASCII.
+  const { decomposeLigatures } = await import('../src/lib/winAnsiSafe.ts')
+  const ligIn = 'ﬀﬁﬂﬃﬄﬅ'
+  const ligExpect = 'fffiflffifflst'
+  const ligGot = decomposeLigatures(ligIn)
+  const ligMsg = `decomposeLigatures('${ligIn}') === '${ligExpect}'`
+  if (ligGot === ligExpect) { console.log(`  ✓ ${ligMsg}`); passed++ }
+  else { console.log(`  ✗ ${ligMsg} (got '${ligGot}')`); failed++ }
   return { passed, failed }
 }
 
