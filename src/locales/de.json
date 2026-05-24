@@ -1986,6 +1986,7 @@
         "totalEstimated": "Summe (geschätzt)",
         "caveat": "Orientierungswerte aus den HOAI-Honorartafeln · keine verbindlichen Quoten.",
         "computedFromTooltip": "Berechnet aus: {{inputs}}",
+        "demolitionStub": "Abbruchkosten sind in Vorbereitung. Festangebote bei einem zugelassenen Abbruchunternehmen einholen — die Spanne hängt vom Schadstoffgutachten (Asbest/KMF/PCB) und vom Entsorgungsvolumen (KrWG) ab. Keine HOAI-Neubau-Honorartafel anwendbar.",
         "timelineEyebrow": "Verfahrensdauer",
         "totalDuration": "Gesamt",
         "totalDurationValue": "ca. 4–6 Monate",

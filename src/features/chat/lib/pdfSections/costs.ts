@@ -63,6 +63,14 @@ export interface CostsData {
   items: ReadonlyArray<CostsItem>
   /** Pre-formatted total EUR range. */
   total: string
+  /** v1.0.28 Bug 53 — optional subtitle override (replaces the HOAI
+   *  basisTemplate line). Used by T-05 demolition to state the honest
+   *  "request quotes" framing instead of a fabricated HOAI/area basis. */
+  subtitle?: string
+  /** v1.0.28 Bug 53 — optional empty-state message override (replaces the
+   *  generic "continue the consultation" line) so an intentionally
+   *  empty cost table (T-05 demolition honest stub) reads correctly. */
+  emptyMessage?: string
 }
 
 export interface CostsFooterData {
@@ -104,9 +112,11 @@ export function renderCostsBody(
     data.areaSqm > 0
       ? pdfStr(strings, 'costs.basisTemplate')
       : pdfStr(strings, 'costs.basisTemplate.noArea')
-  const basisText = basisRaw
-    .replace(/\{n\}/g, String(data.areaSqm))
-    .replace(/\{state\}/g, data.bundeslandCode)
+  const basisText =
+    data.subtitle ??
+    basisRaw
+      .replace(/\{n\}/g, String(data.areaSqm))
+      .replace(/\{state\}/g, data.bundeslandCode)
   drawSafeText(page, basisText, {
     x: MARGIN,
     y: headerY - 56,
@@ -118,7 +128,7 @@ export function renderCostsBody(
 
   // ─── Empty state ────────────────────────────────────────────────
   if (data.items.length === 0) {
-    drawSafeText(page, pdfStr(strings, 'costs.empty'), {
+    drawSafeText(page, data.emptyMessage ?? pdfStr(strings, 'costs.empty'), {
       x: MARGIN,
       y: PAGE_HEIGHT / 2,
       size: 12,

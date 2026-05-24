@@ -90,6 +90,11 @@ export function CostTimelineTab({ project, state }: Props) {
   const cost = buildCostBreakdown(procedure, klasse, opts)
   const inputs = resolveInputs(procedure, klasse, opts)
   const inputsLabel = describeCostInputs(inputs, lang)
+  // v1.0.28 Bug 53 — T-05 demolition is cost-template-blind (HOAI new-build
+  // engine + 180 m² silent default + a GEG energy row). No sourced BKI
+  // demolition factors exist (C11_DATA_GAPS GAP-4) → honest stub, not wrong
+  // numbers.
+  const isDemolition = state.templateId === 'T-05' || project.intent === 'abbruch'
 
   const totalWeight = totalPhaseWeight()
   const maxBar = Math.max(...COST_LINES.map((l) => cost[l.key].max), 1)
@@ -109,6 +114,14 @@ export function CostTimelineTab({ project, state }: Props) {
             {t('result.workspace.cost.confidence')}
           </span>
         </header>
+        {isDemolition ? (
+          <div className="border border-clay/30 rounded-[10px] bg-paper-card p-4 sm:p-5">
+            <p className="text-[13px] leading-relaxed text-ink/80">
+              {t('result.workspace.cost.demolitionStub')}
+            </p>
+          </div>
+        ) : (
+          <>
         <div className="border border-ink/12 rounded-[10px] bg-paper-card p-4 sm:p-5 flex flex-col gap-3">
           {COST_LINES.map((line) => {
             const bucket = cost[line.key]
@@ -172,6 +185,8 @@ export function CostTimelineTab({ project, state }: Props) {
           <br />
           {t('result.workspace.cost.caveat')}
         </p>
+          </>
+        )}
       </section>
 
       {/* Timeline */}

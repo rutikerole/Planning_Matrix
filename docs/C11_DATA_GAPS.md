@@ -113,6 +113,19 @@ open. Recorded here as UNVERIFIED so they are not mistaken for closed.
 | GAP-1 | Bug 27 München calendar | no | no (generic label) | deferred — needs sourced per-state calendars |
 | GAP-2 | Stub legal codes (11 states) | no | no (honest placeholder) | deferred — needs sourced per-state §§ |
 | GAP-3 | Bug 35/I cost multiplier | no | no (honest baseline label) | deferred — needs sourced BKI data |
+| GAP-4 | Bug 53 T-05 demolition cost factors | no | no (honest "in Vorbereitung" stub) | deferred — needs sourced demolition/disposal cost data |
+
+### GAP-4 — T-05 demolition cost (v1.0.28 Bug 53)
+The HOAI new-build engine (`costNormsMuenchen.ts buildCostBreakdown`) is
+wrong for demolition: it emits Architect/Structural/Energy(!)/Authority rows
+scaled off a silent 180 m² default. No sourced BKI **demolition** cost
+factors (excavation + Schadstoff abatement + KrWG disposal + contractor)
+exist in the repo. v1.0.28 routes T-05 to an honest "Demolition cost ranges
+in preparation — request quotes from a licensed demolition contractor" stub
+in **both** the PDF (`pdfSections/costs.ts` via `costsData.subtitle/emptyMessage`)
+and the web (`CostTimelineTab`), removing the Energy-consultation row and the
+180 m² default. Closes when sourced demolition cost ranges land. NO invented
+numbers.
 
 **No fabrication ships in any of the 16 states.** The three open gaps are
 data-completeness items, each honestly disclosed in-product, each requiring

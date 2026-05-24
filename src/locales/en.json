@@ -1986,6 +1986,7 @@
         "totalEstimated": "Total (estimated)",
         "caveat": "Orientation values from the HOAI fee tables · not binding quotes.",
         "computedFromTooltip": "Computed from: {{inputs}}",
+        "demolitionStub": "Demolition cost ranges are in preparation. Request fixed quotes from a licensed demolition contractor — the spread depends on the hazardous-materials survey (asbestos/KMF/PCB) and disposal volume (KrWG). No HOAI new-build fee schedule applies.",
         "timelineEyebrow": "Procedure duration",
         "totalDuration": "Total",
         "totalDurationValue": "~ 4–6 months",

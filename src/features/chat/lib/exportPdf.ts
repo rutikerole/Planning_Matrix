@@ -686,14 +686,32 @@ export async function buildExportPdf({
       range: formatEurRange(costBreakdown.behoerdengebuehren, lang),
     },
   ]
-  const costsData: CostsData = {
-    areaSqm,
-    bundeslandCode: bundeslandCodeUpper,
-    structuralRef,
-    templateLabel,
-    items: costItems,
-    total: formatEurRange(costBreakdown.total, lang),
-  }
+  // v1.0.28 Bug 53 + Bug 30 — T-05 demolition is cost-template-blind: the
+  // HOAI new-build engine emits Architect/Structural/Energy/Authority rows
+  // (incl. a GEG thermal cert — absurd for a teardown) scaled off a silent
+  // 180 m² default the user never gave. NO sourced BKI demolition factors
+  // exist (C11_DATA_GAPS GAP-4), so route to an honest stub rather than
+  // ship wrong numbers — no fabrication.
+  const isDemolition = procedureCase.intent === 'abbruch'
+  const costsData: CostsData = isDemolition
+    ? {
+        areaSqm: 0,
+        bundeslandCode: bundeslandCodeUpper,
+        structuralRef,
+        templateLabel,
+        items: [],
+        total: '—',
+        subtitle: pdfStrings['costs.demolition.subtitle'],
+        emptyMessage: pdfStrings['costs.demolition.empty'],
+      }
+    : {
+        areaSqm,
+        bundeslandCode: bundeslandCodeUpper,
+        structuralRef,
+        templateLabel,
+        items: costItems,
+        total: formatEurRange(costBreakdown.total, lang),
+      }
   const costsPage = doc.addPage([PDF_PAGE_WIDTH, PDF_PAGE_HEIGHT])
   const costsPageNumber = doc.getPageCount()
   renderCostsBody(costsPage, editorialFonts, pdfStrings, costsData)

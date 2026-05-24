@@ -127,6 +127,10 @@ const EN: PdfStrings = {
   'costs.items.authority': 'Authority fees',
   'costs.items.authority.basis': 'Bauamt + neighbour involvement',
   'costs.empty': 'No cost rows recorded yet.',
+  'costs.demolition.subtitle':
+    'Demolition cost ranges in preparation · request quotes from a licensed demolition contractor.',
+  'costs.demolition.empty':
+    'Demolition cost ranges in preparation. Request fixed quotes from a licensed demolition contractor — the spread depends on the hazardous-materials survey (asbestos/KMF/PCB) and the disposal volume (KrWG). No HOAI new-build fee schedule applies.',
 
   // ─── v1.0.16 Renaissance Part 2B — Timeline ───────────────────
   'timeline.kicker': 'SECTION 04 · TIMELINE',
@@ -319,6 +323,10 @@ const DE: PdfStrings = {
   'costs.items.authority': 'Behördengebühren',
   'costs.items.authority.basis': 'Bauamtsgebühr + Nachbarbeteiligung',
   'costs.empty': 'Noch keine Kostenzeilen erfasst.',
+  'costs.demolition.subtitle':
+    'Abbruchkosten in Vorbereitung · Angebote bei einem zugelassenen Abbruchunternehmen einholen.',
+  'costs.demolition.empty':
+    'Abbruchkosten in Vorbereitung. Festangebote bei einem zugelassenen Abbruchunternehmen einholen — die Spanne hängt vom Schadstoffgutachten (Asbest/KMF/PCB) und vom Entsorgungsvolumen (KrWG) ab. Keine HOAI-Neubau-Honorartafel anwendbar.',
 
   // ─── v1.0.16 Renaissance Part 2B — Timeline ───────────────────
   'timeline.kicker': 'ABSCHNITT 04 · ZEITPLAN',
