@@ -1,5 +1,58 @@
 # Changelog
 
+## v1.0.28 — T-05 demolition pipeline alignment (NRW exemplar) (2026-05-24)
+
+Rutik's first live smoke walk of a never-before-tested template (T-05 Abbruch,
+NRW, Bonn) exposed that the deterministic result/PDF pipeline is TEMPLATE-BLIND:
+the chat persona was state-correct (verfahrensfrei § 62 BauO NRW) but the
+downstream resolvers / cost / risk / do-next / timeline / legal-domain composers
+assumed T-01 shape and overrode it. 12 bugs (52-63) diagnosed; this sprint fixes
+the T-05 NRW exemplar + documents the pattern. See `docs/V1_0_28_T05_DIAGNOSIS.md`.
+
+**CODE-COMPLETE (fixture/render-proven, gate-green):**
+- **Bug 52** — `resolveProcedure` honors the persona's `verfahren_indikation`
+  fact; PDF emits verfahrensfrei § 62 BauO NRW (was § 65 "standard permit
+  REQUIRED" — a chat-vs-PDF contradiction). `62dcca3`
+- **Bug 53 + Bug 30** — T-05 cost = honest "request quotes" stub (PDF + web);
+  removed the HOAI new-build rows + the Energy-consultation line + the 180 m²
+  silent default. No invented BKI (C11_DATA_GAPS GAP-4). `aa98ee6`
+- **Bug 54** — web Legal Landscape Domain B is state-aware for ALL 15 non-Bayern
+  states (was gated `if (isBayern)` → empty). Not T-05-specific. `1db2955`
+- **Bug 55** — wizard coverage warning is state-tier-aware (no "outside Munich"
+  on supported NRW/BW/Hessen/Niedersachsen); honest copy. `934b82d`
+- **Bug 56** — Do-Next demolition baseline (Schadstoffgutachten → contractor →
+  confirm), not the generic "engage architect / pre-meeting Bauamt". `6d5e863`
+- **Bug 57** — risk register template/fact-filtered: T-05 shows demolition risks;
+  B-Plan/Heritage/Pre-decision/Bauamt-backlog suppressed (Heritage fact-gated on
+  `denkmalschutz`). `4bcae1f`
+- **Bug 58** (PDF) — T-05 verfahrensfrei timeline = survey/procurement/demolition
+  (~5-10 wks), no Bauamt review cycle / "Baugenehmigung issued". `224e80c`
+- **Bug 59** — cover footer clamps a long Bauherr name (no overlap with the
+  centered PRELIMINARY cell). `a880c9b`
+- **Bug 61** — Stadtarchiv caveat resolves the city from the project address
+  ("Bonn"), not the hardcoded NRW default "Düsseldorf". `a880c9b`
+
+**FLAGGED for v1.0.29 (persona-side / deep — out of this sprint's scope):**
+- **Bug 60** — verification-page signature/note overlap (PDF layout; not a
+  surgical fix — deferred to avoid layout regression). Evidence: PDF p10.
+- **Bug 62** — team specialist staleness ("year unknown" vs Baujahr 1978;
+  "neighbouring buildings" on a detached demo). PERSONA-emitted `state.roles`;
+  the deterministic baseline (`deriveBaselineRoles` DEMOLITION_ROLES) is clean.
+  No chat-turn redeploy this sprint.
+- **Bug 63** — empty `state.recommendations` (→ empty Suggestions tab + PDF
+  recommendations). Persona never emits a `recommendations_delta` (persistence
+  path works). The Do-Next deterministic baseline (Bug 56) is the mitigation.
+- **Bug 58 (web)** — CostTimelineTab "Procedure duration" sub-detail (Overview +
+  PDF headline timeline are correct).
+
+**Pattern + scope:** T-02/T-04/T-06/T-07/T-08 carry the same template-blind
+shapes (cost 180-default, generic do-next, T-01 timeline/risks) — flagged for
+v1.0.29+. Edge Functions: no redeploy. Migrations: none.
+
+> **Verdict: 🟡 not-GREEN for full-Germany.** v1.0.28 closes the T-05 NRW
+> exemplar (9 bugs code-complete + render-proven) + documents the pattern; 3
+> bugs deferred (persona-side / deep) + 5 templates remain.
+
 ## v1.0.27 — C7 + C8: architect verification flow wired (2026-05-24)
 
 Backend (share-project CREATE/ACCEPT + verify-fact + RLS + project_members)

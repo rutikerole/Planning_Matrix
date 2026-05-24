@@ -93,3 +93,26 @@ The 16-state matrix (v1.0.26) only tested **T-01 EFH-Neubau**. The chat **person
 
 ## DEFERRED → v1.0.29+
 T-02/T-04/T-06/T-07/T-08 pipeline alignment (same pattern) · per-state BKI cost factors · 11 stub-state real §§/chamber/authority · Bug 27 München calendar · Section XII Risk Register + Vorhabensbeschreibung PDF sections.
+
+---
+
+## RESOLUTION (v1.0.28 — 2026-05-24)
+
+| Bug | Status | Commit |
+|-----|--------|--------|
+| 52 procedure verfahrensfrei | RESOLVED (render-proven) | `62dcca3` |
+| 53 + 30 cost honest stub | RESOLVED (render-proven) | `aa98ee6` |
+| 54 web Legal B (15 states) | RESOLVED (smoke-proven) | `1db2955` |
+| 55 coverage warning | RESOLVED | `934b82d` |
+| 56 do-next demolition | RESOLVED (smoke-proven) | `6d5e863` |
+| 57 risk template/fact filter | RESOLVED (smoke-proven) | `4bcae1f` |
+| 58 timeline (PDF) | RESOLVED (render-proven) | `224e80c` |
+| 59 cover footer overlap | RESOLVED (raster-confirmed) | `a880c9b` |
+| 61 Stadtarchiv city | RESOLVED (render-proven) | `a880c9b` |
+| 60 verification signature overlap | DEFERRED v1.0.29 (deep PDF layout) | — |
+| 62 team staleness | DEFERRED v1.0.29 (persona-emitted; baseline clean) | — |
+| 63 empty recommendations | DEFERRED v1.0.29 (persona never emits; do-next mitigated) | — |
+| 58 web sub-detail | DEFERRED v1.0.29 (CostTimelineTab "Procedure duration") | — |
+
+9 code-complete · 4 deferred (3 persona-side/deep + 1 web sub-detail). Bayern
+SHA held across all commits. T-02/T-04/T-06/T-07/T-08 carry the same pattern.

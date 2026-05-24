@@ -21,6 +21,25 @@ Sprint anchor reminder:
   `b18d3f7f9a6fe238c18cec5361d30ea3a547e46b1ef2b16a1e74c533aacb3471`
   must MATCH at start AND end of every commit in any future sprint.
 
+## Closed in v1.0.28 (T-05 demolition pipeline — NRW exemplar)
+
+CODE-COMPLETE + render/fixture-proven: Bug 52 (procedure verfahrensfrei),
+Bug 53+30 (cost honest stub), Bug 54 (web Legal B — 15 states), Bug 55
+(coverage warning), Bug 56 (do-next demolition), Bug 57 (risk template/fact
+filter), Bug 58-PDF (timeline), Bug 59 (cover footer clamp), Bug 61
+(Stadtarchiv city). Diagnosis: docs/V1_0_28_T05_DIAGNOSIS.md.
+
+Deferred to v1.0.29 (persona-side / deep / out of scope):
+- Bug 60 (verification-page signature overlap — deep PDF layout).
+- Bug 62 (team specialist staleness — PERSONA-emitted state.roles; deterministic
+  baseline is clean; needs chat-turn, not this sprint).
+- Bug 63 (empty state.recommendations — persona never emits recommendations_delta;
+  Do-Next deterministic baseline is the mitigation).
+- Bug 58 web CostTimelineTab "Procedure duration" sub-detail.
+- **T-02 / T-04 / T-06 / T-07 / T-08** — same template-blind pipeline pattern
+  (cost 180-default, generic do-next, T-01 timeline/risks). T-05 is the proof
+  of fix-shape; propagate per docs/V1_0_28_T05_DIAGNOSIS.md.
+
 ## Closed in v1.0.27 (C7 + C8 — architect verification flow)
 
 - **Bug 29 — architect dead-end** — CLOSED. Owner-side share-project CREATE

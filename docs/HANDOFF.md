@@ -461,7 +461,24 @@ shipped in Phase 13 Week 4). What's missing is the cron harness
 
 ## 9. Operational responsibilities — split between engineering and client
 
-**v1.0.27 (C7+C8) IS THE CURRENT RELEASE.** The architect verification flow
+**v1.0.28 (T-05 pipeline alignment) IS THE CURRENT RELEASE.** Rutik's first
+live T-05 (demolition · NRW · Bonn) smoke walk exposed the deterministic
+result/PDF pipeline as TEMPLATE-BLIND (it assumed T-01 shape + overrode the
+state-correct persona). v1.0.28 fixes the T-05 NRW exemplar: Bug 52 (procedure
+verfahrensfrei §62, not §65), Bug 53/30 (cost honest stub, no 180 m² default),
+Bug 54 (web Legal Landscape Domain B for ALL 15 non-Bayern states), Bug 55
+(state-tier coverage warning), Bug 56 (demolition do-next), Bug 57 (risk
+template/fact filter), Bug 58 (PDF verfahrensfrei timeline), Bug 59 (cover
+footer clamp), Bug 61 (Stadtarchiv from project city). Deferred to v1.0.29:
+Bug 60 (PDF signature overlap — deep), Bug 62 (team staleness — persona-emitted),
+Bug 63 (empty recommendations — persona never emits). **The same template-blind
+pattern affects T-02/T-04/T-06/T-07/T-08** — see docs/V1_0_28_T05_DIAGNOSIS.md.
+Bayern SHA b18d3f7f...3471 held across all 10 commits. **Full-Germany ship
+remains 🟡 not-GREEN.**
+
+---
+
+**v1.0.27 (C7+C8)** (prior release). The architect verification flow
 is wired end-to-end through the shipped UI: owner "Invite architect to
 verify" → /architect/accept → VerificationPanel "Bestätigen" / "Ablehnen" →
 the owner's "Vorläufig" footer clears/reverts (focus-poll + best-effort
