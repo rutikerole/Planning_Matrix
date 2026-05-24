@@ -34,6 +34,9 @@ export function VerificationPanel() {
   const queryClient = useQueryClient()
   const [pendingNote, setPendingNote] = useState<Record<string, string>>({})
   const [error, setError] = useState<string | null>(null)
+  // C8 (Bug 34) — which row is mid-rejection + its reason draft.
+  const [rejectingKey, setRejectingKey] = useState<string | null>(null)
+  const [rejectReason, setRejectReason] = useState<Record<string, string>>({})
 
   const { data, isLoading, error: queryError } = useQuery<ProjectRow | null>({
     enabled: !!projectId && !!user,
@@ -51,13 +54,21 @@ export function VerificationPanel() {
   })
 
   const verifyMutation = useMutation({
-    mutationFn: async (args: { field: VerifyFactField; itemId: string; note?: string }) => {
+    mutationFn: async (args: {
+      field: VerifyFactField
+      itemId: string
+      note?: string
+      action?: 'verify' | 'reject'
+      reason?: string
+    }) => {
       if (!projectId) throw new Error('no projectId')
       const result = await verifyFact({
         projectId,
         field: args.field,
         itemId: args.itemId,
         note: args.note,
+        action: args.action,
+        reason: args.reason,
       })
       if (!result.ok) {
         throw new Error(result.error.message)
@@ -140,6 +151,13 @@ export function VerificationPanel() {
           onVerify={(field, itemId, note) =>
             verifyMutation.mutate({ field, itemId, note })
           }
+          onReject={(field, itemId, reason) =>
+            verifyMutation.mutate({ field, itemId, action: 'reject', reason })
+          }
+          rejectingKey={rejectingKey}
+          setRejectingKey={setRejectingKey}
+          rejectReason={rejectReason}
+          setRejectReason={setRejectReason}
           isPending={verifyMutation.isPending}
         />
       ))}
@@ -234,6 +252,11 @@ function Section({
   pendingNote,
   setPendingNote,
   onVerify,
+  onReject,
+  rejectingKey,
+  setRejectingKey,
+  rejectReason,
+  setRejectReason,
   isPending,
 }: {
   field: VerifyFactField
@@ -242,6 +265,11 @@ function Section({
   pendingNote: Record<string, string>
   setPendingNote: React.Dispatch<React.SetStateAction<Record<string, string>>>
   onVerify: (field: VerifyFactField, itemId: string, note?: string) => void
+  onReject: (field: VerifyFactField, itemId: string, reason: string) => void
+  rejectingKey: string | null
+  setRejectingKey: React.Dispatch<React.SetStateAction<string | null>>
+  rejectReason: Record<string, string>
+  setRejectReason: React.Dispatch<React.SetStateAction<Record<string, string>>>
   isPending: boolean
 }) {
   if (rows.length === 0) return null
@@ -256,6 +284,7 @@ function Section({
         {rows.map((row) => {
           const noteKey = `${field}::${row.itemId}`
           const note = pendingNote[noteKey] ?? ''
+          const reason = rejectReason[noteKey] ?? ''
           return (
             <li
               key={noteKey}
@@ -274,32 +303,75 @@ function Section({
                   {row.detail}
                 </p>
               )}
-              {row.isVerified ? (
-                <p className="mt-2 font-mono text-[11px] uppercase tracking-[0.18em] text-emerald-700">
-                  Bestätigt
-                </p>
-              ) : (
-                <div className="mt-2 flex flex-wrap items-center gap-2">
-                  <input
-                    type="text"
-                    placeholder="Notiz (optional)"
-                    value={note}
-                    onChange={(e) =>
-                      setPendingNote((prev) => ({ ...prev, [noteKey]: e.target.value }))
-                    }
-                    className="min-w-[18rem] flex-1 border border-[hsl(var(--ink))]/15 bg-transparent px-2 py-1 font-mono text-[12px] text-[hsl(var(--ink))] focus:outline-none focus:ring-1 focus:ring-[hsl(var(--ink))]/40"
-                    maxLength={500}
-                  />
+              <div className="mt-2 flex flex-col gap-2">
+                {row.isVerified ? (
+                  <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-emerald-700">
+                    Bestätigt
+                  </p>
+                ) : (
+                  <div className="flex flex-wrap items-center gap-2">
+                    <input
+                      type="text"
+                      placeholder="Notiz (optional)"
+                      value={note}
+                      onChange={(e) =>
+                        setPendingNote((prev) => ({ ...prev, [noteKey]: e.target.value }))
+                      }
+                      className="min-w-[18rem] flex-1 border border-[hsl(var(--ink))]/15 bg-transparent px-2 py-1 font-mono text-[12px] text-[hsl(var(--ink))] focus:outline-none focus:ring-1 focus:ring-[hsl(var(--ink))]/40"
+                      maxLength={500}
+                    />
+                    <button
+                      type="button"
+                      disabled={isPending}
+                      onClick={() => onVerify(field, row.itemId, note || undefined)}
+                      className="border border-[hsl(var(--ink))] px-3 py-1 font-mono text-[11px] uppercase tracking-[0.18em] text-[hsl(var(--ink))] hover:bg-[hsl(var(--ink))] hover:text-[hsl(var(--paper))] disabled:opacity-40"
+                    >
+                      {isPending ? 'verifiziere …' : 'Bestätigen'}
+                    </button>
+                  </div>
+                )}
+                {/* C8 (Bug 34) — reject / un-verify with a required reason. */}
+                {rejectingKey === noteKey ? (
+                  <div className="flex flex-wrap items-center gap-2 border-l-2 border-[hsl(var(--clay))]/40 pl-2">
+                    <input
+                      type="text"
+                      placeholder="Grund der Ablehnung (erforderlich, min. 5 Zeichen)"
+                      value={reason}
+                      onChange={(e) =>
+                        setRejectReason((prev) => ({ ...prev, [noteKey]: e.target.value }))
+                      }
+                      className="min-w-[18rem] flex-1 border border-[hsl(var(--clay))]/30 bg-transparent px-2 py-1 font-mono text-[12px] text-[hsl(var(--ink))] focus:outline-none focus:ring-1 focus:ring-[hsl(var(--clay))]/50"
+                      maxLength={500}
+                    />
+                    <button
+                      type="button"
+                      disabled={isPending || reason.trim().length < 5}
+                      onClick={() => {
+                        onReject(field, row.itemId, reason.trim())
+                        setRejectingKey(null)
+                      }}
+                      className="border border-[hsl(var(--clay))] px-3 py-1 font-mono text-[11px] uppercase tracking-[0.18em] text-[hsl(var(--clay))] hover:bg-[hsl(var(--clay))] hover:text-[hsl(var(--paper))] disabled:opacity-40"
+                    >
+                      Ablehnung bestätigen
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setRejectingKey(null)}
+                      className="font-mono text-[10px] uppercase tracking-[0.18em] text-[hsl(var(--ink))]/45 hover:text-[hsl(var(--ink))]"
+                    >
+                      Abbrechen
+                    </button>
+                  </div>
+                ) : (
                   <button
                     type="button"
-                    disabled={isPending}
-                    onClick={() => onVerify(field, row.itemId, note || undefined)}
-                    className="border border-[hsl(var(--ink))] px-3 py-1 font-mono text-[11px] uppercase tracking-[0.18em] text-[hsl(var(--ink))] hover:bg-[hsl(var(--ink))] hover:text-[hsl(var(--paper))] disabled:opacity-40"
+                    onClick={() => setRejectingKey(noteKey)}
+                    className="self-start font-mono text-[10px] uppercase tracking-[0.18em] text-[hsl(var(--clay))]/70 hover:text-[hsl(var(--clay))]"
                   >
-                    {isPending ? 'verifiziere …' : 'Bestätigen'}
+                    {row.isVerified ? 'Verifizierung zurückziehen' : 'Ablehnen'}
                   </button>
-                </div>
-              )}
+                )}
+              </div>
             </li>
           )
         })}

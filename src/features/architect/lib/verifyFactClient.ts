@@ -12,6 +12,10 @@ export interface VerifyFactRequest {
   field: VerifyFactField
   itemId: string
   note?: string
+  /** C8 (Bug 34) — 'verify' (default) or 'reject' (un-verify with reason). */
+  action?: 'verify' | 'reject'
+  /** Required (≥ 5 chars) when action === 'reject'. */
+  reason?: string
 }
 
 export interface VerifyFactSuccess {
@@ -19,6 +23,7 @@ export interface VerifyFactSuccess {
   projectId: string
   field: VerifyFactField
   itemId: string
+  action?: 'verify' | 'reject'
   requestId: string
 }
 

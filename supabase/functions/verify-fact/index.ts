@@ -90,7 +90,14 @@ Deno.serve(async (req: Request) => {
     )
   }
 
-  let body: { projectId?: string; field?: string; itemId?: string; note?: string }
+  let body: {
+    projectId?: string
+    field?: string
+    itemId?: string
+    note?: string
+    action?: string
+    reason?: string
+  }
   try {
     body = await req.json()
   } catch {
@@ -122,6 +129,23 @@ Deno.serve(async (req: Request) => {
   }
   const note =
     typeof body.note === 'string' && body.note.length <= 500 ? body.note : undefined
+
+  // C8 (Bug 34) — verify | reject discriminator. Default 'verify' for
+  // backwards compatibility. Reject downgrades DESIGNER+VERIFIED →
+  // DESIGNER+ASSUMED with a required reason and emits qualifier.rejected
+  // (already a first-class signal in the qualifier_transitions +
+  // qualifier_metrics views, 0027 / 0029). An architect uses this to
+  // un-confirm a row they verified by mistake or found wrong later.
+  const action: 'verify' | 'reject' = body.action === 'reject' ? 'reject' : 'verify'
+  const rejectReason = typeof body.reason === 'string' ? body.reason.trim() : ''
+  if (action === 'reject' && rejectReason.length < 5) {
+    return jsonError(
+      { code: 'validation', message: 'reason must be at least 5 characters for a rejection' },
+      400,
+      corsHeaders,
+      requestId,
+    )
+  }
 
   const supabaseUrl = Deno.env.get('SUPABASE_URL')
   const anonKey = Deno.env.get('SUPABASE_ANON_KEY')
@@ -214,15 +238,27 @@ Deno.serve(async (req: Request) => {
   }
 
   const now = new Date().toISOString()
-  const verifiedQualifier: Qualifier = {
-    source: 'DESIGNER',
-    quality: 'VERIFIED',
-    setAt: now,
-    setBy: 'user',
-    ...(note ? { reason: note } : {}),
-  }
+  // Reject → DESIGNER+ASSUMED (the row reverts to "Vorläufig" on the owner
+  // side); reason is recorded verbatim. No architect display name is
+  // fabricated — the authoritative identity is event_log.user_id below.
+  const nextQualifier: Qualifier =
+    action === 'reject'
+      ? {
+          source: 'DESIGNER',
+          quality: 'ASSUMED',
+          setAt: now,
+          setBy: 'user',
+          reason: `rejected at ${now}: ${rejectReason}`,
+        }
+      : {
+          source: 'DESIGNER',
+          quality: 'VERIFIED',
+          setAt: now,
+          setBy: 'user',
+          ...(note ? { reason: note } : {}),
+        }
 
-  const next = applyVerification(state, body.field as FieldKind, body.itemId, verifiedQualifier)
+  const next = applyVerification(state, body.field as FieldKind, body.itemId, nextQualifier)
   if (!next) {
     return jsonError(
       { code: 'not_found', message: `${body.field}/${body.itemId} not found in project state.` },
@@ -252,16 +288,16 @@ Deno.serve(async (req: Request) => {
       user_id: userData.user.id,
       project_id: body.projectId,
       source: 'system',
-      name: 'qualifier.verified',
+      name: action === 'reject' ? 'qualifier.rejected' : 'qualifier.verified',
       attributes: {
         field: body.field,
         item_id: body.itemId,
         attempted_source: 'DESIGNER',
-        attempted_quality: 'VERIFIED',
+        attempted_quality: action === 'reject' ? 'ASSUMED' : 'VERIFIED',
         enforced_source: 'DESIGNER',
-        enforced_quality: 'VERIFIED',
+        enforced_quality: action === 'reject' ? 'ASSUMED' : 'VERIFIED',
         caller_role: 'designer',
-        ...(note ? { note } : {}),
+        ...(action === 'reject' ? { reason: rejectReason } : note ? { note } : {}),
       },
       client_ts: now,
       trace_id: null,
@@ -280,6 +316,7 @@ Deno.serve(async (req: Request) => {
       projectId: body.projectId,
       field: body.field,
       itemId: body.itemId,
+      action,
       requestId,
     }),
     {
