@@ -1,0 +1,40 @@
+{
+  "_comment": "C11 16-state matrix fixture. Baden-Württemberg × T-01 EFH-Neubau, plain residential plot, NO hard-blocker facts. bw × neubau reaches the generic branch resolveProcedure.ts:307-314 → citation from getStateLocalization regular.citation → expected '§ 58 LBO', confidence ASSUMED. SUBSTANTIVE state: PDF MUST carry the real 'LBO' §; MUST NOT carry any Bayern-leak token; MUST NOT carry a fabricated 'BauO {UPPERCASE}'. Project slug 'bw' per states/_types.ts:31.",
+  "project": {
+    "id": "00000000-0000-0000-0000-0000000026a4",
+    "owner_id": "00000000-0000-0000-0000-00000000beef",
+    "intent": "neubau_einfamilienhaus",
+    "has_plot": true,
+    "plot_address": "Ahornweg 5, 70188 Stuttgart",
+    "bundesland": "bw",
+    "template_id": "T-01",
+    "name": "EFH-Neubau Stuttgart",
+    "status": "in_progress",
+    "state": {
+      "templateId": "T-01",
+      "schemaVersion": 1,
+      "areas": {
+        "A": { "state": "ACTIVE", "reason": "Innenbereich § 34 BauGB angenommen; Einfügen wird geprüft" },
+        "B": { "state": "ACTIVE", "reason": "Verfahrensart vorbehaltlich landesrechtlicher Detail-Spezifika" },
+        "C": { "state": "ACTIVE", "reason": "Keine Baulasten, kein Denkmalschutz identifiziert" }
+      },
+      "facts": [
+        { "key": "plot.address", "value": "Ahornweg 5, 70188 Stuttgart", "qualifier": { "source": "CLIENT", "quality": "DECIDED", "setAt": "2026-05-24T00:00:00.000Z", "setBy": "assistant" } },
+        { "key": "bundesland", "value": "Baden-Württemberg", "evidence": "PLZ 70188 liegt in Stuttgart, Baden-Württemberg", "qualifier": { "source": "CLIENT", "quality": "DECIDED", "setAt": "2026-05-24T00:00:00.000Z", "setBy": "assistant" } },
+        { "key": "vorhaben_typ", "value": "Neubau Einfamilienhaus", "qualifier": { "source": "CLIENT", "quality": "DECIDED", "setAt": "2026-05-24T00:00:00.000Z", "setBy": "assistant" } },
+        { "key": "klasse", "value": "Gebäudeklasse 1", "qualifier": { "source": "LEGAL", "quality": "CALCULATED", "setAt": "2026-05-24T00:00:00.000Z", "setBy": "assistant" } },
+        { "key": "denkmalschutz", "value": false, "qualifier": { "source": "CLIENT", "quality": "DECIDED", "setAt": "2026-05-24T00:00:00.000Z", "setBy": "assistant" } },
+        { "key": "ensembleschutz", "value": false, "qualifier": { "source": "CLIENT", "quality": "DECIDED", "setAt": "2026-05-24T00:00:00.000Z", "setBy": "assistant" } }
+      ],
+      "recommendations": [],
+      "procedures": [],
+      "documents": [],
+      "specialists": [],
+      "roles": []
+    },
+    "created_at": "2026-05-24T00:00:00.000Z",
+    "updated_at": "2026-05-24T00:00:00.000Z"
+  },
+  "messages": [],
+  "events": []
+}

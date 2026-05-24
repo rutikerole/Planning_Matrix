@@ -1,0 +1,40 @@
+{
+  "_comment": "C11 16-state matrix fixture. Mecklenburg-Vorpommern × T-01 EFH-Neubau, plain residential plot, NO hard-blocker facts. STUB state (makeStub, empty pack citation) → generic branch resolveProcedure.ts:307-314 → expected honest 'in Vorbereitung' (DE) / 'being finalized' (EN) framing, NO fabricated §. MUST NOT carry 'BauO {UPPERCASE}' (real code is LBauO M-V); MUST NOT carry any Bayern-leak token. Project slug is the CANONICAL 'mv' (NOT 'mecklenburg-vorpommern') per states/_types.ts:41 — a wrong slug would fall through getStateLocalization to BAYERN (stateLocalization.ts:427).",
+  "project": {
+    "id": "00000000-0000-0000-0000-0000000026ac",
+    "owner_id": "00000000-0000-0000-0000-00000000beef",
+    "intent": "neubau_einfamilienhaus",
+    "has_plot": true,
+    "plot_address": "Ahornstraße 15, 19061 Schwerin",
+    "bundesland": "mv",
+    "template_id": "T-01",
+    "name": "EFH-Neubau Schwerin",
+    "status": "in_progress",
+    "state": {
+      "templateId": "T-01",
+      "schemaVersion": 1,
+      "areas": {
+        "A": { "state": "ACTIVE", "reason": "Innenbereich § 34 BauGB angenommen; Einfügen wird geprüft" },
+        "B": { "state": "ACTIVE", "reason": "Verfahrensart vorbehaltlich landesrechtlicher Detail-Spezifika" },
+        "C": { "state": "ACTIVE", "reason": "Keine Baulasten, kein Denkmalschutz identifiziert" }
+      },
+      "facts": [
+        { "key": "plot.address", "value": "Ahornstraße 15, 19061 Schwerin", "qualifier": { "source": "CLIENT", "quality": "DECIDED", "setAt": "2026-05-24T00:00:00.000Z", "setBy": "assistant" } },
+        { "key": "bundesland", "value": "Mecklenburg-Vorpommern", "evidence": "PLZ 19061 liegt in Schwerin, Mecklenburg-Vorpommern", "qualifier": { "source": "CLIENT", "quality": "DECIDED", "setAt": "2026-05-24T00:00:00.000Z", "setBy": "assistant" } },
+        { "key": "vorhaben_typ", "value": "Neubau Einfamilienhaus", "qualifier": { "source": "CLIENT", "quality": "DECIDED", "setAt": "2026-05-24T00:00:00.000Z", "setBy": "assistant" } },
+        { "key": "klasse", "value": "Gebäudeklasse 1", "qualifier": { "source": "LEGAL", "quality": "CALCULATED", "setAt": "2026-05-24T00:00:00.000Z", "setBy": "assistant" } },
+        { "key": "denkmalschutz", "value": false, "qualifier": { "source": "CLIENT", "quality": "DECIDED", "setAt": "2026-05-24T00:00:00.000Z", "setBy": "assistant" } },
+        { "key": "ensembleschutz", "value": false, "qualifier": { "source": "CLIENT", "quality": "DECIDED", "setAt": "2026-05-24T00:00:00.000Z", "setBy": "assistant" } }
+      ],
+      "recommendations": [],
+      "procedures": [],
+      "documents": [],
+      "specialists": [],
+      "roles": []
+    },
+    "created_at": "2026-05-24T00:00:00.000Z",
+    "updated_at": "2026-05-24T00:00:00.000Z"
+  },
+  "messages": [],
+  "events": []
+}

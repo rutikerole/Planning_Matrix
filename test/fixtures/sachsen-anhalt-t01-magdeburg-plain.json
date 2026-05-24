@@ -1,0 +1,40 @@
+{
+  "_comment": "C11 16-state matrix fixture. Sachsen-Anhalt × T-01 EFH-Neubau, plain residential plot, NO hard-blocker facts. STUB state (makeStub, empty pack citation) → generic branch resolveProcedure.ts:307-314 → expected honest 'in Vorbereitung' (DE) / 'being finalized' (EN) framing, NO fabricated §. MUST NOT carry 'BauO {UPPERCASE}' (real code is BauO LSA); MUST NOT carry any Bayern-leak token. Project slug 'sachsen-anhalt' per states/_types.ts:36.",
+  "project": {
+    "id": "00000000-0000-0000-0000-0000000026a8",
+    "owner_id": "00000000-0000-0000-0000-00000000beef",
+    "intent": "neubau_einfamilienhaus",
+    "has_plot": true,
+    "plot_address": "Lindenallee 9, 39112 Magdeburg",
+    "bundesland": "sachsen-anhalt",
+    "template_id": "T-01",
+    "name": "EFH-Neubau Magdeburg",
+    "status": "in_progress",
+    "state": {
+      "templateId": "T-01",
+      "schemaVersion": 1,
+      "areas": {
+        "A": { "state": "ACTIVE", "reason": "Innenbereich § 34 BauGB angenommen; Einfügen wird geprüft" },
+        "B": { "state": "ACTIVE", "reason": "Verfahrensart vorbehaltlich landesrechtlicher Detail-Spezifika" },
+        "C": { "state": "ACTIVE", "reason": "Keine Baulasten, kein Denkmalschutz identifiziert" }
+      },
+      "facts": [
+        { "key": "plot.address", "value": "Lindenallee 9, 39112 Magdeburg", "qualifier": { "source": "CLIENT", "quality": "DECIDED", "setAt": "2026-05-24T00:00:00.000Z", "setBy": "assistant" } },
+        { "key": "bundesland", "value": "Sachsen-Anhalt", "evidence": "PLZ 39112 liegt in Magdeburg, Sachsen-Anhalt", "qualifier": { "source": "CLIENT", "quality": "DECIDED", "setAt": "2026-05-24T00:00:00.000Z", "setBy": "assistant" } },
+        { "key": "vorhaben_typ", "value": "Neubau Einfamilienhaus", "qualifier": { "source": "CLIENT", "quality": "DECIDED", "setAt": "2026-05-24T00:00:00.000Z", "setBy": "assistant" } },
+        { "key": "klasse", "value": "Gebäudeklasse 1", "qualifier": { "source": "LEGAL", "quality": "CALCULATED", "setAt": "2026-05-24T00:00:00.000Z", "setBy": "assistant" } },
+        { "key": "denkmalschutz", "value": false, "qualifier": { "source": "CLIENT", "quality": "DECIDED", "setAt": "2026-05-24T00:00:00.000Z", "setBy": "assistant" } },
+        { "key": "ensembleschutz", "value": false, "qualifier": { "source": "CLIENT", "quality": "DECIDED", "setAt": "2026-05-24T00:00:00.000Z", "setBy": "assistant" } }
+      ],
+      "recommendations": [],
+      "procedures": [],
+      "documents": [],
+      "specialists": [],
+      "roles": []
+    },
+    "created_at": "2026-05-24T00:00:00.000Z",
+    "updated_at": "2026-05-24T00:00:00.000Z"
+  },
+  "messages": [],
+  "events": []
+}

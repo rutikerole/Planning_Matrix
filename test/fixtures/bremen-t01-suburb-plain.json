@@ -1,0 +1,40 @@
+{
+  "_comment": "C11 16-state matrix fixture. Bremen × T-01 EFH-Neubau, SUBURBAN residential plot (Schwachhausen — deliberately NOT a landmark like Marktplatz that would trip Denkmal). NO hard-blocker facts. STADTSTAAT stub: cityBlock=null path MUST render without crash. STUB state → generic branch resolveProcedure.ts:307-314 → expected honest 'in Vorbereitung' (DE) / 'being finalized' (EN) framing, NO fabricated §. MUST NOT carry 'BauO {UPPERCASE}' (real code is BremLBO); MUST NOT carry any Bayern-leak token. Project slug 'bremen' per states/_types.ts:45.",
+  "project": {
+    "id": "00000000-0000-0000-0000-0000000026af",
+    "owner_id": "00000000-0000-0000-0000-00000000beef",
+    "intent": "neubau_einfamilienhaus",
+    "has_plot": true,
+    "plot_address": "Schwachhauser Heerstraße 200, 28213 Bremen",
+    "bundesland": "bremen",
+    "template_id": "T-01",
+    "name": "EFH-Neubau Bremen-Schwachhausen",
+    "status": "in_progress",
+    "state": {
+      "templateId": "T-01",
+      "schemaVersion": 1,
+      "areas": {
+        "A": { "state": "ACTIVE", "reason": "Innenbereich § 34 BauGB angenommen; Einfügen wird geprüft" },
+        "B": { "state": "ACTIVE", "reason": "Verfahrensart vorbehaltlich landesrechtlicher Detail-Spezifika" },
+        "C": { "state": "ACTIVE", "reason": "Keine Baulasten, kein Denkmalschutz identifiziert" }
+      },
+      "facts": [
+        { "key": "plot.address", "value": "Schwachhauser Heerstraße 200, 28213 Bremen", "qualifier": { "source": "CLIENT", "quality": "DECIDED", "setAt": "2026-05-24T00:00:00.000Z", "setBy": "assistant" } },
+        { "key": "bundesland", "value": "Bremen", "evidence": "PLZ 28213 liegt in Bremen (Schwachhausen)", "qualifier": { "source": "CLIENT", "quality": "DECIDED", "setAt": "2026-05-24T00:00:00.000Z", "setBy": "assistant" } },
+        { "key": "vorhaben_typ", "value": "Neubau Einfamilienhaus", "qualifier": { "source": "CLIENT", "quality": "DECIDED", "setAt": "2026-05-24T00:00:00.000Z", "setBy": "assistant" } },
+        { "key": "klasse", "value": "Gebäudeklasse 1", "qualifier": { "source": "LEGAL", "quality": "CALCULATED", "setAt": "2026-05-24T00:00:00.000Z", "setBy": "assistant" } },
+        { "key": "denkmalschutz", "value": false, "qualifier": { "source": "CLIENT", "quality": "DECIDED", "setAt": "2026-05-24T00:00:00.000Z", "setBy": "assistant" } },
+        { "key": "ensembleschutz", "value": false, "qualifier": { "source": "CLIENT", "quality": "DECIDED", "setAt": "2026-05-24T00:00:00.000Z", "setBy": "assistant" } }
+      ],
+      "recommendations": [],
+      "procedures": [],
+      "documents": [],
+      "specialists": [],
+      "roles": []
+    },
+    "created_at": "2026-05-24T00:00:00.000Z",
+    "updated_at": "2026-05-24T00:00:00.000Z"
+  },
+  "messages": [],
+  "events": []
+}

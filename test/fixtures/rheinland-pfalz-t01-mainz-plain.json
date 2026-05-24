@@ -1,0 +1,40 @@
+{
+  "_comment": "C11 16-state matrix fixture. Rheinland-Pfalz × T-01 EFH-Neubau, plain residential plot, NO hard-blocker facts. STUB state (makeStub, empty pack citation) → generic branch resolveProcedure.ts:307-314 → expected honest 'in Vorbereitung' (DE) / 'being finalized' (EN) framing, NO fabricated §. MUST NOT carry 'BauO {UPPERCASE}' (real code is LBauO RLP); MUST NOT carry any Bayern-leak token. Project slug is the CANONICAL 'rlp' (NOT 'rheinland-pfalz') per states/_types.ts:38 — a wrong slug would fall through getStateLocalization to BAYERN (stateLocalization.ts:427).",
+  "project": {
+    "id": "00000000-0000-0000-0000-0000000026a9",
+    "owner_id": "00000000-0000-0000-0000-00000000beef",
+    "intent": "neubau_einfamilienhaus",
+    "has_plot": true,
+    "plot_address": "Eichendorffstraße 6, 55122 Mainz",
+    "bundesland": "rlp",
+    "template_id": "T-01",
+    "name": "EFH-Neubau Mainz",
+    "status": "in_progress",
+    "state": {
+      "templateId": "T-01",
+      "schemaVersion": 1,
+      "areas": {
+        "A": { "state": "ACTIVE", "reason": "Innenbereich § 34 BauGB angenommen; Einfügen wird geprüft" },
+        "B": { "state": "ACTIVE", "reason": "Verfahrensart vorbehaltlich landesrechtlicher Detail-Spezifika" },
+        "C": { "state": "ACTIVE", "reason": "Keine Baulasten, kein Denkmalschutz identifiziert" }
+      },
+      "facts": [
+        { "key": "plot.address", "value": "Eichendorffstraße 6, 55122 Mainz", "qualifier": { "source": "CLIENT", "quality": "DECIDED", "setAt": "2026-05-24T00:00:00.000Z", "setBy": "assistant" } },
+        { "key": "bundesland", "value": "Rheinland-Pfalz", "evidence": "PLZ 55122 liegt in Mainz, Rheinland-Pfalz", "qualifier": { "source": "CLIENT", "quality": "DECIDED", "setAt": "2026-05-24T00:00:00.000Z", "setBy": "assistant" } },
+        { "key": "vorhaben_typ", "value": "Neubau Einfamilienhaus", "qualifier": { "source": "CLIENT", "quality": "DECIDED", "setAt": "2026-05-24T00:00:00.000Z", "setBy": "assistant" } },
+        { "key": "klasse", "value": "Gebäudeklasse 1", "qualifier": { "source": "LEGAL", "quality": "CALCULATED", "setAt": "2026-05-24T00:00:00.000Z", "setBy": "assistant" } },
+        { "key": "denkmalschutz", "value": false, "qualifier": { "source": "CLIENT", "quality": "DECIDED", "setAt": "2026-05-24T00:00:00.000Z", "setBy": "assistant" } },
+        { "key": "ensembleschutz", "value": false, "qualifier": { "source": "CLIENT", "quality": "DECIDED", "setAt": "2026-05-24T00:00:00.000Z", "setBy": "assistant" } }
+      ],
+      "recommendations": [],
+      "procedures": [],
+      "documents": [],
+      "specialists": [],
+      "roles": []
+    },
+    "created_at": "2026-05-24T00:00:00.000Z",
+    "updated_at": "2026-05-24T00:00:00.000Z"
+  },
+  "messages": [],
+  "events": []
+}
