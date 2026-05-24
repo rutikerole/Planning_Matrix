@@ -1,5 +1,6 @@
 import type { ProjectState } from '@/types/projectState'
 import { getStateCitations } from '@/legal/stateCitations'
+import { extractProcedureCitation } from '@/legal/resolveProcedure'
 
 export type LegalRelevance = 'HIGH' | 'PARTIAL' | 'NONE'
 
@@ -65,6 +66,13 @@ export function composeLegalDomains(
     ...documents.map(
       (d) => `${d.title_de} ${d.title_en} ${d.qualifier?.reason ?? ''}`,
     ),
+    // v1.0.28 Bug 54 — include the Areas A/B/C reasons so Domain A picks up
+    // the § 30/34/35 BauGB planning context the persona records there (it
+    // was previously invisible to the regex because the corpus was facts +
+    // procedures + documents only).
+    areas?.A?.reason ?? '',
+    areas?.B?.reason ?? '',
+    areas?.C?.reason ?? '',
   ]
     .filter(Boolean)
     .join('\n')
@@ -169,6 +177,42 @@ export function composeLegalDomains(
       relevance: 'PARTIAL',
       status: lang === 'en' ? 'GK-dependent fire protection' : 'gebäudeklassenabhängig',
     })
+  }
+  // v1.0.28 Bug 54 — Domain B was Bayern-only (the BayBO matchers above
+  // sit inside `if (isBayern)`), so ALL 15 non-Bayern states rendered an
+  // empty Building-law section ("Not enough information yet") on the web
+  // Legal Landscape tab. The 16-state matrix never caught it — it only
+  // asserts the PDF. Surface the state's procedure for every non-Bayern
+  // state. No fabrication: substantive states carry a real
+  // permitFormCitation; stub states render the honest "Landesbauordnung
+  // {Land}" label with an "in Vorbereitung" status (their pack §-fields
+  // are deliberately unverified deferral text).
+  if (!isBayern) {
+    const verfahrenFact = facts.find(
+      (f) => f.key === 'verfahren_indikation' || f.key === 'PROCEDURE.TYPE',
+    )
+    const verfahrenStr =
+      typeof verfahrenFact?.value === 'string' ? verfahrenFact.value : ''
+    const isFree = /verfahrensfrei|permit-free|genehmigungsfrei/i.test(verfahrenStr)
+    let label: string
+    let status: string
+    if (verfahrenStr) {
+      label =
+        extractProcedureCitation(verfahrenStr) ??
+        (citations.isSubstantive
+          ? citations.permitFormCitation
+          : `Landesbauordnung ${citations.labelDe}`)
+      status = isFree
+        ? lang === 'en' ? 'permit-free' : 'verfahrensfrei'
+        : lang === 'en' ? 'permit procedure' : 'Genehmigungsverfahren'
+    } else if (citations.isSubstantive) {
+      label = citations.permitFormCitation
+      status = lang === 'en' ? 'permit procedure (baseline)' : 'Genehmigungsverfahren (Basis)'
+    } else {
+      label = `Landesbauordnung ${citations.labelDe}`
+      status = lang === 'en' ? 'details in preparation' : 'Detail-Spezifika in Vorbereitung'
+    }
+    bRows.unshift({ label, relevance: 'HIGH', status })
   }
   const areaB = areas?.B
   const bRelevance: LegalRelevance =

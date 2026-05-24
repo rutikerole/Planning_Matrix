@@ -21,6 +21,19 @@ import {
 } from '../src/features/result/lib/architectInviteApi.ts'
 import { computeVerificationRollup } from '../src/features/result/lib/verificationRollup.ts'
 import { erodeVerificationOnEdit } from '../src/lib/projectStateHelpers.ts'
+import { composeLegalDomains } from '../src/features/result/lib/composeLegalDomains.ts'
+import { readFileSync } from 'node:fs'
+import { fileURLToPath } from 'node:url'
+import { dirname, join } from 'node:path'
+
+const REPO_ROOT = join(dirname(fileURLToPath(import.meta.url)), '..')
+function loadFixtureState(file: string): {
+  state: Record<string, unknown>
+  bundesland: string
+} {
+  const fx = JSON.parse(readFileSync(join(REPO_ROOT, file), 'utf-8'))
+  return { state: fx.project.state, bundesland: fx.project.bundesland }
+}
 
 interface Tally {
   passed: number
@@ -242,8 +255,49 @@ function runErosion(): Tally {
   return t
 }
 
+function runLegalDomains(): Tally {
+  console.log('\n[smoke-architect] composeLegalDomains Domain B (Commit 3 / Bug 54)…')
+  const t: Tally = { passed: 0, failed: 0 }
+  const domB = (file: string, lang: 'de' | 'en') => {
+    const { state, bundesland } = loadFixtureState(file)
+    const domains = composeLegalDomains(state as never, lang, bundesland)
+    return domains.find((d) => d.key === 'B')
+  }
+
+  // NRW T-05 (substantive, verfahrensfrei) → B populated with § 62.
+  for (const lang of ['de', 'en'] as const) {
+    const b = domB('test/fixtures/nrw-t05-bonn-verfahrensfrei.json', lang)
+    ok(t, (b?.rows.length ?? 0) > 0, `NRW T-05 ${lang}: Domain B has rows (was empty pre-Bug-54)`)
+    ok(
+      t,
+      b?.rows.some((r) => /§\s*62\s+BauO\s+NRW/.test(r.label)) ?? false,
+      `NRW T-05 ${lang}: Domain B cites § 62 BauO NRW`,
+    )
+  }
+  // Sachsen T-01 (stub) → B populated with honest "Landesbauordnung Sachsen".
+  for (const lang of ['de', 'en'] as const) {
+    const b = domB('test/fixtures/sachsen-t01-leipzig.json', lang)
+    ok(t, (b?.rows.length ?? 0) > 0, `Sachsen T-01 ${lang}: Domain B has rows (stub, not empty)`)
+    ok(
+      t,
+      b?.rows.some((r) => /Landesbauordnung Sachsen/.test(r.label)) ?? false,
+      `Sachsen T-01 ${lang}: Domain B honest stub label`,
+    )
+  }
+  // Bayern regression — BayBO matchers still drive Domain B (corpus has
+  // "BayBO Art. 58" in the area-B reason).
+  const bayB = domB('test/fixtures/bayern-t03-verified.json', 'de')
+  ok(t, (bayB?.rows.length ?? 0) > 0, 'Bayern T-03: Domain B still populated (BayBO matchers)')
+  ok(
+    t,
+    bayB?.rows.some((r) => /BayBO/.test(r.label)) ?? false,
+    'Bayern T-03: Domain B still cites BayBO (no regression)',
+  )
+  return t
+}
+
 function main(): void {
-  const sections: Tally[] = [runInviteParse(), runRollup(), runErosion()]
+  const sections: Tally[] = [runInviteParse(), runRollup(), runErosion(), runLegalDomains()]
   const passed = sections.reduce((n, s) => n + s.passed, 0)
   const failed = sections.reduce((n, s) => n + s.failed, 0)
   console.log(`\n[smoke-architect] ${passed} passed · ${failed} failed`)
