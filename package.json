@@ -23,6 +23,7 @@
     "smoke:citations:live": "node scripts/smokeWalk.mjs --live",
     "smoke:pdf-text": "npx tsx scripts/smoke-pdf-text.mts",
     "smoke:pdf-matrix": "npx tsx scripts/smoke-pdf-matrix.mts",
+    "smoke:architect": "npx tsx scripts/smoke-architect-flow.mts",
     "smoke:architect-e2e": "node scripts/architect-e2e-smoke.mjs",
     "smoke:matrix": "node scripts/smoke-walk-matrix.mjs",
     "verify:bayern-sha": "node scripts/verify-bayern-sha.mjs",
