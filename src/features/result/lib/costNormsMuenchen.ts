@@ -126,8 +126,14 @@ const ZONE_MULT: Record<Honorarzone, number> = {
  * Phase 8.1 (A.4) — Bundesland-level rate factor. Only Bayern in v1;
  * future Länder slot in here without changing the engine signature.
  */
+// v1.0.25 Bug 28 — keyed by the lowercase BundeslandCode (matching
+// projects.bundesland), not "Bayern". The pre-fix uppercase key meant
+// REGION_MULT[bundesland] always missed → fell through to 1.0 (dead
+// code). All states currently use the 1.0 HOAI baseline (no per-state
+// factor calibrated yet — docs/cost-formula.md); the lookup is now
+// normalized so calibrated factors slot in correctly later.
 const REGION_MULT: Record<string, number> = {
-  Bayern: 1.0,
+  bayern: 1.0,
 }
 
 const BASE_AREA_SQM = 180
@@ -205,7 +211,7 @@ export function resolveInputs(
 ): CostInputs {
   const areaSqm = opts.areaSqm ?? BASE_AREA_SQM
   const honorarzone = opts.honorarzone ?? 'III'
-  const bundesland = opts.bundesland ?? 'Bayern'
+  const bundesland = (opts.bundesland ?? 'bayern').toLowerCase()
   const region = REGION_MULT[bundesland] ?? 1.0
   const multiplier =
     PROCEDURE_MULT[procedure] *
@@ -231,10 +237,14 @@ export function describeCostInputs(
       ? `HOAI Zone ${inputs.honorarzone}`
       : `HOAI-Zone ${inputs.honorarzone}`,
   )
-  parts.push(
+  // v1.0.25 Bug 28 — render the proper state LABEL, not the raw
+  // lowercase code (was "Bundesland-Faktor bayern" shown to users).
+  const stateLabel =
     lang === 'en'
-      ? `${inputs.bundesland} factor`
-      : `Bundesland-Faktor ${inputs.bundesland}`,
+      ? getStateLocalization(inputs.bundesland).labelEn
+      : getStateLocalization(inputs.bundesland).labelDe
+  parts.push(
+    lang === 'en' ? `${stateLabel} factor` : `Bundesland-Faktor ${stateLabel}`,
   )
   if (inputs.klasse !== 'unknown') {
     parts.push(
@@ -368,6 +378,7 @@ export function detectKlasse(corpus: string): Gebaeudeklasse {
 // ─── Phase 10 commit 12 — per-template cost bands ───────────────────────
 
 import type { TemplateId } from '@/types/projectState'
+import { getStateLocalization } from '@/legal/stateLocalization'
 
 export interface CostBandPerTemplate {
   /** EUR lower bound (typical-case minimum). */
