@@ -1854,7 +1854,7 @@
         "empty": "Keine spezifischen Risiken erkannt."
       },
       "sendToArchitect": {
-        "modalTitle": "Briefing an Architekt:in senden",
+        "modalTitle": "Schreibgeschütztes Briefing senden",
         "intro": "Senden Sie das vollständige Briefing per E-Mail mit einem 30-tägigen Lese-Link, oder kopieren Sie nur den Link.",
         "emailLabel": "E-Mail der Architekt:in",
         "emailPlaceholder": "name@architekt.de",
@@ -1887,9 +1887,10 @@
       },
       "footer": {
         "back": "↩ Zurück zur Beratung",
-        "sendToArchitect": "An Architekt:in senden",
+        "inviteArchitect": "Architekt:in zur Verifizierung einladen",
+        "sendToArchitect": "Schreibgeschützte Übersicht senden",
         "pdf": "PDF",
-        "shareLink": "Link teilen",
+        "shareLink": "Link teilen (schreibgeschützt)",
         "takeItHome": "Mitnehmen",
         "moreActions": "Weitere Aktionen",
         "inspectDataFlow": "Datenfluss prüfen"

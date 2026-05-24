@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { ArrowLeft } from 'lucide-react'
+import { ArrowLeft, Check } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type { MessageRow, ProjectRow } from '@/types/db'
 import { ExportMenu } from './ExportMenu'
 import { SendToArchitectModal } from './SendToArchitectModal'
+import { InviteArchitectModal } from './InviteArchitectModal'
 import type { ResultSource } from './ResultWorkspace'
 import { InlineLogsButton } from '@/features/admin/components/InlineLogsButton'
 
@@ -44,6 +45,7 @@ export function ResultFooter({ project, messages, events, source }: Props) {
   const [params, setParams] = useSearchParams()
   const [toast, setToast] = useState<string | null>(null)
   const [sendOpen, setSendOpen] = useState(false)
+  const [inviteOpen, setInviteOpen] = useState(false)
 
   useEffect(() => {
     if (!toast) return
@@ -95,6 +97,17 @@ export function ResultFooter({ project, messages, events, source }: Props) {
                 {t('result.workspace.footer.back')}
               </span>
             </Link>
+            {/* C7 (Bug 29) — the legal-shield entry point. Emerald/solid
+             *  to distinguish the WRITE-access verification invite from
+             *  the read-only briefing send below. */}
+            <button
+              type="button"
+              onClick={() => setInviteOpen(true)}
+              className="hidden sm:inline-flex items-center gap-1.5 h-9 px-3 bg-emerald-700 text-paper rounded-full text-[12px] hover:bg-emerald-800 transition-colors duration-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-700 focus-visible:ring-offset-2 focus-visible:ring-offset-paper-card"
+            >
+              <Check aria-hidden="true" className="size-3" />
+              {t('result.workspace.footer.inviteArchitect')}
+            </button>
             <button
               type="button"
               onClick={() => setSendOpen(true)}
@@ -128,6 +141,11 @@ export function ResultFooter({ project, messages, events, source }: Props) {
         project={project}
         open={sendOpen}
         onOpenChange={setSendOpen}
+      />
+      <InviteArchitectModal
+        project={project}
+        open={inviteOpen}
+        onOpenChange={setInviteOpen}
       />
     </>
   )

@@ -1854,7 +1854,7 @@
         "empty": "No specific risks flagged."
       },
       "sendToArchitect": {
-        "modalTitle": "Send briefing to your architect",
+        "modalTitle": "Send read-only briefing",
         "intro": "Send the full briefing by email with a 30-day read-only link, or just copy the link.",
         "emailLabel": "Architect's email",
         "emailPlaceholder": "name@architekt.de",
@@ -1887,9 +1887,10 @@
       },
       "footer": {
         "back": "↩ Back to consultation",
-        "sendToArchitect": "Send to architect",
+        "inviteArchitect": "Invite architect to verify",
+        "sendToArchitect": "Send read-only briefing",
         "pdf": "PDF",
-        "shareLink": "Share link",
+        "shareLink": "Share link (read-only)",
         "takeItHome": "Take it home",
         "moreActions": "More actions",
         "inspectDataFlow": "Inspect data flow"
