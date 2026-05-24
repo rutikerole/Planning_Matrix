@@ -1,7 +1,7 @@
 {
   "url": "https://www.muenchen.info/plan/bebauungsplan/p_8570_1781.pdf",
   "fingerprint": "24c152545e12f99004e566533e73af7095f36ef5c52fb9ee32c974669e9b473a",
-  "lastChecked": "2026-05-17",
+  "lastChecked": "2026-05-24",
   "lastChanged": "2026-05-03",
   "statusHistory": [
     {
@@ -15,6 +15,10 @@
     {
       "status": "UNCHANGED",
       "date": "2026-05-17"
+    },
+    {
+      "status": "UNCHANGED",
+      "date": "2026-05-24"
     }
   ]
 }

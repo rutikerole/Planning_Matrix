@@ -1,8 +1,8 @@
 {
   "url": "https://www.ib-georgisis.de/",
-  "fingerprint": "f7ba238568f6ae6f37de8766386514d2ecb51881e91e62f8e33768762530c16c",
-  "lastChecked": "2026-05-17",
-  "lastChanged": "2026-05-17",
+  "fingerprint": "b8bf7b7dfe2c4db124594de8c7273106667f706da50110ea51d2c98f2f91d7da",
+  "lastChecked": "2026-05-24",
+  "lastChanged": "2026-05-24",
   "statusHistory": [
     {
       "status": "UNCHANGED",
@@ -19,6 +19,10 @@
     {
       "status": "CHANGED",
       "date": "2026-05-17"
+    },
+    {
+      "status": "CHANGED",
+      "date": "2026-05-24"
     }
   ]
 }

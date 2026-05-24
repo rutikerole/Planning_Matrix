@@ -1,8 +1,8 @@
 {
   "url": "https://www.erlangen.de/",
-  "fingerprint": "481e3ab724fac36abc0c744f9088d4f4594c0b7675927cd51fab5a4886a9f60b",
-  "lastChecked": "2026-05-17",
-  "lastChanged": "2026-05-17",
+  "fingerprint": "3371c6ac36c75c5981bafdaed29a081de9bbe8085b05a1a3c4329e6979d9d4b1",
+  "lastChecked": "2026-05-24",
+  "lastChanged": "2026-05-24",
   "statusHistory": [
     {
       "status": "UNCHANGED",
@@ -19,6 +19,10 @@
     {
       "status": "CHANGED",
       "date": "2026-05-17"
+    },
+    {
+      "status": "CHANGED",
+      "date": "2026-05-24"
     }
   ]
 }
