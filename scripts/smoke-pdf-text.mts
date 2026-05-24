@@ -1361,6 +1361,45 @@ async function runDeriveGkUnit(): Promise<{ passed: number; failed: number }> {
   return { passed, failed }
 }
 
+// v1.0.25 Bug 26 — stub-state procedure-citation fabrication guard.
+// Pre-fix, resolveProcedure's generic branch emitted
+// `§ 65 BauO ${CODE.toUpperCase()}` for any stub state without a hard
+// blocker (e.g. "§ 65 BauO SACHSEN" — real code is SächsBO). The two
+// no-blocker fixtures below drive that exact branch; the guard asserts
+// NO fabricated "BauO {UPPERCASE}" / "§ NN BauO {CODE}" token survives
+// to the rendered PDF, and that the honest "in Vorbereitung" framing
+// is present instead.
+async function runStubStateFabricationGuard(): Promise<{ passed: number; failed: number }> {
+  console.log(`\n[smoke-pdf-text] stub-state § 65 BauO fabrication guard (Bug 26)…`)
+  let passed = 0
+  let failed = 0
+  const cases: Array<{ file: string; label: string }> = [
+    { file: 'test/fixtures/sachsen-t01-leipzig.json', label: 'Sachsen' },
+    { file: 'test/fixtures/brandenburg-t01-potsdam.json', label: 'Brandenburg' },
+  ]
+  const fabricationRx = /BauO\s+(SACHSEN|BRANDENBURG|THUERINGEN|SACHSEN-ANHALT|RLP|MV|SH|SAARLAND|BERLIN|HAMBURG|BREMEN)\b/u
+  const upperParaRx = /§\s*\d+\s+BauO\s+[A-ZÄÖÜ-]{2,}/u
+  for (const c of cases) {
+    for (const lang of ['de', 'en'] as const) {
+      const bytes = await renderFixturePdf(lang, c.file)
+      const text = await extractPdfText(bytes)
+      const fabHit = fabricationRx.test(text)
+      const m1 = `${c.label} ${lang}: no fabricated "BauO {UPPERCASE}" token`
+      if (!fabHit) { console.log(`  ✓ ${m1}`); passed++ }
+      else { const ctx = text.match(/.{0,30}BauO\s+[A-ZÄÖÜ-]{2,}.{0,10}/u); console.log(`  ✗ ${m1}${ctx ? ` — context: "${ctx[0]}"` : ''}`); failed++ }
+      const upperHit = upperParaRx.test(text)
+      const m2 = `${c.label} ${lang}: no "§ NN BauO {UPPERCASE}" fabrication`
+      if (!upperHit) { console.log(`  ✓ ${m2}`); passed++ }
+      else { console.log(`  ✗ ${m2}`); failed++ }
+      const honestHit = /in Vorbereitung|being finalized/u.test(text)
+      const m3 = `${c.label} ${lang}: honest "in Vorbereitung" framing present`
+      if (honestHit) { console.log(`  ✓ ${m3}`); passed++ }
+      else { console.log(`  ✗ ${m3}`); failed++ }
+    }
+  }
+  return { passed, failed }
+}
+
 async function main(): Promise<void> {
   const en = await runLocale('en')
   const de = await runLocale('de')
@@ -1377,6 +1416,7 @@ async function main(): Promise<void> {
   const addressParser = await runAddressParserUnit()
   const writeTimeGate = await runWriteTimeGateUnit()
   const designerExt = await runDesignerExtUnit()
+  const stubFabrication = await runStubStateFabricationGuard()
   const totalFailed =
     en.failed +
     de.failed +
@@ -1392,7 +1432,8 @@ async function main(): Promise<void> {
     glossaryStateAware.failed +
     addressParser.failed +
     writeTimeGate.failed +
-    designerExt.failed
+    designerExt.failed +
+    stubFabrication.failed
   const totalPassed =
     en.passed +
     de.passed +
@@ -1408,7 +1449,8 @@ async function main(): Promise<void> {
     glossaryStateAware.passed +
     addressParser.passed +
     writeTimeGate.passed +
-    designerExt.passed
+    designerExt.passed +
+    stubFabrication.passed
   console.log(`\n[smoke-pdf-text] ${totalPassed} passed · ${totalFailed} failed`)
   if (totalFailed > 0) {
     console.log('[smoke-pdf-text] FAIL — see violations above.')

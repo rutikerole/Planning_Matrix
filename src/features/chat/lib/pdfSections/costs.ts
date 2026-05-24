@@ -50,8 +50,14 @@ export interface CostsItem {
 export interface CostsData {
   /** m² façade used as the cost-driving area. */
   areaSqm: number
-  /** Bundesland short-code uppercased (e.g. "NRW", "BAYERN"). */
+  /** Bundesland short-code uppercased (e.g. "NRW", "BAYERN"). Used
+   *  only as a state LABEL in the subtitle, never as a citation. */
   bundeslandCode: string
+  /** v1.0.25 Bug 26 — state-correct structural-certificate reference
+   *  for the structural cost-item basis line (real § for substantive
+   *  states, generic "Landesbauordnung {Land}" for stubs). Replaces
+   *  the former hardcoded "§ 68 BauO {state}" fabrication. */
+  structuralRef: string
   /** Template label (e.g. "T-03 · Renovation"). */
   templateLabel: string
   items: ReadonlyArray<CostsItem>
@@ -129,7 +135,9 @@ export function renderCostsBody(
   const tableWidth = PAGE_WIDTH - 2 * MARGIN
   const rows = data.items.map((item) => {
     const basisRaw = pdfStr(strings, item.basisKey)
-    const basisLine = basisRaw.replace(/\{state\}/g, data.bundeslandCode)
+    const basisLine = basisRaw
+      .replace(/\{state\}/g, data.bundeslandCode)
+      .replace(/\{structuralRef\}/g, data.structuralRef)
     return {
       cells: [pdfStr(strings, item.labelKey), '', item.range],
       basisRow: basisLine,

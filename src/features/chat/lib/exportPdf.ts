@@ -325,6 +325,27 @@ export async function buildExportPdf({
   // timeline, schedule blocks) are deferred to v1.0.16+ Renaissance
   // parts 2B/2C/2D per the user's strict scope guard.
   const bundeslandCodeUpper = (project.bundesland ?? '').toUpperCase()
+  // v1.0.25 Bug 26 — state-correct legal ref for the Executive footer
+  // provenance line. Was a hardcoded "§ 62/64 BauO {state}" (NRW-shaped;
+  // fabricated "§ 62/64 BauO SACHSEN"/"… BAYERN" for every other state).
+  // Now sourced from getStateLocalization: real free/simplified §/Art.
+  // for substantive states (incl. Bayern → "BayBO Art. 57 / Art. 58"),
+  // honest generic "Landesbauordnung {Land}" for stubs (no fabricated §).
+  const execLoc = getStateLocalization(project.bundesland)
+  const execRefParts = [
+    execLoc.procedure.free?.citation,
+    execLoc.procedure.simplified.citation,
+  ].filter((s): s is string => !!s && s.trim().length > 0)
+  const stateLegalRef =
+    execRefParts.length > 0
+      ? execRefParts.join(' / ')
+      : `Landesbauordnung ${execLoc.labelDe}`
+  // v1.0.25 Bug 26 — state-correct structural-cert ref for the cost
+  // table's structural basis line (was hardcoded "§ 68 BauO {state}").
+  const structuralRef =
+    execLoc.structuralCert.citation.trim().length > 0
+      ? execLoc.structuralCert.citation
+      : `Landesbauordnung ${execLoc.labelDe}`
 
   // ── v1.0.19 Bug 40 — canonical procedure decision (early stage) ─
   // Computed ONCE, threaded through Areas (Area B body), Procedures
@@ -487,6 +508,7 @@ export async function buildExportPdf({
     renderExecutiveBody(executivePage, editorialFonts, pdfStrings, {
       templateLabel,
       bundeslandCode: bundeslandCodeUpper,
+      stateLegalRef,
       topThree,
     })
   }
@@ -656,6 +678,7 @@ export async function buildExportPdf({
   const costsData: CostsData = {
     areaSqm,
     bundeslandCode: bundeslandCodeUpper,
+    structuralRef,
     templateLabel,
     items: costItems,
     total: formatEurRange(costBreakdown.total, lang),

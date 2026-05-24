@@ -1,0 +1,40 @@
+{
+  "_comment": "v1.0.25 Bug 26 regression fixture. Sachsen × T-01 EFH-Neubau on a plain residential plot with NO hard-blocker facts (no denkmalschutz / ensembleschutz / mk_gebietsart / sonderbau_scope / bauvoranfrage_hard_blocker). This is the exact scenario from BUG_26_RENDER_REPRO.md §2 that drove resolveProcedure into its generic branch. Before the v1.0.25 fix this rendered '§ 65 BauO SACHSEN' (a fabricated, non-existent citation — real code is SächsBO). The smoke-pdf-text fabrication guard asserts no such token appears.",
+  "project": {
+    "id": "00000000-0000-0000-0000-0000000026a1",
+    "owner_id": "00000000-0000-0000-0000-00000000beef",
+    "intent": "neubau_einfamilienhaus",
+    "has_plot": true,
+    "plot_address": "Lindenstraße 12, 04317 Leipzig",
+    "bundesland": "sachsen",
+    "template_id": "T-01",
+    "name": "EFH-Neubau Leipzig",
+    "status": "in_progress",
+    "state": {
+      "templateId": "T-01",
+      "schemaVersion": 1,
+      "areas": {
+        "A": { "state": "ACTIVE", "reason": "Innenbereich § 34 BauGB angenommen; Einfügen wird geprüft" },
+        "B": { "state": "ACTIVE", "reason": "Verfahrensart vorbehaltlich landesrechtlicher Detail-Spezifika" },
+        "C": { "state": "ACTIVE", "reason": "Keine Baulasten, kein Denkmalschutz identifiziert" }
+      },
+      "facts": [
+        { "key": "plot.address", "value": "Lindenstraße 12, 04317 Leipzig", "qualifier": { "source": "CLIENT", "quality": "DECIDED", "setAt": "2026-05-24T00:00:00.000Z", "setBy": "assistant" } },
+        { "key": "bundesland", "value": "Sachsen", "evidence": "PLZ 04317 liegt in Leipzig, Sachsen", "qualifier": { "source": "CLIENT", "quality": "DECIDED", "setAt": "2026-05-24T00:00:00.000Z", "setBy": "assistant" } },
+        { "key": "vorhaben_typ", "value": "Neubau Einfamilienhaus", "qualifier": { "source": "CLIENT", "quality": "DECIDED", "setAt": "2026-05-24T00:00:00.000Z", "setBy": "assistant" } },
+        { "key": "klasse", "value": "Gebäudeklasse 1", "qualifier": { "source": "LEGAL", "quality": "CALCULATED", "setAt": "2026-05-24T00:00:00.000Z", "setBy": "assistant" } },
+        { "key": "denkmalschutz", "value": false, "qualifier": { "source": "CLIENT", "quality": "DECIDED", "setAt": "2026-05-24T00:00:00.000Z", "setBy": "assistant" } },
+        { "key": "ensembleschutz", "value": false, "qualifier": { "source": "CLIENT", "quality": "DECIDED", "setAt": "2026-05-24T00:00:00.000Z", "setBy": "assistant" } }
+      ],
+      "recommendations": [],
+      "procedures": [],
+      "documents": [],
+      "specialists": [],
+      "roles": []
+    },
+    "created_at": "2026-05-24T00:00:00.000Z",
+    "updated_at": "2026-05-24T00:00:00.000Z"
+  },
+  "messages": [],
+  "events": []
+}

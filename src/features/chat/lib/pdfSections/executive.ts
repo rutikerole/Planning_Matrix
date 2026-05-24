@@ -69,6 +69,11 @@ export interface ExecutiveRec {
 export interface ExecutiveData {
   templateLabel: string
   bundeslandCode: string
+  /** v1.0.25 Bug 26 — state-correct legal reference for the footer
+   *  provenance line (real §/Art. for substantive states, generic
+   *  "Landesbauordnung {Land}" for stubs). Replaces the former
+   *  hardcoded "§ 62/64 BauO {state}" which fabricated wrong refs. */
+  stateLegalRef: string
   topThree: ReadonlyArray<ExecutiveRec>
 }
 
@@ -294,7 +299,7 @@ export function renderExecutiveBody(
   const footerNoteY = MARGIN + 70
   drawHairline(page, MARGIN, footerNoteY + 12, MARGIN + 80)
   const footerNoteRaw = pdfStr(strings, 'exec.footer')
-  const footerNote = footerNoteRaw.replace(/\{state\}/g, data.bundeslandCode)
+  const footerNote = footerNoteRaw.replace(/\{stateLegalRef\}/g, data.stateLegalRef)
   drawWrappedText(page, MARGIN, footerNoteY, footerNote, {
     maxWidth: PAGE_WIDTH - 2 * MARGIN,
     lineHeight: 14,

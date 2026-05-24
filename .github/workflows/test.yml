@@ -35,6 +35,13 @@ jobs:
           VITE_SUPABASE_URL: 'https://stub.supabase.co'
           VITE_SUPABASE_ANON_KEY: 'stub-anon-key'
 
+      # v1.0.25 — PDF render gate (Band 11's missing "5th gate").
+      # Renders the fixture PDFs through buildExportPdf and asserts no
+      # ligature corruption, DE/EN parity, and (v1.0.25 Bug 26) no
+      # fabricated "§ NN BauO {UPPERCASE}" stub-state citations.
+      - name: PDF smoke (render + Bug 26 fabrication guard)
+        run: npm run smoke:pdf-text
+
       - name: Run Playwright
         run: npx playwright test
         env:
