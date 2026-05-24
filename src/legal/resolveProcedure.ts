@@ -118,6 +118,27 @@ export interface ProcedureCase {
    *  schools) — § 50 BauO NRW / Art. 2 Abs. 4 BayBO etc.; triggers
    *  Sonderbauverfahren that this resolver does not yet cover. */
   sonderbau_scope?: boolean
+  /** v1.0.28 Bug 52 — the persona's synthesized procedure conclusion
+   *  (e.g. "verfahrensfrei nach § 62 BauO NRW"), read from the
+   *  `verfahren_indikation` / `PROCEDURE.TYPE` fact. When it states the
+   *  permit-free direction, the resolver honors it instead of the
+   *  template-blind generic branch (which would emit the regular permit
+   *  for an Abbruch and contradict the state-correct persona fact). */
+  verfahren_indikation?: string
+}
+
+/**
+ * v1.0.28 Bug 52 — pull a citation token from the persona's
+ * verfahren_indikation string ("verfahrensfrei nach § 62 BauO NRW" →
+ * "§ 62 BauO NRW"; "BayBO Art. 57" → "BayBO Art. 57"). Returns null when
+ * no recognizable citation is present.
+ */
+export function extractProcedureCitation(s: string): string | null {
+  const para = s.match(/§\s*\d+[a-z]?(?:\s+Abs\.\s*\d+)?\s+\S+(?:\s+\S+)?/u)
+  if (para) return para[0].replace(/\s+/g, ' ').trim()
+  const art = s.match(/BayBO\s+Art\.\s*\d+[a-z]?/u)
+  if (art) return art[0]
+  return null
 }
 
 // v1.0.21 Bug E — describe an active hard blocker for the renderer.
@@ -262,6 +283,36 @@ export function resolveProcedure(c: ProcedureCase): ProcedureDecision {
             'Vorhabenkonzept kann unzulässig sein — vor jeder weiteren Planung Bauvoranfrage stellen.',
           message_en:
             'Project as currently scoped may be inadmissible — file a pre-decision (Bauvoranfrage) before any further planning.',
+        },
+      ],
+    }
+  }
+  // v1.0.28 Bug 52 — honor the persona's verfahrensfrei conclusion BEFORE
+  // the template-blind branches. The persona writes a verfahren_indikation
+  // fact after its synthesis (e.g. T-05 Abbruch Bonn: "verfahrensfrei nach
+  // § 62 BauO NRW"); the generic branch below would otherwise emit the
+  // regular permit (§ 65) and contradict it — the exact T-05 smoke-walk
+  // defect. We honor ONLY the permit-free direction (never to downgrade a
+  // permit the resolver would require) so this can't weaken a real
+  // obligation. Hard blockers above still take precedence.
+  const vi = (c.verfahren_indikation ?? '').toLowerCase()
+  if (/verfahrensfrei|verfahrensfreiheit|permit-free|genehmigungsfrei/.test(vi)) {
+    const cited = extractProcedureCitation(c.verfahren_indikation ?? '')
+    const freeCitation =
+      cited ?? getStateLocalization(c.bundesland).procedure.free?.citation ?? ''
+    return {
+      kind: 'verfahrensfrei',
+      citation: freeCitation || (c.verfahren_indikation ?? '').trim(),
+      reasoning_de: `Verfahrensfrei${freeCitation ? ` nach ${freeCitation}` : ''} — kein Bauantrag und keine förmliche Anzeige erforderlich. Pflichten ergeben sich aus dem Nebenrecht (z. B. Schadstoff- und Entsorgungsrecht); Verfahrensfreiheit mit der unteren Bauaufsichtsbehörde bestätigen.`,
+      reasoning_en: `Permit-free${freeCitation ? ` under ${freeCitation}` : ''} — no building application and no formal notification required. Obligations arise from ancillary law (e.g. hazardous-materials and waste law); confirm the permit-free status with the lower building authority.`,
+      confidence: 'CALCULATED',
+      caveats: [
+        {
+          kind: 'bebauungsplan_specific',
+          message_de:
+            'Verfahrensfreiheit vor Arbeitsbeginn mit der unteren Bauaufsichtsbehörde bestätigen — bei Sonderbau-Tatbeständen oder höherer Gebäudeklasse kann eine Genehmigungspflicht greifen.',
+          message_en:
+            'Confirm permit-free status with the lower building authority before work begins — a Sonderbau scope or higher building class can reinstate a permit requirement.',
         },
       ],
     }

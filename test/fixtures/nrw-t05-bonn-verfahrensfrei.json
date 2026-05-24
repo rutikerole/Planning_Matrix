@@ -1,0 +1,47 @@
+{
+  "_comment": "v1.0.28 Bug 52 regression fixture — T-05 Abbruch, NRW, Bonn, detached GK 2, built 1978, no Denkmal/Erhaltungssatzung/Sanierungsgebiet/Baulast. Mirrors Rutik's live smoke walk. The persona wrote verfahren_indikation='verfahrensfrei nach § 62 BauO NRW'. Pre-fix, resolveProcedure's generic branch (abbruch → no branch) emitted '§ 65 BauO NRW' standard permit, contradicting the chat. Expected post-fix: PDF + resolver emit verfahrensfrei '§ 62 BauO NRW', NOT '§ 65 BauO NRW REQUIRED'.",
+  "project": {
+    "id": "00000000-0000-0000-0000-0000000028a1",
+    "owner_id": "00000000-0000-0000-0000-00000000beef",
+    "intent": "abbruch",
+    "has_plot": true,
+    "plot_address": "Hauptstraße 47, 53111 Bonn",
+    "bundesland": "nrw",
+    "template_id": "T-05",
+    "name": "Demolition Hauptstraße",
+    "status": "in_progress",
+    "state": {
+      "templateId": "T-05",
+      "schemaVersion": 1,
+      "areas": {
+        "A": { "state": "ACTIVE", "reason": "§ 34 BauGB Innenbereich angenommen; kein Bebauungsplan, kein Sanierungsgebiet, keine Erhaltungssatzung" },
+        "B": { "state": "ACTIVE", "reason": "Verfahrensfrei nach § 62 BauO NRW — Abbruch eines freistehenden Gebäudes GK 2" },
+        "C": { "state": "ACTIVE", "reason": "Schadstoffrisiko (Baujahr 1978); KrWG-Entsorgungspflichten; keine Baulasten, kein Denkmalschutz" }
+      },
+      "facts": [
+        { "key": "plot.address", "value": "Hauptstraße 47, 53111 Bonn", "qualifier": { "source": "CLIENT", "quality": "DECIDED", "setAt": "2026-05-24T00:00:00.000Z", "setBy": "assistant" } },
+        { "key": "bundesland", "value": "Nordrhein-Westfalen", "evidence": "PLZ 53111 liegt in Bonn, Nordrhein-Westfalen", "qualifier": { "source": "CLIENT", "quality": "DECIDED", "setAt": "2026-05-24T00:00:00.000Z", "setBy": "assistant" } },
+        { "key": "abbruch_typ", "value": "Vollabbruch", "qualifier": { "source": "CLIENT", "quality": "DECIDED", "setAt": "2026-05-24T00:00:00.000Z", "setBy": "assistant" } },
+        { "key": "denkmalschutz", "value": false, "qualifier": { "source": "CLIENT", "quality": "DECIDED", "setAt": "2026-05-24T00:00:00.000Z", "setBy": "assistant" } },
+        { "key": "gebaeudeklasse", "value": "GK2", "qualifier": { "source": "CLIENT", "quality": "DECIDED", "setAt": "2026-05-24T00:00:00.000Z", "setBy": "assistant" } },
+        { "key": "abbruch_freistehend", "value": true, "qualifier": { "source": "CLIENT", "quality": "DECIDED", "setAt": "2026-05-24T00:00:00.000Z", "setBy": "assistant" } },
+        { "key": "standsicherheit_nachbar_erforderlich", "value": false, "qualifier": { "source": "LEGAL", "quality": "CALCULATED", "setAt": "2026-05-24T00:00:00.000Z", "setBy": "assistant" } },
+        { "key": "baujahr", "value": 1978, "qualifier": { "source": "CLIENT", "quality": "DECIDED", "setAt": "2026-05-24T00:00:00.000Z", "setBy": "assistant" } },
+        { "key": "schadstoff_risiko", "value": "hoch — Asbest, KMF, PCB möglich (Baujahr 1978)", "qualifier": { "source": "LEGAL", "quality": "CALCULATED", "setAt": "2026-05-24T00:00:00.000Z", "setBy": "assistant" } },
+        { "key": "erhaltungssatzung", "value": false, "qualifier": { "source": "CLIENT", "quality": "DECIDED", "setAt": "2026-05-24T00:00:00.000Z", "setBy": "assistant" } },
+        { "key": "sanierungsgebiet", "value": false, "qualifier": { "source": "CLIENT", "quality": "DECIDED", "setAt": "2026-05-24T00:00:00.000Z", "setBy": "assistant" } },
+        { "key": "baulast", "value": false, "qualifier": { "source": "CLIENT", "quality": "DECIDED", "setAt": "2026-05-24T00:00:00.000Z", "setBy": "assistant" } },
+        { "key": "verfahren_indikation", "value": "verfahrensfrei nach § 62 BauO NRW", "qualifier": { "source": "LEGAL", "quality": "CALCULATED", "setAt": "2026-05-24T00:00:00.000Z", "setBy": "assistant" } }
+      ],
+      "recommendations": [],
+      "procedures": [],
+      "documents": [],
+      "specialists": [],
+      "roles": []
+    },
+    "created_at": "2026-05-24T00:00:00.000Z",
+    "updated_at": "2026-05-24T00:00:00.000Z"
+  },
+  "messages": [],
+  "events": []
+}

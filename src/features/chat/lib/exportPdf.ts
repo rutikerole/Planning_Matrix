@@ -371,6 +371,12 @@ export async function buildExportPdf({
     const n = Number(f.value)
     return Number.isFinite(n) ? n : undefined
   }
+  // v1.0.28 Bug 52 — string fact getter; reads the persona's procedure
+  // conclusion so resolveProcedure can honor a verfahrensfrei verdict.
+  const factStr = (key: string): string | undefined => {
+    const f = factsEarly.find((x) => x.key === key)
+    return typeof f?.value === 'string' ? f.value : undefined
+  }
   const procedureCase: ProcedureCase = {
     intent: intentFromTemplate(state.templateId ?? 'T-03'),
     bundesland: (project.bundesland ?? 'nrw') as BundeslandCode,
@@ -392,6 +398,11 @@ export async function buildExportPdf({
     mk_gebietsart: factBool('mk_gebietsart'),
     bauvoranfrage_hard_blocker: factBool('bauvoranfrage_hard_blocker'),
     sonderbau_scope: factBool('sonderbau_scope'),
+    // v1.0.28 Bug 52 — persona's procedure conclusion (verfahren_indikation
+    // or PROCEDURE.TYPE fact). resolveProcedure honors a verfahrensfrei
+    // verdict so the PDF stops contradicting the chat (T-05 Abbruch Bonn).
+    verfahren_indikation:
+      factStr('verfahren_indikation') ?? factStr('PROCEDURE.TYPE'),
   }
   const procedureDecision: ProcedureDecision = resolveProcedure(procedureCase)
   // v1.0.21 Bug E — derive an explicit BLOCKER summary that the
