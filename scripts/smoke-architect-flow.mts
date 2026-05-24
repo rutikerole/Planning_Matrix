@@ -19,6 +19,7 @@ import {
   ArchitectInviteError,
   type ArchitectInviteErrorCode,
 } from '../src/features/result/lib/architectInviteApi.ts'
+import { computeVerificationRollup } from '../src/features/result/lib/verificationRollup.ts'
 
 interface Tally {
   passed: number
@@ -140,8 +141,60 @@ function runInviteParse(): Tally {
   return t
 }
 
+function runRollup(): Tally {
+  console.log('\n[smoke-architect] computeVerificationRollup (Commit 5 / Bug 33)…')
+  const t: Tally = { passed: 0, failed: 0 }
+  const v = (setAt?: string) => ({
+    source: 'DESIGNER',
+    quality: 'VERIFIED',
+    ...(setAt ? { setAt } : {}),
+  })
+  const a = { source: 'LEGAL', quality: 'ASSUMED' }
+
+  // Empty → total 0, NOT allVerified (vacuous-truth guard).
+  const empty = computeVerificationRollup({})
+  ok(t, empty.total === 0 && empty.verified === 0, 'empty state → total 0 / verified 0')
+  ok(t, empty.allVerified === false, 'empty state → allVerified false (no vacuous clear)')
+
+  // Partial → some verified, not all.
+  const partial = computeVerificationRollup({
+    facts: [
+      { key: 'a', value: 1, qualifier: v('2026-05-24T10:00:00.000Z') },
+      { key: 'b', value: 2, qualifier: a },
+      { key: 'c', value: 3, qualifier: a },
+    ],
+  } as never)
+  ok(t, partial.total === 3, 'partial → total 3')
+  ok(t, partial.verified === 1, 'partial → verified 1')
+  ok(t, partial.pending === 2, 'partial → pending 2')
+  ok(t, partial.allVerified === false, 'partial → allVerified false')
+
+  // All verified across categories → allVerified true; lastVerifiedAt = max setAt.
+  const all = computeVerificationRollup({
+    facts: [{ key: 'a', value: 1, qualifier: v('2026-05-24T10:00:00.000Z') }],
+    recommendations: [{ id: 'r1', qualifier: v('2026-05-24T12:00:00.000Z') }],
+    procedures: [{ id: 'p1', qualifier: v('2026-05-24T09:00:00.000Z') }],
+  } as never)
+  ok(t, all.total === 3 && all.verified === 3, 'all → total 3 / verified 3')
+  ok(t, all.allVerified === true, 'all → allVerified true')
+  ok(
+    t,
+    all.lastVerifiedAt === '2026-05-24T12:00:00.000Z',
+    `all → lastVerifiedAt = latest setAt (got ${all.lastVerifiedAt})`,
+  )
+
+  // One pending item anywhere → NOT allVerified.
+  const onePending = computeVerificationRollup({
+    facts: [{ key: 'a', value: 1, qualifier: v() }],
+    roles: [{ id: 'role1', qualifier: a }],
+  } as never)
+  ok(t, onePending.allVerified === false, 'one pending role → allVerified false')
+
+  return t
+}
+
 function main(): void {
-  const sections: Tally[] = [runInviteParse()]
+  const sections: Tally[] = [runInviteParse(), runRollup()]
   const passed = sections.reduce((n, s) => n + s.passed, 0)
   const failed = sections.reduce((n, s) => n + s.failed, 0)
   console.log(`\n[smoke-architect] ${passed} passed · ${failed} failed`)

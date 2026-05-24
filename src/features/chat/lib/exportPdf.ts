@@ -1090,8 +1090,24 @@ export async function buildExportPdf({
   const allPages = doc.getPages()
   const today = formatDate(new Date().toISOString(), lang)
   const footer = `${lang === 'en' ? 'Generated with Planning Matrix' : 'Generiert mit Planning Matrix'}  ·  planning-matrix.app  ·  ${today}`
-  const vorlaeufig =
-    lang === 'en'
+  // C8 (Bug 33) — aggregate rollup. The per-page footer clears to a
+  // "verified" line ONLY when EVERY load-bearing item is DESIGNER+VERIFIED
+  // (same predicate as the result-page VorlaeufigFooter). Date only — no
+  // architect name (not in state under RLS; never fabricated). The else-
+  // branch is byte-identical to the prior locked text, so non-fully-
+  // verified projects (incl. every smoke fixture) render unchanged.
+  const { computeVerificationRollup } = await import(
+    '@/features/result/lib/verificationRollup'
+  )
+  const verificationRollup = computeVerificationRollup(state)
+  const verifiedFooterDate = verificationRollup.lastVerifiedAt
+    ? ` · ${formatDate(verificationRollup.lastVerifiedAt, lang)}`
+    : ''
+  const vorlaeufig = verificationRollup.allVerified
+    ? lang === 'en'
+      ? `Verified by a certified architect (Bauvorlageberechtigte/r)${verifiedFooterDate}.`
+      : `Verifiziert durch eine/n bauvorlageberechtigte/n Architekt/in${verifiedFooterDate}.`
+    : lang === 'en'
       ? 'Preliminary - to be confirmed by a certified architect (Bauvorlageberechtigte/r).'
       : 'Vorläufig - bestätigt durch eine/n bauvorlageberechtigte/n Architekt/in.'
   // v1.0.13 — skip the y=28/y=44 footers on pages 1 (cover) and 2

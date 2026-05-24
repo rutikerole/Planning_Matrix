@@ -8,6 +8,7 @@ import {
   VorlaeufigFooter,
   isPending,
 } from '@/features/architect/components/VorlaeufigFooter'
+import { VerificationProgress } from '../VerificationProgress'
 
 interface Props {
   project: ProjectRow
@@ -43,6 +44,8 @@ export function OverviewTab({ project, state }: Props) {
     )
   return (
     <div className="flex flex-col gap-8 max-w-[1100px]">
+      {/* C8 (Bug 33) — project-wide verification rollup indicator. */}
+      <VerificationProgress state={state} />
       <div className="grid grid-cols-1 lg:grid-cols-[1.4fr_1fr] gap-6 lg:gap-10">
         <ExecutiveRead project={project} state={state} />
         <AtAGlance project={project} state={state} />

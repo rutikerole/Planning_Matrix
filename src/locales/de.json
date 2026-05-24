@@ -1787,6 +1787,10 @@
         "heading": "Vorläufig",
         "body": "Vorläufig — bestätigt durch eine/n bauvorlageberechtigte/n Architekt/in noch ausstehend."
       },
+      "verification": {
+        "progress": "{{verified}} von {{total}} Punkten durch Architekt:in verifiziert",
+        "allVerified": "Alle Punkte durch Architekt:in verifiziert · {{date}}"
+      },
       "tabs": {
         "aria": "Briefing-Bereiche",
         "overview": "Übersicht",
