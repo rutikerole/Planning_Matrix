@@ -461,7 +461,28 @@ shipped in Phase 13 Week 4). What's missing is the cron harness
 
 ## 9. Operational responsibilities — split between engineering and client
 
-**v1.0.26 (C11) IS THE CURRENT RELEASE.** The 16-state PDF smoke matrix
+**v1.0.27 (C7+C8) IS THE CURRENT RELEASE.** The architect verification flow
+is wired end-to-end through the shipped UI: owner "Invite architect to
+verify" → /architect/accept → VerificationPanel "Bestätigen" / "Ablehnen" →
+the owner's "Vorläufig" footer clears/reverts (focus-poll + best-effort
+realtime). Closes Bug 29 (dead-end), Bug 32 (reactive footer + erosion),
+Bug 33 (aggregate rollup), Bug 34 (reject/un-verify). Bayern SHA
+b18d3f7f...3471 held across all 8 commits.
+
+Pending manual steps (UNVERIFIED until done): apply
+`0035_realtime_projects.sql` via SQL Editor (realtime upgrade — focus-poll
+works without it); redeploy the `verify-fact` Edge Function (Deno; adds the
+reject action); run the e2e legal-shield smoke walk. A test architect needs
+a `profiles.role='designer'` account (manager-provisioned via SQL).
+
+Still open (data-bearing, sourced-data-gated; see docs/C11_DATA_GAPS.md):
+Bug 27 (München calendar · C5), Bug 35 / Bug I (cost multiplier), Section
+XII / Vorhabensbeschreibung / KfW BEG 458 (C9), the 11 stub states' real §§.
+**Full-Germany ship remains 🟡 not-GREEN.**
+
+---
+
+**v1.0.26 (C11)** (prior release). The 16-state PDF smoke matrix
 (`scripts/smoke-pdf-matrix.mts`, CI-gated in `test.yml`) closes **Bug 11**
 (full-Germany PDF matrix) and **Bug 48** (`verify:bayern-sha` now a CI step,
 alongside `smoke:pdf-matrix` + `smoke:citations`). **Bug 26**

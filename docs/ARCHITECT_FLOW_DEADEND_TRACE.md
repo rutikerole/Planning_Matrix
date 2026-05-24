@@ -4,6 +4,15 @@
 **Trigger:** FULL_GERMANY_AUDIT.md Bug 29 — the architect "legal shield" verification surface appears unreachable end-to-end through the shipped UI (prod `project_members` = 0 rows, `qualifier_transitions` = 0 rows).
 **Mode:** READ-ONLY, no execution. Pure static click-path trace from owner Dashboard. Bayern SHA MATCH preserved.
 
+> **RESOLVED 2026-05-24 in v1.0.27 (C7 + C8).** The owner-side invite path is
+> now wired (`architectInviteApi.ts` + `InviteArchitectModal.tsx` + a
+> result-page "Invite architect to verify" CTA), so the legal shield is
+> reachable end-to-end through the shipped UI. Reactive owner footer (Bug 32),
+> verification erosion on owner edit (Bug 32), aggregate rollup (Bug 33), and
+> architect reject/un-verify (Bug 34) also landed. Validation pending Rutik's
+> e2e smoke walk + the manual steps (apply migration 0035; redeploy
+> verify-fact). The trace below is retained as the historical diagnosis.
+
 ## TL;DR
 
 **Confirmed: there is no click-path from the owner UI that creates a `project_members` row or routes anyone to `/architect/accept`.** The product ships **two differently-named "share" mechanisms** that look interchangeable but are not:

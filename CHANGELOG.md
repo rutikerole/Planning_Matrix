@@ -1,5 +1,51 @@
 # Changelog
 
+## v1.0.27 — C7 + C8: architect verification flow wired (2026-05-24)
+
+Backend (share-project CREATE/ACCEPT + verify-fact + RLS + project_members)
+was complete since Phase 13; the flow was unreachable because no owner-side
+UI called share-project CREATE (docs/ARCHITECT_FLOW_DEADEND_TRACE.md). This
+sprint wires the missing caller + reactive UI + lifecycle correctness — the
+legal shield is now reachable end-to-end through the shipped UI.
+
+**C7 — owner invite flow (closes Bug 29):**
+- `architectInviteApi.ts` — share-project CREATE wrapper (raw-fetch mirror
+  of shareTokenApi; typed errors; no fabricated 409).
+- `InviteArchitectModal.tsx` — emerald verification-invite UI, deliberately
+  distinct from the read-only briefing modal; generates the
+  `/architect/accept?token=…` link via react-query (effect-free, no
+  duplicate invite rows).
+- result-footer "Invite architect to verify" CTA; "Send to architect"
+  relabelled "Send read-only briefing"; share link relabelled read-only.
+
+**C8 — verification lifecycle:**
+- **Bug 32 (reactive footer)** — `useVerificationReactivity`: focus-poll
+  PRIMARY (invalidates `['project',id]`) + best-effort projects-UPDATE
+  realtime. Migration `0035_realtime_projects.sql` (manual SQL-Editor apply)
+  enables the realtime half; focus-poll works without it.
+- **Bug 32 (erosion half)** — `erodeVerificationOnEdit` at the fact-upsert
+  seam: an owner edit changing a verified fact's value downgrades it to
+  DESIGNER+ASSUMED + "re-verification required"; same-value re-write
+  preserves it. Server-side (chat-turn pipes through the shared module).
+- **Bug 33** — `computeVerificationRollup` + `VerificationProgress`
+  ("X of N items verified"); per-page PDF footer flips to "Verified …" when
+  all load-bearing items are DESIGNER+VERIFIED. (Scoped follow-up:
+  editorial-page center footers in the all-verified end-state.)
+- **Bug 34** — reject/un-verify via a `verify-fact` `action:'verify'|'reject'`
+  overload (no new function/migration; `qualifier.rejected` already in the
+  0027/0029 views). Reject → DESIGNER+ASSUMED + required reason; per-row
+  "Ablehnen" affordance in VerificationPanel.
+
+**UNVERIFIED (pending Rutik):** apply migration 0035 (SQL Editor) + redeploy
+the verify-fact Edge Function (Deno; reject action) + the e2e legal-shield
+smoke walk (owner invite → architect accept → verify → footer clears →
+reject → reverts). Tests are mock-only (smoke:architect 29/0); no live
+invites are run. No architect display name is fabricated (not in schema).
+
+> **Verdict: 🟡 not-GREEN for full-Germany.** v1.0.27 closes the architect-
+> flow surface; data-bearing sections (Bug 27 calendar, Bug 35 cost, stub
+> states, Section XII) remain — see docs/C11_DATA_GAPS.md.
+
 ## v1.0.26 — C11: 16-state PDF matrix + CI hardening (2026-05-24)
 
 Closes the deterministic-PDF-render coverage gap across all of Germany.

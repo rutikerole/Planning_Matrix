@@ -21,6 +21,23 @@ Sprint anchor reminder:
   `b18d3f7f9a6fe238c18cec5361d30ea3a547e46b1ef2b16a1e74c533aacb3471`
   must MATCH at start AND end of every commit in any future sprint.
 
+## Closed in v1.0.27 (C7 + C8 — architect verification flow)
+
+- **Bug 29 — architect dead-end** — CLOSED. Owner-side share-project CREATE
+  caller wired (architectInviteApi + InviteArchitectModal + result CTA).
+- **Bug 32 — reactive owner footer + verification erosion** — CLOSED.
+  Focus-poll + best-effort realtime (migration 0035) + server-side
+  erodeVerificationOnEdit at the fact-upsert seam.
+- **Bug 33 — aggregate Vorläufig rollup** — CLOSED. computeVerificationRollup
+  + progress indicator + PDF footer flip (editorial-footer parity = noted
+  follow-up).
+- **Bug 34 — architect reject/un-verify** — CLOSED. verify-fact
+  action:'verify'|'reject' overload + required reason.
+
+Pending Rutik (UNVERIFIED until done): apply migration 0035 via SQL Editor +
+redeploy verify-fact (Deno) + e2e legal-shield smoke walk. Realtime, reject,
+and e2e are unvalidated by Claude (mock-only tests).
+
 ## Closed in v1.0.26 (C11)
 
 - **Bug 11 — 16-state PDF matrix** — CLOSED. `scripts/smoke-pdf-matrix.mts`
