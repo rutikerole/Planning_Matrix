@@ -9,6 +9,7 @@ import type { Fact, ProjectState } from '@/types/projectState'
 import { initialProjectState } from '@/lib/projectStateHelpers'
 import { selectTemplate, type Intent } from '../lib/selectTemplate'
 import { deriveName } from '../lib/deriveName'
+import { resolveCityFromPLZ } from '../lib/resolveCityFromPLZ'
 import type { BundeslandCode } from '@/legal/states/_types'
 import { parseAddressBlob, plzMatchesBundesland } from '@/lib/addressParser'
 
@@ -242,9 +243,14 @@ export function useCreateProject() {
     // v1.0.6 (Bug 0 — B04 surgical mitigation) — write the wizard's
     // explicit Bundesland selection to projects.bundesland. The legacy
     // wizard hardcoded 'bayern' regardless of address, which made every
-    // non-Bayern project resolve to Bayern law downstream. `city` stays
-    // 'muenchen' only when the project is in Bayern, since the cityBlock
-    // pilot is München-only (other Bundesländer have no cityBlock yet).
+    // non-Bayern project resolve to Bayern law downstream.
+    //
+    // v1.0.25 (Bug 42) — city is now resolved by PLZ via
+    // resolveCityFromPLZ, not the old `bayern ? 'muenchen' : null`
+    // hardcode that stamped EVERY Bayern project (incl. Nuremberg/
+    // Augsburg) as München and froze city='muenchen' onto rows later
+    // relabeled to other states. Non-Bayern → null; Bayern → muenchen/
+    // erlangen by PLZ, else null.
     const { data: projectRow, error: insertErr } = await supabase
       .from('projects')
       .insert({
@@ -253,7 +259,10 @@ export function useCreateProject() {
         has_plot: input.hasPlot,
         plot_address: input.hasPlot ? input.plotAddress : null,
         bundesland: input.bundesland,
-        city: input.bundesland === 'bayern' ? 'muenchen' : null,
+        city: resolveCityFromPLZ(
+          input.hasPlot ? input.plotAddress : null,
+          input.bundesland,
+        ),
         template_id: templateId,
         name:
           input.suggestedName?.trim() ||

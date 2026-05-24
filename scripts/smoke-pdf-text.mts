@@ -765,6 +765,27 @@ async function runAddressParserUnit(): Promise<{ passed: number; failed: number 
     if (ok) { console.log(`  ✓ ${msg}`); passed++ }
     else { console.log(`  ✗ ${msg} (got ${got})`); failed++ }
   }
+  // v1.0.25 Bug 42 — resolveCityFromPLZ: cityBlock pilot is Bayern-only;
+  // non-Bayern never gets a Bayern city (the forensics leak case).
+  const { resolveCityFromPLZ } = await import(
+    '../src/features/wizard/lib/resolveCityFromPLZ.ts'
+  )
+  const cityCases: Array<{ addr: string; bl: string; expect: string | null }> = [
+    { addr: 'Marienplatz 8, 80331 München', bl: 'bayern', expect: 'muenchen' },
+    { addr: 'Hauptstraße 1, 91054 Erlangen', bl: 'bayern', expect: 'erlangen' },
+    { addr: 'Lorenzer Platz 1, 90402 Nürnberg', bl: 'bayern', expect: null },
+    // the NON_BAYERN_PROD_FORENSICS leak: München address tagged hessen
+    { addr: 'Marienplatz 8, 80331 München', bl: 'hessen', expect: null },
+    { addr: 'Lindenstraße 12, 04317 Leipzig', bl: 'sachsen', expect: null },
+    { addr: 'no postcode here', bl: 'bayern', expect: null },
+  ]
+  for (const c of cityCases) {
+    const got = resolveCityFromPLZ(c.addr, c.bl as never)
+    const ok = got === c.expect
+    const msg = `resolveCityFromPLZ('${c.addr}', '${c.bl}') === ${c.expect}`
+    if (ok) { console.log(`  ✓ ${msg}`); passed++ }
+    else { console.log(`  ✗ ${msg} (got ${got})`); failed++ }
+  }
   return { passed, failed }
 }
 
