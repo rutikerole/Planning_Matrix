@@ -232,8 +232,16 @@ export function renderVerificationBody(
       safe: fonts.safe,
     })
   }
-  // Full-width signature underline (drawSignatureField at fullW)
-  drawSignatureField(page, {
+  // Full-width signature underline (drawSignatureField at fullW).
+  // v1.0.31 C5 (Bug 60) — measure-then-place. The co-signature note was drawn
+  // at a FIXED bauherrY-80, which lands between the Bauherr label (bauherrY-76)
+  // and its Date sublabel (bauherrY-90) and overlapped both — the signature-
+  // block collision deferred across v1.0.28/29/30. Anchor the note below the
+  // field's returned endY instead (endY = lineY-36, i.e. 8pt below the
+  // sublabel), so it can never overlap regardless of font metrics. The page
+  // has ~240pt of clearance to the footer (panelY = headerY-130), so pushing
+  // the note ~32pt lower than before stays well clear.
+  const bauherrField = drawSignatureField(page, {
     x: MARGIN,
     y: bauherrY - 6,
     width: fullW,
@@ -241,10 +249,10 @@ export function renderVerificationBody(
     sublabel: pdfStr(strings, 'sig.date'),
     fonts,
   })
-  // Italic-serif CLAY co-signature note below the labels
+  // Italic-serif CLAY co-signature note, cleared 14pt below the field endY.
   drawSafeText(page, pdfStr(strings, 'sig.bauherr.note'), {
     x: MARGIN,
-    y: bauherrY - 80,
+    y: bauherrField.endY - 14,
     size: 9,
     font: fonts.serifItalic,
     color: CLAY,
