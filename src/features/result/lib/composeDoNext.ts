@@ -59,7 +59,7 @@ export function composeDoNext({
   })
 
   // 2. Open items — top-priority assumptions framed as actions.
-  const open = computeOpenItems(state, lang, 3)
+  const open = computeOpenItems(state, lang, 3, project.bundesland)
   open.topPriority.forEach((item) => {
     out.push({
       id: `open-${item.id}`,

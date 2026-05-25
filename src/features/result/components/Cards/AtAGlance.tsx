@@ -35,7 +35,7 @@ export function AtAGlance({ project, state }: Props) {
   const resolvedProc = useResolvedProcedures(project, state)
 
   const facts = state.facts ?? []
-  const open = computeOpenItems(state, lang)
+  const open = computeOpenItems(state, lang, 4, project.bundesland)
 
   const primaryProcedure =
     resolvedProc.procedures.find((p) => p.status === 'erforderlich') ??

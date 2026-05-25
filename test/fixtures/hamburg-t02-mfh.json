@@ -1,0 +1,51 @@
+{
+  "_comment": "v1.0.29 T-02 Hamburg smoke-walk fixture. Mönckebergstraße 11, 20095 Hamburg — Neubau MFH, GK 4, 5 storeys, 8 units × 90 m² = 720 m² Wohnfläche, OK 13 m, pure residential, no Sonderbau. STADTSTAAT stub (hamburg). Area reasons carry Brandschutz + GEG + Stellplatz so composeLegalDomains emits the rows that historically bled München/BayBO text via findRuleSnippet (Bug 65). Cost key is wohnflaeche_gesamt_m2=720 (Bug 64 — must NOT fall back to 180). verfahren_indikation = § 61 HBauO vereinfacht (Bug 73/79). MUST NOT render any Bayern-leak token (BayBO/BayTBest/StPlS/München) on a Hamburg project.",
+  "project": {
+    "id": "00000000-0000-0000-0000-0000000029a2",
+    "owner_id": "00000000-0000-0000-0000-00000000beef",
+    "intent": "neubau_mehrfamilienhaus",
+    "has_plot": true,
+    "plot_address": "Mönckebergstraße 11, 20095 Hamburg",
+    "bundesland": "hamburg",
+    "template_id": "T-02",
+    "name": "Mehrfamilienhaus Mönckebergstraße",
+    "status": "in_progress",
+    "state": {
+      "templateId": "T-02",
+      "schemaVersion": 1,
+      "areas": {
+        "A": { "state": "ACTIVE", "reason": "§ 34 BauGB Innenbereich angenommen; Einfügen in die Umgebung wird geprüft; Bauvoranfrage beim Bezirksamt Hamburg-Mitte empfohlen" },
+        "B": { "state": "ACTIVE", "reason": "Vereinfachtes Baugenehmigungsverfahren § 61 HBauO; Brandschutz gebäudeklassenabhängig (GK 4); GEG 2024 Wärmeschutznachweis; Schallschutz DIN 4109" },
+        "C": { "state": "ACTIVE", "reason": "Stellplatznachweis und Fahrradstellplätze § 48 HBauO; Schallschutz DIN 4109; keine Baulasten, kein Denkmalschutz identifiziert" }
+      },
+      "facts": [
+        { "key": "plot.address", "value": "Mönckebergstraße 11, 20095 Hamburg", "qualifier": { "source": "CLIENT", "quality": "DECIDED", "setAt": "2026-05-25T00:00:00.000Z", "setBy": "assistant" } },
+        { "key": "bundesland", "value": "Hamburg", "evidence": "PLZ 20095 liegt in Hamburg", "qualifier": { "source": "CLIENT", "quality": "DECIDED", "setAt": "2026-05-25T00:00:00.000Z", "setBy": "assistant" } },
+        { "key": "vorhaben_typ", "value": "Neubau Mehrfamilienhaus", "qualifier": { "source": "CLIENT", "quality": "DECIDED", "setAt": "2026-05-25T00:00:00.000Z", "setBy": "assistant" } },
+        { "key": "vorhaben_nutzung", "value": "Reine Wohnnutzung, keine Mischnutzung", "qualifier": { "source": "CLIENT", "quality": "DECIDED", "setAt": "2026-05-25T00:00:00.000Z", "setBy": "assistant" } },
+        { "key": "gebaeudeklasse", "value": "GK 4", "qualifier": { "source": "CLIENT", "quality": "ASSUMED", "setAt": "2026-05-25T00:00:00.000Z", "setBy": "assistant" } },
+        { "key": "vollgeschosse", "value": 5, "qualifier": { "source": "CLIENT", "quality": "DECIDED", "setAt": "2026-05-25T00:00:00.000Z", "setBy": "assistant" } },
+        { "key": "wohneinheiten_anzahl", "value": 8, "qualifier": { "source": "CLIENT", "quality": "DECIDED", "setAt": "2026-05-25T00:00:00.000Z", "setBy": "assistant" } },
+        { "key": "wohneinheit_flaeche_m2", "value": 90, "qualifier": { "source": "CLIENT", "quality": "DECIDED", "setAt": "2026-05-25T00:00:00.000Z", "setBy": "assistant" } },
+        { "key": "wohnflaeche_gesamt_m2", "value": 720, "evidence": "8 Wohneinheiten × 90 m²", "qualifier": { "source": "CLIENT", "quality": "CALCULATED", "setAt": "2026-05-25T00:00:00.000Z", "setBy": "assistant" } },
+        { "key": "okff_oberstes_geschoss_m", "value": 13, "qualifier": { "source": "CLIENT", "quality": "DECIDED", "setAt": "2026-05-25T00:00:00.000Z", "setBy": "assistant" } },
+        { "key": "sonderbau_tatbestand", "value": false, "qualifier": { "source": "LEGAL", "quality": "CALCULATED", "setAt": "2026-05-25T00:00:00.000Z", "setBy": "assistant" } },
+        { "key": "planungsrecht_rechtsgrundlage", "value": "§ 34 BauGB wahrscheinlich", "qualifier": { "source": "CLIENT", "quality": "ASSUMED", "setAt": "2026-05-25T00:00:00.000Z", "setBy": "assistant" } },
+        { "key": "verfahren_indikation", "value": "Vereinfachtes Baugenehmigungsverfahren § 61 HBauO", "qualifier": { "source": "LEGAL", "quality": "CALCULATED", "setAt": "2026-05-25T00:00:00.000Z", "setBy": "assistant" } },
+        { "key": "stellplatz_anzahl_geplant", "value": 6, "qualifier": { "source": "CLIENT", "quality": "DECIDED", "setAt": "2026-05-25T00:00:00.000Z", "setBy": "assistant" } },
+        { "key": "stellplatz_typ", "value": "Tiefgarage", "qualifier": { "source": "CLIENT", "quality": "DECIDED", "setAt": "2026-05-25T00:00:00.000Z", "setBy": "assistant" } },
+        { "key": "geg_pflicht", "value": "Wärmeschutznachweis Pflicht im Bauantrag — GEG 2024", "qualifier": { "source": "LEGAL", "quality": "CALCULATED", "setAt": "2026-05-25T00:00:00.000Z", "setBy": "assistant" } },
+        { "key": "denkmalschutz", "value": false, "qualifier": { "source": "CLIENT", "quality": "DECIDED", "setAt": "2026-05-25T00:00:00.000Z", "setBy": "assistant" } }
+      ],
+      "recommendations": [],
+      "procedures": [],
+      "documents": [],
+      "specialists": [],
+      "roles": []
+    },
+    "created_at": "2026-05-25T00:00:00.000Z",
+    "updated_at": "2026-05-25T00:00:00.000Z"
+  },
+  "messages": [],
+  "events": []
+}

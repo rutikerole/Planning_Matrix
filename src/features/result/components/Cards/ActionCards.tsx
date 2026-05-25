@@ -25,7 +25,7 @@ export function ActionCards({ project, state }: Props) {
 
   const doNext = composeDoNext({ project, state, lang, limit: 3 })
 
-  const open = computeOpenItems(state, lang, 4)
+  const open = computeOpenItems(state, lang, 4, project.bundesland)
   const aggregate = aggregateQualifiers(state)
 
   return (

@@ -86,7 +86,7 @@ export function composeExecutiveRead({
   const months = Math.round((weeks.min + weeks.max) / 2 / 4)
 
   // Open-items summary
-  const open = computeOpenItems(state, lang, 4)
+  const open = computeOpenItems(state, lang, 4, project.bundesland)
   const flagCount = open.count
   const flagWords = lang === 'en' ? 'flags' : 'Punkte'
   const flagWordSingular = lang === 'en' ? 'flag' : 'Punkt'

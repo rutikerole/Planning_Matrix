@@ -18,7 +18,9 @@ export interface LegalRuleSnippet {
   label: string
   interpretationDe: string
   interpretationEn: string
-  externalUrl: string
+  /** Optional — federal-neutral variants (v1.0.29 Bug 65) omit it so the
+   *  Legal Landscape tab falls back to the citation's own href. */
+  externalUrl?: string
   verifyBeforePublicLaunch: true
 }
 
@@ -175,6 +177,70 @@ export const LEGAL_RULE_SNIPPETS: LegalRuleSnippet[] = [
 
 const BY_LABEL = new Map(LEGAL_RULE_SNIPPETS.map((s) => [s.label, s]))
 
-export function findRuleSnippet(label: string): LegalRuleSnippet | undefined {
-  return BY_LABEL.get(label)
+// v1.0.29 Bug 65 — Stadtstaat / non-Bayern Bayern-snippet bleed.
+//
+// The snippet table above is Bayern-authored. composeLegalDomains emits
+// GENERIC topic labels ("Brandschutz", "Stellplatzsatzung", "Baulasten")
+// for EVERY state, so on a Hamburg / Berlin / NRW project these labels
+// resolved to München/BayBO text ("BayBO and BayTBest", "Munich parking
+// ordinance StPlS 926…"). Only the Legal Landscape *web* tab bled — the
+// PDF (composeLegalDomains rows + glossary) was already clean.
+//
+// Fix: federal-neutral overrides for the universal topics, applied for any
+// bundesland that is not Bayern. No fabricated § / city — honest framing
+// with "in Vorbereitung" where a state-specific value is unknown. Bayern
+// keeps the authored snippet byte-identical; the BayBO-Art.* labels (which
+// composeLegalDomains only emits for Bayern anyway) are suppressed for
+// non-Bayern as a belt-and-braces guard.
+const FEDERAL_OVERRIDES: Record<string, LegalRuleSnippet> = {
+  Brandschutz: {
+    label: 'Brandschutz',
+    interpretationDe:
+      'Gebäudeklassen-abhängige Brandschutzanforderungen nach der Landesbauordnung. Ab Gebäudeklasse 4 in der Regel Brandschutznachweis durch eine:n staatlich anerkannte:n Sachverständige:n — landesrechtliche Detailregeln in Vorbereitung.',
+    interpretationEn:
+      'Building-class-dependent fire-protection requirements under the state building code. From building class 4 onward, typically a fire-protection certificate from a state-accredited expert — state-specific detail rules in preparation.',
+    verifyBeforePublicLaunch: true,
+  },
+  Stellplatzsatzung: {
+    label: 'Stellplatzsatzung',
+    interpretationDe:
+      'Stellplatzpflicht nach Landesbauordnung und kommunaler Stellplatzsatzung. Anzahl und mögliche ÖPNV-Reduktionen richten sich nach der jeweiligen Gemeinde — konkrete Werte in Vorbereitung.',
+    interpretationEn:
+      'Parking obligation under the state building code and the municipal parking ordinance. The number of spaces and any public-transit reductions depend on the specific municipality — concrete values in preparation.',
+    verifyBeforePublicLaunch: true,
+  },
+  Baulasten: {
+    label: 'Baulasten',
+    interpretationDe:
+      'Baulastenverzeichnis: öffentlich-rechtliche Verpflichtungen, die mit dem Grundstück übergehen — Wegerechte, Abstandsflächen-Übernahmen, Stellplatznachweise. Vor Kauf bei der zuständigen Bauaufsichtsbehörde einsehen.',
+    interpretationEn:
+      'Baulastenverzeichnis (land-charges register): public-law obligations that transfer with the plot — rights of way, setback transfers, parking allocations. Inspect at the responsible building authority before purchase.',
+    verifyBeforePublicLaunch: true,
+  },
+  Denkmalschutz: {
+    label: 'Denkmalschutz',
+    interpretationDe:
+      'Baudenkmäler und Ensembles benötigen eine zusätzliche Erlaubnis nach dem Denkmalschutzgesetz des Landes, parallel zur Baugenehmigung. Frühzeitig bei der unteren Denkmalschutzbehörde anfragen.',
+    interpretationEn:
+      'Heritage-protected buildings and ensembles require an additional permit under the state heritage-protection act alongside the building permit. Inquire with the local heritage authority early.',
+    verifyBeforePublicLaunch: true,
+  },
+}
+
+export function findRuleSnippet(
+  label: string,
+  bundesland?: string | null,
+): LegalRuleSnippet | undefined {
+  const base = BY_LABEL.get(label)
+  if (!base) return undefined
+  const isBayern = (bundesland ?? '').toLowerCase() === 'bayern'
+  // Bayern — and legacy callers that pass no bundesland (tests) — keep the
+  // authored snippet byte-identical.
+  if (isBayern || bundesland == null) return base
+  const federal = FEDERAL_OVERRIDES[label]
+  if (federal) return federal
+  // A BayBO-§ snippet must never surface on a non-Bayern project.
+  if (label.startsWith('BayBO')) return undefined
+  // Remaining labels are federal (BauGB / BauNVO / GEG) — state-neutral.
+  return base
 }

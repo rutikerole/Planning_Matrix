@@ -38,6 +38,9 @@ export function computeOpenItems(
   state: Partial<ProjectState>,
   lang: 'de' | 'en' = 'de',
   topN = 4,
+  // v1.0.29 Bug 65 — threaded to humanizeFact so non-Bayern projects don't
+  // surface München/BayBO citations on the Verify-with-Architect card.
+  bundesland?: string | null,
 ): OpenItems {
   const facts = state.facts ?? []
   // Phase 8.5 (A.2): use the resolved Areas (auto-flips to ACTIVE
@@ -62,7 +65,7 @@ export function computeOpenItems(
     // fallback rendered DB shapes ("Ensemble Schwabing Geprueft: false").
     // humanizeFact uses curated locale templates with algorithmic
     // fallback for unmapped keys.
-    const label = humanizeFact(f, lang)
+    const label = humanizeFact(f, lang, bundesland)
     items.push({
       id: `f-${f.key}`,
       label,

@@ -49,6 +49,7 @@ export function LegalLandscapeTab({ project, state }: Props) {
           domain={domain}
           lang={lang}
           projectId={project.id}
+          bundesland={project.bundesland}
           openCitation={openCitation}
           onOpenCitation={setOpenCitation}
         />
@@ -64,12 +65,14 @@ function DomainBand({
   domain,
   lang,
   projectId,
+  bundesland,
   openCitation,
   onOpenCitation,
 }: {
   domain: LegalDomain
   lang: 'de' | 'en'
   projectId: string
+  bundesland: string | null
   openCitation: string | null
   onOpenCitation: (next: string | null) => void
 }) {
@@ -112,7 +115,7 @@ function DomainBand({
         <ul className="flex flex-col">
           {domain.rows.map((row, idx) => {
             const cite = findCitation(row.label)
-            const snippet = findRuleSnippet(row.label)
+            const snippet = findRuleSnippet(row.label, bundesland)
             const rowKey = `${domain.key}-${idx}`
             const open = openCitation === rowKey
             const interpretation = snippet

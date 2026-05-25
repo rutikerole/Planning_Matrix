@@ -24,6 +24,8 @@ import { erodeVerificationOnEdit } from '../src/lib/projectStateHelpers.ts'
 import { composeLegalDomains } from '../src/features/result/lib/composeLegalDomains.ts'
 import { composeRisks } from '../src/features/result/lib/composeRisks.ts'
 import { composeDoNext } from '../src/features/result/lib/composeDoNext.ts'
+import { findRuleSnippet } from '../src/data/legalRuleSnippets.ts'
+import { humanizeFact } from '../src/features/result/lib/humanizeFact.ts'
 import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'node:path'
@@ -359,6 +361,53 @@ function runDoNext(): Tally {
   return t
 }
 
+function runBayernBleed(): Tally {
+  console.log('\n[smoke-architect] Stadtstaat/non-Bayern Bayern-snippet bleed (C2 / Bug 65)…')
+  const t: Tally = { passed: 0, failed: 0 }
+  const BLEED = /BayBO|BayTBest|StPlS|M[üu]nch/
+
+  // Hamburg T-02 — the Legal Landscape tab renders findRuleSnippet for every
+  // composeLegalDomains row label. None may carry a Bayern/München token.
+  const { state, bundesland } = loadFixtureState('test/fixtures/hamburg-t02-mfh.json')
+  for (const lang of ['de', 'en'] as const) {
+    const domains = composeLegalDomains(state as never, lang, bundesland)
+    const labels = domains.flatMap((d) => d.rows.map((r) => r.label))
+    // The fixture must actually exercise the historically-bleeding rows.
+    ok(t, labels.includes('Brandschutz'), `Hamburg ${lang}: Brandschutz row present (exercises bleed path)`)
+    ok(t, labels.includes('Stellplatzsatzung'), `Hamburg ${lang}: Stellplatzsatzung row present (exercises bleed path)`)
+    for (const label of labels) {
+      const snip = findRuleSnippet(label, bundesland)
+      const text = snip ? (lang === 'en' ? snip.interpretationEn : snip.interpretationDe) : ''
+      ok(t, !BLEED.test(text), `Hamburg ${lang}: "${label}" interpretation carries NO Bayern token`)
+    }
+  }
+
+  // Direct generic-topic checks both languages.
+  for (const lang of ['de', 'en'] as const) {
+    for (const topic of ['Brandschutz', 'Stellplatzsatzung', 'Baulasten'] as const) {
+      const s = findRuleSnippet(topic, 'hamburg')
+      const txt = s ? (lang === 'en' ? s.interpretationEn : s.interpretationDe) : ''
+      ok(t, !!s && !BLEED.test(txt), `Hamburg ${lang}: "${topic}" → federal-neutral (no Bayern token)`)
+    }
+  }
+
+  // Bayern regression — the authored snippet MUST stay byte-identical.
+  const bayBrand = findRuleSnippet('Brandschutz', 'bayern')
+  ok(t, /BayBO/.test(bayBrand?.interpretationEn ?? '') && /BayTBest/.test(bayBrand?.interpretationEn ?? ''),
+    'Bayern: Brandschutz still cites BayBO + BayTBest (byte-identical)')
+  const bayStp = findRuleSnippet('Stellplatzsatzung', 'bayern')
+  ok(t, /StPlS 926/.test(bayStp?.interpretationEn ?? ''),
+    'Bayern: Stellplatzsatzung still cites StPlS 926 (byte-identical)')
+
+  // humanizeFact second vector — the Verify-with-Architect card.
+  const stpFact = { key: 'stellplatz_anzahl_geplant', value: 6 } as never
+  ok(t, !BLEED.test(humanizeFact(stpFact, 'en', 'hamburg')),
+    'Hamburg: humanizeFact(stellplatz) carries NO StPlS 926')
+  ok(t, /StPlS 926/.test(humanizeFact(stpFact, 'en', 'bayern')),
+    'Bayern: humanizeFact(stellplatz) still cites StPlS 926 (byte-identical)')
+  return t
+}
+
 function main(): void {
   const sections: Tally[] = [
     runInviteParse(),
@@ -367,6 +416,7 @@ function main(): void {
     runLegalDomains(),
     runRisks(),
     runDoNext(),
+    runBayernBleed(),
   ]
   const passed = sections.reduce((n, s) => n + s.passed, 0)
   const failed = sections.reduce((n, s) => n + s.failed, 0)

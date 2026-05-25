@@ -171,6 +171,40 @@ const TEMPLATES: Record<string, Template> = {
   },
 }
 
+// v1.0.29 Bug 65 — the curated templates above were authored for Bayern
+// (StPlS 926, BayBO Art. 57/58, Art. 44a BayBO, BaumschutzV 901,
+// Denkmal-Atlas). On a non-Bayern project those citations are wrong
+// (München/Bayern bleed). For non-Bayern states use a federal-neutral
+// variant; Bayern (and bundesland-less legacy callers) keep the authored
+// template byte-identical. The ensemble_*_geprueft keys are München-named
+// (a non-Bayern project never carries them) so they need no override.
+const FEDERAL_TEMPLATES: Record<string, Template> = {
+  vereinfachtes_verfahren_anwendbar: {
+    de: 'Vereinfachtes Verfahren — Anwendbarkeit zu bestätigen',
+    en: 'Simplified procedure — applicability pending',
+  },
+  freistellung_anwendbar: {
+    de: 'Genehmigungsfreistellung — Voraussetzungen offen',
+    en: 'Permit exemption — preconditions pending',
+  },
+  pv_pflicht: {
+    de: 'PV-Pflicht nach Landesrecht anzuwenden',
+    en: 'State PV requirement applies',
+  },
+  stellplatz_anzahl_geplant: {
+    de: 'Geplante Stellplätze: {{value}}',
+    en: 'Planned parking spaces: {{value}}',
+  },
+  baumschutz_betroffen: {
+    de: 'Baumschutz nach kommunaler Satzung betroffen — Baumkartierung empfohlen',
+    en: 'Tree protection (municipal ordinance) applies — tree survey recommended',
+  },
+  denkmalschutz_geprueft: {
+    de: 'Denkmalschutz noch nicht geprüft — Anfrage bei der Denkmalbehörde offen',
+    en: 'Heritage status not yet checked — heritage authority inquiry needed',
+  },
+}
+
 const PRESENT_DE: Record<string, string> = {
   true: 'eingeholt',
   false: 'noch nicht eingeholt',
@@ -226,8 +260,16 @@ function algorithmicLabel(fact: Fact, lang: 'de' | 'en'): string {
  * Phase 8.5 — main entry. Surface a fact as a single human-readable
  * line in the requested locale.
  */
-export function humanizeFact(fact: Fact, lang: 'de' | 'en' = 'de'): string {
-  const template = TEMPLATES[fact.key]
+export function humanizeFact(
+  fact: Fact,
+  lang: 'de' | 'en' = 'de',
+  bundesland?: string | null,
+): string {
+  // v1.0.29 Bug 65 — federal-neutral override for non-Bayern states.
+  const isBayern = (bundesland ?? '').toLowerCase() === 'bayern'
+  const federal =
+    !isBayern && bundesland != null ? FEDERAL_TEMPLATES[fact.key] : undefined
+  const template = federal ?? TEMPLATES[fact.key]
   if (!template) return algorithmicLabel(fact, lang)
   let line = lang === 'en' ? template.en : template.de
   if (line.includes('{{value}}')) {
