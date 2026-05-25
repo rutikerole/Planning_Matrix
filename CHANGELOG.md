@@ -1,5 +1,62 @@
 # Changelog
 
+## v1.0.30 — T-04 Use-conversion (Leipzig / Sachsen) template-blind pass (2026-05-25)
+
+Rutik's first live T-04 (Umnutzung) smoke walk — retail → gastronomy, Karl-
+Liebknecht-Straße 33, 04107 Leipzig — surfaced 17 bugs + 5 new, all in the
+DETERMINISTIC pipeline (the persona's SächsBO / DIN 4109 / TA Lärm / § 33 SächsBO
+reasoning was state-correct). T-04 confirms the template-blind pattern a third
+time: v1.0.28 = T-05, v1.0.29 = T-02, v1.0.30 = T-04. See
+`docs/V1_0_30_T04_LEIPZIG_DIAGNOSIS.md`. The matrix was T-01-only, so the whole
+class was CI-invisible until the new sachsen-t04 fixture.
+
+- **Bug 88 / 99 / 100 / ±** — T-04 cost section was the new-build HOAI engine
+  (only T-05 branched). Added an `isUseConversion` honest stub (request Fachplaner
+  quotes, no fabricated BKI), cleaned the Bayern-bled T-04 `COST_BANDS` text, fixed
+  `±`→`²` (Instrument Serif glyph gap, NOT winAnsiSafe; `+/-` in caption), + a new
+  **pdfStrings EN/DE parity gate**. `2cfb9d2`
+- **Bug 89** — web Domain B gained TA Lärm + Rettungsweg matchers (DIN 4109 +
+  Brandschutz already fired); PDF Domain B improves via the C4 procedure fix. `37e1206`
+- **Bug 90 / 91 / 92** — T-04 fell to the generic `standard`/`(regulär)`/ASSUMED
+  branch. Added an `umnutzung` branch → `vereinfachtes` + CALCULATED, converging
+  the PDF resolver with the web baseline ("Simplified building permit"). `9041ccb`
+- **Bug 94 / 95 / 103** — Suggestions tab + PDF recs + Executive page were empty
+  (→ 11p not 12p). 4 state-neutral T-04 smart suggestions (Bauvoranfrage floor +
+  Schallschutz / Brandschutz-Rettungsweg / TA-Lärm); aligned the TOC page-calc to
+  the real exec-page render condition. `045f04e`
+- **Bug 96** — Heritage risk fired on `denkmalschutz` ASSUMED "nicht bekannt";
+  now suppressed on ASSUMED-negative (still fires on TRUE / genuine UNKNOWN). `e098d77`
+- **Bug 104** — T-04 fact-key family (incl. the umlaut `nettogrundfläche_m2` the
+  live persona emits) added to factLabels.{en,de}. `33f54b1`
+- **Bug 97 / 98 / 101** — scrubbed the STUB_VERIFY deferral from the architect
+  role; suppressed the per-row doc citation → ONE footer; fixed the broken
+  "permit nach …" Key Data concatenation. `520f464` (role-scrub regex corrected `0467a99`)
+- **Bug 106 / 107 / 108** — ellipsize over-long Key Data values, doc delivery,
+  glossary terms (no more off-page overflow). `875da0b`
+- **Bug 102** — ≥2 PENDING legal domains now knock the confidence down
+  (Leipzig 87% → 71%); a single open domain (Königsallee) is unaffected. `6d3f5af`
+- **Bug 93** — building class reads "Not re-classified · use conversion" for T-04
+  instead of a bare "—" / "eaves height not recorded". `53380b1`
+- **Bug 72** (deferred 3 sprints) — wizard map printed "Currently active: München
+  … Other regions follow" on a Leipzig project. Honest non-München caption when
+  the address is valid + non-München (no geocoder / pilot refactor). **App-run
+  verified** via Playwright. `a7ab787`
+- **C11** — `sachsen-t04-leipzig.json` fixture (real persona key shapes) +
+  `runSaxonyT04` (smoke:architect +23) + T-04 PDF assertions (smoke:pdf-text +13)
+  incl. the **Bug 92 cross-surface assertion**. The fixture-render gate caught a
+  silent C7b regression (exact-match role scrub missed after `stripVersionTokens`
+  ate the em-dash space) — fixed with a tolerant regex. `0467a99`
+
+Deferred: 105 (multi-page Key Data table = Bug 78) + 109 (signature collision =
+Bug 60) — deep PDF layout; persona-side Bug 63 (`recommendations_delta`); the 7
+other München/BayBO-framed `COST_BANDS_BY_TEMPLATE` entries (web Cost tab). The
+template-blind pattern will keep biting T-06/T-07/T-08 until each gets this pass.
+
+Gates every commit: bayern-sha `b18d3f7f…3471` MATCH · 16-state matrix 16/16 ·
+pdf-text 289/0 · citations · architect 237/0 · chat-ux 18/0 · bundle ~284 KB gz ·
+lint net-zero (8/2 pre-existing). No chat-turn redeploy, no migrations, no
+fabrication. v1.0.29.1 + v1.0.29.2 untouched.
+
 ## v1.0.29.2 — chat-UX overlap / auto-scroll / sidebar-desync hotfix (2026-05-25)
 
 Rutik's T-02 Hamburg smoke walk (Round 10, mid-stream) exposed 4 chat-viewport

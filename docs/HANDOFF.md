@@ -461,8 +461,26 @@ shipped in Phase 13 Week 4). What's missing is the cron harness
 
 ## 9. Operational responsibilities — split between engineering and client
 
-**v1.0.29.2 (chat-UX overlap / auto-scroll / sidebar-desync hotfix) IS THE
-CURRENT RELEASE.** Rutik's T-02 Hamburg smoke walk (Round 10, mid-stream) exposed
+**v1.0.30 (T-04 Use-conversion Leipzig / Sachsen — template-blind pass) IS THE
+CURRENT RELEASE.** Rutik's first live T-04 (Umnutzung) smoke walk — retail →
+gastronomy at Karl-Liebknecht-Straße 33, 04107 Leipzig — surfaced 22 deterministic-
+pipeline bugs (the persona's SächsBO / DIN 4109 / TA Lärm reasoning was state-
+correct). All 22 closed across 13 commits: T-04 cost honest-stub + `±` glyph +
+pdfStrings parity gate (88/99/100); web Domain B TA Lärm + Rettungsweg (89);
+`umnutzung` procedure → vereinfachtes CALCULATED, web↔PDF converged (90/91/92);
+T-04 suggestions floor restoring the Executive page (94/95/103); heritage risk
+ASSUMED-gating (96); T-04 labels incl. the umlaut key (104); STUB_VERIFY role/doc
+scrub + procedure-text fix (97/98/101); layout ellipsize (106/107/108); ≥2-PENDING
+confidence knockdown (102); honest building class (93); and **Bug 72 — the wizard
+map honest non-München caption (deferred 3 sprints, app-run verified)**. New
+`sachsen-t04-leipzig.json` fixture + `runSaxonyT04` (smoke:architect 237/0) + T-04
+PDF arms (smoke:pdf-text 289/0, incl. the Bug 92 cross-surface assertion); the
+fixture-render gate caught + fixed a silent C7b role-scrub regression. Deferred:
+Bug 60/78 (deep PDF layout), Bug 63 (persona-side), the 7 other München-framed
+`COST_BANDS`. See `docs/V1_0_30_T04_LEIPZIG_DIAGNOSIS.md`. Bayern SHA held across
+all commits. **The template-blind pattern still awaits T-06/T-07/T-08.**
+
+**v1.0.29.2 (chat-UX overlap / auto-scroll / sidebar-desync hotfix).** Rutik's T-02 Hamburg smoke walk (Round 10, mid-stream) exposed
 4 chat-viewport defects, all wiring/behavior in existing machinery: Bug 84
 (auto-scroll didn't follow the persona stream — the streaming bubble had no
 spec-tag for `useAutoScroll` to target), Bug 85 (fixed 200px input-zone reserve

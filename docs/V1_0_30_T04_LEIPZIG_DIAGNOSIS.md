@@ -353,25 +353,34 @@ Vorbereitung" for any unsourced number) · net-zero lint in touched files (basel
 
 | Bug | Status | Commit |
 |---|---|---|
-| 88 cost T-04 branch | OPEN | C2 |
-| 88-sub `±`→`²` | OPEN | C2 |
-| 99 caption noun (NGF) | OPEN | C2 |
-| 100 BKI honesty clause | OPEN (mostly shipped) | C2 |
-| 89 Domain B rows | OPEN | C3 |
-| 90 qualifier CALCULATED | OPEN | C4 |
-| 91 honest procedure label | OPEN | C4 |
-| 92 web/PDF single-source | OPEN | C4 |
-| 94 + 95 suggestions/recs | OPEN | C5 |
-| 103 exec page + page count | OPEN | C5 |
-| 96 heritage risk gating | OPEN | C6 |
-| 97 architect role scrub | OPEN | C7 |
-| 98 doc disclaimer → footer | OPEN | C7 |
-| 101 procedure-indication text | OPEN | C7 |
-| 104 EN/DE T-04 labels | OPEN | C7 |
-| 106 + 107 + 108 layout ellipsize | OPEN | C7 |
-| 102 confidence | OPEN | C8 |
-| 93 building class | OPEN | C9 |
-| 72 wizard map honest state | OPEN | C10 |
-| sachsen-t04 fixture + gate | OPEN | C11 |
-| 105 multi-page table (= Bug 78) | DEFERRED | — |
-| 109 signature layout (= Bug 60) | DEFERRED | — |
+| 88 cost T-04 branch | ✅ CLOSED | `2cfb9d2` (C2) |
+| 88-sub `±`→`²` | ✅ CLOSED | `2cfb9d2` (C2) |
+| 99 caption noun (NGF) | ✅ CLOSED (mooted by stub) | `2cfb9d2` (C2) |
+| 100 BKI honesty clause | ✅ verified already shipped | `2cfb9d2` (C2) |
+| 89 Domain B rows | ✅ CLOSED (web; PDF via C4) | `37e1206` (C3) |
+| 90 qualifier CALCULATED | ✅ CLOSED | `9041ccb` (C4) |
+| 91 honest procedure label | ✅ CLOSED | `9041ccb` (C4) |
+| 92 web/PDF converge + assert | ✅ CLOSED (assert in C11) | `9041ccb` (C4) |
+| 94 + 95 suggestions/recs | ✅ CLOSED | `045f04e` (C5) |
+| 103 exec page + page count | ✅ CLOSED | `045f04e` (C5) |
+| 96 heritage risk gating | ✅ CLOSED | `e098d77` (C6) |
+| 104 EN/DE T-04 labels | ✅ CLOSED | `33f54b1` (C7a) |
+| 97 architect role scrub | ✅ CLOSED (regex fix in C11) | `520f464` (C7b) + `0467a99` (C11) |
+| 98 doc disclaimer → footer | ✅ CLOSED | `520f464` (C7b) |
+| 101 procedure-indication text | ✅ CLOSED | `520f464` (C7b) |
+| 106 + 107 + 108 layout ellipsize | ✅ CLOSED | `875da0b` (C7c) |
+| 102 confidence | ✅ CLOSED | `6d3f5af` (C8) |
+| 93 building class | ✅ CLOSED | `53380b1` (C9) |
+| 72 wizard map honest state | ✅ CLOSED (app-run verified) | `a7ab787` (C10) |
+| sachsen-t04 fixture + gates | ✅ CLOSED | `0467a99` (C11) |
+| 105 multi-page table (= Bug 78) | ⏭ DEFERRED (deep) | — |
+| 109 signature layout (= Bug 60) | ⏭ DEFERRED (deep) | — |
+
+**All 22 in-scope bugs CLOSED across 13 commits (C1–C11 + the C7a/b/c split),
+every commit green (Bayern SHA MATCH · matrix 16/16 · pdf-text 289/0 · architect
+237/0 · chat-ux/citations OK · build+bundle ~284 KB gz · lint net-zero 8/2).**
+The C11 fixture-render gate caught a silent regression in the C7b role scrub
+(exact-match vs `stripVersionTokens` whitespace) — corrected in C11. Deferred:
+105/109 (deep PDF layout = Bug 78/60), persona-side Bug 63, the 7 remaining
+München/BayBO-framed `COST_BANDS_BY_TEMPLATE` entries (web Cost tab) — flagged
+for follow-up.

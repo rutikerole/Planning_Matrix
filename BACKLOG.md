@@ -21,6 +21,33 @@ Sprint anchor reminder:
   `b18d3f7f9a6fe238c18cec5361d30ea3a547e46b1ef2b16a1e74c533aacb3471`
   must MATCH at start AND end of every commit in any future sprint.
 
+## Closed in v1.0.30 (T-04 Use-conversion Leipzig — template-blind pass)
+
+CODE-COMPLETE + fixture/render-proven across 13 commits: Bug 88/99/100/± (T-04
+cost stub + pdfStrings parity gate), 89 (web Domain B TA Lärm + Rettungsweg),
+90/91/92 (vereinfachtes CALCULATED + web↔PDF converge, cross-surface asserted),
+94/95/103 (T-04 suggestions floor + exec page + TOC), 96 (heritage ASSUMED-gating),
+104 (T-04 labels both locales incl. umlaut key), 97/98/101 (role scrub + doc footer
++ procedure text), 106/107/108 (layout ellipsize), 102 (≥2-PENDING confidence),
+93 (building class honest), **72 (wizard map honest non-München caption —
+app-run verified, was deferred 3 sprints)**. New `sachsen-t04-leipzig.json` fixture
++ `runSaxonyT04` (smoke:architect 237/0) + T-04 PDF arms (smoke:pdf-text 289/0).
+Diagnosis: docs/V1_0_30_T04_LEIPZIG_DIAGNOSIS.md.
+
+Still deferred after v1.0.30:
+- **Bug 60 / 109** — verification-page signature overlap + **Bug 78 / 105**
+  multi-page Key Data table. Deep PDF layout; both confirmed still present on the
+  T-04 walk. Candidate for a dedicated PDF-layout sprint.
+- **Bug 63 (persona-side)** — `recommendations_delta` thin; the T-04 suggestions
+  floor is the deterministic mitigation (no chat-turn this sprint).
+- **`COST_BANDS_BY_TEMPLATE` Bayern-bleed** — only T-04's basis text was cleaned;
+  the other 7 bands still cite München/BayBO on the web Cost tab for non-Bayern
+  projects. Surgical follow-up.
+- Per-state `legalRuleSnippets` + `COST_BANDS` per-state authoring; web
+  Procedure-tab qualifier override (v1.0.29.1 carry).
+- **T-06 / T-07 / T-08** — same template-blind pattern; T-02 + T-05 + T-04 are now
+  three proofs of the fix-shape; propagate per the diagnosis docs.
+
 ## Closed in v1.0.29.2 (chat-UX hotfix)
 
 Bug 84 (stream auto-scroll), Bug 85 (dynamic input-zone reserve), Bug 86 (hide
