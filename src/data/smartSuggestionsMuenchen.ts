@@ -102,6 +102,44 @@ export interface SmartSuggestion {
 }
 
 export const SMART_SUGGESTIONS_MUENCHEN: SmartSuggestion[] = [
+  // v1.0.29 Bug 68 — T-02 MFH deterministic baseline. The Hamburg walk
+  // surfaced only generic energy/KfW/insurance cards because no MFH-specific
+  // suggestion existed. These are state-neutral (no Bayern, no fabricated
+  // chamber URL, no fabricated KfW) and rank high for neubau via intent +
+  // template + scope.
+  {
+    id: 'bauvoranfrage-neubau',
+    applicableTemplates: ['T-01', 'T-02'],
+    category: 'regulation',
+    titleDe: 'Bauvoranfrage beim Bauamt stellen',
+    titleEn: 'File a Bauvoranfrage with the building authority',
+    bodyDe:
+      'Klären Sie vor dem Bauantrag die Zulässigkeit nach § 34 BauGB bzw. den B-Plan-Status sowie etwaige Erhaltungs- oder Gestaltungssatzungen verbindlich mit dem zuständigen Bauamt/Bezirksamt.',
+    bodyEn:
+      'Before the full permit application, clarify admissibility under § 34 BauGB or the Bebauungsplan status — plus any preservation or design ordinances — bindingly with the responsible building authority / district office.',
+    reasoningDe: 'Eine Bauvoranfrage sichert die grundsätzliche Bebaubarkeit, bevor Planungskosten entstehen.',
+    reasoningEn: 'A Bauvoranfrage secures basic buildability before planning costs are incurred.',
+    intents: ['neubau_einfamilienhaus', 'neubau_mehrfamilienhaus'],
+    scopeMatch: /§\s*34|bebauungsplan|innenbereich|unbekannt/i,
+    relevanceWeight: 1.5,
+    verifyBeforePublicLaunch: true,
+  },
+  {
+    id: 'kernteam-mfh',
+    applicableTemplates: ['T-02'],
+    category: 'precedent',
+    titleDe: 'Kernteam für das Mehrfamilienhaus beauftragen',
+    titleEn: 'Commission the core team for the multi-family build',
+    bodyDe:
+      'Ein MFH der Gebäudeklasse 3+ braucht früh ein abgestimmtes Team: bauvorlageberechtigte:r Architekt:in, Tragwerksplanung, Brandschutz, GEG-Energieberatung und Schallschutz (DIN 4109). Architekt:innen-Auswahl über die Architektenkammer Ihres Bundeslandes, gefiltert nach Erfahrung in der passenden Gebäudeklasse.',
+    bodyEn:
+      "A GK 3+ multi-family build needs an aligned team early: a submission-authorized architect, structural, fire-protection, GEG energy, and sound-insulation (DIN 4109) planners. Shortlist architects via your federal state's chamber of architects, filtered by experience in the relevant building class.",
+    reasoningDe: 'Die fünf Fachplanungen greifen ineinander — frühe Beauftragung vermeidet Nachläufe in LP 1–4.',
+    reasoningEn: 'The five disciplines interlock — early commissioning avoids rework in LP 1–4.',
+    intents: ['neubau_mehrfamilienhaus'],
+    relevanceWeight: 1.6,
+    verifyBeforePublicLaunch: true,
+  },
   {
     id: 'pv-pflicht',
     applicableTemplates: ['T-01', 'T-02'],

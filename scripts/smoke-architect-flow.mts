@@ -29,6 +29,7 @@ import { humanizeFact } from '../src/features/result/lib/humanizeFact.ts'
 import { resolveAreaSqmByTemplate } from '../src/features/result/lib/costNormsMuenchen.ts'
 import { resolveRoles } from '../src/features/result/lib/resolveRoles.ts'
 import { stripVersionTokens } from '../src/lib/stripVersionTokens.ts'
+import { pickSmartSuggestions } from '../src/features/result/lib/smartSuggestionsMatcher.ts'
 import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'node:path'
@@ -476,6 +477,32 @@ function runRoles(): Tally {
   return t
 }
 
+function runSuggestions(): Tally {
+  console.log('\n[smoke-architect] T-02 suggestions baseline (C6 / Bug 68)…')
+  const t: Tally = { passed: 0, failed: 0 }
+  const BLEED = /BayBO|BayTBest|StPlS|M[üu]nch/
+
+  const fx = JSON.parse(readFileSync(join(REPO_ROOT, 'test/fixtures/hamburg-t02-mfh.json'), 'utf-8'))
+  const picks = pickSmartSuggestions({ project: fx.project, state: fx.project.state, limit: 8 })
+  const ids = picks.map((s) => s.id)
+  ok(t, ids.includes('bauvoranfrage-neubau'), 'Hamburg T-02: Bauvoranfrage suggestion present')
+  ok(t, ids.includes('kernteam-mfh'), 'Hamburg T-02: MFH core-team suggestion present')
+  // MFH-specific cards must out-rank the generic insurance filler.
+  const topThree = ids.slice(0, 3)
+  ok(t, topThree.includes('kernteam-mfh') || topThree.includes('bauvoranfrage-neubau'),
+    'Hamburg T-02: an MFH-specific card ranks in the top 3 (not generic boilerplate only)')
+  // No Bayern bleed + no fabricated KfW forced.
+  for (const s of picks) {
+    ok(t, !BLEED.test(`${s.titleEn} ${s.bodyEn}`), `Hamburg T-02: suggestion "${s.id}" carries NO Bayern token`)
+  }
+
+  // EFH T-01 regression — the MFH-only core-team card must NOT fire.
+  const efh = JSON.parse(readFileSync(join(REPO_ROOT, 'test/fixtures/hamburg-t01-suburb-plain.json'), 'utf-8'))
+  const efhIds = pickSmartSuggestions({ project: efh.project, state: efh.project.state, limit: 8 }).map((s) => s.id)
+  ok(t, !efhIds.includes('kernteam-mfh'), 'EFH T-01: MFH-only core-team card does NOT fire (no regression)')
+  return t
+}
+
 function main(): void {
   const sections: Tally[] = [
     runInviteParse(),
@@ -487,6 +514,7 @@ function main(): void {
     runBayernBleed(),
     runCostArea(),
     runRoles(),
+    runSuggestions(),
   ]
   const passed = sections.reduce((n, s) => n + s.passed, 0)
   const failed = sections.reduce((n, s) => n + s.failed, 0)
