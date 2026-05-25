@@ -137,6 +137,16 @@ export const LEGAL_RULE_SNIPPETS: LegalRuleSnippet[] = [
     verifyBeforePublicLaunch: true,
   },
   {
+    // v1.0.29 Bug 66 — DIN 4109 is a federal (national) standard, mandatory
+    // for MFH. State-neutral text → no bundesland gate needed.
+    label: 'DIN 4109',
+    interpretationDe:
+      'Schallschutz im Hochbau (DIN 4109): bundesweit geltende Mindestanforderungen an Luft- und Trittschalldämmung zwischen Wohneinheiten sowie gegen Außenlärm. Für Mehrfamilienhäuser regelmäßig nachzuweisen.',
+    interpretationEn:
+      'Sound insulation in buildings (DIN 4109): nationwide minimum requirements for airborne and impact-sound insulation between dwellings and against external noise. Regularly required for multi-family buildings.',
+    verifyBeforePublicLaunch: true,
+  },
+  {
     label: 'Brandschutz',
     interpretationDe:
       'Gebäudeklassen-abhängige Brandschutzanforderungen aus der BayBO und BayTBest. Ab GK 4 in der Regel Brandschutznachweis durch:r staatlich anerkannte:n Sachverständige:n.',

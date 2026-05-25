@@ -298,6 +298,16 @@ function runLegalDomains(): Tally {
     bayB?.rows.some((r) => /BayBO/.test(r.label)) ?? false,
     'Bayern T-03: Domain B still cites BayBO (no regression)',
   )
+  // C4 / Bug 66 — Hamburg T-02 GK 4 MFH Domain B is substantive (§ 61 HBauO
+  // procedure + GEG 2024 + Brandschutz + DIN 4109), not a single stub row.
+  for (const lang of ['de', 'en'] as const) {
+    const b = domB('test/fixtures/hamburg-t02-mfh.json', lang)
+    const labels = (b?.rows ?? []).map((r) => r.label)
+    ok(t, labels.some((l) => /§\s*61\s+HBauO/.test(l)), `Hamburg T-02 ${lang}: Domain B cites § 61 HBauO`)
+    ok(t, labels.includes('GEG 2024'), `Hamburg T-02 ${lang}: Domain B has GEG 2024`)
+    ok(t, labels.includes('Brandschutz'), `Hamburg T-02 ${lang}: Domain B has Brandschutz`)
+    ok(t, labels.includes('DIN 4109'), `Hamburg T-02 ${lang}: Domain B has DIN 4109 (Bug 66 fill)`)
+  }
   return t
 }
 

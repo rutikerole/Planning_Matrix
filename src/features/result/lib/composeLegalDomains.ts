@@ -178,6 +178,16 @@ export function composeLegalDomains(
       status: lang === 'en' ? 'GK-dependent fire protection' : 'gebäudeklassenabhängig',
     })
   }
+  // v1.0.29 Bug 66 — DIN 4109 sound insulation is a federal (national)
+  // standard, mandatory for MFH. composeLegalDomains had no matcher, so the
+  // T-02 GK 4 MFH Domain B under-produced on the web Legal Landscape tab.
+  if (has(/din\s*4109|schallschutz/)) {
+    bRows.push({
+      label: 'DIN 4109',
+      relevance: 'PARTIAL',
+      status: lang === 'en' ? 'sound insulation' : 'Schallschutz',
+    })
+  }
   // v1.0.28 Bug 54 — Domain B was Bayern-only (the BayBO matchers above
   // sit inside `if (isBayern)`), so ALL 15 non-Bayern states rendered an
   // empty Building-law section ("Not enough information yet") on the web
