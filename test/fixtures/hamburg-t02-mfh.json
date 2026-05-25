@@ -41,7 +41,9 @@
       "procedures": [],
       "documents": [],
       "specialists": [],
-      "roles": []
+      "roles": [
+        { "id": "R-Schall", "title_de": "Schallschutzgutachter:in", "title_en": "Acoustic consultant", "needed": true, "rationale_de": "DIN 4109 Schallschutznachweis ist Pflichtbestandteil des Bauantrags für GK 4 (Detail-§ in v1.0.21 noch zu verifizieren).", "rationale_en": "DIN 4109 sound-insulation report is a mandatory part of the Bauantrag for GK 4 (detail § to verify in v1.0.21).", "qualifier": { "source": "MODEL", "quality": "CALCULATED", "setAt": "2026-05-25T00:00:00.000Z", "setBy": "assistant" } }
+      ]
     },
     "created_at": "2026-05-25T00:00:00.000Z",
     "updated_at": "2026-05-25T00:00:00.000Z"

@@ -27,6 +27,8 @@ import { composeDoNext } from '../src/features/result/lib/composeDoNext.ts'
 import { findRuleSnippet } from '../src/data/legalRuleSnippets.ts'
 import { humanizeFact } from '../src/features/result/lib/humanizeFact.ts'
 import { resolveAreaSqmByTemplate } from '../src/features/result/lib/costNormsMuenchen.ts'
+import { resolveRoles } from '../src/features/result/lib/resolveRoles.ts'
+import { stripVersionTokens } from '../src/lib/stripVersionTokens.ts'
 import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'node:path'
@@ -437,6 +439,43 @@ function runCostArea(): Tally {
   return t
 }
 
+function runRoles(): Tally {
+  console.log('\n[smoke-architect] T-02 roles union-floor + version scrub (C5 / Bug 67)…')
+  const t: Tally = { passed: 0, failed: 0 }
+  const VERSION = /\bv\d+\.\d+\.\d+\b/
+
+  // stripVersionTokens unit checks.
+  ok(t, stripVersionTokens('Detail-§ in v1.0.21 noch offen') === 'Detail-§ noch offen',
+    'stripVersionTokens drops "in v1.0.21"')
+  ok(t, !VERSION.test(stripVersionTokens('regional BKI factors not yet wired in v1.0.23 — see docs.')),
+    'stripVersionTokens drops "in v1.0.23"')
+  ok(t, stripVersionTokens('clean text') === 'clean text', 'stripVersionTokens idempotent on clean text')
+
+  // Hamburg T-02 — persona emitted ONE role; the union floor must re-add the
+  // MFH baseline so the GK 4 specialist set is complete.
+  const fx = JSON.parse(readFileSync(join(REPO_ROOT, 'test/fixtures/hamburg-t02-mfh.json'), 'utf-8'))
+  const { roles, isFromState } = resolveRoles(fx.project, fx.project.state)
+  const titles = roles.map((r) => r.title_de)
+  ok(t, isFromState, 'Hamburg T-02: isFromState true (persona role present)')
+  ok(t, roles.length >= 5, `Hamburg T-02: ≥ 5 roles after union floor (got ${roles.length})`)
+  for (const want of ['Architekt:in', 'Tragwerksplaner:in', 'Brandschutzplaner:in', 'Schallschutzgutachter:in']) {
+    ok(t, titles.some((x) => x === want), `Hamburg T-02: union includes ${want}`)
+  }
+  ok(t, titles.some((x) => /Energieberater/.test(x)), 'Hamburg T-02: union includes a GEG-Energieberater:in')
+  // No role copy carries an internal version token.
+  const leak = roles.find(
+    (r) => VERSION.test(r.rationale_de ?? '') || VERSION.test(r.rationale_en ?? '') || VERSION.test(r.qualifier?.reason ?? ''),
+  )
+  ok(t, !leak, `Hamburg T-02: no role copy leaks a version token${leak ? ` (leak in ${leak.id})` : ''}`)
+
+  // EFH regression — neubau_einfamilienhaus keeps the EFH baseline (no
+  // Brandschutz/Schallschutz specialists forced on a single-family home).
+  const efh = JSON.parse(readFileSync(join(REPO_ROOT, 'test/fixtures/hamburg-t01-suburb-plain.json'), 'utf-8'))
+  const efhRoles = resolveRoles(efh.project, efh.project.state).roles.map((r) => r.title_de)
+  ok(t, !efhRoles.includes('Schallschutzgutachter:in'), 'EFH T-01: no MFH-only Schallschutzgutachter forced (no regression)')
+  return t
+}
+
 function main(): void {
   const sections: Tally[] = [
     runInviteParse(),
@@ -447,6 +486,7 @@ function main(): void {
     runDoNext(),
     runBayernBleed(),
     runCostArea(),
+    runRoles(),
   ]
   const passed = sections.reduce((n, s) => n + s.passed, 0)
   const failed = sections.reduce((n, s) => n + s.failed, 0)

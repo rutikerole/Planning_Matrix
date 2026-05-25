@@ -102,6 +102,70 @@ const NEW_BUILD_ROLES = (citations: StateCitationPack): Role[] => [
   ),
 ]
 
+// v1.0.29 Bug 67 — MFH (GK 3+) carries two specialists an EFH new-build
+// doesn't: a Brandschutzplaner:in (fire-protection certificate from GK 3/4)
+// and a Schallschutzgutachter:in (DIN 4109 between dwelling units). The
+// Hamburg T-02 walk's persona named all of these, but emitted only one role
+// into state.roles — the union floor in resolveRoles re-adds the rest.
+const MFH_NEW_BUILD_ROLES = (citations: StateCitationPack): Role[] => [
+  baselineRole(
+    'R-Architekt',
+    'Architekt:in',
+    'Architect',
+    `Bauvorlageberechtigt nach ${citations.permitSubmissionCitation}; reicht den Antrag ein.`,
+    `Licensed for permit submissions under ${citations.permitSubmissionCitation}.`,
+    citations.labelDe,
+  ),
+  baselineRole(
+    'R-Tragwerksplaner',
+    'Tragwerksplaner:in',
+    'Structural engineer',
+    `Standsicherheitsnachweis nach ${citations.structuralCertCitation}.`,
+    `Structural certification under ${citations.structuralCertCitation}.`,
+    citations.labelDe,
+  ),
+  baselineRole(
+    'R-Brandschutzplaner',
+    'Brandschutzplaner:in',
+    'Fire-protection planner',
+    'Brandschutznachweis ab Gebäudeklasse 3/4 — i.d.R. durch staatlich anerkannte:n Sachverständige:n.',
+    'Fire-protection certificate from building class 3/4 — typically via a state-accredited expert.',
+    citations.labelDe,
+  ),
+  baselineRole(
+    'R-Energieberater',
+    'GEG-Energieberater:in',
+    'Energy consultant (GEG)',
+    'Wärmeschutznachweis nach GEG 2024 — Bestandteil des Antrags.',
+    'Thermal protection certification under GEG 2024 — required for the application.',
+    citations.labelDe,
+  ),
+  baselineRole(
+    'R-Schallschutzgutachter',
+    'Schallschutzgutachter:in',
+    'Acoustic consultant',
+    'Schallschutznachweis nach DIN 4109 — bei Mehrfamilienhäusern Pflicht.',
+    'Sound-insulation certificate under DIN 4109 — mandatory for multi-family buildings.',
+    citations.labelDe,
+  ),
+  baselineRole(
+    'R-Vermesser',
+    'Vermesser:in',
+    'Surveyor',
+    `Amtlicher Lageplan; bei Neubauten in ${citations.labelDe} Pflicht.`,
+    `Official site plan; mandatory for new builds in ${citations.labelEn}.`,
+    citations.labelDe,
+  ),
+  baselineRole(
+    'R-Bauamt',
+    'Bauamt',
+    'Building authority',
+    'Kommunale Genehmigungsbehörde — prüft und entscheidet.',
+    'Municipal permitting body — reviews and decides.',
+    citations.labelDe,
+  ),
+]
+
 const RENOVATION_ROLES = (citations: StateCitationPack): Role[] => [
   baselineRole(
     'R-Architekt',
@@ -167,8 +231,9 @@ const DEMOLITION_ROLES = (citations: StateCitationPack): Role[] => [
 export function deriveBaselineRoles({ intent, bundesland }: Args): Role[] {
   const citations = getStateCitations(bundesland)
   switch (intent) {
-    case 'neubau_einfamilienhaus':
     case 'neubau_mehrfamilienhaus':
+      return MFH_NEW_BUILD_ROLES(citations)
+    case 'neubau_einfamilienhaus':
     case 'aufstockung':
     case 'anbau':
       return NEW_BUILD_ROLES(citations)

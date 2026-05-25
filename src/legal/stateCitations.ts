@@ -145,8 +145,11 @@ const NIEDERSACHSEN: StateCitationPack = {
 
 // ── Stub pack (honest deferral) ──────────────────────────────────────
 
-const STUB_VERIFY_DE = 'Detail-§ in v1.0.21 noch nicht verifiziert — mit Bauamt oder Architektenkammer abklären'
-const STUB_VERIFY_EN = 'Detail § not yet verified in v1.0.21 — confirm with local building authority or Architektenkammer'
+// v1.0.29 Bug 67/82 — dropped the internal version token ("v1.0.21") that
+// leaked into user-facing text (Team architect card, Domain C denkmal label,
+// PDF). Honest-deferral wording only.
+const STUB_VERIFY_DE = 'Detail-§ noch nicht hinterlegt — mit Bauamt oder Architektenkammer abklären'
+const STUB_VERIFY_EN = 'Detail § not yet on file — confirm with local building authority or Architektenkammer'
 
 function archivCityFor(bundesland: BundeslandCode, labelDe: string): string {
   // Stadtstaaten map to themselves; other stub states use a known
