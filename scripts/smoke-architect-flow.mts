@@ -32,8 +32,10 @@ import { stripVersionTokens } from '../src/lib/stripVersionTokens.ts'
 import { pickSmartSuggestions } from '../src/features/result/lib/smartSuggestionsMatcher.ts'
 import { computeChamberProgress } from '../src/features/chat/lib/chamberProgress.ts'
 import { factLabel } from '../src/lib/factLabel.ts'
-import { resolveProcedure } from '../src/legal/resolveProcedure.ts'
+import { resolveProcedure, procedureLabel, intentFromTemplate } from '../src/legal/resolveProcedure.ts'
 import { composeExecutiveRead } from '../src/features/result/lib/composeExecutiveRead.ts'
+import { computeConfidence } from '../src/features/result/lib/computeConfidence.ts'
+import { deriveBaselineProcedure } from '../src/features/result/lib/deriveBaselineProcedure.ts'
 import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'node:path'
@@ -670,6 +672,77 @@ function runProcedure(): Tally {
   return t
 }
 
+// v1.0.30 — end-to-end T-04 use-conversion fixture (Sachsen, Leipzig). Runs the
+// real composers on the live-walk state to prove the sprint's fixes together.
+function runSaxonyT04(): Tally {
+  console.log('\n[smoke-architect] Sachsen × T-04 use-conversion fixture (v1.0.30)…')
+  const t: Tally = { passed: 0, failed: 0 }
+  const fx = JSON.parse(
+    readFileSync(join(REPO_ROOT, 'test/fixtures/sachsen-t04-leipzig.json'), 'utf-8'),
+  )
+  const project = fx.project
+  const state = fx.project.state
+
+  // Bug 89 — Domain B picks up the substantive building-law topics.
+  for (const lang of ['de', 'en'] as const) {
+    const b = composeLegalDomains(state, lang, project.bundesland).find(
+      (d) => d.key === 'B',
+    )
+    const labels = (b?.rows ?? []).map((r) => r.label)
+    ok(t, labels.includes('TA Lärm'), `T-04 ${lang}: Domain B has TA Lärm (Bug 89)`)
+    ok(t, labels.includes('Rettungsweg'), `T-04 ${lang}: Domain B has Rettungsweg (Bug 89)`)
+    ok(t, labels.includes('DIN 4109'), `T-04 ${lang}: Domain B has DIN 4109 (Bug 89)`)
+    ok(t, labels.includes('Brandschutz'), `T-04 ${lang}: Domain B has Brandschutz (Bug 89)`)
+  }
+
+  // Bug 96 — Heritage risk suppressed (denkmalschutz ASSUMED "nicht bekannt").
+  const risks = composeRisks({ project, state, limit: 30 }).visible.map(
+    (r) => r.entry.id,
+  )
+  ok(t, !risks.includes('risk-denkmal'), 'T-04: Heritage risk suppressed (Bug 96)')
+
+  // Bug 94/95/103 — deterministic suggestions feed the tab + recs + exec page.
+  const picks = pickSmartSuggestions({ project, state, limit: 8 }).map((s) => s.id)
+  ok(t, picks.includes('bauvoranfrage-umnutzung'), 'T-04: Bauvoranfrage suggestion floor (Bug 94/95/103)')
+  ok(t, picks.includes('schallschutz-umnutzung'), 'T-04: Schallschutz suggestion (Bug 94/95)')
+  ok(t, picks.includes('brandschutz-rettungsweg-umnutzung'), 'T-04: Brandschutz/Rettungsweg suggestion')
+  ok(t, picks.includes('ta-laerm-umnutzung'), 'T-04: TA Lärm suggestion')
+
+  // Bug 90/91/92 — CALCULATED simplified procedure, converged web ↔ PDF label.
+  const decision = resolveProcedure({
+    intent: intentFromTemplate(state.templateId),
+    bundesland: project.bundesland,
+    eingriff_tragende_teile: false,
+    eingriff_aussenhuelle: false,
+    denkmalschutz: false,
+    ensembleschutz: false,
+    verfahren_indikation: 'Baugenehmigungsverfahren erforderlich (Nutzungsänderung)',
+  } as never)
+  ok(t, decision.kind === 'vereinfachtes', `T-04: procedure 'vereinfachtes' (Bug 91, got '${decision.kind}')`)
+  ok(t, decision.confidence === 'CALCULATED', `T-04: procedure CALCULATED (Bug 90, got '${decision.confidence}')`)
+  const pdfLabel = procedureLabel(decision.kind, 'en')
+  const webLabel = deriveBaselineProcedure({ intent: 'umnutzung', bundesland: project.bundesland })[0]?.title_en ?? ''
+  ok(
+    t,
+    /Simplified/.test(pdfLabel) && /Simplified/.test(webLabel),
+    `T-04: web ↔ PDF procedure label converge on "Simplified" (Bug 92) — web='${webLabel}' pdf='${pdfLabel}'`,
+  )
+  ok(t, !/regul/i.test(pdfLabel), 'T-04: procedure label not "(regulär)" (Bug 91)')
+
+  // Bug 102 — ≥2 PENDING domains (A + C) knock the confidence below a clean read.
+  const conf = computeConfidence(state)
+  ok(t, conf > 25 && conf < 80, `T-04: confidence penalized for 2 PENDING domains (Bug 102, got ${conf})`)
+
+  // Bug 104 — T-04 fact keys resolve to mapped labels (no humanizer leak), incl.
+  // the umlaut key the live persona emits.
+  ok(t, factLabel('use_change_from', 'en').label === 'Current use', 'T-04: use_change_from → "Current use" (Bug 104)')
+  ok(t, factLabel('use_change_to', 'de').label === 'Neue Nutzung', 'T-04: use_change_to → "Neue Nutzung" (Bug 104)')
+  ok(t, factLabel('ta_laerm_gutachten_erforderlich', 'en').label === 'TA Lärm assessment required', 'T-04: ta_laerm_gutachten_erforderlich mapped (Bug 104)')
+  ok(t, factLabel('nettogrundfläche_m2', 'de').label === 'Nettogrundfläche', 'T-04: nettogrundfläche_m2 (ä) → "Nettogrundfläche" (Bug 104)')
+  ok(t, factLabel('rettungsweg_zweiter', 'en').label === 'Second escape route', 'T-04: rettungsweg_zweiter mapped (Bug 104)')
+  return t
+}
+
 function main(): void {
   const sections: Tally[] = [
     runInviteParse(),
@@ -685,6 +758,7 @@ function main(): void {
     runProgress(),
     runLabels(),
     runProcedure(),
+    runSaxonyT04(),
   ]
   const passed = sections.reduce((n, s) => n + s.passed, 0)
   const failed = sections.reduce((n, s) => n + s.failed, 0)

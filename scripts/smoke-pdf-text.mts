@@ -1407,6 +1407,9 @@ async function runStubStateFabricationGuard(): Promise<{ passed: number; failed:
   const cases: Array<{ file: string; label: string }> = [
     { file: 'test/fixtures/sachsen-t01-leipzig.json', label: 'Sachsen' },
     { file: 'test/fixtures/brandenburg-t01-potsdam.json', label: 'Brandenburg' },
+    // v1.0.30 — the T-04 use-conversion PDF rides the same no-fabrication +
+    // honest-framing guards, plus the T-04-specific copy checks below.
+    { file: 'test/fixtures/sachsen-t04-leipzig.json', label: 'Sachsen T-04' },
   ]
   const fabricationRx = /BauO\s+(SACHSEN|BRANDENBURG|THUERINGEN|SACHSEN-ANHALT|RLP|MV|SH|SAARLAND|BERLIN|HAMBURG|BREMEN)\b/u
   const upperParaRx = /§\s*\d+\s+BauO\s+[A-ZÄÖÜ-]{2,}/u
@@ -1422,10 +1425,28 @@ async function runStubStateFabricationGuard(): Promise<{ passed: number; failed:
       const m2 = `${c.label} ${lang}: no "§ NN BauO {UPPERCASE}" fabrication`
       if (!upperHit) { console.log(`  ✓ ${m2}`); passed++ }
       else { console.log(`  ✗ ${m2}`); failed++ }
-      const honestHit = /in Vorbereitung|being finalized/u.test(text)
+      const honestHit = /in Vorbereitung|being finalized|in preparation/u.test(text)
       const m3 = `${c.label} ${lang}: honest "in Vorbereitung" framing present`
       if (honestHit) { console.log(`  ✓ ${m3}`); passed++ }
       else { console.log(`  ✗ ${m3}`); failed++ }
+
+      // v1.0.30 — T-04 use-conversion PDF copy fixes.
+      if (c.file.includes('t04')) {
+        const simp = /Simplified building permit|Vereinfachtes Baugenehmigungsverfahren/u.test(text)
+        const mS = `${c.label} ${lang}: procedure reads "Simplified" not "(regulär)" (Bug 91)`
+        if (simp) { console.log(`  ✓ ${mS}`); passed++ } else { console.log(`  ✗ ${mS}`); failed++ }
+        const noStub = !/Detail-§ noch nicht hinterlegt/u.test(text)
+        const mD = `${c.label} ${lang}: no leaked "Detail-§ noch nicht hinterlegt" (Bug 97/98)`
+        if (noStub) { console.log(`  ✓ ${mD}`); passed++ } else { console.log(`  ✗ ${mD}`); failed++ }
+        const recsOk = !/No recommendations recorded yet|Noch keine Empfehlungen erfasst/u.test(text)
+        const mR = `${c.label} ${lang}: recommendations populated (Bug 95/103)`
+        if (recsOk) { console.log(`  ✓ ${mR}`); passed++ } else { console.log(`  ✗ ${mR}`); failed++ }
+        if (lang === 'en') {
+          const labelOk = /Current use/u.test(text) && !/Use Change From/u.test(text)
+          const mL = `${c.label} en: Key Data uses "Current use" not raw "Use Change From" (Bug 104)`
+          if (labelOk) { console.log(`  ✓ ${mL}`); passed++ } else { console.log(`  ✗ ${mL}`); failed++ }
+        }
+      }
     }
   }
   return { passed, failed }

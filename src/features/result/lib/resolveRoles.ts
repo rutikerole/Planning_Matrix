@@ -2,7 +2,6 @@ import type { ProjectRow } from '@/types/db'
 import type { ProjectState, Role } from '@/types/projectState'
 import { deriveBaselineRoles } from './deriveBaselineRoles'
 import { stripVersionTokens } from '@/lib/stripVersionTokens'
-import { STUB_VERIFY } from '@/legal/stateCitations'
 
 export interface ResolvedRoles {
   roles: Role[]
@@ -20,9 +19,19 @@ const normTitle = (s: string): string => s.toLowerCase().replace(/[^a-zäöüß]
  * clean generic state-law reference. Scrubs both DE and EN stub strings (the EN
  * rationale interpolates the German citation too).
  */
+// Whitespace-tolerant matcher for the STUB_VERIFY_DE deferral phrase. NOT an
+// exact split on the constant: stripVersionTokens (run first) collapses the
+// space before the em-dash ("hinterlegt — mit" → "hinterlegt— mit"), so an
+// exact match misses. The German phrase is interpolated into BOTH the DE and
+// EN role rationales (permitSubmissionCitation is a single German string).
+const STUB_DEFERRAL_RX =
+  /Detail-§\s*noch\s*nicht\s*hinterlegt\s*[—–-]\s*mit\s*Bauamt\s*oder\s*Architektenkammer\s*abklären/g
+
 function scrubStubCitation(s: string, lang: 'de' | 'en'): string {
-  const replacement = lang === 'en' ? 'applicable state law' : 'geltendem Landesrecht'
-  return s.split(STUB_VERIFY.de).join(replacement).split(STUB_VERIFY.en).join(replacement)
+  return s.replace(
+    STUB_DEFERRAL_RX,
+    lang === 'en' ? 'applicable state law' : 'geltendem Landesrecht',
+  )
 }
 
 /** v1.0.29 Bug 67/82 + v1.0.30 Bug 97 — scrub internal version tokens AND the

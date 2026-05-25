@@ -1,0 +1,50 @@
+{
+  "_comment": "v1.0.30 — Sachsen × T-04 Umnutzung (use conversion) regression fixture, mirroring Rutik's live Leipzig smoke walk: retail (former bookshop, ~140 m² NGF) → gastronomy (café/bistro, 40 seats, until 23:00), Gründerzeit ~1905, no Denkmal known, reiner Innenausbau, Hinterhof Rettungsweg in question. Fact keys use the REAL persona shapes observed in the PDF Key Data (incl. the umlaut `nettogrundfläche_m2` and the ASSUMED 'nicht bekannt' denkmalschutz string) — the Bug-83 discipline. Areas A + C PENDING (Bug 102 ≥2-PENDING confidence penalty), B ACTIVE. recommendations=[] (persona Bug 63) so the deterministic T-04 suggestions floor must fire. Drives: Bug 88 (cost stub), 89 (Domain B TA Lärm/Rettungsweg/DIN 4109/Brandschutz), 90/91/92 (vereinfachtes CALCULATED, converged), 94/95/103 (suggestions + exec page), 96 (heritage suppressed on ASSUMED), 102 (confidence), 104 (labels).",
+  "project": {
+    "id": "00000000-0000-0000-0000-0000000030a4",
+    "owner_id": "00000000-0000-0000-0000-00000000beef",
+    "intent": "umnutzung",
+    "has_plot": true,
+    "plot_address": "Karl-Liebknecht-Straße 33, 04107 Leipzig",
+    "bundesland": "sachsen",
+    "template_id": "T-04",
+    "name": "Change of use Karl-Liebknecht-Straße",
+    "status": "in_progress",
+    "state": {
+      "templateId": "T-04",
+      "schemaVersion": 1,
+      "areas": {
+        "A": { "state": "PENDING", "reason": "Gebietsverträglichkeit (MI vs WA) noch nicht formal bestätigt — Bauvoranfrage ausstehend" },
+        "B": { "state": "ACTIVE", "reason": "Nutzungsänderung genehmigungspflichtig; Schallschutz (DIN 4109), Brandschutz + zweiter Rettungsweg und TA Lärm sind die maßgeblichen bauordnungsrechtlichen Themen" },
+        "C": { "state": "PENDING", "reason": "Stellplatz und sonstige kommunale Vorgaben Leipzig noch nicht besprochen" }
+      },
+      "facts": [
+        { "key": "plot.address", "value": "Karl-Liebknecht-Straße 33, 04107 Leipzig", "qualifier": { "source": "CLIENT", "quality": "DECIDED", "setAt": "2026-05-25T00:00:00.000Z", "setBy": "assistant" } },
+        { "key": "bundesland", "value": "Sachsen", "evidence": "PLZ 04107 liegt in Leipzig, Sachsen", "qualifier": { "source": "CLIENT", "quality": "DECIDED", "setAt": "2026-05-25T00:00:00.000Z", "setBy": "assistant" } },
+        { "key": "use_change_from", "value": "Einzelhandel (Buchhandlung, ~140 m² NGF)", "qualifier": { "source": "CLIENT", "quality": "DECIDED", "setAt": "2026-05-25T00:00:00.000Z", "setBy": "assistant" } },
+        { "key": "use_change_to", "value": "Gastronomie — Café/Bistro, ~40 Sitzplätze, leichte Küche, Öffnungszeiten bis 23:00", "qualifier": { "source": "CLIENT", "quality": "DECIDED", "setAt": "2026-05-25T00:00:00.000Z", "setBy": "assistant" } },
+        { "key": "gebietstyp_annahme", "value": "MI nach § 6 BauNVO (Annahme, Verifikation ausstehend)", "qualifier": { "source": "CLIENT", "quality": "ASSUMED", "setAt": "2026-05-25T00:00:00.000Z", "setBy": "assistant" } },
+        { "key": "sonderbau_trigger", "value": "nein — Gaststätte < 60 gleichzeitige Gäste", "qualifier": { "source": "LEGAL", "quality": "CALCULATED", "setAt": "2026-05-25T00:00:00.000Z", "setBy": "assistant" } },
+        { "key": "gebaeude_baujahr", "value": "ca. 1905", "qualifier": { "source": "CLIENT", "quality": "ASSUMED", "setAt": "2026-05-25T00:00:00.000Z", "setBy": "assistant" } },
+        { "key": "strukturelle_aenderungen", "value": "keine — reiner Innenausbau", "qualifier": { "source": "CLIENT", "quality": "DECIDED", "setAt": "2026-05-25T00:00:00.000Z", "setBy": "assistant" } },
+        { "key": "nettogrundfläche_m2", "value": 140, "qualifier": { "source": "CLIENT", "quality": "DECIDED", "setAt": "2026-05-25T00:00:00.000Z", "setBy": "assistant" } },
+        { "key": "denkmalschutz", "value": "nicht bekannt an der Einheit", "qualifier": { "source": "CLIENT", "quality": "ASSUMED", "setAt": "2026-05-25T00:00:00.000Z", "setBy": "assistant" } },
+        { "key": "schallschutz_massnahmen_erforderlich", "value": "Bestandsaufnahme durch Schallschutzgutachter:in erforderlich; DIN 4109 / DIN 4109-5 bei Gewerbe → Wohnen-naher Nutzung", "qualifier": { "source": "LEGAL", "quality": "CALCULATED", "setAt": "2026-05-25T00:00:00.000Z", "setBy": "assistant" } },
+        { "key": "ta_laerm_gutachten_erforderlich", "value": "TA Lärm Außenlärm-Gutachten vor Bauantrag erforderlich", "qualifier": { "source": "CLIENT", "quality": "DECIDED", "setAt": "2026-05-25T00:00:00.000Z", "setBy": "assistant" } },
+        { "key": "verfahren_genehmigungspflichtig", "value": "Genehmigungsverfahren erforderlich — keine Verfahrensfreiheit", "qualifier": { "source": "LEGAL", "quality": "CALCULATED", "setAt": "2026-05-25T00:00:00.000Z", "setBy": "assistant" } },
+        { "key": "rettungsweg_zweiter", "value": "Zweiter Rettungsweg fehlt — Hinterhof-Durchgang strukturell vorhanden, § 33 SächsBO", "qualifier": { "source": "CLIENT", "quality": "DECIDED", "setAt": "2026-05-25T00:00:00.000Z", "setBy": "assistant" } },
+        { "key": "brandschutz_massnahmen", "value": "Brandschutzplaner:in + Rettungswegplan erforderlich; zweiter Rettungsweg, T30-RS", "qualifier": { "source": "LEGAL", "quality": "CALCULATED", "setAt": "2026-05-25T00:00:00.000Z", "setBy": "assistant" } },
+        { "key": "verfahren_indikation", "value": "Baugenehmigungsverfahren erforderlich (Nutzungsänderung)", "qualifier": { "source": "LEGAL", "quality": "CALCULATED", "setAt": "2026-05-25T00:00:00.000Z", "setBy": "assistant" } }
+      ],
+      "recommendations": [],
+      "procedures": [],
+      "documents": [],
+      "specialists": [],
+      "roles": []
+    },
+    "created_at": "2026-05-25T00:00:00.000Z",
+    "updated_at": "2026-05-25T00:00:00.000Z"
+  },
+  "messages": [],
+  "events": []
+}
