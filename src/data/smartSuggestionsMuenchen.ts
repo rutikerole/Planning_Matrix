@@ -438,4 +438,85 @@ export const SMART_SUGGESTIONS_MUENCHEN: SmartSuggestion[] = [
     relevanceWeight: 1.2,
     verifyBeforePublicLaunch: true,
   },
+  // v1.0.30 Bug 94/95/103 — T-04 use-conversion deterministic baseline. The
+  // Leipzig walk (retail → gastronomy) left the Suggestions tab, the PDF
+  // Section 08 recommendations AND the PDF Executive Summary page empty:
+  // state.recommendations is empty (persona Bug 63) and no T-04-relevant smart
+  // suggestion fired. These four are state-neutral (NO Bayern token, NO
+  // fabricated chamber/§/URL — only real federal references) and feed all three
+  // surfaces via pickSmartSuggestions. `bauvoranfrage-umnutzung` is the always-on
+  // floor (no scopeMatch) → guarantees the exec page renders and restores the
+  // 12th page (Bug 103); the three Fachgutachten cards are scope-gated to the
+  // use-change facts the persona records.
+  {
+    id: 'bauvoranfrage-umnutzung',
+    applicableTemplates: ['T-04'],
+    category: 'regulation',
+    titleDe: 'Bauvoranfrage zur Gebietsverträglichkeit stellen',
+    titleEn: 'File a Bauvoranfrage on use-type admissibility',
+    bodyDe:
+      'Eine Nutzungsänderung ist nur zulässig, wenn die neue Nutzung im Baugebiet (§§ 1–11 BauNVO bzw. § 34 BauGB) zulässig ist. Klären Sie die Gebietsverträglichkeit und etwaige Auflagen verbindlich mit dem zuständigen Bauamt, bevor Planungskosten entstehen.',
+    bodyEn:
+      'A use change is only admissible if the new use is permitted in the area (§§ 1–11 BauNVO or § 34 BauGB). Clarify the use-type admissibility and any conditions bindingly with the responsible building authority before planning costs are incurred.',
+    reasoningDe:
+      'Die Zulässigkeit der neuen Nutzung ist die Grundvoraussetzung jeder Umnutzung — vor allem anderen klären.',
+    reasoningEn:
+      'The admissibility of the new use is the precondition for any conversion — clarify it before anything else.',
+    relevanceWeight: 1.5,
+    verifyBeforePublicLaunch: true,
+  },
+  {
+    id: 'schallschutz-umnutzung',
+    applicableTemplates: ['T-04'],
+    category: 'tooling',
+    titleDe: 'Schallschutzgutachten beauftragen',
+    titleEn: 'Commission a sound-insulation assessment',
+    bodyDe:
+      'Eine Nutzungsänderung Richtung Wohnen oder mit Lärmquellen verschärft die Schallschutzanforderungen (DIN 4109). Eine Bestandsaufnahme durch eine:n Schallschutzgutachter:in klärt, ob vorhandene Bauteile (z. B. eine Holzbalkendecke) ertüchtigt werden müssen.',
+    bodyEn:
+      'A use change toward residential — or one that introduces noise sources — raises the sound-insulation requirements (DIN 4109). A survey by a sound-insulation specialist clarifies whether existing elements (e.g. a timber-beam ceiling) need upgrading.',
+    reasoningDe:
+      'Schallschutz ist bei Use-Changes der häufigste Nachrüst-Kostentreiber — früh prüfen.',
+    reasoningEn:
+      'Sound insulation is the most common retrofit cost driver in use changes — check it early.',
+    scopeMatch: /schallschutz|din\s*4109/i,
+    relevanceWeight: 1.4,
+    verifyBeforePublicLaunch: true,
+  },
+  {
+    id: 'brandschutz-rettungsweg-umnutzung',
+    applicableTemplates: ['T-04'],
+    category: 'risk',
+    titleDe: 'Brandschutzkonzept + Rettungswegplan erstellen lassen',
+    titleEn: 'Have a fire-protection concept + escape-route plan prepared',
+    bodyDe:
+      'Eine geänderte Nutzung kann einen zweiten Rettungsweg und ein angepasstes Brandschutzkonzept auslösen. Lassen Sie früh durch eine:n Brandschutzplaner:in prüfen, ob der vorhandene Rettungsweg (z. B. über den Hinterhof) ausreicht oder baulich ergänzt werden muss.',
+    bodyEn:
+      'A changed use can trigger a second escape route and an adjusted fire-protection concept. Have a fire-protection planner check early whether the existing escape route (e.g. via the rear courtyard) is sufficient or needs structural completion.',
+    reasoningDe:
+      'Ein fehlender zweiter Rettungsweg ist ein häufiger Genehmigungs-Stopper bei Umnutzungen.',
+    reasoningEn:
+      'A missing second escape route is a common approval blocker in use conversions.',
+    scopeMatch: /brandschutz|rettungsweg/i,
+    relevanceWeight: 1.4,
+    verifyBeforePublicLaunch: true,
+  },
+  {
+    id: 'ta-laerm-umnutzung',
+    applicableTemplates: ['T-04'],
+    category: 'regulation',
+    titleDe: 'TA-Lärm-Gutachten für die neue Nutzung einholen',
+    titleEn: 'Obtain a TA-Lärm assessment for the new use',
+    bodyDe:
+      'Gastronomie und andere lärmintensive Nutzungen müssen die Immissionsrichtwerte der TA Lärm gegenüber der Nachbarschaft einhalten. Ein Außenlärm-Gutachten vor dem Bauantrag belegt die Verträglichkeit (Öffnungszeiten, Außenbereich, Technik).',
+    bodyEn:
+      'Gastronomy and other noise-intensive uses must meet the TA Lärm immission limits toward the neighbourhood. An external-noise assessment before the permit application demonstrates compatibility (opening hours, outdoor area, building services).',
+    reasoningDe:
+      'Bei Gastronomie ist der Nachweis nach TA Lärm regelmäßig Genehmigungsvoraussetzung.',
+    reasoningEn:
+      'For gastronomy, a TA Lärm demonstration is regularly a precondition for approval.',
+    scopeMatch: /ta.?l(ä|ae)rm|gastronom|gaststätte|sitzpl|caf(é|e)/i,
+    relevanceWeight: 1.4,
+    verifyBeforePublicLaunch: true,
+  },
 ]

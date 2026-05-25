@@ -504,6 +504,30 @@ function runSuggestions(): Tally {
   const efh = JSON.parse(readFileSync(join(REPO_ROOT, 'test/fixtures/hamburg-t01-suburb-plain.json'), 'utf-8'))
   const efhIds = pickSmartSuggestions({ project: efh.project, state: efh.project.state, limit: 8 }).map((s) => s.id)
   ok(t, !efhIds.includes('kernteam-mfh'), 'EFH T-01: MFH-only core-team card does NOT fire (no regression)')
+
+  // v1.0.30 Bug 94/95/103 — T-04 use-conversion deterministic suggestions.
+  // Synthetic T-04 project with the use-change facts the Leipzig walk recorded.
+  const t04Project = { intent: 'umnutzung', bundesland: 'sachsen', template_id: 'T-04' } as never
+  const t04State = {
+    recommendations: [],
+    facts: [
+      { key: 'schallschutz_massnahmen_erforderlich', value: 'Bestandsaufnahme durch Schallschutzgutachter:in erforderlich' },
+      { key: 'brandschutz_massnahmen', value: 'Brandschutzplaner:in + Rettungswegplan erforderlich' },
+      { key: 'rettungsweg_zweiter', value: 'Zweiter Rettungsweg fehlt' },
+      { key: 'ta_laerm_gutachten_erforderlich', value: 'TA Lärm Außenlärm-Gutachten vor Bauantrag erforderlich' },
+    ],
+  } as never
+  const t04Ids = pickSmartSuggestions({ project: t04Project, state: t04State, limit: 8 }).map((s) => s.id)
+  ok(t, t04Ids.includes('bauvoranfrage-umnutzung'), 'T-04: Bauvoranfrage (always-on floor) fires → exec page non-empty (Bug 103)')
+  ok(t, t04Ids.includes('schallschutz-umnutzung'), 'T-04: Schallschutz suggestion fires on facts (Bug 94/95)')
+  ok(t, t04Ids.includes('brandschutz-rettungsweg-umnutzung'), 'T-04: Brandschutz/Rettungsweg suggestion fires')
+  ok(t, t04Ids.includes('ta-laerm-umnutzung'), 'T-04: TA Lärm suggestion fires')
+  for (const s of pickSmartSuggestions({ project: t04Project, state: t04State, limit: 8 })) {
+    ok(t, !BLEED.test(`${s.titleEn} ${s.bodyEn}`), `T-04: suggestion "${s.id}" carries NO Bayern token`)
+  }
+  // T-01 regression — the T-04-only cards must NOT fire on a neubau project.
+  const t01Ids = pickSmartSuggestions({ project: { intent: 'neubau', bundesland: 'sachsen', template_id: 'T-01' } as never, state: t04State, limit: 8 }).map((s) => s.id)
+  ok(t, !t01Ids.includes('schallschutz-umnutzung'), 'T-01: T-04-only Schallschutz card does NOT fire (no regression)')
   return t
 }
 

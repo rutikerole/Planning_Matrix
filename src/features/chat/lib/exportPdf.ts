@@ -1251,7 +1251,7 @@ export async function buildExportPdf({
   // we know the total, so no placeholder is ever drawn.
   const totalPages = allPages.length
   renderTocPage(tocPage, editorialFonts, pdfStrings, {
-    pageNumbers: computeTocPageNumbers(state),
+    pageNumbers: computeTocPageNumbers(state, executivePage !== null),
     docNo,
     totalPages,
     tocPageNumber: 2,
@@ -1376,6 +1376,11 @@ export async function buildExportPdf({
  */
 function computeTocPageNumbers(
   state: Partial<ProjectState>,
+  // v1.0.30 Bug 103 — the executive page renders on topThreeSources (recs +
+  // smart picks + blockers), NOT state.recommendations alone. Pass the ACTUAL
+  // render result so the TOC page numbers don't drift when smart picks alone
+  // populate the exec page (T-04 use-conversion: recs empty, smart picks present).
+  hasExecutivePage: boolean,
 ): {
   executive: number
   areas: number
@@ -1391,7 +1396,7 @@ function computeTocPageNumbers(
 } {
   // Heuristic page-shift: each "explicit" section adds one page; the
   // inline-flow body sections (procedures..audit) crowd on ~3 pages.
-  const hasTop3 = (state.recommendations ?? []).length > 0
+  const hasTop3 = hasExecutivePage
   const hasAreas = !!state.areas
   const exec = 3
   const areas = exec + (hasTop3 ? 1 : 0)
