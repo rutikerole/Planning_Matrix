@@ -1504,6 +1504,8 @@ async function runDemoCellsRender(): Promise<{ passed: number; failed: number }>
         /Wärmeschutznachweis|Energieausweis|thermal/u.test(text),
         `Hessen T-03 ${lang}: GEG renovation document present (Check 9)`,
       )
+      for (const a of assertNoCorruption(text)) expect(a.pass, `Hessen T-03 ${lang}: ${a.msg} (Check 12)`)
+      expect(/Schweizer Straße/u.test(text), `Hessen T-03 ${lang}: ß renders in address (Check 12)`)
     }
     // T-05 NRW Köln — demolition honest stub, verfahrensfrei § 62 BauO NRW.
     {
@@ -1518,6 +1520,8 @@ async function runDemoCellsRender(): Promise<{ passed: number; failed: number }>
       expect(!BAYERN_LEAK.test(text), `NRW T-05 Köln ${lang}: no Bayern-leak (Check 6)`)
       expect(pages === 12, `NRW T-05 Köln ${lang}: 12 sections rendered (Check 4, got ${pages})`)
       expect(execMarker.test(text), `NRW T-05 Köln ${lang}: Executive Top-3 page renders (Check 4 / Bug 103)`)
+      for (const a of assertNoCorruption(text)) expect(a.pass, `NRW T-05 Köln ${lang}: ${a.msg} (Check 12)`)
+      expect(/Köln/u.test(text), `NRW T-05 Köln ${lang}: ö umlaut renders in address (Check 12)`)
     }
     // T-01 Bayern München — neubau real HOAI cost rows (NOT a stub),
     // vereinfachtes Verfahren BayBO Art. 58.
@@ -1529,6 +1533,8 @@ async function runDemoCellsRender(): Promise<{ passed: number; failed: number }>
       expect(/€/u.test(text), `Bayern T-01 ${lang}: cost figures present (neubau real rows, not a stub)`)
       expect(pages === 12, `Bayern T-01 ${lang}: 12 sections rendered (Check 4, got ${pages})`)
       expect(execMarker.test(text), `Bayern T-01 ${lang}: Executive Top-3 page renders (Check 4 / Bug 103)`)
+      for (const a of assertNoCorruption(text)) expect(a.pass, `Bayern T-01 ${lang}: ${a.msg} (Check 12)`)
+      expect(/München/u.test(text), `Bayern T-01 ${lang}: ü umlaut renders in address (Check 12)`)
     }
   }
   return { passed, failed }

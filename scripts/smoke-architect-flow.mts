@@ -786,6 +786,10 @@ function runBayernT01(): Tally {
   ok(t, d.confidence === 'CALCULATED', `Bayern T-01: procedure CALCULATED (Check 2, got '${d.confidence}')`)
   ok(t, /BayBO\s+Art\.\s*58/.test(d.citation), `Bayern T-01: cites BayBO Art. 58 (got '${d.citation}')`)
   for (const k of ['wohnflaeche_gesamt_m2', 'klasse', 'denkmalschutz', 'ensembleschutz']) labelsOk(t, k)
+  // Check 8 — clean cell (all 3 domains ACTIVE, no PENDING, no hard blocker) is
+  // not knocked down by the Bug-102 PENDING penalty.
+  const conf = computeConfidence(loadFixtureState('test/fixtures/bayern-t01-muenchen.json').state as never)
+  ok(t, conf >= 55 && conf <= 100, `Bayern T-01: confidence reflects clean active domains (Check 8, got ${conf})`)
   return t
 }
 
@@ -801,6 +805,8 @@ function runNrwT05Koeln(): Tally {
   const fx = JSON.parse(readFileSync(join(REPO_ROOT, 'test/fixtures/nrw-t05-koeln.json'), 'utf-8'))
   const picks = pickSmartSuggestions({ project: fx.project, state: fx.project.state, limit: 8 }).map((s) => s.id)
   ok(t, picks.includes('schadstoffgutachten-abbruch'), 'NRW T-05 Köln: demolition suggestions floor present (exec page, Bug 103)')
+  const conf = computeConfidence(loadFixtureState('test/fixtures/nrw-t05-koeln.json').state as never)
+  ok(t, conf >= 55 && conf <= 100, `NRW T-05 Köln: confidence reflects clean active domains (Check 8, got ${conf})`)
   return t
 }
 
@@ -820,6 +826,15 @@ function runHessenT03(): Tally {
     'fassadenflaeche_m2', 'klasse', 'energiestandard',
     'eingriff_tragende_teile', 'eingriff_aussenhuelle', 'denkmalschutz', 'ensembleschutz',
   ]) labelsOk(t, k)
+  // T-03 risk rows — GEG-Sanierungspflicht fires (envelope intervention), heritage
+  // risk suppressed (denkmalschutz=false). Mirrors the v1.0.30 T-04 risk gating.
+  const fx = JSON.parse(readFileSync(join(REPO_ROOT, 'test/fixtures/hessen-t03-frankfurt.json'), 'utf-8'))
+  const riskIds = composeRisks({ project: fx.project, state: fx.project.state, limit: 30 }).visible.map((r) => r.entry.id)
+  ok(t, riskIds.includes('risk-geg'), 'Hessen T-03: GEG-Sanierungspflicht risk present (risk-geg)')
+  ok(t, !riskIds.includes('risk-denkmal'), 'Hessen T-03: no heritage risk (denkmalschutz=false, Check)')
+  // Check 8 — clean cell not knocked down by the PENDING penalty.
+  const conf = computeConfidence(fx.project.state as never)
+  ok(t, conf >= 55 && conf <= 100, `Hessen T-03: confidence reflects clean active domains (Check 8, got ${conf})`)
   return t
 }
 
