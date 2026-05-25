@@ -216,7 +216,17 @@ export function renderProceduresBody(
         // v1.0.19 — leading separator stays Latin (· U+00B7) since
         // → U+2192 round-trips as ² in pdf-parse extraction (same
         // class of bug as v1.0.18 Bug 35 ▸ substitution).
-        drawSafeText(page, `· ${doc.delivery}`, {
+        // v1.0.30 Bug 107 — clamp the delivery/basis sub-line to the content
+        // width so a long "· {delivery} · {citation}" no longer runs off the
+        // right page margin (PDF p.6). No-op when it already fits.
+        const deliveryLine = ellipsizeToWidth(
+          `· ${doc.delivery}`,
+          fonts.serifItalic,
+          9,
+          PAGE_WIDTH - 2 * MARGIN - 16,
+          fonts.safe,
+        )
+        drawSafeText(page, deliveryLine, {
           x: MARGIN + 16,
           y: cursor,
           size: 9,

@@ -26,6 +26,7 @@ import {
   drawPaperBackground,
   drawQualifierPill,
   drawSafeText,
+  ellipsizeToWidth,
   getQualifierLabel,
   type EditorialFonts,
 } from '../pdfPrimitives'
@@ -141,7 +142,18 @@ export function renderKeyDataBody(
       color: CLAY,
       safe: fonts.safe,
     })
-    drawSafeText(page, row.value, {
+    // v1.0.30 Bug 106 — clamp the value to the page edge so long values
+    // ("Gastronomie — Café/Bistro, ~40 Sitzplätze … Öffnungszeiten bis 23:00")
+    // no longer overflow off the right page margin. ellipsizeToWidth is a
+    // no-op for values that already fit, so the T-01 matrix is unaffected.
+    const drawnValue = ellipsizeToWidth(
+      row.value,
+      fonts.sansMedium,
+      11,
+      pageRight - colValueX,
+      fonts.safe,
+    )
+    drawSafeText(page, drawnValue, {
       x: colValueX,
       y: rowY,
       size: 11,
@@ -154,7 +166,7 @@ export function renderKeyDataBody(
     // inside the value. Skipped when caller didn't pass doc (the
     // annotation requires the PDFDocument's context).
     if (data.doc) {
-      const citations = findCitations(row.value, data.bundeslandCode)
+      const citations = findCitations(drawnValue, data.bundeslandCode)
       for (const cite of citations) {
         if (!cite.url) continue
         addLinkAnnotation({
@@ -162,7 +174,7 @@ export function renderKeyDataBody(
           page,
           x: colValueX,
           y: rowY,
-          text: row.value,
+          text: drawnValue,
           linkText: cite.text,
           linkIndex: cite.start,
           font: fonts.sansMedium,
@@ -174,7 +186,7 @@ export function renderKeyDataBody(
     }
 
     const valueWidth = fonts.sansMedium.widthOfTextAtSize(
-      fonts.safe(row.value),
+      fonts.safe(drawnValue),
       11,
     )
     const proposedPillX = Math.max(colQualX, colValueX + valueWidth + MIN_GAP)

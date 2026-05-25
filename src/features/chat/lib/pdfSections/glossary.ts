@@ -25,6 +25,7 @@ import {
   drawPaperBackground,
   drawSafeText,
   drawWrappedText,
+  ellipsizeToWidth,
   type EditorialFonts,
 } from '../pdfPrimitives'
 import { pdfStr, type PdfStrings } from '../pdfStrings'
@@ -202,7 +203,17 @@ export function renderGlossaryBody(
     const row = Math.floor(idx / 2)
     const cellX = MARGIN + col * (cellW + 16)
     const cellY = headerY - 76 - row * rowHeight
-    const term = entry.term.replace(/\{state\}/g, data.bundeslandCode)
+    // v1.0.30 Bug 108 — clamp the term to its half-width cell so a long term
+    // ("Landes-Denkmalschutzgesetz Sachsen · Denkmalschutz") no longer runs off
+    // the right page edge (PDF p.11). The definition below already wraps to
+    // cellW; only the term line was unclamped. No-op when it fits.
+    const term = ellipsizeToWidth(
+      entry.term.replace(/\{state\}/g, data.bundeslandCode),
+      fonts.sansMedium,
+      11,
+      cellW,
+      fonts.safe,
+    )
     const definitionRaw = isDe ? entry.de : entry.en
     const definition = definitionRaw.replace(
       /\{state\}/g,
