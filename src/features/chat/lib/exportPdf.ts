@@ -723,6 +723,14 @@ export async function buildExportPdf({
   // use-conversion BKI exists, so route to an honest stub (request
   // Fachplaner quotes) rather than ship new-build numbers. No fabrication.
   const isUseConversion = procedureCase.intent === 'umnutzung'
+  // v1.0.31 C3 — T-03 renovation is cost-template-blind the same way T-05
+  // demolition (Bug 53) and T-04 use-conversion (Bug 88) were: the HOAI
+  // new-build engine assumes full new-build LP1-4, a new official site plan and
+  // a GEG-Neubau thermal cert — none fit a renovation, whose cost is dominated
+  // by scope (cosmetic vs. load-bearing vs. energetic). No sourced renovation
+  // BKI exists, so route to an honest stub (request Fachplaner quotes) rather
+  // than ship new-build numbers. No fabrication.
+  const isRenovation = procedureCase.intent === 'sanierung'
   const costsData: CostsData = isDemolition
     ? {
         areaSqm: 0,
@@ -745,14 +753,25 @@ export async function buildExportPdf({
           subtitle: pdfStrings['costs.useConversion.subtitle'],
           emptyMessage: pdfStrings['costs.useConversion.empty'],
         }
-      : {
-          areaSqm,
-          bundeslandCode: bundeslandCodeUpper,
-          structuralRef,
-          templateLabel,
-          items: costItems,
-          total: formatEurRange(costBreakdown.total, lang),
-        }
+      : isRenovation
+        ? {
+            areaSqm: 0,
+            bundeslandCode: bundeslandCodeUpper,
+            structuralRef,
+            templateLabel,
+            items: [],
+            total: '—',
+            subtitle: pdfStrings['costs.renovation.subtitle'],
+            emptyMessage: pdfStrings['costs.renovation.empty'],
+          }
+        : {
+            areaSqm,
+            bundeslandCode: bundeslandCodeUpper,
+            structuralRef,
+            templateLabel,
+            items: costItems,
+            total: formatEurRange(costBreakdown.total, lang),
+          }
   const costsPage = doc.addPage([PDF_PAGE_WIDTH, PDF_PAGE_HEIGHT])
   const costsPageNumber = doc.getPageCount()
   renderCostsBody(costsPage, editorialFonts, pdfStrings, costsData)

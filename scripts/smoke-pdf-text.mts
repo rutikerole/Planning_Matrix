@@ -1452,6 +1452,58 @@ async function runStubStateFabricationGuard(): Promise<{ passed: number; failed:
   return { passed, failed }
 }
 
+// v1.0.31 — demo-cell render gate. Renders the 3 hardened fixtures (T-01
+// Bayern / T-05 NRW Köln / T-03 Hessen) and asserts the template-correct cost
+// surface (C3: renovation + demolition honest stubs; neubau real HOAI rows),
+// the correct state § on each, and no cross-state Bayern-leak on the non-Bayern
+// cells (Check 6).
+async function runDemoCellsRender(): Promise<{ passed: number; failed: number }> {
+  console.log(`\n[smoke-pdf-text] v1.0.31 demo cells (T-01 Bayern / T-05 NRW Köln / T-03 Hessen)…`)
+  let passed = 0
+  let failed = 0
+  const expect = (cond: boolean, msg: string): void => {
+    if (cond) { console.log(`  ✓ ${msg}`); passed++ } else { console.log(`  ✗ ${msg}`); failed++ }
+  }
+  const BAYERN_LEAK = /BayBO|BayDSchG|BLfD|München|Schwabing|Maxvorstadt|StPlS\s*926|\bLHM\b/u
+  for (const lang of ['en', 'de'] as const) {
+    // T-03 Hessen Frankfurt — renovation honest cost stub (C3), real § 65 HBO,
+    // no Bayern-leak.
+    {
+      const text = await extractPdfText(
+        await renderFixturePdf(lang, 'test/fixtures/hessen-t03-frankfurt.json'),
+      )
+      const stub = lang === 'en'
+        ? /Renovation cost ranges in preparation/u.test(text)
+        : /Sanierungskosten in Vorbereitung/u.test(text)
+      expect(stub, `Hessen T-03 ${lang}: renovation cost honest stub renders (C3)`)
+      expect(/§\s*65\s+HBO/u.test(text), `Hessen T-03 ${lang}: § 65 HBO cited`)
+      expect(!BAYERN_LEAK.test(text), `Hessen T-03 ${lang}: no Bayern-leak (Check 6)`)
+    }
+    // T-05 NRW Köln — demolition honest stub, verfahrensfrei § 62 BauO NRW.
+    {
+      const text = await extractPdfText(
+        await renderFixturePdf(lang, 'test/fixtures/nrw-t05-koeln.json'),
+      )
+      const stub = lang === 'en'
+        ? /Demolition cost ranges in preparation/u.test(text)
+        : /Abbruchkosten in Vorbereitung/u.test(text)
+      expect(stub, `NRW T-05 Köln ${lang}: demolition cost honest stub renders`)
+      expect(/§\s*62\s+BauO\s+NRW/u.test(text), `NRW T-05 Köln ${lang}: § 62 BauO NRW cited`)
+      expect(!BAYERN_LEAK.test(text), `NRW T-05 Köln ${lang}: no Bayern-leak (Check 6)`)
+    }
+    // T-01 Bayern München — neubau real HOAI cost rows (NOT a stub),
+    // vereinfachtes Verfahren BayBO Art. 58.
+    {
+      const text = await extractPdfText(
+        await renderFixturePdf(lang, 'test/fixtures/bayern-t01-muenchen.json'),
+      )
+      expect(/BayBO\s+Art\.\s*58/u.test(text), `Bayern T-01 ${lang}: BayBO Art. 58 cited`)
+      expect(/€/u.test(text), `Bayern T-01 ${lang}: cost figures present (neubau real rows, not a stub)`)
+    }
+  }
+  return { passed, failed }
+}
+
 async function main(): Promise<void> {
   const en = await runLocale('en')
   const de = await runLocale('de')
@@ -1469,6 +1521,7 @@ async function main(): Promise<void> {
   const writeTimeGate = await runWriteTimeGateUnit()
   const designerExt = await runDesignerExtUnit()
   const stubFabrication = await runStubStateFabricationGuard()
+  const demoCells = await runDemoCellsRender()
   const totalFailed =
     en.failed +
     de.failed +
@@ -1485,7 +1538,8 @@ async function main(): Promise<void> {
     addressParser.failed +
     writeTimeGate.failed +
     designerExt.failed +
-    stubFabrication.failed
+    stubFabrication.failed +
+    demoCells.failed
   const totalPassed =
     en.passed +
     de.passed +
@@ -1502,7 +1556,8 @@ async function main(): Promise<void> {
     addressParser.passed +
     writeTimeGate.passed +
     designerExt.passed +
-    stubFabrication.passed
+    stubFabrication.passed +
+    demoCells.passed
   console.log(`\n[smoke-pdf-text] ${totalPassed} passed · ${totalFailed} failed`)
   if (totalFailed > 0) {
     console.log('[smoke-pdf-text] FAIL — see violations above.')

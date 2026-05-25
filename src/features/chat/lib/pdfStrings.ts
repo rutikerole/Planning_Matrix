@@ -140,6 +140,15 @@ const EN: PdfStrings = {
     'Use-conversion cost ranges in preparation · request quotes from the relevant Fachplaner:innen.',
   'costs.useConversion.empty':
     'Use-conversion cost ranges in preparation. Request fixed quotes for the sound-insulation (Schallschutz), fire-protection / escape-route (Brandschutz / Rettungsweg) and noise (TA Lärm) assessments plus the existing-condition survey (Bestandsaufnahme) — the spread depends on the existing structure (e.g. Holzbalkendecke) and the required Fachgutachten. No HOAI new-build fee schedule applies.',
+  // v1.0.31 C3 — T-03 renovation honest stub (mirrors demolition / use-conversion).
+  // The HOAI new-build engine assumes full new-build LP1-4, a new official site
+  // plan and a GEG-Neubau thermal cert — none fit a renovation, whose cost is
+  // dominated by scope (cosmetic vs. load-bearing vs. energetic). No sourced
+  // renovation BKI exists, so request Fachplaner quotes, not new-build numbers.
+  'costs.renovation.subtitle':
+    'Renovation cost ranges in preparation · request quotes from the relevant Fachplaner:innen.',
+  'costs.renovation.empty':
+    'Renovation cost ranges in preparation. Request fixed quotes for the architect, structural (Tragwerk) and energy (GEG) services the scope requires — the spread depends on the depth of the intervention (cosmetic vs. load-bearing vs. energetic refurbishment) and the existing structure. No HOAI new-build fee schedule applies.',
 
   // ─── v1.0.16 Renaissance Part 2B — Timeline ───────────────────
   'timeline.kicker': 'SECTION 04 · TIMELINE',
@@ -360,6 +369,11 @@ const DE: PdfStrings = {
     'Umnutzungskosten in Vorbereitung · Angebote bei den relevanten Fachplaner:innen einholen.',
   'costs.useConversion.empty':
     'Umnutzungskosten in Vorbereitung. Festangebote für Schallschutz-, Brandschutz-/Rettungsweg- und TA-Lärm-Gutachten sowie die Bestandsaufnahme einholen — die Spanne hängt vom Bestand (z. B. Holzbalkendecke) und den erforderlichen Fachgutachten ab. Keine HOAI-Neubau-Honorartafel anwendbar.',
+  // v1.0.31 C3 — siehe EN-Pendant. Sanierung: ehrlicher Stub statt Neubau-Zahlen.
+  'costs.renovation.subtitle':
+    'Sanierungskosten in Vorbereitung · Angebote bei den relevanten Fachplaner:innen einholen.',
+  'costs.renovation.empty':
+    'Sanierungskosten in Vorbereitung. Festangebote für die nach Umfang erforderlichen Architekten-, Tragwerks- und GEG-Leistungen einholen — die Spanne hängt von der Eingriffstiefe (kosmetisch vs. tragend vs. energetisch) und vom Bestand ab. Keine HOAI-Neubau-Honorartafel anwendbar.',
 
   // ─── v1.0.16 Renaissance Part 2B — Timeline ───────────────────
   'timeline.kicker': 'ABSCHNITT 04 · ZEITPLAN',
