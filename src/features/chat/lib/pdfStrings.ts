@@ -184,7 +184,9 @@ const EN: PdfStrings = {
   'verif.status.body':
     'Pending architect confirmation. All values derived from persona model computation against state.',
   'verif.dq.h': 'DATA QUALITY',
-  'verif.dq.legend.verified': 'verified',
+  // v1.0.29 Bug 75 — first arc is DECIDED, not architect-verified. Label it
+  // "decided" so a brief with 0 sign-offs no longer reads "54% verified".
+  'verif.dq.legend.verified': 'decided',
   'verif.dq.legend.calculated': 'calculated',
   'verif.dq.legend.assumed': 'assumed',
   'sig.architect': 'Architect (Bauvorlageberechtigte/r)',
@@ -392,7 +394,7 @@ const DE: PdfStrings = {
   'verif.status.body':
     'Architekt:in-Bestätigung ausstehend. Alle Werte abgeleitet aus Persona-Modell-Berechnung gegen den Stand.',
   'verif.dq.h': 'DATENQUALITÄT',
-  'verif.dq.legend.verified': 'verifiziert',
+  'verif.dq.legend.verified': 'entschieden',
   'verif.dq.legend.calculated': 'berechnet',
   'verif.dq.legend.assumed': 'angenommen',
   'sig.architect': 'Architekt:in (Bauvorlageberechtigte/r)',

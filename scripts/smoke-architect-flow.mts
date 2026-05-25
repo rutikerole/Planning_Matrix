@@ -31,6 +31,7 @@ import { resolveRoles } from '../src/features/result/lib/resolveRoles.ts'
 import { stripVersionTokens } from '../src/lib/stripVersionTokens.ts'
 import { pickSmartSuggestions } from '../src/features/result/lib/smartSuggestionsMatcher.ts'
 import { computeChamberProgress } from '../src/features/chat/lib/chamberProgress.ts'
+import { factLabel } from '../src/lib/factLabel.ts'
 import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'node:path'
@@ -540,6 +541,46 @@ function runProgress(): Tally {
   return t
 }
 
+function runLabels(): Tally {
+  console.log('\n[smoke-architect] T-02 fact-key labels — no raw-key leak (C8 / Bug 71+81)…')
+  const t: Tally = { passed: 0, failed: 0 }
+  // Replicates factLabel.ts's humanizer so the gate asserts a REAL label
+  // exists (resolved label must differ from the raw-key fallback).
+  const titleCaseI = (w: string) =>
+    w.length === 0 ? w : w === w.toUpperCase() && w.length <= 4 ? w : w.toLowerCase()[0].toUpperCase() + w.toLowerCase().slice(1)
+  const humanizeI = (key: string) =>
+    key.split('.').map((seg) => seg.split('_').map(titleCaseI).join(' ')).join(' · ')
+
+  // The real T-02 walk's emitted keys (PDF p.10 Key Data — dotted namespace
+  // + flat snake). Every one must resolve to a curated label, not humanizer.
+  const T02_KEYS = [
+    'bundesland', 'vorhaben.typ', 'vorhaben.nutzung', 'gebaeudeklasse', 'vollgeschosse',
+    'wohneinheiten.anzahl', 'wohneinheit.flaeche_m2', 'wohnflaeche_gesamt_m2',
+    'okff_oberstes_geschoss_m', 'sonderbau_tatbestand', 'planungsrecht.rechtsgrundlage',
+    'planungsrecht.bebauungsplan_status', 'planungsrecht.erhaltungssatzung_moeglich',
+    'verfahren.typ', 'architekt.beauftragt', 'architekt.kammer', 'kernteam.architekt_register',
+    'kernteam.bestaetigt', 'stellplatz.anzahl_geplant', 'stellplatz.typ',
+    'stellplatz.reduktion_moeglich', 'fahrradstellplatz.pflicht', 'geg.pflicht',
+  ]
+  for (const key of T02_KEYS) {
+    const en = factLabel(key, 'en').label
+    const de = factLabel(key, 'de').label
+    // Neither locale may expose internal-namespace artifacts: the dotted-key
+    // humanizer middot (" · ") or a snake_case underscore.
+    ok(t, !en.includes(' · ') && !/_/.test(en), `en: "${key}" label has no raw-key artifact ("${en}")`)
+    ok(t, !de.includes(' · ') && !/_/.test(de), `de: "${key}" label has no raw-key artifact ("${de}")`)
+    // EN must be a real English label — never the German-key humanizer
+    // fallback (catches single-segment leaks like "Okff Oberstes Geschoss M").
+    ok(t, en !== humanizeI(key), `en: "${key}" → curated English label ("${en}")`)
+  }
+  // Spot-check the worst offender (internal variable name) + a dotted key.
+  ok(t, factLabel('okff_oberstes_geschoss_m', 'en').label === 'Top-floor finished floor level',
+    'okff_oberstes_geschoss_m → "Top-floor finished floor level" (was "Okff Oberstes Geschoss M")')
+  ok(t, factLabel('geg.pflicht', 'en').label === 'GEG requirement',
+    'geg.pflicht → "GEG requirement" (was "Geg · Pflicht")')
+  return t
+}
+
 function main(): void {
   const sections: Tally[] = [
     runInviteParse(),
@@ -553,6 +594,7 @@ function main(): void {
     runRoles(),
     runSuggestions(),
     runProgress(),
+    runLabels(),
   ]
   const passed = sections.reduce((n, s) => n + s.passed, 0)
   const failed = sections.reduce((n, s) => n + s.failed, 0)

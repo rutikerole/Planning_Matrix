@@ -1092,21 +1092,23 @@ export async function buildExportPdf({
   // the three surfaces report consistent denominators. v1.0.20 walked
   // facts only, which produced verification-page counts that visibly
   // diverged from the donut (one project: donut 59/12/29 vs
-  // verification 0/33/67). The aggregator walks all five qualifier-
-  // bearing categories (facts + procedures + documents + roles +
-  // recommendations); the verification page now groups VERIFIED +
-  // DECIDED into the "verified" bucket (both indicate authoritative
-  // status), CALCULATED stays its own bucket, ASSUMED + UNKNOWN
-  // collapse to the "assumed" bucket — same grouping the donut uses.
+  // v1.0.29 Bug 75 — match the web DataQualityDonut grouping + wording.
+  // The page previously bundled VERIFIED + DECIDED and LABELLED it
+  // "verified", so a brief with 0 architect verifications still read
+  // "54% verified" — conflating qualifier strength (Decided) with
+  // architect sign-off (Verified). Now: DECIDED alone is the first arc
+  // ("decided"); CALCULATED + VERIFIED is the second arc ("calculated",
+  // exactly as DataQualityDonut.tsx folds them); ASSUMED + UNKNOWN is the
+  // third. "Verified" is no longer claimed anywhere on the page.
   const verificationPage = doc.addPage([PDF_PAGE_WIDTH, PDF_PAGE_HEIGHT])
   const verificationPageNumber = doc.getPageCount()
   const { aggregateQualifiers: aggregateQualifiersFn } = await import(
     '@/features/result/lib/qualifierAggregate'
   )
   const verificationAgg = aggregateQualifiersFn(state as ProjectState)
-  const verifiedCount =
-    verificationAgg.counts.VERIFIED + verificationAgg.counts.DECIDED
-  const calculatedCount = verificationAgg.counts.CALCULATED
+  const verifiedCount = verificationAgg.counts.DECIDED
+  const calculatedCount =
+    verificationAgg.counts.CALCULATED + verificationAgg.counts.VERIFIED
   const assumedCount =
     verificationAgg.counts.ASSUMED + verificationAgg.counts.UNKNOWN
   renderVerificationBody(verificationPage, editorialFonts, pdfStrings, {

@@ -272,4 +272,45 @@ export const factLabelsEn: Record<string, FactLabel> = {
   'nutzungseinheiten_anzahl': { label: 'Number of units' },
   'nutzungseinheiten_groesse_max_m2': { label: 'Max unit size', unit: 'm²' },
   'bebauungsplan_id': { label: 'Bebauungsplan ID' },
+
+  // ── v1.0.29 Bug 71/81 — T-02 MFH fact keys. The Hamburg walk leaked raw
+  //    keys ("Okff Oberstes Geschoss M", "Vorhaben · Typ", "Geg · Pflicht")
+  //    in the EN Key Data table because these had no label and fell to the
+  //    humanizer. Both dotted (persona namespace) and flat-snake forms are
+  //    registered (the persona's key naming is inconsistent — flagged for
+  //    v1.0.30 chat-turn alignment).
+  'bundesland': { label: 'Federal state' },
+  'vorhaben.typ': { label: 'Project type' },
+  'vorhaben_typ': { label: 'Project type' },
+  'vorhaben.nutzung': { label: 'Use type' },
+  'vorhaben_nutzung': { label: 'Use type' },
+  'gebaeudeklasse': { label: 'Building class' },
+  'vollgeschosse': { label: 'Full storeys' },
+  'wohneinheiten.anzahl': { label: 'Dwelling units' },
+  'wohneinheiten_anzahl': { label: 'Dwelling units' },
+  'wohneinheit.flaeche_m2': { label: 'Area per dwelling', unit: 'm²' },
+  'wohneinheit_flaeche_m2': { label: 'Area per dwelling', unit: 'm²' },
+  'wohnflaeche_gesamt_m2': { label: 'Total living area', unit: 'm²' },
+  'wohnflaeche_gesamt': { label: 'Total living area', unit: 'm²' },
+  'okff_oberstes_geschoss_m': { label: 'Top-floor finished floor level', unit: 'm' },
+  'sonderbau_tatbestand': { label: 'Special-occupancy (Sonderbau) trigger' },
+  'planungsrecht.rechtsgrundlage': { label: 'Planning-law basis' },
+  'planungsrecht_rechtsgrundlage': { label: 'Planning-law basis' },
+  'planungsrecht.bebauungsplan_status': { label: 'Development-plan status' },
+  'planungsrecht.erhaltungssatzung_moeglich': { label: 'Preservation ordinance possible' },
+  'verfahren.typ': { label: 'Procedure type' },
+  'verfahren_typ': { label: 'Procedure type' },
+  'verfahren_indikation': { label: 'Procedure indication' },
+  'architekt.beauftragt': { label: 'Architect engaged' },
+  'architekt.kammer': { label: 'Chamber of architects' },
+  'kernteam.architekt_register': { label: 'Architect register' },
+  'kernteam.bestaetigt': { label: 'Core team confirmed' },
+  'stellplatz.anzahl_geplant': { label: 'Planned parking spaces' },
+  'stellplatz_anzahl_geplant': { label: 'Planned parking spaces' },
+  'stellplatz.typ': { label: 'Parking type' },
+  'stellplatz_typ': { label: 'Parking type' },
+  'stellplatz.reduktion_moeglich': { label: 'Parking reduction possible' },
+  'fahrradstellplatz.pflicht': { label: 'Bicycle parking requirement' },
+  'geg.pflicht': { label: 'GEG requirement' },
+  'geg_pflicht': { label: 'GEG requirement' },
 }
