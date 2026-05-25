@@ -18,6 +18,7 @@
 import {
   createContext,
   useContext,
+  useEffect,
   useRef,
   type ReactNode,
   type RefObject,
@@ -69,6 +70,35 @@ export function ChamberLayout({
   bottomRightSlot,
 }: Props) {
   const mainRef = useRef<HTMLElement | null>(null)
+  // v1.0.29.2 Bug 85 — the sticky input zone's height varies (SmartChips wrap /
+  // stack on narrow viewports, multi-line textarea up to 5 rows, IDK hint row).
+  // The previous fixed `pb-[200px]` + `-mt-[200px]` reserve let a taller zone
+  // hide streaming content behind the chips. Measure the zone and publish
+  // `--chamber-input-h`; the thread's bottom padding + the zone's negative
+  // margin both consume it, so they track the real height in lockstep.
+  const inputZoneRef = useRef<HTMLDivElement | null>(null)
+  useEffect(() => {
+    const zone = inputZoneRef.current
+    const main = mainRef.current
+    if (!zone || !main) return
+    let raf = 0
+    const apply = () => {
+      const h = Math.ceil(zone.getBoundingClientRect().height)
+      if (h > 0) main.style.setProperty('--chamber-input-h', `${h}px`)
+    }
+    // rAF-debounced; observes border-box size only, so writing margin-top /
+    // the thread's padding back out never feeds the observer (no loop).
+    const ro = new ResizeObserver(() => {
+      cancelAnimationFrame(raf)
+      raf = requestAnimationFrame(apply)
+    })
+    ro.observe(zone)
+    apply()
+    return () => {
+      cancelAnimationFrame(raf)
+      ro.disconnect()
+    }
+  }, [])
   return (
     <ChamberMainRefCtx.Provider value={mainRef}>
       <div
@@ -120,8 +150,13 @@ export function ChamberLayout({
               * killed and never re-mounted. */}
             {stickyHeader}
 
-            {/* Thread column */}
-            <div className="mx-auto w-full max-w-[var(--chamber-col-max)] px-[var(--chamber-col-px-mobile)] md:px-[var(--chamber-col-px-tablet)] lg:px-[var(--chamber-col-px-desktop)] pt-6 md:pt-8 pb-[180px] md:pb-[200px] flex-1">
+            {/* Thread column. v1.0.29.2 Bug 85 — bottom padding tracks the
+              * measured input-zone height (+24 px breathing) instead of a fixed
+              * 180/200 px, so streaming content always clears the chips/input. */}
+            <div
+              className="mx-auto w-full max-w-[var(--chamber-col-max)] px-[var(--chamber-col-px-mobile)] md:px-[var(--chamber-col-px-tablet)] lg:px-[var(--chamber-col-px-desktop)] pt-6 md:pt-8 flex-1"
+              style={{ paddingBottom: 'calc(var(--chamber-input-h, 200px) + 24px)' }}
+            >
               {thread}
             </div>
 
@@ -129,8 +164,14 @@ export function ChamberLayout({
               * main scroll container. Phase 7.6 §1.6: fixed → sticky.
               * Always visible regardless of scroll position. */}
             <div
-              className="sticky bottom-0 z-30 -mt-[200px] md:-mt-[200px]"
-              style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
+              ref={inputZoneRef}
+              className="sticky bottom-0 z-30"
+              style={{
+                // v1.0.29.2 Bug 85 — negative margin = measured zone height
+                // (lockstep with the thread's bottom padding above).
+                marginTop: 'calc(var(--chamber-input-h, 200px) * -1)',
+                paddingBottom: 'env(safe-area-inset-bottom, 0px)',
+              }}
             >
               <div
                 aria-hidden="true"
