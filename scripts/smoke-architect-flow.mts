@@ -32,6 +32,8 @@ import { stripVersionTokens } from '../src/lib/stripVersionTokens.ts'
 import { pickSmartSuggestions } from '../src/features/result/lib/smartSuggestionsMatcher.ts'
 import { computeChamberProgress } from '../src/features/chat/lib/chamberProgress.ts'
 import { factLabel } from '../src/lib/factLabel.ts'
+import { resolveProcedure } from '../src/legal/resolveProcedure.ts'
+import { composeExecutiveRead } from '../src/features/result/lib/composeExecutiveRead.ts'
 import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'node:path'
@@ -581,6 +583,42 @@ function runLabels(): Tally {
   return t
 }
 
+function runProcedure(): Tally {
+  console.log('\n[smoke-architect] procedure qualifier + verfahren_typ (C9 / Bug 79+73+80)…')
+  const t: Tally = { passed: 0, failed: 0 }
+  const base = {
+    intent: 'neubau', bundesland: 'hamburg',
+    eingriff_tragende_teile: false, eingriff_aussenhuelle: false,
+    denkmalschutz: false, ensembleschutz: false,
+  } as never
+
+  // Bug 79/73 — honor the persona's simplified conclusion (§ 61 HBauO) with
+  // CALCULATED confidence (PDF was "regulär" + ASSUMED).
+  const simp = resolveProcedure({ ...(base as object), verfahren_indikation: 'Vereinfachtes Baugenehmigungsverfahren § 61 HBauO' } as never)
+  ok(t, simp.kind === 'vereinfachtes', `Hamburg T-02: procedure kind 'vereinfachtes' (got '${simp.kind}')`)
+  ok(t, /§\s*61\s+HBauO/.test(simp.citation), `Hamburg T-02: cites § 61 HBauO (got '${simp.citation}')`)
+  ok(t, simp.confidence === 'CALCULATED', `Hamburg T-02: confidence CALCULATED (got '${simp.confidence}')`)
+
+  // Regression — no indikation → honest generic stub (standard + ASSUMED).
+  const generic = resolveProcedure(base)
+  ok(t, generic.kind === 'standard' && generic.confidence === 'ASSUMED',
+    `stub w/o indikation → standard + ASSUMED (got '${generic.kind}'/'${generic.confidence}')`)
+
+  // Bug 52 regression — verfahrensfrei still honored (T-05 NRW).
+  const free = resolveProcedure({ ...(base as object), bundesland: 'nrw', verfahren_indikation: 'verfahrensfrei nach § 62 BauO NRW' } as never)
+  ok(t, free.kind === 'verfahrensfrei', `verfahrensfrei still honored (got '${free.kind}')`)
+
+  // Bug 80 — the executive read no longer hardcodes "Gebäudeklasse 1–3" (it
+  // contradicted the GK 4 MFH).
+  const fx = JSON.parse(readFileSync(join(REPO_ROOT, 'test/fixtures/hamburg-t02-mfh.json'), 'utf-8'))
+  for (const lang of ['de', 'en'] as const) {
+    const exec = composeExecutiveRead({ project: fx.project, state: fx.project.state, lang })
+    const text = exec.paragraphs.join(' ')
+    ok(t, !/Geb[äa]udeklasse\s*1[–-]3/.test(text), `exec ${lang}: no "Gebäudeklasse 1–3" contradiction`)
+  }
+  return t
+}
+
 function main(): void {
   const sections: Tally[] = [
     runInviteParse(),
@@ -595,6 +633,7 @@ function main(): void {
     runSuggestions(),
     runProgress(),
     runLabels(),
+    runProcedure(),
   ]
   const passed = sections.reduce((n, s) => n + s.passed, 0)
   const failed = sections.reduce((n, s) => n + s.failed, 0)

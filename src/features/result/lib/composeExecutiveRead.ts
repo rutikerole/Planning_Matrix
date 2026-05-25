@@ -314,9 +314,14 @@ function statuteImplicationFor(
 function conditionsFor(intent: string, lang: 'de' | 'en'): string {
   const isNew = intent.startsWith('neubau_') || intent === 'aufstockung' || intent === 'anbau'
   if (isNew) {
+    // v1.0.29 Bug 80 — dropped the hardcoded "Gebäudeklasse 1–3" clause. It
+    // was a Bayern-ism (BayBO Art. 58 = GK 1–3) that both contradicted the
+    // GK 4 Hamburg MFH and is state-imprecise (HBauO § 61 simplified scope is
+    // not GK-bounded that way). Condition on the real cross-state driver —
+    // Sonderbau scope — so the clause is correct for any building class.
     return lang === 'en'
-      ? 'the plot is in a built-up area, no Sonderbau scope, and Gebäudeklasse 1–3'
-      : 'Innenbereich vorliegt, kein Sonderbau und Gebäudeklasse 1–3'
+      ? 'the plot is in a built-up area and no Sonderbau scope applies'
+      : 'Innenbereich vorliegt und kein Sonderbau-Tatbestand greift'
   }
   if (intent === 'sanierung' || intent === 'umnutzung') {
     return lang === 'en'

@@ -79,8 +79,8 @@ export function deriveBaselineProcedure({
           'P-Vereinfacht',
           tSimp.de,
           tSimp.en,
-          `Standardpfad für Wohnvorhaben in Gebäudeklasse 1–3 in ${loc.labelDe}; entfällt bei Sonderbauten oder Freistellungs-Konstellationen.`,
-          `Standard path for residential projects in building class 1–3 in ${loc.labelEn}; replaced by Sonderbau scope or permit-exemption cases.`,
+          `Standardpfad für Wohnvorhaben ohne Sonderbau-Tatbestand in ${loc.labelDe}; bei Sonderbauten oder Freistellungs-Konstellationen abweichend.`,
+          `Standard path for residential projects without a Sonderbau scope in ${loc.labelEn}; differs for Sonderbau scope or permit-exemption cases.`,
         ),
         ...(free
           ? [

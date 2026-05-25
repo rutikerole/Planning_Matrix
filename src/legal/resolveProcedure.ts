@@ -317,6 +317,36 @@ export function resolveProcedure(c: ProcedureCase): ProcedureDecision {
       ],
     }
   }
+  // v1.0.29 Bug 79 + Bug 73 — honor the persona's SIMPLIFIED-permit conclusion
+  // the same way Bug 52 honors verfahrensfrei. The T-02 Hamburg walk's persona
+  // concluded "Vereinfachtes Baugenehmigungsverfahren § 61 HBauO", but the
+  // template-blind generic branch below emitted the REGULAR permit ("regulär")
+  // with ASSUMED confidence — contradicting the state-correct persona fact on
+  // PDF pages 4 + 7 and downgrading the qualifier. Honor the cited simplified
+  // procedure with CALCULATED confidence (the persona reasoned it from intent +
+  // Gebäudeklasse + non-Sonderbau across multiple rounds). Hard blockers +
+  // verfahrensfrei above still take precedence; never used to downgrade a
+  // permit the resolver would itself require.
+  if (/vereinfacht|simplified/.test(vi)) {
+    const cited = extractProcedureCitation(c.verfahren_indikation ?? '')
+    const simpCitation = cited ?? ''
+    return {
+      kind: 'vereinfachtes',
+      citation: simpCitation || (c.verfahren_indikation ?? '').trim(),
+      reasoning_de: `Vereinfachtes Baugenehmigungsverfahren${simpCitation ? ` nach ${simpCitation}` : ''} — Bauantrag erforderlich; das Bauamt prüft Planungsrecht und örtliche Bauvorschriften, die bauvorlageberechtigte Person haftet für die übrige Materie.`,
+      reasoning_en: `Simplified building permit${simpCitation ? ` under ${simpCitation}` : ''} — a building application is required; the authority reviews planning law and local building rules, the submission-authorized planner is liable for the remaining substance.`,
+      confidence: 'CALCULATED',
+      caveats: [
+        {
+          kind: 'bebauungsplan_specific',
+          message_de:
+            'Anwendbarkeit des vereinfachten Verfahrens mit dem lokalen Bauamt bestätigen; bei Sonderbau-Tatbeständen greift das reguläre Verfahren.',
+          message_en:
+            'Confirm applicability of the simplified procedure with the local building authority; a Sonderbau scope reinstates the regular procedure.',
+        },
+      ],
+    }
+  }
   if (c.bundesland === 'nrw' && c.intent === 'sanierung') {
     return resolveNrwSanierung(c)
   }
