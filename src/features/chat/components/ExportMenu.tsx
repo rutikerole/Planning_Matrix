@@ -8,6 +8,7 @@ import { buildExportFilename } from '@/lib/export/exportFilename'
 import { buildExportMarkdown } from '@/lib/export/exportMarkdown'
 import { buildExportJson } from '@/lib/export/exportJson'
 import { logExportEvent, type ExportEventType } from '@/lib/telemetry'
+import { isPdfDemoReady } from '@/legal/demoCoverage'
 
 // Tailwind's md: breakpoint is 768px. Both desktop popover and mobile Vaul
 // Drawer used to mount unconditionally — Vaul's Portal escaped its parent's
@@ -75,6 +76,9 @@ export function ExportMenu({
 }: Props) {
   const { t, i18n } = useTranslation()
   const lang = (i18n.resolvedLanguage ?? 'de') as 'de' | 'en'
+  // v1.0.31 — freeze the architect PDF for non-demo cells behind an honest
+  // "coverage in preparation" state (renderer untouched; UI-layer gate only).
+  const pdfReady = isPdfDemoReady(project.template_id, project.bundesland)
   const [open, setOpen] = useState(false)
   const [busy, setBusy] = useState<'pdf' | 'md' | 'json' | null>(null)
   const [error, setError] = useState<ExportError | null>(null)
@@ -104,6 +108,7 @@ export function ExportMenu({
   }, [open])
 
   const triggerExport = async (kind: 'pdf' | 'md' | 'json') => {
+    if (kind === 'pdf' && !pdfReady) return
     setBusy(kind)
     setError(null)
     const attemptedEvent = `${kind}_export_attempted` as ExportEventType
@@ -203,7 +208,7 @@ export function ExportMenu({
             <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-clay/85">
               {t('chat.export.eyebrow', { defaultValue: 'Exportieren' })}
             </p>
-            <ExportRows lang={lang} busy={busy} onPick={triggerExport} t={t} />
+            <ExportRows lang={lang} busy={busy} onPick={triggerExport} t={t} pdfReady={pdfReady} />
             {error && (
               <ExportErrorPanel
                 error={error}
@@ -252,7 +257,7 @@ export function ExportMenu({
                 <X className="size-4" aria-hidden="true" />
               </button>
             </div>
-            <ExportRows lang={lang} busy={busy} onPick={triggerExport} t={t} />
+            <ExportRows lang={lang} busy={busy} onPick={triggerExport} t={t} pdfReady={pdfReady} />
             {error && (
               <div className="mt-4">
                 <ExportErrorPanel
@@ -321,9 +326,10 @@ interface ExportRowsProps {
   busy: 'pdf' | 'md' | 'json' | null
   onPick: (kind: 'pdf' | 'md' | 'json') => void
   t: (key: string, opts?: { defaultValue?: string }) => string
+  pdfReady: boolean
 }
 
-function ExportRows({ busy, onPick, t }: ExportRowsProps) {
+function ExportRows({ busy, onPick, t, pdfReady }: ExportRowsProps) {
   const rows: Array<{
     kind: 'pdf' | 'md' | 'json'
     numeral: string
@@ -364,11 +370,12 @@ function ExportRows({ busy, onPick, t }: ExportRowsProps) {
         <li key={r.kind}>
           <button
             type="button"
-            disabled={busy !== null}
+            disabled={busy !== null || (r.kind === 'pdf' && !pdfReady)}
             onClick={() => onPick(r.kind)}
             className={
               'group block w-full text-left grid grid-cols-[28px_1fr] gap-x-3 py-3 transition-colors duration-soft motion-safe:hover:bg-clay/[0.05] focus-visible:outline-none focus-visible:bg-clay/[0.05] rounded-sm ' +
-              (idx > 0 ? 'border-t border-ink/12' : '')
+              (idx > 0 ? 'border-t border-ink/12' : '') +
+              (r.kind === 'pdf' && !pdfReady ? ' opacity-60 cursor-not-allowed' : '')
             }
           >
             <span className="font-serif italic text-[13px] text-clay-deep tabular-figures pt-1 leading-none text-center">
@@ -384,7 +391,12 @@ function ExportRows({ busy, onPick, t }: ExportRowsProps) {
                 )}
               </p>
               <p className="text-[12px] italic text-ink/65 leading-relaxed">
-                {t(r.bodyKey, { defaultValue: r.bodyDefault })}
+                {r.kind === 'pdf' && !pdfReady
+                  ? t('chat.export.pdf.inPreparation', {
+                      defaultValue:
+                        'Full PDF in preparation for this template/state — currently hardened for T-01 Bayern, T-05 NRW, T-03 Hessen.',
+                    })
+                  : t(r.bodyKey, { defaultValue: r.bodyDefault })}
               </p>
             </div>
           </button>

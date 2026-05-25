@@ -16,6 +16,7 @@ import type { MessageRow, ProjectRow } from '@/types/db'
 import { createShareToken } from '../lib/shareTokenApi'
 import { useEventEmitter } from '@/hooks/useEventEmitter'
 import { useAuthStore } from '@/stores/authStore'
+import { isPdfDemoReady } from '@/legal/demoCoverage'
 
 interface ProjectEventRow {
   id: string
@@ -54,6 +55,10 @@ export function ExportMenu({
 }: Props) {
   const { t, i18n } = useTranslation()
   const lang = (i18n.resolvedLanguage ?? 'de') as 'de' | 'en'
+  // v1.0.31 — freeze the architect PDF for non-demo cells (template ∉
+  // {T-01,T-03,T-05} or non-substantive state) behind an honest "coverage in
+  // preparation" state. The renderer is untouched; only this UI entry gates.
+  const pdfReady = isPdfDemoReady(project.template_id, project.bundesland)
   const [busy, setBusy] = useState<Action | null>(null)
   const resultEmit = useEventEmitter('result')
   // v1.0.14 Bug 29 — resolve owner display name from auth profile
@@ -82,6 +87,9 @@ export function ExportMenu({
 
   const trigger = async (action: Action) => {
     if (busy) return
+    // v1.0.31 — defense in depth: never render a full PDF for a non-demo cell
+    // even if the menu item is reached programmatically.
+    if ((action === 'pdf-en' || action === 'pdf-de') && !pdfReady) return
     // Phase 9.2 — emit click before the async work so the click is
     // captured even if the user navigates away while the export
     // computes (PDF can take a few seconds).
@@ -181,25 +189,33 @@ export function ExportMenu({
             the user's current i18n locale), but both options are
             always available. */}
         <DropdownMenuItem
+          disabled={!pdfReady || busy !== null}
           onSelect={() => void trigger(lang === 'de' ? 'pdf-de' : 'pdf-en')}
-          className="gap-3"
+          className={cn('gap-3', !pdfReady && 'cursor-not-allowed opacity-60')}
         >
           <FileText aria-hidden="true" className="size-4 text-clay/85" />
           <span className="flex-1">
             {t('result.export.pdf.title')}
-            <span className="ml-2 font-mono text-[10px] uppercase tracking-[0.18em] text-clay/70">
-              {lang === 'de' ? 'DE' : 'EN'}
-            </span>
+            {pdfReady ? (
+              <span className="ml-2 font-mono text-[10px] uppercase tracking-[0.18em] text-clay/70">
+                {lang === 'de' ? 'DE' : 'EN'}
+              </span>
+            ) : (
+              <span className="ml-2 text-[10px] italic text-clay/70">
+                {t('result.export.pdf.inPreparation')}
+              </span>
+            )}
           </span>
           {(busy === 'pdf-en' || busy === 'pdf-de') && (
             <span className="text-[11px] italic text-clay/85">…</span>
           )}
         </DropdownMenuItem>
         <DropdownMenuItem
+          disabled={!pdfReady || busy !== null}
           onSelect={() =>
             void trigger(lang === 'de' ? 'pdf-en' : 'pdf-de')
           }
-          className="gap-3"
+          className={cn('gap-3', !pdfReady && 'cursor-not-allowed opacity-60')}
         >
           <FileText aria-hidden="true" className="size-4 text-clay/55" />
           <span className="flex-1 text-clay/85">

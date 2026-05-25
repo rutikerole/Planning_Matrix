@@ -1757,7 +1757,8 @@
       "busy": "wird erstellt …",
       "pdf": {
         "title": "Vollständiges PDF",
-        "body": "Atelier-Briefing-Format"
+        "body": "Atelier-Briefing-Format",
+        "inPreparation": "In Vorbereitung"
       },
       "md": {
         "title": "Markdown-Checkliste",
