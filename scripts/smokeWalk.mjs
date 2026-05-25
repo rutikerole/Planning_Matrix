@@ -4112,6 +4112,14 @@ async function runStaticGate() {
       ok: /agg\.counts\.ASSUMED\s*\+\s*agg\.counts\.UNKNOWN/.test(computeConfidenceSrc),
       msg: 'v1.0.7: ASSUMED + UNKNOWN grouped at 0.4 (matches donut)',
     },
+    {
+      ok: /PENDING_DOMAIN_PENALTY/.test(computeConfidenceSrc) && /countPendingDomains/.test(computeConfidenceSrc),
+      msg: 'v1.0.30 Bug 102: ≥2 PENDING-domain confidence knockdown present',
+    },
+    {
+      ok: /pendingDomains\s*>=\s*2/.test(computeConfidenceSrc),
+      msg: 'v1.0.30 Bug 102: penalty gated at ≥2 PENDING (single open domain unaffected)',
+    },
   ]))
 
   // ── v1.0.6 Bug 3 + v1.0.7 Bug 9 — spine reaches 100% on canonical

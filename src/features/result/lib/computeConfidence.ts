@@ -11,6 +11,23 @@ import { aggregateQualifiers } from './qualifierAggregate'
 // non-zero, non-misleading value the bauherr can interpret.
 const HARD_BLOCKER_PENALTY = 0.7
 const CONFIDENCE_FLOOR = 25
+// v1.0.30 Bug 102 — PENDING legal domains aren't reflected in the qualifier mix,
+// so a project can show 87% on DECIDED facts while Planning (A) + Other
+// Requirements (C) are still PENDING (the T-04 Leipzig walk). When ≥2 of the 3
+// legal domains are PENDING, apply a mild knockdown (0.85 per PENDING domain
+// beyond the first) so the header honestly reflects the open legal scope.
+// Lighter than a hard blocker (which means "may be inadmissible"); a PENDING
+// domain is merely "not yet assessed".
+const PENDING_DOMAIN_PENALTY = 0.85
+
+/** Count legal domains (Areas A/B/C) still in the PENDING state. */
+function countPendingDomains(state: Partial<ProjectState>): number {
+  const areas = state.areas
+  if (!areas) return 0
+  return (['A', 'B', 'C'] as const).filter(
+    (k) => areas[k]?.state === 'PENDING',
+  ).length
+}
 
 function countHardBlockers(state: Partial<ProjectState>): number {
   const facts = state.facts ?? []
@@ -119,11 +136,23 @@ export function computeConfidenceBreakdown(
   // risk of being inadmissible. Each blocker now knocks 30% off the
   // composite multiplicatively, with a 25% floor.
   const blockerCount = countHardBlockers(state)
+  // v1.0.30 Bug 102 — ≥2 PENDING domains knock the composite down so an
+  // 87%-on-DECIDED-facts project with two open legal domains reads as the
+  // preliminary value it is. Gated at ≥2 so a single open domain (e.g. the
+  // Königsallee B-PENDING case) is unaffected. Stacks with the blocker penalty.
+  const pendingDomains = countPendingDomains(state)
+  const pendingPenalty =
+    pendingDomains >= 2 ? Math.pow(PENDING_DOMAIN_PENALTY, pendingDomains - 1) : 1
+  const hasPenalty = blockerCount > 0 || pendingPenalty < 1
   const total =
-    rawTotal > 0 && blockerCount > 0
+    rawTotal > 0 && hasPenalty
       ? Math.max(
           CONFIDENCE_FLOOR,
-          Math.round(rawTotal * Math.pow(HARD_BLOCKER_PENALTY, blockerCount)),
+          Math.round(
+            rawTotal *
+              Math.pow(HARD_BLOCKER_PENALTY, blockerCount) *
+              pendingPenalty,
+          ),
         )
       : rawTotal
   return {
