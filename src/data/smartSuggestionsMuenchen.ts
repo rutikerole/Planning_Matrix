@@ -519,4 +519,65 @@ export const SMART_SUGGESTIONS_MUENCHEN: SmartSuggestion[] = [
     relevanceWeight: 1.4,
     verifyBeforePublicLaunch: true,
   },
+  // v1.0.31 C6 — T-05 demolition floor (Bug 103 for abbruch). The nrw-t05
+  // fixtures carry empty state.recommendations (persona Bug 63) and no demolition
+  // suggestion fired, so the Executive page was skipped → the PDF rendered 11 pp
+  // (TOC drift). Mirrors the T-04 floor: `schadstoffgutachten-abbruch` is the
+  // always-on floor (no scopeMatch) that guarantees the exec page renders and
+  // restores the 12th page; the other two are scope-gated to the demolition
+  // facts. State-neutral — only federal GefStoffV / KrWG references, no Bayern
+  // token, no fabricated chamber/§/URL.
+  {
+    id: 'schadstoffgutachten-abbruch',
+    applicableTemplates: ['T-05'],
+    category: 'risk',
+    titleDe: 'Schadstoffgutachten vor dem Abbruch beauftragen',
+    titleEn: 'Commission a hazardous-materials survey before demolition',
+    bodyDe:
+      'Vor jedem Abbruch ist eine Schadstofferkundung (Asbest, KMF, PCB, PAK) nach GefStoffV erforderlich. Das Gutachten bestimmt Rückbau- und Entsorgungsweg und ist die Grundlage für belastbare Festangebote.',
+    bodyEn:
+      'Every demolition requires a hazardous-materials survey (asbestos, mineral fibre, PCB, PAH) under the GefStoffV. The survey determines the dismantling and disposal route and is the basis for reliable fixed quotes.',
+    reasoningDe:
+      'Das Schadstoffgutachten ist der erste verbindliche Schritt jedes Abbruchs — ohne es ist keine seriöse Kostenschätzung möglich.',
+    reasoningEn:
+      'The hazardous-materials survey is the first binding step of any demolition — no serious cost estimate is possible without it.',
+    relevanceWeight: 1.5,
+    verifyBeforePublicLaunch: true,
+  },
+  {
+    id: 'entsorgungsnachweis-abbruch',
+    applicableTemplates: ['T-05'],
+    category: 'regulation',
+    titleDe: 'Entsorgungs- und Verwertungsnachweis (KrWG) vorbereiten',
+    titleEn: 'Prepare the disposal and recovery records (KrWG)',
+    bodyDe:
+      'Abbruchabfälle sind nach Kreislaufwirtschaftsgesetz (KrWG) zu trennen, zu dokumentieren und zu verwerten bzw. zu entsorgen. Mengen und Nachweise früh mit dem Abbruchunternehmen klären.',
+    bodyEn:
+      'Demolition waste must be separated, documented and recovered or disposed of under the Circular Economy Act (KrWG). Clarify volumes and records early with the demolition contractor.',
+    reasoningDe:
+      'Entsorgungskosten sind nach den Schadstoffen der zweitgrößte Abbruch-Kostentreiber.',
+    reasoningEn:
+      'After hazardous materials, disposal is the second-largest demolition cost driver.',
+    scopeMatch: /entsorgung|krwg|abfall|schadstoff|asbest/i,
+    relevanceWeight: 1.4,
+    verifyBeforePublicLaunch: true,
+  },
+  {
+    id: 'standsicherheit-nachbar-abbruch',
+    applicableTemplates: ['T-05'],
+    category: 'risk',
+    titleDe: 'Standsicherheit der Nachbarbebauung prüfen',
+    titleEn: 'Check the structural stability of adjacent buildings',
+    bodyDe:
+      'Bei grenzständiger oder angebauter Bebauung ist die Standsicherheit der Nachbargebäude während und nach dem Abbruch nachzuweisen (z. B. Sicherung freigelegter Brandwände).',
+    bodyEn:
+      'For buildings at or sharing a boundary, the structural stability of neighbouring buildings during and after demolition must be demonstrated (e.g. securing exposed party walls).',
+    reasoningDe:
+      'Freigelegte Nachbar-Brandwände sind die häufigste Haftungsfalle beim Teilabbruch.',
+    reasoningEn:
+      'Exposed neighbouring party walls are the most common liability trap in partial demolition.',
+    scopeMatch: /standsicherheit|nachbar|brandwand|grenz/i,
+    relevanceWeight: 1.3,
+    verifyBeforePublicLaunch: true,
+  },
 ]

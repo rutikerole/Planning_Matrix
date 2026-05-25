@@ -1465,40 +1465,52 @@ async function runDemoCellsRender(): Promise<{ passed: number; failed: number }>
     if (cond) { console.log(`  ✓ ${msg}`); passed++ } else { console.log(`  ✗ ${msg}`); failed++ }
   }
   const BAYERN_LEAK = /BayBO|BayDSchG|BLfD|München|Schwabing|Maxvorstadt|StPlS\s*926|\bLHM\b/u
+  const { PDFDocument } = await import('pdf-lib')
+  const pageCount = async (b: Uint8Array): Promise<number> =>
+    (await PDFDocument.load(b)).getPageCount()
   for (const lang of ['en', 'de'] as const) {
+    // Executive "Top 3" page marker — its absence is the Bug-103 TOC-drift
+    // signal (exec page skipped when topThreeSources is empty -> 11 pp).
+    const execMarker = lang === 'en' ? /Top 3 next steps/u : /Die 3 nächsten Schritte/u
     // T-03 Hessen Frankfurt — renovation honest cost stub (C3), real § 65 HBO,
-    // no Bayern-leak.
+    // no Bayern-leak, 12 sections + Executive page (Check 4).
     {
-      const text = await extractPdfText(
-        await renderFixturePdf(lang, 'test/fixtures/hessen-t03-frankfurt.json'),
-      )
+      const bytes = await renderFixturePdf(lang, 'test/fixtures/hessen-t03-frankfurt.json')
+      const text = await extractPdfText(bytes)
+      const pages = await pageCount(bytes)
       const stub = lang === 'en'
         ? /Renovation cost ranges in preparation/u.test(text)
         : /Sanierungskosten in Vorbereitung/u.test(text)
       expect(stub, `Hessen T-03 ${lang}: renovation cost honest stub renders (C3)`)
       expect(/§\s*65\s+HBO/u.test(text), `Hessen T-03 ${lang}: § 65 HBO cited`)
       expect(!BAYERN_LEAK.test(text), `Hessen T-03 ${lang}: no Bayern-leak (Check 6)`)
+      expect(pages === 12, `Hessen T-03 ${lang}: 12 sections rendered (Check 4, got ${pages})`)
+      expect(execMarker.test(text), `Hessen T-03 ${lang}: Executive Top-3 page renders (Check 4 / Bug 103)`)
     }
     // T-05 NRW Köln — demolition honest stub, verfahrensfrei § 62 BauO NRW.
     {
-      const text = await extractPdfText(
-        await renderFixturePdf(lang, 'test/fixtures/nrw-t05-koeln.json'),
-      )
+      const bytes = await renderFixturePdf(lang, 'test/fixtures/nrw-t05-koeln.json')
+      const text = await extractPdfText(bytes)
+      const pages = await pageCount(bytes)
       const stub = lang === 'en'
         ? /Demolition cost ranges in preparation/u.test(text)
         : /Abbruchkosten in Vorbereitung/u.test(text)
       expect(stub, `NRW T-05 Köln ${lang}: demolition cost honest stub renders`)
       expect(/§\s*62\s+BauO\s+NRW/u.test(text), `NRW T-05 Köln ${lang}: § 62 BauO NRW cited`)
       expect(!BAYERN_LEAK.test(text), `NRW T-05 Köln ${lang}: no Bayern-leak (Check 6)`)
+      expect(pages === 12, `NRW T-05 Köln ${lang}: 12 sections rendered (Check 4, got ${pages})`)
+      expect(execMarker.test(text), `NRW T-05 Köln ${lang}: Executive Top-3 page renders (Check 4 / Bug 103)`)
     }
     // T-01 Bayern München — neubau real HOAI cost rows (NOT a stub),
     // vereinfachtes Verfahren BayBO Art. 58.
     {
-      const text = await extractPdfText(
-        await renderFixturePdf(lang, 'test/fixtures/bayern-t01-muenchen.json'),
-      )
+      const bytes = await renderFixturePdf(lang, 'test/fixtures/bayern-t01-muenchen.json')
+      const text = await extractPdfText(bytes)
+      const pages = await pageCount(bytes)
       expect(/BayBO\s+Art\.\s*58/u.test(text), `Bayern T-01 ${lang}: BayBO Art. 58 cited`)
       expect(/€/u.test(text), `Bayern T-01 ${lang}: cost figures present (neubau real rows, not a stub)`)
+      expect(pages === 12, `Bayern T-01 ${lang}: 12 sections rendered (Check 4, got ${pages})`)
+      expect(execMarker.test(text), `Bayern T-01 ${lang}: Executive Top-3 page renders (Check 4 / Bug 103)`)
     }
   }
   return { passed, failed }

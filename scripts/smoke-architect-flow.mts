@@ -795,6 +795,11 @@ function runNrwT05Koeln(): Tally {
   ok(t, d.kind === 'verfahrensfrei', `NRW T-05 Köln: kind 'verfahrensfrei' (got '${d.kind}')`)
   ok(t, d.confidence === 'CALCULATED', `NRW T-05 Köln: procedure CALCULATED (Check 2, got '${d.confidence}')`)
   ok(t, /§\s*62\s+BauO\s+NRW/.test(d.citation), `NRW T-05 Köln: cites § 62 BauO NRW (got '${d.citation}')`)
+  // C6 — demolition suggestions floor so the Executive page renders (Bug 103 for
+  // abbruch: empty state.recommendations + no demolition pick -> 11 pp).
+  const fx = JSON.parse(readFileSync(join(REPO_ROOT, 'test/fixtures/nrw-t05-koeln.json'), 'utf-8'))
+  const picks = pickSmartSuggestions({ project: fx.project, state: fx.project.state, limit: 8 }).map((s) => s.id)
+  ok(t, picks.includes('schadstoffgutachten-abbruch'), 'NRW T-05 Köln: demolition suggestions floor present (exec page, Bug 103)')
   return t
 }
 
