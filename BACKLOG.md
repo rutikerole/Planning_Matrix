@@ -21,6 +21,29 @@ Sprint anchor reminder:
   `b18d3f7f9a6fe238c18cec5361d30ea3a547e46b1ef2b16a1e74c533aacb3471`
   must MATCH at start AND end of every commit in any future sprint.
 
+## Closed in v1.0.29 (T-02 MFH Hamburg — Stadtstaat + template-blind)
+
+CODE-COMPLETE + fixture/render-proven: Bug 64 (cost key), Bug 65 (Bayern bleed —
+15-state, highest impact), Bug 66 (web Domain B DIN 4109), Bug 67 (role floor +
+version scrub), Bug 68 (T-02 suggestions), Bug 69+70 (progress + handoff),
+Bug 71+81 (fact-key labels), Bug 75 (PDF "decided"), Bug 73+79 (procedure
+vereinfacht + CALCULATED), Bug 80 (exec GK-1-3 contradiction), Bug 74 (neubau
+docs baseline), Bug 82 (glossary version/path scrub), Bug 76+77 (PDF layout
+clamps). Diagnosis: docs/V1_0_29_T02_HAMBURG_DIAGNOSIS.md.
+
+Deferred to v1.0.30 (flagged):
+- **Bug 72** — wizard map München-locked (Phase-5 geocoder + bounds boundary;
+  nationwide recenter is deep, not surgical).
+- **Bug 60** — verification-page signature overlap (carried from v1.0.28).
+- Persona-side (chat-turn redeploy): thin role/suggestion/recommendations_delta
+  emission; `wohnflaeche_gesamt_m2`/dotted-vs-snake fact-key naming alignment;
+  inline synthesis-complete banner.
+- **T-04 / T-06 / T-07 / T-08** — same template-blind pattern; T-02 + T-05 are
+  the proofs of fix-shape; propagate per the diagnosis docs.
+- Per-state `legalRuleSnippets` authoring (NRW / BW / Hessen / Niedersachsen) so
+  non-Bayern Legal Landscape rows carry substantive (not just federal-neutral)
+  interpretations.
+
 ## Closed in v1.0.28 (T-05 demolition pipeline — NRW exemplar)
 
 CODE-COMPLETE + render/fixture-proven: Bug 52 (procedure verfahrensfrei),

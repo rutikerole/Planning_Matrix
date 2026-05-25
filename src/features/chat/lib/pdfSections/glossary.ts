@@ -73,8 +73,8 @@ const FEDERAL_ENTRIES: ReadonlyArray<GlossaryEntry> = [
   },
   {
     term: 'BKI · Baukosteninformationszentrum',
-    en: 'German construction-cost benchmarking institute; regional BKI factors not yet wired in v1.0.23 — see docs/cost-formula.md.',
-    de: 'Baukosteninformationszentrum; regionale BKI-Faktoren noch nicht aktiv in v1.0.23 — siehe docs/cost-formula.md.',
+    en: 'German construction-cost benchmarking institute; regional cost factors are being finalized.',
+    de: 'Baukosteninformationszentrum; regionale Kostenfaktoren werden derzeit erarbeitet.',
   },
   {
     term: 'ÖbVI · Vermessungsingenieur',
@@ -117,8 +117,8 @@ function stateEntries(bundeslandLower: string | null | undefined): GlossaryEntry
     return [
       {
         term: `BauO ${cit.labelDe} · Bauordnung`,
-        en: `${cit.labelEn} state building code — §§ not yet wired in v1.0.23. Verify with the ${cit.labelEn} Architektenkammer.`,
-        de: `Landesbauordnung ${cit.labelDe} — §§ noch nicht hinterlegt in v1.0.23. Mit ${cit.labelDe}-Architektenkammer abklären.`,
+        en: `${cit.labelEn} state building code — §§ not yet on file. Verify with the ${cit.labelEn} Architektenkammer.`,
+        de: `Landesbauordnung ${cit.labelDe} — §§ noch nicht hinterlegt. Mit ${cit.labelDe}-Architektenkammer abklären.`,
       },
       {
         term: `${cit.denkmalSchutzAct.split(' (')[0]} · Denkmalschutz`,

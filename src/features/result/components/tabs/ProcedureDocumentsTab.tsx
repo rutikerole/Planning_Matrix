@@ -144,7 +144,11 @@ export function ProcedureDocumentsTab({ project, state }: Props) {
           * inline so the UI tab matches the PDF page 7 list. Hidden
           * when the project is hard-blocker-gated (the blocked label
           * lives in the header count line above). */}
-        {!resolvedDocs.blockedByVoranfrage && resolvedDocs.required.length > 0 && documents.length === 0 && (
+        {/* v1.0.29 Bug 74 — show the canonical required list even when the
+          * persona emitted a document. Previously gated on `documents.length
+          * === 0`, so one persona-suggested doc hid the full needed-set and
+          * the counter ("4 required") contradicted the single rendered row. */}
+        {!resolvedDocs.blockedByVoranfrage && resolvedDocs.required.length > 0 && (
           <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mt-1">
             {resolvedDocs.required.map((r) => (
               <li

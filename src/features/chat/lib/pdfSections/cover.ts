@@ -139,6 +139,10 @@ export function renderCoverPage(
   // bauherr knows the deliverable's signal strength at a glance.
   const gridTopY = midY - 110
   const colWidth = (PAGE_WIDTH - 2 * MARGIN) / 4
+  // v1.0.29 Bug 76 — clamp every cell's value to the column width minus a
+  // 12pt gutter so a long template label ("T-02 · New build (MFH)") can no
+  // longer overlap the CREATED column ("25 May 2026").
+  const cellMaxWidth = colWidth - 12
   drawLabelValue(
     page,
     MARGIN,
@@ -146,6 +150,7 @@ export function renderCoverPage(
     pdfStr(strings, 'cover.bundeslandLabel'),
     data.bundeslandName,
     fonts,
+    cellMaxWidth,
   )
   drawLabelValue(
     page,
@@ -154,6 +159,7 @@ export function renderCoverPage(
     pdfStr(strings, 'cover.templateLabel'),
     data.templateLabel,
     fonts,
+    cellMaxWidth,
   )
   drawLabelValue(
     page,
@@ -162,6 +168,7 @@ export function renderCoverPage(
     pdfStr(strings, 'cover.createdLabel'),
     data.createdDate,
     fonts,
+    cellMaxWidth,
   )
   drawLabelValue(
     page,
@@ -170,6 +177,7 @@ export function renderCoverPage(
     pdfStr(strings, 'cover.confidenceLabel'),
     `${data.confidencePercent}%`,
     fonts,
+    cellMaxWidth,
   )
 
   // v1.0.14 Bug 28 fix — footer is NOT drawn here. Footer is drawn

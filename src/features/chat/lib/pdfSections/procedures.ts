@@ -27,6 +27,7 @@ import {
   drawPriorityPill,
   drawSafeText,
   drawWrappedText,
+  ellipsizeToWidth,
   formatQualifier,
   type EditorialFonts,
 } from '../pdfPrimitives'
@@ -98,7 +99,19 @@ export function renderProceduresBody(
     const bodyMaxWidth = PAGE_WIDTH - 2 * MARGIN
     data.procedures.forEach((proc) => {
       const statusLabel = pdfStr(strings, `proc.status.${proc.status}`)
-      drawSafeText(page, proc.title, {
+      // v1.0.29 Bug 77 — clamp the procedure heading so neither it nor the
+      // status pill after it overflows the right margin (the T-02 stub title
+      // "Baugenehmigungsverfahren (regulär) — landesrechtliche Detail…" ran
+      // off the page). Reserve ~110pt for the pill + gap.
+      const titleMaxWidth = PAGE_WIDTH - 2 * MARGIN - 110
+      const clampedTitle = ellipsizeToWidth(
+        proc.title,
+        fonts.sansMedium,
+        13,
+        titleMaxWidth,
+        fonts.safe,
+      )
+      drawSafeText(page, clampedTitle, {
         x: MARGIN,
         y: cursor,
         size: 13,
@@ -107,7 +120,7 @@ export function renderProceduresBody(
         safe: fonts.safe,
       })
       const titleW = fonts.sansMedium.widthOfTextAtSize(
-        fonts.safe(proc.title),
+        fonts.safe(clampedTitle),
         13,
       )
       const bg = proc.status === 'required' ? PILL_LEGAL_BG : PILL_CALC_BG

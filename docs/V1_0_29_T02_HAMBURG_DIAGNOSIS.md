@@ -295,3 +295,39 @@ Legend — surface: **PDF** / **WEB** / **BOTH**. Class: **A** template-blind,
   cost-area + roles-floor + docs assertions.
 - Bayern T-01 + T-03 render-regression assertions (Bug 65 insurance — Bayern
   still cites BayBO/StPlS).
+
+---
+
+## RESOLUTION (commit hashes + corrections found during implementation)
+
+| Bug | Status | Commit |
+|---|---|---|
+| 65 Bayern bleed | CODE-COMPLETE | `335f751` (C2) |
+| 64 cost key | CODE-COMPLETE | `58434dd` (C3) |
+| 66 Domain B (web) | CODE-COMPLETE | `3648d02` (C4) |
+| 67 roles floor + version scrub | CODE-COMPLETE | `03b73df` (C5) |
+| 68 suggestions | CODE-COMPLETE | `095eeb8` (C6) |
+| 69 + 70 progress + handoff | CODE-COMPLETE | `4adf8a3` (C7) |
+| 71 + 81 labels · 75 "decided" | CODE-COMPLETE | `2e6346b` (C8) |
+| 79 + 73 procedure · 80 exec GK | CODE-COMPLETE | `f68998e` (C9) |
+| 74 docs · 82 glossary · 76 + 77 layout | CODE-COMPLETE | C10 |
+| 72 map · 60 signature | DEFERRED v1.0.30 | — |
+
+**Corrections discovered during implementation (beyond the 5 Turn-1 ones):**
+- **Bug 67 version leak is NOT persona-emitted.** Turn 1 (grep) suggested the
+  `v1.0.21` string was persona-side; the runBayernBleed render surfaced it in
+  the Domain C denkmal label → traced to `stateCitations.ts:148` `STUB_VERIFY`
+  (a citation-pack data string feeding the baseline architect role + the denkmal
+  label + the PDF). Fixed at the data root + a render-side `stripVersionTokens`
+  defense. Deterministic, not chat-turn.
+- **Bug 80 is deterministic, NOT persona-emitted.** Turn 1 assumed the GK-1-3
+  exec clause was persona text; it's hardcoded in `composeExecutiveRead.ts:318`
+  + `deriveBaselineProcedure.ts:82` (a Bayern-ism). Fixed in code.
+- **Bug 74 has a render-suppression aspect beyond the resolver.** Both
+  `ProcedureDocumentsTab.tsx:147` and `exportPdf.ts:862` showed the canonical
+  `required` list ONLY when the persona emitted no docs — so the walk's single
+  persona doc suppressed the full set (same class as Bug 67 roles). Fixed the
+  suppression + added the neubau branch to `requiredDocuments.ts`.
+- **Fact-key naming is inconsistent** (dotted `vorhaben.typ` vs flat
+  `wohnflaeche_gesamt_m2`); labels registered for both forms, alignment flagged
+  for v1.0.30 chat-turn.

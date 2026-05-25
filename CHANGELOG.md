@@ -1,5 +1,62 @@
 # Changelog
 
+## v1.0.29 — T-02 MFH Hamburg pipeline alignment + Stadtstaat Bayern-bleed (2026-05-25)
+
+Rutik's first live T-02 (New build MFH, Hamburg, Mönckebergstraße) smoke walk
+proved the v1.0.28 fixes were T-05-scoped and exposed a NEW class: Bayern-
+authored topic tables leaking München/BayBO into every non-Bayern web render.
+19 bugs (64-82) diagnosed — 5 with root causes that CORRECTED the launch prompt
+(read code over prompt). See `docs/V1_0_29_T02_HAMBURG_DIAGNOSIS.md`.
+
+**CODE-COMPLETE (fixture/render-proven, gate-green every commit):**
+- **Bug 65** — Stadtstaat/non-Bayern Bayern-snippet bleed (highest-impact,
+  15-state). `legalRuleSnippets.ts` + `humanizeFact.ts` rendered "BayBO and
+  BayTBest" / "Munich StPlS 926" for every state; now bundesland-gated →
+  federal-neutral, Bayern byte-identical. `335f751`
+- **Bug 64** — T-02 cost reads `wohnflaeche_gesamt_m2` (=720), no 180 m² default
+  (was a missing fact key, not a missing branch). `58434dd`
+- **Bug 66** — web Legal Landscape Domain B substantive for stub T-02 (DIN 4109
+  matcher). `3648d02`
+- **Bug 67** — MFH role floor via union (persona's thin 1-role emission no
+  longer suppresses the baseline 5) + version-token scrub (`v1.0.21` leaked from
+  stateCitations STUB_VERIFY). `03b73df`
+- **Bug 68** — T-02 MFH deterministic suggestions (Bauvoranfrage + core team),
+  no fabricated chamber URL/KfW. `095eeb8`
+- **Bug 69 + 70** — progress floors on spine-stage completion + synthesis
+  handoff fires the existing BriefingCTA to hero/ready (was 55%@round-12, no
+  CTA). Pure SPA. `4adf8a3`
+- **Bug 71 + 81** — DE+EN labels for all T-02 fact keys (no more "Okff Oberstes
+  Geschoss M" raw-key leak, PDF + web). `2e6346b`
+- **Bug 75** — PDF Data Quality reads "decided", not "verified" (matches web;
+  was "54% verified" on 0 sign-offs). `2e6346b`
+- **Bug 79 + 73** — `resolveProcedure` honors persona "vereinfacht" → § 61 HBauO
+  + CALCULATED (was "regulär" + ASSUMED). `f68998e`
+- **Bug 80** — killed the hardcoded "Gebäudeklasse 1–3" exec clause that
+  contradicted the GK 4 MFH (condition on Sonderbau instead). `f68998e`
+- **Bug 74** — neubau document baseline (Standsicherheit, Brandschutz, GEG,
+  Schallschutz DIN 4109, Entwässerung, Stellplatz) + both surfaces show the
+  canonical required list, not the persona's thin one (1 doc → 9).
+- **Bug 82** — scrubbed `v1.0.23` + `docs/cost-formula.md` from the PDF glossary.
+- **Bug 76 + 77** — cover template-field clamp + procedure-heading clamp
+  (`ellipsizeToWidth`), render-verified no overflow.
+
+**DEFERRED to v1.0.30 (flagged, with evidence):**
+- **Bug 72** — wizard map shows München for non-Bayern. The map is München-
+  locked at the geocoder + bounds layer (Phase-5 narrowing); recentering
+  nationwide crosses the pilot product boundary — deep, not surgical.
+- **Bug 60** — verification-page signature overlap (deep PDF layout; carried
+  from v1.0.28).
+- **Persona-side (no chat-turn redeploy this sprint):** thin role/suggestion/
+  recommendations_delta emission; `wohnflaeche_gesamt_m2` vs `wohnflaeche` and
+  the dotted-vs-snake fact-key naming inconsistency; the inline synthesis banner.
+- **T-04 / T-06 / T-07 / T-08** — same template-blind pattern.
+- Per-state `legalRuleSnippets` authoring (NRW / BW / Hessen / Niedersachsen).
+
+Gates every commit: bayern-sha MATCH · 16-state T-01 matrix 16/16 · T-05 fixture
+green · new Hamburg T-02 fixture + Bayern regression assertions · smoke:architect
+200/0 · pdf-text · citations · build · bundle ~281 KB gz. No Edge Function
+redeploy, no migrations. Net-zero lint.
+
 ## v1.0.28 — T-05 demolition pipeline alignment (NRW exemplar) (2026-05-24)
 
 Rutik's first live smoke walk of a never-before-tested template (T-05 Abbruch,

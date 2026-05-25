@@ -417,6 +417,28 @@ export function drawMonoMeta(
  * Two-line stack: small CLAY label above, Inter-Medium INK value below.
  * Used for the cover-page 3-column metadata grid + key-data table rows.
  */
+/**
+ * v1.0.29 Bug 76/77 — trim a string with a trailing ellipsis so it fits
+ * `maxWidth` at the given font/size. Idempotent on already-short text.
+ */
+export function ellipsizeToWidth(
+  text: string,
+  font: { widthOfTextAtSize: (s: string, size: number) => number },
+  size: number,
+  maxWidth: number,
+  safe: (s: string) => string,
+): string {
+  if (font.widthOfTextAtSize(safe(text), size) <= maxWidth) return text
+  let s = text
+  while (
+    s.length > 1 &&
+    font.widthOfTextAtSize(safe(`${s}…`), size) > maxWidth
+  ) {
+    s = s.slice(0, -1)
+  }
+  return `${s.replace(/\s+$/, '')}…`
+}
+
 export function drawLabelValue(
   page: PDFPage,
   x: number,
@@ -424,6 +446,9 @@ export function drawLabelValue(
   label: string,
   value: string,
   fonts: EditorialFonts,
+  // v1.0.29 Bug 76 — clamp the value to the column width so a long label
+  // (e.g. "T-02 · New build (MFH)") cannot overflow into the next cell.
+  maxWidth?: number,
 ): void {
   page.drawText(fonts.safe(label), {
     x,
@@ -432,7 +457,11 @@ export function drawLabelValue(
     font: fonts.sansMedium,
     color: CLAY,
   })
-  page.drawText(fonts.safe(value), {
+  const v =
+    maxWidth != null
+      ? ellipsizeToWidth(value, fonts.sansMedium, 12, maxWidth, fonts.safe)
+      : value
+  page.drawText(fonts.safe(v), {
     x,
     y: y - 16,
     size: 12,

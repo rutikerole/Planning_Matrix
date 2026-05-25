@@ -461,7 +461,24 @@ shipped in Phase 13 Week 4). What's missing is the cron harness
 
 ## 9. Operational responsibilities — split between engineering and client
 
-**v1.0.28 (T-05 pipeline alignment) IS THE CURRENT RELEASE.** Rutik's first
+**v1.0.29 (T-02 MFH Hamburg alignment + Stadtstaat Bayern-bleed) IS THE CURRENT
+RELEASE.** Rutik's first live T-02 (New build MFH · Hamburg) smoke walk proved
+the v1.0.28 fixes were T-05-scoped and exposed a NEW class — Bayern-authored
+topic tables (`legalRuleSnippets.ts`, `humanizeFact.ts`) leaking München/BayBO
+into every non-Bayern web render. v1.0.29 fixes 17 of 19 bugs (64-82): Bug 65
+(Bayern bleed, 15-state), Bug 64 (cost key `wohnflaeche_gesamt_m2`), Bug 66 (web
+Domain B), Bug 67 (role floor + version-token scrub), Bug 68 (T-02 suggestions),
+Bug 69+70 (spine-stage progress + synthesis handoff), Bug 71+81 (fact-key
+labels), Bug 75 (PDF "decided" not "verified"), Bug 73+79 (procedure vereinfacht
++ CALCULATED), Bug 80 (exec GK-1-3 contradiction), Bug 74 (neubau docs baseline),
+Bug 82 (glossary scrub), Bug 76+77 (PDF layout clamps). DEFERRED to v1.0.30:
+Bug 72 (map München-locked — Phase-5 geocoder boundary, deep), Bug 60 (signature
+overlap), persona-side emission gaps. **The template-blind pattern still affects
+T-04/T-06/T-07/T-08** — T-02 + T-05 are the proofs of fix-shape; see
+docs/V1_0_29_T02_HAMBURG_DIAGNOSIS.md. Bayern SHA b18d3f7f...3471 held across all
+10 commits. **Full-Germany ship remains 🟡 not-GREEN.**
+
+**v1.0.28 (T-05 pipeline alignment).** Rutik's first
 live T-05 (demolition · NRW · Bonn) smoke walk exposed the deterministic
 result/PDF pipeline as TEMPLATE-BLIND (it assumed T-01 shape + overrode the
 state-correct persona). v1.0.28 fixes the T-05 NRW exemplar: Bug 52 (procedure

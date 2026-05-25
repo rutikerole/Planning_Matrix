@@ -772,7 +772,6 @@ export async function buildExportPdf({
   const resolvedProcs = resolveProcedures(project, state as ProjectState)
   const resolvedRoles = resolveRoles(project, state as ProjectState)
   const procs = resolvedProcs.procedures
-  const docs = state.documents ?? []
   const roles = resolvedRoles.roles
   const facts = state.facts ?? []
 
@@ -857,11 +856,13 @@ export async function buildExportPdf({
     fassadenflaeche_m2: procedureCase.fassadenflaeche_m2,
   }
   const resolvedDocs = resolveDocuments(project, state)
+  // v1.0.29 Bug 74 — show the canonical required list whenever the project is
+  // not hard-blocker-gated. Previously a single persona-emitted document
+  // (docs.length > 0) suppressed the whole required-Anlagen set, so the T-02
+  // Hamburg brief listed one doc instead of the ~7 a new build needs.
   const requiredDocs: RequiredDocument[] = resolvedDocs.blockedByVoranfrage
     ? []
-    : docs.length > 0
-      ? []
-      : requiredDocumentsForCase(docCase)
+    : requiredDocumentsForCase(docCase)
   const statusLabelDe: Record<RequiredDocument['status'], string> = {
     required: 'ERFORDERLICH',
     conditional: 'BEDINGT',
@@ -886,11 +887,9 @@ export async function buildExportPdf({
           ? 'Hard blocker active — pre-decision required first.'
           : 'Hard Blocker aktiv — Bauvoranfrage zuerst erforderlich.',
       }]
-    : docs.length > 0
-      ? docs.map((d) => ({
-          title: (lang === 'en' ? d.title_en : d.title_de) ?? '',
-        }))
-      : requiredDocs.map((r) => {
+    : // v1.0.29 Bug 74 — always render the canonical required-Anlagen list
+      // (was suppressed to the persona's thin docs when docs.length > 0).
+      requiredDocs.map((r) => {
           const statusLabel =
             lang === 'en' ? statusLabelEn[r.status] : statusLabelDe[r.status]
           const titleBase = lang === 'en' ? r.name_en : r.name_de

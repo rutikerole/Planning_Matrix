@@ -186,6 +186,77 @@ export function requiredDocumentsForCase(
     })
   }
 
+  // ── Neubau baseline (v1.0.29 Bug 74) ──────────────────────────
+  // requiredDocumentsForCase was eingriff-flag-gated (T-03 Sanierung-shaped):
+  // a new build never sets eingriff_tragende_teile / fassadenflaeche, so
+  // Standsicherheit, Brandschutz, GEG, Schallschutz, Entwässerung, Stellplatz
+  // never emitted — the T-02 Hamburg brief showed a single document. A new
+  // build always needs the structural + fire + energy + drainage + parking
+  // set; MFH/attached buildings additionally DIN 4109 sound insulation.
+  if (c.intent === 'neubau') {
+    out.push({
+      key: 'standsicherheitsnachweis',
+      name_de: 'Standsicherheitsnachweis (Statik)',
+      name_en: 'Structural calculation',
+      status: 'required',
+      delivery_de: 'Tragwerksplaner:in',
+      delivery_en: 'Structural engineer',
+      citation: cit.structuralCertCitation,
+    })
+    out.push({
+      key: 'brandschutznachweis',
+      name_de: 'Brandschutznachweis',
+      name_en: 'Fire-protection certificate',
+      status: 'conditional',
+      delivery_de: 'Brandschutzplaner:in oder Architekt:in (je Gebäudeklasse)',
+      delivery_en: 'Fire-protection engineer or architect (per Gebäudeklasse)',
+      citation: brandschutzCitation,
+      condition_note_de:
+        'Erforderlich ab Gebäudeklasse 3; bei GK 1+2 zumeist im Bauantrag erfasst.',
+      condition_note_en:
+        'Required from building class 3 onward; classes 1+2 usually covered in the permit application.',
+    })
+    out.push({
+      key: 'geg_waermeschutznachweis_neubau',
+      name_de: 'GEG-Wärmeschutznachweis (Neubau)',
+      name_en: 'GEG thermal-insulation certificate (new build)',
+      status: 'required',
+      delivery_de: 'Energieberater:in (dena-Liste)',
+      delivery_en: 'Energy consultant (dena registry)',
+      citation: '§ 48 GEG',
+    })
+    out.push({
+      key: 'schallschutznachweis',
+      name_de: 'Schallschutznachweis (DIN 4109)',
+      name_en: 'Sound-insulation certificate (DIN 4109)',
+      status: 'conditional',
+      delivery_de: 'Schallschutzgutachter:in',
+      delivery_en: 'Acoustic consultant',
+      citation: 'DIN 4109',
+      condition_note_de:
+        'Pflicht bei Mehrfamilienhäusern und aneinandergebauten Gebäuden.',
+      condition_note_en: 'Mandatory for multi-family and attached buildings.',
+    })
+    out.push({
+      key: 'entwaesserungsplan',
+      name_de: 'Entwässerungsplan',
+      name_en: 'Drainage plan',
+      status: 'required',
+      delivery_de: 'Architekt:in oder Fachplaner:in',
+      delivery_en: 'Architect or specialist planner',
+      citation: bauVorl,
+    })
+    out.push({
+      key: 'stellplatznachweis',
+      name_de: 'Stellplatznachweis',
+      name_en: 'Parking provision certificate',
+      status: 'required',
+      delivery_de: 'Architekt:in',
+      delivery_en: 'Architect',
+      citation: bauVorl,
+    })
+  }
+
   // ── Eingriff in tragende Teile ─────────────────────────────────
   if (c.eingriff_tragende_teile) {
     out.push({
