@@ -320,4 +320,22 @@ export const factLabelsDe: Record<string, FactLabel> = {
   'fahrradstellplatz.pflicht': { label: 'Fahrradstellplatz-Pflicht' },
   'geg.pflicht': { label: 'GEG-Pflicht' },
   'geg_pflicht': { label: 'GEG-Pflicht' },
+  // v1.0.30 Bug 104 — siehe EN-Pendant. T-04 Umnutzung Fakt-Schlüssel; beide
+  // Schreibweisen (ä / ae) registriert, da der Persona-Output schwankt.
+  'use_change_from': { label: 'Bisherige Nutzung' },
+  'use_change_to': { label: 'Neue Nutzung' },
+  'nutzungsaenderung_von': { label: 'Bisherige Nutzung' },
+  'nutzungsaenderung_zu': { label: 'Neue Nutzung' },
+  'gebietstyp_annahme': { label: 'Gebietstyp (Annahme)' },
+  'sonderbau_trigger': { label: 'Sonderbau-Trigger' },
+  'gebaeude_baujahr': { label: 'Baujahr' },
+  'bestandsgebaeude_baujahr': { label: 'Baujahr' },
+  'strukturelle_aenderungen': { label: 'Strukturelle Änderungen' },
+  'nettogrundflaeche_m2': { label: 'Nettogrundfläche', unit: 'm²' },
+  'nettogrundfläche_m2': { label: 'Nettogrundfläche', unit: 'm²' },
+  'schallschutz_massnahmen_erforderlich': { label: 'Schallschutzmaßnahmen erforderlich' },
+  'ta_laerm_gutachten_erforderlich': { label: 'TA-Lärm-Gutachten erforderlich' },
+  'verfahren_genehmigungspflichtig': { label: 'Genehmigungspflichtig' },
+  'rettungsweg_zweiter': { label: 'Zweiter Rettungsweg' },
+  'brandschutz_massnahmen': { label: 'Brandschutzmaßnahmen' },
 }

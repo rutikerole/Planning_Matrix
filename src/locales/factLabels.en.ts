@@ -313,4 +313,26 @@ export const factLabelsEn: Record<string, FactLabel> = {
   'fahrradstellplatz.pflicht': { label: 'Bicycle parking requirement' },
   'geg.pflicht': { label: 'GEG requirement' },
   'geg_pflicht': { label: 'GEG requirement' },
+  // v1.0.30 Bug 104 — T-04 use-conversion fact keys. The Leipzig walk's Key
+  // Data table leaked humanized raw keys ("Use Change From", "Gebietstyp
+  // Annahme", "Ta Laerm Gutachten Erforderlich", …) in BOTH locales because
+  // factLabels had no entries. Bug-83 trap: the live persona emits
+  // `nettogrundfläche_m2` WITH ä (PDF showed "Nettogrundfläche M2"), not the
+  // ASCII form personaBehaviour.ts:174 documents — so BOTH forms are mapped.
+  'use_change_from': { label: 'Current use' },
+  'use_change_to': { label: 'Intended use' },
+  'nutzungsaenderung_von': { label: 'Current use' },
+  'nutzungsaenderung_zu': { label: 'Intended use' },
+  'gebietstyp_annahme': { label: 'Assumed area type' },
+  'sonderbau_trigger': { label: 'Special-occupancy (Sonderbau) trigger' },
+  'gebaeude_baujahr': { label: 'Year built' },
+  'bestandsgebaeude_baujahr': { label: 'Year built' },
+  'strukturelle_aenderungen': { label: 'Structural changes' },
+  'nettogrundflaeche_m2': { label: 'Net floor area (NGF)', unit: 'm²' },
+  'nettogrundfläche_m2': { label: 'Net floor area (NGF)', unit: 'm²' },
+  'schallschutz_massnahmen_erforderlich': { label: 'Sound-insulation measures required' },
+  'ta_laerm_gutachten_erforderlich': { label: 'TA Lärm assessment required' },
+  'verfahren_genehmigungspflichtig': { label: 'Permit required' },
+  'rettungsweg_zweiter': { label: 'Second escape route' },
+  'brandschutz_massnahmen': { label: 'Fire-protection measures' },
 }
