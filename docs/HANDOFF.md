@@ -461,8 +461,26 @@ shipped in Phase 13 Week 4). What's missing is the cron harness
 
 ## 9. Operational responsibilities — split between engineering and client
 
-**v1.0.29 (T-02 MFH Hamburg alignment + Stadtstaat Bayern-bleed) IS THE CURRENT
-RELEASE.** Rutik's first live T-02 (New build MFH · Hamburg) smoke walk proved
+**v1.0.29.2 (chat-UX overlap / auto-scroll / sidebar-desync hotfix) IS THE
+CURRENT RELEASE.** Rutik's T-02 Hamburg smoke walk (Round 10, mid-stream) exposed
+4 chat-viewport defects, all wiring/behavior in existing machinery: Bug 84
+(auto-scroll didn't follow the persona stream — the streaming bubble had no
+spec-tag for `useAutoScroll` to target), Bug 85 (fixed 200px input-zone reserve
+overflowed for stacked-mobile/multi-line input → ResizeObserver dynamic reserve),
+Bug 86 (stale previous-turn chips visible during compose → hidden while
+thinking/streaming), Bug 87 (sidebar "speaking now" desynced from the header →
+single-sourced to recentSpecialist). Decision logic extracted to
+`src/features/chat/lib/chatUxDecisions.ts` + a `smoke:chat-ux` gate (18
+assertions, CI-wired); the visual result is confirmed by operator smoke walk (no
+browser runner — Playwright deferred). See `docs/V1_0_29_2_CHAT_UX_DIAGNOSIS.md`.
+Bayern SHA held across all commits.
+
+**v1.0.29.1 (Bug 83 verfahren fact-key alignment).** Post-ship validation caught
+that the procedure-conclusion fixes read `verfahren_indikation` while the persona
+emits `verfahren.typ`; fixtures masked it. Fixed the read + re-audited Bug 52.
+
+**v1.0.29 (T-02 MFH Hamburg alignment + Stadtstaat Bayern-bleed).** Rutik's first
+live T-02 (New build MFH · Hamburg) smoke walk proved
 the v1.0.28 fixes were T-05-scoped and exposed a NEW class — Bayern-authored
 topic tables (`legalRuleSnippets.ts`, `humanizeFact.ts`) leaking München/BayBO
 into every non-Bayern web render. v1.0.29 fixes 17 of 19 bugs (64-82): Bug 65

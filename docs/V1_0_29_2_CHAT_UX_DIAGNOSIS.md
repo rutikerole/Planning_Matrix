@@ -115,3 +115,33 @@ pure decision logic + `smoke:chat-ux` gate · C7 docs + tag v1.0.29.2.
 Bayern SHA MATCH · matrix 16/16 · T-05 + T-02 fixtures green · v1.0.29.1 procedure
 fix untouched · no PDF regression · no BriefingCTA hero/ready regression · mobile +
 desktop in the layout math · net-zero lint.
+
+---
+
+## RESOLUTION (commit hashes)
+
+| Bug | Fix | Commit |
+|---|---|---|
+| 85 dynamic input-zone reserve | ResizeObserver → `--chamber-input-h` | `3723c06` (C2) |
+| 84 stream auto-scroll | streaming anchor + near-edge gate | `f367c65` (C3) |
+| 86 hide stale chips | `chipsVisible` while thinking/streaming | `5fde4a2` (C4) |
+| 87 spine single-source | `liveStageForSpecialist(recentSpecialist)` | `4e1baf0` (C5) |
+| pure-logic gate | `chatUxDecisions.ts` + `smoke:chat-ux` (18) | `6651aad` (C6) |
+
+**Status:** decision logic CODE-COMPLETE + smoke-gated (18/0). Visual feel
+(scroll position, no-overlap, loading, sidebar highlight) = NEEDS operator visual
+confirm — no DOM/browser runner.
+
+## Operator smoke-walk checklist (desktop + mobile)
+- **Bug 84:** click a Yes/No chip → the new section scrolls so its title is near
+  the top (not crammed at the bottom). Scroll UP mid-stream → it must NOT yank
+  you down (JumpToLatest pill appears instead). Long multi-paragraph section →
+  reads top-down without fighting.
+- **Bug 85 (mobile especially):** with a multi-line reply typed AND a multi-chip
+  question, the streaming text never hides behind the chips/input; ≥24px gap.
+- **Bug 86:** the moment you send a reply, the old chips disappear (not just dim);
+  fresh chips appear only after the new section finishes.
+- **Bug 87:** while a section streams, the sidebar "speaking now" matches the
+  top-right header (e.g. both "Other regulations" when "Adjacent rules" renders).
+- **No-regression:** BriefingCTA hero/ready pulse (v1.0.29 Bug 70) doesn't cause a
+  layout jump mid-stream; mobile spine drawer label matches desktop.

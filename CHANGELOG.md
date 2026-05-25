@@ -1,5 +1,35 @@
 # Changelog
 
+## v1.0.29.2 — chat-UX overlap / auto-scroll / sidebar-desync hotfix (2026-05-25)
+
+Rutik's T-02 Hamburg smoke walk (Round 10, mid-stream) exposed 4 chat-viewport
+defects — all WIRING/BEHAVIOR in existing machinery, not missing features. See
+`docs/V1_0_29_2_CHAT_UX_DIAGNOSIS.md`.
+
+- **Bug 84** — auto-scroll didn't follow the persona STREAM. `useAutoScroll`
+  fired only on the persisted turn; the streaming bubble had no `spec-tag`, so
+  new sections crammed against the chips. Now scrolls the streaming anchor's top
+  to topOffset on stream-start, gated by near-live-edge (no fighting a user
+  reading history). `f367c65`
+- **Bug 85** — fixed 200px input-zone reserve overflowed (stacked mobile chips +
+  multi-line textarea ≈ 276px). ResizeObserver → `--chamber-input-h` → thread
+  padding + zone margin track the real height +24px. `3723c06`
+- **Bug 86** — stale previous-turn chips stayed visible (dimmed) while a new
+  section composed. Now hidden entirely while thinking/streaming, re-rendered
+  fresh on land. `5fde4a2`
+- **Bug 87** — sidebar "speaking now" used a different source (state-based
+  first-not-done) than the header (recentSpecialist), so they disagreed
+  mid-stream. Single-sourced the spine live-marker to recentSpecialist. `4e1baf0`
+
+Decision logic extracted to `chatUxDecisions.ts` + a new `smoke:chat-ux` gate
+(18 assertions, CI-wired) `6651aad`. **Verification:** DOM/visual bugs — the
+deterministic logic is gated; scroll/overlap/loading feel is confirmed by the
+operator smoke walk (no browser runner; Playwright deferred to an infra sprint).
+
+Gates every commit: bayern-sha MATCH · 16-state matrix 16/16 · pdf-text ·
+citations · architect 200/0 · smoke:chat-ux 18/0 · bundle ~282 KB gz. No
+chat-turn redeploy, no migrations, no PDF-surface change.
+
 ## v1.0.29.1 — Bug 83 verfahren fact-key alignment + Bug 52 re-audit (2026-05-25)
 
 Post-ship validation pass (before the operator smoke-walk) caught that the

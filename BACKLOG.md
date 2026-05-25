@@ -21,6 +21,22 @@ Sprint anchor reminder:
   `b18d3f7f9a6fe238c18cec5361d30ea3a547e46b1ef2b16a1e74c533aacb3471`
   must MATCH at start AND end of every commit in any future sprint.
 
+## Closed in v1.0.29.2 (chat-UX hotfix)
+
+Bug 84 (stream auto-scroll), Bug 85 (dynamic input-zone reserve), Bug 86 (hide
+stale chips while composing), Bug 87 (sidebar "speaking now" single-sourced to
+recentSpecialist). All wiring/behavior fixes in existing chat machinery; decision
+logic gated by `smoke:chat-ux` (18 assertions); visual confirmed by operator
+smoke walk. Diagnosis: docs/V1_0_29_2_CHAT_UX_DIAGNOSIS.md. Deferred: a
+Playwright/jsdom chat-stream test harness (dedicated infra sprint, v1.0.31+).
+
+## Closed in v1.0.29.1 (Bug 83 verfahren fact-key)
+
+resolveProcedure + composeLegalDomains read `verfahren.typ`/`verfahren_typ` in
+addition to `verfahren_indikation`/`PROCEDURE.TYPE`; nrw-t05 + hamburg-t02
+fixtures corrected to the real key shape. Bug 52 re-audited. Deferred to v1.0.30:
+web Procedure-tab qualifier override (resolveProcedures returns persona ASSUMED).
+
 ## Closed in v1.0.29 (T-02 MFH Hamburg — Stadtstaat + template-blind)
 
 CODE-COMPLETE + fixture/render-proven: Bug 64 (cost key), Bug 65 (Bayern bleed —
