@@ -188,6 +188,28 @@ export function composeLegalDomains(
       status: lang === 'en' ? 'sound insulation' : 'Schallschutz',
     })
   }
+  // v1.0.30 Bug 89 — the T-04 Leipzig walk (retail → gastronomy) raised two
+  // substantive building-law topics composeLegalDomains had no matcher for, so
+  // the web Legal Landscape Domain B under-produced after 6 rounds of content:
+  //   • TA Lärm — Außenlärm/Immissionsschutz for the gastronomy use
+  //   • Rettungsweg — second escape route (Hinterhof) for the changed use
+  // Both are state-neutral (TA Lärm is federal; a second Rettungsweg is
+  // required by every Landesbauordnung), so they surface as topic rows without
+  // a state-specific citation — same shape as the Brandschutz / DIN 4109 rows.
+  if (has(/ta[\s-]*l(ä|ae)rm/)) {
+    bRows.push({
+      label: 'TA Lärm',
+      relevance: 'PARTIAL',
+      status: lang === 'en' ? 'noise immission control' : 'Immissionsschutz · Lärm',
+    })
+  }
+  if (has(/rettungsweg/)) {
+    bRows.push({
+      label: 'Rettungsweg',
+      relevance: 'PARTIAL',
+      status: lang === 'en' ? 'second escape route' : 'zweiter Rettungsweg',
+    })
+  }
   // v1.0.28 Bug 54 — Domain B was Bayern-only (the BayBO matchers above
   // sit inside `if (isBayern)`), so ALL 15 non-Bayern states rendered an
   // empty Building-law section ("Not enough information yet") on the web
