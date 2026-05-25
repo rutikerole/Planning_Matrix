@@ -1912,7 +1912,8 @@
         "specialists": "Fachpersonen",
         "openQuestions": "Offene Fragen",
         "inProgress": "In Klärung",
-        "tbd": "—"
+        "tbd": "—",
+        "gkUseConversion": "Keine Neueinstufung · Nutzungsänderung"
       },
       "actions": {
         "doNextEyebrow": "Nächste Schritte",

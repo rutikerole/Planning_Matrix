@@ -1912,7 +1912,8 @@
         "specialists": "Specialists needed",
         "openQuestions": "Open questions",
         "inProgress": "In progress",
-        "tbd": "—"
+        "tbd": "—",
+        "gkUseConversion": "Not re-classified · use conversion"
       },
       "actions": {
         "doNextEyebrow": "Do next",

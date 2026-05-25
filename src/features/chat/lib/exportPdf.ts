@@ -1104,12 +1104,22 @@ export async function buildExportPdf({
       derived.klasse != null
         ? ' · ' + (lang === 'en' ? derived.reasoningEn : derived.reasoningDe)
         : ''
+    // v1.0.30 Bug 93 — a use conversion (T-04) does not re-classify the
+    // building's Gebäudeklasse; deriving a new-build GK from eaves height is
+    // not meaningful, and the bare deferral read as "—" on the web AT A GLANCE.
+    // State it honestly. (An explicit gebaeudeklasse fact, if present, still
+    // renders above via hasExplicitKlasse.)
+    const isUseConv = state.templateId === 'T-04'
     keyDataRows.push({
       field: lang === 'en' ? 'Building class' : 'Gebäudeklasse',
-      value: gkValue + reasoningSuffix,
+      value: isUseConv
+        ? lang === 'en'
+          ? 'Not re-classified — use conversion (existing building unchanged)'
+          : 'Keine Neueinstufung — Nutzungsänderung (Bestand unverändert)'
+        : gkValue + reasoningSuffix,
       qualifier: {
         source: 'LEGAL',
-        quality: derived.qualifier,
+        quality: isUseConv ? 'CALCULATED' : derived.qualifier,
       },
     })
   }

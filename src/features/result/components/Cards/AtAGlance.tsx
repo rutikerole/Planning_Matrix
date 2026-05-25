@@ -64,11 +64,15 @@ export function AtAGlance({ project, state }: Props) {
   const derivedKlasse = deriveGebaeudeklasse(
     deriveGkInputFromFacts(facts, state.templateId ?? null),
   )
+  // v1.0.30 Bug 93 — a use conversion (T-04) does not re-classify the building's
+  // Gebäudeklasse; show that honestly instead of the bare "—" tbd placeholder.
   const klasseValue = explicitKlasse
     ? explicitKlasse
-    : derivedKlasse.klasse != null
-      ? formatGebaeudeklasseValue(derivedKlasse, lang)
-      : t('result.workspace.ataglance.tbd')
+    : state.templateId === 'T-04'
+      ? t('result.workspace.ataglance.gkUseConversion')
+      : derivedKlasse.klasse != null
+        ? formatGebaeudeklasseValue(derivedKlasse, lang)
+        : t('result.workspace.ataglance.tbd')
 
   // Cost — reuse the München heuristic engine, now with area + zone +
   // region inputs flowing through (A.4).
