@@ -60,6 +60,11 @@ jobs:
       - name: Citations smoke
         run: npm run smoke:citations
 
+      # v1.0.29.2 — chat-UX decision logic (auto-scroll gate, chips visibility,
+      # spine speaking-now source, dynamic input-zone reserve math).
+      - name: Chat-UX smoke
+        run: npm run smoke:chat-ux
+
       - name: Run Playwright
         run: npx playwright test
         env:

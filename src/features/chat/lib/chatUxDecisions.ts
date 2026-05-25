@@ -50,3 +50,24 @@ export function liveStageForSpecialist(
   const stage = SPINE_STAGES.find((s) => s.ownerSpecialist === specialist)
   return stage ? stage.id : null
 }
+
+/** Breathing room (px) between the last line of thread content and the input zone. */
+export const INPUT_ZONE_BREATHING_PX = 24
+
+/**
+ * Bug 85 — the reserve spec ChamberLayout applies in CSS:
+ *   thread padding-bottom = measuredHeight + breathing
+ *   input-zone margin-top  = -measuredHeight
+ * Mirrored here as the canonical math so smoke:chat-ux can assert the sizing
+ * (the layout itself uses CSS calc(var(--chamber-input-h) …) — no DOM render
+ * available to test, so the contract lives in this pure spec).
+ */
+export function inputZoneReserve(measuredHeightPx: number): {
+  padBottom: number
+  marginTop: number
+} {
+  return {
+    padBottom: measuredHeightPx + INPUT_ZONE_BREATHING_PX,
+    marginTop: -measuredHeightPx,
+  }
+}
