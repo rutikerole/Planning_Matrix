@@ -26,6 +26,7 @@ import { composeRisks } from '../src/features/result/lib/composeRisks.ts'
 import { composeDoNext } from '../src/features/result/lib/composeDoNext.ts'
 import { findRuleSnippet } from '../src/data/legalRuleSnippets.ts'
 import { humanizeFact } from '../src/features/result/lib/humanizeFact.ts'
+import { resolveAreaSqmByTemplate } from '../src/features/result/lib/costNormsMuenchen.ts'
 import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'node:path'
@@ -408,6 +409,24 @@ function runBayernBleed(): Tally {
   return t
 }
 
+function runCostArea(): Tally {
+  console.log('\n[smoke-architect] T-02 cost area-reader (C3 / Bug 64)…')
+  const t: Tally = { passed: 0, failed: 0 }
+  const { state } = loadFixtureState('test/fixtures/hamburg-t02-mfh.json')
+  const facts = (state.facts ?? []) as Array<{ key: string; value: unknown }>
+  // Direct: wohnflaeche_gesamt_m2 = 720 must resolve (was missing → 180).
+  const direct = resolveAreaSqmByTemplate(facts, 'T-02')
+  ok(t, direct === 720, `T-02: area resolves to 720 m² from wohnflaeche_gesamt_m2 (got ${direct})`)
+  ok(t, direct !== 180, 'T-02: area is NOT the 180 m² default')
+  // Derived fallback: with no total key, 8 units × 90 m² = 720.
+  const noTotal = facts.filter(
+    (f) => !['wohnflaeche', 'wohnflaeche_m2', 'wohnflaeche_gesamt_m2', 'wohnflaeche_gesamt'].includes(f.key),
+  )
+  const derived = resolveAreaSqmByTemplate(noTotal, 'T-02')
+  ok(t, derived === 720, `T-02: area derives 720 m² from units × per-unit when total absent (got ${derived})`)
+  return t
+}
+
 function main(): void {
   const sections: Tally[] = [
     runInviteParse(),
@@ -417,6 +436,7 @@ function main(): void {
     runRisks(),
     runDoNext(),
     runBayernBleed(),
+    runCostArea(),
   ]
   const passed = sections.reduce((n, s) => n + s.passed, 0)
   const failed = sections.reduce((n, s) => n + s.failed, 0)

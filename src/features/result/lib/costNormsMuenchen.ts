@@ -303,8 +303,11 @@ export function detectAreaSqm(corpus: string): number | undefined {
  */
 const COST_BASIS_FIELD_BY_TEMPLATE: Partial<Record<TemplateId, readonly string[]>> = {
   // Lists are tried in order; first numeric hit wins.
-  'T-01': ['wohnflaeche', 'wohnflaeche_m2'],
-  'T-02': ['wohnflaeche', 'wohnflaeche_m2'],
+  // v1.0.29 Bug 64 — the T-02 Hamburg smoke walk proved the persona emits
+  // `wohnflaeche_gesamt_m2` (720), which was absent here → the engine fell
+  // back to BASE_AREA_SQM=180 and quoted €24,700–46,200 for a 720 m² MFH.
+  'T-01': ['wohnflaeche', 'wohnflaeche_m2', 'wohnflaeche_gesamt_m2', 'wohnflaeche_gesamt'],
+  'T-02': ['wohnflaeche', 'wohnflaeche_m2', 'wohnflaeche_gesamt_m2', 'wohnflaeche_gesamt'],
   'T-03': ['fassadenflaeche_m2'],
   'T-04': ['nutzflaeche_m2', 'nutzflaeche'],
   'T-05': ['bruttoraumflaeche_m3'],
@@ -346,6 +349,28 @@ export function resolveAreaSqmByTemplate(
       if (Number.isFinite(parsed)) n = parsed
     }
     if (n != null && Number.isFinite(n) && n >= 20 && n <= 5000) return n
+  }
+  // v1.0.29 Bug 64 — MFH fallback: when no total Wohnfläche key resolved,
+  // derive it from units × per-unit area (the persona reliably emits both
+  // even when it omits the explicit total).
+  if (templateId === 'T-02') {
+    const num = (key: string): number | undefined => {
+      const f = facts.find((x) => x.key === key)
+      if (!f) return undefined
+      const v =
+        typeof f.value === 'number'
+          ? f.value
+          : typeof f.value === 'string'
+            ? parseFloat(f.value)
+            : NaN
+      return Number.isFinite(v) ? v : undefined
+    }
+    const units = num('wohneinheiten_anzahl')
+    const perUnit = num('wohneinheit_flaeche_m2')
+    if (units && perUnit) {
+      const total = units * perUnit
+      if (total >= 20 && total <= 5000) return total
+    }
   }
   return undefined
 }
