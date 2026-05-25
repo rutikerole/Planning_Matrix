@@ -42,6 +42,10 @@ export interface ResolvedSpineStage {
 export function useSpineStages(
   project: ProjectRow | null | undefined,
   messages: MessageRow[] | undefined,
+  // v1.0.29.2 Bug 87 — the current speaker (same source as the header). When
+  // set, the "speaking now" live marker moves to this specialist's stage so the
+  // sidebar agrees with the ConversationStrip header + the rendered content.
+  recentSpecialist: Specialist | null = null,
 ): ResolvedSpineStage[] {
   const { t } = useTranslation()
   const messageCount = messages?.length ?? 0
@@ -82,14 +86,27 @@ export function useSpineStages(
     const allDone = liveIdx === -1
     if (allDone) liveIdx = SPINE_STAGES.length - 1
 
-    return SPINE_STAGES.map((s, i): ResolvedSpineStage => {
+    // v1.0.29.2 Bug 87 — the "speaking now" live marker follows the current
+    // speaker (recentSpecialist), the SAME source the header uses. The
+    // state-based liveIdx still drives done/next/future (monotonic completion
+    // preserved); only the live highlight is re-pointed at the speaker.
+    const speakerIdx =
+      recentSpecialist != null
+        ? SPINE_STAGES.findIndex((s) => s.ownerSpecialist === recentSpecialist)
+        : -1
+    const effectiveLiveIdx = speakerIdx >= 0 ? speakerIdx : liveIdx
+
+    const result = SPINE_STAGES.map((s, i): ResolvedSpineStage => {
       let status: SpineStageStatus
-      if (allDone) {
-        status = i === liveIdx ? 'live' : 'done'
+      if (i === effectiveLiveIdx) {
+        status = 'live'
+      } else if (allDone) {
+        status = 'done'
       } else if (i < liveIdx) {
         status = 'done'
       } else if (i === liveIdx) {
-        status = 'live'
+        // state-based live got demoted to next (the speaker is elsewhere).
+        status = 'next'
       } else if (i === liveIdx + 1) {
         status = 'next'
       } else {
@@ -131,10 +148,11 @@ export function useSpineStages(
         firstMessageIndex: firstIdx,
       }
     })
+    return result
     // The dependency on messageCount + state captures every meaningful
     // change without subscribing to message body churn.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [state, messageCount, t])
+  }, [state, messageCount, recentSpecialist, t])
 }
 
 /** Helper used by useChamberProgress to expose currentStageId. */

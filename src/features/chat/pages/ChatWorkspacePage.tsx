@@ -175,7 +175,9 @@ export function ChatWorkspacePage() {
   // Phase 7.5 — useSpineStages must be called unconditionally; hook
   // tolerates project=null and returns 8 future-status rows in that
   // case, so it's safe above the early-return.
-  const spineStages = useSpineStages(project, messages)
+  // v1.0.29.2 Bug 87 — pass the current speaker so the spine "speaking now"
+  // marker uses the same source as the ConversationStrip header.
+  const spineStages = useSpineStages(project, messages, progress.recentSpecialist)
 
   if (!project) return null
 

@@ -2,6 +2,9 @@
 // assert it without a DOM/browser runner (the repo has no jsdom/RTL/Playwright).
 // The React hooks/components below import these; the smoke gate unit-tests them.
 
+import { SPINE_STAGES, type SpineStageId } from './spineStageDefinitions'
+import type { Specialist } from '@/types/projectState'
+
 /** Stable DOM id on the streaming assistant bubble so useAutoScroll can target
  *  the in-flight section (persisted turns use `spec-tag-<id>`, which the
  *  streaming bubble does not have). */
@@ -31,4 +34,19 @@ export function shouldFollowStreamOnStart(
  */
 export function chipsVisible(isThinking: boolean, isStreaming: boolean): boolean {
   return !isThinking && !isStreaming
+}
+
+/**
+ * Bug 87 — map the current speaker to its spine stage so the sidebar
+ * "speaking now" marker uses the SAME source as the header (ConversationStrip's
+ * recentSpecialist), instead of useSpineStages' state-based first-not-done
+ * (which lagged: header said "OTHER RULES · LIVE" while the sidebar highlighted
+ * "Procedure synthesis"). Returns null when there's no current speaker.
+ */
+export function liveStageForSpecialist(
+  specialist: Specialist | null,
+): SpineStageId | null {
+  if (!specialist) return null
+  const stage = SPINE_STAGES.find((s) => s.ownerSpecialist === specialist)
+  return stage ? stage.id : null
 }
