@@ -1486,6 +1486,24 @@ async function runDemoCellsRender(): Promise<{ passed: number; failed: number }>
       expect(!BAYERN_LEAK.test(text), `Hessen T-03 ${lang}: no Bayern-leak (Check 6)`)
       expect(pages === 12, `Hessen T-03 ${lang}: 12 sections rendered (Check 4, got ${pages})`)
       expect(execMarker.test(text), `Hessen T-03 ${lang}: Executive Top-3 page renders (Check 4 / Bug 103)`)
+      // Check 5 — Hessen is substantive: no stub-state §-placeholder may leak
+      // into role/document/citation text. (The cost stub's legitimate
+      // "in Vorbereitung" is NOT a stub-state marker; the markers are the
+      // STUB_VERIFY phrasings below.)
+      expect(
+        !/noch nicht hinterlegt|Detail-Spezifika|Detail-§/u.test(text),
+        `Hessen T-03 ${lang}: no stub-state §-placeholder leak (Check 5)`,
+      )
+      // Check 9 — renovation documents populated + GEG-Sanierung cert present
+      // (envelope intervention triggers GEG), not an empty/new-build-only set.
+      const docsPopulated = lang === 'en'
+        ? !/No documents recorded yet/u.test(text)
+        : !/Noch keine Dokumente erfasst/u.test(text)
+      expect(docsPopulated, `Hessen T-03 ${lang}: Documents section populated (Check 9)`)
+      expect(
+        /Wärmeschutznachweis|Energieausweis|thermal/u.test(text),
+        `Hessen T-03 ${lang}: GEG renovation document present (Check 9)`,
+      )
     }
     // T-05 NRW Köln — demolition honest stub, verfahrensfrei § 62 BauO NRW.
     {
