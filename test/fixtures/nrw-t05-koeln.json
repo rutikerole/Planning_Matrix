@@ -1,0 +1,49 @@
+{
+  "_comment": "v1.0.31 demo cell C2 — T-05 Abbruch, NRW, Köln (50674), detached GK 2, built 1975, no Denkmal/Erhaltungssatzung/Sanierungsgebiet/Baulast. Persona seeded verfahren.typ='verfahrensfrei nach § 62 BauO NRW' -> resolveProcedure branch 2 -> kind 'verfahrensfrei', CALCULATED, citation '§ 62 BauO NRW'. Mirrors the proven nrw-t05-bonn shape (which stays green) for a second NRW city. Citation manually verified against BauO NRW 2018 (§ 62 verfahrensfreie Vorhaben incl. Abbruch GK1-3). Cost: abbruch -> honest demolition stub. Used by smoke-architect-flow runNrwT05Koeln + smoke-pdf-text demo-cell render arm.",
+  "project": {
+    "id": "00000000-0000-0000-0000-000000003105",
+    "owner_id": "00000000-0000-0000-0000-00000000beef",
+    "intent": "abbruch",
+    "has_plot": true,
+    "plot_address": "Aachener Straße 100, 50674 Köln",
+    "bundesland": "nrw",
+    "template_id": "T-05",
+    "name": "Abbruch Aachener Straße",
+    "status": "in_progress",
+    "state": {
+      "templateId": "T-05",
+      "schemaVersion": 1,
+      "areas": {
+        "A": { "state": "ACTIVE", "reason": "§ 34 BauGB Innenbereich angenommen; kein Bebauungsplan, kein Sanierungsgebiet, keine Erhaltungssatzung" },
+        "B": { "state": "ACTIVE", "reason": "Verfahrensfrei nach § 62 BauO NRW — Abbruch eines freistehenden Gebäudes Gebäudeklasse 2" },
+        "C": { "state": "ACTIVE", "reason": "Schadstoffrisiko (Baujahr 1975); KrWG-Entsorgungspflichten; keine Baulasten, kein Denkmalschutz" }
+      },
+      "facts": [
+        { "key": "plot.address", "value": "Aachener Straße 100, 50674 Köln", "qualifier": { "source": "CLIENT", "quality": "DECIDED", "setAt": "2026-05-25T00:00:00.000Z", "setBy": "assistant" } },
+        { "key": "bundesland", "value": "Nordrhein-Westfalen", "evidence": "PLZ 50674 liegt in Köln, Nordrhein-Westfalen", "qualifier": { "source": "CLIENT", "quality": "DECIDED", "setAt": "2026-05-25T00:00:00.000Z", "setBy": "assistant" } },
+        { "key": "abbruch_typ", "value": "Vollabbruch", "qualifier": { "source": "CLIENT", "quality": "DECIDED", "setAt": "2026-05-25T00:00:00.000Z", "setBy": "assistant" } },
+        { "key": "denkmalschutz", "value": false, "qualifier": { "source": "CLIENT", "quality": "DECIDED", "setAt": "2026-05-25T00:00:00.000Z", "setBy": "assistant" } },
+        { "key": "gebaeudeklasse", "value": "GK2", "qualifier": { "source": "CLIENT", "quality": "DECIDED", "setAt": "2026-05-25T00:00:00.000Z", "setBy": "assistant" } },
+        { "key": "abbruch_freistehend", "value": true, "qualifier": { "source": "CLIENT", "quality": "DECIDED", "setAt": "2026-05-25T00:00:00.000Z", "setBy": "assistant" } },
+        { "key": "standsicherheit_nachbar_erforderlich", "value": false, "qualifier": { "source": "LEGAL", "quality": "CALCULATED", "setAt": "2026-05-25T00:00:00.000Z", "setBy": "assistant" } },
+        { "key": "baujahr", "value": 1975, "qualifier": { "source": "CLIENT", "quality": "DECIDED", "setAt": "2026-05-25T00:00:00.000Z", "setBy": "assistant" } },
+        { "key": "schadstoff_risiko", "value": "hoch — Asbest, KMF, PCB möglich (Baujahr 1975)", "qualifier": { "source": "LEGAL", "quality": "CALCULATED", "setAt": "2026-05-25T00:00:00.000Z", "setBy": "assistant" } },
+        { "key": "erhaltungssatzung", "value": false, "qualifier": { "source": "CLIENT", "quality": "DECIDED", "setAt": "2026-05-25T00:00:00.000Z", "setBy": "assistant" } },
+        { "key": "sanierungsgebiet", "value": false, "qualifier": { "source": "CLIENT", "quality": "DECIDED", "setAt": "2026-05-25T00:00:00.000Z", "setBy": "assistant" } },
+        { "key": "baulast", "value": false, "qualifier": { "source": "CLIENT", "quality": "DECIDED", "setAt": "2026-05-25T00:00:00.000Z", "setBy": "assistant" } },
+        { "key": "verfahren.typ", "value": "verfahrensfrei nach § 62 BauO NRW", "qualifier": { "source": "LEGAL", "quality": "CALCULATED", "setAt": "2026-05-25T00:00:00.000Z", "setBy": "assistant" } }
+      ],
+      "recommendations": [],
+      "procedures": [
+        { "id": "P-Verfahrensfrei", "title_de": "Verfahrensfrei nach § 62 BauO NRW", "title_en": "Permit-free under § 62 BauO NRW", "status": "nicht_erforderlich", "rationale_de": "Abbruch eines freistehenden Gebäudes der Gebäudeklasse 2 ist nach § 62 BauO NRW verfahrensfrei; Nebenpflichten (Schadstoff, Entsorgung) bleiben.", "rationale_en": "Demolition of a detached building class 2 is permit-free under § 62 BauO NRW; ancillary duties (hazardous materials, disposal) remain.", "qualifier": { "source": "LEGAL", "quality": "CALCULATED", "setAt": "2026-05-25T00:00:00.000Z", "setBy": "assistant" } }
+      ],
+      "documents": [],
+      "specialists": [],
+      "roles": []
+    },
+    "created_at": "2026-05-25T00:00:00.000Z",
+    "updated_at": "2026-05-25T00:00:00.000Z"
+  },
+  "messages": [],
+  "events": []
+}

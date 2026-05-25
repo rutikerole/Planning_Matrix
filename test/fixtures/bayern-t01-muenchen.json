@@ -1,0 +1,46 @@
+{
+  "_comment": "v1.0.31 demo cell C2 — T-01 EFH-Neubau, Bayern, München (Solln, 81477), qualifizierter Bebauungsplan. Persona seeded verfahren.typ='Vereinfachtes Baugenehmigungsverfahren nach BayBO Art. 58' -> resolveProcedure branch 3 -> kind 'vereinfachtes', CALCULATED, citation 'BayBO Art. 58'. Citations manually verified against the repo's Bayern localization (stateLocalization.ts: free=Art.57, simplified=Art.58, regular=Art.59) — repo-consistent with the SHA-locked Bayern content; Art. 58/59 are real BayBO articles. Cost: neubau -> HOAI new-build rows (correct for T-01), area 160 m² Wohnfläche. Used by smoke-architect-flow runBayernT01 + smoke-pdf-text demo-cell render arm.",
+  "project": {
+    "id": "00000000-0000-0000-0000-000000003101",
+    "owner_id": "00000000-0000-0000-0000-00000000beef",
+    "intent": "neubau_einfamilienhaus",
+    "has_plot": true,
+    "plot_address": "Drygalski-Allee 100, 81477 München",
+    "bundesland": "bayern",
+    "template_id": "T-01",
+    "name": "EFH-Neubau Drygalski-Allee",
+    "status": "in_progress",
+    "state": {
+      "templateId": "T-01",
+      "schemaVersion": 1,
+      "areas": {
+        "A": { "state": "ACTIVE", "reason": "Qualifizierter Bebauungsplan nach § 30 Abs. 1 BauGB; Vorhaben fügt sich nach Art und Maß ein." },
+        "B": { "state": "ACTIVE", "reason": "Vereinfachtes Baugenehmigungsverfahren nach BayBO Art. 58 — Wohngebäude Gebäudeklasse 1, kein Sonderbau." },
+        "C": { "state": "ACTIVE", "reason": "GEG-Wärmeschutznachweis und PV-Pflicht (BayBO Art. 44a); Stellplatznachweis nach örtlicher Satzung." }
+      },
+      "facts": [
+        { "key": "plot.address", "value": "Drygalski-Allee 100, 81477 München", "qualifier": { "source": "CLIENT", "quality": "DECIDED", "setAt": "2026-05-25T00:00:00.000Z", "setBy": "assistant" } },
+        { "key": "bundesland", "value": "Bayern", "evidence": "PLZ 81477 liegt in München, Bayern", "qualifier": { "source": "CLIENT", "quality": "DECIDED", "setAt": "2026-05-25T00:00:00.000Z", "setBy": "assistant" } },
+        { "key": "vorhaben_typ", "value": "Neubau Einfamilienhaus", "qualifier": { "source": "CLIENT", "quality": "DECIDED", "setAt": "2026-05-25T00:00:00.000Z", "setBy": "assistant" } },
+        { "key": "wohnflaeche_gesamt_m2", "value": 160, "qualifier": { "source": "CLIENT", "quality": "DECIDED", "setAt": "2026-05-25T00:00:00.000Z", "setBy": "assistant" } },
+        { "key": "klasse", "value": "Gebäudeklasse 1", "qualifier": { "source": "LEGAL", "quality": "CALCULATED", "setAt": "2026-05-25T00:00:00.000Z", "setBy": "assistant" } },
+        { "key": "bebauungsplan_id", "value": "qualifizierter Bebauungsplan vorhanden", "qualifier": { "source": "CLIENT", "quality": "DECIDED", "setAt": "2026-05-25T00:00:00.000Z", "setBy": "assistant" } },
+        { "key": "denkmalschutz", "value": false, "qualifier": { "source": "CLIENT", "quality": "DECIDED", "setAt": "2026-05-25T00:00:00.000Z", "setBy": "assistant" } },
+        { "key": "ensembleschutz", "value": false, "qualifier": { "source": "CLIENT", "quality": "DECIDED", "setAt": "2026-05-25T00:00:00.000Z", "setBy": "assistant" } },
+        { "key": "verfahren.typ", "value": "Vereinfachtes Baugenehmigungsverfahren nach BayBO Art. 58", "qualifier": { "source": "LEGAL", "quality": "CALCULATED", "setAt": "2026-05-25T00:00:00.000Z", "setBy": "assistant" } }
+      ],
+      "recommendations": [
+        { "id": "rec-1", "rank": 1, "title_de": "Bauvorlageberechtigte:n Architekt:in beauftragen", "title_en": "Engage a submission-authorized architect", "detail_de": "Für das vereinfachte Verfahren (BayBO Art. 58) ist eine bauvorlageberechtigte Person erforderlich; frühzeitig beauftragen.", "detail_en": "The simplified procedure (BayBO Art. 58) requires a submission-authorized person; engage early.", "qualifier": { "source": "LEGAL", "quality": "CALCULATED" } },
+        { "id": "rec-2", "rank": 2, "title_de": "GEG-Wärmeschutznachweis vorbereiten", "title_en": "Prepare the GEG thermal-insulation certificate", "detail_de": "GEG verlangt den Wärmeschutznachweis vor Baubeginn; Energieberatung vor LP 4 abschließen.", "detail_en": "GEG requires the thermal certificate before construction; complete energy consulting before LP 4.", "qualifier": { "source": "LEGAL", "quality": "CALCULATED" } }
+      ],
+      "procedures": [],
+      "documents": [],
+      "specialists": [],
+      "roles": []
+    },
+    "created_at": "2026-05-25T00:00:00.000Z",
+    "updated_at": "2026-05-25T00:00:00.000Z"
+  },
+  "messages": [],
+  "events": []
+}

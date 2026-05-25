@@ -1,0 +1,55 @@
+{
+  "_comment": "v1.0.31 demo cell C2 — T-03 Sanierung, Hessen, Frankfurt am Main (Sachsenhausen, 60594), Gründerzeit-Altbau, energetische + strukturelle Modernisierung (Fassadendämmung + neue Öffnungen in tragenden Teilen), kein Denkmalschutz. Persona seeded verfahren.typ='Vereinfachtes Baugenehmigungsverfahren nach § 65 HBO' -> resolveProcedure branch 3 -> kind 'vereinfachtes', CALCULATED, citation '§ 65 HBO'. Citation manually verified against HBO 2018 (§ 63 verfahrensfrei, § 64 Genehmigungsfreistellung, § 65 vereinfachtes Baugenehmigungsverfahren, § 66 regulär) AND against the repo's Hessen localization (stateLocalization.ts simplified=§ 65 HBO). Cost: sanierung -> honest renovation stub (C3). Hessen is a SUBSTANTIVE state: PDF must carry real HBO §§, no Bayern-leak, no STUB_VERIFY 'Detail-§ noch nicht hinterlegt'. Used by smoke-architect-flow runHessenT03 + smoke-pdf-text demo-cell render arm.",
+  "project": {
+    "id": "00000000-0000-0000-0000-000000003103",
+    "owner_id": "00000000-0000-0000-0000-00000000beef",
+    "intent": "sanierung",
+    "has_plot": true,
+    "plot_address": "Schweizer Straße 50, 60594 Frankfurt am Main",
+    "bundesland": "hessen",
+    "template_id": "T-03",
+    "name": "Sanierung Schweizer Straße",
+    "status": "in_progress",
+    "state": {
+      "templateId": "T-03",
+      "schemaVersion": 1,
+      "areas": {
+        "A": { "state": "ACTIVE", "reason": "Innenbereich nach § 34 BauGB; Bestandsgebäude im qualifizierten Quartier." },
+        "B": { "state": "ACTIVE", "reason": "Vereinfachtes Baugenehmigungsverfahren nach § 65 HBO — Eingriff in tragende Teile löst Bauantragspflicht aus, kein Sonderbau." },
+        "C": { "state": "ACTIVE", "reason": "GEG-Sanierungspflicht bei Eingriff in die Gebäudehülle; Wärmeschutznachweis und Energieausweis erforderlich." }
+      },
+      "facts": [
+        { "key": "plot.address", "value": "Schweizer Straße 50, 60594 Frankfurt am Main", "qualifier": { "source": "CLIENT", "quality": "DECIDED", "setAt": "2026-05-25T00:00:00.000Z", "setBy": "assistant" } },
+        { "key": "bundesland", "value": "Hessen", "evidence": "PLZ 60594 liegt in Frankfurt am Main, Hessen", "qualifier": { "source": "CLIENT", "quality": "DECIDED", "setAt": "2026-05-25T00:00:00.000Z", "setBy": "assistant" } },
+        { "key": "vorhaben_typ", "value": "Sanierung Bestandsgebäude", "qualifier": { "source": "CLIENT", "quality": "DECIDED", "setAt": "2026-05-25T00:00:00.000Z", "setBy": "assistant" } },
+        { "key": "fassadenflaeche_m2", "value": 180, "qualifier": { "source": "CLIENT", "quality": "DECIDED", "setAt": "2026-05-25T00:00:00.000Z", "setBy": "assistant" } },
+        { "key": "klasse", "value": "Gebäudeklasse 3", "qualifier": { "source": "LEGAL", "quality": "CALCULATED", "setAt": "2026-05-25T00:00:00.000Z", "setBy": "assistant" } },
+        { "key": "energiestandard", "value": "GEG 2024 Mindestanforderung", "qualifier": { "source": "LEGAL", "quality": "CALCULATED", "setAt": "2026-05-25T00:00:00.000Z", "setBy": "assistant" } },
+        { "key": "denkmalschutz", "value": false, "qualifier": { "source": "CLIENT", "quality": "DECIDED", "setAt": "2026-05-25T00:00:00.000Z", "setBy": "assistant" } },
+        { "key": "ensembleschutz", "value": false, "qualifier": { "source": "CLIENT", "quality": "DECIDED", "setAt": "2026-05-25T00:00:00.000Z", "setBy": "assistant" } },
+        { "key": "eingriff_tragende_teile", "value": true, "qualifier": { "source": "CLIENT", "quality": "DECIDED", "setAt": "2026-05-25T00:00:00.000Z", "setBy": "assistant" } },
+        { "key": "eingriff_aussenhuelle", "value": true, "qualifier": { "source": "CLIENT", "quality": "DECIDED", "setAt": "2026-05-25T00:00:00.000Z", "setBy": "assistant" } },
+        { "key": "aenderung_aeussere_erscheinung", "value": false, "qualifier": { "source": "CLIENT", "quality": "DECIDED", "setAt": "2026-05-25T00:00:00.000Z", "setBy": "assistant" } },
+        { "key": "verfahren.typ", "value": "Vereinfachtes Baugenehmigungsverfahren nach § 65 HBO", "qualifier": { "source": "LEGAL", "quality": "CALCULATED", "setAt": "2026-05-25T00:00:00.000Z", "setBy": "assistant" } }
+      ],
+      "recommendations": [
+        { "id": "rec-1", "rank": 1, "title_de": "GEG-zertifizierte:n Energieberater:in beauftragen", "title_en": "Engage a GEG-certified energy consultant", "detail_de": "GEG verlangt einen Wärmeschutznachweis vor Bauantrag; bei Eingriff in die Gebäudehülle greift die Sanierungspflicht. Energieberatung vor LP 4 abschließen.", "detail_en": "GEG requires a thermal certificate before the permit; envelope work triggers the renovation obligation. Complete energy consulting before LP 4.", "qualifier": { "source": "LEGAL", "quality": "CALCULATED" } },
+        { "id": "rec-2", "rank": 2, "title_de": "Tragwerksplaner:in für Eingriff in tragende Teile", "title_en": "Engage a structural engineer for load-bearing work", "detail_de": "Neue Öffnungen in tragenden Wänden erfordern einen Standsicherheitsnachweis; löst das vereinfachte Verfahren nach § 65 HBO aus.", "detail_en": "New openings in load-bearing walls require a structural certificate; triggers the simplified procedure under § 65 HBO.", "qualifier": { "source": "LEGAL", "quality": "CALCULATED" } },
+        { "id": "rec-3", "rank": 3, "title_de": "Verfahrensart mit dem Bauaufsichtsamt Frankfurt bestätigen", "title_en": "Confirm the procedure with Frankfurt's building authority", "detail_de": "Vereinfachtes Verfahren (§ 65 HBO) vor LP 1 mit der unteren Bauaufsichtsbehörde abstimmen.", "detail_en": "Confirm the simplified procedure (§ 65 HBO) with the lower building authority before LP 1.", "qualifier": { "source": "LEGAL", "quality": "CALCULATED" } }
+      ],
+      "procedures": [
+        { "id": "proc-1", "status": "erforderlich", "title_de": "Vereinfachtes Baugenehmigungsverfahren", "title_en": "Simplified building permit procedure", "rationale_de": "§ 65 HBO gilt für die Sanierung mit Eingriff in tragende Teile (Gebäudeklasse 3, kein Sonderbau).", "rationale_en": "§ 65 HBO applies to a renovation intervening in load-bearing elements (building class 3, no Sonderbau).", "qualifier": { "source": "LEGAL", "quality": "CALCULATED" } }
+      ],
+      "documents": [],
+      "specialists": [],
+      "roles": [
+        { "id": "role-energy", "title_de": "Energieberater:in (GEG)", "title_en": "Energy consultant (GEG)", "needed": true, "rationale_de": "GEG-Sanierungspflicht greift bei Eingriffen in die Gebäudehülle.", "rationale_en": "The GEG renovation obligation applies when the building envelope is affected.", "qualifier": { "source": "LEGAL", "quality": "CALCULATED" } },
+        { "id": "role-structural", "title_de": "Tragwerksplaner:in", "title_en": "Structural engineer", "needed": true, "rationale_de": "Eingriff in tragende Teile erfordert einen Standsicherheitsnachweis.", "rationale_en": "Intervention in load-bearing elements requires a structural certificate.", "qualifier": { "source": "LEGAL", "quality": "CALCULATED" } }
+      ]
+    },
+    "created_at": "2026-05-25T00:00:00.000Z",
+    "updated_at": "2026-05-25T00:00:00.000Z"
+  },
+  "messages": [],
+  "events": []
+}

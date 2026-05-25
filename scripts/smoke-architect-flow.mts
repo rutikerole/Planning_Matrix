@@ -743,6 +743,80 @@ function runSaxonyT04(): Tally {
   return t
 }
 
+// v1.0.31 — PDF vertical-slice demo cells. Pure-logic gates for the 3
+// hardened cells (T-01 Bayern München / T-05 NRW Köln / T-03 Hessen
+// Frankfurt): the procedure resolves CALCULATED with the correct state §
+// (Check 2), no Bayern-leak in non-Bayern procedure text (Check 6), and the
+// fact keys carry curated bilingual labels (Check 10). PDF-render assertions
+// (typography, sections, no-leak in rendered text) land in smoke-pdf-text.
+function procedureCaseFromFixture(file: string): Parameters<typeof resolveProcedure>[0] {
+  const { state, bundesland } = loadFixtureState(file)
+  const facts = (state.facts ?? []) as Array<{ key: string; value: unknown }>
+  const fb = (k: string) => facts.find((f) => f.key === k)?.value === true
+  const fs = (k: string) => {
+    const v = facts.find((f) => f.key === k)?.value
+    return typeof v === 'string' ? v : undefined
+  }
+  return {
+    intent: intentFromTemplate(state.templateId as never),
+    bundesland: bundesland as never,
+    eingriff_tragende_teile: fb('eingriff_tragende_teile'),
+    eingriff_aussenhuelle: fb('eingriff_aussenhuelle'),
+    denkmalschutz: fb('denkmalschutz'),
+    ensembleschutz: fb('ensembleschutz'),
+    aenderung_aeussere_erscheinung: fb('aenderung_aeussere_erscheinung'),
+    verfahren_indikation:
+      fs('verfahren_indikation') ?? fs('verfahren.typ') ?? fs('verfahren_typ'),
+  }
+}
+
+function labelsOk(t: Tally, key: string): void {
+  const en = factLabel(key, 'en').label
+  const de = factLabel(key, 'de').label
+  ok(t, !en.includes(' · ') && !/_/.test(en), `label '${key}' en has no raw-key artifact ("${en}")`)
+  ok(t, !de.includes(' · ') && !/_/.test(de), `label '${key}' de has no raw-key artifact ("${de}")`)
+}
+
+function runBayernT01(): Tally {
+  console.log('\n[smoke-architect] Bayern × T-01 EFH-Neubau demo cell (v1.0.31)…')
+  const t: Tally = { passed: 0, failed: 0 }
+  const d = resolveProcedure(procedureCaseFromFixture('test/fixtures/bayern-t01-muenchen.json'))
+  ok(t, d.kind === 'vereinfachtes', `Bayern T-01: kind 'vereinfachtes' (got '${d.kind}')`)
+  ok(t, d.confidence === 'CALCULATED', `Bayern T-01: procedure CALCULATED (Check 2, got '${d.confidence}')`)
+  ok(t, /BayBO\s+Art\.\s*58/.test(d.citation), `Bayern T-01: cites BayBO Art. 58 (got '${d.citation}')`)
+  for (const k of ['wohnflaeche_gesamt_m2', 'klasse', 'denkmalschutz', 'ensembleschutz']) labelsOk(t, k)
+  return t
+}
+
+function runNrwT05Koeln(): Tally {
+  console.log('\n[smoke-architect] NRW × T-05 Abbruch (Köln) demo cell (v1.0.31)…')
+  const t: Tally = { passed: 0, failed: 0 }
+  const d = resolveProcedure(procedureCaseFromFixture('test/fixtures/nrw-t05-koeln.json'))
+  ok(t, d.kind === 'verfahrensfrei', `NRW T-05 Köln: kind 'verfahrensfrei' (got '${d.kind}')`)
+  ok(t, d.confidence === 'CALCULATED', `NRW T-05 Köln: procedure CALCULATED (Check 2, got '${d.confidence}')`)
+  ok(t, /§\s*62\s+BauO\s+NRW/.test(d.citation), `NRW T-05 Köln: cites § 62 BauO NRW (got '${d.citation}')`)
+  return t
+}
+
+function runHessenT03(): Tally {
+  console.log('\n[smoke-architect] Hessen × T-03 Sanierung demo cell (v1.0.31)…')
+  const t: Tally = { passed: 0, failed: 0 }
+  const d = resolveProcedure(procedureCaseFromFixture('test/fixtures/hessen-t03-frankfurt.json'))
+  ok(t, d.kind === 'vereinfachtes', `Hessen T-03: kind 'vereinfachtes' (got '${d.kind}')`)
+  ok(t, d.confidence === 'CALCULATED', `Hessen T-03: procedure CALCULATED (Check 2, got '${d.confidence}')`)
+  ok(t, /§\s*65\s+HBO/.test(d.citation), `Hessen T-03: cites § 65 HBO (got '${d.citation}')`)
+  ok(
+    t,
+    !/BayBO|München|Schwabing|BLfD/.test(`${d.citation}${d.reasoning_de}${d.reasoning_en}`),
+    'Hessen T-03: no Bayern-leak in procedure text (Check 6)',
+  )
+  for (const k of [
+    'fassadenflaeche_m2', 'klasse', 'energiestandard',
+    'eingriff_tragende_teile', 'eingriff_aussenhuelle', 'denkmalschutz', 'ensembleschutz',
+  ]) labelsOk(t, k)
+  return t
+}
+
 function main(): void {
   const sections: Tally[] = [
     runInviteParse(),
@@ -759,6 +833,9 @@ function main(): void {
     runLabels(),
     runProcedure(),
     runSaxonyT04(),
+    runBayernT01(),
+    runNrwT05Koeln(),
+    runHessenT03(),
   ]
   const passed = sections.reduce((n, s) => n + s.passed, 0)
   const failed = sections.reduce((n, s) => n + s.failed, 0)
