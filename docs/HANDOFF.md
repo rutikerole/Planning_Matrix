@@ -5,6 +5,16 @@
 > Reads end-to-end on first pass; subsequent visits use the table of
 > contents. **This document IS the v1 deliverable's audit trail.**
 
+> **Current release: v1.0.31 (2026-05-25)** — PDF vertical slice. The architect
+> PDF is hardened to 12/12 MUST checks on three demo cells (T-01 × Bayern München,
+> T-05 × NRW Köln, T-03 × Hessen Frankfurt); all other templates/states are frozen
+> behind an honest "coverage in preparation" state in the export menus
+> (`src/legal/demoCoverage.ts`). No migrations, no Edge-Function redeploys this
+> release. See `docs/V1_0_31_PDF_SLICE_DIAGNOSIS.md` (the 12-check definition) and
+> `docs/V1_0_30_STRATEGIC_RESEARCH.md` (why the horizontal walk stopped + the
+> Phase 2/3 plan). Visual confirmation of the signature-block reflow (Bug 60) and
+> the freeze UI is an operator smoke-walk item.
+
 ## Contents
 
 1. What Planning Matrix is

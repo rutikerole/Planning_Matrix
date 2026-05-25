@@ -88,4 +88,20 @@ Bayern SHA `b18d3f7f…aacb3471` MATCH · 16-state T-01 matrix 16/16 · `nrw-t05
 
 | Check / Bug | Status | Commit |
 |---|---|---|
-| _to be filled per commit_ | | |
+| Check 1 — citations (no-fab + manual verify) | ✅ (machine XML grounding → Phase 2) | C2 `1d81e56` |
+| Check 2 — procedure CALCULATED + correct § | ✅ | C2 `1d81e56` + C7 `efc768f` |
+| Check 3 — cost honest (T-03 renovation stub) | ✅ | C3 `b4f70bb` |
+| Check 4 — 12 sections + TOC (+ T-05 exec floor) | ✅ | C6 `78a769d` |
+| Check 5 — no stub-state leak (Hessen) | ✅ | C8 `c53b2e2` |
+| Check 6 — no cross-state Bayern-leak | ✅ | C3/C8/C10 |
+| Check 7 — web↔PDF Section 05 converge | ✅ | C7 `efc768f` |
+| Check 8 — confidence reflects open domains | ✅ (95/96/93) | C10 `60f2613` |
+| Check 9 — documents template-correct | ✅ | C8 `c53b2e2` |
+| Check 10 — fact labels EN/DE | ✅ | C2 `1d81e56` / C8 |
+| Check 11 — cover + signature no overlap (Bug 60) | ✅ (geometric proof; visual = smoke walk) | C5 `78a7969` |
+| Check 12 — typography (±, m², ß/ä/ö/ü) | ✅ | C10 `60f2613` |
+| Freeze non-demo cells + stub banner | ✅ | C9 `425cc39` |
+| Bug 78 multi-page Key Data | ⏭ DEFERRED (does not bite the demo cells; bites T-04+) | — |
+| C4 Genehmigungsfreistellung label | ⏭ DROPPED (repo models Bayern as Art.57/58/59; T-01 uses vereinfachtes Art.58) | C2 |
+
+**12/12 MUST checks GREEN on T-01 Bayern + T-05 NRW + T-03 Hessen.** The loop ends.

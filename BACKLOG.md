@@ -21,6 +21,35 @@ Sprint anchor reminder:
   `b18d3f7f9a6fe238c18cec5361d30ea3a547e46b1ef2b16a1e74c533aacb3471`
   must MATCH at start AND end of every commit in any future sprint.
 
+## Closed in v1.0.31 (PDF vertical slice — 3 demo cells × 12 MUST checks)
+
+Pivot to PDF-hardening (see `docs/V1_0_30_STRATEGIC_RESEARCH.md` +
+`docs/V1_0_31_PDF_SLICE_DIAGNOSIS.md`). **12/12 PDF MUST checks GREEN** on
+T-01 × Bayern (München), T-05 × NRW (Köln), T-03 × Hessen (Frankfurt) across
+11 commits (C1–C11), every commit green (Bayern SHA MATCH · matrix 16/16 ·
+nrw-t05-bonn/hamburg-t02/sachsen-t04 green · smoke:pdf-text 359/0 ·
+smoke:architect 281/0 · build 285 KB gz · lint net-zero). New fixtures
+`bayern-t01-muenchen` / `nrw-t05-koeln` / `hessen-t03-frankfurt`; new
+`src/legal/demoCoverage.ts` freeze gate; T-03 `isRenovation` cost stub; T-05
+demolition suggestions floor; Bug 60 signature reflow; web↔PDF convergence gate.
+
+Still deferred after v1.0.31:
+- **Bug 78 / 105** — multi-page Key Data table. Confirmed it does NOT bite the
+  demo cells (10/14/13 rows < ~17 T-04 overflow); bites T-04 + T-06/07/08. Candidate
+  for the dedicated PDF-layout sprint.
+- **C4 (dropped)** — Genehmigungsfreistellung label: the repo models Bayern as
+  Art.57/58/59 with no `genehmigungsfreigestellt` kind; T-01 uses the repo-consistent
+  vereinfachtes Art.58. Revisit only if a Bayern procedure-model refresh is scoped.
+- **Phase 2 (v1.0.32)** — statute-XML citation grounding (gesetze-im-internet.de
+  XML, kills Check-1's manual-verify dependency) + Destatis Baupreisindex API
+  (kills identical-cost-across-states). See the strategic doc §7.
+- **Phase 3 (v1.0.33+)** — template-parametric cost/procedure/risk/timeline refactor
+  (closes T-06/07/08 in one pass). ONLY if the Phase-1+2 demo lands.
+- **T-02 / T-04 / T-06 / T-07 / T-08 + 11 stub states** — frozen behind the
+  honest "coverage in preparation" UI until each gets its own 12-check pass.
+- Visual confirmation of the signature reflow (Bug 60) + the freeze UI state =
+  operator smoke walk.
+
 ## Closed in v1.0.30 (T-04 Use-conversion Leipzig — template-blind pass)
 
 CODE-COMPLETE + fixture/render-proven across 13 commits: Bug 88/99/100/± (T-04

@@ -1,5 +1,57 @@
 # Changelog
 
+## v1.0.31 — PDF vertical slice: 3 demo cells pass the 12 MUST checks (2026-05-25)
+
+Pivot from the horizontal template-blind walk (see `docs/V1_0_30_STRATEGIC_RESEARCH.md`)
+to a focused PDF-hardening slice. The finish line — defined for the first time in
+7 sprints — is **12/12 PDF MUST checks GREEN on three demo cells**: T-01 × Bayern
+(München), T-05 × NRW (Köln), T-03 × Hessen (Frankfurt). Everything else is frozen
+behind an honest "coverage in preparation" UI. Diagnosis + resolution table:
+`docs/V1_0_31_PDF_SLICE_DIAGNOSIS.md`.
+
+- **C2** — 3 demo fixtures + pure-logic gates (runBayernT01 / runNrwT05Koeln /
+  runHessenT03): procedure CALCULATED with the correct state § (BayBO Art. 58 /
+  § 62 BauO NRW / § 65 HBO), no Bayern-leak, curated bilingual labels. §§ manually
+  verified against the repo's Bayern localization + BauO NRW 2018 + HBO 2018
+  (machine XML grounding = Phase 2 / v1.0.32). C4 (Genehmigungsfreistellung label)
+  dropped — the repo models Bayern as Art.57/58/59, so T-01 uses the repo-consistent
+  vereinfachtes Art.58 (no new procedure kind, no SHA risk). `1d81e56`
+- **C3 (Check 3)** — T-03 renovation was cost-template-blind (new-build HOAI rows);
+  added an `isRenovation` honest stub (request Fachplaner quotes, no fabricated
+  renovation BKI) mirroring T-05/T-04. `b4f70bb`
+- **C5 (Check 11, Bug 60)** — the signature-block collision deferred across
+  v1.0.28→30: the Bauherr co-signature note sat at a fixed `bauherrY-80`, overlapping
+  the label/sublabel. Measure-then-place — anchor below the field's returned `endY`.
+  Affects every cell (shared verification page). `78a7969`
+- **C6 (Check 4)** — Key Data fits one page on all 3 cells (10 / 14 / 13 rows < the
+  ~17-row T-04 overflow, so Bug 78 stays deferred); fixed a Bug-103 recurrence for
+  abbruch (NRW Köln rendered 11pp) with a T-05 demolition suggestions floor →
+  Executive page restored, 12pp. `78a769d`
+- **C7 (Check 7)** — web↔PDF Section 05 convergence gate: `resolveProcedures` (web
+  AT A GLANCE) and `resolveProcedure` (PDF) classify to the same verdict on all 3
+  cells. `efc768f`
+- **C8 (Checks 5/9/10)** — Hessen T-03 (first substantive non-Bayern T-03 walk):
+  no stub-state §-placeholder leak, renovation docs + GEG cert populated, bilingual
+  labels. `c53b2e2`
+- **C9** — freeze the architect PDF for non-demo cells (`src/legal/demoCoverage.ts`
+  + both ExportMenus) behind an honest "In preparation" state; the renderer is
+  untouched so every smoke fixture stays green. Wizard stub-state coverage already
+  honest (Bug 55/72). `425cc39`
+- **C10 (Checks 6/8/12)** — confidence 95 / 96 / 93 on the clean cells (no PENDING
+  penalty); T-03 GEG-Sanierungspflicht risk fires + heritage suppressed; ß/ö/ü
+  render (München / Köln / Schweizer Straße), no glyph corruption. `60f2613`
+
+**Gates:** Bayern SHA MATCH every commit · 16-state matrix 16/16 · nrw-t05-bonn +
+hamburg-t02 + sachsen-t04 fixtures green · smoke:pdf-text 276→359/0 · smoke:architect
+237→281/0 · build 285 KB gz · lint net-zero · no migrations · no chat-turn redeploy.
+
+**Still deferred:** Bug 78 multi-page Key Data table (bites T-04+, not the demo
+cells) · T-02/T-04/T-06/T-07/T-08 + the 11 stub states (frozen behind "in
+preparation" UI) · machine statute-XML citation grounding + Destatis Baupreisindex
+(Phase 2 / v1.0.32) · template-parametric refactor (Phase 3 / v1.0.33+, only if the
+demo lands). **Visual confirmation of the signature reflow + freeze UI = operator
+smoke walk** (the repo's pattern for deep PDF layout / UI state).
+
 ## v1.0.30 — T-04 Use-conversion (Leipzig / Sachsen) template-blind pass (2026-05-25)
 
 Rutik's first live T-04 (Umnutzung) smoke walk — retail → gastronomy, Karl-
