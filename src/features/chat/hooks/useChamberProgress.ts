@@ -21,125 +21,34 @@
 
 import { useMemo } from 'react'
 import type { MessageRow } from '@/types/db'
-import type { ProjectState, Specialist } from '@/types/projectState'
-import { currentStageId } from './useSpineStages'
-import { SPINE_STAGES, type SpineStageId } from '../lib/spineStageDefinitions'
+import type { ProjectState } from '@/types/projectState'
+import {
+  computeChamberProgress,
+  TOTAL_ESTIMATE_T01,
+  type ChamberProgress,
+} from '../lib/chamberProgress'
 
-const TOTAL_ESTIMATE_T01 = 22
+export type { ChamberProgress }
 
-export interface ChamberProgress {
-  percent: number
-  currentTurn: number
-  totalEstimate: number
-  spokenSpecialists: Set<Specialist>
-  recentSpecialist: Specialist | null
-  isReadyForReview: boolean
-  /** Phase 7.5 — the Spine's "live" stage. Null pre-state. Both
-   *  surfaces (Spine + any other progress UI) must derive from the
-   *  same shared computation; do not duplicate. */
-  currentStageId: SpineStageId | null
-  /** Phase 7.7 §1.1 — diagnostic fractions exposed for the
-   *  ?debug=spine panel. Inputs vs output side-by-side. */
-  debug: {
-    turnsFraction: number
-    areasFraction: number
-    recsFraction: number
-    blended: number
-    areasComplete: number
-    recsCount: number
-  }
-}
-
+/**
+ * Phase 7 Chamber — single hook that drives every progress surface.
+ * v1.0.29 — the computation now lives in the pure `computeChamberProgress`
+ * (lib/chamberProgress.ts) so the smoke runner can assert it without React.
+ */
 export function useChamberProgress(
   messages: MessageRow[] | undefined,
   state: Partial<ProjectState> | undefined,
   completionSignal: string | null,
   templateOverride?: number,
 ): ChamberProgress {
-  return useMemo(() => {
-    const list = messages ?? []
-    const assistants = list.filter((m) => m.role === 'assistant' && !m.id.startsWith('system:'))
-    const currentTurn = assistants.length
-    const totalEstimate = templateOverride ?? TOTAL_ESTIMATE_T01
-
-    const spoken = new Set<Specialist>()
-    let recent: Specialist | null = null
-    for (const m of assistants) {
-      if (m.specialist) {
-        spoken.add(m.specialist as Specialist)
-        recent = m.specialist as Specialist
-      }
-    }
-
-    const areas = state?.areas
-    const areasComplete = (['A', 'B', 'C'] as const).filter(
-      (k) => areas?.[k]?.state === 'ACTIVE',
-    ).length
-    const recsCount = state?.recommendations?.length ?? 0
-
-    const turnsFraction = Math.min(currentTurn / totalEstimate, 1)
-    const areasFraction = areasComplete / 3
-    const recsFraction = Math.min(recsCount, 3) / 3
-
-    const isReadyForReview = completionSignal === 'ready_for_review'
-    // v1.0.6 Bug 3 + v1.0.7 Bug 9 — spine reaches 100% when EITHER
-    // the canonical final_synthesis.isDone criterion fires
-    // (state.recommendations.length >= 3) OR the result page already
-    // has material content. The legacy formula only boosted to 95%
-    // via the transient `ready_for_review` completion signal sourced
-    // from a zustand store that resets on refresh — projects whose
-    // result page rendered fully (procedures + areas active +
-    // recommendations present) still showed Round 9 · 41% in the
-    // sidebar. v1.0.6 added the canonical criterion; v1.0.7 widens
-    // to the fallback so existing projects whose persona stopped
-    // before emitting 3 distinct recs (but still produced the
-    // matrix) also reflect completion in the spine.
-    const finalStage = SPINE_STAGES[SPINE_STAGES.length - 1]
-    let isSpineComplete = false
-    try {
-      if (state) {
-        const canonical = finalStage.isDone(state as ProjectState, list)
-        const proceduresCount = state.procedures?.length ?? 0
-        const recsCount = state.recommendations?.length ?? 0
-        const areasActive = (['A', 'B', 'C'] as const).some(
-          (k) => state.areas?.[k]?.state === 'ACTIVE',
-        )
-        const hasMaterialResult =
-          proceduresCount >= 1 && areasActive && recsCount >= 1
-        isSpineComplete = canonical || hasMaterialResult
-      }
-    } catch {
-      isSpineComplete = false
-    }
-    const blended =
-      turnsFraction * 0.6 + areasFraction * 0.2 + recsFraction * 0.2
-    // Phase 7.7 §1.1 — floor at turnsFraction. The blended formula
-    // can BOOST upward when areas/recs are present; it cannot drag
-    // progress below the user's actual turn count.
-    const floored = Math.max(turnsFraction, blended)
-    const finalRaw = isSpineComplete
-      ? 1
-      : isReadyForReview
-        ? Math.max(floored, 0.95)
-        : floored
-    const percent = Math.max(0, Math.min(100, Math.round(finalRaw * 100)))
-
-    return {
-      percent,
-      currentTurn,
-      totalEstimate,
-      spokenSpecialists: spoken,
-      recentSpecialist: recent,
-      isReadyForReview,
-      currentStageId: currentStageId(state as ProjectState | undefined, list),
-      debug: {
-        turnsFraction,
-        areasFraction,
-        recsFraction,
-        blended,
-        areasComplete,
-        recsCount,
-      },
-    }
-  }, [messages, state, completionSignal, templateOverride])
+  return useMemo(
+    () =>
+      computeChamberProgress(
+        messages ?? [],
+        state,
+        completionSignal,
+        templateOverride ?? TOTAL_ESTIMATE_T01,
+      ),
+    [messages, state, completionSignal, templateOverride],
+  )
 }

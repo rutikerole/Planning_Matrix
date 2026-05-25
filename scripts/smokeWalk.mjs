@@ -4120,8 +4120,11 @@ async function runStaticGate() {
   // >= 3). v1.0.7 widens with the material-result fallback so
   // projects with procedures + areas active + recommendations
   // (regardless of count >= 3) also report complete.
-  const progressHookSrc = await readFileText('src/features/chat/hooks/useChamberProgress.ts')
-  results.push(failures('v1.0.6 Bug 3 + v1.0.7 Bug 9: useChamberProgress completion paths', [
+  // v1.0.29 — the completion-path math moved (verbatim) from the
+  // useChamberProgress hook to the pure lib/chamberProgress.ts so the smoke
+  // runner can assert it without React. Same logic, new home.
+  const progressHookSrc = await readFileText('src/features/chat/lib/chamberProgress.ts')
+  results.push(failures('v1.0.6 Bug 3 + v1.0.7 Bug 9: chamberProgress completion paths', [
     {
       ok: /SPINE_STAGES/.test(progressHookSrc),
       msg: 'hook must import SPINE_STAGES to read the last stage isDone',

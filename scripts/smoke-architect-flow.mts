@@ -30,6 +30,7 @@ import { resolveAreaSqmByTemplate } from '../src/features/result/lib/costNormsMu
 import { resolveRoles } from '../src/features/result/lib/resolveRoles.ts'
 import { stripVersionTokens } from '../src/lib/stripVersionTokens.ts'
 import { pickSmartSuggestions } from '../src/features/result/lib/smartSuggestionsMatcher.ts'
+import { computeChamberProgress } from '../src/features/chat/lib/chamberProgress.ts'
 import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'node:path'
@@ -503,6 +504,42 @@ function runSuggestions(): Tally {
   return t
 }
 
+function runProgress(): Tally {
+  console.log('\n[smoke-architect] chamber progress + synthesis handoff (C7 / Bug 69+70)…')
+  const t: Tally = { passed: 0, failed: 0 }
+  const turns = (specs: string[]) =>
+    specs.map((s, i) => ({ id: `a${i}`, role: 'assistant', specialist: s })) as never
+
+  const fx = JSON.parse(readFileSync(join(REPO_ROOT, 'test/fixtures/hamburg-t02-mfh.json'), 'utf-8'))
+  const state = fx.project.state // areas A/B/C all ACTIVE, procedures=[], recs=[]
+
+  // Synthesis reached: synthesizer has the floor + 3 areas settled. Round 12
+  // of 22 (turnsFraction 0.545) used to show 55%; must now be ≥ 95 so
+  // useCompletionGate fires hero/ready (the missing "Open briefing" handoff).
+  const synthMsgs = turns([
+    'moderator', 'moderator', 'planungsrecht', 'planungsrecht', 'bauordnungsrecht',
+    'bauordnungsrecht', 'sonstige_vorgaben', 'verfahren', 'beteiligte', 'beteiligte',
+    'synthesizer', 'synthesizer',
+  ])
+  const atSynthesis = computeChamberProgress(synthMsgs, state, null)
+  ok(t, atSynthesis.percent >= 95, `synthesis reached → percent ≥ 95 (got ${atSynthesis.percent}, was 55)`)
+  ok(t, atSynthesis.isReadyForReview, 'synthesis reached → isReadyForReview derived true (gate → hero/ready)')
+
+  // Mid-consultation (no synthesizer yet) — the spine-stage floor lifts above
+  // a raw turn fraction but must NOT falsely flip to ready.
+  const midMsgs = turns(['moderator', 'planungsrecht', 'bauordnungsrecht', 'sonstige_vorgaben'])
+  const mid = computeChamberProgress(midMsgs, state, null)
+  ok(t, mid.percent >= 60 && mid.percent < 95, `mid-consultation stage-floored (got ${mid.percent}, in [60,95))`)
+  ok(t, !mid.isReadyForReview, 'mid-consultation NOT ready (no synthesis signal)')
+
+  // Early conversation — moderator only, areas pending. Must stay low.
+  const earlyState = { areas: { A: { state: 'PENDING' }, B: { state: 'PENDING' }, C: { state: 'PENDING' } }, facts: [], procedures: [], recommendations: [], roles: [] }
+  const early = computeChamberProgress(turns(['moderator']), earlyState as never, null)
+  ok(t, early.percent < 60, `early conversation stays low (got ${early.percent})`)
+  ok(t, !early.isReadyForReview, 'early conversation NOT ready')
+  return t
+}
+
 function main(): void {
   const sections: Tally[] = [
     runInviteParse(),
@@ -515,6 +552,7 @@ function main(): void {
     runCostArea(),
     runRoles(),
     runSuggestions(),
+    runProgress(),
   ]
   const passed = sections.reduce((n, s) => n + s.passed, 0)
   const failed = sections.reduce((n, s) => n + s.failed, 0)
