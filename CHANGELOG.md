@@ -1,5 +1,30 @@
 # Changelog
 
+## v1.0.29.1 — Bug 83 verfahren fact-key alignment + Bug 52 re-audit (2026-05-25)
+
+Post-ship validation pass (before the operator smoke-walk) caught that the
+v1.0.28/29 procedure-conclusion fixes (Bug 52, 66, 73, 79) read only
+`verfahren_indikation` / `PROCEDURE.TYPE`, but the real persona emits the
+conclusion under the dotted `verfahren.typ` fact (PDF Key Data "Verfahren ·
+Typ"). The hand-crafted fixtures used `verfahren_indikation`, masking the
+mismatch — a real re-walk would have shown "Baugenehmigungsverfahren (regulär) ·
+ASSUMED" + the "Landesbauordnung Hamburg" Domain B stub again.
+
+- `exportPdf.ts` + `composeLegalDomains.ts` — read `verfahren_indikation ??
+  PROCEDURE.TYPE ?? verfahren.typ ?? verfahren_typ`. NOT sourced from
+  `state.procedures` (the Königsallee T-03 fixture proved `procedures[0]` can
+  contradict the more-correct deterministic `resolveNrwSanierung` § 62 verdict —
+  that must keep winning when no explicit procedure-type fact is present).
+- Bug 52 re-audit: the `nrw-t05` fixture had the same masking. Both fixtures
+  updated to the real shape (`verfahren.typ` + representative `state.procedures`).
+- Deferred to v1.0.30: web Procedure-tab qualifier override (resolveProcedures
+  returns the persona's ASSUMED verbatim — the PDF now re-derives CALCULATED).
+
+Render-proven at the real key: T-02 PDF "§ 61 HBauO · ERFORDERLICH · BERECHNET"
+(was regulär · ASSUMED); web Domain B "§ 61 HBauO"; T-05 "§ 62 verfahrensfrei"
+(no § 65); Königsallee § 62 unchanged. Gates: SHA MATCH · matrix 16/16 ·
+pdf-text · citations · architect 200/0 · bundle 281.5 KB gz. `5e92c14`
+
 ## v1.0.29 — T-02 MFH Hamburg pipeline alignment + Stadtstaat Bayern-bleed (2026-05-25)
 
 Rutik's first live T-02 (New build MFH, Hamburg, Mönckebergstraße) smoke walk

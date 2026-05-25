@@ -311,7 +311,17 @@ Legend — surface: **PDF** / **WEB** / **BOTH**. Class: **A** template-blind,
 | 71 + 81 labels · 75 "decided" | CODE-COMPLETE | `2e6346b` (C8) |
 | 79 + 73 procedure · 80 exec GK | CODE-COMPLETE | `f68998e` (C9) |
 | 74 docs · 82 glossary · 76 + 77 layout | CODE-COMPLETE | C10 |
+| **83 verfahren fact-key (post-ship validation)** | **CODE-COMPLETE** | `5e92c14` (v1.0.29.1) |
 | 72 map · 60 signature | DEFERRED v1.0.30 | — |
+
+**Bug 83 (post-ship validation finding).** Bug 52/66/73/79 read only
+`verfahren_indikation`/`PROCEDURE.TYPE`; the real persona emits `verfahren.typ`
+(PDF Key Data middot). Fixtures masked it. Fix: read `verfahren.typ`/
+`verfahren_typ` too. NOT `state.procedures`-sourced — Königsallee T-03 proved
+`procedures[0]` ("Vereinfachtes Bauantragsverfahren", no §) can contradict the
+deterministic verfahrensfrei § 62 verdict. Bug 52 (v1.0.28) had the same
+masking — both fixtures updated to the real key shape. Web Procedure-tab
+qualifier (persona ASSUMED) deferred to v1.0.30.
 
 **Corrections discovered during implementation (beyond the 5 Turn-1 ones):**
 - **Bug 67 version leak is NOT persona-emitted.** Turn 1 (grep) suggested the
