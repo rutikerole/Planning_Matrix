@@ -36,6 +36,7 @@ import { resolveProcedure, procedureLabel, intentFromTemplate } from '../src/leg
 import { composeExecutiveRead } from '../src/features/result/lib/composeExecutiveRead.ts'
 import { computeConfidence } from '../src/features/result/lib/computeConfidence.ts'
 import { deriveBaselineProcedure } from '../src/features/result/lib/deriveBaselineProcedure.ts'
+import { resolveProcedures } from '../src/features/result/lib/resolveProcedures.ts'
 import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'node:path'
@@ -822,6 +823,49 @@ function runHessenT03(): Tally {
   return t
 }
 
+// v1.0.31 C7 — web ↔ PDF Section 05 convergence (Check 7). The web AT A GLANCE
+// shows useResolvedProcedures(project,state) (= the pure resolveProcedures); the
+// PDF Section 05 shows resolveProcedure(...).kind. Assert both surfaces reach the
+// SAME procedure verdict for each demo cell (mirrors the v1.0.30 T-04 cross-
+// surface assertion). Compares the verdict CLASS, not the exact label string
+// (web shows the persona title / baseline pack, PDF shows the localized kind
+// label — both must classify identically).
+function verdictKey(label: string): string {
+  const s = label.toLowerCase()
+  if (/verfahrensfrei|permit-free|genehmigungsfrei/.test(s)) return 'permit-free'
+  if (/vereinfacht|simplified/.test(s)) return 'simplified'
+  if (/regul|standard/.test(s)) return 'regular'
+  if (/voranfrage|pre-decision|deferred|zurückgestellt/.test(s)) return 'deferred'
+  return `other(${s.slice(0, 24)})`
+}
+
+function runConvergence(): Tally {
+  console.log('\n[smoke-architect] web ↔ PDF Section 05 convergence — demo cells (v1.0.31 C7)…')
+  const t: Tally = { passed: 0, failed: 0 }
+  for (const file of [
+    'test/fixtures/bayern-t01-muenchen.json',
+    'test/fixtures/nrw-t05-koeln.json',
+    'test/fixtures/hessen-t03-frankfurt.json',
+  ]) {
+    const fx = JSON.parse(readFileSync(join(REPO_ROOT, file), 'utf-8'))
+    const web = resolveProcedures(fx.project, fx.project.state)
+    const primary =
+      web.procedures.find((p) => p.status === 'erforderlich') ?? web.procedures[0]
+    const pdf = resolveProcedure(procedureCaseFromFixture(file))
+    const name = file.split('/').pop()
+    for (const lang of ['de', 'en'] as const) {
+      const webLabel = (lang === 'en' ? primary?.title_en : primary?.title_de) ?? ''
+      const pdfLabel = procedureLabel(pdf.kind, lang)
+      ok(
+        t,
+        verdictKey(webLabel) === verdictKey(pdfLabel),
+        `${name} ${lang}: web↔PDF Section 05 verdict converge — web '${webLabel}'→${verdictKey(webLabel)} · pdf '${pdfLabel}'→${verdictKey(pdfLabel)}`,
+      )
+    }
+  }
+  return t
+}
+
 function main(): void {
   const sections: Tally[] = [
     runInviteParse(),
@@ -841,6 +885,7 @@ function main(): void {
     runBayernT01(),
     runNrwT05Koeln(),
     runHessenT03(),
+    runConvergence(),
   ]
   const passed = sections.reduce((n, s) => n + s.passed, 0)
   const failed = sections.reduce((n, s) => n + s.failed, 0)
