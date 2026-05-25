@@ -923,7 +923,13 @@ export async function buildExportPdf({
             lang === 'en' ? statusLabelEn[r.status] : statusLabelDe[r.status]
           const titleBase = lang === 'en' ? r.name_en : r.name_de
           const title = `${titleBase} · ${statusLabel}`
-          const delivery = `${lang === 'en' ? r.delivery_en : r.delivery_de}${r.citation ? ` · ${r.citation}` : ''}`
+          // v1.0.30 Bug 98 — suppress the stub-state deferral citation per row
+          // ("Bauvorlagenverordnung Sachsen — Detail-§ noch nicht hinterlegt …"),
+          // which repeated on every Anlage. Substantive § citations still show;
+          // a single honest footer (documentsNote) carries the deferral once.
+          const cleanCitation =
+            r.citation && !/noch nicht hinterlegt/i.test(r.citation) ? r.citation : ''
+          const delivery = `${lang === 'en' ? r.delivery_en : r.delivery_de}${cleanCitation ? ` · ${cleanCitation}` : ''}`
           const conditionNote =
             r.status === 'conditional'
               ? lang === 'en'
@@ -942,6 +948,13 @@ export async function buildExportPdf({
     bundeslandCode: bundeslandCodeUpper,
     procedures: procRows,
     documents: docRows,
+    // v1.0.30 Bug 98 — one honest footer when any required-doc citation is the
+    // stub deferral (replaces the per-row repetition suppressed above).
+    documentsNote: requiredDocs.some(
+      (r) => !!r.citation && /noch nicht hinterlegt/i.test(r.citation),
+    )
+      ? pdfStrings['docs.stubFooter']
+      : undefined,
   })
 
   // ── Page VII: Team & Stakeholders ──────────────────────────────
@@ -1059,10 +1072,10 @@ export async function buildExportPdf({
     }))
   keyDataRows.push({
     field: lang === 'en' ? 'Procedure indication' : 'Verfahren Indikation',
-    value:
-      procedureLabel(procedureDecision.kind, lang).toLowerCase() +
-      ' nach ' +
-      procedureDecision.citation,
+    // v1.0.30 Bug 101 — was `${label.toLowerCase()} nach ${citation}`, a broken
+    // EN/DE concatenation ("standard building permit nach Baugenehmigungsverfahren
+    // (regulär)"). Single localized label + middot + citation, no hardcoded " nach ".
+    value: `${procedureLabel(procedureDecision.kind, lang)} · ${procedureDecision.citation}`,
     qualifier: {
       source: 'LEGAL',
       quality: procedureDecision.confidence,

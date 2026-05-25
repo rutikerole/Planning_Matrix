@@ -2,6 +2,7 @@ import type { ProjectRow } from '@/types/db'
 import type { ProjectState, Role } from '@/types/projectState'
 import { deriveBaselineRoles } from './deriveBaselineRoles'
 import { stripVersionTokens } from '@/lib/stripVersionTokens'
+import { STUB_VERIFY } from '@/legal/stateCitations'
 
 export interface ResolvedRoles {
   roles: Role[]
@@ -10,12 +11,27 @@ export interface ResolvedRoles {
 
 const normTitle = (s: string): string => s.toLowerCase().replace(/[^a-zäöüß]/g, '')
 
-/** v1.0.29 Bug 67/82 — scrub internal version tokens from user-facing role copy. */
+/**
+ * v1.0.30 Bug 97 — stub-state citation packs fill permitSubmissionCitation with
+ * the internal STUB_VERIFY deferral string ("Detail-§ noch nicht hinterlegt — mit
+ * Bauamt oder Architektenkammer abklären"); deriveBaselineRoles interpolates it
+ * into "bauvorlageberechtigt nach {cite}" / "licensed under {cite}", leaking
+ * framing copy into the architect role description (PDF p.7). Replace it with a
+ * clean generic state-law reference. Scrubs both DE and EN stub strings (the EN
+ * rationale interpolates the German citation too).
+ */
+function scrubStubCitation(s: string, lang: 'de' | 'en'): string {
+  const replacement = lang === 'en' ? 'applicable state law' : 'geltendem Landesrecht'
+  return s.split(STUB_VERIFY.de).join(replacement).split(STUB_VERIFY.en).join(replacement)
+}
+
+/** v1.0.29 Bug 67/82 + v1.0.30 Bug 97 — scrub internal version tokens AND the
+ *  stub-state citation deferral from user-facing role copy. */
 function sanitizeRole(r: Role): Role {
   return {
     ...r,
-    rationale_de: stripVersionTokens(r.rationale_de ?? ''),
-    rationale_en: stripVersionTokens(r.rationale_en ?? ''),
+    rationale_de: scrubStubCitation(stripVersionTokens(r.rationale_de ?? ''), 'de'),
+    rationale_en: scrubStubCitation(stripVersionTokens(r.rationale_en ?? ''), 'en'),
     qualifier: r.qualifier
       ? { ...r.qualifier, reason: stripVersionTokens(r.qualifier.reason ?? '') || r.qualifier.reason }
       : r.qualifier,

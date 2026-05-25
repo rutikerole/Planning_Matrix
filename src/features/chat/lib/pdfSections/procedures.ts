@@ -57,6 +57,10 @@ export interface ProceduresData {
   bundeslandCode: string
   procedures: ReadonlyArray<ProcRow>
   documents: ReadonlyArray<DocRow>
+  /** v1.0.30 Bug 98 — single honest footer rendered once below the document
+   *  list when the state's submission §§ are deferred placeholders (replaces
+   *  the per-row "Detail-§ noch nicht hinterlegt" repetition). */
+  documentsNote?: string
 }
 
 export interface ProceduresFooterData {
@@ -234,6 +238,19 @@ export function renderProceduresBody(
         cursor -= 12
       }
       cursor -= 4
+    })
+  }
+  // v1.0.30 Bug 98 — one honest stub-§§ footer (set by exportPdf when the
+  // state's document citations are deferral placeholders), replacing the
+  // per-row "Detail-§ noch nicht hinterlegt" repetition.
+  if (data.documentsNote) {
+    drawWrappedText(page, MARGIN, cursor - 4, data.documentsNote, {
+      maxWidth: PAGE_WIDTH - 2 * MARGIN,
+      lineHeight: 12,
+      font: fonts.serifItalic,
+      size: 9,
+      color: CLAY,
+      safe: fonts.safe,
     })
   }
 }

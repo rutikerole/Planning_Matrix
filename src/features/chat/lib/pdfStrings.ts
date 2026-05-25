@@ -214,6 +214,10 @@ const EN: PdfStrings = {
   'docs.kicker': 'SECTION 06 · DOCUMENTS',
   'docs.title': 'Submission documents',
   'docs.empty': 'No documents recorded yet — continue the consultation.',
+  // v1.0.30 Bug 98 — ONE honest footer instead of repeating the stub-state
+  // deferral citation on every required-document row (Sachsen stub).
+  'docs.stubFooter':
+    'State-specific submission §§ are in preparation — confirm the exact document requirements with the local building authority.',
 
   // ─── v1.0.17 — Team & Stakeholders ────────────────────────────
   'team.kicker': 'SECTION 07 · TEAM & STAKEHOLDERS',
@@ -429,6 +433,9 @@ const DE: PdfStrings = {
   'docs.title': 'Einreichungs-Dokumente',
   'docs.empty':
     'Noch keine Dokumente erfasst — Konsultation fortsetzen.',
+  // v1.0.30 Bug 98 — siehe EN-Pendant.
+  'docs.stubFooter':
+    'Landesspezifische Einreichungs-§§ in Vorbereitung — die genauen Dokumentanforderungen mit dem lokalen Bauamt abklären.',
 
   // ─── v1.0.17 — Team & Stakeholders ────────────────────────────
   'team.kicker': 'ABSCHNITT 07 · TEAM & BETEILIGTE',
