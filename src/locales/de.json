@@ -833,6 +833,7 @@
       "placeholder": "z. B. Türkenstraße 25, 80799 München",
       "helper": "Wir nutzen die Adresse zur Recherche von Bebauungsplan und örtlichen Satzungen.",
       "coverage": "Aktuell aktiv: München (PLZ 80331–81929). Weitere Regionen folgen.",
+      "coverageOutside": "Diese Adresse liegt außerhalb des aktuellen München-Kartenpilots — die rechtliche Analyse läuft dennoch für das erkannte Bundesland.",
       "mapHint": "Klicken Sie in die Karte, um eine andere Lage zu prüfen.",
       "mapWithoutPlot": "Ohne Grundstück arbeiten wir mit Annahmen.",
       "noPlot": "Ohne Grundstück können Bereich A (Planungsrecht) und C (sonstige Vorgaben) noch nicht ermittelt werden. Wir arbeiten mit Annahmen und markieren die Lücke.",

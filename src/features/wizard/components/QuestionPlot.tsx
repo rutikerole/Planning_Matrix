@@ -532,7 +532,16 @@ export function QuestionPlot({ onSubmit, submitError }: Props) {
                       {t('wizard.q2.helper')}
                     </p>
                     <p className="font-mono text-[11px] leading-relaxed text-pm-ink-mute2">
-                      {t('wizard.q2.coverage')}
+                      {/* v1.0.30 Bug 72 — a valid non-München address (the map
+                          can't geocode it, so the view stays München-centred)
+                          must NOT read "Currently active: München … Other
+                          regions follow" — that implied the project wasn't
+                          covered. Show an honest note that the map is a München
+                          pilot view while the legal analysis still runs for the
+                          detected state. */}
+                      {addressValid && !isMunich
+                        ? t('wizard.q2.coverageOutside')
+                        : t('wizard.q2.coverage')}
                     </p>
                   </div>
 

@@ -833,6 +833,7 @@
       "placeholder": "e.g. Türkenstraße 25, 80799 München",
       "helper": "We use the address to research the development plan and local ordinances.",
       "coverage": "Currently active: München (postal codes 80331–81929). Other regions follow.",
+      "coverageOutside": "This address is outside the current München map pilot — the legal analysis still runs for the detected federal state.",
       "mapHint": "Click on the map to inspect a different location.",
       "mapWithoutPlot": "Without a plot, we proceed with assumptions.",
       "noPlot": "Without a plot, areas A (planning law) and C (further requirements) cannot yet be assessed. We work with assumptions and flag the gap.",
