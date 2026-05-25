@@ -74,6 +74,7 @@ export function ChatWorkspacePage() {
 
   const chatTurn = useChatTurn(projectId)
   const isThinking = useChatStore((s) => s.isAssistantThinking)
+  const isStreaming = useChatStore((s) => s.streamingMessage !== null)
   const offlineQueueDepth = useChatStore((s) => s.offlineQueue.length)
   const queueFull = offlineQueueDepth >= OFFLINE_QUEUE_CAP
   useOfflineQueueDrain(projectId, chatTurn)
@@ -98,7 +99,7 @@ export function ChatWorkspacePage() {
     return null
   }, [messages])
 
-  useAutoScroll({ latestAssistantId, topOffset: 90 })
+  useAutoScroll({ latestAssistantId, streamingActive: isStreaming, topOffset: 90 })
 
   // Chamber progress + ledger.
   const completionSignal = useChatStore((s) => s.lastCompletionSignal)

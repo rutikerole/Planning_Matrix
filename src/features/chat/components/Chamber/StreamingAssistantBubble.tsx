@@ -7,6 +7,7 @@ import { useChatStore } from '@/stores/chatStore'
 import { ChamberSigil } from '../../lib/specialistSigils'
 import type { Specialist } from '@/types/projectState'
 import { StreamingCursor } from './StreamingCursor'
+import { STREAM_ANCHOR_ID } from '../../lib/chatUxDecisions'
 
 export function StreamingAssistantBubble() {
   const { t } = useTranslation()
@@ -15,7 +16,9 @@ export function StreamingAssistantBubble() {
   const specialist = (stream.specialist ?? 'moderator') as Specialist
   const label = t(`chat.specialists.${specialist}`)
   return (
-    <article className="flex flex-col gap-4">
+    // v1.0.29.2 Bug 84 — id is the scroll anchor useAutoScroll targets on
+    // stream-start (persisted turns use spec-tag-<id>, absent while streaming).
+    <article id={STREAM_ANCHOR_ID} className="flex flex-col gap-4">
       <div className="flex items-center gap-2">
         <span style={{ color: 'hsl(var(--clay))' }}>
           <ChamberSigil specialist={specialist} size={16} />

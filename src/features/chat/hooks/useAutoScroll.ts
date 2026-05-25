@@ -27,6 +27,7 @@
 
 import { useEffect, useRef } from 'react'
 import { useChamberMainRef } from '../components/Chamber/ChamberLayout'
+import { STREAM_ANCHOR_ID, shouldFollowStreamOnStart } from '../lib/chatUxDecisions'
 
 interface Options {
   /**
@@ -36,6 +37,14 @@ interface Options {
    */
   latestAssistantId: string | null
   /**
+   * v1.0.29.2 Bug 84 — true while a persona section is streaming. On the
+   * stream's START the hook scrolls the streaming bubble's anchor
+   * (STREAM_ANCHOR_ID) top to `topOffset`, so the new section is visible
+   * above the chips/input WITHOUT waiting for the turn to persist. Gated
+   * by "user is near the live edge" so we don't fight a user reading history.
+   */
+  streamingActive?: boolean
+  /**
    * Distance, in px, from viewport top to the spec-tag after auto-
    * scroll completes. Default 90 — matches StickyContext's IO
    * rootMargin so both move in lock-step.
@@ -44,13 +53,22 @@ interface Options {
 }
 
 const PAUSE_THRESHOLD_PX = 200
+// Ignore scroll events for this long after a programmatic scrollTo so our own
+// smooth-scroll animation doesn't pollute the near-bottom / pause measurements.
+const PROGRAMMATIC_GUARD_MS = 600
 
 export function useAutoScroll({
   latestAssistantId,
+  streamingActive = false,
   topOffset = 90,
 }: Options): void {
   const lastIdRef = useRef<string | null>(null)
   const pausedRef = useRef(false)
+  // Bug 84 — tracks whether the user sits near the live edge (bottom). Updated
+  // by the scroll listener; read at stream-start. Default true (fresh load).
+  const nearBottomRef = useRef(true)
+  const wasStreamingRef = useRef(false)
+  const programmaticUntilRef = useRef(0)
   const mainRefHolder = useChamberMainRef()
 
   // Phase 7.6 §1.6 — measurements + scroll target the chamber-main
@@ -58,19 +76,27 @@ export function useAutoScroll({
   // the document. Falls back to window.* if no main ref is mounted
   // (e.g. pre-Chamber surfaces or test environments).
   useEffect(() => {
-    if (!latestAssistantId) {
-      pausedRef.current = false
-      return
-    }
     const main = mainRefHolder?.current
     const target: HTMLElement | Window = main ?? window
     const measure = () => {
-      const tag = document.getElementById(`spec-tag-${latestAssistantId}`)
-      if (!tag) return
-      const rect = tag.getBoundingClientRect()
-      const baseTop = main ? main.getBoundingClientRect().top : 0
-      const distance = Math.abs(rect.top - baseTop - topOffset)
-      pausedRef.current = distance > PAUSE_THRESHOLD_PX
+      // Ignore our own smooth-scroll animation.
+      if (Date.now() < programmaticUntilRef.current) return
+      // Persisted-turn pause gate (existing).
+      if (latestAssistantId) {
+        const tag = document.getElementById(`spec-tag-${latestAssistantId}`)
+        if (tag) {
+          const rect = tag.getBoundingClientRect()
+          const baseTop = main ? main.getBoundingClientRect().top : 0
+          const distance = Math.abs(rect.top - baseTop - topOffset)
+          pausedRef.current = distance > PAUSE_THRESHOLD_PX
+        }
+      }
+      // Bug 84 — near-live-edge gate for streaming (independent of the
+      // persisted spec-tag, which scrolls up once a new section appends).
+      if (main) {
+        const distFromBottom = main.scrollHeight - main.scrollTop - main.clientHeight
+        nearBottomRef.current = shouldFollowStreamOnStart(distFromBottom)
+      }
     }
     target.addEventListener('scroll', measure, { passive: true })
     window.addEventListener('resize', measure, { passive: true })
@@ -80,6 +106,7 @@ export function useAutoScroll({
     }
   }, [latestAssistantId, topOffset, mainRefHolder])
 
+  // Persisted-turn arrival — scroll its spec-tag top to topOffset.
   useEffect(() => {
     if (!latestAssistantId) return
     if (latestAssistantId === lastIdRef.current) return
@@ -93,6 +120,7 @@ export function useAutoScroll({
       if (!tag) return
       const rect = tag.getBoundingClientRect()
       const main = mainRefHolder?.current
+      programmaticUntilRef.current = Date.now() + PROGRAMMATIC_GUARD_MS
       if (main) {
         const baseTop = main.getBoundingClientRect().top
         const top = main.scrollTop + (rect.top - baseTop) - topOffset
@@ -103,4 +131,31 @@ export function useAutoScroll({
       }
     })
   }, [latestAssistantId, topOffset, mainRefHolder])
+
+  // Bug 84 — stream START: scroll the streaming bubble's top to topOffset so
+  // the new section is visible (not crammed behind the chips), unless the user
+  // has scrolled up to re-read. The persisted-turn effect above re-anchors the
+  // same position when the message lands, so there's no jump.
+  useEffect(() => {
+    const wasStreaming = wasStreamingRef.current
+    wasStreamingRef.current = streamingActive
+    if (!streamingActive || wasStreaming) return // only on false → true
+    if (!nearBottomRef.current) return // user reading history — don't fight
+
+    requestAnimationFrame(() => {
+      const anchor = document.getElementById(STREAM_ANCHOR_ID)
+      if (!anchor) return
+      const rect = anchor.getBoundingClientRect()
+      const main = mainRefHolder?.current
+      programmaticUntilRef.current = Date.now() + PROGRAMMATIC_GUARD_MS
+      if (main) {
+        const baseTop = main.getBoundingClientRect().top
+        const top = main.scrollTop + (rect.top - baseTop) - topOffset
+        main.scrollTo({ top, behavior: 'smooth' })
+      } else {
+        const top = window.scrollY + rect.top - topOffset
+        window.scrollTo({ top, behavior: 'smooth' })
+      }
+    })
+  }, [streamingActive, topOffset, mainRefHolder])
 }
