@@ -22,3 +22,13 @@ export function shouldFollowStreamOnStart(
 ): boolean {
   return distanceFromBottomPx <= threshold
 }
+
+/**
+ * Bug 86 — SmartChips are driven by the last PERSISTED assistant turn, so while
+ * a new section is thinking/streaming they show the PREVIOUS turn's question (a
+ * stale, mis-leading affordance). Hide them entirely until the new section lands
+ * (then they re-render with the fresh question). Pure so the gate is testable.
+ */
+export function chipsVisible(isThinking: boolean, isStreaming: boolean): boolean {
+  return !isThinking && !isStreaming
+}

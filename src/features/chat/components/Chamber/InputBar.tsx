@@ -26,6 +26,7 @@ import { useEventEmitter } from '@/hooks/useEventEmitter'
 import type { MessageRow } from '@/types/db'
 import type { UserAnswer } from '@/types/chatTurn'
 import { SmartChips } from './SmartChips'
+import { chipsVisible } from '../../lib/chatUxDecisions'
 import { SendButton } from './SendButton'
 import { LongPressMenu, type IdkMode } from './LongPressMenu'
 import { AttachmentChip } from './AttachmentChip'
@@ -61,6 +62,10 @@ export function InputBar({
   // §24 #51 — suppress IDK on synthesizer turns (summary gates).
   const showIdk = allowIdk && !isSynthesizer && !disabled
   const isThinking = useChatStore((s) => s.isAssistantThinking)
+  const isStreaming = useChatStore((s) => s.streamingMessage !== null)
+  // v1.0.29.2 Bug 86 — hide the (stale) previous-turn chips while a new section
+  // is composing; they re-render with the fresh question once it lands.
+  const showChips = chipsVisible(isThinking, isStreaming)
   const completionSignal = useChatStore((s) => s.lastCompletionSignal)
   const deleteFile = useDeleteFile()
 
@@ -174,16 +179,18 @@ export function InputBar({
         * chip row aligns with the chapter-heading body indent and
         * reads as a continuation of the conversation, not a chrome
         * detail of the input bar. */}
-      <div className="pl-14">
-        <SmartChips
-          lastAssistant={lastAssistant}
-          disabled={disabled}
-          onPick={(a) => applySuggestion(suggestionFromAnswer(a))}
-          onContinue={handleContinue}
-          onIdkOpen={() => setLongPressOpen(true)}
-          showIdk={showIdk}
-        />
-      </div>
+      {showChips && (
+        <div className="pl-14">
+          <SmartChips
+            lastAssistant={lastAssistant}
+            disabled={disabled}
+            onPick={(a) => applySuggestion(suggestionFromAnswer(a))}
+            onContinue={handleContinue}
+            onIdkOpen={() => setLongPressOpen(true)}
+            showIdk={showIdk}
+          />
+        </div>
+      )}
 
       {/* Attachment chips */}
       {attachments.length > 0 && (
