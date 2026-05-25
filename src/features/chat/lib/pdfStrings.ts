@@ -103,12 +103,12 @@ const EN: PdfStrings = {
   // regional adjustment the formula does not apply. Honest baseline
   // framing replaces it. See docs/cost-formula.md.
   'costs.basisTemplate':
-    'Computed from {n} m² façade · HOAI Zone III · German baseline (regional variance ±10%)',
+    'Computed from {n} m² façade · HOAI Zone III · German baseline (regional variance +/-10%)',
   // v1.0.23 Bug L — honest no-area fallback when fassadenflaeche_m2 is
   // unset or zero. Replaces the v1.0.20-era "Computed from 0 m² façade"
   // leak that read as a measurement rather than a missing-data marker.
   'costs.basisTemplate.noArea':
-    'Computed from floor area only (façade area not captured) · HOAI Zone III · German baseline (regional variance ±10%)',
+    'Computed from floor area only (façade area not captured) · HOAI Zone III · German baseline (regional variance +/-10%)',
   'costs.th.item': 'ITEM',
   'costs.th.basis': 'BASIS',
   'costs.th.range': 'EUR RANGE',
@@ -131,6 +131,15 @@ const EN: PdfStrings = {
     'Demolition cost ranges in preparation · request quotes from a licensed demolition contractor.',
   'costs.demolition.empty':
     'Demolition cost ranges in preparation. Request fixed quotes from a licensed demolition contractor — the spread depends on the hazardous-materials survey (asbestos/KMF/PCB) and the disposal volume (KrWG). No HOAI new-build fee schedule applies.',
+  // v1.0.30 Bug 88 — T-04 use-conversion honest stub (mirrors demolition).
+  // The HOAI new-build engine does not model a use change (no new-build
+  // LP1-4, no envelope GEG trigger, no new official site plan), and no
+  // sourced use-conversion BKI exists — so request Fachplaner quotes
+  // instead of shipping new-build numbers.
+  'costs.useConversion.subtitle':
+    'Use-conversion cost ranges in preparation · request quotes from the relevant Fachplaner:innen.',
+  'costs.useConversion.empty':
+    'Use-conversion cost ranges in preparation. Request fixed quotes for the sound-insulation (Schallschutz), fire-protection / escape-route (Brandschutz / Rettungsweg) and noise (TA Lärm) assessments plus the existing-condition survey (Bestandsaufnahme) — the spread depends on the existing structure (e.g. Holzbalkendecke) and the required Fachgutachten. No HOAI new-build fee schedule applies.',
 
   // ─── v1.0.16 Renaissance Part 2B — Timeline ───────────────────
   'timeline.kicker': 'SECTION 04 · TIMELINE',
@@ -315,10 +324,10 @@ const DE: PdfStrings = {
   'costs.title': 'Geschätzte Kostenspanne',
   // v1.0.22 Bug I — see EN counterpart above. Honest baseline framing.
   'costs.basisTemplate':
-    'Berechnet aus {n} m² Fassade · HOAI Zone III · deutscher Basiswert (regionale Varianz ±10%)',
+    'Berechnet aus {n} m² Fassade · HOAI Zone III · deutscher Basiswert (regionale Varianz +/-10%)',
   // v1.0.23 Bug L — see EN counterpart above.
   'costs.basisTemplate.noArea':
-    'Berechnet ausschließlich aus Wohnfläche (Fassade noch nicht erfasst) · HOAI Zone III · deutscher Basiswert (regionale Varianz ±10%)',
+    'Berechnet ausschließlich aus Wohnfläche (Fassade noch nicht erfasst) · HOAI Zone III · deutscher Basiswert (regionale Varianz +/-10%)',
   'costs.th.item': 'POSITION',
   'costs.th.basis': 'GRUNDLAGE',
   'costs.th.range': 'EUR-SPANNE',
@@ -341,6 +350,12 @@ const DE: PdfStrings = {
     'Abbruchkosten in Vorbereitung · Angebote bei einem zugelassenen Abbruchunternehmen einholen.',
   'costs.demolition.empty':
     'Abbruchkosten in Vorbereitung. Festangebote bei einem zugelassenen Abbruchunternehmen einholen — die Spanne hängt vom Schadstoffgutachten (Asbest/KMF/PCB) und vom Entsorgungsvolumen (KrWG) ab. Keine HOAI-Neubau-Honorartafel anwendbar.',
+  // v1.0.30 Bug 88 — siehe EN-Pendant. Umnutzung: ehrlicher Stub statt
+  // Neubau-Zahlen.
+  'costs.useConversion.subtitle':
+    'Umnutzungskosten in Vorbereitung · Angebote bei den relevanten Fachplaner:innen einholen.',
+  'costs.useConversion.empty':
+    'Umnutzungskosten in Vorbereitung. Festangebote für Schallschutz-, Brandschutz-/Rettungsweg- und TA-Lärm-Gutachten sowie die Bestandsaufnahme einholen — die Spanne hängt vom Bestand (z. B. Holzbalkendecke) und den erforderlichen Fachgutachten ab. Keine HOAI-Neubau-Honorartafel anwendbar.',
 
   // ─── v1.0.16 Renaissance Part 2B — Timeline ───────────────────
   'timeline.kicker': 'ABSCHNITT 04 · ZEITPLAN',

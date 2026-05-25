@@ -715,6 +715,14 @@ export async function buildExportPdf({
   // exist (C11_DATA_GAPS GAP-4), so route to an honest stub rather than
   // ship wrong numbers — no fabrication.
   const isDemolition = procedureCase.intent === 'abbruch'
+  // v1.0.30 Bug 88 — T-04 use-conversion is cost-template-blind the same
+  // way T-05 demolition was (Bug 53). The HOAI new-build engine emits
+  // Architect LP1-4 / Structural / Surveying / Energy (GEG thermal cert)
+  // rows scaled off NGF — none fit an interior use change (no new-build
+  // LP1-4, no envelope GEG trigger, no new official site plan). No sourced
+  // use-conversion BKI exists, so route to an honest stub (request
+  // Fachplaner quotes) rather than ship new-build numbers. No fabrication.
+  const isUseConversion = procedureCase.intent === 'umnutzung'
   const costsData: CostsData = isDemolition
     ? {
         areaSqm: 0,
@@ -726,14 +734,25 @@ export async function buildExportPdf({
         subtitle: pdfStrings['costs.demolition.subtitle'],
         emptyMessage: pdfStrings['costs.demolition.empty'],
       }
-    : {
-        areaSqm,
-        bundeslandCode: bundeslandCodeUpper,
-        structuralRef,
-        templateLabel,
-        items: costItems,
-        total: formatEurRange(costBreakdown.total, lang),
-      }
+    : isUseConversion
+      ? {
+          areaSqm: 0,
+          bundeslandCode: bundeslandCodeUpper,
+          structuralRef,
+          templateLabel,
+          items: [],
+          total: '—',
+          subtitle: pdfStrings['costs.useConversion.subtitle'],
+          emptyMessage: pdfStrings['costs.useConversion.empty'],
+        }
+      : {
+          areaSqm,
+          bundeslandCode: bundeslandCodeUpper,
+          structuralRef,
+          templateLabel,
+          items: costItems,
+          total: formatEurRange(costBreakdown.total, lang),
+        }
   const costsPage = doc.addPage([PDF_PAGE_WIDTH, PDF_PAGE_HEIGHT])
   const costsPageNumber = doc.getPageCount()
   renderCostsBody(costsPage, editorialFonts, pdfStrings, costsData)

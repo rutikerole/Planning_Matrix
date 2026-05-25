@@ -454,8 +454,14 @@ export const COST_BANDS_BY_TEMPLATE: Record<TemplateId, CostBandPerTemplate> = {
   'T-04': {
     lower:  6_000,
     upper: 18_000,
-    basisDe: 'Umnutzung verfahrensfrei (Anzeige nach Art. 57 Abs. 4 BayBO), München',
-    basisEn: 'Change of use procedure-exempt (notification per Art. 57 Abs. 4), Munich',
+    // v1.0.30 Bug 88 — drop the "verfahrensfrei (Anzeige nach Art. 57 Abs. 4
+    // BayBO), München" framing: it bled BayBO + München onto every non-Bayern
+    // project AND was factually wrong (a use change is frequently
+    // genehmigungspflichtig, e.g. retail→gastronomy in Leipzig). State-neutral,
+    // scope-honest. (The remaining 7 bands are still München/BayBO-framed —
+    // web Cost-tab bleed flagged in BACKLOG for a follow-up pass.)
+    basisDe: 'Umnutzung — Umfang abhängig von Schallschutz-/Brandschutz-/TA-Lärm-Gutachten; Fachgutachten erforderlich',
+    basisEn: 'Change of use — scope depends on sound-/fire-protection/noise assessments; specialist reports required',
   },
   'T-05': {
     lower:  4_500,
