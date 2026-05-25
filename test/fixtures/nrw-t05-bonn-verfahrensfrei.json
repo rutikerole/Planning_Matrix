@@ -31,10 +31,12 @@
         { "key": "erhaltungssatzung", "value": false, "qualifier": { "source": "CLIENT", "quality": "DECIDED", "setAt": "2026-05-24T00:00:00.000Z", "setBy": "assistant" } },
         { "key": "sanierungsgebiet", "value": false, "qualifier": { "source": "CLIENT", "quality": "DECIDED", "setAt": "2026-05-24T00:00:00.000Z", "setBy": "assistant" } },
         { "key": "baulast", "value": false, "qualifier": { "source": "CLIENT", "quality": "DECIDED", "setAt": "2026-05-24T00:00:00.000Z", "setBy": "assistant" } },
-        { "key": "verfahren_indikation", "value": "verfahrensfrei nach § 62 BauO NRW", "qualifier": { "source": "LEGAL", "quality": "CALCULATED", "setAt": "2026-05-24T00:00:00.000Z", "setBy": "assistant" } }
+        { "key": "verfahren.typ", "value": "verfahrensfrei nach § 62 BauO NRW", "qualifier": { "source": "LEGAL", "quality": "CALCULATED", "setAt": "2026-05-24T00:00:00.000Z", "setBy": "assistant" } }
       ],
       "recommendations": [],
-      "procedures": [],
+      "procedures": [
+        { "id": "P-Verfahrensfrei", "title_de": "Verfahrensfrei nach § 62 BauO NRW", "title_en": "Permit-free under § 62 BauO NRW", "status": "nicht_erforderlich", "rationale_de": "Abbruch eines freistehenden Gebäudes der Gebäudeklasse 2 ist nach § 62 BauO NRW verfahrensfrei; Nebenpflichten (Schadstoff, Entsorgung) bleiben.", "rationale_en": "Demolition of a detached building class 2 is permit-free under § 62 BauO NRW; ancillary duties (hazardous materials, disposal) remain.", "qualifier": { "source": "LEGAL", "quality": "CALCULATED", "setAt": "2026-05-24T00:00:00.000Z", "setBy": "assistant" } }
+      ],
       "documents": [],
       "specialists": [],
       "roles": []

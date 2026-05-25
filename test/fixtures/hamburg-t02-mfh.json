@@ -31,14 +31,16 @@
         { "key": "okff_oberstes_geschoss_m", "value": 13, "qualifier": { "source": "CLIENT", "quality": "DECIDED", "setAt": "2026-05-25T00:00:00.000Z", "setBy": "assistant" } },
         { "key": "sonderbau_tatbestand", "value": false, "qualifier": { "source": "LEGAL", "quality": "CALCULATED", "setAt": "2026-05-25T00:00:00.000Z", "setBy": "assistant" } },
         { "key": "planungsrecht_rechtsgrundlage", "value": "§ 34 BauGB wahrscheinlich", "qualifier": { "source": "CLIENT", "quality": "ASSUMED", "setAt": "2026-05-25T00:00:00.000Z", "setBy": "assistant" } },
-        { "key": "verfahren_indikation", "value": "Vereinfachtes Baugenehmigungsverfahren § 61 HBauO", "qualifier": { "source": "LEGAL", "quality": "CALCULATED", "setAt": "2026-05-25T00:00:00.000Z", "setBy": "assistant" } },
+        { "key": "verfahren.typ", "value": "Vereinfachtes Baugenehmigungsverfahren § 61 HBauO", "qualifier": { "source": "LEGAL", "quality": "CALCULATED", "setAt": "2026-05-25T00:00:00.000Z", "setBy": "assistant" } },
         { "key": "stellplatz_anzahl_geplant", "value": 6, "qualifier": { "source": "CLIENT", "quality": "DECIDED", "setAt": "2026-05-25T00:00:00.000Z", "setBy": "assistant" } },
         { "key": "stellplatz_typ", "value": "Tiefgarage", "qualifier": { "source": "CLIENT", "quality": "DECIDED", "setAt": "2026-05-25T00:00:00.000Z", "setBy": "assistant" } },
         { "key": "geg_pflicht", "value": "Wärmeschutznachweis Pflicht im Bauantrag — GEG 2024", "qualifier": { "source": "LEGAL", "quality": "CALCULATED", "setAt": "2026-05-25T00:00:00.000Z", "setBy": "assistant" } },
         { "key": "denkmalschutz", "value": false, "qualifier": { "source": "CLIENT", "quality": "DECIDED", "setAt": "2026-05-25T00:00:00.000Z", "setBy": "assistant" } }
       ],
       "recommendations": [],
-      "procedures": [],
+      "procedures": [
+        { "id": "P-Vereinfacht", "title_de": "Vereinfachtes Baugenehmigungsverfahren § 61 HBauO", "title_en": "Simplified building permit § 61 HBauO", "status": "erforderlich", "rationale_de": "GK 4, reine Wohnnutzung, kein Sonderbau-Tatbestand — vereinfachtes Verfahren nach § 61 HBauO; Bestätigung durch bauvorlageberechtigte:n Architekt:in.", "rationale_en": "GK 4, purely residential, no Sonderbau scope — simplified procedure under § 61 HBauO; confirmation by a submission-authorized architect.", "qualifier": { "source": "LEGAL", "quality": "ASSUMED", "setAt": "2026-05-25T00:00:00.000Z", "setBy": "assistant" } }
+      ],
       "documents": [],
       "specialists": [],
       "roles": [

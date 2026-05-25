@@ -401,11 +401,21 @@ export async function buildExportPdf({
     mk_gebietsart: factBool('mk_gebietsart'),
     bauvoranfrage_hard_blocker: factBool('bauvoranfrage_hard_blocker'),
     sonderbau_scope: factBool('sonderbau_scope'),
-    // v1.0.28 Bug 52 — persona's procedure conclusion (verfahren_indikation
-    // or PROCEDURE.TYPE fact). resolveProcedure honors a verfahrensfrei
-    // verdict so the PDF stops contradicting the chat (T-05 Abbruch Bonn).
+    // v1.0.28 Bug 52 + v1.0.29.1 Bug 83 — persona's explicit procedure-type
+    // conclusion, read across every fact-key convention. The T-02 Hamburg walk
+    // emitted it under the dotted `verfahren.typ` (PDF Key Data), not
+    // `verfahren_indikation` — so the v1.0.28/29 read missed it and the PDF
+    // fell to the generic "regulär · ASSUMED" branch. NOT sourced from
+    // state.procedures: the Königsallee T-03 fixture proved the persona's
+    // procedures[0] title ("Vereinfachtes Bauantragsverfahren", no §) can
+    // CONTRADICT the more-correct deterministic verdict (verfahrensfrei § 62
+    // via resolveNrwSanierung), which must still win when no explicit
+    // procedure-type fact is present.
     verfahren_indikation:
-      factStr('verfahren_indikation') ?? factStr('PROCEDURE.TYPE'),
+      factStr('verfahren_indikation') ??
+      factStr('PROCEDURE.TYPE') ??
+      factStr('verfahren.typ') ??
+      factStr('verfahren_typ'),
   }
   const procedureDecision: ProcedureDecision = resolveProcedure(procedureCase)
   // v1.0.21 Bug E — derive an explicit BLOCKER summary that the

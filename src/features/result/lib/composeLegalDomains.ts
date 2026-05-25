@@ -198,8 +198,18 @@ export function composeLegalDomains(
   // {Land}" label with an "in Vorbereitung" status (their pack §-fields
   // are deliberately unverified deferral text).
   if (!isBayern) {
+    // v1.0.29.1 Bug 83 — read the persona's explicit procedure-type fact across
+    // every key convention. The T-02 Hamburg walk emitted it via `verfahren.typ`
+    // (dotted), not `verfahren_indikation` — so the v1.0.28/29 read missed it
+    // and Domain B fell to the "Landesbauordnung {Land}" stub instead of the
+    // cited §. NOT sourced from state.procedures (the Königsallee fixture proved
+    // procedures[0] can be less precise than the deterministic verdict).
     const verfahrenFact = facts.find(
-      (f) => f.key === 'verfahren_indikation' || f.key === 'PROCEDURE.TYPE',
+      (f) =>
+        f.key === 'verfahren_indikation' ||
+        f.key === 'PROCEDURE.TYPE' ||
+        f.key === 'verfahren.typ' ||
+        f.key === 'verfahren_typ',
     )
     const verfahrenStr =
       typeof verfahrenFact?.value === 'string' ? verfahrenFact.value : ''
