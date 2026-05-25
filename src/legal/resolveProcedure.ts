@@ -370,6 +370,45 @@ export function resolveProcedure(c: ProcedureCase): ProcedureDecision {
       ],
     }
   }
+  // v1.0.30 Bug 90 + 91 + 92 — use-conversion (T-04). A use change that
+  // cleared the hard-blocker gate above is a NON-Sonderbau permit case: the
+  // building-permit obligation is CALCULATED (intent + non-Sonderbau, since a
+  // Sonderbau scope would have short-circuited to bauvoranfrage), and for a
+  // non-Sonderbau use change the SIMPLIFIED procedure is the correct baseline
+  // (§ 63 SächsBO / § 64 BauO NRW etc.) — NOT the "(regulär)" new-build label
+  // the generic branch below emits (Bug 91), and NOT ASSUMED (Bug 90). This
+  // converges the PDF resolver with the web baseline, which already returns
+  // loc.procedure.simplified for umnutzung (deriveBaselineProcedure.ts:98-107)
+  // — Bug 92. The verfahrensfrei/vereinfacht keyword branches above still take
+  // precedence whenever the persona stated one explicitly.
+  if (c.intent === 'umnutzung') {
+    const loc = getStateLocalization(c.bundesland)
+    const simp = loc.procedure.simplified
+    const simpCitation = simp.citation.trim()
+    const hasCitation = simpCitation.length > 0
+    return {
+      kind: 'vereinfachtes',
+      citation: hasCitation
+        ? simpCitation
+        : 'landesrechtliche Detail-Spezifika in Vorbereitung',
+      reasoning_de: hasCitation
+        ? `Nutzungsänderung ist genehmigungspflichtig; für nicht-Sonderbauten regelmäßig im vereinfachten Verfahren (${simp.nameDe}, ${simpCitation}). Verfahrensart und etwaige Sonderbau-Tatbestände mit dem lokalen Bauamt bestätigen.`
+        : `Nutzungsänderung ist genehmigungspflichtig; für nicht-Sonderbauten regelmäßig im vereinfachten Verfahren — konkrete Verfahrensart (landesrechtliche Detail-Spezifika in Vorbereitung) mit dem lokalen Bauamt bestätigen.`,
+      reasoning_en: hasCitation
+        ? `A use change requires a building permit; for non-Sonderbau cases typically via the simplified procedure (${simp.nameEn}, ${simpCitation}). Confirm the procedure type and any Sonderbau scope with the local building authority.`
+        : `A use change requires a building permit; for non-Sonderbau cases typically via the simplified procedure (state-specific details being finalized) — confirm the procedure type with the local building authority.`,
+      confidence: 'CALCULATED',
+      caveats: [
+        {
+          kind: 'bebauungsplan_specific',
+          message_de:
+            'Anwendbarkeit des vereinfachten Verfahrens mit dem lokalen Bauamt bestätigen; bei Sonderbau-Tatbeständen greift das reguläre Verfahren.',
+          message_en:
+            'Confirm applicability of the simplified procedure with the local building authority; a Sonderbau scope reinstates the regular procedure.',
+        },
+      ],
+    }
+  }
   // Generic branch for unmigrated states/intents.
   //
   // v1.0.25 Bug 26 fix — was `§ 65 BauO ${c.bundesland.toUpperCase()}`,

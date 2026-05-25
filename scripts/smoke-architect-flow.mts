@@ -600,9 +600,21 @@ function runProcedure(): Tally {
   ok(t, simp.confidence === 'CALCULATED', `Hamburg T-02: confidence CALCULATED (got '${simp.confidence}')`)
 
   // Regression — no indikation → honest generic stub (standard + ASSUMED).
+  // (base.intent === 'neubau' — proves the umnutzung branch below does NOT
+  //  bleed into other intents.)
   const generic = resolveProcedure(base)
   ok(t, generic.kind === 'standard' && generic.confidence === 'ASSUMED',
     `stub w/o indikation → standard + ASSUMED (got '${generic.kind}'/'${generic.confidence}')`)
+
+  // v1.0.30 Bug 90/91/92 — T-04 use-conversion (Sachsen stub) is a non-Sonderbau
+  // permit case: CALCULATED simplified procedure (converges with the web
+  // baseline deriveBaselineProcedure umnutzung → loc.procedure.simplified),
+  // NOT the generic "standard + (regulär) + ASSUMED" the PDF previously emitted.
+  const umnutz = resolveProcedure({ ...(base as object), bundesland: 'sachsen', intent: 'umnutzung' } as never)
+  ok(t, umnutz.kind === 'vereinfachtes', `T-04 umnutzung: kind 'vereinfachtes' (Bug 91, got '${umnutz.kind}')`)
+  ok(t, umnutz.confidence === 'CALCULATED', `T-04 umnutzung: confidence CALCULATED (Bug 90, got '${umnutz.confidence}')`)
+  ok(t, !/regul[äa]r/.test(umnutz.citation + umnutz.reasoning_de + umnutz.reasoning_en),
+    `T-04 umnutzung: no "(regulär)" new-build label (Bug 91)`)
 
   // Bug 52 regression — verfahrensfrei still honored (T-05 NRW).
   const free = resolveProcedure({ ...(base as object), bundesland: 'nrw', verfahren_indikation: 'verfahrensfrei nach § 62 BauO NRW' } as never)
