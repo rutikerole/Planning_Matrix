@@ -46,7 +46,17 @@ export function composeRisks({ project, state, limit = 3 }: Args): {
     // negates it (Heritage when denkmalschutz=false; also kills the
     // /denkmal/-matches-"kein Denkmalschutz" false positive).
     if (entry.excludeIntents?.includes(project.intent)) continue
-    if (entry.suppressWhenFactFalse && factIsFalse(state, entry.suppressWhenFactFalse))
+    // v1.0.30 Bug 96 — also suppress when the fact is ASSUMED-negative (e.g.
+    // denkmalschutz "nicht bekannt an der Einheit" · ASSUMED). The T-04 Leipzig
+    // walk surfaced Heritage as the TOP risk although no Denkmalschutz was
+    // known: factIsFalse only caught explicit false/nein, not the ASSUMED
+    // "nicht bekannt" string. A genuine UNKNOWN (quality !== 'ASSUMED') or an
+    // affirmative value still fires.
+    if (
+      entry.suppressWhenFactFalse &&
+      (factIsFalse(state, entry.suppressWhenFactFalse) ||
+        factIsAssumedNegative(state, entry.suppressWhenFactFalse))
+    )
       continue
     if (entry.bundeslaender && !entry.bundeslaender.includes(project.bundesland))
       continue
@@ -84,6 +94,31 @@ function factIsFalse(state: Partial<ProjectState>, key: string): boolean {
   const f = (state.facts ?? []).find((x) => x.key === key)
   if (!f) return false
   return f.value === false || f.value === 'false' || f.value === 'NEIN' || f.value === 'nein'
+}
+
+/**
+ * v1.0.30 Bug 96 — true when a fact is ASSUMED and its value reads as
+ * negative / not-known (e.g. denkmalschutz "nicht bekannt an der Einheit").
+ * An ASSUMED-negative fact is not a verified signal, so a HIGH-impact risk
+ * (Heritage) must not fire off it. An affirmative value ("ja", "Einzeldenkmal")
+ * or a genuine UNKNOWN (quality !== 'ASSUMED') still fires.
+ */
+function factIsAssumedNegative(
+  state: Partial<ProjectState>,
+  key: string,
+): boolean {
+  const f = (state.facts ?? []).find((x) => x.key === key)
+  if (!f || f.qualifier?.quality !== 'ASSUMED') return false
+  if (f.value === false) return true
+  if (typeof f.value !== 'string') return false
+  const v = f.value.toLowerCase()
+  // affirmative heritage assertion → still fire
+  if (/\bja\b|yes|gesch[üu]tzt|steht unter|einzeldenkmal|ensemble/.test(v)) {
+    return false
+  }
+  return /nicht bekannt|unbekannt|\bkein|\bnein\b|\bkeine\b|not known|\bnone\b|\bno\b/.test(
+    v,
+  )
 }
 
 function buildCorpus(state: Partial<ProjectState>): string {

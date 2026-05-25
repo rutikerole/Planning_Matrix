@@ -339,6 +339,21 @@ function runRisks(): Tally {
   const t01 = risksFor('test/fixtures/nrw-t01-duesseldorf-plain.json')
   ok(t, t01.includes('risk-bplan-late-discovery'), 'T-01 neubau: B-Plan risk still fires (no regression)')
   ok(t, !t01.includes('risk-schadstoff-abbruch'), 'T-01 neubau: demolition risk does NOT fire')
+
+  // v1.0.30 Bug 96 — Heritage risk suppressed when denkmalschutz is ASSUMED +
+  // "nicht bekannt" (the T-04 Leipzig case), not just explicit false/nein.
+  const risksForState = (state: unknown) =>
+    composeRisks({ project: { intent: 'umnutzung', bundesland: 'sachsen' } as never, state: state as never, limit: 30 })
+      .visible.map((r) => r.entry.id)
+  const assumedNeg = risksForState({
+    facts: [{ key: 'denkmalschutz', value: 'nicht bekannt an der Einheit', qualifier: { source: 'CLIENT', quality: 'ASSUMED' } }],
+  })
+  ok(t, !assumedNeg.includes('risk-denkmal'), 'Bug 96: Heritage risk suppressed on denkmalschutz ASSUMED + "nicht bekannt"')
+  // Regression — an affirmative heritage value STILL fires (must not over-suppress).
+  const heritageTrue = risksForState({
+    facts: [{ key: 'denkmalschutz', value: 'ja — Einzeldenkmal', qualifier: { source: 'CLIENT', quality: 'DECIDED' } }],
+  })
+  ok(t, heritageTrue.includes('risk-denkmal'), 'Bug 96: Heritage risk STILL fires when denkmalschutz is affirmatively true')
   return t
 }
 
