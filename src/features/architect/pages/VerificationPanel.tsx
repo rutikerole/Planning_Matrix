@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Link, useParams } from 'react-router-dom'
 import { supabase } from '@/lib/supabase'
@@ -11,6 +12,9 @@ interface ProjectRow {
   name: string | null
   bundesland: string | null
   template_id: string | null
+  /** v1.0.32.2 (B) — owner_id distinguishes an OWNER preview (read-only) from
+   *  a designer-member (full write). RLS returns it to both. */
+  owner_id: string | null
   state: ProjectState | null
 }
 
@@ -29,6 +33,7 @@ interface ProjectRow {
  * German copy from the user's spec.
  */
 export function VerificationPanel() {
+  const { t } = useTranslation()
   const { projectId } = useParams<{ projectId: string }>()
   const user = useAuthStore((s) => s.user)
   const queryClient = useQueryClient()
@@ -61,7 +66,7 @@ export function VerificationPanel() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('projects')
-        .select('id, name, bundesland, template_id, state')
+        .select('id, name, bundesland, template_id, owner_id, state')
         .eq('id', projectId!)
         .maybeSingle()
       if (error) throw error
@@ -104,6 +109,13 @@ export function VerificationPanel() {
 
   const sections = useMemo(() => deriveSections(data?.state ?? null), [data])
 
+  // v1.0.32.2 (B) — owner read-only preview. The OWNER can reach this panel via
+  // the ?preview=1 link (ArchitectGuard relaxation); RLS lets them read their
+  // own project. owner_id === caller ⇒ preview (verify/reject hidden). A real
+  // designer-member has owner_id ≠ caller ⇒ full write. Writes are server-gated
+  // (verify-fact requires role=designer) regardless, so this is UX-only.
+  const isPreview = !!data && !!user && data.owner_id === user.id
+
   // v1.0.32 Bug 112 — identity gate. If the project already carries a verifying
   // architect (state.verification, set on a prior verify) or we captured one
   // this session, verify directly; otherwise prompt once. The captured identity
@@ -111,6 +123,7 @@ export function VerificationPanel() {
   const hasIdentity =
     !!data?.state?.verification?.architectName || !!sessionIdentity
   const requestVerify = (field: VerifyFactField, itemId: string, note?: string) => {
+    if (isPreview) return // owner preview — read-only (defense; controls hidden)
     if (hasIdentity) {
       verifyMutation.mutate({ field, itemId, note, identity: sessionIdentity ?? undefined })
       return
@@ -180,6 +193,14 @@ export function VerificationPanel() {
         </p>
       </header>
 
+      {isPreview && (
+        <div className="mb-4 border border-[hsl(var(--clay))]/40 bg-[hsl(var(--clay))]/5 px-4 py-2.5">
+          <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-[hsl(var(--clay))]">
+            {t('architect.preview.banner')}
+          </p>
+        </div>
+      )}
+
       {error && (
         <div className="mb-4">
           <ErrorBanner message={error} />
@@ -210,6 +231,7 @@ export function VerificationPanel() {
           rejectReason={rejectReason}
           setRejectReason={setRejectReason}
           isPending={verifyMutation.isPending}
+          preview={isPreview}
         />
       ))}
 
@@ -394,6 +416,7 @@ function Section({
   rejectReason,
   setRejectReason,
   isPending,
+  preview,
 }: {
   field: VerifyFactField
   title: string
@@ -407,6 +430,8 @@ function Section({
   rejectReason: Record<string, string>
   setRejectReason: React.Dispatch<React.SetStateAction<Record<string, string>>>
   isPending: boolean
+  /** v1.0.32.2 (B) — owner read-only preview: hide all verify/reject controls. */
+  preview: boolean
 }) {
   if (rows.length === 0) return null
   return (
@@ -444,7 +469,7 @@ function Section({
                   <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-emerald-700">
                     Bestätigt
                   </p>
-                ) : (
+                ) : preview ? null : (
                   <div className="flex flex-wrap items-center gap-2">
                     <input
                       type="text"
@@ -466,8 +491,8 @@ function Section({
                     </button>
                   </div>
                 )}
-                {/* C8 (Bug 34) — reject / un-verify with a required reason. */}
-                {rejectingKey === noteKey ? (
+                {/* C8 (Bug 34) — reject / un-verify; hidden in owner preview (B). */}
+                {!preview && (rejectingKey === noteKey ? (
                   <div className="flex flex-wrap items-center gap-2 border-l-2 border-[hsl(var(--clay))]/40 pl-2">
                     <input
                       type="text"
@@ -506,7 +531,7 @@ function Section({
                   >
                     {row.isVerified ? 'Verifizierung zurückziehen' : 'Ablehnen'}
                   </button>
-                )}
+                ))}
               </div>
             </li>
           )

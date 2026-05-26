@@ -38,7 +38,16 @@ export function ArchitectGuard({ children }: { children: ReactNode }) {
     return <GateLoading />
   }
   if (!user) return <GateLoading />
-  if (!isDesigner) return <NotAuthorized />
+  // v1.0.32.2 (B) — owner read-only preview. A non-designer may reach the
+  // per-project verify route with ?preview=1 (AcceptInvite routes the project
+  // OWNER here). This relaxes only the CLIENT visibility gate: the project read
+  // is RLS-scoped (owner sees only their own; others get null → empty panel) and
+  // every write (verify-fact) is server-gated to role=designer. Scoped to the
+  // verify route so the dashboard etc. stay designer-only.
+  const isPreviewRoute =
+    /\/architect\/projects\/[^/]+\/verify$/.test(location.pathname) &&
+    new URLSearchParams(location.search).get('preview') === '1'
+  if (!isDesigner && !isPreviewRoute) return <NotAuthorized />
   return <>{children}</>
 }
 
