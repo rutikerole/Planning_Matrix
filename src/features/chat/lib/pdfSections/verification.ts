@@ -45,6 +45,13 @@ export interface VerificationData {
    *  Bug 29 fallback chain (profile.full_name → user_metadata →
    *  email local-part → "Bauherr"/"Owner"). */
   bauherrName?: string
+  /** v1.0.32 Bug 112 — self-attested verifying-architect identity, pre-printed
+   *  above the architect / chamber signature lines on a fully-verified brief.
+   *  Passed by exportPdf only when rollup.allVerified. Self-attested, not
+   *  chamber-audited. */
+  architectName?: string
+  architectChamberNo?: string
+  architectChamberState?: string
 }
 
 export interface VerificationFooterData {
@@ -197,6 +204,35 @@ export function renderVerificationBody(
   // ─── Signature block ───────────────────────────────────────────
   const sigStartY = panelY - 140
   const sigHalfW = (PAGE_WIDTH - 2 * MARGIN - 40) / 2
+
+  // v1.0.32 Bug 112 — pre-print the self-attested architect identity just above
+  // the signature lines on a fully-verified brief (drawSignatureField puts the
+  // hairline at y-56, so y-50 sits ~6pt above it). The earlier design left
+  // these blank "never a fabricated name"; we now print the architect's own
+  // attested name + chamber number, captured at verify time.
+  if (data.architectName) {
+    drawSafeText(page, data.architectName, {
+      x: MARGIN,
+      y: sigStartY - 50,
+      size: 12,
+      font: fonts.sansMedium,
+      color: INK,
+      safe: fonts.safe,
+    })
+  }
+  const chamberLine = [data.architectChamberNo, data.architectChamberState]
+    .filter((s): s is string => typeof s === 'string' && s.length > 0)
+    .join(' · ')
+  if (chamberLine) {
+    drawSafeText(page, chamberLine, {
+      x: MARGIN + sigHalfW + 40,
+      y: sigStartY - 50,
+      size: 11,
+      font: fonts.sans,
+      color: INK,
+      safe: fonts.safe,
+    })
+  }
 
   drawSignatureField(page, {
     x: MARGIN,

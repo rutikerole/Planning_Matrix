@@ -1181,6 +1181,13 @@ export async function buildExportPdf({
     verificationAgg.counts.CALCULATED + verificationAgg.counts.VERIFIED
   const assumedCount =
     verificationAgg.counts.ASSUMED + verificationAgg.counts.UNKNOWN
+  // v1.0.32 Bug 111/112 — compute the verification rollup here (was at the
+  // footer block below) so the signature block AND the editorial footers share
+  // one source. Surfaces the self-attested architect identity for the sig block.
+  const { computeVerificationRollup } = await import(
+    '@/features/result/lib/verificationRollup'
+  )
+  const verificationRollup = computeVerificationRollup(state)
   renderVerificationBody(verificationPage, editorialFonts, pdfStrings, {
     templateLabel,
     bundeslandCode: bundeslandCodeUpper,
@@ -1190,6 +1197,15 @@ export async function buildExportPdf({
     verifiedCount,
     calculatedCount,
     assumedCount,
+    // v1.0.32 Bug 112 — name the architect in the signature block only on a
+    // fully-verified brief (same gate as the cleared footer).
+    ...(verificationRollup.allVerified && verificationRollup.architectName
+      ? {
+          architectName: verificationRollup.architectName,
+          architectChamberNo: verificationRollup.architectChamberNo ?? undefined,
+          architectChamberState: verificationRollup.architectChamberState ?? undefined,
+        }
+      : {}),
   })
 
   // ── Page XI: Glossary ──────────────────────────────────────────
@@ -1222,16 +1238,12 @@ export async function buildExportPdf({
   const allPages = doc.getPages()
   const today = formatDate(new Date().toISOString(), lang)
   const footer = `${lang === 'en' ? 'Generated with Planning Matrix' : 'Generiert mit Planning Matrix'}  ·  planning-matrix.app  ·  ${today}`
-  // C8 (Bug 33) — aggregate rollup. The per-page footer clears to a
+  // C8 (Bug 33) / v1.0.32 Bug 111 — the per-page + editorial footers clear to a
   // "verified" line ONLY when EVERY load-bearing item is DESIGNER+VERIFIED
-  // (same predicate as the result-page VorlaeufigFooter). Date only — no
-  // architect name (not in state under RLS; never fabricated). The else-
-  // branch is byte-identical to the prior locked text, so non-fully-
-  // verified projects (incl. every smoke fixture) render unchanged.
-  const { computeVerificationRollup } = await import(
-    '@/features/result/lib/verificationRollup'
-  )
-  const verificationRollup = computeVerificationRollup(state)
+  // (same predicate as the result-page VorlaeufigFooter). verificationRollup is
+  // computed once above (it also feeds the signature block's architect name).
+  // The unverified branch is byte-identical to the prior locked text, so
+  // non-fully-verified projects (incl. every smoke fixture) render unchanged.
   const verifiedFooterDate = verificationRollup.lastVerifiedAt
     ? ` · ${formatDate(verificationRollup.lastVerifiedAt, lang)}`
     : ''

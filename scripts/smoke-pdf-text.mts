@@ -1022,6 +1022,35 @@ async function runArchitektBannerGateCheck(): Promise<{ passed: number; failed: 
   return { passed, failed }
 }
 
+// v1.0.32 Bug 112 — a fully-verified brief must NAME the self-attested
+// architect (+ chamber registration no.) in the signature block; an
+// un-verified brief must leave it blank. The all-verified fixture carries a
+// state.verification block; the unverified original carries none.
+async function runVerifiedArchitectName(): Promise<{ passed: number; failed: number }> {
+  console.log(`\n[smoke-pdf-text] verified PDF names the architect (Bug 112)…`)
+  let passed = 0
+  let failed = 0
+  const verifiedFx = 'test/fixtures/bayern-t01-muenchen-allverified.json'
+  const unverifiedFx = 'test/fixtures/bayern-t01-muenchen.json'
+  for (const lang of ['en', 'de'] as const) {
+    const vText = await extractPdfText(await renderFixturePdf(lang, verifiedFx))
+    const nameHit = vText.includes('Anna Vogt')
+    const m1 = `all-verified ${lang}: architect name printed in signature block (Bug 112)`
+    if (nameHit) { console.log(`  ✓ ${m1}`); passed++ }
+    else { console.log(`  ✗ ${m1}`); failed++ }
+    const chamberHit = vText.includes('BY-2024-08817')
+    const m2 = `all-verified ${lang}: chamber registration no. printed (Bug 112)`
+    if (chamberHit) { console.log(`  ✓ ${m2}`); passed++ }
+    else { console.log(`  ✗ ${m2}`); failed++ }
+    const uText = await extractPdfText(await renderFixturePdf(lang, unverifiedFx))
+    const noName = !uText.includes('Anna Vogt')
+    const m3 = `unverified ${lang}: no architect name on un-verified brief (Bug 112 gate)`
+    if (noName) { console.log(`  ✓ ${m3}`); passed++ }
+    else { console.log(`  ✗ ${m3}`); failed++ }
+  }
+  return { passed, failed }
+}
+
 // v1.0.24 Bug R extension — normalizeDesignerWithoutInLoop now fires
 // at Top-3 + Section VIII (in addition to v1.0.23's Key Data path).
 // Unit-tests the gate function across the full quality matrix so a
@@ -1614,6 +1643,7 @@ async function main(): Promise<void> {
   const verifiedBanner = await runVerifiedBannerCheck()
   const verifiedFooter = await runVerifiedFooterCheck()
   const architektBannerGate = await runArchitektBannerGateCheck()
+  const verifiedName = await runVerifiedArchitectName()
   const designerDowngrade = await runDesignerDowngradeCheck()
   const factLabelCoverage = await runFactLabelCoverageUnit()
   const glossaryStateAware = await runGlossaryStateAwareCheck()
@@ -1634,6 +1664,7 @@ async function main(): Promise<void> {
     verifiedBanner.failed +
     verifiedFooter.failed +
     architektBannerGate.failed +
+    verifiedName.failed +
     designerDowngrade.failed +
     factLabelCoverage.failed +
     glossaryStateAware.failed +
@@ -1654,6 +1685,7 @@ async function main(): Promise<void> {
     verifiedBanner.passed +
     verifiedFooter.passed +
     architektBannerGate.passed +
+    verifiedName.passed +
     designerDowngrade.passed +
     factLabelCoverage.passed +
     glossaryStateAware.passed +
