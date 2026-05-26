@@ -29,6 +29,7 @@ import {
   drawSignatureField,
   drawStackedBar,
   drawWrappedText,
+  ellipsizeToWidth,
   type EditorialFonts,
 } from '../pdfPrimitives'
 import { pdfStr, type PdfStrings } from '../pdfStrings'
@@ -213,28 +214,42 @@ export function renderVerificationBody(
   // hairline at y-56, so y-50 sits ~6pt above it). The earlier design left
   // these blank "never a fabricated name"; we now print the architect's own
   // attested name + chamber number, captured at verify time.
+  // v1.0.34 Bug 60 — clamp the self-attested name to its own signature-column
+  // width (sigHalfW). The name was drawn size-12 with NO width guard at
+  // x=MARGIN while the chamber line sits at x=MARGIN+sigHalfW+40 on the SAME
+  // baseline; a long attested name (e.g. "Dr.-Ing. Maximilian von
+  // Hohenzollern-Sigmaringen") ran into the chamber column. ellipsizeToWidth is
+  // a no-op for names that fit, so normal names + the demo cells are unchanged.
   if (data.architectName) {
-    drawSafeText(page, data.architectName, {
-      x: MARGIN,
-      y: sigStartY - 50,
-      size: 12,
-      font: fonts.sansMedium,
-      color: INK,
-      safe: fonts.safe,
-    })
+    drawSafeText(
+      page,
+      ellipsizeToWidth(data.architectName, fonts.sansMedium, 12, sigHalfW, fonts.safe),
+      {
+        x: MARGIN,
+        y: sigStartY - 50,
+        size: 12,
+        font: fonts.sansMedium,
+        color: INK,
+        safe: fonts.safe,
+      },
+    )
   }
   const chamberLine = [data.architectChamberNo, data.architectChamberState]
     .filter((s): s is string => typeof s === 'string' && s.length > 0)
     .join(' · ')
   if (chamberLine) {
-    drawSafeText(page, chamberLine, {
-      x: MARGIN + sigHalfW + 40,
-      y: sigStartY - 50,
-      size: 11,
-      font: fonts.sans,
-      color: INK,
-      safe: fonts.safe,
-    })
+    drawSafeText(
+      page,
+      ellipsizeToWidth(chamberLine, fonts.sans, 11, sigHalfW, fonts.safe),
+      {
+        x: MARGIN + sigHalfW + 40,
+        y: sigStartY - 50,
+        size: 11,
+        font: fonts.sans,
+        color: INK,
+        safe: fonts.safe,
+      },
+    )
   }
 
   drawSignatureField(page, {
