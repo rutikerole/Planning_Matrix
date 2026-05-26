@@ -1,5 +1,28 @@
 # Changelog
 
+## v1.0.32.1 — Frozen-template UX hotfix (2026-05-26)
+
+Manager-demo polish: a non-demo template/state (anything outside the three
+hardened cells — T-01 Bayern, T-03 Hessen, T-05 NRW) now presents a **confident
+roadmap** at PDF export instead of a blunt "in preparation" line. The chat
+export menu previously fell back to a hardcoded, English-only string that named
+the limitation outright ("currently hardened for T-01 Bayern, T-05 NRW, T-03
+Hessen"); the result dropdown showed an italic "In preparation" tag.
+
+Both now render a clean clay **"Coming soon" / "Bald verfügbar"** pill (not a
+red/yellow warning) plus the line *"This template is rolling out in our next
+release. Contact your account manager for early access."* (DE: *"Diese Vorlage
+wird in unserem nächsten Release verfügbar. Für frühen Zugang wenden Sie sich an
+Ihren Account Manager."*). Copy lives in a single shared key
+(`common.frozenTemplate.{badge,roadmap}`, EN+DE) referenced by both menus.
+
+The badge is intentionally **date-free** (no "Q3 2026") to avoid an unbacked
+commitment in front of the manager — swap to a dated badge trivially if the
+roadmap firms up. UI-layer copy only: `isPdfDemoReady` gate untouched (empty
+diff), so the three demo cells are byte-for-byte unchanged. Gates: Bayern SHA
+MATCH, 16/16 matrix, smoke:pdf-text 386, verify:locales 1439, build clean,
+bundle 285.5 KB gz, lint net-zero.
+
 ## v1.0.32 — Architect handoff P0 fix sprint (2026-05-26)
 
 Closes the four P0s the v1.0.31 architect-handoff audit
