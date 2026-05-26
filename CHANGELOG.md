@@ -1,5 +1,42 @@
 # Changelog
 
+## v1.0.32.2 — Architect accept-link UX (2026-05-26)
+
+Rutik tested the live handoff and the accept link "looked broken": clicking
+`/architect/accept?token=…` while signed in as the owner showed a mixed
+German/English rejection ("Einladung nicht akzeptiert" + "Only profiles with
+role=designer can claim architect invites.") then a Dashboard link. **The gate
+was working as designed** — only a provisioned architect can claim — but the
+surface was embarrassing and gave the owner no way to *see* the panel. Two fixes:
+
+**A — AcceptInvite fully localized, no jargon.** Every string now goes through
+`t()` (EN+DE); the raw English server message is discarded and replaced by a
+CODE-mapped localized string (`forbidden` → *"This verification link is reserved
+for the invited architect. Please sign in with the architect account that
+received this link, or ask the project owner to confirm your access."*, plus
+notFound / session / invalidToken / generic). No more mixed languages, no
+`role=designer` on screen.
+
+**B — "Preview as architect" for the owner.** When the signed-in caller OWNS the
+token's project, `AcceptInvite` routes them to
+`/architect/projects/:id/verify?preview=1` instead of the designer-only claim.
+`ArchitectGuard` allows that one route through for non-designers; `VerificationPanel`
+detects `owner_id === caller` and renders **read-only** — a clay "Preview mode —
+sign in as the invited architect to confirm" banner (EN+DE) with all
+verify/reject controls omitted. **Security unchanged:** the project read is
+RLS-scoped (owner sees only their own project) and every write stays
+server-gated to `role=designer`; this relaxes client visibility only. A
+designer-member (`owner_id ≠ caller`) gets the full write panel as before.
+
+Net for the demo: the owner/manager can click their own link and SEE exactly
+what an architect sees, read-only — no designer provisioning required. (To
+actually *verify*, a designer account is still needed: `update profiles set
+role='designer' where id = (select id from auth.users where email=…)`.)
+
+UI-layer only — no migration, no Edge-Function redeploy. Gates: Bayern SHA MATCH,
+16/16 matrix, smoke:pdf-text 386, smoke:architect, verify:locales 1454,
+hardcoded-de clean, build clean, bundle 286.1 KB gz, lint net-zero.
+
 ## v1.0.32.1 — Frozen-template UX hotfix (2026-05-26)
 
 Manager-demo polish: a non-demo template/state (anything outside the three
