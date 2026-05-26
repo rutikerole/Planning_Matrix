@@ -175,6 +175,35 @@ test.describe('Architect surface', () => {
     await expect(cta).toBeVisible()
   })
 
+  test('first Bestätigen prompts for self-attested architect identity (Bug 112)', async ({
+    page,
+  }) => {
+    await stubArchitectBackend(page, { memberships: 1, verifiedQualifier: false })
+    await page.addInitScript(() => {
+      window.localStorage.setItem(
+        'sb-localhost-auth-token',
+        JSON.stringify({
+          currentSession: {
+            access_token: 'fake-jwt',
+            refresh_token: 'fake-refresh',
+            user: { id: 'arch-user-id-aaaa-bbbb-cccc-dddd-eeee' },
+          },
+          expiresAt: 9999999999,
+        }),
+      )
+    })
+    await page.goto(`/architect/projects/${PROJECT_ID}/verify`)
+    const cta = page.getByRole('button', { name: /^best[äa]tigen$/i }).first()
+    await expect(cta).toBeVisible()
+    await cta.click()
+    // v1.0.32 Bug 112 — the one-time self-attested identity prompt appears
+    // BEFORE the qualifier flips, and it is honest about not being audited.
+    await expect(
+      page.getByRole('heading', { name: /Angaben für die Unterschrift/i }),
+    ).toBeVisible()
+    await expect(page.getByText(/Selbstauskunft/i)).toBeVisible()
+  })
+
   test('anonymous caller hitting /architect/accept is redirected to sign-in', async ({
     page,
   }) => {

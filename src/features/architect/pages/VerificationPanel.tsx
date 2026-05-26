@@ -37,6 +37,23 @@ export function VerificationPanel() {
   // C8 (Bug 34) — which row is mid-rejection + its reason draft.
   const [rejectingKey, setRejectingKey] = useState<string | null>(null)
   const [rejectReason, setRejectReason] = useState<Record<string, string>>({})
+  // v1.0.32 Bug 112 — one-time self-attested identity capture. Opened by the
+  // first "Bestätigen" when the project has no recorded architect identity.
+  const [identityModalOpen, setIdentityModalOpen] = useState(false)
+  const [pendingVerify, setPendingVerify] = useState<{
+    field: VerifyFactField
+    itemId: string
+    note?: string
+  } | null>(null)
+  const [sessionIdentity, setSessionIdentity] = useState<{
+    name: string
+    chamberNo?: string
+    chamberState?: string
+  } | null>(null)
+  const [archName, setArchName] = useState('')
+  const [archChamberNo, setArchChamberNo] = useState('')
+  const [archChamberState, setArchChamberState] = useState('')
+  const [identityError, setIdentityError] = useState<string | null>(null)
 
   const { data, isLoading, error: queryError } = useQuery<ProjectRow | null>({
     enabled: !!projectId && !!user,
@@ -60,6 +77,7 @@ export function VerificationPanel() {
       note?: string
       action?: 'verify' | 'reject'
       reason?: string
+      identity?: { name: string; chamberNo?: string; chamberState?: string }
     }) => {
       if (!projectId) throw new Error('no projectId')
       const result = await verifyFact({
@@ -69,6 +87,7 @@ export function VerificationPanel() {
         note: args.note,
         action: args.action,
         reason: args.reason,
+        identity: args.identity,
       })
       if (!result.ok) {
         throw new Error(result.error.message)
@@ -84,6 +103,40 @@ export function VerificationPanel() {
   })
 
   const sections = useMemo(() => deriveSections(data?.state ?? null), [data])
+
+  // v1.0.32 Bug 112 — identity gate. If the project already carries a verifying
+  // architect (state.verification, set on a prior verify) or we captured one
+  // this session, verify directly; otherwise prompt once. The captured identity
+  // rides the first verify; verify-fact records it once (server-side set-once).
+  const hasIdentity =
+    !!data?.state?.verification?.architectName || !!sessionIdentity
+  const requestVerify = (field: VerifyFactField, itemId: string, note?: string) => {
+    if (hasIdentity) {
+      verifyMutation.mutate({ field, itemId, note, identity: sessionIdentity ?? undefined })
+      return
+    }
+    setPendingVerify({ field, itemId, note })
+    setIdentityError(null)
+    setIdentityModalOpen(true)
+  }
+  const submitIdentity = () => {
+    const name = archName.trim()
+    if (name.length < 3) {
+      setIdentityError('Bitte geben Sie Ihren Namen an (mind. 3 Zeichen).')
+      return
+    }
+    const identity = {
+      name,
+      chamberNo: archChamberNo.trim() || undefined,
+      chamberState: archChamberState.trim() || undefined,
+    }
+    setSessionIdentity(identity)
+    setIdentityModalOpen(false)
+    if (pendingVerify) {
+      verifyMutation.mutate({ ...pendingVerify, identity })
+      setPendingVerify(null)
+    }
+  }
 
   if (isLoading) {
     return (
@@ -148,9 +201,7 @@ export function VerificationPanel() {
           rows={section.rows}
           pendingNote={pendingNote}
           setPendingNote={setPendingNote}
-          onVerify={(field, itemId, note) =>
-            verifyMutation.mutate({ field, itemId, note })
-          }
+          onVerify={(field, itemId, note) => requestVerify(field, itemId, note)}
           onReject={(field, itemId, reason) =>
             verifyMutation.mutate({ field, itemId, action: 'reject', reason })
           }
@@ -170,6 +221,91 @@ export function VerificationPanel() {
           ← Zurück zur Übersicht
         </Link>
       </p>
+
+      {/* v1.0.32 Bug 112 — one-time self-attested identity prompt. German-only,
+          matching the architect surface. Honest: self-attested, not audited. */}
+      {identityModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[hsl(var(--ink))]/40 px-4">
+          <div className="w-full max-w-md border border-[hsl(var(--ink))]/20 bg-[hsl(var(--paper))] p-6">
+            <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-[hsl(var(--ink))]/45">
+              Bestätigungsdokument
+            </p>
+            <h2 className="mt-1 text-xl text-[hsl(var(--ink))]">
+              Ihre Angaben für die Unterschrift
+            </h2>
+            <p className="mt-2 text-[13px] text-[hsl(var(--ink))]/65">
+              Diese Angaben erscheinen im Unterschriftsfeld des verifizierten
+              PDF. Selbstauskunft — sie wird nicht gegen die Architektenliste
+              geprüft.
+            </p>
+            <div className="mt-4 flex flex-col gap-3">
+              <label className="flex flex-col gap-1">
+                <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-[hsl(var(--ink))]/55">
+                  Name (wie im Dokument)
+                </span>
+                <input
+                  type="text"
+                  value={archName}
+                  onChange={(e) => setArchName(e.target.value)}
+                  maxLength={120}
+                  autoFocus
+                  className="border border-[hsl(var(--ink))]/15 bg-transparent px-2 py-1 font-mono text-[13px] text-[hsl(var(--ink))] focus:outline-none focus:ring-1 focus:ring-[hsl(var(--ink))]/40"
+                />
+              </label>
+              <label className="flex flex-col gap-1">
+                <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-[hsl(var(--ink))]/55">
+                  Architektenkammer Eintragungs-Nr. (optional)
+                </span>
+                <input
+                  type="text"
+                  value={archChamberNo}
+                  onChange={(e) => setArchChamberNo(e.target.value)}
+                  maxLength={60}
+                  className="border border-[hsl(var(--ink))]/15 bg-transparent px-2 py-1 font-mono text-[13px] text-[hsl(var(--ink))] focus:outline-none focus:ring-1 focus:ring-[hsl(var(--ink))]/40"
+                />
+              </label>
+              <label className="flex flex-col gap-1">
+                <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-[hsl(var(--ink))]/55">
+                  Architektenkammer (optional)
+                </span>
+                <input
+                  type="text"
+                  value={archChamberState}
+                  onChange={(e) => setArchChamberState(e.target.value)}
+                  maxLength={80}
+                  placeholder="z. B. Bayerische Architektenkammer"
+                  className="border border-[hsl(var(--ink))]/15 bg-transparent px-2 py-1 font-mono text-[13px] text-[hsl(var(--ink))] placeholder:text-[hsl(var(--ink))]/30 focus:outline-none focus:ring-1 focus:ring-[hsl(var(--ink))]/40"
+                />
+              </label>
+            </div>
+            {identityError && (
+              <p className="mt-2 font-mono text-[12px] text-[hsl(var(--clay))]">
+                {identityError}
+              </p>
+            )}
+            <div className="mt-5 flex items-center justify-end gap-3">
+              <button
+                type="button"
+                onClick={() => {
+                  setIdentityModalOpen(false)
+                  setPendingVerify(null)
+                }}
+                className="font-mono text-[11px] uppercase tracking-[0.18em] text-[hsl(var(--ink))]/45 hover:text-[hsl(var(--ink))]"
+              >
+                Abbrechen
+              </button>
+              <button
+                type="button"
+                onClick={submitIdentity}
+                disabled={verifyMutation.isPending}
+                className="border border-[hsl(var(--ink))] px-3 py-1.5 font-mono text-[11px] uppercase tracking-[0.18em] text-[hsl(var(--ink))] hover:bg-[hsl(var(--ink))] hover:text-[hsl(var(--paper))] disabled:opacity-40"
+              >
+                Bestätigen &amp; verifizieren
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
