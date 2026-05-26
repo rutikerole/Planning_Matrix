@@ -7,9 +7,9 @@
 // Turn die Sub-Kategorie elizitieren, BEVOR sie irgendeine
 // Verfahrens-Logik anwendet.
 //
-// LEGAL-VERIFY-MARKER · BayBO Art. 57 Abs. 1 Nr. 1 b Garage ≤ 30 m² · Stand: stabil
+// LEGAL-VERIFY-MARKER · BayBO Art. 57 Abs. 1 Nr. 1 b Garage ≤ 50 m² Brutto-Grundfläche · Stand: gesetze-bayern.de 2025
 // LEGAL-VERIFY-MARKER · BayBO Art. 57 Abs. 1 Nr. 3 PV-Anlagen Dach · Stand: stabil
-// LEGAL-VERIFY-MARKER · BayBO Art. 57 Abs. 1 (Pool 100 m³) · Stand: stabil
+// LEGAL-VERIFY-MARKER · BayBO Art. 57 Abs. 1 (Pool — Volumenschwelle mit Bauamt bestätigen) · Stand: UNVERIFIZIERT
 // LEGAL-VERIFY-MARKER · Viertes Modernisierungsgesetz Werbeanlagen-Reform · Stand: 04/2026
 //                       Quelle: STMB / Bayerischer Landtag 26.03.2026 (post-cutoff verified by brief)
 // LEGAL-VERIFY-MARKER · BauGB § 35 Außenbereich (Solar-Freifläche) · Stand: stabil
@@ -52,15 +52,16 @@ TYPISCHE SUB-KATEGORIEN für T-08
 ──────────────────────────────────────────────────────────────────────────
 
 A) GARAGE / CARPORT (BayBO Art. 57 Abs. 1 Nr. 1 b):
-   • Grundfläche ≤ 30 m² UND mittlere Höhe ≤ 3 m UND nicht im
-     Außenbereich → verfahrensfrei.
+   • Brutto-Grundfläche ≤ 50 m² UND nicht im Außenbereich →
+     verfahrensfrei.
    • Größer ODER im Außenbereich → genehmigungspflichtig
      (vereinfachtes Verfahren).
 
 B) POOL / SCHWIMMBECKEN (BayBO Art. 57 Abs. 1):
-   • Beckeninhalt ≤ 100 m³ UND nicht im Außenbereich →
-     verfahrensfrei.
-   • Größer oder Außenbereich → genehmigungspflichtig.
+   • Kleinere Schwimmbecken im Innenbereich sind regelmäßig
+     verfahrensfrei; die genaue Volumen-Schwelle mit dem Bauamt
+     bestätigen — NICHT aus dem Gedächtnis nennen.
+   • Im Außenbereich → genehmigungspflichtig.
 
 C) GARTENHAUS / GERÄTEHÜTTE:
    • ≤ 75 m³ Brutto-Rauminhalt UND nicht im Außenbereich UND
@@ -181,18 +182,19 @@ VERMEIDE für T-08
 TYPISCHE KORREKTE ZITATE für T-08 (sub-kategorien-spezifisch)
 ──────────────────────────────────────────────────────────────────────────
 
-  ✓ "BayBO Art. 57 Abs. 1 Nr. 1 b" — Garage/Carport ≤ 30 m²
-                                     Grundfläche und ≤ 3 m mittlere
-                                     Höhe verfahrensfrei
+  ✓ "BayBO Art. 57 Abs. 1 Nr. 1 b" — Garage/Carport ≤ 50 m²
+                                     Brutto-Grundfläche, nicht im
+                                     Außenbereich → verfahrensfrei
   ✓ "BayBO Art. 57 Abs. 1 Nr. 1 a" — Gartenhaus / Geräteschuppen
                                      ≤ 75 m³ Brutto-Rauminhalt ohne
                                      Aufenthaltsräume verfahrensfrei
   ✓ "BayBO Art. 57 Abs. 1 Nr. 3 b" — Solaranlagen auf, an oder
                                      unter Dächern (Dach-PV)
                                      verfahrensfrei
-  ✓ "BayBO Art. 57 Abs. 1 (Pool)" — Schwimmbecken bis 100 m³
-                                     Beckeninhalt verfahrensfrei,
-                                     wenn nicht im Außenbereich
+  ✓ "BayBO Art. 57 Abs. 1 (Pool)" — kleinere Schwimmbecken im
+                                     Innenbereich regelmäßig verfahrens-
+                                     frei; Volumenschwelle mit Bauamt
+                                     bestätigen (nicht raten)
   ✓ "BayBO Art. 57 Abs. 7"         — Anzeigepflicht für nicht
                                      OHNE-Anzeige-verfahrensfreie
                                      Vorhaben
@@ -212,8 +214,8 @@ VERBOTENE ZITATE für T-08
 
   ✗ "Anlage 1 BayBO" / "Annex 1 BayBO" — existiert nicht; die
                                      einzelnen Sub-Kategorie-Schwellen
-                                     (Garage 30 m², Pool 100 m³,
-                                     Gartenhaus 75 m³) stehen direkt
+                                     (Garage 50 m², Gartenhaus
+                                     75 m³) stehen direkt
                                      in Art. 57 Abs. 1 mit ihren
                                      jeweiligen Nummern
   ✗ "§ 57 BayBO" / "§ 58 BayBO"   — Art., nicht §

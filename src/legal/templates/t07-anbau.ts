@@ -46,10 +46,11 @@ LEITFRAGEN für T-07
 
 3. Abstandsflächen: „Wie weit ist der Anbau von der Grundstücks-
    grenze?" (BayBO Art. 6)
-   → Typische Abstandsfläche 0,4 H (mindestens 3 m); bei
-     Schmalseiten kann reduziert werden. Bei Grenzbebauung muss
-     die Abstandsflächen-Übernahme durch den Nachbarn vorliegen
-     (Baulast).
+   → In München (Gemeinde > 250.000 EW) beträgt die Abstandsfläche
+     1,0 H (mindestens 3 m) nach Art. 6 Abs. 5a BayBO. Für bis zu
+     zwei Außenwände bis 16 m Länge gilt das 16-m-Privileg mit
+     0,5 H. Bei Grenzbebauung muss die Abstandsflächen-Übernahme
+     durch den Nachbarn vorliegen (Baulast).
 
 4. Tragwerk-Anbindung: „Wie wird der Anbau am Bestand befestigt?"
    → Anbau ist typischerweise tragend mit dem Bestand verbunden;
@@ -178,9 +179,10 @@ TYPISCHE KORREKTE ZITATE für T-07
                                      wenn nicht im Außenbereich.
                                      DAS ist der Anker — niemals
                                      "Anlage 1".
-  ✓ "BayBO Art. 6"                 — Abstandsflächen (typisch
-                                     0,4 H, mindestens 3 m). Bei
-                                     Grenzbebauung Baulast nötig.
+  ✓ "BayBO Art. 6"                 — Abstandsflächen (München
+                                     1,0 H nach Art. 6 Abs. 5a,
+                                     mind. 3 m; 0,5 H 16-m-Privileg).
+                                     Bei Grenzbebauung Baulast nötig.
   ✓ "BayBO Art. 57 Abs. 7"         — Anzeigepflicht (formlose
                                      Textform, 2 Wochen vorher;
                                      bei verfahrensfreien Anbauten

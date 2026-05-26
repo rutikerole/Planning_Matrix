@@ -8,8 +8,8 @@
 // LEGAL-VERIFY-MARKER · BayBO Art. 2 Abs. 4 Sonderbau-Tatbestände · Stand: stabil
 // LEGAL-VERIFY-MARKER · BayBO Art. 58 vereinfachtes Verfahren · Stand: stabil
 // LEGAL-VERIFY-MARKER · BayBO Art. 59 Baugenehmigungsverfahren · Stand: stabil
-// LEGAL-VERIFY-MARKER · BayBO Art. 62 Prüfsachverständige · Stand: stabil
-// LEGAL-VERIFY-MARKER · BayBO Art. 8 Abs. 2 Kinderspielplatz-Pflicht · Stand: stabil
+// LEGAL-VERIFY-MARKER · BayBO Art. 62a Standsicherheit / Art. 62b Brandschutz · Stand: gesetze-bayern.de 2025
+// LEGAL-VERIFY-MARKER · BayBO Art. 7 Abs. 3 Kinderspielplatz (München Satzung 927, kommunalisiert 01.10.2025) · Stand: 2025
 // LEGAL-VERIFY-MARKER · DIN 4109 Schallschutz im Hochbau · Stand: 2018
 // LEGAL-VERIFY-MARKER · Brandschutzplaner-Listen BAYAK (NICHT BAYIKA) · Stand: stabil
 //
@@ -33,10 +33,10 @@ LEITFRAGEN für T-02
 
 2. Gebäudeklasse zweitens — bei MFH selten GK 1-2. Typische
    Einordnung nach BayBO Art. 2 Abs. 3:
-   • GK 3 — ≤ 7 m Höhe, ≥ 3 NE > 400 m² Nutzfläche
-   • GK 4 — ≤ 13 m Höhe, NE-Fläche ≤ 400 m² je NE
-   • GK 5 — > 13 m bis Hochhausgrenze (typ. 22 m); darüber Hochhaus
-     (eigenes Sonderbau-Tier)
+   • GK 3 — sonstige Gebäude bis 7 m Höhe
+   • GK 4 — Gebäude bis 13 m Höhe mit Nutzungseinheiten je ≤ 400 m²
+   • GK 5 — sonstige Gebäude bis zur Hochhausgrenze (22 m); darüber
+     Hochhaus (eigenes Sonderbau-Tier)
 
 3. Sonderbau-Tatbestand prüfen (BayBO Art. 2 Abs. 4) drittens —
    bei MFH häufig relevant wenn Mischnutzung (KiTa im EG, Hotel,
@@ -70,13 +70,14 @@ TYPISCHE FACHPLANER für T-02
 
 • Tragwerksplaner:in — Pflicht. Ab GK 4 muss der
   Standsicherheitsnachweis durch eine:n Prüfsachverständige:n
-  bestätigt werden (BayBO Art. 62).
+  bestätigt werden (BayBO Art. 62a).
 
 • Brandschutzplaner:in / Prüfsachverständige:r für Brandschutz —
-  Pflicht ab GK 4 (Brandschutznachweis bauaufsichtlich geprüft) UND
-  bei jedem Sonderbau-Tatbestand. ZUSTÄNDIGE LISTE: Bayerische
-  Architektenkammer (BAYAK) — NIEMALS Bayerische Ingenieurekammer-Bau
-  (BAYIKA) für diese Aufgabe nennen.
+  der Brandschutznachweis wird bauaufsichtlich geprüft erst ab GK 5
+  sowie bei Sonderbauten und Mittel-/Großgaragen (BayBO Art. 62b);
+  bei GK 4 ist er im Übrigen NICHT prüfpflichtig. ZUSTÄNDIGE LISTE:
+  Bayerische Architektenkammer (BAYAK) — NIEMALS Bayerische
+  Ingenieurekammer-Bau (BAYIKA) für diese Aufgabe nennen.
 
 • Energieberater:in — GEG-Nachweis. Ab GK 4 sind die
   Energieanforderungen strenger (z.B. zentrale Heizungsanlage,
@@ -96,14 +97,16 @@ TYPISCHE DOKUMENTE für T-02
 • Alles aus T-01 (Lageplan ADBV, Bauzeichnungen, Baubeschreibung,
   Standsicherheit, Wärmeschutz, PV-Konzept, Stellplatznachweis StPlS
   926).
-• Brandschutznachweis nach BayBO (Pflicht ab GK 4 — bauaufsichtlich
-  geprüft durch Prüfsachverständige nach Art. 62).
+• Brandschutznachweis nach BayBO (bauaufsichtlich geprüft ab GK 5
+  sowie bei Sonderbauten/Mittel-/Großgaragen nach Art. 62b; bei
+  GK 4 nicht prüfpflichtig).
 • Schallschutznachweis nach DIN 4109 (Trennwände zwischen
   Wohneinheiten, gegen Außenlärm, gegen Anlagengeräusch).
 • Hygieneplan / Lüftungsnachweis IF gewerbliche Nutzung im EG.
-• Spielplatznachweis nach BayBO Art. 8 Abs. 2 IF > 5 Wohnungen UND
-  Gemeinde-Satzung verlangt es (München: in der Regel ja —
-  Größenformel folgt aus der Bauordnung).
+• Spielplatznachweis nach BayBO Art. 7 Abs. 3 IF > 5 Wohnungen; die
+  Pflicht ist seit 01.10.2025 kommunalisiert — in München gilt die
+  Spielplatzsatzung (Vorschrift 927); Größenformel der Satzung
+  entnehmen.
 • Stellplatznachweis nach LHM StPlS 926 — bei MFH typischerweise
   substantiell (1 Stellplatz je WE Standardrichtwert; ÖPNV-bedingte
   Reduktionen möglich).

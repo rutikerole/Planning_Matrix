@@ -8,7 +8,7 @@
 // im ersten substantiellen Turn benennen — sonst fehlt der
 // rechtliche Hauptgrund, warum dieser Bauherr Aufstockung wählt.
 //
-// LEGAL-VERIFY-MARKER · BayBO Art. 46 Abs. 6 Aufstockungs-Privileg · Stand: stabil
+// LEGAL-VERIFY-MARKER · BayBO Art. 46 Abs. 6 Aufstockungs-Privileg (eingeführt 1. ModG, in Kraft 01.01.2025) · Stand: 2025
 // LEGAL-VERIFY-MARKER · BayBO Art. 57 Abs. 1 Nr. 18 Dachgeschossausbau (cross-ref T-03) · Stand: 01.01.2025
 // LEGAL-VERIFY-MARKER · BayBO Art. 81 Abs. 1 Nr. 4 b Stellplatz-Privileg · Stand: 01.10.2025
 //                       Quelle: Lutz-Abel + byak.de + Graml & Kollegen (post-cutoff verified by brief)
@@ -197,9 +197,11 @@ TYPISCHE KORREKTE ZITATE für T-06
                                        eingeschossige Aufstockung
                                        zur Schaffung von Wohnraum;
                                        Anforderungen der bisherigen
-                                       Gebäudeklasse gelten weiter,
-                                       Bestand wird nicht
-                                       brandschutz-nachertüchtigt
+                                       Gebäudeklasse gelten weiter;
+                                       Bestand i.d.R. nicht brand-
+                                       schutz-nachertüchtigt — ABER
+                                       notwendige Treppenräume können
+                                       weiterhin anzupassen sein
   ✓ "BayBO Art. 81 Abs. 1 Nr. 4 b"   — Stellplatz-Privileg
                                        (seit 01.10.2025); Gemeinde
                                        darf KEINE zusätzlichen
