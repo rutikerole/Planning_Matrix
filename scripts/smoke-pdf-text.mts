@@ -1051,6 +1051,43 @@ async function runVerifiedArchitectName(): Promise<{ passed: number; failed: num
   return { passed, failed }
 }
 
+// v1.0.32 Bug 129/130/131 — a fully-verified brief must carry NO contradictory
+// preliminary STATUS language anywhere: cover revision ("v1 preliminary"), the
+// cover/areas disclaimer ("pending architect confirmation"), and the
+// verification-page intro ("This brief is preliminary") all flip to verified.
+// We assert the SPECIFIC status strings (not the bare word "preliminary") so
+// the legitimate HOAI "preliminary design phase" domain term is not flagged.
+async function runVerifiedNoPreliminary(): Promise<{ passed: number; failed: number }> {
+  console.log(`\n[smoke-pdf-text] no contradictory preliminary on verified brief (Bug 129/130/131)…`)
+  let passed = 0
+  let failed = 0
+  const fixture = 'test/fixtures/bayern-t01-muenchen-allverified.json'
+  for (const lang of ['en', 'de'] as const) {
+    const text = await extractPdfText(await renderFixturePdf(lang, fixture))
+    const mustAbsent =
+      lang === 'en'
+        ? ['pending architect confirmation', 'Pending architect confirmation', 'v1 preliminary', 'This brief is preliminary']
+        : ['Bestätigung ausstehend', 'v1 vorläufig', 'Dieses Briefing ist vorläufig']
+    for (const n of mustAbsent) {
+      const ok = !text.includes(n)
+      const m = `verified ${lang}: absent "${n}"`
+      if (ok) { console.log(`  ✓ ${m}`); passed++ }
+      else { console.log(`  ✗ ${m}`); failed++ }
+    }
+    const mustPresent =
+      lang === 'en'
+        ? ['v1 verified', 'has been confirmed by the verifying architect']
+        : ['v1 verifiziert', 'wurde von der unten genannten']
+    for (const n of mustPresent) {
+      const ok = text.includes(n)
+      const m = `verified ${lang}: present "${n}"`
+      if (ok) { console.log(`  ✓ ${m}`); passed++ }
+      else { console.log(`  ✗ ${m}`); failed++ }
+    }
+  }
+  return { passed, failed }
+}
+
 // v1.0.24 Bug R extension — normalizeDesignerWithoutInLoop now fires
 // at Top-3 + Section VIII (in addition to v1.0.23's Key Data path).
 // Unit-tests the gate function across the full quality matrix so a
@@ -1644,6 +1681,7 @@ async function main(): Promise<void> {
   const verifiedFooter = await runVerifiedFooterCheck()
   const architektBannerGate = await runArchitektBannerGateCheck()
   const verifiedName = await runVerifiedArchitectName()
+  const verifiedNoPrelim = await runVerifiedNoPreliminary()
   const designerDowngrade = await runDesignerDowngradeCheck()
   const factLabelCoverage = await runFactLabelCoverageUnit()
   const glossaryStateAware = await runGlossaryStateAwareCheck()
@@ -1665,6 +1703,7 @@ async function main(): Promise<void> {
     verifiedFooter.failed +
     architektBannerGate.failed +
     verifiedName.failed +
+    verifiedNoPrelim.failed +
     designerDowngrade.failed +
     factLabelCoverage.failed +
     glossaryStateAware.failed +
@@ -1686,6 +1725,7 @@ async function main(): Promise<void> {
     verifiedFooter.passed +
     architektBannerGate.passed +
     verifiedName.passed +
+    verifiedNoPrelim.passed +
     designerDowngrade.passed +
     factLabelCoverage.passed +
     glossaryStateAware.passed +

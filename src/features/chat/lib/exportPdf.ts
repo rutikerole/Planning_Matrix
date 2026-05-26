@@ -221,6 +221,13 @@ export async function buildExportPdf({
   safe = resolveSafeTextFn(fonts.usingFallback)
 
   const state = (project.state ?? {}) as Partial<ProjectState>
+  // v1.0.32 Bug 111/112/129/130/131 — verification rollup computed ONCE here so
+  // the cover (revision + footer), the verification-page intro + signature
+  // block, and every editorial footer share one allVerified gate.
+  const { computeVerificationRollup } = await import(
+    '@/features/result/lib/verificationRollup'
+  )
+  const verificationRollup = computeVerificationRollup(state)
   // v1.0.24 Bug R extension — invitedDesigner discriminant computed
   // once and threaded into every qualifier-emit site so the
   // normalizeDesignerWithoutInLoop gate fires uniformly across Top-3
@@ -259,7 +266,12 @@ export async function buildExportPdf({
     project.created_at,
     projectTitleForCover,
   )
-  const revision = pdfStr(pdfStrings, 'cover.revisionValue')
+  // v1.0.32 Bug 129 — cover REVISION line clears to "v1 verified" on a fully-
+  // verified brief (was always "v1 preliminary", contradicting the banner).
+  const revision = pdfStr(
+    pdfStrings,
+    verificationRollup.allVerified ? 'cover.revisionValueVerified' : 'cover.revisionValue',
+  )
   // v1.0.14 Bug 29 — bauherrName resolved by caller (ExportMenu)
   // from profile.full_name / user_metadata / email local-part with
   // localized "Bauherr"/"Owner" as final fallback. PDF composer
@@ -655,6 +667,8 @@ export async function buildExportPdf({
       templateLabel,
       bundeslandCode: bundeslandCodeUpper,
       rows,
+      // v1.0.32 Bug 131 — areas-page bottom disclaimer clears on full verification.
+      verified: verificationRollup.allVerified,
     })
   }
 
@@ -1181,13 +1195,6 @@ export async function buildExportPdf({
     verificationAgg.counts.CALCULATED + verificationAgg.counts.VERIFIED
   const assumedCount =
     verificationAgg.counts.ASSUMED + verificationAgg.counts.UNKNOWN
-  // v1.0.32 Bug 111/112 — compute the verification rollup here (was at the
-  // footer block below) so the signature block AND the editorial footers share
-  // one source. Surfaces the self-attested architect identity for the sig block.
-  const { computeVerificationRollup } = await import(
-    '@/features/result/lib/verificationRollup'
-  )
-  const verificationRollup = computeVerificationRollup(state)
   renderVerificationBody(verificationPage, editorialFonts, pdfStrings, {
     templateLabel,
     bundeslandCode: bundeslandCodeUpper,
@@ -1197,6 +1204,9 @@ export async function buildExportPdf({
     verifiedCount,
     calculatedCount,
     assumedCount,
+    // v1.0.32 Bug 130 — verification-page intro flips to the confirmed wording
+    // on a fully-verified brief (no more "this brief is preliminary").
+    verified: verificationRollup.allVerified,
     // v1.0.32 Bug 112 — name the architect in the signature block only on a
     // fully-verified brief (same gate as the cleared footer).
     ...(verificationRollup.allVerified && verificationRollup.architectName
@@ -1359,6 +1369,10 @@ export async function buildExportPdf({
   renderCoverFooter(coverPage, editorialFonts, pdfStrings, {
     bauherrName,
     totalPages,
+    // v1.0.32 Bug 131 — cover footer center clears with the editorial footers
+    // (footerCenter = footer.verified+date when allVerified, else the byte-
+    // identical cover.preliminary fallback).
+    centerText: footerCenter,
     validUntilLabel: verifiedBannerLabel ? undefined : validUntilLabel,
     verifiedBannerLabel,
   })

@@ -231,6 +231,10 @@ export function renderCoverFooter(
   data: {
     bauherrName: string
     totalPages: number
+    /** v1.0.32 Bug 131 — verified|preliminary footer center (exportPdf
+     *  footerCenter); falls back to cover.preliminary (byte-identical to
+     *  footer.preliminary) when omitted. */
+    centerText?: string
     /** v1.0.18 Feature 4 — pre-formatted expiry date in locale. */
     validUntilLabel?: string
     /** v1.0.23 Bug J — when set, replaces the 30-day validity stamp
@@ -244,7 +248,7 @@ export function renderCoverFooter(
   drawHairline(page, MARGIN, MARGIN + 28, PAGE_WIDTH - MARGIN, { color: CLAY })
 
   const bauherrText = `${pdfStr(strings, 'cover.bauherrLabel')} · ${data.bauherrName}`
-  const preliminaryText = pdfStr(strings, 'cover.preliminary')
+  const preliminaryText = data.centerText ?? pdfStr(strings, 'cover.preliminary')
   const pageText = `1 / ${data.totalPages}`
 
   // Pre-sanitize ONLY for width measurement. drawSafeText re-applies

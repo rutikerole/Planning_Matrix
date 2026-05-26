@@ -78,6 +78,9 @@ export interface AreasData {
   templateLabel: string
   bundeslandCode: string
   rows: ReadonlyArray<AreaRow>
+  /** v1.0.32 Bug 131 — flips the bottom italic disclaimer note from the
+   *  preliminary line to the verified line on a fully-verified brief. */
+  verified?: boolean
 }
 
 export interface AreasFooterData {
@@ -225,7 +228,7 @@ export function renderAreasBody(
     page,
     MARGIN,
     footerNoteY,
-    pdfStr(strings, 'footer.preliminary'),
+    pdfStr(strings, data.verified ? 'footer.verified' : 'footer.preliminary'),
     {
       maxWidth: PAGE_WIDTH - 2 * MARGIN,
       lineHeight: 14,

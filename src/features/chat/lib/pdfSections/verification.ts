@@ -45,6 +45,9 @@ export interface VerificationData {
    *  Bug 29 fallback chain (profile.full_name → user_metadata →
    *  email local-part → "Bauherr"/"Owner"). */
   bauherrName?: string
+  /** v1.0.32 Bug 130 — true on a fully-verified brief; flips the intro from
+   *  "this brief is preliminary" to the confirmed wording. */
+  verified?: boolean
   /** v1.0.32 Bug 112 — self-attested verifying-architect identity, pre-printed
    *  above the architect / chamber signature lines on a fully-verified brief.
    *  Passed by exportPdf only when rollup.allVerified. Self-attested, not
@@ -101,7 +104,7 @@ export function renderVerificationBody(
   )
 
   // Intro paragraph
-  drawWrappedText(page, MARGIN, headerY - 70, pdfStr(strings, 'verif.sub'), {
+  drawWrappedText(page, MARGIN, headerY - 70, pdfStr(strings, data.verified ? 'verif.sub.verified' : 'verif.sub'), {
     maxWidth: PAGE_WIDTH - 2 * MARGIN,
     lineHeight: 16,
     font: fonts.serifItalic,
@@ -132,7 +135,7 @@ export function renderVerificationBody(
     page,
     MARGIN,
     panelY - 42,
-    pdfStr(strings, 'verif.status.body'),
+    pdfStr(strings, data.verified ? 'verif.status.body.verified' : 'verif.status.body'),
     {
       maxWidth: panelHalfW,
       lineHeight: 14,

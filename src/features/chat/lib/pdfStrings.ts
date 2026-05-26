@@ -31,6 +31,8 @@ const EN: PdfStrings = {
   'cover.docnoLabel': 'DOC NO',
   'cover.revisionLabel': 'REVISION',
   'cover.revisionValue': 'v1 preliminary',
+  // v1.0.32 Bug 129 — verified cover revision (replaces "v1 preliminary").
+  'cover.revisionValueVerified': 'v1 verified',
   'cover.kicker': 'PROJECT BRIEF · BAUVORHABEN',
   'cover.bundeslandLabel': 'BUNDESLAND',
   'cover.templateLabel': 'TEMPLATE',
@@ -202,9 +204,15 @@ const EN: PdfStrings = {
   'verif.title': 'Verification status & signature',
   'verif.sub':
     'This brief is preliminary. Final figures require architect (Bauvorlageberechtigte/r) confirmation against the authoritative § citations.',
+  // v1.0.32 Bug 130 — verification-page intro on a fully-verified brief.
+  'verif.sub.verified':
+    'This brief has been confirmed by the verifying architect named below, against the authoritative § citations.',
   'verif.status.h': 'VERIFICATION STATUS',
   'verif.status.body':
     'Pending architect confirmation. All values derived from persona model computation against state.',
+  // v1.0.32 Bug 130 — verification STATUS card on a fully-verified brief.
+  'verif.status.body.verified':
+    'Confirmed by the verifying architect named below. All values reviewed against the authoritative state record.',
   'verif.dq.h': 'DATA QUALITY',
   // v1.0.29 Bug 75 — first arc is DECIDED, not architect-verified. Label it
   // "decided" so a brief with 0 sign-offs no longer reads "54% verified".
@@ -273,6 +281,8 @@ const DE: PdfStrings = {
   'cover.docnoLabel': 'DOK-NR',
   'cover.revisionLabel': 'REVISION',
   'cover.revisionValue': 'v1 vorläufig',
+  // v1.0.32 Bug 129 — verified cover revision (replaces "v1 vorläufig").
+  'cover.revisionValueVerified': 'v1 verifiziert',
   'cover.kicker': 'BAUVORHABEN · PROJEKTBRIEFING',
   'cover.bundeslandLabel': 'BUNDESLAND',
   'cover.templateLabel': 'VORLAGE',
@@ -429,9 +439,15 @@ const DE: PdfStrings = {
   'verif.title': 'Verifizierungsstatus & Unterschrift',
   'verif.sub':
     'Dieses Briefing ist vorläufig. Endgültige Werte erfordern die Bestätigung einer/eines bauvorlageberechtigten Architekt:in gegen die maßgeblichen § Anker.',
+  // v1.0.32 Bug 130 — Verifizierungsseite-Intro bei vollständig verifiziertem Briefing.
+  'verif.sub.verified':
+    'Dieses Briefing wurde von der unten genannten bauvorlageberechtigten Architekt:in gegen die maßgeblichen § Anker bestätigt.',
   'verif.status.h': 'VERIFIZIERUNGSSTATUS',
   'verif.status.body':
     'Architekt:in-Bestätigung ausstehend. Alle Werte abgeleitet aus Persona-Modell-Berechnung gegen den Stand.',
+  // v1.0.32 Bug 130 — Verifizierungsstatus-Karte bei vollständig verifiziertem Briefing.
+  'verif.status.body.verified':
+    'Bestätigt durch die unten genannte bauvorlageberechtigte Architekt:in. Alle Werte gegen den maßgeblichen Stand geprüft.',
   'verif.dq.h': 'DATENQUALITÄT',
   'verif.dq.legend.verified': 'entschieden',
   'verif.dq.legend.calculated': 'berechnet',
