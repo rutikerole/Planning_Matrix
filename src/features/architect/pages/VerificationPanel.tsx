@@ -2,6 +2,8 @@ import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Link, useParams } from 'react-router-dom'
+import { Check } from 'lucide-react'
+import { cn } from '@/lib/utils'
 import { supabase } from '@/lib/supabase'
 import { useAuthStore } from '@/stores/authStore'
 import type { ProjectState } from '@/types/projectState'
@@ -115,6 +117,13 @@ export function VerificationPanel() {
   // designer-member has owner_id ≠ caller ⇒ full write. Writes are server-gated
   // (verify-fact requires role=designer) regardless, so this is UX-only.
   const isPreview = !!data && !!user && data.owner_id === user.id
+  // v1.0.32.5 — verification progress across all sections (completion sense).
+  const totalRows = sections.reduce((n, s) => n + s.rows.length, 0)
+  const verifiedRows = sections.reduce(
+    (n, s) => n + s.rows.filter((r) => r.isVerified).length,
+    0,
+  )
+  const verifiedPct = totalRows > 0 ? Math.round((verifiedRows / totalRows) * 100) : 0
 
   // v1.0.32 Bug 112 — identity gate. If the project already carries a verifying
   // architect (state.verification, set on a prior verify) or we captured one
@@ -192,6 +201,18 @@ export function VerificationPanel() {
           „Vorläufig"-Hinweis nicht mehr.
         </p>
       </header>
+
+      <div className="mb-5 flex items-center gap-3">
+        <div className="h-[3px] flex-1 bg-[hsl(var(--ink))]/8">
+          <div
+            className="h-full bg-emerald-600/80 transition-all duration-soft"
+            style={{ width: `${verifiedPct}%` }}
+          />
+        </div>
+        <span className="shrink-0 font-mono text-[10px] uppercase tracking-[0.18em] text-[hsl(var(--ink))]/55">
+          {verifiedRows} / {totalRows} bestätigt
+        </span>
+      </div>
 
       {isPreview && (
         <div className="mb-4 border border-[hsl(var(--clay))]/40 bg-[hsl(var(--clay))]/5 px-4 py-2.5">
@@ -403,6 +424,34 @@ function deriveSections(state: ProjectState | null): SectionData[] {
   ]
 }
 
+/** v1.0.32.5 — semantic provenance tag: a small status dot + mono label, tinted
+ *  by quality so the architect can scan at a glance — emerald = verified (done),
+ *  clay = assumed (needs your eyes), quiet ink = decided/calculated (routine). */
+function QualifierTag({ source, quality }: { source: string; quality: string }) {
+  const dot =
+    quality === 'VERIFIED'
+      ? 'bg-emerald-600'
+      : quality === 'ASSUMED'
+        ? 'bg-[hsl(var(--clay))]'
+        : quality === 'CALCULATED'
+          ? 'bg-[hsl(var(--ink))]/35'
+          : 'bg-[hsl(var(--ink))]/25'
+  const text =
+    quality === 'VERIFIED'
+      ? 'text-emerald-800/75'
+      : quality === 'ASSUMED'
+        ? 'text-[hsl(var(--clay))]'
+        : 'text-[hsl(var(--ink))]/45'
+  return (
+    <span className="inline-flex shrink-0 items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.16em]">
+      <span className={cn('size-1.5 rounded-full', dot)} aria-hidden="true" />
+      <span className={text}>
+        {source} · {quality}
+      </span>
+    </span>
+  )
+}
+
 function Section({
   field,
   title,
@@ -436,9 +485,12 @@ function Section({
   if (rows.length === 0) return null
   return (
     <section className="mb-6 border border-[hsl(var(--ink))]/10">
-      <header className="border-b border-[hsl(var(--ink))]/10 px-4 py-2">
+      <header className="flex items-baseline justify-between border-b border-[hsl(var(--ink))]/10 px-4 py-2.5">
         <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-[hsl(var(--ink))]/55">
           {title}
+        </p>
+        <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-[hsl(var(--ink))]/35">
+          {rows.filter((r) => r.isVerified).length} / {rows.length}
         </p>
       </header>
       <ul>
@@ -449,15 +501,16 @@ function Section({
           return (
             <li
               key={noteKey}
-              className="border-b border-[hsl(var(--ink))]/5 px-4 py-3 last:border-b-0"
+              className={cn(
+                'border-b border-[hsl(var(--ink))]/5 px-4 py-3.5 transition-colors last:border-b-0',
+                row.isVerified && 'border-l-2 border-l-emerald-600/40 bg-emerald-600/[0.03]',
+              )}
             >
-              <div className="flex flex-wrap items-baseline justify-between gap-2">
+              <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
                 <p className="text-sm tracking-tight text-[hsl(var(--ink))]">
                   {row.label}
                 </p>
-                <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-[hsl(var(--ink))]/45">
-                  {row.source} · {row.quality}
-                </p>
+                <QualifierTag source={row.source} quality={row.quality} />
               </div>
               {row.detail && (
                 <p className="mt-1 text-[13px] text-[hsl(var(--ink))]/65">
@@ -466,7 +519,8 @@ function Section({
               )}
               <div className="mt-2 flex flex-col gap-2">
                 {row.isVerified ? (
-                  <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-emerald-700">
+                  <p className="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.18em] text-emerald-700">
+                    <Check aria-hidden="true" className="size-3.5" />
                     Bestätigt
                   </p>
                 ) : preview ? null : (
@@ -478,14 +532,14 @@ function Section({
                       onChange={(e) =>
                         setPendingNote((prev) => ({ ...prev, [noteKey]: e.target.value }))
                       }
-                      className="min-w-[18rem] flex-1 border border-[hsl(var(--ink))]/15 bg-transparent px-2 py-1 font-mono text-[12px] text-[hsl(var(--ink))] focus:outline-none focus:ring-1 focus:ring-[hsl(var(--ink))]/40"
+                      className="min-w-[12rem] flex-1 border border-[hsl(var(--ink))]/12 bg-[hsl(var(--ink))]/[0.015] px-2.5 py-1.5 font-mono text-[12px] text-[hsl(var(--ink))] placeholder:text-[hsl(var(--ink))]/35 focus:border-[hsl(var(--ink))]/40 focus:outline-none focus:ring-1 focus:ring-[hsl(var(--ink))]/30"
                       maxLength={500}
                     />
                     <button
                       type="button"
                       disabled={isPending}
                       onClick={() => onVerify(field, row.itemId, note || undefined)}
-                      className="border border-[hsl(var(--ink))] px-3 py-1 font-mono text-[11px] uppercase tracking-[0.18em] text-[hsl(var(--ink))] hover:bg-[hsl(var(--ink))] hover:text-[hsl(var(--paper))] disabled:opacity-40"
+                      className="shrink-0 border border-emerald-700/60 px-3 py-1.5 font-mono text-[11px] uppercase tracking-[0.18em] text-emerald-800 transition-colors hover:bg-emerald-700 hover:text-[hsl(var(--paper))] disabled:opacity-40"
                     >
                       {isPending ? 'verifiziere …' : 'Bestätigen'}
                     </button>

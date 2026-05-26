@@ -1,5 +1,29 @@
 # Changelog
 
+## v1.0.32.5 — Verification panel polish (2026-05-26)
+
+Style pass on the architect verification panel (now reachable end-to-end after
+the self-service invite). It was visually monotone — every row identical, the
+provenance tags (`AUTHORITY · VERIFIED`, `CLIENT · ASSUMED`…) reading as gray
+noise, and zero use of the brand's emerald. On-theme refinements (atelier
+tokens, austere, no new copy):
+
+- **Semantic provenance tags** — a small status dot + mono label, tinted by
+  quality so the architect scans at a glance: emerald = VERIFIED (done), clay =
+  ASSUMED (needs your eyes), quiet ink = DECIDED/CALCULATED (routine).
+- **Verified rows recede, settled** — emerald left-accent + faint tint + a
+  check beside "Bestätigt".
+- **Emerald verify CTA** — the "Bestätigen" button now carries the brand
+  verified colour (was plain ink); subtler note input (also `min-w` 18→12rem,
+  helping the narrow-viewport overflow noted in the audit).
+- **Completion sense** — a slim progress bar + "{n} / {total} bestätigt" under
+  the intro, and a per-section count in each section header.
+
+VerificationPanel-only, German surface unchanged, `preview` (owner read-only)
+gating intact, button text unchanged (Playwright stubs hold). Build clean,
+hardcoded-de clean, locales 1454, smoke:architect green, Bayern SHA MATCH,
+bundle 286.4 KB gz, lint net-zero.
+
 ## v1.0.32.4 — Dashboard first-run fits one viewport (2026-05-26)
 
 The empty dashboard (no projects yet) was two stacked blocks — the big
