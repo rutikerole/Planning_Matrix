@@ -95,35 +95,51 @@ export function renderKeyDataBody(
   const colValueX = tableX + colFieldW
   const colQualX = tableX + colFieldW + colValueW
 
-  drawSafeText(page, pdfStr(strings, 'data.th.field'), {
-    x: colFieldX,
-    y: tableY,
-    size: 10,
-    font: fonts.sansMedium,
-    color: CLAY,
-    safe: fonts.safe,
-  })
-  drawSafeText(page, pdfStr(strings, 'data.th.value'), {
-    x: colValueX,
-    y: tableY,
-    size: 10,
-    font: fonts.sansMedium,
-    color: CLAY,
-    safe: fonts.safe,
-  })
-  drawSafeText(page, pdfStr(strings, 'data.th.qualifier'), {
-    x: colQualX,
-    y: tableY,
-    size: 10,
-    font: fonts.sansMedium,
-    color: CLAY,
-    safe: fonts.safe,
-  })
-  drawHairline(page, tableX, tableY - 8, tableX + tableW, {
-    color: INK,
-    thickness: 0.5,
-    opacity: 0.7,
-  })
+  const drawColumnHeaderRow = (p: PDFPage, atY: number): void => {
+    drawSafeText(p, pdfStr(strings, 'data.th.field'), {
+      x: colFieldX,
+      y: atY,
+      size: 10,
+      font: fonts.sansMedium,
+      color: CLAY,
+      safe: fonts.safe,
+    })
+    drawSafeText(p, pdfStr(strings, 'data.th.value'), {
+      x: colValueX,
+      y: atY,
+      size: 10,
+      font: fonts.sansMedium,
+      color: CLAY,
+      safe: fonts.safe,
+    })
+    drawSafeText(p, pdfStr(strings, 'data.th.qualifier'), {
+      x: colQualX,
+      y: atY,
+      size: 10,
+      font: fonts.sansMedium,
+      color: CLAY,
+      safe: fonts.safe,
+    })
+    drawHairline(p, tableX, atY - 8, tableX + tableW, {
+      color: INK,
+      thickness: 0.5,
+      opacity: 0.7,
+    })
+  }
+  drawColumnHeaderRow(page, tableY)
+
+  // v1.0.34 Bug 78 — paginate when rows approach the footer band. The v1.0.17
+  // loop was a flat forEach with no addPage/bottom-margin guard, so a table
+  // taller than one page (T-02/T-04/T-08 rich-fact cells, > ~17 rows) drew rows
+  // off-page into the footer. Now: when the next row would cross PAGE_FLOOR and
+  // a PDFDocument is available, start a fresh page, repeat the column header,
+  // and continue. For tables that fit one page (every demo cell, ≤ ~17 rows)
+  // the guard never fires and the output is byte-identical. Overflow pages are
+  // NOT in exportPdf's editorialPages set, so they receive the standard
+  // continuation footer; verification/glossary page numbers shift automatically
+  // because exportPdf reads getPageCount() after this body renders.
+  const PAGE_FLOOR = MARGIN + 60
+  let currentPage = page
 
   let rowY = tableY - 26
   // v1.0.18 Bug 37 — keep the qualifier pill clear of the value
@@ -136,7 +152,14 @@ export function renderKeyDataBody(
   const MIN_GAP = 12
   const pageRight = tableX + tableW
   data.rows.forEach((row, idx) => {
-    drawSafeText(page, row.field, {
+    if (rowY < PAGE_FLOOR && data.doc) {
+      currentPage = data.doc.addPage([PAGE_WIDTH, PAGE_HEIGHT])
+      drawPaperBackground(currentPage)
+      const contHeaderY = PAGE_HEIGHT - MARGIN - 30
+      drawColumnHeaderRow(currentPage, contHeaderY)
+      rowY = contHeaderY - 26
+    }
+    drawSafeText(currentPage, row.field, {
       x: colFieldX,
       y: rowY,
       size: 11,
@@ -155,7 +178,7 @@ export function renderKeyDataBody(
       pageRight - colValueX,
       fonts.safe,
     )
-    drawSafeText(page, drawnValue, {
+    drawSafeText(currentPage, drawnValue, {
       x: colValueX,
       y: rowY,
       size: 11,
@@ -173,7 +196,7 @@ export function renderKeyDataBody(
         if (!cite.url) continue
         addLinkAnnotation({
           doc: data.doc,
-          page,
+          page: currentPage,
           x: colValueX,
           y: rowY,
           text: drawnValue,
@@ -203,7 +226,7 @@ export function renderKeyDataBody(
     )
     const pillWidth = pillTextWidth + 12
     if (proposedPillX + pillWidth <= pageRight) {
-      drawQualifierPill(page, proposedPillX, rowY, {
+      drawQualifierPill(currentPage, proposedPillX, rowY, {
         source: row.qualifier.source,
         quality: row.qualifier.quality,
         font: fonts.sansMedium,
@@ -214,7 +237,7 @@ export function renderKeyDataBody(
     } else {
       // Value too long — wrap pill to next line, left-anchored to
       // the value column so the field/value/pill still align.
-      drawQualifierPill(page, colValueX, rowY - 16, {
+      drawQualifierPill(currentPage, colValueX, rowY - 16, {
         source: row.qualifier.source,
         quality: row.qualifier.quality,
         font: fonts.sansMedium,
@@ -224,7 +247,7 @@ export function renderKeyDataBody(
       rowY -= 36
     }
     if (idx < data.rows.length - 1) {
-      drawHairline(page, tableX, rowY + 8, tableX + tableW, {
+      drawHairline(currentPage, tableX, rowY + 8, tableX + tableW, {
         color: CLAY,
         thickness: 0.4,
         opacity: 0.3,
