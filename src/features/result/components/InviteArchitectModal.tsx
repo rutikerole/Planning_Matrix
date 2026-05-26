@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useQuery } from '@tanstack/react-query'
+import { useMutation } from '@tanstack/react-query'
 import { Check, Copy, Mail, X, Loader2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import {
@@ -32,10 +32,11 @@ interface Props {
  * Check icon (vs the clay/dashed read-only share styling), explicit
  * write-access copy, and a close-confirm if the link wasn't copied.
  *
- * The invite is generated on open via react-query (enabled: open) —
- * idiomatic for this codebase and effect-free, so React 19 strict-mode
- * doesn't mint duplicate project_members rows (the query dedupes +
- * caches; staleTime Infinity reuses a valid invite on re-open).
+ * Bug 114 — the invite is minted on an explicit "create" submit (a
+ * mutation), NOT on open, so the token can be BOUND to the architect's
+ * email at create-time. A user-initiated mutation also fires exactly once
+ * per click, so React 19 strict-mode cannot mint duplicate
+ * project_members rows.
  */
 export function InviteArchitectModal({ project, open, onOpenChange }: Props) {
   const { t, i18n } = useTranslation()
@@ -44,21 +45,22 @@ export function InviteArchitectModal({ project, open, onOpenChange }: Props) {
   const [copied, setCopied] = useState(false)
   const [email, setEmail] = useState('')
 
-  const inviteQuery = useQuery<ArchitectInvite>({
-    queryKey: ['architect-invite', project.id],
-    queryFn: () => createArchitectInvite(project.id),
-    enabled: open,
-    staleTime: Infinity,
-    gcTime: Infinity,
-    retry: false,
+  // Bug 114 — bind the invite to this email at create-time. The link is minted
+  // only when the owner submits a valid address; the server rejects any other
+  // caller from accepting it.
+  const emailTrimmed = email.trim()
+  const emailValid = /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(emailTrimmed)
+
+  const inviteMutation = useMutation<ArchitectInvite, Error>({
+    mutationFn: () => createArchitectInvite(project.id, emailTrimmed),
   })
-  const invite = inviteQuery.data ?? null
-  const loading = inviteQuery.isFetching && !invite
+  const invite = inviteMutation.data ?? null
+  const loading = inviteMutation.isPending
   const error =
-    inviteQuery.error instanceof Error
-      ? inviteQuery.error.message
-      : inviteQuery.error
-        ? String(inviteQuery.error)
+    inviteMutation.error instanceof Error
+      ? inviteMutation.error.message
+      : inviteMutation.error
+        ? String(inviteMutation.error)
         : null
 
   const expiryHuman = invite
@@ -79,6 +81,7 @@ export function InviteArchitectModal({ project, open, onOpenChange }: Props) {
     if (!next) {
       setCopied(false)
       setEmail('')
+      inviteMutation.reset()
     }
     onOpenChange(next)
   }
@@ -151,10 +154,45 @@ export function InviteArchitectModal({ project, open, onOpenChange }: Props) {
             </p>
             <button
               type="button"
-              onClick={() => void inviteQuery.refetch()}
+              onClick={() => inviteMutation.mutate()}
               className="mt-1.5 text-[11px] font-medium uppercase tracking-[0.14em] text-clay hover:text-ink transition-colors duration-soft"
             >
               {t('result.workspace.inviteArchitect.retry')}
+            </button>
+          </div>
+        )}
+
+        {!invite && !loading && (
+          <div className="flex flex-col gap-1.5">
+            <label
+              htmlFor="invite-architect-email"
+              className="text-[10px] font-medium uppercase tracking-[0.18em] text-emerald-800 leading-none"
+            >
+              {t('result.workspace.inviteArchitect.emailLabel')}
+            </label>
+            <input
+              id="invite-architect-email"
+              type="email"
+              inputMode="email"
+              autoComplete="email"
+              placeholder={t('result.workspace.inviteArchitect.emailPlaceholder')}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="h-9 w-full rounded-[6px] border border-ink/15 bg-paper-card px-2.5 text-[13px] text-ink focus:outline-none focus:border-emerald-700/50"
+            />
+            <button
+              type="button"
+              disabled={!emailValid}
+              onClick={() => inviteMutation.mutate()}
+              className={cn(
+                'mt-1 inline-flex self-start items-center gap-1.5 h-9 px-3 rounded-full text-[12px]',
+                'bg-emerald-700 text-paper hover:bg-emerald-800 transition-colors duration-soft',
+                'disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-emerald-700',
+                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-700 focus-visible:ring-offset-2 focus-visible:ring-offset-paper',
+              )}
+            >
+              <Check aria-hidden="true" className="size-3" />
+              <span>{t('result.workspace.inviteArchitect.generateCta')}</span>
             </button>
           </div>
         )}
@@ -203,38 +241,21 @@ export function InviteArchitectModal({ project, open, onOpenChange }: Props) {
                   date: expiryHuman,
                 })}
               </p>
+              <p className="text-[11px] text-emerald-800/90">
+                {t('result.workspace.inviteArchitect.boundTo', {
+                  email: emailTrimmed,
+                })}
+              </p>
             </div>
 
-            <div className="flex flex-col gap-1.5">
-              <label
-                htmlFor="invite-architect-email"
-                className="text-[10px] font-medium uppercase tracking-[0.18em] text-clay leading-none"
-              >
-                {t('result.workspace.inviteArchitect.emailLabel')}
-              </label>
-              <div className="flex items-center gap-2">
-                <input
-                  id="invite-architect-email"
-                  type="email"
-                  inputMode="email"
-                  autoComplete="email"
-                  placeholder={t(
-                    'result.workspace.inviteArchitect.emailPlaceholder',
-                  )}
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="h-9 min-w-0 flex-1 rounded-[6px] border border-ink/15 bg-paper-card px-2.5 text-[13px] text-ink focus:outline-none focus:border-ink/40"
-                />
-                <button
-                  type="button"
-                  onClick={handleMailto}
-                  className="inline-flex shrink-0 items-center gap-1.5 h-9 px-3 rounded-full text-[12px] bg-paper-card border border-ink/15 text-ink/85 hover:text-ink hover:border-ink/30 transition-colors duration-soft"
-                >
-                  <Mail aria-hidden="true" className="size-3" />
-                  <span>{t('result.workspace.inviteArchitect.mailtoCta')}</span>
-                </button>
-              </div>
-            </div>
+            <button
+              type="button"
+              onClick={handleMailto}
+              className="inline-flex self-start items-center gap-1.5 h-9 px-3 rounded-full text-[12px] bg-paper-card border border-ink/15 text-ink/85 hover:text-ink hover:border-ink/30 transition-colors duration-soft"
+            >
+              <Mail aria-hidden="true" className="size-3" />
+              <span>{t('result.workspace.inviteArchitect.mailtoCta')}</span>
+            </button>
 
             <p className="text-[10.5px] italic text-emerald-800/80 leading-relaxed">
               {t('result.workspace.inviteArchitect.distinctNote')}

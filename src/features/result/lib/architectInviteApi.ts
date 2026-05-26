@@ -122,9 +122,15 @@ function functionsBase(): { url: string; anonKey: string } {
  * Owner generates an architect verification invite. Returns the
  * /architect/accept?token=… URL + 7-day expiry. Throws
  * ArchitectInviteError (with .code) on auth / ownership / backend failure.
+ *
+ * Bug 114 — when `email` is supplied, the server binds the token to that
+ * address: only a caller signed in with the same email may accept the invite
+ * (a forwarded link is rejected 403). Omitting `email` mints an unbound,
+ * any-caller invite (the pre-0037 self-service behaviour).
  */
 export async function createArchitectInvite(
   projectId: string,
+  email?: string,
 ): Promise<ArchitectInvite> {
   // Lazy import so this module's top stays free of supabase.ts's
   // unguarded import.meta.env read (keeps parseInviteResponse testable).
@@ -143,7 +149,11 @@ export async function createArchitectInvite(
       apikey: anonKey,
       Authorization: `Bearer ${accessToken}`,
     },
-    body: JSON.stringify({ action: 'create', projectId }),
+    body: JSON.stringify({
+      action: 'create',
+      projectId,
+      ...(email && email.trim().length > 0 ? { email: email.trim() } : {}),
+    }),
   })
   const body = (await response.json().catch(() => null)) as unknown
   return parseInviteResponse(response.status, body)

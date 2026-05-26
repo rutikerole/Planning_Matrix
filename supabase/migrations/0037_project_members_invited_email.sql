@@ -1,0 +1,45 @@
+-- ───────────────────────────────────────────────────────────────────────
+-- 0037_project_members_invited_email.sql
+--
+-- Phase 1 / Bug 114 — bind an architect invite token to the invited email
+-- address. Until now the invite_token was an UNBOUND bearer secret: anyone
+-- who obtained the /architect/accept?token=… link (forwarded mail, leaked
+-- chat) could claim it and — since v1.0.32.3 auto-promotes the claimant to
+-- role=designer — gain verify-write on the project, clearing the "Vorläufig"
+-- legal footer under a self-attested architect name. This column lets
+-- share-project pin a token to one email at create-time and reject a
+-- mismatched claimant at accept-time.
+--
+-- Nullable + NO backfill, on purpose. NULL = unbound: legacy rows issued
+-- before this migration, and any future invite minted without an email,
+-- keep being accepted from any signed-in caller — so the self-service invite
+-- flow shipped in v1.0.32.3 does NOT break. Binding is enforced in code
+-- (share-project handleAccept) only when invited_email IS NOT NULL — the same
+-- code-not-constraint pattern as the 0030 TTL, for the same reason (a
+-- structured 403 with the locked invite copy instead of a generic constraint
+-- error).
+--
+-- Apply path: Supabase Dashboard → SQL Editor → New query → paste → Run.
+-- Idempotent: ADD COLUMN IF NOT EXISTS. No backfill, no index, no RLS change
+-- (the owner already reads project_members via 0026/0031; share-project reads
+-- invited_email via the service-role client at accept-time).
+-- ───────────────────────────────────────────────────────────────────────
+
+alter table public.project_members
+  add column if not exists invited_email text;
+
+-- ───────────────────────────────────────────────────────────────────────
+-- DASHBOARD STEPS (post-apply):
+--   1. Apply this migration (SQL Editor).
+--   2. Verify the column exists:
+--        select column_name from information_schema.columns
+--        where table_schema = 'public' and table_name = 'project_members'
+--          and column_name = 'invited_email';
+--      -> invited_email
+--   3. Redeploy the share-project Edge Function (binds at create, enforces at
+--      accept) AND the verify-fact Edge Function (Bug 118 optimistic lock).
+--   4. Replay test (Bug 114 gate): create an invite bound to email A, then
+--      attempt accept while signed in as a DIFFERENT email B → expect HTTP 403
+--      {code:'forbidden'}. Accept as email A → expect 200. A no-email (legacy)
+--      invite must still accept from any caller (unbound regression check).
+-- ───────────────────────────────────────────────────────────────────────

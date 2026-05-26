@@ -64,9 +64,11 @@ const PUBLIC_SITE_URL =
   Deno.env.get('PUBLIC_SITE_URL') ?? 'https://planning-matrix.vercel.app'
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+// Bug 114 — loose, RFC-pragmatic email shape for the optional invite binding.
+const EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/
 
 type RequestBody =
-  | { action: 'create'; projectId: string }
+  | { action: 'create'; projectId: string; email?: string }
   | { inviteToken: string }
 
 Deno.serve(async (req: Request) => {
@@ -164,6 +166,7 @@ Deno.serve(async (req: Request) => {
       auth: { persistSession: false, autoRefreshToken: false },
     }),
     userId: userData.user.id,
+    userEmail: userData.user.email ?? null,
     corsHeaders,
     requestId,
   })
@@ -177,7 +180,14 @@ function parseBody(raw: unknown): RequestBody | null {
     typeof obj.projectId === 'string' &&
     UUID_RE.test(obj.projectId)
   ) {
-    return { action: 'create', projectId: obj.projectId }
+    // Bug 114 — optional invite-binding email. Normalized (trim + lowercase,
+    // ≤ 254 chars); shape is validated in handleCreate so a malformed address
+    // returns a structured 400 rather than minting an un-acceptable invite.
+    const email =
+      typeof obj.email === 'string' && obj.email.trim().length > 0
+        ? obj.email.trim().toLowerCase().slice(0, 254)
+        : undefined
+    return { action: 'create', projectId: obj.projectId, ...(email ? { email } : {}) }
   }
   if (typeof obj.inviteToken === 'string' && UUID_RE.test(obj.inviteToken)) {
     return { inviteToken: obj.inviteToken }
@@ -187,13 +197,24 @@ function parseBody(raw: unknown): RequestBody | null {
 
 // ── CREATE — owner generates an invite ───────────────────────────────────
 async function handleCreate(args: {
-  body: { action: 'create'; projectId: string }
+  body: { action: 'create'; projectId: string; email?: string }
   userClient: SupabaseClient
   userId: string
   corsHeaders: Record<string, string>
   requestId: string
 }): Promise<Response> {
   const { body, userClient, userId, corsHeaders, requestId } = args
+
+  // Bug 114 — if the owner supplied a binding email, it must be a valid
+  // address; otherwise we'd mint an invite that can never be accepted.
+  if (body.email && !EMAIL_RE.test(body.email)) {
+    return jsonError(
+      { code: 'validation', message: 'Invited email is not a valid address.' },
+      400,
+      corsHeaders,
+      requestId,
+    )
+  }
 
   // POST_V1_AUDIT CRIT-1 — explicit project-ownership check before
   // the INSERT. RLS at 0026:67-78 enforces the same predicate; the
@@ -240,6 +261,8 @@ async function handleCreate(args: {
     .insert({
       project_id: body.projectId,
       role_in_project: 'designer',
+      // Bug 114 — bind the token to this email (NULL when unbound/self-service).
+      invited_email: body.email ?? null,
     })
     .select('id, invite_token, expires_at')
     .maybeSingle()
@@ -277,10 +300,12 @@ async function handleAccept(args: {
   userClient: SupabaseClient
   serviceClient: SupabaseClient
   userId: string
+  userEmail: string | null
   corsHeaders: Record<string, string>
   requestId: string
 }): Promise<Response> {
-  const { body, userClient, serviceClient, userId, corsHeaders, requestId } = args
+  const { body, userClient, serviceClient, userId, userEmail, corsHeaders, requestId } =
+    args
 
   // v1.0.32.3 — SELF-SERVICE INVITE (replaces the POST_V1_AUDIT CRIT-2
   // pre-provisioned-designer wall). The invite token (122-bit UUID, single-use,
@@ -303,7 +328,9 @@ async function handleAccept(args: {
   // would not return).
   const { data: row, error: lookupErr } = await serviceClient
     .from('project_members')
-    .select('id, project_id, user_id, accepted_at, role_in_project, expires_at')
+    .select(
+      'id, project_id, user_id, accepted_at, role_in_project, expires_at, invited_email',
+    )
     .eq('invite_token', body.inviteToken)
     .maybeSingle()
 
@@ -326,6 +353,28 @@ async function handleAccept(args: {
   if (row.role_in_project !== 'designer') {
     return jsonError(
       { code: 'forbidden', message: 'Invite is not for an architect role.' },
+      403,
+      corsHeaders,
+      requestId,
+    )
+  }
+
+  // Bug 114 — token↔email binding. When the invite was created with a bound
+  // address (invited_email NOT NULL), ONLY that address may claim it; a
+  // forwarded link presented by anyone else is rejected. NULL invited_email =
+  // legacy/unbound invite (pre-0037, or any invite minted without an email) →
+  // accepted from any signed-in caller, preserving the v1.0.32.3 self-service
+  // path and every already-issued link. Fail closed: a caller with no email on
+  // their session cannot claim a bound invite.
+  if (
+    row.invited_email &&
+    row.invited_email.toLowerCase() !== (userEmail ?? '').toLowerCase()
+  ) {
+    return jsonError(
+      {
+        code: 'forbidden',
+        message: 'Diese Einladung ist an eine andere E-Mail-Adresse gerichtet.',
+      },
       403,
       corsHeaders,
       requestId,

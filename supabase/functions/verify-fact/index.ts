@@ -225,7 +225,7 @@ Deno.serve(async (req: Request) => {
 
   const { data: project, error: pErr } = await serviceClient
     .from('projects')
-    .select('id, state')
+    .select('id, state, state_version')
     .eq('id', body.projectId)
     .maybeSingle()
   if (pErr) {
@@ -244,6 +244,12 @@ Deno.serve(async (req: Request) => {
       requestId,
     )
   }
+
+  // Bug 118 — capture the version we are about to read-modify-write against.
+  // 0033 added projects.state_version + a BEFORE-UPDATE trigger that bumps it
+  // on every state change; the guarded write below uses it for optimistic
+  // concurrency.
+  const expectedVersion = project.state_version
 
   const state = project.state as ProjectState | null
   if (!state || typeof state !== 'object') {
@@ -300,14 +306,35 @@ Deno.serve(async (req: Request) => {
     }
   }
 
-  const { error: upErr } = await serviceClient
+  // Bug 118 — optimistic concurrency. Until now verify-fact wrote blind
+  // (last-writer-wins vs. a concurrent owner chat-turn or a second architect —
+  // E11): the 0033 state_version + bump trigger existed but nothing read or
+  // guarded on it (dead lock). Guard the write on the version read above;
+  // rowcount 0 means another writer bumped state_version in between → 409, so
+  // the SPA refetches fresh state and the architect re-confirms against it.
+  const { data: updatedRow, error: upErr } = await serviceClient
     .from('projects')
     .update({ state: next, updated_at: now })
     .eq('id', body.projectId)
+    .eq('state_version', expectedVersion)
+    .select('id')
+    .maybeSingle()
   if (upErr) {
     return jsonError(
       { code: 'persistence_failed', message: upErr.message },
       500,
+      corsHeaders,
+      requestId,
+    )
+  }
+  if (!updatedRow) {
+    return jsonError(
+      {
+        code: 'conflict',
+        message:
+          'Dieser Eintrag wurde inzwischen geändert. Bitte neu laden und erneut bestätigen.',
+      },
+      409,
       corsHeaders,
       requestId,
     )
