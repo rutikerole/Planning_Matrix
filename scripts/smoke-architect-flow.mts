@@ -219,6 +219,22 @@ function runRollup(): Tally {
   } as never)
   ok(t, onePending.allVerified === false, 'one pending role → allVerified false')
 
+  // v1.0.32 Bug 112 — rollup surfaces self-attested architect identity from
+  // state.verification (denormalized by verify-fact); null when absent.
+  const withId = computeVerificationRollup({
+    facts: [{ key: 'a', value: 1, qualifier: v('2026-05-26T10:00:00.000Z') }],
+    verification: {
+      architectName: 'Dipl.-Ing. Anna Vogt',
+      architectChamberNo: 'BY-2024-08817',
+      architectChamberState: 'Bayerische Architektenkammer',
+      firstVerifiedAt: '2026-05-26T10:00:00.000Z',
+    },
+  } as never)
+  ok(t, withId.architectName === 'Dipl.-Ing. Anna Vogt', 'rollup surfaces architectName from state.verification')
+  ok(t, withId.architectChamberNo === 'BY-2024-08817', 'rollup surfaces architectChamberNo')
+  ok(t, withId.architectChamberState === 'Bayerische Architektenkammer', 'rollup surfaces architectChamberState')
+  ok(t, empty.architectName === null, 'rollup architectName null when verification absent')
+
   return t
 }
 

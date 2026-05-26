@@ -169,6 +169,22 @@ export interface AskedQuestion {
   askedAt: string
 }
 
+/**
+ * v1.0.32 Bug 112 — self-attested identity of the verifying architect.
+ * Stamped by verify-fact on the first verify that carries an identity payload
+ * and denormalized here (inside projects.state) so the client PDF export —
+ * which reads only projects.state, never the architect's RLS-protected
+ * profile — can name them in the signature block. Self-attested by the
+ * verifying architect, NOT chamber-audited.
+ */
+export interface VerificationStamp {
+  architectName: string
+  architectChamberNo?: string
+  architectChamberState?: string
+  /** ISO-8601 instant of the first verify that set this. */
+  firstVerifiedAt: string
+}
+
 export interface ProjectState {
   schemaVersion: 1
   templateId: TemplateId
@@ -182,4 +198,7 @@ export interface ProjectState {
   questionsAsked: AskedQuestion[]
   /** ISO-8601 instant of the most recent assistant turn persisted. */
   lastTurnAt: string
+  /** v1.0.32 Bug 112 — set once the verifying architect supplies their name on
+   *  first verify; absent on legacy/unverified projects. */
+  verification?: VerificationStamp
 }

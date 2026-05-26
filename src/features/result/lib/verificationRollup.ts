@@ -14,10 +14,14 @@ import type { ProjectState } from '@/types/projectState'
 // Edge Function can flip (facts / recommendations / procedures / documents
 // / roles — verify-fact/index.ts:296-337).
 //
-// Architect NAME is intentionally absent: verify-fact records setBy:'user'
-// + an optional free-text note, not a display name, and the owner cannot
-// read the architect's profile under RLS. We surface the date only — never
-// a fabricated name.
+// v1.0.32 Bug 112 — architect identity is NO LONGER absent. The earlier design
+// omitted the name because verify-fact recorded setBy:'user' with no display
+// name and the owner cannot read the architect's profile under RLS. We now
+// capture the architect's SELF-ATTESTED name + chamber number at first-verify
+// time (VerificationPanel one-time prompt → verify-fact) and denormalize it
+// into state.verification, so the client PDF can name them without an
+// RLS-blocked profile read. Self-attested, never fabricated. lastVerifiedAt
+// still drives the date.
 // ───────────────────────────────────────────────────────────────────────
 
 export interface VerificationRollup {
@@ -31,6 +35,11 @@ export interface VerificationRollup {
   allVerified: boolean
   /** Latest qualifier.setAt among verified items (ISO), or null. */
   lastVerifiedAt: string | null
+  /** v1.0.32 Bug 112 — self-attested verifying-architect identity from
+   *  state.verification, or null when unset. */
+  architectName: string | null
+  architectChamberNo: string | null
+  architectChamberState: string | null
 }
 
 interface QualifierLike {
@@ -73,11 +82,15 @@ export function computeVerificationRollup(
   }
 
   const pending = total - verified
+  const v = state?.verification ?? null
   return {
     total,
     verified,
     pending,
     allVerified: total > 0 && pending === 0,
     lastVerifiedAt,
+    architectName: v?.architectName ?? null,
+    architectChamberNo: v?.architectChamberNo ?? null,
+    architectChamberState: v?.architectChamberState ?? null,
   }
 }
