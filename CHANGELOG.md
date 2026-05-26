@@ -1,6 +1,6 @@
 # Changelog
 
-## v1.0.32 — Architect handoff P0 fix sprint (in progress)
+## v1.0.32 — Architect handoff P0 fix sprint (2026-05-26)
 
 Closes the four P0s the v1.0.31 architect-handoff audit
 (`docs/V1_0_31_ARCHITECT_HANDOFF_AUDIT.md`) found disqualifying for the legal
@@ -29,6 +29,79 @@ grepped the live bundle directly:
 The reject branch is live; `chat-turn` v9 (same day) confirms the erosion
 downgrade is deployed too. The HANDOFF caveat was a then-pending note since
 actioned. No code change — closed by proof, not assumption.
+
+### Bug 111 — every editorial footer clears on full verification
+
+The audit found only the Section-10 footer hardcoded "VORLÄUFIG". A grep proved
+it was worse: **all 11 editorial footers** (executive / areas / costs / timeline
+/ procedures / team / recommendations / keyData / verification / glossary / toc)
+hardcoded `footer.preliminary` and never cleared, so a fully-verified brief
+still printed VORLÄUFIG on every section page (only rare continuation pages
+cleared via the app-canonical loop). Added a `footer.verified` string (EN/DE)
+and threaded an optional `footerCenter` through all 11 `*FooterData` interfaces;
+`exportPdf` computes it once on `verificationRollup.allVerified` and passes it to
+every editorial footer. Fallback = `footer.preliminary`, so unverified output is
+byte-identical (16/16 matrix + all demo fixtures unchanged). The app-canonical
+loop string (shared with the web footer / markdown / legal modules) is left
+untouched. Proven by a new all-verified fixture: the VERIFIED pill appears on the
+verified brief and is absent on the unverified original (EN+DE).
+
+### Bug 127 — cover banner gated on full verification (folded in)
+
+The ARCHITEKT-VERIFIZIERT cover banner used `facts.some(DESIGNER+VERIFIED)` — it
+lit when a *single* fact was verified, so the cover could claim chamber signoff
+while the page footers still said VORLÄUFIG (the same self-contradiction).
+Re-gated on `verificationRollup.allVerified`; the AUTHORITY+VERIFIED submitted
+banner keeps its independent path. A new partial-verified fixture (one fact
+verified → `facts.some`=true but `allVerified`=false) proves the banner stays
+dark and the 30-day stamp remains; the all-verified fixture proves it lights at
+full coverage.
+
+### Bug 112 — the verified PDF names the architect
+
+The signature block was structurally blank generic text ("eine/n
+bauvorlageberechtigte/n Architekt/in") because verify-fact recorded `setBy:'user'`
+with no name and the owner can't read the architect's profile under RLS. Now the
+architect supplies their **self-attested** name (+ optional chamber registration
+no. / chamber) once, on their first verify (`VerificationPanel` one-time DE
+prompt). `verify-fact` records it set-once into `project_members` (migration
+**0036**, additive columns) and denormalizes a snapshot into
+`projects.state.verification`; `computeVerificationRollup` surfaces it; the PDF
+pre-prints it above the architect / chamber signature lines — gated on
+`allVerified`. Honesty boundary held throughout: **self-attested, not
+chamber-audited** (the chamber no. is independently verifiable by the reader).
+Proven: a fully-verified brief prints the name + chamber (EN+DE); an unverified
+brief leaves them blank.
+
+### Bug 110 — honest invite delivery (Option A)
+
+There is no server-side email — the invite is a copy-link the owner sends. The
+modal already centered Copy-link (mailto is a labeled "Open in mail client"
+secondary), but the copy didn't set the delivery expectation. Reworded the intro
+(EN+DE): *"Planning Matrix does not email the architect for you — copy this link
+and send it via your preferred channel"*; the email field is now "(optional —
+only pre-fills your mail app)". Option B (a Resend Edge Function) was rejected
+this sprint: it needs a DKIM-verified sending domain, which `*.vercel.app` can't
+provide — falling back to a shared sender would risk the verify link landing in
+spam, the same silent-failure class we're eliminating. Deferred until a real
+domain lands.
+
+### Manual steps before this functions in prod (Rutik)
+
+Code + every local gate are green, but Bug 112 only functions in prod after:
+1. Apply migration `0036_project_members_architect_identity.sql` (Supabase SQL
+   Editor — never `db push`).
+2. Redeploy the `verify-fact` Edge Function (it now records the identity). No
+   `chat-turn` redeploy (untouched).
+
+### Gates (every commit)
+
+Bayern SHA `b18d3f7f…3471` MATCH · 16/16 state matrix · `smoke:pdf-text`
+359→375 · `smoke:architect` 281→285 · build clean · index bundle 285.3 KB gz
+(ceiling 300) · lint net-zero on touched files (8/2 baseline). Playwright
+architect spec validated in CI (the local sandbox can't serve the stubbed-data
+tests — proven by the untouched dashboard test failing identically on pristine
+`main`; the no-stub anonymous-redirect test passes locally).
 
 ## v1.0.31 — PDF vertical slice: 3 demo cells pass the 12 MUST checks (2026-05-25)
 

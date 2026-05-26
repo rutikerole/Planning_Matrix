@@ -5,15 +5,29 @@
 > Reads end-to-end on first pass; subsequent visits use the table of
 > contents. **This document IS the v1 deliverable's audit trail.**
 
-> **Current release: v1.0.31 (2026-05-25)** — PDF vertical slice. The architect
-> PDF is hardened to 12/12 MUST checks on three demo cells (T-01 × Bayern München,
-> T-05 × NRW Köln, T-03 × Hessen Frankfurt); all other templates/states are frozen
-> behind an honest "coverage in preparation" state in the export menus
-> (`src/legal/demoCoverage.ts`). No migrations, no Edge-Function redeploys this
-> release. See `docs/V1_0_31_PDF_SLICE_DIAGNOSIS.md` (the 12-check definition) and
-> `docs/V1_0_30_STRATEGIC_RESEARCH.md` (why the horizontal walk stopped + the
-> Phase 2/3 plan). Visual confirmation of the signature-block reflow (Bug 60) and
-> the freeze UI is an operator smoke-walk item.
+> **Current release: v1.0.32 (2026-05-26)** — Architect handoff P0 fix sprint.
+> Closes the four P0s the v1.0.31 audit (`docs/V1_0_31_ARCHITECT_HANDOFF_AUDIT.md`)
+> found disqualifying for the legal shield: **Bug 111** (all 11 editorial footers
+> now clear to VERIFIZIERT on full verification, not just Section 10), **Bug 112**
+> (the verified PDF now names the self-attested architect + chamber no. in the
+> signature block), **Bug 110** (honest copy-link invite — no implied system
+> email), and **Bug 113** (reject-inversion confirmed RESOLVED — deployed
+> `verify-fact` v2 already carries the reject branch). **Bug 127** (cover banner
+> gated on full verification) folded in. A fully-verified brief now renders a
+> VERIFIZIERT footer + a named architect; a partially-verified one stays
+> preliminary. Self-attested identity is **not chamber-audited** (honest framing
+> throughout).
+>
+> **PENDING MANUAL STEPS (UNVERIFIED until done — Rutik):** (1) apply migration
+> `0036_project_members_architect_identity.sql` via SQL Editor; (2) redeploy the
+> `verify-fact` Edge Function (now records the identity). **No `chat-turn`
+> redeploy.** Until both are done, Bug 112 identity capture is inert in prod
+> (footer/banner clearing — Bug 111/127 — is client-only and already live on
+> deploy). Then run the e2e legal-shield smoke walk.
+>
+> Gates green every commit: Bayern SHA `b18d3f7f…3471` MATCH, 16/16 matrix,
+> smoke:pdf-text 375, smoke:architect 285, bundle 285.3 KB gz. Prior release
+> context: `docs/V1_0_31_PDF_SLICE_DIAGNOSIS.md`.
 
 ## Contents
 
