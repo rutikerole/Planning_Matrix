@@ -2019,6 +2019,29 @@
       }
     }
   },
+  "architect": {
+    "accept": {
+      "eyebrow": "Architekt-Einladung",
+      "checking": "Einladung wird geprüft …",
+      "successTitle": "Einladung angenommen",
+      "alreadyTitle": "Einladung bereits angenommen",
+      "successBody": "Sie haben jetzt Zugriff auf das Projekt.",
+      "toVerify": "Zur Verifikations-Oberfläche →",
+      "toOverview": "oder Übersicht",
+      "errorTitle": "Einladung nicht akzeptiert",
+      "back": "Zurück zum Dashboard",
+      "error": {
+        "forbidden": "Dieser Verifizierungs-Link ist der eingeladenen Architekt:in vorbehalten. Bitte melden Sie sich mit dem Architekt-Konto an, das diesen Link erhalten hat, oder fragen Sie die Projektinhaber:in nach Zugang.",
+        "notFound": "Dieser Einladungslink ist ungültig oder wurde widerrufen.",
+        "invalidToken": "Ungültiger oder fehlender Einladungs-Token.",
+        "session": "Ihre Sitzung ist abgelaufen. Bitte erneut anmelden.",
+        "generic": "Die Einladung konnte nicht angenommen werden. Bitte erneut versuchen."
+      }
+    },
+    "preview": {
+      "banner": "Vorschaumodus — anmelden als eingeladene Architekt:in zum Bestätigen."
+    }
+  },
   "chatRecovery": {
     "title": "Letzte Anfrage nicht abgeschlossen",
     "body": "Die letzte Nachricht wurde gesendet, aber das Planungsteam hat nicht geantwortet. Erneut versuchen?",

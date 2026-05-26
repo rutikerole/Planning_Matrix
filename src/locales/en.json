@@ -2019,6 +2019,29 @@
       }
     }
   },
+  "architect": {
+    "accept": {
+      "eyebrow": "Architect invitation",
+      "checking": "Checking invitation …",
+      "successTitle": "Invitation accepted",
+      "alreadyTitle": "Invitation already accepted",
+      "successBody": "You now have access to this project.",
+      "toVerify": "To the verification panel →",
+      "toOverview": "or overview",
+      "errorTitle": "Invitation not accepted",
+      "back": "Back to dashboard",
+      "error": {
+        "forbidden": "This verification link is reserved for the invited architect. Please sign in with the architect account that received this link, or ask the project owner to confirm your access.",
+        "notFound": "This invitation link is not valid or has been revoked.",
+        "invalidToken": "Invalid or missing invitation token.",
+        "session": "Your session has expired. Please sign in again.",
+        "generic": "The invitation could not be accepted. Please try again."
+      }
+    },
+    "preview": {
+      "banner": "Preview mode — sign in as the invited architect to confirm items."
+    }
+  },
   "chatRecovery": {
     "title": "Last request didn't complete",
     "body": "Your message was sent but the planning team didn't reply. Try again?",
