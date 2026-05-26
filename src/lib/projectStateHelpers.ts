@@ -424,6 +424,17 @@ export function applyRecommendationsDelta(
     const idx = recs.findIndex((r) => r.id === d.id)
     if (idx >= 0) {
       const cur = recs[idx]
+      // v1.0.34 Bug 117 — erode an architect's verification when the owner edit
+      // changes the rec's CONTENT (title/detail). Metadata-only edits (rank,
+      // cta, effort) preserve the DESIGNER+VERIFIED badge. Mirrors the facts
+      // path (erodeVerificationOnEdit), previously facts-only.
+      const wasVerified =
+        cur.qualifier?.source === 'DESIGNER' && cur.qualifier?.quality === 'VERIFIED'
+      const contentChanged =
+        (d.title_de !== undefined && d.title_de !== cur.title_de) ||
+        (d.title_en !== undefined && d.title_en !== cur.title_en) ||
+        (d.detail_de !== undefined && d.detail_de !== cur.detail_de) ||
+        (d.detail_en !== undefined && d.detail_en !== cur.detail_en)
       recs[idx] = {
         ...cur,
         ...(d.rank !== undefined ? { rank: d.rank } : {}),
@@ -439,7 +450,11 @@ export function applyRecommendationsDelta(
         ...(d.responsible_party !== undefined
           ? { responsible_party: d.responsible_party }
           : {}),
-        ...(d.qualifier !== undefined ? { qualifier: d.qualifier } : {}),
+        ...(wasVerified && contentChanged
+          ? { qualifier: { source: 'DESIGNER', quality: 'ASSUMED' } }
+          : d.qualifier !== undefined
+            ? { qualifier: d.qualifier }
+            : {}),
       }
     } else {
       const fresh: Recommendation = {
@@ -501,6 +516,17 @@ export function applyProceduresDelta(
     }
     if (idx >= 0) {
       const cur = procs[idx]
+      // v1.0.34 Bug 117 — erode verification on a content change (status /
+      // rationale / title); preserve it on a no-op re-write. Was: blind
+      // {...cur,...baseQual} reset every edit to LEGAL+CALCULATED.
+      const wasVerified =
+        cur.qualifier?.source === 'DESIGNER' && cur.qualifier?.quality === 'VERIFIED'
+      const contentChanged =
+        (d.status !== undefined && d.status !== cur.status) ||
+        (d.title_de !== undefined && d.title_de !== cur.title_de) ||
+        (d.title_en !== undefined && d.title_en !== cur.title_en) ||
+        (d.rationale_de !== undefined && d.rationale_de !== cur.rationale_de) ||
+        (d.rationale_en !== undefined && d.rationale_en !== cur.rationale_en)
       procs[idx] = {
         ...cur,
         ...(d.title_de !== undefined ? { title_de: d.title_de } : {}),
@@ -508,7 +534,18 @@ export function applyProceduresDelta(
         ...(d.status !== undefined ? { status: d.status } : {}),
         ...(d.rationale_de !== undefined ? { rationale_de: d.rationale_de } : {}),
         ...(d.rationale_en !== undefined ? { rationale_en: d.rationale_en } : {}),
-        qualifier: { ...cur.qualifier, ...baseQual },
+        qualifier:
+          wasVerified && contentChanged
+            ? {
+                source: 'DESIGNER',
+                quality: 'ASSUMED',
+                setAt,
+                setBy: 'assistant',
+                reason: 'owner edited after verification, re-verification required',
+              }
+            : wasVerified
+              ? cur.qualifier
+              : { ...cur.qualifier, ...baseQual },
       }
     } else {
       const fresh: Procedure = {
@@ -550,6 +587,14 @@ export function applyDocumentsDelta(
     }
     if (idx >= 0) {
       const cur = docs[idx]
+      // v1.0.34 Bug 117 — erode verification on a content change (title /
+      // status); preserve on a no-op re-write.
+      const wasVerified =
+        cur.qualifier?.source === 'DESIGNER' && cur.qualifier?.quality === 'VERIFIED'
+      const contentChanged =
+        (d.status !== undefined && d.status !== cur.status) ||
+        (d.title_de !== undefined && d.title_de !== cur.title_de) ||
+        (d.title_en !== undefined && d.title_en !== cur.title_en)
       docs[idx] = {
         ...cur,
         ...(d.title_de !== undefined ? { title_de: d.title_de } : {}),
@@ -557,7 +602,18 @@ export function applyDocumentsDelta(
         ...(d.status !== undefined ? { status: d.status } : {}),
         ...(d.required_for !== undefined ? { required_for: d.required_for } : {}),
         ...(d.produced_by !== undefined ? { produced_by: d.produced_by } : {}),
-        qualifier: { ...cur.qualifier, ...baseQual },
+        qualifier:
+          wasVerified && contentChanged
+            ? {
+                source: 'DESIGNER',
+                quality: 'ASSUMED',
+                setAt,
+                setBy: 'assistant',
+                reason: 'owner edited after verification, re-verification required',
+              }
+            : wasVerified
+              ? cur.qualifier
+              : { ...cur.qualifier, ...baseQual },
       }
     } else {
       const fresh: DocumentItem = {
@@ -599,6 +655,16 @@ export function applyRolesDelta(
     }
     if (idx >= 0) {
       const cur = roles[idx]
+      // v1.0.34 Bug 117 — erode verification on a content change (needed /
+      // rationale / title); preserve on a no-op re-write.
+      const wasVerified =
+        cur.qualifier?.source === 'DESIGNER' && cur.qualifier?.quality === 'VERIFIED'
+      const contentChanged =
+        (d.needed !== undefined && d.needed !== cur.needed) ||
+        (d.title_de !== undefined && d.title_de !== cur.title_de) ||
+        (d.title_en !== undefined && d.title_en !== cur.title_en) ||
+        (d.rationale_de !== undefined && d.rationale_de !== cur.rationale_de) ||
+        (d.rationale_en !== undefined && d.rationale_en !== cur.rationale_en)
       roles[idx] = {
         ...cur,
         ...(d.title_de !== undefined ? { title_de: d.title_de } : {}),
@@ -606,7 +672,18 @@ export function applyRolesDelta(
         ...(d.needed !== undefined ? { needed: d.needed } : {}),
         ...(d.rationale_de !== undefined ? { rationale_de: d.rationale_de } : {}),
         ...(d.rationale_en !== undefined ? { rationale_en: d.rationale_en } : {}),
-        qualifier: { ...cur.qualifier, ...baseQual },
+        qualifier:
+          wasVerified && contentChanged
+            ? {
+                source: 'DESIGNER',
+                quality: 'ASSUMED',
+                setAt,
+                setBy: 'assistant',
+                reason: 'owner edited after verification, re-verification required',
+              }
+            : wasVerified
+              ? cur.qualifier
+              : { ...cur.qualifier, ...baseQual },
       }
     } else {
       const fresh: Role = {
