@@ -1242,6 +1242,16 @@ export async function buildExportPdf({
     : lang === 'en'
       ? 'Preliminary - to be confirmed by a certified architect (Bauvorlageberechtigte/r).'
       : 'Vorläufig - bestätigt durch eine/n bauvorlageberechtigte/n Architekt/in.'
+  // v1.0.32 Bug 111 — editorial-page footer center. The 11 render*Footer
+  // helpers each hardcoded footer.preliminary and never cleared, so a fully
+  // verified brief still printed "VORLÄUFIG" on every section page while only
+  // the rare continuation page (the loop above, app-canonical caveat) cleared.
+  // Compute the center once here on the SAME allVerified gate and thread it
+  // into every editorial footer. Unverified → byte-identical footer.preliminary
+  // (every smoke fixture renders unchanged).
+  const footerCenter = verificationRollup.allVerified
+    ? `${pdfStr(pdfStrings, 'footer.verified')}${verifiedFooterDate}`
+    : pdfStr(pdfStrings, 'footer.preliminary')
   // v1.0.13 — skip the y=28/y=44 footers on pages 1 (cover) and 2
   // (TOC). v1.0.15 also skips the executive + areas pages (their
   // footers are drawn by renderExecutiveFooter / renderAreasFooter
@@ -1340,6 +1350,7 @@ export async function buildExportPdf({
     verifiedBannerLabel,
   })
   renderTocFooter(tocPage, editorialFonts, pdfStrings, {
+    footerCenter,
     docNo,
     totalPages,
     tocPageNumber: 2,
@@ -1348,6 +1359,7 @@ export async function buildExportPdf({
   // v1.0.15 — executive + areas footers in the second pass.
   if (executivePage) {
     renderExecutiveFooter(executivePage, editorialFonts, pdfStrings, {
+      footerCenter,
       docNo,
       totalPages,
       pageNumber: executivePageNumber,
@@ -1355,47 +1367,56 @@ export async function buildExportPdf({
   }
   if (areasPage) {
     renderAreasFooter(areasPage, editorialFonts, pdfStrings, {
+      footerCenter,
       docNo,
       totalPages,
       pageNumber: areasPageNumber,
     })
   }
   renderCostsFooter(costsPage, editorialFonts, pdfStrings, {
+    footerCenter,
     docNo,
     totalPages,
     pageNumber: costsPageNumber,
   })
   renderTimelineFooter(timelinePage, editorialFonts, pdfStrings, {
+    footerCenter,
     docNo,
     totalPages,
     pageNumber: timelinePageNumber,
   })
   renderProceduresFooter(proceduresPage, editorialFonts, pdfStrings, {
+    footerCenter,
     docNo,
     totalPages,
     pageNumber: proceduresPageNumber,
   })
   renderTeamFooter(teamPage, editorialFonts, pdfStrings, {
+    footerCenter,
     docNo,
     totalPages,
     pageNumber: teamPageNumber,
   })
   renderRecsFooter(recsPage, editorialFonts, pdfStrings, {
+    footerCenter,
     docNo,
     totalPages,
     pageNumber: recsPageNumber,
   })
   renderKeyDataFooter(keyDataPage, editorialFonts, pdfStrings, {
+    footerCenter,
     docNo,
     totalPages,
     pageNumber: keyDataPageNumber,
   })
   renderVerificationFooter(verificationPage, editorialFonts, pdfStrings, {
+    footerCenter,
     docNo,
     totalPages,
     pageNumber: verificationPageNumber,
   })
   renderGlossaryFooter(glossaryPage, editorialFonts, pdfStrings, {
+    footerCenter,
     docNo,
     totalPages,
     pageNumber: glossaryPageNumber,

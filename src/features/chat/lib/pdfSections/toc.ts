@@ -120,11 +120,11 @@ export function renderTocFooter(
   page: PDFPage,
   fonts: EditorialFonts,
   strings: PdfStrings,
-  data: { docNo: string; totalPages: number; tocPageNumber: number },
+  data: { docNo: string; totalPages: number; tocPageNumber: number; footerCenter?: string },
 ): void {
   drawFooter(page, {
     left: data.docNo,
-    center: pdfStr(strings, 'footer.preliminary'),
+    center: data.footerCenter ?? pdfStr(strings, 'footer.preliminary'),
     right: `${data.tocPageNumber} / ${data.totalPages}`,
     fonts,
   })

@@ -46,6 +46,8 @@ export interface TeamData {
 }
 
 export interface TeamFooterData {
+  /** v1.0.32 Bug 111 — verified|preliminary footer center, set by exportPdf. */
+  footerCenter?: string
   docNo: string
   totalPages: number
   pageNumber: number
@@ -205,7 +207,7 @@ export function renderTeamFooter(
 ): void {
   drawFooter(page, {
     left: data.docNo,
-    center: pdfStr(strings, 'footer.preliminary'),
+    center: data.footerCenter ?? pdfStr(strings, 'footer.preliminary'),
     right: `${data.pageNumber} / ${data.totalPages}`,
     fonts,
   })
