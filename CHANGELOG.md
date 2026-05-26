@@ -1,5 +1,35 @@
 # Changelog
 
+## v1.0.32.3 — Self-service architect invite (2026-05-26) — PENDING REDEPLOY
+
+Root-cause fix for the recurring "Invitation not accepted" wall. An invited
+architect could never accept, because accepting required a global
+`profiles.role='designer'` that could only be set by hand in SQL — i.e. you had
+to already BE a designer to become one. Every test (Rutik signing in as
+`erolerutik7`) hit this.
+
+`share-project` handleAccept no longer requires a pre-provisioned designer role.
+The invite token (122-bit UUID, single-use, 7-day TTL) is the authorization —
+the project OWNER vouches for the verifier by sending the link. On a valid
+accept, a default-role (`client`) account is promoted to `designer` (service-role
+write; privileged roles never downgraded), so `verify-fact` + `ArchitectGuard`
+recognise them. The role is membership-scoped in effect: a promoted designer can
+only verify projects they are an accepted member of.
+
+**Security trade-off (deliberate):** this is the standard bearer-token invite
+model ("anyone with the link can verify this project") — the same as a Google
+Docs link-share. The owner controls who gets the link; the 7-day TTL + single-use
+claim bound exposure. Strict email-binding remains the deferred hardening
+(audit Bug 114).
+
+**PENDING: redeploy `share-project`** for this to take effect in prod (currently
+ACTIVE version 1, 2026-05-07). Edge-function-only change — no migration, no app
+code, no `chat-turn`/`verify-fact` redeploy. App build clean, Bayern SHA MATCH.
+
+Immediate alternative (no redeploy, keeps strict gating): SQL-provision the
+architect — `update public.profiles set role='designer' where id = (select id
+from auth.users where email='…')`.
+
 ## v1.0.32.2 — Architect accept-link UX (2026-05-26)
 
 Rutik tested the live handoff and the accept link "looked broken": clicking

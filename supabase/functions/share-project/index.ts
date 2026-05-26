@@ -282,24 +282,21 @@ async function handleAccept(args: {
 }): Promise<Response> {
   const { body, userClient, serviceClient, userId, corsHeaders, requestId } = args
 
-  // POST_V1_AUDIT CRIT-2 — designer-role check (existing in v1.0;
-  // pinned by smokeWalk drift fixture in v1.0.1).
+  // v1.0.32.3 — SELF-SERVICE INVITE (replaces the POST_V1_AUDIT CRIT-2
+  // pre-provisioned-designer wall). The invite token (122-bit UUID, single-use,
+  // 7-day TTL) IS the authorization: the project OWNER vouches for the verifier
+  // by sending the link, so we no longer require a global role=designer set by
+  // hand in SQL (which blocked every invited architect — they could never become
+  // a designer because becoming one required being one). We read the current
+  // role only to decide whether to promote a default 'client' to 'designer'
+  // AFTER a valid accept (below), so verify-fact + ArchitectGuard recognise the
+  // newly-invited architect. The resulting 'designer' role is membership-scoped
+  // in effect: it only lets them verify projects they are an accepted member of.
   const { data: profile } = await userClient
     .from('profiles')
     .select('role')
     .eq('id', userId)
     .maybeSingle()
-  if (profile?.role !== 'designer') {
-    return jsonError(
-      {
-        code: 'forbidden',
-        message: 'Only profiles with role=designer can claim architect invites.',
-      },
-      403,
-      corsHeaders,
-      requestId,
-    )
-  }
 
   // Look up the row by invite_token via service-role (the unclaimed
   // row has user_id=NULL, which the user-scoped SELECT policy
@@ -402,6 +399,23 @@ async function handleAccept(args: {
       corsHeaders,
       requestId,
     )
+  }
+
+  // v1.0.32.3 — promote a default 'client' to 'designer' on a valid accept so
+  // verify-fact (role=designer gate) + ArchitectGuard recognise the newly-
+  // invited architect. Privileged roles (admin / engineer / authority) are left
+  // untouched — we never downgrade. Service-role write (a user cannot change
+  // their own role under RLS). Non-fatal: the membership is already bound.
+  if (!profile?.role || profile.role === 'client') {
+    const { error: roleErr } = await serviceClient
+      .from('profiles')
+      .update({ role: 'designer' })
+      .eq('id', userId)
+    if (roleErr) {
+      console.warn(
+        `[share-project] [${requestId}] designer-role promotion failed: ${roleErr.message}`,
+      )
+    }
   }
 
   void serviceClient
