@@ -384,6 +384,12 @@ function ExportRows({ busy, onPick, t, pdfReady }: ExportRowsProps) {
             <div className="flex flex-col gap-1">
               <p className="text-[14px] font-medium text-ink leading-snug">
                 {t(r.titleKey, { defaultValue: r.titleDefault })}
+                {r.kind === 'pdf' && !pdfReady && (
+                  // v1.0.32.1 — confident "Coming soon" pill (clay, not a warning).
+                  <span className="ml-2 align-middle rounded-full border border-clay/30 px-1.5 py-px font-mono text-[9px] uppercase tracking-[0.14em] text-clay/80">
+                    {t('common.frozenTemplate.badge')}
+                  </span>
+                )}
                 {busy === r.kind && (
                   <span className="ml-2 font-serif italic text-[11px] text-clay">
                     …
@@ -392,10 +398,7 @@ function ExportRows({ busy, onPick, t, pdfReady }: ExportRowsProps) {
               </p>
               <p className="text-[12px] italic text-ink/65 leading-relaxed">
                 {r.kind === 'pdf' && !pdfReady
-                  ? t('chat.export.pdf.inPreparation', {
-                      defaultValue:
-                        'Full PDF in preparation for this template/state — currently hardened for T-01 Bayern, T-05 NRW, T-03 Hessen.',
-                    })
+                  ? t('common.frozenTemplate.roadmap')
                   : t(r.bodyKey, { defaultValue: r.bodyDefault })}
               </p>
             </div>

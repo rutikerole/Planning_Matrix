@@ -194,18 +194,28 @@ export function ExportMenu({
           className={cn('gap-3', !pdfReady && 'cursor-not-allowed opacity-60')}
         >
           <FileText aria-hidden="true" className="size-4 text-clay/85" />
-          <span className="flex-1">
-            {t('result.export.pdf.title')}
-            {pdfReady ? (
+          {pdfReady ? (
+            <span className="flex-1">
+              {t('result.export.pdf.title')}
               <span className="ml-2 font-mono text-[10px] uppercase tracking-[0.18em] text-clay/70">
                 {lang === 'de' ? 'DE' : 'EN'}
               </span>
-            ) : (
-              <span className="ml-2 text-[10px] italic text-clay/70">
-                {t('result.export.pdf.inPreparation')}
+            </span>
+          ) : (
+            // v1.0.32.1 — confident roadmap framing for a non-demo template/state
+            // (clean clay pill + early-access sub-line; NOT a red/yellow warning).
+            <span className="flex-1 flex flex-col gap-0.5">
+              <span className="inline-flex items-center gap-2">
+                {t('result.export.pdf.title')}
+                <span className="rounded-full border border-clay/30 px-1.5 py-px font-mono text-[9px] uppercase tracking-[0.14em] text-clay/80">
+                  {t('common.frozenTemplate.badge')}
+                </span>
               </span>
-            )}
-          </span>
+              <span className="text-[11px] not-italic text-ink/55 leading-snug">
+                {t('common.frozenTemplate.roadmap')}
+              </span>
+            </span>
+          )}
           {(busy === 'pdf-en' || busy === 'pdf-de') && (
             <span className="text-[11px] italic text-clay/85">…</span>
           )}
