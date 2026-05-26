@@ -97,6 +97,9 @@ Deno.serve(async (req: Request) => {
     note?: string
     action?: string
     reason?: string
+    // v1.0.32 Bug 112 — optional self-attested architect identity, captured
+    // on the architect's FIRST verify (VerificationPanel one-time prompt).
+    identity?: { name?: string; chamberNo?: string; chamberState?: string }
   }
   try {
     body = await req.json()
@@ -129,6 +132,21 @@ Deno.serve(async (req: Request) => {
   }
   const note =
     typeof body.note === 'string' && body.note.length <= 500 ? body.note : undefined
+
+  // v1.0.32 Bug 112 — self-attested architect identity (optional). Trimmed +
+  // length-capped; never hard-fails the request. Recorded exactly once, on the
+  // first verify, into project_members + projects.state.verification. The name
+  // is the verifying architect's attestation, NOT a chamber audit.
+  const identityName =
+    typeof body.identity?.name === 'string' ? body.identity.name.trim().slice(0, 120) : ''
+  const identityChamberNo =
+    typeof body.identity?.chamberNo === 'string'
+      ? body.identity.chamberNo.trim().slice(0, 60)
+      : ''
+  const identityChamberState =
+    typeof body.identity?.chamberState === 'string'
+      ? body.identity.chamberState.trim().slice(0, 80)
+      : ''
 
   // C8 (Bug 34) — verify | reject discriminator. Default 'verify' for
   // backwards compatibility. Reject downgrades DESIGNER+VERIFIED →
@@ -268,6 +286,20 @@ Deno.serve(async (req: Request) => {
     )
   }
 
+  // v1.0.32 Bug 112 — stamp the self-attested architect identity into
+  // state.verification exactly once (first verify with a name wins; reject and
+  // later verifies leave it untouched). Denormalized here so the client PDF
+  // export can name the architect without an RLS-blocked profile read.
+  const stampIdentity = action === 'verify' && identityName.length > 0 && !next.verification
+  if (stampIdentity) {
+    next.verification = {
+      architectName: identityName,
+      ...(identityChamberNo ? { architectChamberNo: identityChamberNo } : {}),
+      ...(identityChamberState ? { architectChamberState: identityChamberState } : {}),
+      firstVerifiedAt: now,
+    }
+  }
+
   const { error: upErr } = await serviceClient
     .from('projects')
     .update({ state: next, updated_at: now })
@@ -279,6 +311,29 @@ Deno.serve(async (req: Request) => {
       corsHeaders,
       requestId,
     )
+  }
+
+  // v1.0.32 Bug 112 — mirror the identity into project_members (stable
+  // source-of-truth, independent of the mutable state JSONB). Set-once via the
+  // architect_name IS NULL guard; fire-and-forget (the state stamp above is the
+  // load-bearing write for the PDF).
+  if (stampIdentity) {
+    void serviceClient
+      .from('project_members')
+      .update({
+        architect_name: identityName,
+        architect_chamber_no: identityChamberNo || null,
+        architect_chamber_state: identityChamberState || null,
+      })
+      .eq('id', membership.id)
+      .is('architect_name', null)
+      .then(({ error }: { error: { message: string } | null }) => {
+        if (error) {
+          console.warn(
+            `[verify-fact] [${requestId}] project_members identity write failed: ${error.message}`,
+          )
+        }
+      })
   }
 
   void serviceClient
@@ -317,6 +372,7 @@ Deno.serve(async (req: Request) => {
       field: body.field,
       itemId: body.itemId,
       action,
+      verification: next.verification ?? null,
       requestId,
     }),
     {
