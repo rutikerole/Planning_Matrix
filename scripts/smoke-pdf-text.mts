@@ -960,6 +960,34 @@ async function runVerifiedBannerCheck(): Promise<{ passed: number; failed: numbe
   return { passed, failed }
 }
 
+// v1.0.32 Bug 111 — every editorial-page footer must clear on a fully
+// architect-verified brief. footer.verified is a NEW string used ONLY by the
+// 11 editorial footers (via exportPdf footerCenter), so its presence proves
+// the footers flipped and its absence on the unverified original proves the
+// allVerified gate works both ways. Substring match avoids em-dash/umlaut
+// extraction ambiguity.
+async function runVerifiedFooterCheck(): Promise<{ passed: number; failed: number }> {
+  console.log(`\n[smoke-pdf-text] editorial footer clears on all-verified (Bug 111)…`)
+  let passed = 0
+  let failed = 0
+  const verifiedFx = 'test/fixtures/bayern-t01-muenchen-allverified.json'
+  const unverifiedFx = 'test/fixtures/bayern-t01-muenchen.json'
+  for (const lang of ['en', 'de'] as const) {
+    const needle = lang === 'en' ? 'architect confirmation on file' : 'Bestätigung liegt vor'
+    const vText = await extractPdfText(await renderFixturePdf(lang, verifiedFx))
+    const vHit = vText.includes(needle)
+    const vMsg = `all-verified ${lang}: editorial footers show verified pill (Bug 111)`
+    if (vHit) { console.log(`  ✓ ${vMsg}`); passed++ }
+    else { console.log(`  ✗ ${vMsg}`); failed++ }
+    const uText = await extractPdfText(await renderFixturePdf(lang, unverifiedFx))
+    const uAbsent = !uText.includes(needle)
+    const uMsg = `unverified ${lang}: footers stay preliminary, no verified pill (Bug 111 gate)`
+    if (uAbsent) { console.log(`  ✓ ${uMsg}`); passed++ }
+    else { console.log(`  ✗ ${uMsg}`); failed++ }
+  }
+  return { passed, failed }
+}
+
 // v1.0.24 Bug R extension — normalizeDesignerWithoutInLoop now fires
 // at Top-3 + Section VIII (in addition to v1.0.23's Key Data path).
 // Unit-tests the gate function across the full quality matrix so a
@@ -1550,6 +1578,7 @@ async function main(): Promise<void> {
   const denominator = await runDenominatorUnit()
   const sysFlag = await runSystemFlagFilterUnit()
   const verifiedBanner = await runVerifiedBannerCheck()
+  const verifiedFooter = await runVerifiedFooterCheck()
   const designerDowngrade = await runDesignerDowngradeCheck()
   const factLabelCoverage = await runFactLabelCoverageUnit()
   const glossaryStateAware = await runGlossaryStateAwareCheck()
@@ -1568,6 +1597,7 @@ async function main(): Promise<void> {
     denominator.failed +
     sysFlag.failed +
     verifiedBanner.failed +
+    verifiedFooter.failed +
     designerDowngrade.failed +
     factLabelCoverage.failed +
     glossaryStateAware.failed +
@@ -1586,6 +1616,7 @@ async function main(): Promise<void> {
     denominator.passed +
     sysFlag.passed +
     verifiedBanner.passed +
+    verifiedFooter.passed +
     designerDowngrade.passed +
     factLabelCoverage.passed +
     glossaryStateAware.passed +
