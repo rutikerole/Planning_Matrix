@@ -74,10 +74,10 @@ nicht stillschweigend an, Wohnen sei automatisch zulässig.
 § 246e BauGB — Sonderregelungen für den Wohnungsbau ("Bauturbo")
 ══════════════════════════════════════════════════════════════════════════
 
-§ 246e BauGB (eingefügt 2024) erlaubt unter engen Voraussetzungen
-befristete Befreiungen von Festsetzungen des Bebauungsplans, von § 34
-BauGB und von Vorschriften der BauNVO — zur Beschleunigung des
-Wohnungsbaus.
+§ 246e BauGB (in Kraft seit 30.10.2025, befristet bis 31.12.2030) erlaubt
+unter engen Voraussetzungen befristete Befreiungen von Festsetzungen des
+Bebauungsplans, von § 34 BauGB und von Vorschriften der BauNVO — zur
+Beschleunigung des Wohnungsbaus.
 
 DISZIPLIN bei § 246e BauGB:
 

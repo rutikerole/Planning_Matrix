@@ -10,6 +10,16 @@
 // commit 1 (667bb44). When Bayern content is intentionally edited,
 // update EXPECTED_BAYERN_SHA below and call out the change in the
 // commit message.
+//
+// RE-BASELINE LOG:
+//   - 667bb44 (Phase 11): b18d3f7f…b3471 (held across 34+ commits).
+//   - v1.0.34 C4a (phase-2/full-matrix): a2ffc7bb…f31a8 — INTENTIONAL.
+//     Corrected the § 246e BauGB ("Bau-Turbo") dating inside FEDERAL_BLOCK
+//     from the wrong "(eingefügt 2024)" to "(in Kraft seit 30.10.2025,
+//     befristet bis 31.12.2030)" (verified: gesetze-im-internet.de/bbaug/
+//     __246e.html). Only the FEDERAL_BLOCK date parenthetical changed;
+//     BAYERN_BLOCK / MUENCHEN_BLOCK / SHARED / PERSONA / TEMPLATE_SHARED
+//     are byte-unchanged. Length 47923 → 47959 (+36).
 // ───────────────────────────────────────────────────────────────────────
 
 import { readFile } from 'node:fs/promises'
@@ -21,7 +31,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url))
 const REPO_ROOT = join(__dirname, '..', '..')
 
 export const EXPECTED_BAYERN_SHA =
-  'b18d3f7f9a6fe238c18cec5361d30ea3a547e46b1ef2b16a1e74c533aacb3471'
+  'a2ffc7bb47946d7de822823144966576eb57b8ce2662a9ec07a26678a04f31a8'
 
 const SLICE_SEPARATOR = '\n\n---\n\n'
 const TAIL =
