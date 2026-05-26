@@ -29,6 +29,7 @@ import type { ProjectState } from '@/types/projectState'
 // drift.
 import {
   buildCostBreakdown,
+  costBandFor,
   detectAreaSqm,
   detectKlasse,
   detectProcedure,
@@ -745,6 +746,11 @@ export async function buildExportPdf({
   // BKI exists, so route to an honest stub (request Fachplaner quotes) rather
   // than ship new-build numbers. No fabrication.
   const isRenovation = procedureCase.intent === 'sanierung'
+  // v1.0.33 C2 — per-template sourced headline band (COST_BANDS_BY_TEMPLATE,
+  // cross-referenced to each template's TYPISCHE KOSTENRAHMEN). Used only for
+  // the templates that previously fell through to the EFH new-build table
+  // (T-02/T-06/T-07/T-08); harmlessly precomputed for the others.
+  const headlineBand = costBandFor(state.templateId)
   const costsData: CostsData = isDemolition
     ? {
         areaSqm: 0,
@@ -778,14 +784,35 @@ export async function buildExportPdf({
             subtitle: pdfStrings['costs.renovation.subtitle'],
             emptyMessage: pdfStrings['costs.renovation.empty'],
           }
-        : {
-            areaSqm,
-            bundeslandCode: bundeslandCodeUpper,
-            structuralRef,
-            templateLabel,
-            items: costItems,
-            total: formatEurRange(costBreakdown.total, lang),
-          }
+        : state.templateId === 'T-01'
+          ? {
+              areaSqm,
+              bundeslandCode: bundeslandCodeUpper,
+              structuralRef,
+              templateLabel,
+              items: costItems,
+              total: formatEurRange(costBreakdown.total, lang),
+            }
+          : {
+              // v1.0.33 C2 — T-02/T-06/T-07/T-08 previously fell through to the
+              // EFH new-build table above, emitting München single-family
+              // per-category numbers for a multi-family / storey-addition /
+              // extension / other project. Route them to their own sourced
+              // headline band instead of shipping wrong rows. Per-category
+              // breakdowns for these templates are deferred (need BKI/HOAI
+              // sourcing); T-01 and the honest T-03/T-04/T-05 stubs are unchanged.
+              areaSqm: 0,
+              bundeslandCode: bundeslandCodeUpper,
+              structuralRef,
+              templateLabel,
+              items: [],
+              total: '—',
+              subtitle: lang === 'de' ? headlineBand.basisDe : headlineBand.basisEn,
+              emptyMessage: `${pdfStrings['costs.headlineBand.empty']} ${formatEurRange(
+                { min: headlineBand.lower, max: headlineBand.upper },
+                lang,
+              )}`,
+            }
   const costsPage = doc.addPage([PDF_PAGE_WIDTH, PDF_PAGE_HEIGHT])
   const costsPageNumber = doc.getPageCount()
   renderCostsBody(costsPage, editorialFonts, pdfStrings, costsData)

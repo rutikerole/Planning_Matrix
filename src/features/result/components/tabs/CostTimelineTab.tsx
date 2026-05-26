@@ -3,6 +3,7 @@ import type { ProjectRow } from '@/types/db'
 import type { ProjectState } from '@/types/projectState'
 import {
   buildCostBreakdown,
+  costBandFor,
   describeCostInputs,
   detectAreaSqm,
   detectKlasse,
@@ -95,6 +96,19 @@ export function CostTimelineTab({ project, state }: Props) {
   // demolition factors exist (C11_DATA_GAPS GAP-4) → honest stub, not wrong
   // numbers.
   const isDemolition = state.templateId === 'T-05' || project.intent === 'abbruch'
+  // v1.0.33 C2 — align the web cost surface with the PDF cost model. T-03/T-04
+  // were showing EFH new-build bars here while the PDF already routed them to
+  // honest stubs (the PDF↔web divergence); T-02/T-06/T-07/T-08 were showing EFH
+  // bars where the PDF now shows their own sourced headline band. Same model on
+  // both surfaces: stub / band / bars.
+  const isUseConversion = state.templateId === 'T-04' || project.intent === 'umnutzung'
+  const isRenovation = state.templateId === 'T-03' || project.intent === 'sanierung'
+  const isHeadlineBand =
+    state.templateId === 'T-02' ||
+    state.templateId === 'T-06' ||
+    state.templateId === 'T-07' ||
+    state.templateId === 'T-08'
+  const band = costBandFor(state.templateId)
 
   const totalWeight = totalPhaseWeight()
   const maxBar = Math.max(...COST_LINES.map((l) => cost[l.key].max), 1)
@@ -118,6 +132,30 @@ export function CostTimelineTab({ project, state }: Props) {
           <div className="border border-clay/30 rounded-[10px] bg-paper-card p-4 sm:p-5">
             <p className="text-[13px] leading-relaxed text-ink/80">
               {t('result.workspace.cost.demolitionStub')}
+            </p>
+          </div>
+        ) : isUseConversion ? (
+          <div className="border border-clay/30 rounded-[10px] bg-paper-card p-4 sm:p-5">
+            <p className="text-[13px] leading-relaxed text-ink/80">
+              {t('result.workspace.cost.useConversionStub')}
+            </p>
+          </div>
+        ) : isRenovation ? (
+          <div className="border border-clay/30 rounded-[10px] bg-paper-card p-4 sm:p-5">
+            <p className="text-[13px] leading-relaxed text-ink/80">
+              {t('result.workspace.cost.renovationStub')}
+            </p>
+          </div>
+        ) : isHeadlineBand ? (
+          <div className="border border-clay/30 rounded-[10px] bg-paper-card p-4 sm:p-5 flex flex-col gap-2">
+            <span className="font-serif italic text-clay-deep tabular-nums text-[15px]">
+              {formatEurRange({ min: band.lower, max: band.upper }, lang)}
+            </span>
+            <p className="font-serif italic text-[11px] text-clay/85 leading-snug">
+              {lang === 'en' ? band.basisEn : band.basisDe}
+            </p>
+            <p className="text-[11px] italic text-clay/85 leading-relaxed border-l border-clay/35 pl-3">
+              {t('result.workspace.cost.headlineBandNote')}
             </p>
           </div>
         ) : (

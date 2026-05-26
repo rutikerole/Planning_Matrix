@@ -155,6 +155,10 @@ const EN: PdfStrings = {
     'Renovation cost ranges in preparation · request quotes from the relevant Fachplaner:innen.',
   'costs.renovation.empty':
     'Renovation cost ranges in preparation. Request fixed quotes for the architect, structural (Tragwerk) and energy (GEG) services the scope requires — the spread depends on the depth of the intervention (cosmetic vs. load-bearing vs. energetic refurbishment) and the existing structure. No HOAI new-build fee schedule applies.',
+  // v1.0.33 C2 — per-template headline cost band (T-02/T-06/T-07/T-08). The
+  // exportPdf assembly appends the formatted € range from COST_BANDS_BY_TEMPLATE.
+  'costs.headlineBand.empty':
+    'Orientation range (detailed line items follow upon engaging an architect):',
 
   // ─── v1.0.16 Renaissance Part 2B — Timeline ───────────────────
   'timeline.kicker': 'SECTION 04 · TIMELINE',
@@ -390,6 +394,9 @@ const DE: PdfStrings = {
     'Sanierungskosten in Vorbereitung · Angebote bei den relevanten Fachplaner:innen einholen.',
   'costs.renovation.empty':
     'Sanierungskosten in Vorbereitung. Festangebote für die nach Umfang erforderlichen Architekten-, Tragwerks- und GEG-Leistungen einholen — die Spanne hängt von der Eingriffstiefe (kosmetisch vs. tragend vs. energetisch) und vom Bestand ab. Keine HOAI-Neubau-Honorartafel anwendbar.',
+  // v1.0.33 C2 — siehe EN-Pendant. Headline-Spanne (T-02/T-06/T-07/T-08).
+  'costs.headlineBand.empty':
+    'Orientierungs-Spanne (detaillierte Positionen folgen bei Beauftragung der Architekt:in):',
 
   // ─── v1.0.16 Renaissance Part 2B — Timeline ───────────────────
   'timeline.kicker': 'ABSCHNITT 04 · ZEITPLAN',
