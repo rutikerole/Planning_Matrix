@@ -22,7 +22,9 @@ const APP_VERSION = '1.0'
 // Impressum / Datenschutz / AGB / Cookies.
 const FOOTER_ALLOWLIST: ReadonlyArray<string> = [
   '/',
-  '/dashboard',
+  // /dashboard is intentionally omitted — DashboardPage renders its own
+  // <SiteFooter force /> inside its flex column so the empty-state view
+  // resolves to exactly one viewport (header → centred stage → footer).
   '/sign-up',
   '/sign-in',
   '/forgot-password',

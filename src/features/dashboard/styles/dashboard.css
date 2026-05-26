@@ -8,3 +8,26 @@
     opacity: 1 !important;
   }
 }
+
+/* Empty-state drafting mark. The loader's board is a fixed 340×200 with
+   a 48px bottom margin; on the dashboard first-run stage we shrink it to
+   a quiet ~180px mark and drop the margin so the centred composition
+   stays compact and fits one viewport. */
+.dash-empty-mark.drafting-board,
+.dash-empty-mark.drafting-board svg {
+  width: 180px;
+  height: 106px;
+}
+.dash-empty-mark.drafting-board {
+  margin-bottom: 0;
+}
+
+/* Short viewports (small laptops, chrome-heavy windows): trim the mark
+   further so the CTA never slips below the fold. */
+@media (max-height: 720px) {
+  .dash-empty-mark.drafting-board,
+  .dash-empty-mark.drafting-board svg {
+    width: 132px;
+    height: 78px;
+  }
+}

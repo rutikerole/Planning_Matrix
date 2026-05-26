@@ -11,6 +11,7 @@ import {
 import { LanguageSwitcher } from '@/components/shared/LanguageSwitcher'
 import { Wordmark } from '@/components/shared/Wordmark'
 import { BlueprintSubstrate } from '@/components/shared/BlueprintSubstrate'
+import { SiteFooter } from '@/components/SiteFooter'
 import { useAuth } from '@/hooks/useAuth'
 import { useAuthStore } from '@/stores/authStore'
 import { useProjects, type ProjectListEntry } from './hooks/useProjects'
@@ -186,16 +187,16 @@ export function DashboardPage() {
         </div>
       </header>
 
-      <main className="relative z-10 flex-1">
-        <div className="mx-auto flex max-w-[1320px] flex-col gap-12 px-8 py-12">
-          {showEmpty ? (
-            <>
-              <WelcomeBand firstName={firstName} counts={counts} />
-              <span aria-hidden="true" className="block h-px bg-pm-hair" />
-              <EmptyState />
-            </>
-          ) : (
-            <>
+      {showEmpty ? (
+        // First-run stage: a single centred composition that fills the
+        // space between header and footer, so the welcome + CTA land in
+        // one viewport with no scroll (footer is pinned below).
+        <main className="relative z-10 flex flex-1 flex-col items-center justify-center px-6 py-8">
+          <EmptyState firstName={firstName} />
+        </main>
+      ) : (
+        <main className="relative z-10 flex-1">
+          <div className="mx-auto flex max-w-[1320px] flex-col gap-12 px-8 py-12">
               <WelcomeBand firstName={firstName} counts={counts} />
 
               <div className="flex flex-col gap-5 border-b border-pm-hair pb-6 lg:flex-row lg:items-center lg:justify-between">
@@ -326,10 +327,14 @@ export function DashboardPage() {
                   onDelete={setDeleteTarget}
                 />
               </div>
-            </>
-          )}
-        </div>
-      </main>
+          </div>
+        </main>
+      )}
+
+      {/* Footer lives inside the dashboard's flex column (the global
+          SiteFooter skips /dashboard) so the empty-state column resolves
+          to exactly one viewport — header, centred stage, pinned footer. */}
+      <SiteFooter force />
 
       <CommandPalette
         open={paletteOpen}

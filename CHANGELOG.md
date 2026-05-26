@@ -1,5 +1,28 @@
 # Changelog
 
+## v1.0.32.4 — Dashboard first-run fits one viewport (2026-05-26)
+
+The empty dashboard (no projects yet) was two stacked blocks — the big
+left-aligned welcome hero and a separate "Set your first table" empty state —
+running ~1200px tall, so the "Start a project" CTA sat below the fold and you
+had to scroll to reach it. The global footer also lived outside the page's
+`min-h-dvh` container, so it always added a little extra scroll.
+
+Collapsed the empty state into a single centred "atelier stage" that fills the
+space between header and footer: header → centred composition (eyebrow + name +
+tagline + quiet drafting mark + prompt + CTA + note) → pinned footer = exactly
+one viewport, no scroll. `EmptyState` now folds in the welcome identity and
+reuses existing i18n keys (no new strings — locale parity untouched).
+`DashboardPage` centres it in a `flex-1` main and pulls `SiteFooter` into its
+flex column; `SiteFooter` drops `/dashboard` from its allowlist to avoid a
+double render. The drafting board is shrunk to a ~180px mark with a
+`max-height:720px` rule so short laptops stay scroll-free. The populated
+(many-projects) view is unchanged — it still scrolls.
+
+Verified: build clean (bundle 286.4 KB gz, ceiling 300), lint clean on touched
+files, Playwright confirms zero body-scroll + horizontally-centred CTA at
+1440×900, 1280×720 and 390×844.
+
 ## v1.0.32.3 — Self-service architect invite (2026-05-26) — PENDING REDEPLOY
 
 Root-cause fix for the recurring "Invitation not accepted" wall. An invited
