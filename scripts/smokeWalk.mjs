@@ -1432,8 +1432,11 @@ async function runStaticGate() {
       msg: 'share-project must read SUPABASE_SERVICE_ROLE_KEY (claim path uses service-role bypass)',
     },
     {
-      ok: /role\s*!==\s*'designer'|profile\?\.role\s*!==\s*'designer'/.test(shareProjectSrc),
-      msg: 'share-project must reject callers whose profiles.role is not designer',
+      // v1.0.33 C1 — v1.0.32.3 replaced the designer-precondition with self-
+      // service auto-promote; Bug 114 then added token↔email binding as the
+      // real accept-side control. Pin that instead of the deleted role check.
+      ok: /invited_email/.test(shareProjectSrc),
+      msg: 'share-project must bind the invite to invited_email (Bug 114)',
     },
     {
       ok: /'project_member\.accepted'/.test(shareProjectSrc),
@@ -1458,14 +1461,22 @@ async function runStaticGate() {
       msg: 'CRIT-1 fix: 403 message must surface "Only the project owner can create architect invites"',
     },
   ]))
-  results.push(failures('v1.0.1 CRIT-2: accept-rejects-non-designer', [
+  // v1.0.33 C1 — supersedes the v1.0.1 CRIT-2 designer-precondition pin.
+  // v1.0.32.3 made invites self-service (the token is the authorization; a valid
+  // accept auto-promotes a client to designer), and Bug 114 then bound the token
+  // to the invited email. Pin the CURRENT accept-side security model.
+  results.push(failures('v1.0.33 Bug 114: accept binds token to invited email', [
     {
-      ok: /handleAccept\b[\s\S]{0,2000}profile\?\.role\s*!==\s*'designer'/.test(shareProjectSrc),
-      msg: 'CRIT-2 pin: handleAccept must check profile.role !== designer before any state mutation',
+      ok: /row\.invited_email/.test(shareProjectSrc),
+      msg: 'Bug 114: handleAccept must enforce the invited_email binding',
     },
     {
-      ok: /Only profiles with role=designer can claim architect invites/.test(shareProjectSrc),
-      msg: 'CRIT-2 pin: 403 message must surface the locked designer-only copy',
+      ok: /andere E-Mail-Adresse gerichtet/.test(shareProjectSrc),
+      msg: 'Bug 114: 403 message must surface the email-mismatch copy',
+    },
+    {
+      ok: /role:\s*'designer'/.test(shareProjectSrc),
+      msg: 'v1.0.32.3: a valid self-service accept auto-promotes the claimant to designer',
     },
   ]))
   results.push(failures('v1.0.1 CRIT-3: accept-rejects-expired-token', [
