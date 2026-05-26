@@ -86,6 +86,31 @@ provide — falling back to a shared sender would risk the verify link landing i
 spam, the same silent-failure class we're eliminating. Deferred until a real
 domain lands.
 
+### Bug 129/130/131 — verified PDF reads verified EVERYWHERE (found by pre-push audit)
+
+The exhaustive pre-push verification (render + pdf-parse ground truth on the
+all-verified fixture) found the Bug 111 footer fix was necessary but not
+sufficient: the verified PDF still printed preliminary STATUS language in five
+places, contradicting the VERIFIZIERT footer + named architect on the same
+document:
+- **Bug 129** — the cover REVISION line ("v1 preliminary" / "v1 vorläufig").
+- **Bug 130** — the verification-page intro (`verif.sub`, "This brief is
+  preliminary…") AND the STATUS card (`verif.status.body`, "Pending architect
+  confirmation…") — both on the same page as the cleared footer + signature.
+- **Bug 131** — the cover footer + the areas-page bottom disclaimer
+  ("PRELIMINARY — pending architect confirmation").
+
+Fix: hoisted `computeVerificationRollup` to the top of `buildExportPdf` so the
+cover, verification page, areas disclaimer, signature block, and all editorial
+footers share ONE `allVerified` gate; added three verified pdfStrings
+(`cover.revisionValueVerified`, `verif.sub.verified`, `verif.status.body.verified`).
+New `runVerifiedNoPreliminary` smoke asserts the verified brief carries none of
+the specific preliminary status strings and does carry the verified ones (EN+DE)
+— excluding the legitimate HOAI "preliminary design phase" domain term. Bug 112
+edge cases (special chars ß/ç, long name, name-only, chamber-only, no-identity)
+and rollup edges (null date, null identity) verified clean via a throwaway
+harness (removed before commit).
+
 ### Manual steps before this functions in prod (Rutik)
 
 Code + every local gate are green, but Bug 112 only functions in prod after:
@@ -97,8 +122,9 @@ Code + every local gate are green, but Bug 112 only functions in prod after:
 ### Gates (every commit)
 
 Bayern SHA `b18d3f7f…3471` MATCH · 16/16 state matrix · `smoke:pdf-text`
-359→375 · `smoke:architect` 281→285 · build clean · index bundle 285.3 KB gz
-(ceiling 300) · lint net-zero on touched files (8/2 baseline). Playwright
+359→386 · `smoke:architect` 281→285 · `verify:pdfstrings` 162→166 · build clean
+· index bundle 285.3 KB gz (ceiling 300) · lint net-zero on touched files (8/2
+baseline). Playwright
 architect spec validated in CI (the local sandbox can't serve the stubbed-data
 tests — proven by the untouched dashboard test failing identically on pristine
 `main`; the no-stub anonymous-redirect test passes locally).

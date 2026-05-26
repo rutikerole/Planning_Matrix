@@ -16,7 +16,11 @@
 > gated on full verification) folded in. A fully-verified brief now renders a
 > VERIFIZIERT footer + a named architect; a partially-verified one stays
 > preliminary. Self-attested identity is **not chamber-audited** (honest framing
-> throughout).
+> throughout). An exhaustive pre-push audit additionally caught **Bug 129/130/131**
+> — the cover revision, verification-page intro + status card, cover footer, and
+> areas disclaimer still read "preliminary" on a verified doc; all now flip on the
+> shared `allVerified` gate so the verified PDF reads verified on every page
+> (proven by `runVerifiedNoPreliminary`).
 >
 > **PENDING MANUAL STEPS (UNVERIFIED until done — Rutik):** (1) apply migration
 > `0036_project_members_architect_identity.sql` via SQL Editor; (2) redeploy the
@@ -26,8 +30,8 @@
 > deploy). Then run the e2e legal-shield smoke walk.
 >
 > Gates green every commit: Bayern SHA `b18d3f7f…3471` MATCH, 16/16 matrix,
-> smoke:pdf-text 375, smoke:architect 285, bundle 285.3 KB gz. Prior release
-> context: `docs/V1_0_31_PDF_SLICE_DIAGNOSIS.md`.
+> smoke:pdf-text 386, smoke:architect 285, verify:pdfstrings 166, bundle 285.3 KB
+> gz. Prior release context: `docs/V1_0_31_PDF_SLICE_DIAGNOSIS.md`.
 
 ## Contents
 
