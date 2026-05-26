@@ -462,7 +462,11 @@
     "ctaLogin": "Anmelden",
     "languageGerman": "Deutsch",
     "languageEnglish": "Englisch",
-    "skipToContent": "Zum Hauptinhalt springen"
+    "skipToContent": "Zum Hauptinhalt springen",
+    "frozenTemplate": {
+      "badge": "Bald verfügbar",
+      "roadmap": "Diese Vorlage wird in unserem nächsten Release verfügbar. Für frühen Zugang wenden Sie sich an Ihren Account Manager."
+    }
   },
   "notFound": {
     "code": "404",

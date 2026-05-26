@@ -462,7 +462,11 @@
     "ctaLogin": "Log in",
     "languageGerman": "German",
     "languageEnglish": "English",
-    "skipToContent": "Skip to main content"
+    "skipToContent": "Skip to main content",
+    "frozenTemplate": {
+      "badge": "Coming soon",
+      "roadmap": "This template is rolling out in our next release. Contact your account manager for early access."
+    }
   },
   "notFound": {
     "code": "404",
