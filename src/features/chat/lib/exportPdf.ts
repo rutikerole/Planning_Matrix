@@ -1320,14 +1320,15 @@ export async function buildExportPdf({
   const hasAuthorityVerified = facts2.some(
     (f) => f.qualifier?.source === 'AUTHORITY' && f.qualifier?.quality === 'VERIFIED',
   )
-  // ARCHITEKT is a chat-time alias for DESIGNER (the canonical Source
-  // discriminant). Both spellings are accepted upstream; the Source
-  // type only enumerates the canonical 4-tuple.
-  const hasArchitektVerified = facts2.some(
-    (f) =>
-      f.qualifier?.source === 'DESIGNER' &&
-      f.qualifier?.quality === 'VERIFIED',
-  )
+  // v1.0.32 Bug 127 — gate the ARCHITEKT-VERIFIZIERT cover banner on the SAME
+  // project-wide rollup as the editorial footers (Bug 111), not facts.some().
+  // The old facts.some(DESIGNER+VERIFIED) lit the banner the moment ANY single
+  // fact was verified, so the cover could claim "Architektenkammer-Signoff
+  // liegt vor" while every page footer still said VORLÄUFIG — the exact
+  // self-contradiction Bug 111 closed. Now the banner lights only when every
+  // load-bearing item is DESIGNER+VERIFIED. (AUTHORITY+VERIFIED keeps its own
+  // independent path above.)
+  const hasArchitektVerified = verificationRollup.allVerified
   const projectStatus = (project as { status?: string }).status ?? 'active'
   const isSubmitted = projectStatus === 'submitted' || projectStatus === 'approved'
   let verifiedBannerLabel: string | undefined

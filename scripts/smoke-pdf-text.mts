@@ -988,6 +988,40 @@ async function runVerifiedFooterCheck(): Promise<{ passed: number; failed: numbe
   return { passed, failed }
 }
 
+// v1.0.32 Bug 127 — the ARCHITEKT-VERIFIZIERT cover banner must light only at
+// FULL verification (allVerified), not when one fact is verified. The partial
+// fixture has a single DESIGNER+VERIFIED fact (old facts.some gate = true) but
+// allVerified = false → banner stays dark and the 30-day stamp remains. The
+// all-verified fixture confirms the banner still lights at full coverage.
+async function runArchitektBannerGateCheck(): Promise<{ passed: number; failed: number }> {
+  console.log(`\n[smoke-pdf-text] architect cover banner gated on allVerified (Bug 127)…`)
+  let passed = 0
+  let failed = 0
+  for (const lang of ['en', 'de'] as const) {
+    const banner = lang === 'en' ? 'ARCHITECT-VERIFIED' : 'ARCHITEKT-VERIFIZIERT'
+    const stamp = lang === 'en' ? 'VALID FOR 30 DAYS' : 'GÜLTIG 30 TAGE'
+    const pText = await extractPdfText(
+      await renderFixturePdf(lang, 'test/fixtures/bayern-t01-muenchen-partialverified.json'),
+    )
+    const pNoBanner = !pText.includes(banner)
+    const m1 = `partial ${lang}: no architect banner at partial coverage (Bug 127)`
+    if (pNoBanner) { console.log(`  ✓ ${m1}`); passed++ }
+    else { console.log(`  ✗ ${m1}`); failed++ }
+    const pStamp = pText.includes(stamp)
+    const m2 = `partial ${lang}: 30-day validity stamp remains (Bug 127)`
+    if (pStamp) { console.log(`  ✓ ${m2}`); passed++ }
+    else { console.log(`  ✗ ${m2}`); failed++ }
+    const vText = await extractPdfText(
+      await renderFixturePdf(lang, 'test/fixtures/bayern-t01-muenchen-allverified.json'),
+    )
+    const vBanner = vText.includes(banner)
+    const m3 = `all-verified ${lang}: architect banner lights at full coverage (Bug 127)`
+    if (vBanner) { console.log(`  ✓ ${m3}`); passed++ }
+    else { console.log(`  ✗ ${m3}`); failed++ }
+  }
+  return { passed, failed }
+}
+
 // v1.0.24 Bug R extension — normalizeDesignerWithoutInLoop now fires
 // at Top-3 + Section VIII (in addition to v1.0.23's Key Data path).
 // Unit-tests the gate function across the full quality matrix so a
@@ -1579,6 +1613,7 @@ async function main(): Promise<void> {
   const sysFlag = await runSystemFlagFilterUnit()
   const verifiedBanner = await runVerifiedBannerCheck()
   const verifiedFooter = await runVerifiedFooterCheck()
+  const architektBannerGate = await runArchitektBannerGateCheck()
   const designerDowngrade = await runDesignerDowngradeCheck()
   const factLabelCoverage = await runFactLabelCoverageUnit()
   const glossaryStateAware = await runGlossaryStateAwareCheck()
@@ -1598,6 +1633,7 @@ async function main(): Promise<void> {
     sysFlag.failed +
     verifiedBanner.failed +
     verifiedFooter.failed +
+    architektBannerGate.failed +
     designerDowngrade.failed +
     factLabelCoverage.failed +
     glossaryStateAware.failed +
@@ -1617,6 +1653,7 @@ async function main(): Promise<void> {
     sysFlag.passed +
     verifiedBanner.passed +
     verifiedFooter.passed +
+    architektBannerGate.passed +
     designerDowngrade.passed +
     factLabelCoverage.passed +
     glossaryStateAware.passed +
