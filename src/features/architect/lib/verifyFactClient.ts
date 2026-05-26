@@ -1,4 +1,5 @@
 import { supabase } from '@/lib/supabase'
+import type { VerificationStamp } from '@/types/projectState'
 
 export type VerifyFactField =
   | 'extracted_fact'
@@ -16,6 +17,10 @@ export interface VerifyFactRequest {
   action?: 'verify' | 'reject'
   /** Required (≥ 5 chars) when action === 'reject'. */
   reason?: string
+  /** v1.0.32 Bug 112 — self-attested architect identity, sent on the FIRST
+   *  verify (VerificationPanel one-time prompt). Server records it once;
+   *  chamber fields optional. */
+  identity?: { name: string; chamberNo?: string; chamberState?: string }
 }
 
 export interface VerifyFactSuccess {
@@ -24,6 +29,8 @@ export interface VerifyFactSuccess {
   field: VerifyFactField
   itemId: string
   action?: 'verify' | 'reject'
+  /** v1.0.32 Bug 112 — the stored identity after this call (null if unset). */
+  verification?: VerificationStamp | null
   requestId: string
 }
 
