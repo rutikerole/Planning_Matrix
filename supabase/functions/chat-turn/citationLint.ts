@@ -88,60 +88,15 @@ interface ForbiddenPattern {
 
 // ── Reference: canonical Bayern + München citations ────────────────────
 //
-// Documentation only. Sourced from bayern.ts (BayBO articles cited there
-// verbatim) and muenchen.ts (StPlS 926 + Erhaltungssatzungen + Münchner
-// Baumschutzverordnung). When BAYERN_BLOCK gains a new article, append
-// the canonical token here so future positive-gate code (and reviewers)
-// have a single allowlist. Order = order of appearance in bayern.ts.
-export const BAYERN_ALLOWED_CITATIONS: readonly string[] = [
-  // BayBO core articles
-  'Art. 2 Abs. 3 BayBO',
-  'Art. 2 Abs. 4 BayBO',
-  'Art. 6 BayBO',
-  'Art. 12 BayBO',
-  'Art. 44a BayBO',
-  'Art. 46 Abs. 6 BayBO',
-  'Art. 47 BayBO',
-  'Art. 57 BayBO',
-  'Art. 57 Abs. 1 Nr. 1 a BayBO',
-  'Art. 57 Abs. 1 Nr. 1 b BayBO',
-  'Art. 57 Abs. 1 Nr. 3 b BayBO',
-  'Art. 57 Abs. 1 Nr. 18 BayBO',
-  'Art. 57 Abs. 3 Nr. 3 BayBO',
-  'Art. 57 Abs. 4 BayBO',
-  'Art. 57 Abs. 5 BayBO',
-  'Art. 57 Abs. 7 BayBO',
-  'Art. 58 BayBO',
-  'Art. 58a BayBO',
-  'Art. 59 BayBO',
-  'Art. 60 BayBO',
-  'Art. 61 BayBO',
-  'Art. 62 BayBO',
-  'Art. 64 BayBO',
-  'Art. 65 BayBO',
-  'Art. 66 BayBO',
-  'Art. 69 BayBO',
-  'Art. 76 BayBO',
-  'Art. 81 Abs. 1 Nr. 4 b BayBO',
-  'Art. 82c BayBO',
-  // BayDSchG
-  'BayDSchG Art. 6',
-  // München-specific (StPlS 926, Erhaltungssatzungen via BauGB)
-  'StPlS 926 Anlage 1 Nr. 1.1',
-  'StPlS 926 § 3 Abs. 2',
-  'StPlS 926 § 3 Abs. 4',
-  'StPlS 926 § 4 Abs. 3',
-  'BauGB § 172',
-  // Federal-law tokens that legitimately appear next to Bayern citations
-  'BauGB § 30',
-  'BauGB § 34',
-  'BauGB § 35',
-  'BauGB § 246e',
-  'BauNVO § 19',
-  'GEG § 8',
-  'BauGB § 31 Abs. 3',
-  'BauGB § 34 Abs. 3b',
-] as const
+// v1.0.33 C3 — SINGLE SOURCE OF TRUTH. This list previously lived here as a
+// byte-identical copy of src/legal/states/bayern.ts (the prompt↔firewall drift
+// Agent 3 flagged). Both sides now import it from one module; a § correction is
+// authored once. Re-exported under the original name so any downstream consumer
+// (and future positive-gate code) keeps working.
+//
+// Drift gate: scripts/verify-citation-drift.mjs (npm run verify:citation-drift,
+// prebuild) enforces single-source + PDF-engine ⊆ allowlist.
+export { BAYERN_ALLOWED_CITATIONS } from '../../../src/legal/bayernAllowedCitations.ts'
 
 // ── Forbidden patterns ────────────────────────────────────────────────
 //
