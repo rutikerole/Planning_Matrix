@@ -1,5 +1,35 @@
 # Changelog
 
+## v1.0.32 — Architect handoff P0 fix sprint (in progress)
+
+Closes the four P0s the v1.0.31 architect-handoff audit
+(`docs/V1_0_31_ARCHITECT_HANDOFF_AUDIT.md`) found disqualifying for the legal
+shield: the "verified" PDF still said VORLÄUFIG with a blank signature, the
+system never actually sent the invite, and the reject button risked inverting
+to a verify. The audit's verdict — *the wiring is the easy 80% that's done; the
+verified artifact is the hard 20% that is the entire point, and it's hollow* —
+defines this sprint's finish line: a fully-verified project renders a
+**VERIFIZIERT** footer with a **named architect** in the signature block, the
+invite CTA is **honest** about what it does, and the reject path is **proven
+live**.
+
+### Bug 113 — reject-inversion: RESOLVED by verification (no code)
+
+The audit flagged 🟡 *deploy-state-unknown*: `docs/HANDOFF.md:554-555` warned
+that until `verify-fact` was redeployed, "Ablehnen" would invert to a verify.
+Confirmed GREEN by forensic probe — `supabase functions download verify-fact`
+(prod project `dklseznumnehutbarleg`, **version 2, deployed 2026-05-24**) and
+grepped the live bundle directly:
+
+```
+139: const action: 'verify' | 'reject' = body.action === 'reject' ? 'reject' : 'verify'
+291:   name: action === 'reject' ? 'qualifier.rejected' : 'qualifier.verified'
+```
+
+The reject branch is live; `chat-turn` v9 (same day) confirms the erosion
+downgrade is deployed too. The HANDOFF caveat was a then-pending note since
+actioned. No code change — closed by proof, not assumption.
+
 ## v1.0.31 — PDF vertical slice: 3 demo cells pass the 12 MUST checks (2026-05-25)
 
 Pivot from the horizontal template-blind walk (see `docs/V1_0_30_STRATEGIC_RESEARCH.md`)
