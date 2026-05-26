@@ -68,6 +68,10 @@ const EN: PdfStrings = {
 
   // ─── Footer (every page) ───────────────────────────────────────
   'footer.preliminary': 'PRELIMINARY — pending architect confirmation',
+  // v1.0.32 Bug 111 — editorial-page footer clears to this line when the
+  // verification rollup reports every load-bearing item DESIGNER+VERIFIED.
+  // The verification date is appended in code (exportPdf footerCenter).
+  'footer.verified': 'VERIFIED — architect confirmation on file',
   'footer.generatedAt': 'Generated',
 
   // ─── v1.0.15 Renaissance Part 2A — Executive ───────────────────
@@ -306,6 +310,8 @@ const DE: PdfStrings = {
 
   // ─── Footer ────────────────────────────────────────────────────
   'footer.preliminary': 'VORLÄUFIG — Architekt:in-Bestätigung ausstehend',
+  // v1.0.32 Bug 111 — verified-state editorial footer (date appended in code).
+  'footer.verified': 'VERIFIZIERT — Architekt:in-Bestätigung liegt vor',
   'footer.generatedAt': 'Erstellt',
 
   // ─── v1.0.15 Renaissance Part 2A — Executive ───────────────────
