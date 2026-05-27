@@ -135,7 +135,7 @@ const NIEDERSACHSEN: StateCitationPack = {
   bauVorlagenAct: 'BauVorlVO Nds',
   permitFormCitation: '§ 64 NBauO',
   permitSubmissionCitation: '§ 65 NBauO',
-  structuralCertCitation: '§ 65a NBauO',
+  structuralCertCitation: '§ 65 NBauO',
   abstandsFlaechenCitation: '§ 5 NBauO',
   denkmalSchutzAct: 'NDSchG',
   denkmalAuthorityDe: 'Niedersächsisches Landesamt für Denkmalpflege (NLD)',

@@ -22,7 +22,7 @@ Strukturmarker — verbindlich:
   • Bayerisches Landesrecht verwendet "Art." (Artikel):
     BayBO Art. 57 · BayBO Art. 58 · BayBO Art. 6 · BayDSchG Art. 6
   • Bundesrecht verwendet "§" (Paragraph):
-    BauGB § 30 · BauGB § 34 · BauGB § 35 · BauNVO § 19 · GEG § 8
+    BauGB § 30 · BauGB § 34 · BauGB § 35 · BauNVO § 19 · GEG § 10
 
 Die BayBO regelt verfahrensfreie Vorhaben DIREKT im Artikel 57
 (Abs. 1 Nrn. 1–18, Abs. 2–7) — sie hat KEINE "Anlage 1" als Liste

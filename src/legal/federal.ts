@@ -108,7 +108,7 @@ Das GEG (in Kraft seit 1. November 2020, novelliert zum 1. Januar
   • Heizungsanforderungen (65-%-Regel für erneuerbare Energien bei
     neuen Heizungsanlagen ab 1. 1. 2024 in Neubaugebieten; gestaffelt
     in Bestandsgebieten je nach kommunaler Wärmeplanung)
-  • Wärmeschutznachweis (§ 8 GEG) als Bestandteil jedes Bauantrags
+  • Wärmeschutznachweis (§ 10 GEG) als Bestandteil jedes Bauantrags
     für Neubauten
 
 Zuständig in Bayern: Bayerische Architektenkammer (BAYAK) führt die

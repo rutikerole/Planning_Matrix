@@ -161,7 +161,7 @@ export const FACTS_MUENCHEN: MuenchenFact[] = [
     id: 'energie-nachweis-geg',
     de: 'Der Wärmeschutznachweis nach GEG 2024 ist Bestandteil jedes Bauantrags für Neubauten.',
     en: 'The thermal-protection certificate under GEG 2024 is part of every building application for new builds.',
-    reference: 'GEG § 8',
+    reference: 'GEG § 10',
     verifyBeforePublicLaunch: true,
   },
   {

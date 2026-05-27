@@ -54,7 +54,7 @@ Strukturmarker — verbindlich:
   • Niedersächsisches Landesrecht verwendet "§":
     NBauO § 5 · NBauO § 60 · NBauO § 63 · NBauO § 64 · NBauO § 70
   • Bundesrecht ebenfalls "§":
-    BauGB § 30 · BauGB § 34 · BauGB § 35 · BauNVO § 19 · GEG § 8
+    BauGB § 30 · BauGB § 34 · BauGB § 35 · BauNVO § 19 · GEG § 10
 
 Stand. NBauO in der Fassung vom 3. April 2012, mit zwischenzeitlichen
 Novellen — zuletzt die NBauO-Novelle in Kraft seit 1. Juli 2025.
@@ -330,7 +330,7 @@ const ALLOWED_CITATIONS: readonly string[] = [
   'BauGB § 34',
   'BauGB § 35',
   'BauNVO § 19',
-  'GEG § 8',
+  'GEG § 10',
 ] as const
 
 export const NIEDERSACHSEN_DELTA: StateDelta = {

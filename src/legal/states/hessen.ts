@@ -59,7 +59,7 @@ Strukturmarker — verbindlich:
   • Hessisches Landesrecht verwendet "§" (Paragraph) — wie Bundesrecht:
     HBO § 6 · HBO § 65 · HBO § 67 · HBO § 74
   • Bundesrecht ebenfalls "§":
-    BauGB § 30 · BauGB § 34 · BauGB § 35 · BauNVO § 19 · GEG § 8
+    BauGB § 30 · BauGB § 34 · BauGB § 35 · BauNVO § 19 · GEG § 10
 
 Stand. HBO in der Fassung vom 7. Juli 2018, zuletzt geändert durch
 das Dritte Änderungsgesetz / Baupaket I, in Kraft seit 14. Oktober
@@ -445,7 +445,7 @@ const ALLOWED_CITATIONS: readonly string[] = [
   'BauGB § 34',
   'BauGB § 35',
   'BauNVO § 19',
-  'GEG § 8',
+  'GEG § 10',
 ] as const
 
 export const HESSEN_DELTA: StateDelta = {

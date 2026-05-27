@@ -67,7 +67,7 @@ export const BAYERN_ALLOWED_CITATIONS: readonly string[] = [
   'BauGB § 35',
   'BauGB § 246e',
   'BauNVO § 19',
-  'GEG § 8',
+  'GEG § 10',
   'BauGB § 31 Abs. 3',
   'BauGB § 34 Abs. 3b',
 ] as const

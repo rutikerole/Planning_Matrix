@@ -30,6 +30,15 @@
 //     vereinfacht Art. 59) pending a licensed-architect call — none available
 //     at correction time. Verified against gesetze-bayern.de BayBO-58/59/60;
 //     see docs/V1_0_34_BAYERN_PROCEDURE_CORRECTION.md. Length 47959 → 48473.
+//   - phase-b/wire-spine GEG §8→§10 correction: cdf3c625…daaf — INTENTIONAL.
+//     The Wärmeschutznachweis was cited as "GEG § 8" in FEDERAL_BLOCK
+//     (federal.ts: "§ 8 GEG") and BAYERN_BLOCK (bayern.ts: "… · GEG § 8"); § 8
+//     GEG is "Verantwortliche", not the Wärmeschutznachweis. Corrected both to
+//     "§ 10 GEG" (Grundsatz und Niedrigstenergiegebäude) — the verifier ROLE
+//     finding the legal-spine surfaced. Verified: gesetze-im-internet.de/geg/
+//     __8.html vs __10.html; corpus scripts/legal-corpus/federal.json. Only the
+//     two GEG-citation tokens changed; SHARED / MUENCHEN / PERSONA /
+//     TEMPLATE_SHARED are byte-unchanged. Length 48473 → 48475 (+2).
 // ───────────────────────────────────────────────────────────────────────
 
 import { readFile } from 'node:fs/promises'
@@ -41,7 +50,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url))
 const REPO_ROOT = join(__dirname, '..', '..')
 
 export const EXPECTED_BAYERN_SHA =
-  '85155d2d32fa26c70db4c31a481ebbd03d3a1af3cf804f7835d33add8a9417b2'
+  'cdf3c625ce195f8030dac6721f2087b46d05eae98e39030b370bb45c23f9daaf'
 
 const SLICE_SEPARATOR = '\n\n---\n\n'
 const TAIL =

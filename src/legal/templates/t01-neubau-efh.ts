@@ -142,7 +142,7 @@ TYPISCHE KORREKTE ZITATE für T-01
                                   ≤ 2 NE, ≤ 400 m² je NE)
   ✓ "BayBO Art. 44a"            — PV-Pflicht Wohnneubauten
   ✓ "BayBO Art. 6"              — Abstandsflächen
-  ✓ "GEG § 8"                   — Wärmeschutznachweis
+  ✓ "GEG § 10"                   — Wärmeschutznachweis
 
 ──────────────────────────────────────────────────────────────────────────
 VERBOTENE ZITATE für T-01

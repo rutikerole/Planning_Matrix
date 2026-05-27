@@ -55,7 +55,7 @@ Strukturmarker — verbindlich:
   • LBO BW verwendet "§":
     LBO § 5 · LBO § 50 · LBO § 51 · LBO § 52 · LBO § 58 · LBO § 63
   • Bundesrecht ebenfalls "§":
-    BauGB § 30 · BauGB § 34 · BauGB § 35 · BauNVO § 19 · GEG § 8
+    BauGB § 30 · BauGB § 34 · BauGB § 35 · BauNVO § 19 · GEG § 10
 
 Stand. LBO BW vom 8. August 1995, in der Fassung vom 16. März 2026
 (GBl. Nr. 44, Bekanntmachung der Neufassung 15. April 2026 nach dem
@@ -397,7 +397,7 @@ const ALLOWED_CITATIONS: readonly string[] = [
   'BauGB § 34',
   'BauGB § 35',
   'BauNVO § 19',
-  'GEG § 8',
+  'GEG § 10',
 ] as const
 
 export const BW_DELTA: StateDelta = {

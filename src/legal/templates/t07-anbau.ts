@@ -196,7 +196,7 @@ TYPISCHE KORREKTE ZITATE für T-07
                                      (relevant wenn Grundstück
                                      außerhalb Innenbereich liegt)
   ✓ "BauGB § 34"                   — Innenbereich-Einfügen
-  ✓ "GEG § 8"                      — Wärmeschutznachweis bei
+  ✓ "GEG § 10"                      — Wärmeschutznachweis bei
                                      beheiztem Anbau (Wintergarten
                                      zählt; Carport / Kaltgarage
                                      NICHT)

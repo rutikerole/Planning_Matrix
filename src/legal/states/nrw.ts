@@ -60,7 +60,7 @@ Strukturmarker — verbindlich:
     BauO NRW § 6 · BauO NRW § 62 · BauO NRW § 64 · BauO NRW § 65 ·
     BauO NRW § 67
   • Bundesrecht ebenfalls "§":
-    BauGB § 30 · BauGB § 34 · BauGB § 35 · BauNVO § 19 · GEG § 8
+    BauGB § 30 · BauGB § 34 · BauGB § 35 · BauNVO § 19 · GEG § 10
 
 Stand. BauO NRW 2018 (Landesbauordnung 2018), Ausfertigung
 21. Juli 2018, in der Fassung gültig ab 1. Januar 2024 (Zweites
@@ -360,7 +360,7 @@ const ALLOWED_CITATIONS: readonly string[] = [
   'BauGB § 34',
   'BauGB § 35',
   'BauNVO § 19',
-  'GEG § 8',
+  'GEG § 10',
 ] as const
 
 export const NRW_DELTA: StateDelta = {
