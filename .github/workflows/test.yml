@@ -28,6 +28,15 @@ jobs:
       - name: Bayern SHA invariant
         run: npm run verify:bayern-sha
 
+      # phase-c/legal-correctness — strict citation gate: corpus integrity +
+      # every cited §/Art. resolves + law-version currency (data_current_as_of
+      # not older than a known last_amendment). Fast static check; runs before
+      # the expensive browser install + build so legal-data drift fails cheap.
+      # Stricter than the report-mode verify:citations in prebuild — also blocks
+      # existence/role findings (currently zero).
+      - name: Citation strict gate (integrity + existence + law-version)
+        run: npm run verify:citations:strict
+
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium webkit
 
