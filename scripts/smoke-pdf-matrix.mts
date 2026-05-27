@@ -363,6 +363,29 @@ async function main(): Promise<void> {
   // Imported AFTER the env shim has run at module top-level.
   const { getStateLocalization } = await import('../src/legal/stateLocalization.ts')
 
+  // Headline-band leak guard. T-02/T-06/T-07/T-08 render the
+  // COST_BANDS_BY_TEMPLATE basis line for EVERY state (template-keyed, not
+  // state-aware), so a city / Bayern token there bleeds into non-Bayern PDFs —
+  // the T-02/T-06 "München" leak the 128-cell template sweep caught (the matrix
+  // below only renders T-01/T-03, so it never exercised those bands). Assert the
+  // four headline-band templates are state-neutral. Static + deterministic.
+  const { COST_BANDS_BY_TEMPLATE } = await import('../src/features/result/lib/costNormsMuenchen.ts')
+  const bandLeakRx = /München|Munich|\bBayBO\b|\bBLfD\b|\bBayDSchG\b|\bStPlS\b/u
+  const bandLeaks: string[] = []
+  for (const t of ['T-02', 'T-06', 'T-07', 'T-08'] as const) {
+    const b = COST_BANDS_BY_TEMPLATE[t]
+    for (const [k, v] of [['basisDe', b.basisDe], ['basisEn', b.basisEn]] as const) {
+      const m = v.match(bandLeakRx)
+      if (m) bandLeaks.push(`${t}.${k}: "${m[0]}" — headline band renders for all states, must be state-neutral`)
+    }
+  }
+  if (bandLeaks.length) {
+    console.error('[smoke-pdf-matrix] FAIL — headline-band city/Bayern leak:')
+    for (const l of bandLeaks) console.error(`  ✗ ${l}`)
+    process.exit(1)
+  }
+  console.log('[smoke-pdf-matrix] headline-band leak guard OK (T-02/06/07/08 state-neutral)')
+
   console.log(`[smoke-pdf-matrix] rendering ${CELLS.length} states × 2 locales…\n`)
   const results: CellResult[] = []
   for (const cell of CELLS) {

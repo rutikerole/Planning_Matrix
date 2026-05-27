@@ -442,8 +442,12 @@ export const COST_BANDS_BY_TEMPLATE: Record<TemplateId, CostBandPerTemplate> = {
   'T-02': {
     lower: 28_000,
     upper: 55_000,
-    basisDe: 'MFH ab 4 WE, München, mit Brandschutz/Schallschutz/Statik-Prüfung',
-    basisEn: 'Multi-family ≥ 4 units, Munich, including fire/sound/structural review',
+    // v1.0.35+ Phase-C — state-neutral: this band renders the headline cost for
+    // T-02 across ALL states (template-keyed, not state-aware), so naming
+    // München bled "München" into every non-Bayern PDF (128-cell sweep). Values
+    // stay München-tuned (calibration debt); the label must not name a city.
+    basisDe: 'MFH ab 4 WE, mit Brandschutz/Schallschutz/Statik-Prüfung',
+    basisEn: 'Multi-family ≥ 4 units, including fire/sound/structural review',
   },
   'T-03': {
     lower:  8_000,
@@ -458,8 +462,9 @@ export const COST_BANDS_BY_TEMPLATE: Record<TemplateId, CostBandPerTemplate> = {
     // BayBO), München" framing: it bled BayBO + München onto every non-Bayern
     // project AND was factually wrong (a use change is frequently
     // genehmigungspflichtig, e.g. retail→gastronomy in Leipzig). State-neutral,
-    // scope-honest. (The remaining 7 bands are still München/BayBO-framed —
-    // web Cost-tab bleed flagged in BACKLOG for a follow-up pass.)
+    // scope-honest. (T-02 + T-06 — the other headline-band templates rendered
+    // for non-Bayern — are now state-neutral too. T-01/T-03/T-05 bands keep the
+    // München/BayBO framing but are never rendered for non-Bayern, so no bleed.)
     basisDe: 'Umnutzung — Umfang abhängig von Schallschutz-/Brandschutz-/TA-Lärm-Gutachten; Fachgutachten erforderlich',
     basisEn: 'Change of use — scope depends on sound-/fire-protection/noise assessments; specialist reports required',
   },
@@ -472,8 +477,10 @@ export const COST_BANDS_BY_TEMPLATE: Record<TemplateId, CostBandPerTemplate> = {
   'T-06': {
     lower: 14_000,
     upper: 28_000,
-    basisDe: 'Aufstockung mit Tragwerksprüfung + GEG-Nachweis, München',
-    basisEn: 'Storey addition with structural review + GEG certificate, Munich',
+    // v1.0.35+ Phase-C — state-neutral (same reason as T-02: this band renders
+    // for T-06 across all states; naming München leaked into non-Bayern PDFs).
+    basisDe: 'Aufstockung mit Tragwerksprüfung + GEG-Nachweis',
+    basisEn: 'Storey addition with structural review + GEG certificate',
   },
   'T-07': {
     lower:  4_500,
