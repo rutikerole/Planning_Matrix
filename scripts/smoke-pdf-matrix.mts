@@ -289,6 +289,22 @@ async function checkCell(
         }
       }
     }
+    // Phase-C item #2 F1 — Niedersachsen-leak: "NBauO" is forbidden in every
+    // non-NI PDF (the § 14/§ 60 NBauO Brandschutz/verfahrensfrei cross-state
+    // leak). NI legitimately renders NBauO.
+    if (cell.slug !== 'niedersachsen' && /\bNBauO\b/u.test(text)) {
+      const ctx = text.match(/.{0,30}NBauO.{0,15}/u)
+      failures.push(`${lang}: Niedersachsen-leak "NBauO" — "${ctx?.[0] ?? ''}"`)
+    }
+    // Phase-C item #2 F7 — procedure-name doubling must not appear.
+    const dbl = text.match(/Baugenehmigungsverfahren \(Baugenehmigungsverfahren|Verfahren \(Vereinfachtes Baugenehmigungsverfahren/u)
+    if (dbl) failures.push(`${lang}: procedure-name doubling — "${dbl[0]}"`)
+    // Phase-C item #2 F16 — Area B must not re-append the procedure § as a chip
+    // when the reason already cites it (the standard-branch reason ends
+    // "…bestätigen." and self-cites; a trailing "(§ …)" / "(… Art. …)" = the
+    // double-citation regression).
+    const dupCite = text.match(/best[äa]tigen\.\s*\((?:§|[A-Za-zÄÖÜ]+\s+Art\.)/u)
+    if (dupCite) failures.push(`${lang}: Area-B duplicate procedure citation — "${dupCite[0]}"`)
     // Parity: core section headers present in this locale.
     for (const header of SECTION_HEADERS[lang]) {
       if (!text.includes(header)) failures.push(`${lang}: missing section header "${header}" (DE/EN parity)`)
@@ -385,6 +401,57 @@ async function main(): Promise<void> {
     process.exit(1)
   }
   console.log('[smoke-pdf-matrix] headline-band leak guard OK (T-02/06/07/08 state-neutral)')
+
+  // ── Phase-C item #2 citation-leak guard (F1/F2/F3/F7) ────────────────
+  // requiredDocumentsForCase emitted the Niedersachsen else-fallback ("§ 14
+  // NBauO" Brandschutz, "§ 60 NBauO" verfahrensfrei) for EVERY non-NI
+  // substantive state once Phase B flipped the 11 stubs, plus a hard-coded
+  // "§ 9" stamped onto every state's DSchG. These now resolve per state from
+  // the citation pack; resolveProcedure no longer doubles the procedure name.
+  // Assert across all 16 states × the three leak-prone doc paths — the matrix
+  // PDF render below only exercises T-01/neubau, never verfahrensfrei/denkmal.
+  const { requiredDocumentsForCase } = await import('../src/legal/requiredDocuments.ts')
+  const { getStateCitations } = await import('../src/legal/stateCitations.ts')
+  const { resolveProcedure } = await import('../src/legal/resolveProcedure.ts')
+  const DOUBLING_RX =
+    /Baugenehmigungsverfahren \(Baugenehmigungsverfahren|Verfahren \(Vereinfachtes Baugenehmigungsverfahren/u
+  const docBase = (slug: Slug, over: Record<string, unknown>) => ({
+    procedureKind: 'standard', intent: 'neubau', bundesland: slug,
+    eingriff_tragende_teile: false, eingriff_aussenhuelle: false,
+    denkmalschutz: false, geg_trigger: false, ...over,
+  })
+  const citLeaks: string[] = []
+  for (const cell of CELLS) {
+    const slug = cell.slug
+    const cit = getStateCitations(slug)
+    const ownsNBauO = slug === 'niedersachsen'
+    const findCit = (over: Record<string, unknown>, key: string): string =>
+      requiredDocumentsForCase(docBase(slug, over) as never).find((d) => d.key === key)?.citation ?? ''
+    // F1 — Brandschutz (neubau path)
+    const brand = findCit({}, 'brandschutznachweis')
+    if (brand !== cit.brandschutzCitation) citLeaks.push(`${slug}: Brandschutz "${brand}" ≠ pack "${cit.brandschutzCitation}"`)
+    if (!ownsNBauO && /\bNBauO\b/.test(brand)) citLeaks.push(`${slug}: Niedersachsen-leak in Brandschutz "${brand}"`)
+    // F2 — verfahrensfrei (Anzeige-Formular path)
+    const anz = findCit({ procedureKind: 'verfahrensfrei' }, 'anzeige_formular')
+    if (anz !== cit.permitFreeCitation) citLeaks.push(`${slug}: verfahrensfrei "${anz}" ≠ pack "${cit.permitFreeCitation}"`)
+    if (!ownsNBauO && /\bNBauO\b/.test(anz)) citLeaks.push(`${slug}: Niedersachsen-leak in verfahrensfrei "${anz}"`)
+    // F3 — Denkmal-Erlaubnis: no hard-coded "§ 9", no foreign §
+    const denk = findCit({ denkmalschutz: true }, 'denkmalschutz_erlaubnis')
+    if (/§\s*9\b/.test(denk)) citLeaks.push(`${slug}: hard-coded "§ 9" on DSchG "${denk}"`)
+    if (!ownsNBauO && /\bNBauO\b/.test(denk)) citLeaks.push(`${slug}: Niedersachsen-leak in Denkmal "${denk}"`)
+    // F7 — procedure-name doubling (standard + umnutzung composers)
+    const procBase = { bundesland: slug, eingriff_tragende_teile: false, eingriff_aussenhuelle: false, denkmalschutz: false, ensembleschutz: false }
+    for (const intent of ['neubau', 'umnutzung'] as const) {
+      const d = resolveProcedure({ ...procBase, intent } as never)
+      if (DOUBLING_RX.test(d.reasoning_de)) citLeaks.push(`${slug}/${intent}: procedure-name doubling — "${d.reasoning_de.slice(0, 70)}…"`)
+    }
+  }
+  if (citLeaks.length) {
+    console.error('[smoke-pdf-matrix] FAIL — Phase-C item #2 citation leak / doubling:')
+    for (const l of citLeaks) console.error(`  ✗ ${l}`)
+    process.exit(1)
+  }
+  console.log('[smoke-pdf-matrix] citation-leak guard OK (16 states × Brandschutz/verfahrensfrei/Denkmal — no NBauO leak, no "§ 9" stamp, no doubling)')
 
   console.log(`[smoke-pdf-matrix] rendering ${CELLS.length} states × 2 locales…\n`)
   const results: CellResult[] = []

@@ -85,32 +85,22 @@ export function requiredDocumentsForCase(
   // deferral phrases.
   const cit = getStateCitations(c.bundesland)
   const bauVorl = `${cit.bauVorlagenAct}${cit.isSubstantive ? ' § 3' : ''}`
-  const permitFreeNotificationCitation = cit.isSubstantive
-    ? c.bundesland === 'nrw'
-      ? '§ 62 BauO NRW'
-      : c.bundesland === 'bayern'
-        ? 'BayBO Art. 57'
-        : c.bundesland === 'bw'
-          ? '§ 50 LBO BW'
-          : c.bundesland === 'hessen'
-            ? '§ 63 HBO'
-            : '§ 60 NBauO'
-    : cit.permitFormCitation
-  const brandschutzCitation = cit.isSubstantive
-    ? c.bundesland === 'nrw'
-      ? '§ 14 BauO NRW'
-      : c.bundesland === 'bayern'
-        ? 'BayBO Art. 12'
-        : c.bundesland === 'bw'
-          ? '§ 15 LBO BW'
-          : c.bundesland === 'hessen'
-            ? '§ 14 HBO'
-            : '§ 14 NBauO'
-    : cit.permitFormCitation
-  const denkmalAuthorityCity = `Untere Denkmalbehörde (Stadt ${cit.archivCity})`
-  const denkmalCitation = cit.isSubstantive
-    ? `${cit.denkmalSchutzAct} § 9`
-    : cit.denkmalSchutzAct
+  // Phase-C item #2 F1/F2 — these citations resolve PER STATE from the citation
+  // pack (corpus-sourced for the 11 substantive states, hand-coded for the 5).
+  // The previous ternaries' `else` arm was Niedersachsen, so flipping the 11
+  // stubs substantive (Phase B) leaked "§ 14 NBauO" (Brandschutz) / "§ 60 NBauO"
+  // (verfahrensfrei) into every other state. For an unknown/non-substantive
+  // state the pack field is the honest STUB_VERIFY deferral — never a foreign §.
+  const permitFreeNotificationCitation = cit.permitFreeCitation
+  const brandschutzCitation = cit.brandschutzCitation
+  // Phase-C item #2 F5 — the untere Denkmalschutzbehörde sits at the project's
+  // Gemeinde/Kreis, not "Stadt {Landeshauptstadt}". Name it honestly without
+  // asserting a (frequently wrong) city.
+  const denkmalAuthorityCity = 'Untere Denkmalschutzbehörde (Gemeinde bzw. Landkreis des Bauvorhabens)'
+  // Phase-C item #2 F3 — the DSchG Erlaubnis-§ is not in the corpus (BauO-only),
+  // so we cite the act name only. The previous hard-coded "§ 9" was an unverified
+  // assumption stamped onto every state's Denkmalschutzgesetz.
+  const denkmalCitation = cit.denkmalSchutzAct
 
   // ── Always-required (regardless of procedure kind) ──────────────
   out.push({

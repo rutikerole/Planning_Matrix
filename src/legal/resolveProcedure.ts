@@ -392,10 +392,10 @@ export function resolveProcedure(c: ProcedureCase): ProcedureDecision {
         ? simpCitation
         : 'landesrechtliche Detail-Spezifika in Vorbereitung',
       reasoning_de: hasCitation
-        ? `Nutzungsänderung ist genehmigungspflichtig; für nicht-Sonderbauten regelmäßig im vereinfachten Verfahren (${simp.nameDe}, ${simpCitation}). Verfahrensart und etwaige Sonderbau-Tatbestände mit dem lokalen Bauamt bestätigen.`
+        ? `Nutzungsänderung ist genehmigungspflichtig; für nicht-Sonderbauten regelmäßig im vereinfachten Verfahren (${simpCitation}). Verfahrensart und etwaige Sonderbau-Tatbestände mit dem lokalen Bauamt bestätigen.`
         : `Nutzungsänderung ist genehmigungspflichtig; für nicht-Sonderbauten regelmäßig im vereinfachten Verfahren — konkrete Verfahrensart (landesrechtliche Detail-Spezifika in Vorbereitung) mit dem lokalen Bauamt bestätigen.`,
       reasoning_en: hasCitation
-        ? `A use change requires a building permit; for non-Sonderbau cases typically via the simplified procedure (${simp.nameEn}, ${simpCitation}). Confirm the procedure type and any Sonderbau scope with the local building authority.`
+        ? `A use change requires a building permit; for non-Sonderbau cases typically via the simplified procedure (${simpCitation}). Confirm the procedure type and any Sonderbau scope with the local building authority.`
         : `A use change requires a building permit; for non-Sonderbau cases typically via the simplified procedure (state-specific details being finalized) — confirm the procedure type with the local building authority.`,
       confidence: 'CALCULATED',
       caveats: [
@@ -432,22 +432,33 @@ export function resolveProcedure(c: ProcedureCase): ProcedureDecision {
     citation: hasCitation
       ? reg.citation
       : `${reg.nameDe} — landesrechtliche Detail-Spezifika in Vorbereitung`,
+    // Phase-C item #2 F7 — drop the redundant ${reg.nameDe} interpolation: the
+    // sentence already names the procedure ("Reguläres Baugenehmigungsverfahren"),
+    // and reg.nameDe is "Baugenehmigungsverfahren (regulär)", which doubled the
+    // term ("Reguläres Baugenehmigungsverfahren (Baugenehmigungsverfahren …".
     reasoning_de: hasCitation
-      ? `Reguläres Baugenehmigungsverfahren (${reg.nameDe}, ${reg.citation}) als Ausgangspunkt; konkrete Verfahrensart mit dem lokalen Bauamt bestätigen.`
+      ? `Reguläres Baugenehmigungsverfahren (${reg.citation}) als Ausgangspunkt; konkrete Verfahrensart mit dem lokalen Bauamt bestätigen.`
       : `Verfahrensart für ${loc.labelDe} vorbehaltlich landesrechtlicher Detail-Spezifika (in Vorbereitung) — bitte mit dem lokalen Bauamt klären.`,
     reasoning_en: hasCitation
-      ? `Standard building permit (${reg.nameEn}, ${reg.citation}) as the starting point; confirm the specific procedure with the local building authority.`
+      ? `Standard building permit (${reg.citation}) as the starting point; confirm the specific procedure with the local building authority.`
       : `Procedure for ${loc.labelEn} subject to state-specific details (being finalized) — please confirm with the local building authority.`,
     confidence: 'ASSUMED',
-    caveats: [
-      {
-        kind: 'bebauungsplan_specific',
-        message_de:
-          'Spezifische Verfahrensart mit lokalem Bauamt klären — landesspezifische Detailregeln noch nicht vollständig hinterlegt.',
-        message_en:
-          'Confirm specific procedure with the local building authority — state-specific detail rules not yet fully encoded.',
-      },
-    ],
+    // Phase-C item #2 F8 — the "landesspezifische Detailregeln noch nicht
+    // vollständig hinterlegt" caveat is honest only when we lack the regular §.
+    // With a corpus/hand-coded § present (all 16 states), the reasoning already
+    // hedges ("konkrete Verfahrensart … bestätigen"); the stale "not yet encoded"
+    // bullet misrepresents real coverage, so it is emitted only when !hasCitation.
+    caveats: hasCitation
+      ? []
+      : [
+          {
+            kind: 'bebauungsplan_specific',
+            message_de:
+              'Spezifische Verfahrensart mit lokalem Bauamt klären — landesspezifische Detailregeln noch nicht vollständig hinterlegt.',
+            message_en:
+              'Confirm specific procedure with the local building authority — state-specific detail rules not yet fully encoded.',
+          },
+        ],
   }
 }
 

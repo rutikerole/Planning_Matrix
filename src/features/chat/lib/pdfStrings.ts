@@ -240,9 +240,13 @@ const EN: PdfStrings = {
   'docs.title': 'Submission documents',
   'docs.empty': 'No documents recorded yet — continue the consultation.',
   // v1.0.30 Bug 98 — ONE honest footer instead of repeating the stub-state
-  // deferral citation on every required-document row (Sachsen stub).
+  // deferral citation on every required-document row.
+  // Phase-C item #2 F10 — after the F1/F2 corpus wiring only states with a
+  // genuine single-document gap trip this (e.g. RLP's Statik in the separate
+  // Prüf-Regime). Don't overstate ("all submission §§"): name it as the specific
+  // certificate(s) still being aligned.
   'docs.stubFooter':
-    'State-specific submission §§ are in preparation — confirm the exact document requirements with the local building authority.',
+    'A few state-specific certificate §§ (e.g. the structural certificate under the separate inspection regime) are still being aligned — confirm the exact requirements for those documents with the local building authority.',
 
   // ─── v1.0.17 — Team & Stakeholders ────────────────────────────
   'team.kicker': 'SECTION 07 · TEAM & STAKEHOLDERS',
@@ -476,9 +480,10 @@ const DE: PdfStrings = {
   'docs.title': 'Einreichungs-Dokumente',
   'docs.empty':
     'Noch keine Dokumente erfasst — Konsultation fortsetzen.',
-  // v1.0.30 Bug 98 — siehe EN-Pendant.
+  // v1.0.30 Bug 98 — siehe EN-Pendant. Phase-C item #2 F10: präzise statt
+  // pauschal ("alle Einreichungs-§§") — nur der konkret offene Nachweis.
   'docs.stubFooter':
-    'Landesspezifische Einreichungs-§§ in Vorbereitung — die genauen Dokumentanforderungen mit dem lokalen Bauamt abklären.',
+    'Einzelne landesspezifische Nachweis-§§ (z. B. der Statik-Nachweis im Prüf-Regime) noch in Abstimmung — die genauen Anforderungen für diese Nachweise mit dem lokalen Bauamt bestätigen.',
 
   // ─── v1.0.17 — Team & Stakeholders ────────────────────────────
   'team.kicker': 'ABSCHNITT 07 · TEAM & BETEILIGTE',
