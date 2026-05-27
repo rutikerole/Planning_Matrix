@@ -28,10 +28,10 @@ export const PDF_DEMO_TEMPLATE_IDS: readonly TemplateId[] = [
 ]
 
 /**
- * True for the substantive states (Bayern/NRW/BW/Hessen/Niedersachsen).
- * Phase B opened the TEMPLATE dimension (all 8) for these; the 11 stub states
- * stay gated until stateLocalization (procedure §§) is corpus-backed too —
- * their §§ are already in the codegen pack. Resolves via
+ * Phase B: true for ALL 16 states. The 11 former stubs now carry corpus-backed
+ * BauO §§ in both chokepoints (stateCitations citations + stateLocalization
+ * procedure §§), so they are substantive; combined with all 8 templates, every
+ * one of the 128 cells is demo-ready. Resolves via
  * getStateCitations(b).isSubstantive.
  */
 export function isSubstantiveBundesland(

@@ -216,29 +216,35 @@ function withCorpus(pack: StateCitationPack): StateCitationPack {
   return c ? ({ ...pack, ...c } as StateCitationPack) : pack
 }
 
-// NB — Phase B lights up the 5 substantive packs' §-citation fields from the
-// corpus (above). The 11 states below stay makeStub() until the SECOND
-// chokepoint, stateLocalization.ts (procedure §§), is also corpus-backed:
-// flipping them substantive on stateCitations alone yields real §-citations
-// but stub procedure framing (inconsistent) — see _meta/unverified.json and the
-// Phase-B report. The codegen pack already carries their §§, ready for it.
+/**
+ * Phase B — the 11 formerly-stub states now carry corpus-verified BauO §§ in
+ * BOTH chokepoints (here + stateLocalization.ts procedure §§), so flipping them
+ * substantive is consistent. withCorpus overlays the real §-fields; any field
+ * the corpus lacks (RLP structural; denkmal/Bauvorlagen everywhere — the corpus
+ * is BauO-only) keeps the honest STUB_VERIFY deferral — never a fabricated §.
+ * (DSchG / Bauvorlagenverordnung detail is a Phase-C authoring pass.)
+ */
+function makeCorpusPack(b: BundeslandCode, labelDe: string, labelEn: string): StateCitationPack {
+  return withCorpus({ ...makeStub(b, labelDe, labelEn), isSubstantive: true })
+}
+
 const REGISTRY: Record<BundeslandCode, StateCitationPack> = {
   bayern: withCorpus(BAYERN),
   nrw: withCorpus(NRW),
   bw: withCorpus(BW),
   hessen: withCorpus(HESSEN),
   niedersachsen: withCorpus(NIEDERSACHSEN),
-  berlin: makeStub('berlin', 'Berlin', 'Berlin'),
-  hamburg: makeStub('hamburg', 'Hamburg', 'Hamburg'),
-  bremen: makeStub('bremen', 'Bremen', 'Bremen'),
-  brandenburg: makeStub('brandenburg', 'Brandenburg', 'Brandenburg'),
-  mv: makeStub('mv', 'Mecklenburg-Vorpommern', 'Mecklenburg-Western Pomerania'),
-  rlp: makeStub('rlp', 'Rheinland-Pfalz', 'Rhineland-Palatinate'),
-  saarland: makeStub('saarland', 'Saarland', 'Saarland'),
-  sachsen: makeStub('sachsen', 'Sachsen', 'Saxony'),
-  'sachsen-anhalt': makeStub('sachsen-anhalt', 'Sachsen-Anhalt', 'Saxony-Anhalt'),
-  sh: makeStub('sh', 'Schleswig-Holstein', 'Schleswig-Holstein'),
-  thueringen: makeStub('thueringen', 'Thüringen', 'Thuringia'),
+  berlin: makeCorpusPack('berlin', 'Berlin', 'Berlin'),
+  hamburg: makeCorpusPack('hamburg', 'Hamburg', 'Hamburg'),
+  bremen: makeCorpusPack('bremen', 'Bremen', 'Bremen'),
+  brandenburg: makeCorpusPack('brandenburg', 'Brandenburg', 'Brandenburg'),
+  mv: makeCorpusPack('mv', 'Mecklenburg-Vorpommern', 'Mecklenburg-Western Pomerania'),
+  rlp: makeCorpusPack('rlp', 'Rheinland-Pfalz', 'Rhineland-Palatinate'),
+  saarland: makeCorpusPack('saarland', 'Saarland', 'Saarland'),
+  sachsen: makeCorpusPack('sachsen', 'Sachsen', 'Saxony'),
+  'sachsen-anhalt': makeCorpusPack('sachsen-anhalt', 'Sachsen-Anhalt', 'Saxony-Anhalt'),
+  sh: makeCorpusPack('sh', 'Schleswig-Holstein', 'Schleswig-Holstein'),
+  thueringen: makeCorpusPack('thueringen', 'Thüringen', 'Thuringia'),
 }
 
 /**

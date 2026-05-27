@@ -156,18 +156,22 @@ const CELLS: Cell[] = [
 
 // ─── Assertion helpers ──────────────────────────────────────────────
 
-// All 16 registry slugs uppercased EXCEPT NRW (whose real code legitimately
-// IS "BauO NRW"). Used to detect the Bug 26 fabrication class across states.
+// Uppercased registry slugs. The three states whose REAL official short-name
+// is "BauO {x}" — NRW (BauO NRW), Berlin (BauO Bln), Sachsen-Anhalt (BauO LSA)
+// — are NOT in this list; every other state uses SächsBO/BbgBO/HBauO/etc., so
+// "BauO Sachsen"/"BauO BERLIN" etc. remain fabrications. Used to detect the
+// Bug 26 fabrication class across states.
 const FABRICATED_SLUGS =
   'SACHSEN|BRANDENBURG|THUERINGEN|SACHSEN-ANHALT|RLP|SAARLAND|SH|MV|BERLIN|HAMBURG|BREMEN|BW|HESSEN|NIEDERSACHSEN|BAYERN'
 const explicitFabricationRx = new RegExp(`\\bBauO\\s+(?:${FABRICATED_SLUGS})\\b`, 'u')
 // The Bug 26 fabrication class is a SECTION NUMBER bound to "BauO {code}"
 // (e.g. "§ 65 BauO Sachsen" / "§ 65 BauO SACHSEN"). Catches both proper- and
-// upper-case, NRW carved out (its real code legitimately IS "BauO NRW").
-// Deliberately does NOT match the honest glossary TERM "BauO Sachsen ·
-// Bauordnung" (glossary.ts:119 — no preceding "§ NN", explicit "§§ not yet
-// wired" disclosure), which the existing smoke-pdf-text gate asserts present.
-const genericFabricationRx = /§\s*\d+[a-zäöü]?\s+BauO\s+(?!NRW\b)[A-ZÄÖÜ]/u
+// upper-case. Carved out: the three REAL "BauO {x}" short-names NRW / Bln / LSA
+// (Phase B corpus-backed Berlin + Sachsen-Anhalt, so "§ 61 BauO Bln" and
+// "§ 60 BauO LSA" are now legitimate, not fabricated). Deliberately does NOT
+// match the honest glossary TERM "BauO Sachsen · Bauordnung" (glossary.ts:119 —
+// no preceding "§ NN"), which the smoke-pdf-text gate asserts present.
+const genericFabricationRx = /§\s*\d+[a-zäöü]?\s+BauO\s+(?!(?:NRW|Bln|LSA)\b)[A-ZÄÖÜ]/u
 
 const LIGATURE_CHECKS: Array<[RegExp, string]> = [
   [/‌/u, 'zero-width non-joiner U+200C'],

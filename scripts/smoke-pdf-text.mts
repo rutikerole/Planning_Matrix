@@ -828,13 +828,15 @@ async function runGlossaryStateAwareCheck(): Promise<{ passed: number; failed: n
   else { console.log(`  ✗ Bayern: glossary contains 'BayBO' (Bug O)`); failed++ }
   if (bayBLfD) { console.log(`  ✓ Bayern: glossary contains 'BLfD' (Bug O)`); passed++ }
   else { console.log(`  ✗ Bayern: glossary contains 'BLfD' (Bug O)`); failed++ }
-  // Berlin: honest-deferral phrasing.
+  // Berlin: Phase B corpus-backed → glossary now shows the REAL short-name
+  // "BauO Bln" (e.g. "§ 68 BauO Bln Bauantrag"), not the old stub slug
+  // "BauO Berlin". Substantive-state glossary branch (glossary.ts:155-157).
   const berBytes = await renderFixturePdf('de', 'test/fixtures/berlin-t01-pariser-platz.json')
   const berText = await extractPdfText(berBytes)
-  const berBauOBln = /BauO Berlin/u.test(berText)
+  const berBauOBln = /BauO Bln/u.test(berText)
   const berNoBayBO = !/BayBO/u.test(berText) && !/BLfD/u.test(berText) && !/BauO NRW/u.test(berText)
-  if (berBauOBln) { console.log(`  ✓ Berlin: glossary mentions BauO Berlin (Bug O)`); passed++ }
-  else { console.log(`  ✗ Berlin: glossary mentions BauO Berlin (Bug O)`); failed++ }
+  if (berBauOBln) { console.log(`  ✓ Berlin: glossary mentions real 'BauO Bln' (Bug O)`); passed++ }
+  else { console.log(`  ✗ Berlin: glossary mentions real 'BauO Bln' (Bug O)`); failed++ }
   if (berNoBayBO) { console.log(`  ✓ Berlin: glossary does NOT contain BayBO/BLfD/BauO NRW (Bug O guard)`); passed++ }
   else { console.log(`  ✗ Berlin: glossary does NOT contain BayBO/BLfD/BauO NRW (Bug O guard)`); failed++ }
   return { passed, failed }

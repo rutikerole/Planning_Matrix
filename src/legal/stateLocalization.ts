@@ -18,6 +18,12 @@
 // ───────────────────────────────────────────────────────────────────────
 
 import type { BundeslandCode } from './states/_types'
+// Phase B — corpus-backed procedure §§ + structural-cert § (codegen'd from
+// scripts/legal-corpus/). Overlaid onto the 11 stub packs only; the 5 hand-
+// verified substantive packs keep their citations (e.g. Bayern notification =
+// Art. 57 Abs. 7, which the corpus does not model). Per-field: corpus wins
+// where present, hand-coded/stub fallback otherwise.
+import { STATE_CORPUS_PROCEDURE, STATE_CORPUS_CITATIONS } from './corpusCitations.generated'
 
 export interface ProcedurePack {
   /** Verbatim § citation including the LBO short name. */
@@ -396,23 +402,69 @@ function makeStub(bundesland: BundeslandCode, labelDe: string, labelEn: string):
   }
 }
 
+/**
+ * Phase B — overlay corpus procedure §§ (free/freistellung/simplified/regular)
+ * + the structural-cert § onto a stub pack. The stub's generic German names are
+ * already correct ("Vereinfachtes Baugenehmigungsverfahren" etc.); only the
+ * citations were empty. Corpus value wins where present; an absent field keeps
+ * the stub's empty marker (renders without a § anchor — honest, not fabricated).
+ */
+function withLocalizationCorpus(pack: StateLocalization): StateLocalization {
+  const p = STATE_CORPUS_PROCEDURE[pack.bundesland]
+  const sc = STATE_CORPUS_CITATIONS[pack.bundesland]?.structuralCertCitation
+  if (!p && !sc) return pack
+  return {
+    ...pack,
+    procedure: {
+      free: pack.procedure.free
+        ? { ...pack.procedure.free, citation: p?.free ?? pack.procedure.free.citation }
+        : pack.procedure.free,
+      notification:
+        p?.freistellung != null
+          ? { citation: p.freistellung, nameDe: 'Genehmigungsfreistellung', nameEn: 'Permit exemption' }
+          : (pack.procedure.notification ?? null),
+      simplified: { ...pack.procedure.simplified, citation: p?.simplified ?? pack.procedure.simplified.citation },
+      regular: { ...pack.procedure.regular, citation: p?.regular ?? pack.procedure.regular.citation },
+    },
+    structuralCert: { ...pack.structuralCert, citation: sc ?? pack.structuralCert.citation },
+  }
+}
+
+/**
+ * RLP is a terminology outlier: its LBauO has no standalone
+ * "Baugenehmigungsverfahren" or "Bautechnische Nachweise" heading. The regular
+ * permit decision is § 70 "Baugenehmigung" (hand-coded fallback, verified
+ * against the corpus heading); the structural cert stays honest-deferral (RLP's
+ * bautechnische Nachweise live in the separate Prüf-regime). free/simplified
+ * come from the corpus via withLocalizationCorpus.
+ */
+function rlpStub(): StateLocalization {
+  const base = makeStub('rlp', 'Rheinland-Pfalz', 'Rhineland-Palatinate')
+  base.procedure.regular = {
+    citation: '§ 70 LBauO',
+    nameDe: 'Baugenehmigungsverfahren (regulär)',
+    nameEn: 'Regular building permit',
+  }
+  return base
+}
+
 const REGISTRY: Record<BundeslandCode, StateLocalization> = {
   bayern: BAYERN,
   nrw: NRW,
   bw: BW,
   hessen: HESSEN,
   niedersachsen: NIEDERSACHSEN,
-  berlin: makeStub('berlin', 'Berlin', 'Berlin'),
-  hamburg: makeStub('hamburg', 'Hamburg', 'Hamburg'),
-  bremen: makeStub('bremen', 'Bremen', 'Bremen'),
-  brandenburg: makeStub('brandenburg', 'Brandenburg', 'Brandenburg'),
-  mv: makeStub('mv', 'Mecklenburg-Vorpommern', 'Mecklenburg-Western Pomerania'),
-  rlp: makeStub('rlp', 'Rheinland-Pfalz', 'Rhineland-Palatinate'),
-  saarland: makeStub('saarland', 'Saarland', 'Saarland'),
-  sachsen: makeStub('sachsen', 'Sachsen', 'Saxony'),
-  'sachsen-anhalt': makeStub('sachsen-anhalt', 'Sachsen-Anhalt', 'Saxony-Anhalt'),
-  sh: makeStub('sh', 'Schleswig-Holstein', 'Schleswig-Holstein'),
-  thueringen: makeStub('thueringen', 'Thüringen', 'Thuringia'),
+  berlin: withLocalizationCorpus(makeStub('berlin', 'Berlin', 'Berlin')),
+  hamburg: withLocalizationCorpus(makeStub('hamburg', 'Hamburg', 'Hamburg')),
+  bremen: withLocalizationCorpus(makeStub('bremen', 'Bremen', 'Bremen')),
+  brandenburg: withLocalizationCorpus(makeStub('brandenburg', 'Brandenburg', 'Brandenburg')),
+  mv: withLocalizationCorpus(makeStub('mv', 'Mecklenburg-Vorpommern', 'Mecklenburg-Western Pomerania')),
+  rlp: withLocalizationCorpus(rlpStub()),
+  saarland: withLocalizationCorpus(makeStub('saarland', 'Saarland', 'Saarland')),
+  sachsen: withLocalizationCorpus(makeStub('sachsen', 'Sachsen', 'Saxony')),
+  'sachsen-anhalt': withLocalizationCorpus(makeStub('sachsen-anhalt', 'Sachsen-Anhalt', 'Saxony-Anhalt')),
+  sh: withLocalizationCorpus(makeStub('sh', 'Schleswig-Holstein', 'Schleswig-Holstein')),
+  thueringen: withLocalizationCorpus(makeStub('thueringen', 'Thüringen', 'Thuringia')),
 }
 
 /**
