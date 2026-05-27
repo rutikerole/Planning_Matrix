@@ -6,6 +6,8 @@
     "marker": "Art.",
     "current_version_stand": "in der Fassung der Bekanntmachung vom 14. August 2007 (GVBl. S. 588), BayRS 2132-1-B",
     "last_amendment_de": "zuletzt geändert durch § 2 des Gesetzes vom 23. April 2026 (GVBl. S. 190)",
+    "last_amendment_date": "2026-04-23",
+    "data_current_as_of": "2026-05-27",
     "sources": ["https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True"],
     "source_note": "Official consolidated PDF from gesetze-bayern.de (Bayerisches Staatsministerium / juris Bürgerservice). Article headings extracted verbatim via pdftotext. Cross-checked against baunormenlexikon.de (secondary).",
     "verification_summary": { "primary-source": 84, "secondary-mirror": 0, "unverified": 0 },

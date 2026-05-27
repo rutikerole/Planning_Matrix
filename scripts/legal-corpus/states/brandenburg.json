@@ -6,6 +6,8 @@
     "marker": "§",
     "current_version_stand": "2018-11-15",
     "last_amendment_de": "Fassung der Bekanntmachung vom 15. November 2018 (GVBl.I/18, Nr. 39), zuletzt geändert durch Gesetz vom 28. September 2023 (GVBl.I/23, Nr. 18)",
+    "last_amendment_date": "2023-09-28",
+    "data_current_as_of": "2026-05-27",
     "sources": ["https://www.baunormenlexikon.de/norm/bbgbo/9e43e85a-7c8d-4041-b0bd-4b91f839545f"],
     "verification_summary": { "primary-source": 0, "secondary-mirror": 98, "unverified": 0 },
     "notes": "Official portal bravors.brandenburg.de/gesetze/bbgbo served only the SUPERSEDED 2008 version (außer Kraft seit 1. Juli 2016, completely different § numbering) — not usable as a current-law primary source. Current 2018 version captured from baunormenlexikon.de (secondary-mirror)."
