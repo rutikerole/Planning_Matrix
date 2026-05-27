@@ -3828,13 +3828,13 @@ async function runStaticGate() {
     {
       file: 'src/legal/states/bw.ts',
       label: 'BW',
-      expectedCount: 30,
+      expectedCount: 32, // phase-c/item-3: +§ 13 LBO, +§ 15 LBO (persona-allowlist gap close)
       mustContain: ['§ 50 LBO', '§ 51 LBO', '§ 52 LBO', '§ 58 LBO'],
     },
     {
       file: 'src/legal/states/niedersachsen.ts',
       label: 'Niedersachsen',
-      expectedCount: 24,
+      expectedCount: 25, // phase-c/item-3: +§ 14 NBauO (persona-allowlist gap close)
       mustContain: ['§ 60 NBauO', '§ 62 NBauO', '§ 63 NBauO', '§ 65 NBauO'],
     },
     {

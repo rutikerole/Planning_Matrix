@@ -6,6 +6,8 @@
     "marker": "§",
     "current_version_stand": "2015-10-15",
     "last_amendment_de": "Fassung der Bekanntmachung vom 15. Oktober 2015 (GVOBl. M-V S. 344), zuletzt geändert durch Artikel 2 des Gesetzes vom 18. März 2025 (GVOBl. M-V S. 130)",
+    "last_amendment_date": "2025-03-18",
+    "data_current_as_of": "2026-05-27",
     "sources": ["https://www.baunormenlexikon.de/norm/lbauo-m-v/3be225ec-975f-41ec-864c-d96eaa9cc918"],
     "verification_summary": { "primary-source": 0, "secondary-mirror": 97, "unverified": 0 },
     "notes": "No inline § citation for M-V in src/legal/ this session; full Inhaltsübersicht captured for Phase B coverage."

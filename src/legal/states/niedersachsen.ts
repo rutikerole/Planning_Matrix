@@ -309,6 +309,11 @@ Anhangtext und die Novelle 2025 zu verifizieren.
 const ALLOWED_CITATIONS: readonly string[] = [
   '§ 5 NBauO',
   '§ 7 NBauO',
+  // phase-c/item-3 — § 14 (Brandschutz, brandschutzCitation) is used in the
+  // deterministic citations but was absent from this persona allowlist, so
+  // citationLint would flag the persona for citing it. (Needs a chat-turn
+  // edge-function redeploy to take effect.)
+  '§ 14 NBauO',
   '§ 52 NBauO',
   '§ 53 NBauO',
   '§ 60 NBauO',
