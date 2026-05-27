@@ -1,0 +1,58 @@
+{
+  "_meta": {
+    "purpose": "Honesty ledger. (1) §§ with NO sourceable heading. (2) repo-citation errors the spine now EXPOSES (Phase B repo-code fixes). (3) data-quality follow-ups (secondary→primary confirmations, wording variances). Fetch date 2026-05-27.",
+    "headline": "ZERO unverified headings: every one of the 1,569 §/Art. captured across federal + 16 states carries a verbatim official heading at primary-source or secondary-mirror tier. The items below are repo-code findings and quality follow-ups, NOT corpus holes."
+  },
+  "unverified_headings": [],
+
+  "repo_citation_findings_phase_b": [
+    {
+      "finding": "NBauO § 65a does not exist",
+      "class": "EXISTENCE (wrong-number — Art.58a class)",
+      "repo_location": "src/legal/stateCitations.ts:138 (structuralCertCitation: '§ 65a NBauO')",
+      "evidence": "Current NBauO Inhaltsübersicht: § 65 'Bautechnische Nachweise, Typenprüfung' → § 66 'Abweichungen'. No § 65a. Confirmed against baunormenlexikon.de AND NI-VORIS / lexsoft / Haufe.",
+      "correct": "The structural-/bautechnischer Nachweis in NBauO is § 65. stateCitations.ts should cite '§ 65 NBauO'.",
+      "phase": "B (repo-code fix). Surfaced by verify-citations.mjs --strict as an EXISTENCE finding."
+    },
+    {
+      "finding": "GEG § 8 cited for the Wärmeschutznachweis",
+      "class": "ROLE (exists, wrong purpose)",
+      "repo_locations": ["src/legal/federal.ts:111", "src/legal/templates/t01-neubau-efh.ts:145", "src/legal/templates/t07-anbau.ts:199"],
+      "evidence": "§ 8 GEG official heading = 'Verantwortliche' (responsible parties), not a thermal-insulation certificate.",
+      "correct": "Wärmeschutz-/Energiebedarfsnachweis → GEG § 10 (Grundsatz und Niedrigstenergiegebäude); Energieausweis → GEG § 80. (t01-neubau-efh.ts:14 already maps it correctly to § 10; line 145 contradicts it.)",
+      "phase": "B (repo-code fix). Surfaced by verify-citations.mjs --strict as 3 ROLE findings."
+    }
+  ],
+
+  "data_quality_followups_phase_b_or_c": [
+    {
+      "item": "13 states at secondary-mirror tier (baunormenlexikon)",
+      "states": ["berlin", "brandenburg", "bremen", "bw", "hamburg", "hessen", "mv", "niedersachsen", "rlp", "saarland", "sachsen-anhalt", "sh", "thueringen"],
+      "next_step": "Upgrade to primary-source via official consolidated PDFs (the gesetze-bayern.de/pdftotext avenue that worked for Bayern; recht.nrw.de for NRW). Phase C calibration pass.",
+      "blocking": false
+    },
+    {
+      "item": "Cross-check vs repo stateCitations.ts archetype mapping — candidate repo errors",
+      "candidates": [
+        "HBO § 49 corpus heading = 'Blitzschutzanlagen', but stateCitations.ts maps '§ 49 HBO' = permitSubmission (Bauvorlageberechtigung). Bauvorlageberechtigung is HBO § 67. Likely repo error.",
+        "HBO § 66 corpus = 'Baugenehmigungsverfahren', stateCitations.ts maps '§ 66 HBO' = permitForm. The Bauantrag/Bauvorlagen § is HBO § 69. Likely repo error.",
+        "LBO BW § 73a corpus = 'Technische Baubestimmungen', stateCitations.ts maps '§ 73a LBO BW' = structuralCert. Verify the structural-cert § for BW in Phase B.",
+        "LBO BW § 58 corpus = 'Baugenehmigung', stateCitations.ts maps '§ 58 LBO BW' = permitForm (the permit itself, not the application form)."
+      ],
+      "next_step": "Confirm against the official portal, then correct stateCitations.ts in Phase B. (Existence-clean, so NOT a --strict failure; these are concept→§ mapping mismatches the verifier cannot auto-detect.)",
+      "blocking": false
+    },
+    {
+      "item": "Wording variances to confirm against an official portal (Phase B)",
+      "variances": [
+        "NRW § 64: recht.nrw.de (primary) = 'Vereinfachtes Baugenehmigungsverfahren'; baunormenlexikon mirror = 'Einfaches Baugenehmigungsverfahren'. Primary used.",
+        "Saarland § 63: first full-TOC fetch mis-rendered it as § 64's heading; re-fetch + saarheim.de confirm = 'Baugenehmigungsfreistellung'. Corrected heading recorded.",
+        "Saarland §§ 60/61/63: baunormenlexikon vs saarheim.de minor wording variance ('Verfahrensfreie Vorhaben' vs '…Bauvorhaben'; 'Baugenehmigungsfreistellung' vs 'Genehmigungsfreistellung'). baunormenlexikon reading used.",
+        "NBauO § 73a: mirror returned the same heading as § 73 ('Bauvoranfrage und Bauvorbescheid') — likely a TOC duplication artifact; confirm against official source.",
+        "LBO SH § 58a 'Bestehende Anlagen': genuinely present in the mirror TOC (coincidentally the number once fabricated for Bayern — here it is real). Confirm against official source."
+      ],
+      "next_step": "Single official-portal confirmation per item in Phase B/C where exact wording matters.",
+      "blocking": false
+    }
+  ]
+}

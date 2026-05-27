@@ -1,0 +1,47 @@
+{
+  "template_id": "T-08",
+  "slug": "t08-sonstiges",
+  "label_de": "Sonstiges Vorhaben",
+  "label_en": "Other / miscellaneous project",
+  "_meta": {
+    "purpose": "Catch-all template. Carries the SUPERSET of common concerns; the concrete archetypes are determined at runtime from the actual Vorhaben. Phase A data only; cost/timeline SHAPE only (Phase C).",
+    "archetype_taxonomy_ref": "scripts/legal-corpus/SCHEMA.md",
+    "fallback": true
+  },
+  "federal_paragraphs": [
+    { "law": "BauGB", "num": "30", "archetype": "bauplanungsrecht" },
+    { "law": "BauGB", "num": "34", "archetype": "bauplanungsrecht" },
+    { "law": "BauGB", "num": "35", "archetype": "bauplanungsrecht" }
+  ],
+  "state_archetypes": [
+    "bauplanungsrecht", "abstandsflaechen", "verfahrensfrei",
+    "verfahren_freistellung", "verfahren_vereinfacht", "verfahren_regulaer",
+    "bauvorlageberechtigung", "bautechnische_nachweise", "bauantrag_bauvorlagen"
+  ],
+  "procedure_routing": {
+    "description": "No fixed route — resolve the concrete Vorhaben to its nearest archetypes first, then apply the corresponding state procedure §§. Defaults to the full set so nothing is silently dropped.",
+    "rules": [
+      { "when": "Vorhaben unterhalb Verfahrensschwelle", "route": "verfahrensfrei" },
+      { "when": "Regelfall", "route": "verfahren_vereinfacht" },
+      { "when": "Sonderbau-Tatbestand", "route": "verfahren_regulaer" }
+    ]
+  },
+  "cost_metadata_shape": {
+    "calibrated": false,
+    "note": "Line-item keys only; EUR ranges are Phase C.",
+    "line_items": [
+      { "key": "architektenleistung", "basis": "HOAI" },
+      { "key": "fachplanung", "basis": "abhängig vom Vorhaben" },
+      { "key": "behoerdengebuehren", "basis": "state/municipal Kostensatzung" }
+    ]
+  },
+  "timeline_metadata_shape": {
+    "calibrated": false,
+    "note": "Phase keys only; durations are Phase C.",
+    "phases": [
+      { "key": "einordnung", "driver": "bauplanungsrecht" },
+      { "key": "antragstellung_oder_freistellung", "driver": "selected procedure_routing route" },
+      { "key": "ausfuehrung" }
+    ]
+  }
+}

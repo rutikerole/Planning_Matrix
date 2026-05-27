@@ -1,35 +1,69 @@
 {
   "_meta": {
-    "source": "gesetze-im-internet.de — official German federal-law portal (Bundesrecht)",
-    "fetchedAt": "2026-05-27",
-    "purpose": "Official §→Überschrift snapshot for every FEDERAL § cited in src/legal/. The build-time verifier (scripts/verify-citations.mjs) checks repo citations against this. Refresh when a law amends (each law page shows 'Zuletzt geändert durch …'). STATE Bauordnungen (BauO NRW / HBO / LBO / NBauO) are NOT here — gesetze-im-internet.de is federal-only, and official state portals are not machine-fetchable (see docs/V1_0_35_CITATION_SOURCE_RECON.md §3b). State tier is a separate follow-up.",
-    "verbatim": "Headings quoted verbatim from the official amtliche Überschrift."
+    "tier": "federal",
+    "source_portal": "gesetze-im-internet.de — official German federal-law portal (Bundesrecht)",
+    "fetched_at": "2026-05-27",
+    "purpose": "Official §→amtliche Überschrift snapshot for every FEDERAL § cited in src/legal/, plus template-relevant §§ (BauNVO Maß/Stellplätze). The build-time verifier (scripts/verify-citations.mjs) checks repo citations against this. Refresh when a law amends (each law page shows 'Zuletzt geändert durch …').",
+    "verbatim": "Headings quoted verbatim from the official amtliche Überschrift. URL pattern: https://www.gesetze-im-internet.de/<slug>/__<num>.html",
+    "verification_tier_default": "primary-source",
+    "role_conflicts_phase_b": [
+      {
+        "citation": "GEG § 8",
+        "official_heading": "Verantwortliche",
+        "repo_misuse": "Cited as the Wärmeschutznachweis / thermal-insulation certificate",
+        "correct_citation": "GEG § 10 (Grundsatz und Niedrigstenergiegebäude) for the energy standard; GEG § 80 (Energieausweise) for the certificate",
+        "repo_locations": ["src/legal/federal.ts:111", "src/legal/templates/t01-neubau-efh.ts:145", "src/legal/templates/t07-anbau.ts:199"],
+        "resolves_contradiction": "t01-neubau-efh.ts line 14 (marker comment) correctly maps Wärmeschutznachweis → GEG § 10; line 145 wrongly maps it → GEG § 8. § 10 is correct.",
+        "phase": "B — repo-code fix; out of Phase A (data) scope. Corpus heading is already correct."
+      }
+    ]
   },
-  "BauGB": {
-    "30": "Zulässigkeit von Vorhaben im Geltungsbereich eines Bebauungsplans",
-    "31": "Ausnahmen und Befreiungen",
-    "34": "Zulässigkeit von Vorhaben innerhalb der im Zusammenhang bebauten Ortsteile",
-    "35": "Bauen im Außenbereich",
-    "172": "Erhaltung baulicher Anlagen und der Eigenart von Gebieten (Erhaltungssatzung)",
-    "246e": "Befristete Sonderregelung für den Wohnungsbau"
-  },
-  "BauNVO": {
-    "1": "Allgemeine Vorschriften für Bauflächen und Baugebiete",
-    "3": "Reine Wohngebiete",
-    "4": "Allgemeine Wohngebiete",
-    "4a": "Gebiete zur Erhaltung und Entwicklung der Wohnnutzung (besondere Wohngebiete)",
-    "5": "Dorfgebiete",
-    "6": "Mischgebiete",
-    "7": "Kerngebiete",
-    "8": "Gewerbegebiete",
-    "9": "Industriegebiete",
-    "19": "Grundflächenzahl, zulässige Grundfläche",
-    "22": "Bauweise"
-  },
-  "GEG": {
-    "8": "Verantwortliche",
-    "10": "Grundsatz und Niedrigstenergiegebäude",
-    "48": "Anforderungen an ein bestehendes Gebäude bei Änderung",
-    "80": "Ausstellung und Verwendung von Energieausweisen"
+  "laws": {
+    "BauGB": {
+      "law_full_de": "Baugesetzbuch",
+      "law_slug": "baugb",
+      "marker": "§",
+      "paragraphs": {
+        "30": { "heading_de_official": "Zulässigkeit von Vorhaben im Geltungsbereich eines Bebauungsplans", "heading_source_url": "https://www.gesetze-im-internet.de/baugb/__30.html", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source", "archetypes": ["bauplanungsrecht"], "scope_summary_de": "Zulässigkeit von Vorhaben im Bereich eines qualifizierten/vorhabenbezogenen Bebauungsplans.", "scope_summary_en": "Admissibility of projects within a qualified development plan." },
+        "31": { "heading_de_official": "Ausnahmen und Befreiungen", "heading_source_url": "https://www.gesetze-im-internet.de/baugb/__31.html", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source", "archetypes": ["bauplanungsrecht"], "scope_summary_de": "Ausnahmen und Befreiungen von den Festsetzungen des Bebauungsplans.", "scope_summary_en": "Exceptions from and dispensations to development-plan stipulations." },
+        "34": { "heading_de_official": "Zulässigkeit von Vorhaben innerhalb der im Zusammenhang bebauten Ortsteile", "heading_source_url": "https://www.gesetze-im-internet.de/baugb/__34.html", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source", "archetypes": ["bauplanungsrecht"], "scope_summary_de": "Innenbereich: Einfügen in die Eigenart der näheren Umgebung.", "scope_summary_en": "Inner-area admissibility (fitting into the surrounding character)." },
+        "35": { "heading_de_official": "Bauen im Außenbereich", "heading_source_url": "https://www.gesetze-im-internet.de/baugb/__35.html", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source", "archetypes": ["bauplanungsrecht"], "scope_summary_de": "Außenbereich: privilegierte und sonstige Vorhaben.", "scope_summary_en": "Building in the outer area (privileged and other projects)." },
+        "172": { "heading_de_official": "Erhaltung baulicher Anlagen und der Eigenart von Gebieten (Erhaltungssatzung)", "heading_source_url": "https://www.gesetze-im-internet.de/baugb/__172.html", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source", "archetypes": ["denkmalschutz", "nutzungsaenderung"], "scope_summary_de": "Erhaltungssatzung; Genehmigungspflicht für Rückbau/Änderung/Nutzungsänderung in festgesetzten Gebieten.", "scope_summary_en": "Conservation statute; consent requirement in designated areas." },
+        "246e": { "heading_de_official": "Befristete Sonderregelung für den Wohnungsbau", "heading_source_url": "https://www.gesetze-im-internet.de/baugb/__246e.html", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source", "archetypes": ["bauplanungsrecht"], "scope_summary_de": "Befristete Abweichungsmöglichkeit zugunsten des Wohnungsbaus (Bau-Turbo Bund).", "scope_summary_en": "Temporary special rule favouring housing construction." }
+      }
+    },
+    "BauNVO": {
+      "law_full_de": "Baunutzungsverordnung",
+      "law_slug": "baunvo",
+      "marker": "§",
+      "paragraphs": {
+        "1": { "heading_de_official": "Allgemeine Vorschriften für Bauflächen und Baugebiete", "heading_source_url": "https://www.gesetze-im-internet.de/baunvo/__1.html", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source", "archetypes": ["bauplanungsrecht"], "scope_summary_de": "Arten der baulichen Nutzung; Bauflächen und Baugebiete.", "scope_summary_en": "Types of land use; building areas and zones." },
+        "3": { "heading_de_official": "Reine Wohngebiete", "heading_source_url": "https://www.gesetze-im-internet.de/baunvo/__3.html", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source", "archetypes": ["bauplanungsrecht"], "scope_summary_de": "Reine Wohngebiete (WR).", "scope_summary_en": "Purely residential areas." },
+        "4": { "heading_de_official": "Allgemeine Wohngebiete", "heading_source_url": "https://www.gesetze-im-internet.de/baunvo/__4.html", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source", "archetypes": ["bauplanungsrecht"], "scope_summary_de": "Allgemeine Wohngebiete (WA).", "scope_summary_en": "General residential areas." },
+        "4a": { "heading_de_official": "Gebiete zur Erhaltung und Entwicklung der Wohnnutzung (besondere Wohngebiete)", "heading_source_url": "https://www.gesetze-im-internet.de/baunvo/__4a.html", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source", "archetypes": ["bauplanungsrecht"], "scope_summary_de": "Besondere Wohngebiete (WB).", "scope_summary_en": "Special residential areas." },
+        "5": { "heading_de_official": "Dorfgebiete", "heading_source_url": "https://www.gesetze-im-internet.de/baunvo/__5.html", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source", "archetypes": ["bauplanungsrecht"], "scope_summary_de": "Dorfgebiete (MD).", "scope_summary_en": "Village areas." },
+        "6": { "heading_de_official": "Mischgebiete", "heading_source_url": "https://www.gesetze-im-internet.de/baunvo/__6.html", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source", "archetypes": ["bauplanungsrecht"], "scope_summary_de": "Mischgebiete (MI).", "scope_summary_en": "Mixed-use areas." },
+        "7": { "heading_de_official": "Kerngebiete", "heading_source_url": "https://www.gesetze-im-internet.de/baunvo/__7.html", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source", "archetypes": ["bauplanungsrecht"], "scope_summary_de": "Kerngebiete (MK).", "scope_summary_en": "Core (central business) areas." },
+        "8": { "heading_de_official": "Gewerbegebiete", "heading_source_url": "https://www.gesetze-im-internet.de/baunvo/__8.html", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source", "archetypes": ["bauplanungsrecht"], "scope_summary_de": "Gewerbegebiete (GE).", "scope_summary_en": "Commercial areas." },
+        "9": { "heading_de_official": "Industriegebiete", "heading_source_url": "https://www.gesetze-im-internet.de/baunvo/__9.html", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source", "archetypes": ["bauplanungsrecht"], "scope_summary_de": "Industriegebiete (GI).", "scope_summary_en": "Industrial areas." },
+        "12": { "heading_de_official": "Stellplätze und Garagen", "heading_source_url": "https://www.gesetze-im-internet.de/baunvo/__12.html", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source", "archetypes": ["stellplaetze"], "scope_summary_de": "Zulässigkeit von Stellplätzen und Garagen in Baugebieten.", "scope_summary_en": "Admissibility of parking spaces and garages in building zones." },
+        "16": { "heading_de_official": "Bestimmung des Maßes der baulichen Nutzung", "heading_source_url": "https://www.gesetze-im-internet.de/baunvo/__16.html", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source", "archetypes": ["bauplanungsrecht"], "scope_summary_de": "Maß der baulichen Nutzung (GRZ, GFZ, BMZ, Höhe).", "scope_summary_en": "Determination of the degree of building use." },
+        "19": { "heading_de_official": "Grundflächenzahl, zulässige Grundfläche", "heading_source_url": "https://www.gesetze-im-internet.de/baunvo/__19.html", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source", "archetypes": ["bauplanungsrecht"], "scope_summary_de": "Grundflächenzahl (GRZ) und zulässige Grundfläche.", "scope_summary_en": "Site occupancy index (GRZ) and permitted footprint." },
+        "20": { "heading_de_official": "Vollgeschosse, Geschossflächenzahl, Geschossfläche", "heading_source_url": "https://www.gesetze-im-internet.de/baunvo/__20.html", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source", "archetypes": ["bauplanungsrecht"], "scope_summary_de": "Vollgeschosse, Geschossflächenzahl (GFZ), Geschossfläche.", "scope_summary_en": "Full storeys, floor-area ratio (GFZ), floor area." },
+        "22": { "heading_de_official": "Bauweise", "heading_source_url": "https://www.gesetze-im-internet.de/baunvo/__22.html", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source", "archetypes": ["bauplanungsrecht"], "scope_summary_de": "Offene/geschlossene Bauweise.", "scope_summary_en": "Open / closed building method." },
+        "23": { "heading_de_official": "Überbaubare Grundstücksfläche", "heading_source_url": "https://www.gesetze-im-internet.de/baunvo/__23.html", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source", "archetypes": ["bauplanungsrecht", "abstandsflaechen"], "scope_summary_de": "Baugrenzen, Baulinien, Bebauungstiefe.", "scope_summary_en": "Buildable plot area (building lines/limits)." }
+      }
+    },
+    "GEG": {
+      "law_full_de": "Gebäudeenergiegesetz",
+      "law_slug": "geg",
+      "marker": "§",
+      "paragraphs": {
+        "8": { "heading_de_official": "Verantwortliche", "heading_source_url": "https://www.gesetze-im-internet.de/geg/__8.html", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source", "archetypes": [], "scope_summary_de": "Verantwortliche Personen für die Einhaltung des GEG (NICHT der Wärmeschutznachweis — siehe _meta.role_conflicts_phase_b).", "scope_summary_en": "Parties responsible for GEG compliance (NOT the thermal-insulation certificate)." },
+        "10": { "heading_de_official": "Grundsatz und Niedrigstenergiegebäude", "heading_source_url": "https://www.gesetze-im-internet.de/geg/__10.html", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source", "archetypes": ["energie"], "scope_summary_de": "Energetischer Grundsatz; Niedrigstenergiegebäude-Standard (Wärmeschutz-/Energiebedarfsnachweis).", "scope_summary_en": "Energy principle; nearly-zero-energy-building standard." },
+        "48": { "heading_de_official": "Anforderungen an ein bestehendes Gebäude bei Änderung", "heading_source_url": "https://www.gesetze-im-internet.de/geg/__48.html", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source", "archetypes": ["energie"], "scope_summary_de": "Energetische Anforderungen bei Änderung von Bestandsgebäuden (Sanierung).", "scope_summary_en": "Energy requirements when modifying an existing building." },
+        "80": { "heading_de_official": "Ausstellung und Verwendung von Energieausweisen", "heading_source_url": "https://www.gesetze-im-internet.de/geg/__80.html", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source", "archetypes": ["energie"], "scope_summary_de": "Energieausweis (Ausstellung/Verwendung).", "scope_summary_en": "Issuance and use of energy performance certificates." }
+      }
+    }
   }
 }

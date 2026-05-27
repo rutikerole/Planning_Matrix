@@ -1,0 +1,53 @@
+{
+  "template_id": "T-07",
+  "slug": "t07-anbau",
+  "label_de": "Anbau / Erweiterung",
+  "label_en": "Extension / annex",
+  "_meta": {
+    "purpose": "Phase A data: federal §§ + state-§ archetypes. Phase B resolves archetype → state §. Cost/timeline SHAPE only (Phase C).",
+    "archetype_taxonomy_ref": "scripts/legal-corpus/SCHEMA.md",
+    "note": "t07-anbau.ts:199 currently cites GEG § 8 for the Wärmeschutznachweis — that is a ROLE error (§ 8 GEG = 'Verantwortliche'); correct is GEG § 10 / § 80. Logged in _meta/unverified.json → Phase B."
+  },
+  "federal_paragraphs": [
+    { "law": "BauGB", "num": "31", "archetype": "bauplanungsrecht" },
+    { "law": "BauGB", "num": "34", "archetype": "bauplanungsrecht" },
+    { "law": "BauNVO", "num": "16", "archetype": "bauplanungsrecht" },
+    { "law": "BauNVO", "num": "19", "archetype": "bauplanungsrecht" },
+    { "law": "BauNVO", "num": "23", "archetype": "bauplanungsrecht" },
+    { "law": "GEG", "num": "10", "archetype": "energie" },
+    { "law": "GEG", "num": "48", "archetype": "energie" },
+    { "law": "GEG", "num": "80", "archetype": "energie" }
+  ],
+  "state_archetypes": [
+    "bauplanungsrecht", "abstandsflaechen", "bautechnische_nachweise",
+    "energie", "verfahren_freistellung", "verfahren_vereinfacht",
+    "stellplaetze", "bauantrag_bauvorlagen"
+  ],
+  "procedure_routing": {
+    "description": "An Anbau must einfügen (BauGB § 34) and respect GRZ / überbaubare Grundstücksfläche (BauNVO §§ 19/23) and Abstandsflächen at the new wall. Often simplified procedure or — under a qualifying B-Plan — freistellung.",
+    "rules": [
+      { "when": "qualifizierter B-Plan + Festsetzungen eingehalten", "route": "verfahren_freistellung" },
+      { "when": "Innenbereich § 34, Einfügen gegeben", "route": "verfahren_vereinfacht" }
+    ]
+  },
+  "cost_metadata_shape": {
+    "calibrated": false,
+    "note": "Line-item keys only; EUR ranges are Phase C.",
+    "line_items": [
+      { "key": "architektenleistung", "basis": "HOAI" },
+      { "key": "tragwerksplanung", "basis": "Anschluss an Bestand" },
+      { "key": "energienachweis", "basis": "GEG (Erweiterung)" },
+      { "key": "behoerdengebuehren", "basis": "state/municipal Kostensatzung" }
+    ]
+  },
+  "timeline_metadata_shape": {
+    "calibrated": false,
+    "note": "Phase keys only; durations are Phase C.",
+    "phases": [
+      { "key": "machbarkeit_bauplanungsrecht", "driver": "bauplanungsrecht" },
+      { "key": "antragstellung", "driver": "bauantrag_bauvorlagen" },
+      { "key": "behoerdenpruefung", "driver": "selected procedure_routing route" },
+      { "key": "ausfuehrung" }
+    ]
+  }
+}

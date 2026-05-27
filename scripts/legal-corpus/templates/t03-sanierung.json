@@ -1,0 +1,50 @@
+{
+  "template_id": "T-03",
+  "slug": "t03-sanierung",
+  "label_de": "Sanierung / Modernisierung Bestand",
+  "label_en": "Renovation / modernisation of existing building",
+  "_meta": {
+    "purpose": "Phase A data: federal §§ + state-§ archetypes. Phase B resolves archetype → state §. Cost/timeline SHAPE only (Phase C).",
+    "archetype_taxonomy_ref": "scripts/legal-corpus/SCHEMA.md"
+  },
+  "federal_paragraphs": [
+    { "law": "BauGB", "num": "34", "archetype": "bauplanungsrecht" },
+    { "law": "BauGB", "num": "172", "archetype": "denkmalschutz" },
+    { "law": "GEG", "num": "48", "archetype": "energie" },
+    { "law": "GEG", "num": "80", "archetype": "energie" }
+  ],
+  "state_archetypes": [
+    "verfahrensfrei", "verfahren_vereinfacht", "energie",
+    "bautechnische_nachweise", "brandschutz", "denkmalschutz",
+    "nutzungsaenderung", "bauantrag_bauvorlagen"
+  ],
+  "procedure_routing": {
+    "description": "Pure Instandhaltung/Modernisierung is often verfahrensfrei; substantive changes to structure/use/fire-safety trigger a procedure. GEG § 48 governs energy duties on alteration of existing buildings; Denkmal triggers the separate state DSchG.",
+    "rules": [
+      { "when": "reine Instandhaltung/Modernisierung ohne Eingriff in Standsicherheit/Brandschutz/Nutzung", "route": "verfahrensfrei" },
+      { "when": "Eingriff in tragende Teile / Brandschutz / Grundrisse", "route": "verfahren_vereinfacht" },
+      { "when": "Denkmal betroffen", "route": "denkmalschutz", "note": "separate DSchG-Erlaubnis zusätzlich zum Bauordnungsverfahren" }
+    ]
+  },
+  "cost_metadata_shape": {
+    "calibrated": false,
+    "note": "Line-item keys only; EUR ranges are Phase C.",
+    "line_items": [
+      { "key": "architektenleistung", "basis": "HOAI Umbau-Zuschlag" },
+      { "key": "energieberatung", "basis": "GEG § 48 Bestandsänderung" },
+      { "key": "tragwerkspruefung", "basis": "structural archetype (bei Eingriff)" },
+      { "key": "denkmalpflege_abstimmung", "basis": "denkmalschutz archetype (falls Denkmal)" },
+      { "key": "behoerdengebuehren", "basis": "state/municipal Kostensatzung" }
+    ]
+  },
+  "timeline_metadata_shape": {
+    "calibrated": false,
+    "note": "Phase keys only; durations are Phase C.",
+    "phases": [
+      { "key": "bestandsaufnahme" },
+      { "key": "abstimmung", "driver": "denkmalschutz / energie" },
+      { "key": "antragstellung_oder_freistellung", "driver": "selected procedure_routing route" },
+      { "key": "ausfuehrung" }
+    ]
+  }
+}

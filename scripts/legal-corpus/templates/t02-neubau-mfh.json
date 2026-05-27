@@ -1,0 +1,65 @@
+{
+  "template_id": "T-02",
+  "slug": "t02-neubau-mfh",
+  "label_de": "Neubau Mehrfamilienhaus",
+  "label_en": "New multi-family house",
+  "_meta": {
+    "purpose": "Phase A data: federal §§ + state-§ archetypes. Phase B resolves archetype → state §. Cost/timeline SHAPE only (Phase C).",
+    "archetype_taxonomy_ref": "scripts/legal-corpus/SCHEMA.md"
+  },
+  "federal_paragraphs": [
+    { "law": "BauGB", "num": "30", "archetype": "bauplanungsrecht" },
+    { "law": "BauGB", "num": "31", "archetype": "bauplanungsrecht" },
+    { "law": "BauGB", "num": "34", "archetype": "bauplanungsrecht" },
+    { "law": "BauGB", "num": "35", "archetype": "bauplanungsrecht" },
+    { "law": "BauNVO", "num": "1", "archetype": "bauplanungsrecht" },
+    { "law": "BauNVO", "num": "3", "archetype": "bauplanungsrecht" },
+    { "law": "BauNVO", "num": "4", "archetype": "bauplanungsrecht" },
+    { "law": "BauNVO", "num": "6", "archetype": "bauplanungsrecht" },
+    { "law": "BauNVO", "num": "12", "archetype": "stellplaetze" },
+    { "law": "BauNVO", "num": "16", "archetype": "bauplanungsrecht" },
+    { "law": "BauNVO", "num": "19", "archetype": "bauplanungsrecht" },
+    { "law": "BauNVO", "num": "20", "archetype": "bauplanungsrecht" },
+    { "law": "BauNVO", "num": "22", "archetype": "bauplanungsrecht" },
+    { "law": "BauNVO", "num": "23", "archetype": "bauplanungsrecht" },
+    { "law": "GEG", "num": "10", "archetype": "energie" },
+    { "law": "GEG", "num": "80", "archetype": "energie" }
+  ],
+  "state_archetypes": [
+    "bauplanungsrecht", "gebaeudeklasse", "abstandsflaechen", "stellplaetze",
+    "verfahren_freistellung", "verfahren_vereinfacht", "verfahren_regulaer",
+    "bauvorlageberechtigung", "bautechnische_nachweise", "brandschutz",
+    "sonderbauten", "pv_pflicht", "energie", "bauantrag_bauvorlagen"
+  ],
+  "procedure_routing": {
+    "description": "MFH frequently reaches GK 3-5; brandschutz + Stellplätze are first-order. Sonderbau-Tatbestand raises it to the full procedure.",
+    "rules": [
+      { "when": "qualifizierter B-Plan + Festsetzungen eingehalten + keine Sonderbau-Eigenschaft", "route": "verfahren_freistellung" },
+      { "when": "Regelfall ohne Sonderbau", "route": "verfahren_vereinfacht" },
+      { "when": "Sonderbau-Tatbestand (Höhe/Größe/Nutzung)", "route": "verfahren_regulaer" }
+    ]
+  },
+  "cost_metadata_shape": {
+    "calibrated": false,
+    "note": "Line-item keys only; EUR ranges are Phase C.",
+    "line_items": [
+      { "key": "architektenleistung", "basis": "HOAI LP 1-4" },
+      { "key": "tragwerksplanung", "basis": "structural archetype" },
+      { "key": "brandschutzkonzept", "basis": "brandschutz archetype" },
+      { "key": "vermessung", "basis": "amtlicher Lageplan" },
+      { "key": "energienachweis", "basis": "GEG" },
+      { "key": "stellplatznachweis", "basis": "Stellplatzsatzung" },
+      { "key": "behoerdengebuehren", "basis": "state/municipal Kostensatzung" }
+    ]
+  },
+  "timeline_metadata_shape": {
+    "calibrated": false,
+    "note": "Phase keys only; durations are Phase C.",
+    "phases": [
+      { "key": "vorplanung" },
+      { "key": "antragstellung", "driver": "bauantrag_bauvorlagen" },
+      { "key": "behoerdenpruefung", "driver": "selected procedure_routing route" },
+      { "key": "baufreigabe" }
+    ]
+  }
+}

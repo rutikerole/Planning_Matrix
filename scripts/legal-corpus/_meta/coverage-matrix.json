@@ -1,0 +1,918 @@
+{
+  "_meta": {
+    "purpose": "16 Bundesländer × 8 templates. Per-cell: verification tier of the state corpus + whether every CORE state-archetype the template needs is present (taggable to a verbatim §).",
+    "legend": {
+      "tier": "verification tier of the state Bauordnung corpus (primary-source / secondary-mirror)",
+      "covered": "true = every CORE state-archetype the template needs maps to a tagged § in this state",
+      "core_missing": "core state-archetypes the template needs but no § is tagged for (a real gap)",
+      "optional_not_in_bauo": "pv_pflicht / nutzungsaenderung the template references but this state does NOT codify in its BauO (handled by a separate law or the general verfahren §§ — NOT a corpus defect)"
+    },
+    "federal_archetypes_covered_by_federal_json": [
+      "bauplanungsrecht",
+      "energie"
+    ],
+    "separate_law_archetypes": [
+      "denkmalschutz",
+      "state DSchG (Denkmalschutz) is out of BauO scope; BauGB §172 carries the federal hook"
+    ],
+    "fetched_at": "2026-05-27"
+  },
+  "matrix": {
+    "bw": {
+      "T-01": {
+        "tier": "secondary-mirror",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": [
+          "pv_pflicht"
+        ]
+      },
+      "T-02": {
+        "tier": "secondary-mirror",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": [
+          "pv_pflicht"
+        ]
+      },
+      "T-03": {
+        "tier": "secondary-mirror",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": []
+      },
+      "T-04": {
+        "tier": "secondary-mirror",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": []
+      },
+      "T-05": {
+        "tier": "secondary-mirror",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": []
+      },
+      "T-06": {
+        "tier": "secondary-mirror",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": []
+      },
+      "T-07": {
+        "tier": "secondary-mirror",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": []
+      },
+      "T-08": {
+        "tier": "secondary-mirror",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": []
+      }
+    },
+    "bayern": {
+      "T-01": {
+        "tier": "primary-source",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": []
+      },
+      "T-02": {
+        "tier": "primary-source",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": []
+      },
+      "T-03": {
+        "tier": "primary-source",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": []
+      },
+      "T-04": {
+        "tier": "primary-source",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": []
+      },
+      "T-05": {
+        "tier": "primary-source",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": []
+      },
+      "T-06": {
+        "tier": "primary-source",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": []
+      },
+      "T-07": {
+        "tier": "primary-source",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": []
+      },
+      "T-08": {
+        "tier": "primary-source",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": []
+      }
+    },
+    "berlin": {
+      "T-01": {
+        "tier": "secondary-mirror",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": [
+          "pv_pflicht"
+        ]
+      },
+      "T-02": {
+        "tier": "secondary-mirror",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": [
+          "pv_pflicht"
+        ]
+      },
+      "T-03": {
+        "tier": "secondary-mirror",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": [
+          "nutzungsaenderung"
+        ]
+      },
+      "T-04": {
+        "tier": "secondary-mirror",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": [
+          "nutzungsaenderung"
+        ]
+      },
+      "T-05": {
+        "tier": "secondary-mirror",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": []
+      },
+      "T-06": {
+        "tier": "secondary-mirror",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": []
+      },
+      "T-07": {
+        "tier": "secondary-mirror",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": []
+      },
+      "T-08": {
+        "tier": "secondary-mirror",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": []
+      }
+    },
+    "brandenburg": {
+      "T-01": {
+        "tier": "secondary-mirror",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": []
+      },
+      "T-02": {
+        "tier": "secondary-mirror",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": []
+      },
+      "T-03": {
+        "tier": "secondary-mirror",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": [
+          "nutzungsaenderung"
+        ]
+      },
+      "T-04": {
+        "tier": "secondary-mirror",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": [
+          "nutzungsaenderung"
+        ]
+      },
+      "T-05": {
+        "tier": "secondary-mirror",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": []
+      },
+      "T-06": {
+        "tier": "secondary-mirror",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": []
+      },
+      "T-07": {
+        "tier": "secondary-mirror",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": []
+      },
+      "T-08": {
+        "tier": "secondary-mirror",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": []
+      }
+    },
+    "bremen": {
+      "T-01": {
+        "tier": "secondary-mirror",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": [
+          "pv_pflicht"
+        ]
+      },
+      "T-02": {
+        "tier": "secondary-mirror",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": [
+          "pv_pflicht"
+        ]
+      },
+      "T-03": {
+        "tier": "secondary-mirror",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": [
+          "nutzungsaenderung"
+        ]
+      },
+      "T-04": {
+        "tier": "secondary-mirror",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": [
+          "nutzungsaenderung"
+        ]
+      },
+      "T-05": {
+        "tier": "secondary-mirror",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": []
+      },
+      "T-06": {
+        "tier": "secondary-mirror",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": []
+      },
+      "T-07": {
+        "tier": "secondary-mirror",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": []
+      },
+      "T-08": {
+        "tier": "secondary-mirror",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": []
+      }
+    },
+    "hamburg": {
+      "T-01": {
+        "tier": "secondary-mirror",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": [
+          "pv_pflicht"
+        ]
+      },
+      "T-02": {
+        "tier": "secondary-mirror",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": [
+          "pv_pflicht"
+        ]
+      },
+      "T-03": {
+        "tier": "secondary-mirror",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": [
+          "nutzungsaenderung"
+        ]
+      },
+      "T-04": {
+        "tier": "secondary-mirror",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": [
+          "nutzungsaenderung"
+        ]
+      },
+      "T-05": {
+        "tier": "secondary-mirror",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": []
+      },
+      "T-06": {
+        "tier": "secondary-mirror",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": []
+      },
+      "T-07": {
+        "tier": "secondary-mirror",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": []
+      },
+      "T-08": {
+        "tier": "secondary-mirror",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": []
+      }
+    },
+    "hessen": {
+      "T-01": {
+        "tier": "secondary-mirror",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": [
+          "pv_pflicht"
+        ]
+      },
+      "T-02": {
+        "tier": "secondary-mirror",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": [
+          "pv_pflicht"
+        ]
+      },
+      "T-03": {
+        "tier": "secondary-mirror",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": []
+      },
+      "T-04": {
+        "tier": "secondary-mirror",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": []
+      },
+      "T-05": {
+        "tier": "secondary-mirror",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": []
+      },
+      "T-06": {
+        "tier": "secondary-mirror",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": []
+      },
+      "T-07": {
+        "tier": "secondary-mirror",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": []
+      },
+      "T-08": {
+        "tier": "secondary-mirror",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": []
+      }
+    },
+    "mv": {
+      "T-01": {
+        "tier": "secondary-mirror",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": [
+          "pv_pflicht"
+        ]
+      },
+      "T-02": {
+        "tier": "secondary-mirror",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": [
+          "pv_pflicht"
+        ]
+      },
+      "T-03": {
+        "tier": "secondary-mirror",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": [
+          "nutzungsaenderung"
+        ]
+      },
+      "T-04": {
+        "tier": "secondary-mirror",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": [
+          "nutzungsaenderung"
+        ]
+      },
+      "T-05": {
+        "tier": "secondary-mirror",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": []
+      },
+      "T-06": {
+        "tier": "secondary-mirror",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": []
+      },
+      "T-07": {
+        "tier": "secondary-mirror",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": []
+      },
+      "T-08": {
+        "tier": "secondary-mirror",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": []
+      }
+    },
+    "niedersachsen": {
+      "T-01": {
+        "tier": "secondary-mirror",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": [
+          "pv_pflicht"
+        ]
+      },
+      "T-02": {
+        "tier": "secondary-mirror",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": [
+          "pv_pflicht"
+        ]
+      },
+      "T-03": {
+        "tier": "secondary-mirror",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": []
+      },
+      "T-04": {
+        "tier": "secondary-mirror",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": []
+      },
+      "T-05": {
+        "tier": "secondary-mirror",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": []
+      },
+      "T-06": {
+        "tier": "secondary-mirror",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": []
+      },
+      "T-07": {
+        "tier": "secondary-mirror",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": []
+      },
+      "T-08": {
+        "tier": "secondary-mirror",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": []
+      }
+    },
+    "nrw": {
+      "T-01": {
+        "tier": "primary-source",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": [
+          "pv_pflicht"
+        ]
+      },
+      "T-02": {
+        "tier": "primary-source",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": [
+          "pv_pflicht"
+        ]
+      },
+      "T-03": {
+        "tier": "primary-source",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": [
+          "nutzungsaenderung"
+        ]
+      },
+      "T-04": {
+        "tier": "primary-source",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": [
+          "nutzungsaenderung"
+        ]
+      },
+      "T-05": {
+        "tier": "primary-source",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": []
+      },
+      "T-06": {
+        "tier": "primary-source",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": []
+      },
+      "T-07": {
+        "tier": "primary-source",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": []
+      },
+      "T-08": {
+        "tier": "primary-source",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": []
+      }
+    },
+    "rlp": {
+      "T-01": {
+        "tier": "secondary-mirror",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": [
+          "pv_pflicht"
+        ]
+      },
+      "T-02": {
+        "tier": "secondary-mirror",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": [
+          "pv_pflicht"
+        ]
+      },
+      "T-03": {
+        "tier": "secondary-mirror",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": [
+          "nutzungsaenderung"
+        ]
+      },
+      "T-04": {
+        "tier": "secondary-mirror",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": [
+          "nutzungsaenderung"
+        ]
+      },
+      "T-05": {
+        "tier": "secondary-mirror",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": []
+      },
+      "T-06": {
+        "tier": "secondary-mirror",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": []
+      },
+      "T-07": {
+        "tier": "secondary-mirror",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": []
+      },
+      "T-08": {
+        "tier": "secondary-mirror",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": []
+      }
+    },
+    "saarland": {
+      "T-01": {
+        "tier": "secondary-mirror",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": []
+      },
+      "T-02": {
+        "tier": "secondary-mirror",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": []
+      },
+      "T-03": {
+        "tier": "secondary-mirror",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": []
+      },
+      "T-04": {
+        "tier": "secondary-mirror",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": []
+      },
+      "T-05": {
+        "tier": "secondary-mirror",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": []
+      },
+      "T-06": {
+        "tier": "secondary-mirror",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": []
+      },
+      "T-07": {
+        "tier": "secondary-mirror",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": []
+      },
+      "T-08": {
+        "tier": "secondary-mirror",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": []
+      }
+    },
+    "sachsen": {
+      "T-01": {
+        "tier": "secondary-mirror (≥1 primary)",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": [
+          "pv_pflicht"
+        ]
+      },
+      "T-02": {
+        "tier": "secondary-mirror (≥1 primary)",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": [
+          "pv_pflicht"
+        ]
+      },
+      "T-03": {
+        "tier": "secondary-mirror (≥1 primary)",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": [
+          "nutzungsaenderung"
+        ]
+      },
+      "T-04": {
+        "tier": "secondary-mirror (≥1 primary)",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": [
+          "nutzungsaenderung"
+        ]
+      },
+      "T-05": {
+        "tier": "secondary-mirror (≥1 primary)",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": []
+      },
+      "T-06": {
+        "tier": "secondary-mirror (≥1 primary)",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": []
+      },
+      "T-07": {
+        "tier": "secondary-mirror (≥1 primary)",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": []
+      },
+      "T-08": {
+        "tier": "secondary-mirror (≥1 primary)",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": []
+      }
+    },
+    "sachsen-anhalt": {
+      "T-01": {
+        "tier": "secondary-mirror",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": [
+          "pv_pflicht"
+        ]
+      },
+      "T-02": {
+        "tier": "secondary-mirror",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": [
+          "pv_pflicht"
+        ]
+      },
+      "T-03": {
+        "tier": "secondary-mirror",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": [
+          "nutzungsaenderung"
+        ]
+      },
+      "T-04": {
+        "tier": "secondary-mirror",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": [
+          "nutzungsaenderung"
+        ]
+      },
+      "T-05": {
+        "tier": "secondary-mirror",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": []
+      },
+      "T-06": {
+        "tier": "secondary-mirror",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": []
+      },
+      "T-07": {
+        "tier": "secondary-mirror",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": []
+      },
+      "T-08": {
+        "tier": "secondary-mirror",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": []
+      }
+    },
+    "sh": {
+      "T-01": {
+        "tier": "secondary-mirror",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": [
+          "pv_pflicht"
+        ]
+      },
+      "T-02": {
+        "tier": "secondary-mirror",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": [
+          "pv_pflicht"
+        ]
+      },
+      "T-03": {
+        "tier": "secondary-mirror",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": [
+          "nutzungsaenderung"
+        ]
+      },
+      "T-04": {
+        "tier": "secondary-mirror",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": [
+          "nutzungsaenderung"
+        ]
+      },
+      "T-05": {
+        "tier": "secondary-mirror",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": []
+      },
+      "T-06": {
+        "tier": "secondary-mirror",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": []
+      },
+      "T-07": {
+        "tier": "secondary-mirror",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": []
+      },
+      "T-08": {
+        "tier": "secondary-mirror",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": []
+      }
+    },
+    "thueringen": {
+      "T-01": {
+        "tier": "secondary-mirror",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": [
+          "pv_pflicht"
+        ]
+      },
+      "T-02": {
+        "tier": "secondary-mirror",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": [
+          "pv_pflicht"
+        ]
+      },
+      "T-03": {
+        "tier": "secondary-mirror",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": [
+          "nutzungsaenderung"
+        ]
+      },
+      "T-04": {
+        "tier": "secondary-mirror",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": [
+          "nutzungsaenderung"
+        ]
+      },
+      "T-05": {
+        "tier": "secondary-mirror",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": []
+      },
+      "T-06": {
+        "tier": "secondary-mirror",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": []
+      },
+      "T-07": {
+        "tier": "secondary-mirror",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": []
+      },
+      "T-08": {
+        "tier": "secondary-mirror",
+        "covered": true,
+        "core_missing": [],
+        "optional_not_in_bauo": []
+      }
+    }
+  }
+}

@@ -1,0 +1,825 @@
+{
+  "_meta": {
+    "bundesland": "mv",
+    "law_short": "LBauO M-V",
+    "law_full_de": "Landesbauordnung Mecklenburg-Vorpommern (LBauO M-V)",
+    "marker": "§",
+    "current_version_stand": "2015-10-15",
+    "last_amendment_de": "Fassung der Bekanntmachung vom 15. Oktober 2015 (GVOBl. M-V S. 344), zuletzt geändert durch Artikel 2 des Gesetzes vom 18. März 2025 (GVOBl. M-V S. 130)",
+    "sources": ["https://www.baunormenlexikon.de/norm/lbauo-m-v/3be225ec-975f-41ec-864c-d96eaa9cc918"],
+    "verification_summary": { "primary-source": 0, "secondary-mirror": 97, "unverified": 0 },
+    "notes": "No inline § citation for M-V in src/legal/ this session; full Inhaltsübersicht captured for Phase B coverage."
+  },
+  "paragraphs": {
+    "1": {
+      "marker": "§ 1",
+      "heading_de_official": "Anwendungsbereich",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbauo-m-v/3be225ec-975f-41ec-864c-d96eaa9cc918",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "2": {
+      "marker": "§ 2",
+      "heading_de_official": "Begriffe",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbauo-m-v/3be225ec-975f-41ec-864c-d96eaa9cc918",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": ["gebaeudeklasse"],
+      "scope_summary_de": "Begriffsbestimmungen der Bauordnung, insbesondere Gebäudeklassen, Geschosse und Sonderbauten.",
+      "scope_summary_en": "Statutory definitions, in particular building classes, storeys and special buildings."
+    },
+    "3": {
+      "marker": "§ 3",
+      "heading_de_official": "Allgemeine Anforderungen",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbauo-m-v/3be225ec-975f-41ec-864c-d96eaa9cc918",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "4": {
+      "marker": "§ 4",
+      "heading_de_official": "Bebauung der Grundstücke mit Gebäuden",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbauo-m-v/3be225ec-975f-41ec-864c-d96eaa9cc918",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "5": {
+      "marker": "§ 5",
+      "heading_de_official": "Zugänge und Zufahrten auf den Grundstücken",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbauo-m-v/3be225ec-975f-41ec-864c-d96eaa9cc918",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "6": {
+      "marker": "§ 6",
+      "heading_de_official": "Abstandsflächen, Abstände",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbauo-m-v/3be225ec-975f-41ec-864c-d96eaa9cc918",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": ["abstandsflaechen"],
+      "scope_summary_de": "Regelt die einzuhaltenden Abstandsflächen und Abstände vor Außenwänden gegenüber Nachbargrenzen.",
+      "scope_summary_en": "Governs the setback areas and distances required in front of exterior walls toward neighbouring boundaries.",
+      "procedure_relevance": "applies-to: T-01,T-02,T-05,T-07"
+    },
+    "7": {
+      "marker": "§ 7",
+      "heading_de_official": "Teilung von Grundstücken",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbauo-m-v/3be225ec-975f-41ec-864c-d96eaa9cc918",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "8": {
+      "marker": "§ 8",
+      "heading_de_official": "Nicht überbaute Flächen der bebauten Grundstücke, Kinderspielplätze",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbauo-m-v/3be225ec-975f-41ec-864c-d96eaa9cc918",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "9": {
+      "marker": "§ 9",
+      "heading_de_official": "Gestaltung",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbauo-m-v/3be225ec-975f-41ec-864c-d96eaa9cc918",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "10": {
+      "marker": "§ 10",
+      "heading_de_official": "Anlagen der Außenwerbung, Warenautomaten",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbauo-m-v/3be225ec-975f-41ec-864c-d96eaa9cc918",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "11": {
+      "marker": "§ 11",
+      "heading_de_official": "Baustelle",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbauo-m-v/3be225ec-975f-41ec-864c-d96eaa9cc918",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "12": {
+      "marker": "§ 12",
+      "heading_de_official": "Standsicherheit",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbauo-m-v/3be225ec-975f-41ec-864c-d96eaa9cc918",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": ["bautechnische_nachweise"],
+      "scope_summary_de": "Verlangt die Standsicherheit jeder baulichen Anlage und die Tragfähigkeit des Baugrunds.",
+      "scope_summary_en": "Requires the structural stability of every building and the load-bearing capacity of the ground."
+    },
+    "13": {
+      "marker": "§ 13",
+      "heading_de_official": "Schutz gegen schädliche Einflüsse",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbauo-m-v/3be225ec-975f-41ec-864c-d96eaa9cc918",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "14": {
+      "marker": "§ 14",
+      "heading_de_official": "Brandschutz",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbauo-m-v/3be225ec-975f-41ec-864c-d96eaa9cc918",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": ["brandschutz"],
+      "scope_summary_de": "Allgemeine Grundpflicht zum vorbeugenden Brandschutz baulicher Anlagen.",
+      "scope_summary_en": "General duty of preventive fire protection for buildings."
+    },
+    "15": {
+      "marker": "§ 15",
+      "heading_de_official": "Wärme-, Schall-, Erschütterungsschutz",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbauo-m-v/3be225ec-975f-41ec-864c-d96eaa9cc918",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "16": {
+      "marker": "§ 16",
+      "heading_de_official": "Verkehrssicherheit",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbauo-m-v/3be225ec-975f-41ec-864c-d96eaa9cc918",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "16a": {
+      "marker": "§ 16a",
+      "heading_de_official": "Bauarten",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbauo-m-v/3be225ec-975f-41ec-864c-d96eaa9cc918",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "16b": {
+      "marker": "§ 16b",
+      "heading_de_official": "Allgemeine Anforderungen für die Verwendung von Bauprodukten",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbauo-m-v/3be225ec-975f-41ec-864c-d96eaa9cc918",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "16c": {
+      "marker": "§ 16c",
+      "heading_de_official": "Anforderungen für die Verwendung von CE-gekennzeichneten Bauprodukten",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbauo-m-v/3be225ec-975f-41ec-864c-d96eaa9cc918",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "17": {
+      "marker": "§ 17",
+      "heading_de_official": "Verwendbarkeitsnachweise",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbauo-m-v/3be225ec-975f-41ec-864c-d96eaa9cc918",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "18": {
+      "marker": "§ 18",
+      "heading_de_official": "Allgemeine bauaufsichtliche Zulassung",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbauo-m-v/3be225ec-975f-41ec-864c-d96eaa9cc918",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "19": {
+      "marker": "§ 19",
+      "heading_de_official": "Allgemeines bauaufsichtliches Prüfzeugnis",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbauo-m-v/3be225ec-975f-41ec-864c-d96eaa9cc918",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "20": {
+      "marker": "§ 20",
+      "heading_de_official": "Nachweis der Verwendbarkeit von Bauprodukten im Einzelfall",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbauo-m-v/3be225ec-975f-41ec-864c-d96eaa9cc918",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "21": {
+      "marker": "§ 21",
+      "heading_de_official": "Übereinstimmungsbestätigung",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbauo-m-v/3be225ec-975f-41ec-864c-d96eaa9cc918",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "22": {
+      "marker": "§ 22",
+      "heading_de_official": "Übereinstimmungserklärung des Herstellers",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbauo-m-v/3be225ec-975f-41ec-864c-d96eaa9cc918",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "23": {
+      "marker": "§ 23",
+      "heading_de_official": "Zertifizierung",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbauo-m-v/3be225ec-975f-41ec-864c-d96eaa9cc918",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "24": {
+      "marker": "§ 24",
+      "heading_de_official": "Prüf-, Zertifizierungs-, Überwachungsstellen",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbauo-m-v/3be225ec-975f-41ec-864c-d96eaa9cc918",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "25": {
+      "marker": "§ 25",
+      "heading_de_official": "Besondere Sachkunde- und Sorgfaltsanforderungen",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbauo-m-v/3be225ec-975f-41ec-864c-d96eaa9cc918",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "26": {
+      "marker": "§ 26",
+      "heading_de_official": "Allgemeine Anforderungen an das Brandverhalten von Baustoffen und Bauteilen",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbauo-m-v/3be225ec-975f-41ec-864c-d96eaa9cc918",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": ["brandschutz"],
+      "scope_summary_de": "Bestimmt die Brandverhaltensanforderungen an Baustoffe und Bauteile nach Gebäudeklasse.",
+      "scope_summary_en": "Sets fire-behaviour requirements for building materials and components by building class."
+    },
+    "27": {
+      "marker": "§ 27",
+      "heading_de_official": "Tragende Wände, Stützen",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbauo-m-v/3be225ec-975f-41ec-864c-d96eaa9cc918",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "28": {
+      "marker": "§ 28",
+      "heading_de_official": "Außenwände",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbauo-m-v/3be225ec-975f-41ec-864c-d96eaa9cc918",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "29": {
+      "marker": "§ 29",
+      "heading_de_official": "Trennwände",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbauo-m-v/3be225ec-975f-41ec-864c-d96eaa9cc918",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "30": {
+      "marker": "§ 30",
+      "heading_de_official": "Brandwände",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbauo-m-v/3be225ec-975f-41ec-864c-d96eaa9cc918",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "31": {
+      "marker": "§ 31",
+      "heading_de_official": "Decken",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbauo-m-v/3be225ec-975f-41ec-864c-d96eaa9cc918",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "32": {
+      "marker": "§ 32",
+      "heading_de_official": "Dächer",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbauo-m-v/3be225ec-975f-41ec-864c-d96eaa9cc918",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "33": {
+      "marker": "§ 33",
+      "heading_de_official": "Erster und zweiter Rettungsweg",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbauo-m-v/3be225ec-975f-41ec-864c-d96eaa9cc918",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "34": {
+      "marker": "§ 34",
+      "heading_de_official": "Treppen",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbauo-m-v/3be225ec-975f-41ec-864c-d96eaa9cc918",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "35": {
+      "marker": "§ 35",
+      "heading_de_official": "Notwendige Treppenräume, Ausgänge",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbauo-m-v/3be225ec-975f-41ec-864c-d96eaa9cc918",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "36": {
+      "marker": "§ 36",
+      "heading_de_official": "Notwendige Flure, offene Gänge",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbauo-m-v/3be225ec-975f-41ec-864c-d96eaa9cc918",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "37": {
+      "marker": "§ 37",
+      "heading_de_official": "Fenster, Türen, sonstige Öffnungen",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbauo-m-v/3be225ec-975f-41ec-864c-d96eaa9cc918",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "38": {
+      "marker": "§ 38",
+      "heading_de_official": "Umwehrungen",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbauo-m-v/3be225ec-975f-41ec-864c-d96eaa9cc918",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "39": {
+      "marker": "§ 39",
+      "heading_de_official": "Aufzüge",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbauo-m-v/3be225ec-975f-41ec-864c-d96eaa9cc918",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "40": {
+      "marker": "§ 40",
+      "heading_de_official": "Leitungsanlagen, Installationsschächte und –kanäle",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbauo-m-v/3be225ec-975f-41ec-864c-d96eaa9cc918",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "41": {
+      "marker": "§ 41",
+      "heading_de_official": "Lüftungsanlagen",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbauo-m-v/3be225ec-975f-41ec-864c-d96eaa9cc918",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "42": {
+      "marker": "§ 42",
+      "heading_de_official": "Feuerungsanlagen, sonstige Anlagen zur Wärmeerzeugung, Brennstoffversorgung",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbauo-m-v/3be225ec-975f-41ec-864c-d96eaa9cc918",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "43": {
+      "marker": "§ 43",
+      "heading_de_official": "Sanitäre Anlagen, Wasserzähler",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbauo-m-v/3be225ec-975f-41ec-864c-d96eaa9cc918",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "44": {
+      "marker": "§ 44",
+      "heading_de_official": "Kleinkläranlagen, Gruben",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbauo-m-v/3be225ec-975f-41ec-864c-d96eaa9cc918",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "45": {
+      "marker": "§ 45",
+      "heading_de_official": "Aufbewahrung fester Abfallstoffe",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbauo-m-v/3be225ec-975f-41ec-864c-d96eaa9cc918",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "46": {
+      "marker": "§ 46",
+      "heading_de_official": "Blitzschutzanlagen",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbauo-m-v/3be225ec-975f-41ec-864c-d96eaa9cc918",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "47": {
+      "marker": "§ 47",
+      "heading_de_official": "Aufenthaltsräume",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbauo-m-v/3be225ec-975f-41ec-864c-d96eaa9cc918",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "48": {
+      "marker": "§ 48",
+      "heading_de_official": "Wohnungen",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbauo-m-v/3be225ec-975f-41ec-864c-d96eaa9cc918",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "49": {
+      "marker": "§ 49",
+      "heading_de_official": "Stellplätze, Garagen und Abstellplätze für Fahrräder",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbauo-m-v/3be225ec-975f-41ec-864c-d96eaa9cc918",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": ["stellplaetze"],
+      "scope_summary_de": "Regelt die Pflicht zur Herstellung von Stellplätzen, Garagen und Fahrrad-Abstellplätzen.",
+      "scope_summary_en": "Governs the obligation to provide parking spaces, garages and bicycle storage."
+    },
+    "50": {
+      "marker": "§ 50",
+      "heading_de_official": "Barrierefreies Bauen",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbauo-m-v/3be225ec-975f-41ec-864c-d96eaa9cc918",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "51": {
+      "marker": "§ 51",
+      "heading_de_official": "Sonderbauten",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbauo-m-v/3be225ec-975f-41ec-864c-d96eaa9cc918",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": ["sonderbauten"],
+      "scope_summary_de": "Erlaubt besondere Anforderungen oder Erleichterungen für Sonderbauten.",
+      "scope_summary_en": "Allows special requirements or relief for special buildings."
+    },
+    "52": {
+      "marker": "§ 52",
+      "heading_de_official": "Grundpflichten",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbauo-m-v/3be225ec-975f-41ec-864c-d96eaa9cc918",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "53": {
+      "marker": "§ 53",
+      "heading_de_official": "Bauherr",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbauo-m-v/3be225ec-975f-41ec-864c-d96eaa9cc918",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "54": {
+      "marker": "§ 54",
+      "heading_de_official": "Entwurfsverfasser",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbauo-m-v/3be225ec-975f-41ec-864c-d96eaa9cc918",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "55": {
+      "marker": "§ 55",
+      "heading_de_official": "Unternehmer",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbauo-m-v/3be225ec-975f-41ec-864c-d96eaa9cc918",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "56": {
+      "marker": "§ 56",
+      "heading_de_official": "Bauleiter",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbauo-m-v/3be225ec-975f-41ec-864c-d96eaa9cc918",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "57": {
+      "marker": "§ 57",
+      "heading_de_official": "Aufbau und Zuständigkeit der Bauaufsichtsbehörden",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbauo-m-v/3be225ec-975f-41ec-864c-d96eaa9cc918",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "58": {
+      "marker": "§ 58",
+      "heading_de_official": "Aufgaben und Befugnisse der Bauaufsichtsbehörden",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbauo-m-v/3be225ec-975f-41ec-864c-d96eaa9cc918",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "59": {
+      "marker": "§ 59",
+      "heading_de_official": "Grundsatz",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbauo-m-v/3be225ec-975f-41ec-864c-d96eaa9cc918",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "60": {
+      "marker": "§ 60",
+      "heading_de_official": "Vorrang anderer Gestattungsverfahren",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbauo-m-v/3be225ec-975f-41ec-864c-d96eaa9cc918",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "61": {
+      "marker": "§ 61",
+      "heading_de_official": "Verfahrensfreie Bauvorhaben, Beseitigung von Anlagen",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbauo-m-v/3be225ec-975f-41ec-864c-d96eaa9cc918",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": ["verfahrensfrei", "abbruch_beseitigung"],
+      "scope_summary_de": "Listet verfahrensfreie Bauvorhaben und die verfahrensfreie Beseitigung von Anlagen.",
+      "scope_summary_en": "Lists procedure-free building projects and the procedure-free removal of structures."
+    },
+    "62": {
+      "marker": "§ 62",
+      "heading_de_official": "Genehmigungsfreistellung",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbauo-m-v/3be225ec-975f-41ec-864c-d96eaa9cc918",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": ["verfahren_freistellung"],
+      "scope_summary_de": "Regelt das Genehmigungsfreistellungsverfahren für bestimmte Vorhaben im Geltungsbereich eines Bebauungsplans.",
+      "scope_summary_en": "Governs the notification-exemption procedure for certain projects within the scope of a development plan.",
+      "procedure_relevance": "applies-to: T-01,T-02"
+    },
+    "63": {
+      "marker": "§ 63",
+      "heading_de_official": "Vereinfachtes Baugenehmigungsverfahren",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbauo-m-v/3be225ec-975f-41ec-864c-d96eaa9cc918",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": ["verfahren_vereinfacht"],
+      "scope_summary_de": "Regelt das vereinfachte Baugenehmigungsverfahren mit reduziertem Prüfumfang.",
+      "scope_summary_en": "Governs the simplified building-permit procedure with reduced scope of review.",
+      "procedure_relevance": "applies-to: T-01,T-02,T-07"
+    },
+    "64": {
+      "marker": "§ 64",
+      "heading_de_official": "Baugenehmigungsverfahren",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbauo-m-v/3be225ec-975f-41ec-864c-d96eaa9cc918",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": ["verfahren_regulaer"],
+      "scope_summary_de": "Regelt das reguläre (volle) Baugenehmigungsverfahren mit umfassender Prüfung.",
+      "scope_summary_en": "Governs the regular (full) building-permit procedure with comprehensive review.",
+      "procedure_relevance": "applies-to: T-04,T-08"
+    },
+    "65": {
+      "marker": "§ 65",
+      "heading_de_official": "Bauvorlageberechtigung",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbauo-m-v/3be225ec-975f-41ec-864c-d96eaa9cc918",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": ["bauvorlageberechtigung"],
+      "scope_summary_de": "Bestimmt, wer bauvorlageberechtigt ist und Bauvorlagen unterzeichnen darf.",
+      "scope_summary_en": "Determines who is entitled to prepare and sign building submission documents."
+    },
+    "65a": {
+      "marker": "§ 65a",
+      "heading_de_official": "Voraussetzung für die Eintragung in die Liste nach § 65 Absatz 2 Nummer 2",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbauo-m-v/3be225ec-975f-41ec-864c-d96eaa9cc918",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "65b": {
+      "marker": "§ 65b",
+      "heading_de_official": "Eintragungsverfahren für Antragstellende nach § 65a Absatz 3",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbauo-m-v/3be225ec-975f-41ec-864c-d96eaa9cc918",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "65c": {
+      "marker": "§ 65c",
+      "heading_de_official": "Ausgleichsmaßnahmen",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbauo-m-v/3be225ec-975f-41ec-864c-d96eaa9cc918",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "65d": {
+      "marker": "§ 65d",
+      "heading_de_official": "Vorübergehende und gelegentliche Dienstleistungserbringung von bauvorlageberechtigten Ingenieuren, Anzeigeverfahren",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbauo-m-v/3be225ec-975f-41ec-864c-d96eaa9cc918",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "66": {
+      "marker": "§ 66",
+      "heading_de_official": "Bautechnische Nachweise",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbauo-m-v/3be225ec-975f-41ec-864c-d96eaa9cc918",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": ["bautechnische_nachweise"],
+      "scope_summary_de": "Regelt die bautechnischen Nachweise, insbesondere Standsicherheit und Brandschutz.",
+      "scope_summary_en": "Governs the structural-engineering proofs, in particular stability and fire safety."
+    },
+    "67": {
+      "marker": "§ 67",
+      "heading_de_official": "Abweichungen",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbauo-m-v/3be225ec-975f-41ec-864c-d96eaa9cc918",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "68": {
+      "marker": "§ 68",
+      "heading_de_official": "Bauantrag, Bauvorlagen",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbauo-m-v/3be225ec-975f-41ec-864c-d96eaa9cc918",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": ["bauantrag_bauvorlagen"],
+      "scope_summary_de": "Bestimmt Form und Inhalt des Bauantrags und der einzureichenden Bauvorlagen.",
+      "scope_summary_en": "Determines the form and content of the building application and the documents to be submitted."
+    },
+    "69": {
+      "marker": "§ 69",
+      "heading_de_official": "Behandlung des Bauantrags",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbauo-m-v/3be225ec-975f-41ec-864c-d96eaa9cc918",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "70": {
+      "marker": "§ 70",
+      "heading_de_official": "Beteiligung der Nachbarn und der Öffentlichkeit",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbauo-m-v/3be225ec-975f-41ec-864c-d96eaa9cc918",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "71": {
+      "marker": "§ 71",
+      "heading_de_official": "Ersetzung des gemeindlichen Einvernehmens",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbauo-m-v/3be225ec-975f-41ec-864c-d96eaa9cc918",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "72": {
+      "marker": "§ 72",
+      "heading_de_official": "Baugenehmigung, Baubeginn",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbauo-m-v/3be225ec-975f-41ec-864c-d96eaa9cc918",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "72a": {
+      "marker": "§ 72a",
+      "heading_de_official": "Typengenehmigung",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbauo-m-v/3be225ec-975f-41ec-864c-d96eaa9cc918",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "73": {
+      "marker": "§ 73",
+      "heading_de_official": "Geltungsdauer der Baugenehmigung",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbauo-m-v/3be225ec-975f-41ec-864c-d96eaa9cc918",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "74": {
+      "marker": "§ 74",
+      "heading_de_official": "Teilbaugenehmigung",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbauo-m-v/3be225ec-975f-41ec-864c-d96eaa9cc918",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "75": {
+      "marker": "§ 75",
+      "heading_de_official": "Vorbescheid",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbauo-m-v/3be225ec-975f-41ec-864c-d96eaa9cc918",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "76": {
+      "marker": "§ 76",
+      "heading_de_official": "Genehmigung Fliegender Bauten",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbauo-m-v/3be225ec-975f-41ec-864c-d96eaa9cc918",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "77": {
+      "marker": "§ 77",
+      "heading_de_official": "Bauaufsichtliche Zustimmung",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbauo-m-v/3be225ec-975f-41ec-864c-d96eaa9cc918",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "78": {
+      "marker": "§ 78",
+      "heading_de_official": "Verbot unrechtmäßig gekennzeichneter Bauprodukte",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbauo-m-v/3be225ec-975f-41ec-864c-d96eaa9cc918",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "79": {
+      "marker": "§ 79",
+      "heading_de_official": "Einstellung von Arbeiten",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbauo-m-v/3be225ec-975f-41ec-864c-d96eaa9cc918",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "80": {
+      "marker": "§ 80",
+      "heading_de_official": "Beseitigung von Anlagen, Nutzungsuntersagung",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbauo-m-v/3be225ec-975f-41ec-864c-d96eaa9cc918",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": ["abbruch_beseitigung"],
+      "scope_summary_de": "Ermächtigt zur Beseitigung baurechtswidriger Anlagen und zur Untersagung ihrer Nutzung.",
+      "scope_summary_en": "Empowers the authority to order removal of unlawful structures and to prohibit their use."
+    },
+    "80a": {
+      "marker": "§ 80a",
+      "heading_de_official": "Anpassung von Anlagen, Anpassungsverlangen",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbauo-m-v/3be225ec-975f-41ec-864c-d96eaa9cc918",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "81": {
+      "marker": "§ 81",
+      "heading_de_official": "Bauüberwachung",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbauo-m-v/3be225ec-975f-41ec-864c-d96eaa9cc918",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "82": {
+      "marker": "§ 82",
+      "heading_de_official": "Bauzustandsanzeigen, Aufnahme der Nutzung",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbauo-m-v/3be225ec-975f-41ec-864c-d96eaa9cc918",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "83": {
+      "marker": "§ 83",
+      "heading_de_official": "Baulasten, Baulastenverzeichnis",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbauo-m-v/3be225ec-975f-41ec-864c-d96eaa9cc918",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "84": {
+      "marker": "§ 84",
+      "heading_de_official": "Ordnungswidrigkeiten",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbauo-m-v/3be225ec-975f-41ec-864c-d96eaa9cc918",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "85": {
+      "marker": "§ 85",
+      "heading_de_official": "Verordnungsermächtigungen",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbauo-m-v/3be225ec-975f-41ec-864c-d96eaa9cc918",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "85a": {
+      "marker": "§ 85a",
+      "heading_de_official": "Technische Baubestimmungen",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbauo-m-v/3be225ec-975f-41ec-864c-d96eaa9cc918",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "86": {
+      "marker": "§ 86",
+      "heading_de_official": "Örtliche Bauvorschriften",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbauo-m-v/3be225ec-975f-41ec-864c-d96eaa9cc918",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "87": {
+      "marker": "§ 87",
+      "heading_de_official": "Übergangsregelungen",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbauo-m-v/3be225ec-975f-41ec-864c-d96eaa9cc918",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    }
+  }
+}

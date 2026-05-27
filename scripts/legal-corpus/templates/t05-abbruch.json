@@ -1,0 +1,43 @@
+{
+  "template_id": "T-05",
+  "slug": "t05-abbruch",
+  "label_de": "Abbruch / Beseitigung",
+  "label_en": "Demolition / removal",
+  "_meta": {
+    "purpose": "Phase A data: federal §§ + state-§ archetypes. Phase B resolves archetype → state §. Cost/timeline SHAPE only (Phase C).",
+    "archetype_taxonomy_ref": "scripts/legal-corpus/SCHEMA.md"
+  },
+  "federal_paragraphs": [
+    { "law": "BauGB", "num": "172", "archetype": "denkmalschutz" }
+  ],
+  "state_archetypes": [
+    "abbruch_beseitigung", "denkmalschutz", "verfahrensfrei", "bauvorlageberechtigung"
+  ],
+  "procedure_routing": {
+    "description": "Removal of structures is handled by the state Abbruch/Beseitigung §. Many demolitions are verfahrensfrei or anzeigepflichtig below size/use thresholds; a monument or an Erhaltungssatzung (BauGB § 172) overrides that to a consent requirement.",
+    "rules": [
+      { "when": "freistehende Anlage unterhalb Größen-/Nutzungsschwellen, kein Denkmal, keine Erhaltungssatzung", "route": "verfahrensfrei", "note": "ggf. Abbruchanzeige je nach Land" },
+      { "when": "Denkmal betroffen", "route": "denkmalschutz", "note": "DSchG-Erlaubnis erforderlich" },
+      { "when": "Gebiet mit Erhaltungssatzung (BauGB § 172)", "route": "bauplanungsrecht", "note": "Rückbau-Genehmigung der Gemeinde" }
+    ]
+  },
+  "cost_metadata_shape": {
+    "calibrated": false,
+    "note": "Line-item keys only; EUR ranges are Phase C.",
+    "line_items": [
+      { "key": "abbruchplanung", "basis": "Fachplaner Rückbau" },
+      { "key": "schadstoffkataster", "basis": "Asbest/KMF-Erkundung bei Bestand" },
+      { "key": "entsorgung", "basis": "Verwertung/Deponie" },
+      { "key": "behoerdengebuehren", "basis": "state/municipal Kostensatzung (falls verfahrensbehaftet)" }
+    ]
+  },
+  "timeline_metadata_shape": {
+    "calibrated": false,
+    "note": "Phase keys only; durations are Phase C.",
+    "phases": [
+      { "key": "erkundung_schadstoffe" },
+      { "key": "anzeige_oder_antrag", "driver": "selected procedure_routing route" },
+      { "key": "rueckbau" }
+    ]
+  }
+}

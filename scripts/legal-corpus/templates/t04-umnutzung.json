@@ -1,0 +1,58 @@
+{
+  "template_id": "T-04",
+  "slug": "t04-umnutzung",
+  "label_de": "Nutzungsänderung / Umnutzung",
+  "label_en": "Change of use / conversion",
+  "_meta": {
+    "purpose": "Phase A data: federal §§ + state-§ archetypes. Phase B resolves archetype → state §. Cost/timeline SHAPE only (Phase C).",
+    "archetype_taxonomy_ref": "scripts/legal-corpus/SCHEMA.md"
+  },
+  "federal_paragraphs": [
+    { "law": "BauGB", "num": "30", "archetype": "bauplanungsrecht" },
+    { "law": "BauGB", "num": "31", "archetype": "bauplanungsrecht" },
+    { "law": "BauGB", "num": "34", "archetype": "bauplanungsrecht" },
+    { "law": "BauGB", "num": "35", "archetype": "bauplanungsrecht" },
+    { "law": "BauNVO", "num": "1", "archetype": "bauplanungsrecht" },
+    { "law": "BauNVO", "num": "3", "archetype": "bauplanungsrecht" },
+    { "law": "BauNVO", "num": "4", "archetype": "bauplanungsrecht" },
+    { "law": "BauNVO", "num": "5", "archetype": "bauplanungsrecht" },
+    { "law": "BauNVO", "num": "6", "archetype": "bauplanungsrecht" },
+    { "law": "BauNVO", "num": "7", "archetype": "bauplanungsrecht" },
+    { "law": "BauNVO", "num": "8", "archetype": "bauplanungsrecht" },
+    { "law": "BauNVO", "num": "9", "archetype": "bauplanungsrecht" },
+    { "law": "GEG", "num": "48", "archetype": "energie" }
+  ],
+  "state_archetypes": [
+    "nutzungsaenderung", "bauplanungsrecht", "brandschutz", "stellplaetze",
+    "bautechnische_nachweise", "verfahren_vereinfacht", "verfahren_regulaer",
+    "bauvorlageberechtigung", "bauantrag_bauvorlagen"
+  ],
+  "procedure_routing": {
+    "description": "A change of use is itself genehmigungspflichtig unless explicitly verfahrensfrei. Gebietsverträglichkeit (BauNVO) and the new use's brandschutz + Stellplatz demand drive the review depth.",
+    "rules": [
+      { "when": "Nutzungsänderung ohne Sonderbau-Eigenschaft, Gebietsverträglichkeit gegeben", "route": "verfahren_vereinfacht" },
+      { "when": "neue Nutzung erfüllt Sonderbau-Tatbestand", "route": "verfahren_regulaer" }
+    ]
+  },
+  "cost_metadata_shape": {
+    "calibrated": false,
+    "note": "Line-item keys only; EUR ranges are Phase C.",
+    "line_items": [
+      { "key": "architektenleistung", "basis": "HOAI" },
+      { "key": "brandschutzkonzept", "basis": "brandschutz archetype (neue Nutzung)" },
+      { "key": "stellplatznachweis", "basis": "Mehrbedarf neue Nutzung" },
+      { "key": "tragwerkspruefung", "basis": "structural archetype (bei Lasterhöhung)" },
+      { "key": "behoerdengebuehren", "basis": "state/municipal Kostensatzung" }
+    ]
+  },
+  "timeline_metadata_shape": {
+    "calibrated": false,
+    "note": "Phase keys only; durations are Phase C.",
+    "phases": [
+      { "key": "machbarkeit_bauplanungsrecht", "driver": "bauplanungsrecht" },
+      { "key": "antragstellung", "driver": "bauantrag_bauvorlagen" },
+      { "key": "behoerdenpruefung", "driver": "selected procedure_routing route" },
+      { "key": "nutzungsaufnahme" }
+    ]
+  }
+}

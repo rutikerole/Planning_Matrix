@@ -1,0 +1,55 @@
+{
+  "template_id": "T-01",
+  "slug": "t01-neubau-efh",
+  "label_de": "Neubau Einfamilienhaus",
+  "label_en": "New single-family house",
+  "_meta": {
+    "purpose": "Phase A data: which federal §§ apply directly + which state-§ ARCHETYPES this template touches. Phase B resolves archetype → that Bundesland's § via states/<code>.json archetype tags. Cost/timeline are SHAPE only — values are Phase C.",
+    "archetype_taxonomy_ref": "scripts/legal-corpus/SCHEMA.md"
+  },
+  "federal_paragraphs": [
+    { "law": "BauGB", "num": "30", "archetype": "bauplanungsrecht" },
+    { "law": "BauGB", "num": "34", "archetype": "bauplanungsrecht" },
+    { "law": "BauGB", "num": "35", "archetype": "bauplanungsrecht" },
+    { "law": "BauNVO", "num": "16", "archetype": "bauplanungsrecht" },
+    { "law": "BauNVO", "num": "19", "archetype": "bauplanungsrecht" },
+    { "law": "BauNVO", "num": "20", "archetype": "bauplanungsrecht" },
+    { "law": "GEG", "num": "10", "archetype": "energie" },
+    { "law": "GEG", "num": "80", "archetype": "energie" }
+  ],
+  "state_archetypes": [
+    "bauplanungsrecht", "gebaeudeklasse", "abstandsflaechen",
+    "verfahren_freistellung", "verfahren_vereinfacht", "verfahren_regulaer",
+    "bauvorlageberechtigung", "bautechnische_nachweise",
+    "stellplaetze", "pv_pflicht", "energie", "bauantrag_bauvorlagen"
+  ],
+  "procedure_routing": {
+    "description": "Bauplanungsrecht (BauGB §§ 30/34/35) first, then Bauordnungsrecht procedure. Typical EFH = GK 1.",
+    "rules": [
+      { "when": "qualifizierter B-Plan + Wohngebäude + Festsetzungen eingehalten + gemeindliches Einvernehmen", "route": "verfahren_freistellung" },
+      { "when": "kein Freistellungstatbestand", "route": "verfahren_vereinfacht" },
+      { "when": "Sonderbau-Tatbestand", "route": "verfahren_regulaer" }
+    ]
+  },
+  "cost_metadata_shape": {
+    "calibrated": false,
+    "note": "Line-item keys only; EUR ranges are Phase C (Destatis/HOAI calibration).",
+    "line_items": [
+      { "key": "architektenleistung", "basis": "HOAI LP 1-4" },
+      { "key": "tragwerksplanung", "basis": "structural archetype" },
+      { "key": "vermessung", "basis": "amtlicher Lageplan" },
+      { "key": "energienachweis", "basis": "GEG" },
+      { "key": "behoerdengebuehren", "basis": "state/municipal Kostensatzung" }
+    ]
+  },
+  "timeline_metadata_shape": {
+    "calibrated": false,
+    "note": "Phase keys only; durations are Phase C (per-Bauamt practice).",
+    "phases": [
+      { "key": "vorplanung" },
+      { "key": "antragstellung", "driver": "bauantrag_bauvorlagen" },
+      { "key": "behoerdenpruefung", "driver": "selected procedure_routing route" },
+      { "key": "baufreigabe" }
+    ]
+  }
+}
