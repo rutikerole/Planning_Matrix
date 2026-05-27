@@ -299,6 +299,12 @@ async function checkCell(
     // Phase-C item #2 F7 — procedure-name doubling must not appear.
     const dbl = text.match(/Baugenehmigungsverfahren \(Baugenehmigungsverfahren|Verfahren \(Vereinfachtes Baugenehmigungsverfahren/u)
     if (dbl) failures.push(`${lang}: procedure-name doubling — "${dbl[0]}"`)
+    // Phase-C item #2 F16 — Area B must not re-append the procedure § as a chip
+    // when the reason already cites it (the standard-branch reason ends
+    // "…bestätigen." and self-cites; a trailing "(§ …)" / "(… Art. …)" = the
+    // double-citation regression).
+    const dupCite = text.match(/best[äa]tigen\.\s*\((?:§|[A-Za-zÄÖÜ]+\s+Art\.)/u)
+    if (dupCite) failures.push(`${lang}: Area-B duplicate procedure citation — "${dupCite[0]}"`)
     // Parity: core section headers present in this locale.
     for (const header of SECTION_HEADERS[lang]) {
       if (!text.includes(header)) failures.push(`${lang}: missing section header "${header}" (DE/EN parity)`)

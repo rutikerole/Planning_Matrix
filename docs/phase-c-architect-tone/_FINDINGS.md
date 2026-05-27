@@ -194,6 +194,7 @@ fixes render-verified; Bayern SHA MATCH (no SHA-locked file touched); bundle 297
 | **F7** | ✅ closed | Dropped the redundant `${reg.nameDe}`/`${simp.nameDe}` interpolation in both composers (`resolveProcedure.ts` standard + umnutzung). Render: single procedure name in all 16. |
 | **F8** | ✅ closed | The "noch nicht vollständig hinterlegt" caveat now emits only when `!hasCitation` (no regular §); gone for all 16 (all carry a §). |
 | **F10** | ✅ closed | RLP stub-footer reworded to name the specific gap (Statik im Prüf-Regime), not "all Einreichungs-§§". RLP's structural cert stays honest deferral by design. |
+| **F16** | ✅ closed | Found during pre-merge deep-dive: Area B (`exportPdf.ts:573`) unconditionally re-appended the procedure § as a chip, so the F7-cleaned reason ("…(§ 64 BauO Bln) …bestätigen.") rendered it twice. Now appends the chip only when the reason text doesn't already contain the §; NRW-neubau / bauvoranfrage (no § in prose) still show it. Pre-existing; surfaced by F7. |
 | F6, F9, F11, F12, F14, F15 | ⏸ deferred | Out of scope this pass (per authorization) — F6/F9 → item #3. |
 | **F13** | 🚫 fenced | Cost/timeline = Phase C item #4. Untouched. |
 

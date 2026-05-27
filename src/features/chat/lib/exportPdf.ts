@@ -566,11 +566,18 @@ export async function buildExportPdf({
         // ACTIVE; everything else where a decision was reached →
         // ACTIVE (architect signs off); bauvoranfrage → PENDING.
         if (k === 'B') {
-          const decisionReason =
-            (lang === 'en'
+          // Phase-C item #2 F16 — the F7-cleaned reasoning already cites the
+          // procedure § in prose (e.g. "Reguläres Baugenehmigungsverfahren
+          // (§ 64 BauO Bln) …"). Append the citation chip ONLY when the reason
+          // text does NOT already contain it (bauvoranfrage / NRW-neubau carry
+          // no § in prose), so Area B no longer renders the § twice.
+          const reason =
+            lang === 'en'
               ? procedureDecision.reasoning_en
-              : procedureDecision.reasoning_de) +
-            ` (${procedureDecision.citation})`
+              : procedureDecision.reasoning_de
+          const decisionReason = reason.includes(procedureDecision.citation)
+            ? reason
+            : `${reason} (${procedureDecision.citation})`
           const newState =
             procedureDecision.kind === 'bauvoranfrage' ? 'PENDING' : 'ACTIVE'
           return {
