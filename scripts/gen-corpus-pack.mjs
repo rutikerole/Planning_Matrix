@@ -40,6 +40,10 @@ const FIELDS = {
   permitSubmissionCitation: /Bauvorlageberechtigung/i,
   structuralCertCitation: /^Bautechnische Nachweise/i,
   permitFormCitation: /^Bauantrag\b|^Bauantrag,/i,
+  // Brandschutz § (MBO-aligned § 14 in most states; § 15 in RLP/Saarland/BW).
+  // Anchored at start so "Brandschutztechnische…"/"Brandschutznachweis" (no
+  // word boundary) cannot match; only "Brandschutz" / "Brandschutz, …" hits.
+  brandschutzCitation: /^Brandschutz\b/i,
 }
 
 // stateLocalization.ts procedure §§ → ANCHORED regex on the official heading.
@@ -91,8 +95,8 @@ for (const f of (await readdir(STATES_DIR)).filter((x) => x.endsWith('.json')).s
 // ── Regression self-check: the two primary-source states MUST match the
 // values stateCitations.ts / stateLocalization.ts have shipped. ──
 const MUST_CIT = {
-  bayern: { abstandsFlaechenCitation: 'BayBO Art. 6', permitSubmissionCitation: 'BayBO Art. 61', structuralCertCitation: 'BayBO Art. 62', permitFormCitation: 'BayBO Art. 64' },
-  nrw: { abstandsFlaechenCitation: '§ 6 BauO NRW', permitSubmissionCitation: '§ 67 BauO NRW', structuralCertCitation: '§ 68 BauO NRW', permitFormCitation: '§ 70 BauO NRW' },
+  bayern: { abstandsFlaechenCitation: 'BayBO Art. 6', permitSubmissionCitation: 'BayBO Art. 61', structuralCertCitation: 'BayBO Art. 62', permitFormCitation: 'BayBO Art. 64', brandschutzCitation: 'BayBO Art. 12' },
+  nrw: { abstandsFlaechenCitation: '§ 6 BauO NRW', permitSubmissionCitation: '§ 67 BauO NRW', structuralCertCitation: '§ 68 BauO NRW', permitFormCitation: '§ 70 BauO NRW', brandschutzCitation: '§ 14 BauO NRW' },
 }
 const MUST_PROC = {
   bayern: { free: 'BayBO Art. 57', simplified: 'BayBO Art. 59', regular: 'BayBO Art. 60' },
@@ -125,6 +129,7 @@ export interface CorpusCitationFields {
   permitSubmissionCitation?: string
   structuralCertCitation?: string
   permitFormCitation?: string
+  brandschutzCitation?: string
 }
 
 export interface CorpusProcedureFields {

@@ -18,6 +18,7 @@ export interface CorpusCitationFields {
   permitSubmissionCitation?: string
   structuralCertCitation?: string
   permitFormCitation?: string
+  brandschutzCitation?: string
 }
 
 export interface CorpusProcedureFields {
@@ -32,84 +33,98 @@ export const STATE_CORPUS_CITATIONS: Partial<Record<BundeslandCode, CorpusCitati
     "abstandsFlaechenCitation": "BayBO Art. 6",
     "permitSubmissionCitation": "BayBO Art. 61",
     "structuralCertCitation": "BayBO Art. 62",
-    "permitFormCitation": "BayBO Art. 64"
+    "permitFormCitation": "BayBO Art. 64",
+    "brandschutzCitation": "BayBO Art. 12"
   },
   "berlin": {
     "abstandsFlaechenCitation": "§ 6 BauO Bln",
     "permitSubmissionCitation": "§ 65 BauO Bln",
     "structuralCertCitation": "§ 66 BauO Bln",
-    "permitFormCitation": "§ 68 BauO Bln"
+    "permitFormCitation": "§ 68 BauO Bln",
+    "brandschutzCitation": "§ 14 BauO Bln"
   },
   "brandenburg": {
     "abstandsFlaechenCitation": "§ 6 BbgBO",
     "permitSubmissionCitation": "§ 65 BbgBO",
     "structuralCertCitation": "§ 66 BbgBO",
-    "permitFormCitation": "§ 68 BbgBO"
+    "permitFormCitation": "§ 68 BbgBO",
+    "brandschutzCitation": "§ 14 BbgBO"
   },
   "bremen": {
     "abstandsFlaechenCitation": "§ 6 BremLBO",
     "permitSubmissionCitation": "§ 65 BremLBO",
     "structuralCertCitation": "§ 66 BremLBO",
-    "permitFormCitation": "§ 68 BremLBO"
+    "permitFormCitation": "§ 68 BremLBO",
+    "brandschutzCitation": "§ 14 BremLBO"
   },
   "hamburg": {
     "abstandsFlaechenCitation": "§ 6 HBauO",
     "permitSubmissionCitation": "§ 65 HBauO",
     "structuralCertCitation": "§ 66 HBauO",
-    "permitFormCitation": "§ 68 HBauO"
+    "permitFormCitation": "§ 68 HBauO",
+    "brandschutzCitation": "§ 14 HBauO"
   },
   "hessen": {
     "abstandsFlaechenCitation": "§ 6 HBO",
     "permitSubmissionCitation": "§ 67 HBO",
     "structuralCertCitation": "§ 68 HBO",
-    "permitFormCitation": "§ 69 HBO"
+    "permitFormCitation": "§ 69 HBO",
+    "brandschutzCitation": "§ 14 HBO"
   },
   "mv": {
     "abstandsFlaechenCitation": "§ 6 LBauO M-V",
     "permitSubmissionCitation": "§ 65 LBauO M-V",
     "structuralCertCitation": "§ 66 LBauO M-V",
-    "permitFormCitation": "§ 68 LBauO M-V"
+    "permitFormCitation": "§ 68 LBauO M-V",
+    "brandschutzCitation": "§ 14 LBauO M-V"
   },
   "nrw": {
     "abstandsFlaechenCitation": "§ 6 BauO NRW",
     "permitSubmissionCitation": "§ 67 BauO NRW",
     "structuralCertCitation": "§ 68 BauO NRW",
-    "permitFormCitation": "§ 70 BauO NRW"
+    "permitFormCitation": "§ 70 BauO NRW",
+    "brandschutzCitation": "§ 14 BauO NRW"
   },
   "rlp": {
     "abstandsFlaechenCitation": "§ 8 LBauO",
     "permitSubmissionCitation": "§ 64 LBauO",
-    "permitFormCitation": "§ 63 LBauO"
+    "permitFormCitation": "§ 63 LBauO",
+    "brandschutzCitation": "§ 15 LBauO"
   },
   "saarland": {
     "abstandsFlaechenCitation": "§ 7 LBO Saarland",
     "permitSubmissionCitation": "§ 66 LBO Saarland",
     "structuralCertCitation": "§ 67 LBO Saarland",
-    "permitFormCitation": "§ 69 LBO Saarland"
+    "permitFormCitation": "§ 69 LBO Saarland",
+    "brandschutzCitation": "§ 15 LBO Saarland"
   },
   "sachsen-anhalt": {
     "abstandsFlaechenCitation": "§ 6 BauO LSA",
     "permitSubmissionCitation": "§ 64 BauO LSA",
     "structuralCertCitation": "§ 65 BauO LSA",
-    "permitFormCitation": "§ 67 BauO LSA"
+    "permitFormCitation": "§ 67 BauO LSA",
+    "brandschutzCitation": "§ 14 BauO LSA"
   },
   "sachsen": {
     "abstandsFlaechenCitation": "§ 6 SächsBO",
     "permitSubmissionCitation": "§ 65 SächsBO",
     "structuralCertCitation": "§ 66 SächsBO",
-    "permitFormCitation": "§ 68 SächsBO"
+    "permitFormCitation": "§ 68 SächsBO",
+    "brandschutzCitation": "§ 14 SächsBO"
   },
   "sh": {
     "abstandsFlaechenCitation": "§ 6 LBO SH",
     "permitSubmissionCitation": "§ 65 LBO SH",
     "structuralCertCitation": "§ 66 LBO SH",
-    "permitFormCitation": "§ 68 LBO SH"
+    "permitFormCitation": "§ 68 LBO SH",
+    "brandschutzCitation": "§ 14 LBO SH"
   },
   "thueringen": {
     "abstandsFlaechenCitation": "§ 6 ThürBO",
     "permitSubmissionCitation": "§ 67 ThürBO",
     "structuralCertCitation": "§ 72 ThürBO",
-    "permitFormCitation": "§ 74 ThürBO"
+    "permitFormCitation": "§ 74 ThürBO",
+    "brandschutzCitation": "§ 14 ThürBO"
   }
 } as const
 

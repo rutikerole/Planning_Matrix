@@ -92,5 +92,24 @@
       "bauVorlagenAct": { "short": "ThürBauVorlVO", "tier": "primary", "full_title": "Thüringer Verordnung über Bauvorlagen und bauaufsichtliche Anzeigen (Thüringer Bauvorlagenverordnung)", "source_url": "https://landesrecht.thueringen.de/bsth/document/jlr-BauVorlVTHrahmen/part/X", "note": "v. 23.03.2010; portal is a JS-SPA — confirmed via portal-indexed title + umwelt-online mirror" },
       "denkmalSchutzAct": { "short": "ThürDSchG", "tier": "primary", "full_title": "Thüringer Gesetz zur Pflege und zum Schutz der Kulturdenkmale (Thüringer Denkmalschutzgesetz)", "source_url": "https://landesrecht.thueringen.de/bsth/document/jlr-DSchGTH2004pIVZ" }
     }
+  },
+  "monument_authorities_phase_c": {
+    "_meta": {
+      "purpose": "Phase C item #2 F4 — official name of each state's monument Fachbehörde (Landesamt-level), replacing the generic 'Landesamt für Denkmalpflege {Land}' template in src/legal/stateCitations.ts (ADJACENT_LAWS.denkmalAuthorityDe/En). The template was factually wrong for several states (Berlin = Landesdenkmalamt; Hamburg = Denkmalschutzamt; RLP = GDKE; MV = LAKD).",
+      "fetched_at": "2026-05-27",
+      "tier_note": "primary = the authority's own site / state portal; secondary = Wikipedia where the official site was behind a CAPTCHA/JS-shell.",
+      "en_note": "None of these authorities publish an official English self-name; denkmalAuthorityEn values are faithful clean translations, not the bodies' own English designations."
+    },
+    "berlin": { "name": "Landesdenkmalamt Berlin", "tier": "primary", "source_url": "https://www.berlin.de/landesdenkmalamt/ueber-uns/" },
+    "brandenburg": { "name": "Brandenburgisches Landesamt für Denkmalpflege und Archäologisches Landesmuseum (BLDAM)", "tier": "primary", "source_url": "https://bldam-brandenburg.de/" },
+    "bremen": { "name": "Landesamt für Denkmalpflege Bremen", "tier": "primary", "source_url": "https://www.denkmalpflege.bremen.de/", "note": "site header also carries 'und Archäologie'; the LfD's operational scope is built/art monuments" },
+    "hamburg": { "name": "Denkmalschutzamt (Behörde für Kultur und Medien)", "tier": "primary", "source_url": "https://www.hamburg.de/politik-und-verwaltung/behoerden/behoerde-fuer-kultur-und-medien/einrichtungen/denkmalschutzamt", "note": "Stadtstaat — Denkmalschutzamt is simultaneously oberste Denkmalschutzbehörde + Fachbehörde; no separate Landesamt" },
+    "mv": { "name": "Landesamt für Kultur und Denkmalpflege Mecklenburg-Vorpommern (LAKD M-V)", "tier": "primary", "source_url": "https://www.kulturwerte-mv.de/" },
+    "rlp": { "name": "Generaldirektion Kulturelles Erbe Rheinland-Pfalz (GDKE)", "tier": "primary", "source_url": "https://gdke.rlp.de/wer-wir-sind", "note": "GDKE is the umbrella Obere Landesbehörde; the operating Fachbehörde is its internal 'Direktion Landesdenkmalpflege'" },
+    "saarland": { "name": "Landesdenkmalamt Saarland", "tier": "primary", "source_url": "https://www.saarland.de/lda/DE/home", "note": "sits within the Ministerium für Bildung und Kultur" },
+    "sachsen": { "name": "Landesamt für Denkmalpflege Sachsen (LfD)", "tier": "primary", "source_url": "https://www.lfd.sachsen.de/", "note": "built/art monuments; archaeology is the separate Landesamt für Archäologie" },
+    "sachsen-anhalt": { "name": "Landesamt für Denkmalpflege und Archäologie Sachsen-Anhalt (LDA)", "tier": "primary", "source_url": "https://www.lda-lsa.de/" },
+    "sh": { "name": "Landesamt für Denkmalpflege Schleswig-Holstein", "tier": "primary", "source_url": "https://www.schleswig-holstein.de/DE/landesregierung/ministerien-behoerden/LD/ld_node.html", "note": "does not cover Hansestadt Lübeck (own authority) or archaeology (separate Archäologisches Landesamt SH)" },
+    "thueringen": { "name": "Thüringer Landesamt für Denkmalpflege und Archäologie (TLDA)", "tier": "secondary", "source_url": "https://de.wikipedia.org/wiki/Th%C3%BCringisches_Landesamt_f%C3%BCr_Denkmalpflege_und_Arch%C3%A4ologie", "note": "RENAMED Sept 2025 ('Thüringisches' → 'Thüringer'); official site denkmalpflege.thueringen.de behind a CAPTCHA, so tier secondary (Wikipedia-confirmed rename) — primary re-check recommended" }
   }
 }

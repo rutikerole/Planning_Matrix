@@ -35,7 +35,7 @@ import type { BundeslandCode } from './states/_types'
 // fallback: a corpus value (heading-verified) wins where present, the hand-
 // coded value below stays otherwise. BW + Niedersachsen are intentionally
 // absent from the pack (heterogeneous BauO terminology) → fully hand-coded.
-import { STATE_CORPUS_CITATIONS } from './corpusCitations.generated'
+import { STATE_CORPUS_CITATIONS, STATE_CORPUS_PROCEDURE } from './corpusCitations.generated'
 
 export interface StateCitationPack {
   bundesland: BundeslandCode
@@ -57,6 +57,13 @@ export interface StateCitationPack {
   structuralCertCitation: string
   /** Abstandsflächen § (setback rule). */
   abstandsFlaechenCitation: string
+  /** Brandschutz § (fire-protection requirement, MBO-aligned § 14 in most
+   *  states). Phase-C item #2 F1: closes the "§ 14 NBauO" cross-state leak —
+   *  corpus-sourced per state, never the Niedersachsen else-fallback. */
+  brandschutzCitation: string
+  /** Verfahrensfrei / Anzeige § (permit-free notification). Phase-C item #2
+   *  F2: closes the "§ 60 NBauO" leak — overlaid from the corpus `free` §. */
+  permitFreeCitation: string
   /** State monument-protection act short name. */
   denkmalSchutzAct: string
   /** State monument-protection authority name. */
@@ -79,6 +86,8 @@ const BAYERN: StateCitationPack = {
   permitSubmissionCitation: 'BayBO Art. 61',
   structuralCertCitation: 'BayBO Art. 62',
   abstandsFlaechenCitation: 'BayBO Art. 6',
+  brandschutzCitation: 'BayBO Art. 12',
+  permitFreeCitation: 'BayBO Art. 57',
   denkmalSchutzAct: 'BayDSchG',
   denkmalAuthorityDe: 'Bayerisches Landesamt für Denkmalpflege (BLfD)',
   denkmalAuthorityEn: 'Bavarian State Office for Monument Preservation (BLfD)',
@@ -95,6 +104,8 @@ const NRW: StateCitationPack = {
   permitSubmissionCitation: '§ 67 BauO NRW',
   structuralCertCitation: '§ 68 BauO NRW',
   abstandsFlaechenCitation: '§ 6 BauO NRW',
+  brandschutzCitation: '§ 14 BauO NRW',
+  permitFreeCitation: '§ 62 BauO NRW',
   denkmalSchutzAct: 'DSchG NRW',
   denkmalAuthorityDe: 'LVR-Amt für Denkmalpflege im Rheinland bzw. LWL-Denkmalpflege Westfalen',
   denkmalAuthorityEn: 'LVR Office (Rhineland) or LWL Office (Westphalia) for Monument Preservation',
@@ -111,6 +122,8 @@ const BW: StateCitationPack = {
   permitSubmissionCitation: '§ 43 LBO BW',
   structuralCertCitation: '§ 73a LBO BW',
   abstandsFlaechenCitation: '§ 5 LBO BW',
+  brandschutzCitation: '§ 15 LBO BW',
+  permitFreeCitation: '§ 50 LBO BW',
   denkmalSchutzAct: 'DSchG BW',
   denkmalAuthorityDe: 'Landesamt für Denkmalpflege Baden-Württemberg (LAD)',
   denkmalAuthorityEn: 'Baden-Württemberg State Office for Monument Preservation (LAD)',
@@ -127,6 +140,8 @@ const HESSEN: StateCitationPack = {
   permitSubmissionCitation: '§ 49 HBO',
   structuralCertCitation: '§ 68 HBO',
   abstandsFlaechenCitation: '§ 6 HBO',
+  brandschutzCitation: '§ 14 HBO',
+  permitFreeCitation: '§ 63 HBO',
   denkmalSchutzAct: 'HDSchG',
   denkmalAuthorityDe: 'Landesamt für Denkmalpflege Hessen (LfDH)',
   denkmalAuthorityEn: 'Hesse State Office for Monument Preservation (LfDH)',
@@ -143,6 +158,8 @@ const NIEDERSACHSEN: StateCitationPack = {
   permitSubmissionCitation: '§ 65 NBauO',
   structuralCertCitation: '§ 65 NBauO',
   abstandsFlaechenCitation: '§ 5 NBauO',
+  brandschutzCitation: '§ 14 NBauO',
+  permitFreeCitation: '§ 60 NBauO',
   denkmalSchutzAct: 'NDSchG',
   denkmalAuthorityDe: 'Niedersächsisches Landesamt für Denkmalpflege (NLD)',
   denkmalAuthorityEn: 'Lower Saxony State Office for Monument Preservation (NLD)',
@@ -192,6 +209,8 @@ function makeStub(
     permitSubmissionCitation: STUB_VERIFY_DE,
     structuralCertCitation: STUB_VERIFY_DE,
     abstandsFlaechenCitation: STUB_VERIFY_DE,
+    brandschutzCitation: STUB_VERIFY_DE,
+    permitFreeCitation: STUB_VERIFY_DE,
     denkmalSchutzAct: `Landes-Denkmalschutzgesetz ${labelDe} (${STUB_VERIFY_DE})`,
     denkmalAuthorityDe: `Landesamt für Denkmalpflege ${labelDe}`,
     denkmalAuthorityEn: `State Office for Monument Preservation (${labelEn})`,
@@ -212,34 +231,111 @@ export const STUB_VERIFY = { de: STUB_VERIFY_DE, en: STUB_VERIFY_EN }
  */
 function withCorpus(pack: StateCitationPack): StateCitationPack {
   const c = STATE_CORPUS_CITATIONS[pack.bundesland]
-  // c carries only present (string) fields; cast back to the required-field pack.
-  return c ? ({ ...pack, ...c } as StateCitationPack) : pack
+  // c carries only present (string) fields (incl. brandschutzCitation); cast
+  // back to the required-field pack. permitFreeCitation overlays from the
+  // procedure pack's `free` § (single corpus source of truth for verfahrensfrei)
+  // — Phase-C item #2 F2. Absent (BW/Niedersachsen) → hand-coded value stays.
+  const free = STATE_CORPUS_PROCEDURE[pack.bundesland]?.free
+  const overlaid = c ? ({ ...pack, ...c } as StateCitationPack) : pack
+  return free ? { ...overlaid, permitFreeCitation: free } : overlaid
 }
 
 /**
- * Phase C — official Kurzbezeichnungen of the adjacent laws (Bauvorlagen-
- * Verordnung + Landes-Denkmalschutzgesetz) for the 11 newly-substantive states,
- * replacing the Phase-A/B deferral sentences. Researched from primary sources
- * (state law portals / official Amtsblatt / Landesamt PDFs); provenance + tier
- * per value in scripts/legal-corpus/_meta/sources.json (adjacent_laws_phase_c).
- * Short tokens only → glossary terms no longer truncate (Phase-C item #1).
+ * Phase C — adjacent-law short names + monument-authority names for the 11
+ * newly-substantive states, replacing the Phase-A/B deferral sentences:
+ *  - item #1: official Kurzbezeichnungen of the Bauvorlagen-Verordnung +
+ *    Landes-Denkmalschutzgesetz (short tokens → glossary terms no longer
+ *    truncate). Provenance in _meta/sources.json (adjacent_laws_phase_c).
+ *  - item #2 F4: the official name of each state's monument Fachbehörde,
+ *    replacing the generic "Landesamt für Denkmalpflege {Land}" template
+ *    (wrong for Berlin/Hamburg/RLP/MV/…). Verified per state against the
+ *    authority's own site / state portal (2026-05-27); provenance in
+ *    _meta/sources.json (monument_authorities_phase_c). Thüringen renamed
+ *    "Thüringisches → Thüringer" (Sept 2025), tier secondary (CAPTCHA wall).
  * The 5 substantive states (Bayern/NRW/BW/Hessen/Niedersachsen) keep their own
  * hand-coded values above and are NOT in this map.
  */
 const ADJACENT_LAWS: Partial<
-  Record<BundeslandCode, { bauVorlagenAct: string; denkmalSchutzAct: string }>
+  Record<
+    BundeslandCode,
+    {
+      bauVorlagenAct: string
+      denkmalSchutzAct: string
+      denkmalAuthorityDe: string
+      denkmalAuthorityEn: string
+    }
+  >
 > = {
-  berlin: { bauVorlagenAct: 'BauVorlV', denkmalSchutzAct: 'DSchG Bln' },
-  brandenburg: { bauVorlagenAct: 'BbgBauVorlV', denkmalSchutzAct: 'BbgDSchG' },
-  bremen: { bauVorlagenAct: 'BremBauVorlV', denkmalSchutzAct: 'BremDSchG' },
-  hamburg: { bauVorlagenAct: 'BauVorlVO HH', denkmalSchutzAct: 'DSchG HH' },
-  mv: { bauVorlagenAct: 'BauVorlVO M-V', denkmalSchutzAct: 'DSchG M-V' },
-  rlp: { bauVorlagenAct: 'BauuntPrüfVO', denkmalSchutzAct: 'DSchG' },
-  saarland: { bauVorlagenAct: 'BauVorlVO', denkmalSchutzAct: 'SDschG' },
-  sachsen: { bauVorlagenAct: 'DVOSächsBO', denkmalSchutzAct: 'SächsDSchG' },
-  'sachsen-anhalt': { bauVorlagenAct: 'BauVorlVO', denkmalSchutzAct: 'DSchG ST' },
-  sh: { bauVorlagenAct: 'BauVorlVO', denkmalSchutzAct: 'DSchG SH' },
-  thueringen: { bauVorlagenAct: 'ThürBauVorlVO', denkmalSchutzAct: 'ThürDSchG' },
+  berlin: {
+    bauVorlagenAct: 'BauVorlV',
+    denkmalSchutzAct: 'DSchG Bln',
+    denkmalAuthorityDe: 'Landesdenkmalamt Berlin',
+    denkmalAuthorityEn: 'Berlin State Monuments Authority (LDA)',
+  },
+  brandenburg: {
+    bauVorlagenAct: 'BbgBauVorlV',
+    denkmalSchutzAct: 'BbgDSchG',
+    denkmalAuthorityDe:
+      'Brandenburgisches Landesamt für Denkmalpflege und Archäologisches Landesmuseum (BLDAM)',
+    denkmalAuthorityEn:
+      'Brandenburg State Office for Monument Preservation and Archaeological State Museum (BLDAM)',
+  },
+  bremen: {
+    bauVorlagenAct: 'BremBauVorlV',
+    denkmalSchutzAct: 'BremDSchG',
+    denkmalAuthorityDe: 'Landesamt für Denkmalpflege Bremen',
+    denkmalAuthorityEn: 'Bremen State Office for Monument Preservation',
+  },
+  hamburg: {
+    bauVorlagenAct: 'BauVorlVO HH',
+    denkmalSchutzAct: 'DSchG HH',
+    denkmalAuthorityDe: 'Denkmalschutzamt (Behörde für Kultur und Medien)',
+    denkmalAuthorityEn: 'Monument Protection Office (Authority for Culture and Media)',
+  },
+  mv: {
+    bauVorlagenAct: 'BauVorlVO M-V',
+    denkmalSchutzAct: 'DSchG M-V',
+    denkmalAuthorityDe: 'Landesamt für Kultur und Denkmalpflege Mecklenburg-Vorpommern (LAKD M-V)',
+    denkmalAuthorityEn:
+      'Mecklenburg-Vorpommern State Office for Culture and Monument Preservation (LAKD M-V)',
+  },
+  rlp: {
+    bauVorlagenAct: 'BauuntPrüfVO',
+    denkmalSchutzAct: 'DSchG',
+    denkmalAuthorityDe: 'Generaldirektion Kulturelles Erbe Rheinland-Pfalz (GDKE)',
+    denkmalAuthorityEn: 'General Directorate for Cultural Heritage Rhineland-Palatinate (GDKE)',
+  },
+  saarland: {
+    bauVorlagenAct: 'BauVorlVO',
+    denkmalSchutzAct: 'SDschG',
+    denkmalAuthorityDe: 'Landesdenkmalamt Saarland',
+    denkmalAuthorityEn: 'Saarland State Monuments Authority',
+  },
+  sachsen: {
+    bauVorlagenAct: 'DVOSächsBO',
+    denkmalSchutzAct: 'SächsDSchG',
+    denkmalAuthorityDe: 'Landesamt für Denkmalpflege Sachsen (LfD)',
+    denkmalAuthorityEn: 'Saxony State Office for Monument Preservation (LfD)',
+  },
+  'sachsen-anhalt': {
+    bauVorlagenAct: 'BauVorlVO',
+    denkmalSchutzAct: 'DSchG ST',
+    denkmalAuthorityDe: 'Landesamt für Denkmalpflege und Archäologie Sachsen-Anhalt (LDA)',
+    denkmalAuthorityEn:
+      'Saxony-Anhalt State Office for Monument Preservation and Archaeology (LDA)',
+  },
+  sh: {
+    bauVorlagenAct: 'BauVorlVO',
+    denkmalSchutzAct: 'DSchG SH',
+    denkmalAuthorityDe: 'Landesamt für Denkmalpflege Schleswig-Holstein',
+    denkmalAuthorityEn: 'Schleswig-Holstein State Office for Monument Preservation',
+  },
+  thueringen: {
+    bauVorlagenAct: 'ThürBauVorlVO',
+    denkmalSchutzAct: 'ThürDSchG',
+    denkmalAuthorityDe: 'Thüringer Landesamt für Denkmalpflege und Archäologie (TLDA)',
+    denkmalAuthorityEn: 'Thuringia State Office for Monument Preservation and Archaeology (TLDA)',
+  },
 }
 
 /**
