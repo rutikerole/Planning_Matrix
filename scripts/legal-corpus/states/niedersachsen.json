@@ -6,10 +6,15 @@
     "marker": "§",
     "current_version_stand": "2012-04 (Neubekanntmachung), zuletzt geändert 25.06.2025",
     "last_amendment_de": "Gesetz vom 25.06.2025 (Nds. GVBl. 2025 Nr. 52)",
+    "last_amendment_date": "2025-06-25",
+    "data_current_as_of": "2026-05-27",
     "sources": [
-      "https://www.baunormenlexikon.de/norm/nbauo/9d155cdf-de92-4f38-89d8-bab21d8fdea9"
+      "https://www.baunormenlexikon.de/norm/nbauo/9d155cdf-de92-4f38-89d8-bab21d8fdea9",
+      "https://voris.wolterskluwer-online.de/browse/document/5a9a9195-a795-37f6-9f3f-3d79484aea10",
+      "https://voris.wolterskluwer-online.de/browse/document/e73e2a12-18c0-3b16-bda6-3bd85099e6c6"
     ],
     "verification_summary": { "primary-source": 0, "secondary-mirror": 97, "unverified": 0 },
+    "phase_c_legal_correctness_note": "NI is hand-coded in src/legal/stateCitations.ts (not in the corpus pack). phase-c/legal-correctness fixed two mis-maps: permitSubmission § 65→§ 53 (§ 53 = 'Entwurfsverfasserin und Entwurfsverfasser', the bauvorlageberechtigt entitlement, NI-VORIS; § 65 = 'Bautechnische Nachweise', which had been duplicated) and permitForm § 64→§ 67 (§ 67 = 'Bauantrag und Bauvorlagen', NI-VORIS; § 64 = 'Baugenehmigungsverfahren', the procedure). structuralCert stays § 65 (correct). Confirmed against the official NI-VORIS portal.",
     "notes": "Headings fetched verbatim from baunormenlexikon.de this session. Official voris.niedersachsen.de not attempted (JS shell expected per recipe). CROSS-CHECK FLAG: repo cites § 65a but the captured Inhaltsübersicht has no § 65a (§ 65 = 'Bautechnische Nachweise, Typenprüfung'); 65a carried as unverified. § 73a appears in the mirror with the same heading as § 73 ('Bauvoranfrage und Bauvorbescheid') — likely a mirror artifact; captured verbatim as returned."
   },
   "paragraphs": {

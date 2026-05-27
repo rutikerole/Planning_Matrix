@@ -6,10 +6,15 @@
     "marker": "§",
     "current_version_stand": "2024-07-02",
     "last_amendment_de": "Fassung vom 2. Juli 2024 (in Kraft ab 19. Juli 2024)",
+    "last_amendment_date": "2024-07-02",
+    "data_current_as_of": "2026-05-27",
     "sources": [
-      "https://www.baunormenlexikon.de/norm/thuerbo/9c2f12c0-fa74-47fb-8f15-2c3b788db584"
+      "https://www.baunormenlexikon.de/norm/thuerbo/9c2f12c0-fa74-47fb-8f15-2c3b788db584",
+      "https://landesrecht.thueringen.de/bsth/document/jlr-BauOTH2024pIVZ",
+      "https://klimaschutzdigital.de/nd/1643914/vorschrift.html"
     ],
-    "verification_summary": { "primary-source": 0, "secondary-mirror": 102, "unverified": 0 }
+    "verification_summary": { "primary-source": 0, "secondary-mirror": 102, "unverified": 0 },
+    "phase_c_legal_correctness_note": "The AUDIT_PRE_MANUAL_TESTING report flagged Thüringen as a renumbering BLOCKER (claimed current ThürBO 2024 uses §§ 64/65/67 for Bauvorlageberechtigung/Bautechnische Nachweise/Bauantrag). VERIFIED FALSE POSITIVE: the current ThürBO vom 2. Juli 2024 confirms §§ 67/72/74 — exactly this corpus. Cross-confirmed against the official Inhaltsübersicht (landesrecht.thueringen.de jlr-BauOTH2024pIVZ), the current-version text (klimaschutzdigital.de Stand 02.07.2024), and the law's own internal cross-references (§ 68 references the § 67 Liste; § 71 names bauvorlageberechtigte Ingenieure). NO § numbers changed. The official portal returns a JS shell to automated fetch, so tier stays secondary-mirror, but the numbering is cross-confirmed current."
   },
   "paragraphs": {
     "1": { "marker": "§ 1", "heading_de_official": "Anwendungsbereich", "heading_source_url": "https://www.baunormenlexikon.de/norm/thuerbo/9c2f12c0-fa74-47fb-8f15-2c3b788db584", "heading_fetched_at": "2026-05-27", "verification_tier": "secondary-mirror", "archetypes": [] },

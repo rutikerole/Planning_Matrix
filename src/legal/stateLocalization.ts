@@ -219,9 +219,15 @@ const BW: StateLocalization = {
     },
   },
   structuralCert: {
-    citation: '§ 73a LBO',
-    descriptionDe: 'Technische Baubestimmungen (VwV TB BW)',
-    descriptionEn: 'Technical building rules (VwV TB BW)',
+    // phase-c/legal-correctness — was § 73a LBO ("Technische Baubestimmungen", the
+    // VwV TB admin rule), the SAME mis-map the audit flagged in stateCitations.ts
+    // but in this second hand-coded location (render-surfaced: it reaches the
+    // executive read exportPdf.ts:362 + cost rationale costRationales.ts:56). The
+    // Standsicherheits-/bautechnischer Nachweis is § 13 LBO ("Standsicherheit",
+    // dejure.org/gesetze/LBO/13.html) — matching every peer state's structuralCert.
+    citation: '§ 13 LBO',
+    descriptionDe: 'Standsicherheit',
+    descriptionEn: 'Structural certification',
   },
   surveyingNote: {
     de: 'Lageplan nach LBOVVO — bei Neubau und größeren Anbauten Pflicht.',

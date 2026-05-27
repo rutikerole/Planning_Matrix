@@ -6,11 +6,16 @@
     "marker": "§",
     "current_version_stand": "2010-03-05",
     "last_amendment_de": "Gesetz vom 18. März 2025 (GBl. 2025 Nr. 25)",
+    "last_amendment_date": "2025-03-18",
+    "data_current_as_of": "2026-05-27",
     "sources": [
-      "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b"
+      "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b",
+      "https://dejure.org/gesetze/LBO/13.html",
+      "https://dejure.org/gesetze/LBO/53.html"
     ],
     "official_portal_attempted": "https://www.landesrecht-bw.de/bsbw/document/jlr-BauOBW2010V31IVZ — returned JS shell (NO_TEXT), one attempt per recipe",
-    "verification_summary": { "primary-source": 0, "secondary-mirror": 97, "unverified": 0 }
+    "verification_summary": { "primary-source": 0, "secondary-mirror": 97, "unverified": 0 },
+    "phase_c_legal_correctness_note": "BW is hand-coded in src/legal/stateCitations.ts (not in the corpus pack). phase-c/legal-correctness fixed two mis-maps the audit flagged: structuralCert § 73a→§ 13 (§ 13 = 'Standsicherheit', dejure.org/gesetze/LBO/13.html; § 73a = 'Technische Baubestimmungen', an admin rule), and permitForm § 58→§ 53 (§ 53 = 'Bauvorlagen und Bauantrag', dejure.org/gesetze/LBO/53.html; § 58 = 'Baugenehmigung', the permit decision). Both confirmed against dejure (current LBO) + the corpus's own verbatim headings."
   },
   "paragraphs": {
     "1": { "marker": "§ 1", "heading_de_official": "Anwendungsbereich", "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b", "heading_fetched_at": "2026-05-27", "verification_tier": "secondary-mirror", "archetypes": [] },
