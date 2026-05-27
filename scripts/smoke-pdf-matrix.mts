@@ -379,16 +379,16 @@ async function main(): Promise<void> {
   // Imported AFTER the env shim has run at module top-level.
   const { getStateLocalization } = await import('../src/legal/stateLocalization.ts')
 
-  // Headline-band leak guard. T-02/T-06/T-07/T-08 render the
-  // COST_BANDS_BY_TEMPLATE basis line for EVERY state (template-keyed, not
-  // state-aware), so a city / Bayern token there bleeds into non-Bayern PDFs —
-  // the T-02/T-06 "München" leak the 128-cell template sweep caught (the matrix
-  // below only renders T-01/T-03, so it never exercised those bands). Assert the
-  // four headline-band templates are state-neutral. Static + deterministic.
+  // Headline-band leak guard. The COST_BANDS_BY_TEMPLATE basis line is
+  // template-keyed, not state-aware. phase-c/item-4 widened this from the four
+  // headline-rendered templates (T-02/06/07/08) to ALL 8: T-01/T-03/T-05 are now
+  // cleaned state-neutral too, so the guard covers the full table and a city/§
+  // token in ANY band fails CI (locks the cleanup; no latent leak waiting on a
+  // gating change). "Münchner" (adjectival) added per the audit G4 gap. Static.
   const { COST_BANDS_BY_TEMPLATE } = await import('../src/features/result/lib/costNormsMuenchen.ts')
-  const bandLeakRx = /München|Munich|\bBayBO\b|\bBLfD\b|\bBayDSchG\b|\bStPlS\b/u
+  const bandLeakRx = /München|Münchner|Munich|\bBayBO\b|\bBLfD\b|\bBayDSchG\b|\bStPlS\b/u
   const bandLeaks: string[] = []
-  for (const t of ['T-02', 'T-06', 'T-07', 'T-08'] as const) {
+  for (const t of ['T-01', 'T-02', 'T-03', 'T-04', 'T-05', 'T-06', 'T-07', 'T-08'] as const) {
     const b = COST_BANDS_BY_TEMPLATE[t]
     for (const [k, v] of [['basisDe', b.basisDe], ['basisEn', b.basisEn]] as const) {
       const m = v.match(bandLeakRx)
@@ -400,7 +400,7 @@ async function main(): Promise<void> {
     for (const l of bandLeaks) console.error(`  ✗ ${l}`)
     process.exit(1)
   }
-  console.log('[smoke-pdf-matrix] headline-band leak guard OK (T-02/06/07/08 state-neutral)')
+  console.log('[smoke-pdf-matrix] headline-band leak guard OK (all 8 templates state-neutral)')
 
   // ── Phase-C item #2 citation-leak guard (F1/F2/F3/F7) ────────────────
   // requiredDocumentsForCase emitted the Niedersachsen else-fallback ("§ 14
