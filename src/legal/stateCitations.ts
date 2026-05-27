@@ -118,9 +118,16 @@ const BW: StateCitationPack = {
   labelEn: 'Baden-Württemberg',
   archivCity: 'Stuttgart',
   bauVorlagenAct: 'LBOVVO BW',
-  permitFormCitation: '§ 58 LBO BW',
+  // phase-c/legal-correctness — corrected two hand-coded mis-maps the
+  // AUDIT_PRE_MANUAL_TESTING report flagged (BW is hand-coded; withCorpus is a
+  // no-op for it). permitForm was § 58 ("Baugenehmigung" — the permit DECISION,
+  // not the application); the application+documents § is § 53 LBO BW
+  // ("Bauvorlagen und Bauantrag", dejure.org/gesetze/LBO/53.html). structuralCert
+  // was § 73a ("Technische Baubestimmungen" — an admin rule, not a cert); the
+  // Standsicherheit § is § 13 LBO BW (dejure.org/gesetze/LBO/13.html).
+  permitFormCitation: '§ 53 LBO BW',
   permitSubmissionCitation: '§ 43 LBO BW',
-  structuralCertCitation: '§ 73a LBO BW',
+  structuralCertCitation: '§ 13 LBO BW',
   abstandsFlaechenCitation: '§ 5 LBO BW',
   brandschutzCitation: '§ 15 LBO BW',
   permitFreeCitation: '§ 50 LBO BW',
@@ -154,8 +161,16 @@ const NIEDERSACHSEN: StateCitationPack = {
   labelEn: 'Lower Saxony',
   archivCity: 'Hannover',
   bauVorlagenAct: 'BauVorlVO Nds',
-  permitFormCitation: '§ 64 NBauO',
-  permitSubmissionCitation: '§ 65 NBauO',
+  // phase-c/legal-correctness — corrected two hand-coded mis-maps (NI is
+  // hand-coded; withCorpus is a no-op). permitForm was § 64 ("Baugenehmigungs-
+  // verfahren" — the procedure, not the application); the application § is
+  // § 67 NBauO ("Bauantrag und Bauvorlagen", NI-VORIS). permitSubmission
+  // duplicated structuralCert at § 65 ("Bautechnische Nachweise"); the
+  // bauvorlageberechtigt/Entwurfsverfasser entitlement is § 53 NBauO
+  // ("Entwurfsverfasserin und Entwurfsverfasser", NI-VORIS). structuralCert
+  // stays § 65 (correct).
+  permitFormCitation: '§ 67 NBauO',
+  permitSubmissionCitation: '§ 53 NBauO',
   structuralCertCitation: '§ 65 NBauO',
   abstandsFlaechenCitation: '§ 5 NBauO',
   brandschutzCitation: '§ 14 NBauO',

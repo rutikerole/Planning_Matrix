@@ -74,6 +74,7 @@ try {
 
 // States: one law per file
 let stateFiles = []
+const stateMetas = [] // { file, lawShort, bundesland, lastAmendmentDate, dataCurrentAsOf }
 try {
   stateFiles = (await readdir(STATES_DIR)).filter((f) => f.endsWith('.json'))
 } catch (e) {
@@ -88,6 +89,13 @@ for (const f of stateFiles) {
       continue
     }
     addLaw(lawShort, st._meta.marker ?? '§', `state:${st._meta.bundesland ?? f}`, st.paragraphs)
+    stateMetas.push({
+      file: f,
+      lawShort,
+      bundesland: st._meta.bundesland ?? f,
+      lastAmendmentDate: st._meta.last_amendment_date ?? null,
+      dataCurrentAsOf: st._meta.data_current_as_of ?? null,
+    })
   } catch (e) {
     integrityErrors.push(`states/${f} — ${e.message}`)
   }
@@ -162,6 +170,52 @@ for (const rule of ROLE_RULES) {
       role.push({ key: `${rule.law} § ${rule.num}`, why: rule.why, at: `${c.file}:${c.line}`, official: law?.nums.get(rule.num)?.heading })
 }
 
+// ── VERSION check (phase-c/legal-correctness) ──────────────────────────────
+// Detect corpus data that has gone stale relative to a KNOWN amendment. A state
+// declares two ISO dates in _meta: `last_amendment_date` (the most recent
+// amendment we know exists) and `data_current_as_of` (the date through which our
+// captured §§/headings are confirmed current). If our data predates a known
+// amendment, the headings/§ numbers may be from an older version — exactly the
+// "is this the current law?" risk the Thüringen audit raised. This is the gate
+// that makes silent version-drift impossible: bump `last_amendment_date` when a
+// new amendment lands and the check FAILS until someone re-verifies and bumps
+// `data_current_as_of`.
+//   • STALE (gates --strict): both dates present AND data_current_as_of < last_amendment_date.
+//   • UNTRACKED (warn only): a state missing either field — version tracking not
+//     yet wired for it (the 13 mirror-only states; roll out as they're re-verified).
+const ONE_DAY = 86_400_000
+const parseISO = (s) => {
+  if (typeof s !== 'string') return null
+  const m = s.match(/^(\d{4})-(\d{2})-(\d{2})/)
+  if (!m) return null
+  const d = new Date(`${m[1]}-${m[2]}-${m[3]}T00:00:00Z`)
+  return Number.isNaN(d.getTime()) ? null : d
+}
+const today = new Date()
+const versionStale = []
+const versionUntracked = []
+const versionAging = []
+for (const sm of stateMetas) {
+  const amended = parseISO(sm.lastAmendmentDate)
+  const current = parseISO(sm.dataCurrentAsOf)
+  if (!amended || !current) {
+    versionUntracked.push(sm)
+    continue
+  }
+  if (current.getTime() + ONE_DAY <= amended.getTime()) {
+    versionStale.push({
+      bundesland: sm.bundesland,
+      lawShort: sm.lawShort,
+      dataCurrentAsOf: sm.dataCurrentAsOf,
+      lastAmendmentDate: sm.lastAmendmentDate,
+    })
+  } else if ((today.getTime() - amended.getTime()) / ONE_DAY > 730) {
+    // data is current vs the last amendment we know of, but that amendment is
+    // > 2 years old — soft nudge to re-check for a newer one (never fails).
+    versionAging.push({ bundesland: sm.bundesland, lastAmendmentDate: sm.lastAmendmentDate })
+  }
+}
+
 // ── Report ──
 console.log('[verify:citations] FEDERAL + STATE tier — corpus: scripts/legal-corpus/\n')
 
@@ -189,7 +243,11 @@ for (const [name, law] of stateLaws.sort((a, b) => a[0].localeCompare(b[0]))) {
 // are pre-existing REPO-CODE bugs the spine now catches — fixing them is Phase B;
 // until then the prebuild stays on report mode (`verify:citations`, exits 0) and
 // `--strict` reports them for the Phase B backlog.
-const fail = integrityErrors.length > 0 || existence.length > 0 || role.length > 0
+const fail =
+  integrityErrors.length > 0 ||
+  existence.length > 0 ||
+  role.length > 0 ||
+  versionStale.length > 0
 
 if (integrityErrors.length) {
   console.log(`\n⚠ ${integrityErrors.length} CORPUS-INTEGRITY error(s):`)
@@ -208,6 +266,25 @@ if (role.length) {
   for (const f of role) console.log(`  ✗ ${f.key} (official: "${f.official}") — ${f.why}\n       at ${f.at}`)
 }
 
+// VERSION findings (phase-c/legal-correctness)
+console.log(
+  `\nLaw-version currency: ${stateMetas.length - versionUntracked.length}/${stateMetas.length} states version-tracked ` +
+    `· ${versionStale.length} stale · ${versionUntracked.length} untracked · ${versionAging.length} aging`,
+)
+if (versionStale.length) {
+  console.log(`\n⚠ ${versionStale.length} VERSION-STALE finding(s) — corpus data predates a known amendment (re-verify §§ against the current law):`)
+  for (const f of versionStale)
+    console.log(`  ✗ ${f.bundesland} (${f.lawShort}) — data_current_as_of ${f.dataCurrentAsOf} < last_amendment ${f.lastAmendmentDate}`)
+}
+if (versionAging.length) {
+  console.log(`\nℹ ${versionAging.length} state(s) current vs last known amendment, but that amendment is > 2 years old (re-check for a newer one):`)
+  for (const f of versionAging) console.log(`  • ${f.bundesland} — last known amendment ${f.lastAmendmentDate}`)
+}
+if (versionUntracked.length) {
+  console.log(`\nℹ ${versionUntracked.length} state(s) without version tracking (no last_amendment_date + data_current_as_of — wire as each is re-verified):`)
+  console.log(`  • ${versionUntracked.map((s) => s.bundesland).join(', ')}`)
+}
+
 if (!fail) {
   console.log('\n[verify:citations] OK — every cited federal & state §/Art. resolves to the corpus; corpus integrity clean.')
   if (unverifiedCited.length || role.length)
@@ -217,8 +294,8 @@ if (!fail) {
 
 if (STRICT) {
   console.log(
-    `\n[verify:citations] FAIL (--strict) — ${integrityErrors.length} integrity · ${existence.length} existence · ${role.length} role finding(s).` +
-      '\n   Corpus integrity must be 0. Existence + role findings are Phase B repo-code fixes (see _meta/unverified.json). Prebuild stays on report mode until Phase B clears them.',
+    `\n[verify:citations] FAIL (--strict) — ${integrityErrors.length} integrity · ${existence.length} existence · ${role.length} role · ${versionStale.length} version-stale finding(s).` +
+      '\n   Corpus integrity + version-currency must be 0. Existence + role findings are Phase B repo-code fixes (see _meta/unverified.json). Prebuild stays on report mode until cleared.',
   )
   process.exit(1)
 }

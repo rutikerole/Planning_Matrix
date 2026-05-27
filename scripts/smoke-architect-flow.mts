@@ -305,14 +305,18 @@ function runLegalDomains(): Tally {
       `NRW T-05 ${lang}: Domain B cites § 62 BauO NRW`,
     )
   }
-  // Sachsen T-01 (stub) → B populated with honest "Landesbauordnung Sachsen".
+  // Sachsen T-01 — was a STUB ("Landesbauordnung Sachsen") pre-Phase-B; Phase B
+  // flipped Sachsen substantive (corpus-backed SächsBO), so Domain B now cites a
+  // real "§ NN SächsBO". The old stub-label assertion went silently red after
+  // that flip (smoke:architect was not in CI — fixed in this sprint). Assert the
+  // substantive behaviour instead.
   for (const lang of ['de', 'en'] as const) {
     const b = domB('test/fixtures/sachsen-t01-leipzig.json', lang)
-    ok(t, (b?.rows.length ?? 0) > 0, `Sachsen T-01 ${lang}: Domain B has rows (stub, not empty)`)
+    ok(t, (b?.rows.length ?? 0) > 0, `Sachsen T-01 ${lang}: Domain B has rows (substantive, not empty)`)
     ok(
       t,
-      b?.rows.some((r) => /Landesbauordnung Sachsen/.test(r.label)) ?? false,
-      `Sachsen T-01 ${lang}: Domain B honest stub label`,
+      b?.rows.some((r) => /§\s*\d+[a-z]?\s+SächsBO/.test(r.label)) ?? false,
+      `Sachsen T-01 ${lang}: Domain B cites a real SächsBO § (substantive, not the old stub)`,
     )
   }
   // Bayern regression — BayBO matchers still drive Domain B (corpus has
