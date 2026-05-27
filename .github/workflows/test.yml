@@ -65,6 +65,14 @@ jobs:
       - name: Chat-UX smoke
         run: npm run smoke:chat-ux
 
+      # phase-c/legal-correctness — the architect-flow smoke (invite parsing,
+      # role promotion, verification rollup, web↔PDF Section-05 convergence,
+      # composeLegalDomains) was NOT in CI, so a stale Sachsen assertion went
+      # silently red for several sprints after Phase B flipped Sachsen
+      # substantive. Wire it in so an architect-flow regression fails CI.
+      - name: Architect-flow smoke
+        run: npm run smoke:architect
+
       - name: Run Playwright
         run: npx playwright test
         env:
