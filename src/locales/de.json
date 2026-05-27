@@ -2102,7 +2102,7 @@
     "T-03": {
       "name": "Sanierung",
       "shortName": "Sanierung",
-      "description": "Bestandsmodernisierung — seit 01.01.2025 oft verfahrensfrei mit Anzeige (BayBO Art. 57 Abs. 3 Nr. 3 / Abs. 1 Nr. 18)."
+      "description": "Bestandsmodernisierung — je nach Umfang verfahrensfrei mit Anzeige bis genehmigungspflichtig (landesrechtlich unterschiedlich)."
     },
     "T-04": {
       "name": "Umnutzung",
@@ -2112,12 +2112,12 @@
     "T-05": {
       "name": "Abbruch",
       "shortName": "Abbruch",
-      "description": "Vollabbruch oder Teilabbruch eines Bestandsgebäudes; Anzeige nach BayBO Art. 57 Abs. 5."
+      "description": "Vollabbruch oder Teilabbruch eines Bestandsgebäudes; je nach Land anzeige- oder genehmigungspflichtig."
     },
     "T-06": {
       "name": "Aufstockung",
       "shortName": "Aufstockung",
-      "description": "Eingeschossige Aufstockung zur Wohnraumschaffung — Privileg nach BayBO Art. 46 Abs. 6 + Stellplatz-Privileg ab 01.10.2025."
+      "description": "Eingeschossige Aufstockung zur Wohnraumschaffung — Verfahren und etwaige Stellplatz-Privilegien landesrechtlich unterschiedlich."
     },
     "T-07": {
       "name": "Anbau",

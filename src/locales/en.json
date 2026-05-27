@@ -2102,7 +2102,7 @@
     "T-03": {
       "name": "Renovation",
       "shortName": "Renovation",
-      "description": "Renovation of existing building — since 01.01.2025 often procedure-exempt with notification (BayBO Art. 57 Abs. 3 Nr. 3 / Abs. 1 Nr. 18)."
+      "description": "Renovation of an existing building — depending on scope, procedure-exempt with notification up to permit-required (varies by state law)."
     },
     "T-04": {
       "name": "Change of use",
@@ -2112,12 +2112,12 @@
     "T-05": {
       "name": "Demolition",
       "shortName": "Demolition",
-      "description": "Full or partial demolition of an existing building; notification under BayBO Art. 57 Abs. 5."
+      "description": "Full or partial demolition of an existing building; notification- or permit-required depending on the state."
     },
     "T-06": {
       "name": "Storey addition",
       "shortName": "Storey addition",
-      "description": "Single-storey addition for new living space — privilege under BayBO Art. 46 Abs. 6 + parking privilege since 01.10.2025."
+      "description": "Single-storey addition for new living space — procedure and any parking privileges vary by state law."
     },
     "T-07": {
       "name": "Extension",
