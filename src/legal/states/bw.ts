@@ -372,6 +372,13 @@ const ALLOWED_CITATIONS: readonly string[] = [
   '§ 5 LBO',
   '§ 6 LBO',
   '§ 9 LBO',
+  // phase-c/item-3 — close the persona-allowlist gap vs the deterministic
+  // citations: § 13 (Standsicherheit, the Sprint-2 structuralCert fix) + § 15
+  // (Brandschutz, brandschutzCitation) were used in stateCitations/
+  // stateLocalization but absent here, so citationLint would flag the persona
+  // for citing them. (Needs a chat-turn edge-function redeploy to take effect.)
+  '§ 13 LBO',
+  '§ 15 LBO',
   '§ 27f LBO',
   '§ 37 LBO',
   '§ 38 LBO',
