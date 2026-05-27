@@ -1,0 +1,35 @@
+{
+  "_meta": {
+    "source": "gesetze-im-internet.de — official German federal-law portal (Bundesrecht)",
+    "fetchedAt": "2026-05-27",
+    "purpose": "Official §→Überschrift snapshot for every FEDERAL § cited in src/legal/. The build-time verifier (scripts/verify-citations.mjs) checks repo citations against this. Refresh when a law amends (each law page shows 'Zuletzt geändert durch …'). STATE Bauordnungen (BauO NRW / HBO / LBO / NBauO) are NOT here — gesetze-im-internet.de is federal-only, and official state portals are not machine-fetchable (see docs/V1_0_35_CITATION_SOURCE_RECON.md §3b). State tier is a separate follow-up.",
+    "verbatim": "Headings quoted verbatim from the official amtliche Überschrift."
+  },
+  "BauGB": {
+    "30": "Zulässigkeit von Vorhaben im Geltungsbereich eines Bebauungsplans",
+    "31": "Ausnahmen und Befreiungen",
+    "34": "Zulässigkeit von Vorhaben innerhalb der im Zusammenhang bebauten Ortsteile",
+    "35": "Bauen im Außenbereich",
+    "172": "Erhaltung baulicher Anlagen und der Eigenart von Gebieten (Erhaltungssatzung)",
+    "246e": "Befristete Sonderregelung für den Wohnungsbau"
+  },
+  "BauNVO": {
+    "1": "Allgemeine Vorschriften für Bauflächen und Baugebiete",
+    "3": "Reine Wohngebiete",
+    "4": "Allgemeine Wohngebiete",
+    "4a": "Gebiete zur Erhaltung und Entwicklung der Wohnnutzung (besondere Wohngebiete)",
+    "5": "Dorfgebiete",
+    "6": "Mischgebiete",
+    "7": "Kerngebiete",
+    "8": "Gewerbegebiete",
+    "9": "Industriegebiete",
+    "19": "Grundflächenzahl, zulässige Grundfläche",
+    "22": "Bauweise"
+  },
+  "GEG": {
+    "8": "Verantwortliche",
+    "10": "Grundsatz und Niedrigstenergiegebäude",
+    "48": "Anforderungen an ein bestehendes Gebäude bei Änderung",
+    "80": "Ausstellung und Verwendung von Energieausweisen"
+  }
+}
