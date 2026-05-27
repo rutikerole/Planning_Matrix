@@ -30,6 +30,12 @@
 // ───────────────────────────────────────────────────────────────────────
 
 import type { BundeslandCode } from './states/_types'
+// Phase B — corpus-backed citation fields (single source of truth:
+// scripts/legal-corpus/, codegen'd to corpusCitations.generated.ts). Per-field
+// fallback: a corpus value (heading-verified) wins where present, the hand-
+// coded value below stays otherwise. BW + Niedersachsen are intentionally
+// absent from the pack (heterogeneous BauO terminology) → fully hand-coded.
+import { STATE_CORPUS_CITATIONS } from './corpusCitations.generated'
 
 export interface StateCitationPack {
   bundesland: BundeslandCode
@@ -197,12 +203,25 @@ function makeStub(
 // the user-facing locale without re-typing the wording.
 export const STUB_VERIFY = { de: STUB_VERIFY_DE, en: STUB_VERIFY_EN }
 
+/**
+ * Phase B — overlay corpus-backed §-citation fields onto a pack. A corpus
+ * value (heading-verified, scripts/legal-corpus/) wins where present; the
+ * pack's hand-coded value stays otherwise. No-op for states absent from the
+ * pack (BW / Niedersachsen — heterogeneous terminology, hand-coded). This is
+ * how Hessen's § 49→§ 67 / § 66→§ 69 mis-citations get auto-corrected.
+ */
+function withCorpus(pack: StateCitationPack): StateCitationPack {
+  const c = STATE_CORPUS_CITATIONS[pack.bundesland]
+  // c carries only present (string) fields; cast back to the required-field pack.
+  return c ? ({ ...pack, ...c } as StateCitationPack) : pack
+}
+
 const REGISTRY: Record<BundeslandCode, StateCitationPack> = {
-  bayern: BAYERN,
-  nrw: NRW,
-  bw: BW,
-  hessen: HESSEN,
-  niedersachsen: NIEDERSACHSEN,
+  bayern: withCorpus(BAYERN),
+  nrw: withCorpus(NRW),
+  bw: withCorpus(BW),
+  hessen: withCorpus(HESSEN),
+  niedersachsen: withCorpus(NIEDERSACHSEN),
   berlin: makeStub('berlin', 'Berlin', 'Berlin'),
   hamburg: makeStub('hamburg', 'Hamburg', 'Hamburg'),
   bremen: makeStub('bremen', 'Bremen', 'Bremen'),
