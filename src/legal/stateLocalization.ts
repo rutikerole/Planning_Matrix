@@ -440,9 +440,12 @@ function withLocalizationCorpus(pack: StateLocalization): StateLocalization {
  * RLP is a terminology outlier: its LBauO has no standalone
  * "Baugenehmigungsverfahren" or "Bautechnische Nachweise" heading. The regular
  * permit decision is § 70 "Baugenehmigung" (hand-coded fallback, verified
- * against the corpus heading); the structural cert stays honest-deferral (RLP's
- * bautechnische Nachweise live in the separate Prüf-regime). free/simplified
- * come from the corpus via withLocalizationCorpus.
+ * against the corpus heading). phase-c/item-3 — the structural cert no longer
+ * defers: RLP's bautechnische Nachweise live in the separate Prüf-regime, whose
+ * content rule is § 5 BauuntPrüfVO ("Bautechnische Nachweise"; § 5 Abs. 1 =
+ * Standsicherheitsnachweis), the analogue of NRW § 68. Verified 2026-05-27 vs the
+ * primary BauuntPrüfVO regulation text (diearchitekten.org PDF) + lexsoft + FM RLP.
+ * free/simplified come from the corpus via withLocalizationCorpus.
  */
 function rlpStub(): StateLocalization {
   const base = makeStub('rlp', 'Rheinland-Pfalz', 'Rhineland-Palatinate')
@@ -450,6 +453,11 @@ function rlpStub(): StateLocalization {
     citation: '§ 70 LBauO',
     nameDe: 'Baugenehmigungsverfahren (regulär)',
     nameEn: 'Regular building permit',
+  }
+  base.structuralCert = {
+    citation: '§ 5 BauuntPrüfVO',
+    descriptionDe: 'Bautechnische Nachweise (Standsicherheitsnachweis)',
+    descriptionEn: 'Structural certification',
   }
   return base
 }

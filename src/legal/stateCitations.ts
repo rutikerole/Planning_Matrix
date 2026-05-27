@@ -375,7 +375,18 @@ const REGISTRY: Record<BundeslandCode, StateCitationPack> = {
   bremen: makeCorpusPack('bremen', 'Bremen', 'Bremen'),
   brandenburg: makeCorpusPack('brandenburg', 'Brandenburg', 'Brandenburg'),
   mv: makeCorpusPack('mv', 'Mecklenburg-Vorpommern', 'Mecklenburg-Western Pomerania'),
-  rlp: makeCorpusPack('rlp', 'Rheinland-Pfalz', 'Rhineland-Palatinate'),
+  // phase-c/item-3 — RLP structural cert. The LBauO has no "Bautechnische
+  // Nachweise" heading (§ 13 LBauO is only the substantive "Standsicherheit"
+  // requirement), so the heading-semantic codegen left structuralCert as an
+  // honest stub. RLP delegates the structural-certificate CONTENT to a dedicated
+  // Verordnung: § 5 BauuntPrüfVO ("Bautechnische Nachweise") — the exact analogue
+  // of NRW § 68 / NI § 65, and the same BauuntPrüfVO already named as RLP's
+  // bauVorlagenAct. § 5 Abs. 1: "Zum Nachweis der Standsicherheit sind die
+  // erforderlichen Berechnungen … vorzulegen." Verified 2026-05-27 against the
+  // primary regulation text (diearchitekten.org BauuntPrüfVO PDF · § 1 Abs. 1
+  // Nr. 4 + § 5) + lexsoft + FM RLP Ministerium; landesrecht.rlp.de VO node is a
+  // JS shell. NOT in the BauO-only corpus → hand-coded override here.
+  rlp: { ...makeCorpusPack('rlp', 'Rheinland-Pfalz', 'Rhineland-Palatinate'), structuralCertCitation: '§ 5 BauuntPrüfVO' },
   saarland: makeCorpusPack('saarland', 'Saarland', 'Saarland'),
   sachsen: makeCorpusPack('sachsen', 'Sachsen', 'Saxony'),
   'sachsen-anhalt': makeCorpusPack('sachsen-anhalt', 'Sachsen-Anhalt', 'Saxony-Anhalt'),
