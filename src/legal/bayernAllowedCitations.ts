@@ -42,7 +42,6 @@ export const BAYERN_ALLOWED_CITATIONS: readonly string[] = [
   'Art. 57 Abs. 5 BayBO',
   'Art. 57 Abs. 7 BayBO',
   'Art. 58 BayBO',
-  'Art. 58a BayBO',
   'Art. 59 BayBO',
   'Art. 60 BayBO',
   'Art. 61 BayBO',

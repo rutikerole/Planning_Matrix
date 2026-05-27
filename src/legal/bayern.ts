@@ -67,12 +67,12 @@ Bezeichnung in Bayern-Kontext NIEMALS.
   ✓ "BayBO Art. 57 Abs. 5"          — Abbruch
   ✓ "BayBO Art. 57 Abs. 7"          — Anzeigepflicht 2 Wochen
                                        (Abbruch: 1 Monat)
-  ✓ "BayBO Art. 58"                 — Vereinfachtes
-                                       Baugenehmigungsverfahren
-  ✓ "BayBO Art. 58a"                — Genehmigungsfreistellung
+  ✓ "BayBO Art. 58"                 — Genehmigungsfreistellung
                                        (qualifizierter B-Plan)
-  ✓ "BayBO Art. 59"                 — Baugenehmigungsverfahren
-  ✓ "BayBO Art. 60"                 — Sonderbau-Verfahren
+  ✓ "BayBO Art. 59"                 — Vereinfachtes
+                                       Baugenehmigungsverfahren
+  ✓ "BayBO Art. 60"                 — Baugenehmigungsverfahren
+                                       (regulär, auch Sonderbauten)
   ✓ "BayBO Art. 6"                  — Abstandsflächen (0,4 H,
                                        mind. 3 m)
   ✓ "BayBO Art. 12"                 — Standsicherheit
@@ -126,8 +126,8 @@ Art. 2 Abs. 4 BayBO — Sonderbauten (Schwellen seit BayBO-Modernisierung 2025)
   60 Gastplätzen, Versammlungsstätten > 200 Personen, Krankenhäuser,
   Beherbergungsstätten, Kindergärten u. a.
   Sonderbauten unterliegen IMMER dem Baugenehmigungsverfahren nach
-  Art. 60 BayBO — niemals der Genehmigungsfreistellung (Art. 57) oder
-  dem vereinfachten Verfahren (Art. 58).
+  Art. 60 BayBO — niemals der Genehmigungsfreistellung (Art. 58) oder
+  dem vereinfachten Verfahren (Art. 59).
 
 Art. 6 BayBO — Abstandsflächen
   In Bayern beträgt die Abstandsfläche grundsätzlich 0,4 H (mindestens
@@ -203,32 +203,35 @@ Art. 57 BayBO — Verfahrensfreie Vorhaben + Anzeigepflicht
   ursprüngliche Gebäudeklasse bleibt, kein pauschales Brandschutz-
   Upgrade auf höhere GK).
 
-Art. 58a BayBO — Genehmigungsfreistellung (qualifizierter B-Plan)
+Art. 58 BayBO — Genehmigungsfreistellung (qualifizierter B-Plan)
   Genehmigungsfreistellung kommt in Betracht, wenn:
   (i)   qualifizierter Bebauungsplan nach § 30 Abs. 1 BauGB,
   (ii)  Vorhaben entspricht den Festsetzungen,
   (iii) Erschließung gesichert,
-  (iv)  Gemeinde verlangt nicht binnen einem Monat das Verfahren
-        nach Art. 58.
+  (iv)  Gemeinde verlangt nicht binnen einem Monat das
+        vereinfachte Verfahren nach Art. 59.
   Sobald tragende Bauteile geändert werden oder
   Befreiungs-/Ausnahme-Bedarf besteht, entfällt die Freistellung.
   Sonderbauten sind IMMER ausgenommen.
 
-Art. 58 BayBO — Vereinfachtes Verfahren
-  Das vereinfachte Verfahren ist die häufigste Verfahrensart für
-  Einfamilienhäuser und kleinere Wohngebäude. Prüfungsumfang ist
-  reduziert; planungsrechtliche Zulässigkeit + Abstandsflächen +
+Art. 59 BayBO — Vereinfachtes Baugenehmigungsverfahren
+  Das vereinfachte Verfahren kommt für Einfamilienhäuser und kleinere
+  Wohngebäude in Betracht, wenn keine Genehmigungsfreistellung nach
+  Art. 58 greift (etwa weil kein qualifizierter Bebauungsplan
+  vorliegt). Welcher Pfad im Einzelfall greift, bestätigt die/der
+  bauvorlageberechtigte Architekt:in. Prüfungsumfang ist reduziert;
+  planungsrechtliche Zulässigkeit + Abstandsflächen +
   Stellplatznachweis stehen im Vordergrund. Sonderbauten fallen
   NICHT hierunter.
 
-Art. 59 BayBO — Baugenehmigungsverfahren (reguläres Verfahren)
+Art. 60 BayBO — Baugenehmigungsverfahren (reguläres Verfahren)
   Anwendungsbereich: alle baugenehmigungspflichtigen Vorhaben, die
   weder verfahrensfrei nach Art. 57 sind noch in das vereinfachte
-  Verfahren nach Art. 58 fallen — insbesondere Sonderbauten im
+  Verfahren nach Art. 59 fallen — insbesondere Sonderbauten im
   Sinne von Art. 2 Abs. 4 BayBO sowie sonstige Vorhaben, bei denen
   die Behörde den vollen Prüfungsumfang ausübt.
 
-  Prüfungsumfang (gegenüber Art. 58 erweitert):
+  Prüfungsumfang (gegenüber Art. 59 erweitert):
     • planungsrechtliche Zulässigkeit nach §§ 29 ff. BauGB
     • Anforderungen der BayBO und der aufgrund der BayBO
       erlassenen Vorschriften (insbesondere Brandschutz,
@@ -241,7 +244,7 @@ Art. 59 BayBO — Baugenehmigungsverfahren (reguläres Verfahren)
   Frist (Art. 65 BayBO seit 01.01.2025): die Bauaufsichtsbehörde
   prüft Antrag und Bauvorlagen innerhalb von drei Wochen nach
   Eingang auf Vollständigkeit. Eine Genehmigungsfiktion (wie sie
-  Art. 58 Abs. 2 für das vereinfachte Verfahren vorsieht) ist im
+  Art. 59 Abs. 2 für das vereinfachte Verfahren vorsieht) ist im
   regulären Verfahren NICHT vorgesehen.
 
   Typische Münchner Anwendungsfälle: Mehrfamilien-Wohnungsbau ab
@@ -249,11 +252,15 @@ Art. 59 BayBO — Baugenehmigungsverfahren (reguläres Verfahren)
   stätten > 200 Personen, Beherbergungsstätten, Krankenhäuser,
   Kindergärten), gemischt genutzte Vorhaben mit Gewerbeanteilen
   oberhalb der Sonderbau-Schwellen. Für reine Einfamilienhaus-
-  Vorhaben in München (T-01) ist Art. 58 die Regel; Art. 59 kommt
-  in Betracht, wenn das Vorhaben unerwartet als Sonderbau
-  einzuordnen ist.
+  Vorhaben in München (T-01) greift in der Regel ein reduziertes
+  Verfahren — Genehmigungsfreistellung nach Art. 58 bei
+  qualifiziertem Bebauungsplan, sonst das vereinfachte Verfahren
+  nach Art. 59; das reguläre Verfahren nach Art. 60 kommt nur in
+  Betracht, wenn das Vorhaben als Sonderbau einzuordnen ist. Die
+  endgültige Verfahrenseinordnung bestätigt die/der
+  bauvorlageberechtigte Architekt:in.
 
-Art. 60 BayBO — Sonderbau-Verfahren
+Sonderbauten im Baugenehmigungsverfahren (Art. 60 BayBO)
   Das vollumfängliche Verfahren — für Sonderbauten (Art. 2 Abs. 4)
   IMMER, sonst nur in Ausnahmefällen. Brandschutznachweis und
   Standsicherheitsnachweis sind regelmäßig durch eine/n
@@ -282,7 +289,7 @@ Art. 62 BayBO — Bautechnische Nachweise
   Listen — verwechseln Sie das nicht.
 
 Art. 64 BayBO — Antragsverfahren
-  Im vereinfachten Verfahren (Art. 58) entscheidet die Behörde
+  Im vereinfachten Verfahren (Art. 59) entscheidet die Behörde
   grundsätzlich innerhalb von drei Monaten ab Vollständigkeit der
   Bauvorlagen. Erforderliche Unterlagen: Bauantragsformular,
   amtlicher Lageplan, Bauzeichnungen 1:100, Baubeschreibung,
@@ -321,7 +328,7 @@ Art. 82c BayBO — Verfahrensbeschleunigung Wohnungsbau
   Art. 82c BayBO koordiniert die seit 30.10.2025 geltenden
   BauGB-Beschleunigungstatbestände (§ 246e BauGB, § 31 Abs. 3 BauGB,
   § 34 Abs. 3b BauGB) mit dem vereinfachten Baugenehmigungsverfahren
-  nach Art. 58 BayBO. Anwendung kommt insbesondere für Wohnungsbau-
+  nach Art. 59 BayBO. Anwendung kommt insbesondere für Wohnungsbau-
   Vorhaben in ausgewiesenen Wohnungsmangelgebieten in Betracht — die
   Landeshauptstadt München zählt dazu.
 

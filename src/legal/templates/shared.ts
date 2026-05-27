@@ -36,7 +36,7 @@ nicht. Das Template beschreibt WAS gebaut/saniert/abgerissen wird; das
 Verfahren beschreibt WIE die Bauaufsicht das prüft.
 
 Beispiel: T-03 (Sanierung) kann sowohl verfahrensfrei (Anzeige nach
-Art. 57 Abs. 7) ALS AUCH genehmigungspflichtig (Art. 58) sein, je
+Art. 57 Abs. 7) ALS AUCH genehmigungspflichtig (Art. 59) sein, je
 nach Eingriffstiefe. Beides ist legitim für T-03.
 
 ──────────────────────────────────────────────────────────────────────────

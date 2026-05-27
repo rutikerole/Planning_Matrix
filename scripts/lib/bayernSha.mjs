@@ -20,6 +20,16 @@
 //     __246e.html). Only the FEDERAL_BLOCK date parenthetical changed;
 //     BAYERN_BLOCK / MUENCHEN_BLOCK / SHARED / PERSONA / TEMPLATE_SHARED
 //     are byte-unchanged. Length 47923 → 47959 (+36).
+//   - v1.0.34 Bayern procedure-article correction: 85155d2d…17b2 — INTENTIONAL.
+//     Corrected the BayBO procedure-article mapping in BAYERN_BLOCK +
+//     SHARED_BLOCK + TEMPLATE_SHARED_BLOCK: Art. 58 = Genehmigungsfreistellung,
+//     Art. 59 = vereinfachtes Verfahren, Art. 60 = reguläres Verfahren;
+//     removed the fabricated "Art. 58a" (HTTP 404 on gesetze-bayern.de). The
+//     München EFH/MFH default-procedure assertions were softened to a neutral
+//     conditional (Freistellung Art. 58 bei qualifiziertem B-Plan, sonst
+//     vereinfacht Art. 59) pending a licensed-architect call — none available
+//     at correction time. Verified against gesetze-bayern.de BayBO-58/59/60;
+//     see docs/V1_0_34_BAYERN_PROCEDURE_CORRECTION.md. Length 47959 → 48473.
 // ───────────────────────────────────────────────────────────────────────
 
 import { readFile } from 'node:fs/promises'
@@ -31,7 +41,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url))
 const REPO_ROOT = join(__dirname, '..', '..')
 
 export const EXPECTED_BAYERN_SHA =
-  'a2ffc7bb47946d7de822823144966576eb57b8ce2662a9ec07a26678a04f31a8'
+  '85155d2d32fa26c70db4c31a481ebbd03d3a1af3cf804f7835d33add8a9417b2'
 
 const SLICE_SEPARATOR = '\n\n---\n\n'
 const TAIL =

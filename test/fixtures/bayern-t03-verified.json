@@ -22,7 +22,7 @@
       ],
       "areas": {
         "A": { "state": "ACTIVE", "reason": "Innenbereich nach § 34 BauGB. Bebauungsplan vom Bauamt bestätigt." },
-        "B": { "state": "ACTIVE", "reason": "Vereinfachtes Verfahren nach BayBO Art. 58." },
+        "B": { "state": "ACTIVE", "reason": "Vereinfachtes Verfahren nach BayBO Art. 59." },
         "C": { "state": "ACTIVE", "reason": "GEG 2024 Wärmeschutznachweis erforderlich." }
       },
       "recommendations": [],

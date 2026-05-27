@@ -133,19 +133,19 @@ export const factLabelsDe: Record<string, FactLabel> = {
   // ── Procedure / Verfahren ─────────────────────────────────────────
   'PROCEDURE.TYPE': { label: 'Verfahrensart' },
   'PROCEDURE.GENEHMIGUNGSFREISTELLUNG': {
-    label: 'Genehmigungsfreistellung (Art. 57 BayBO)',
+    label: 'Genehmigungsfreistellung (Art. 58 BayBO)',
   },
-  'PROCEDURE.VEREINFACHT': { label: 'Vereinfachtes Verfahren (Art. 58 BayBO)' },
+  'PROCEDURE.VEREINFACHT': { label: 'Vereinfachtes Verfahren (Art. 59 BayBO)' },
   'PROCEDURE.VEREINFACHTES_VERFAHREN': {
-    label: 'Vereinfachtes Verfahren (Art. 58 BayBO)',
+    label: 'Vereinfachtes Verfahren (Art. 59 BayBO)',
   },
   'PROCEDURE.REGULAR': {
-    label: 'Reguläres Baugenehmigungsverfahren (Art. 59 BayBO)',
+    label: 'Reguläres Baugenehmigungsverfahren (Art. 60 BayBO)',
   },
   'PROCEDURE.STANDARD': {
-    label: 'Reguläres Baugenehmigungsverfahren (Art. 59 BayBO)',
+    label: 'Reguläres Baugenehmigungsverfahren (Art. 60 BayBO)',
   },
-  'PROCEDURE.VOLLPRÜFUNG': { label: 'Vollprüfung (Art. 59 BayBO)' },
+  'PROCEDURE.VOLLPRÜFUNG': { label: 'Vollprüfung (Art. 60 BayBO)' },
   'PROCEDURE.VORBESCHEID': { label: 'Vorbescheidsverfahren' },
 
   // ── Parties / Beteiligte ──────────────────────────────────────────

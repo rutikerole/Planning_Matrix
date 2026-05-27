@@ -28,7 +28,7 @@ export interface LegalDomain {
  *
  * Composition is regex-over-corpus for now. The model produces facts
  * + procedures + documents with citation evidence; we sniff for the
- * canonical statutes (§§ 30/34/35 BauGB, BayBO Art. 2/57/58/60/6,
+ * canonical statutes (§§ 30/34/35 BauGB, BayBO Art. 2/57/58/59/60/6,
  * GEG, Brandschutz, Stellplatz, Denkmal, Baulast) and emit one row
  * per hit with HIGH / PARTIAL / NONE relevance. The Areas A/B/C state
  * machine adjusts each domain's overall relevance.
@@ -135,18 +135,25 @@ export function composeLegalDomains(
         status: lang === 'en' ? 'building class' : 'Gebäudeklasse',
       })
     }
-    if (has(/baybo\s*art\.?\s*58\b/)) {
-      bRows.push({
-        label: 'BayBO Art. 58',
-        relevance: 'HIGH',
-        status: lang === 'en' ? 'simplified procedure' : 'vereinfachtes Verfahren',
-      })
-    }
     if (has(/baybo\s*art\.?\s*57\b/)) {
       bRows.push({
         label: 'BayBO Art. 57',
         relevance: 'PARTIAL',
+        status: lang === 'en' ? 'permit-free works' : 'verfahrensfreie Vorhaben',
+      })
+    }
+    if (has(/baybo\s*art\.?\s*58\b/)) {
+      bRows.push({
+        label: 'BayBO Art. 58',
+        relevance: 'PARTIAL',
         status: lang === 'en' ? 'permit exemption check' : 'Genehmigungsfreistellung',
+      })
+    }
+    if (has(/baybo\s*art\.?\s*59\b/)) {
+      bRows.push({
+        label: 'BayBO Art. 59',
+        relevance: 'HIGH',
+        status: lang === 'en' ? 'simplified procedure' : 'vereinfachtes Verfahren',
       })
     }
     if (has(/baybo\s*art\.?\s*60\b/)) {

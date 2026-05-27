@@ -135,8 +135,8 @@ function stateEntries(bundeslandLower: string | null | undefined): GlossaryEntry
     return [
       {
         term: 'BayBO · Bayerische Bauordnung',
-        en: 'Bavarian state building code (BayBO Art. 57 / Art. 58 verfahrensfrei + simplified procedure).',
-        de: 'Bayerische Bauordnung (BayBO Art. 57 / Art. 58 verfahrensfrei + vereinfachtes Verfahren).',
+        en: 'Bavarian state building code (BayBO Art. 57 verfahrensfrei + Art. 59 simplified procedure).',
+        de: 'Bayerische Bauordnung (BayBO Art. 57 verfahrensfrei + Art. 59 vereinfachtes Verfahren).',
       },
       {
         term: 'BayDSchG · Bayerisches Denkmalschutzgesetz',

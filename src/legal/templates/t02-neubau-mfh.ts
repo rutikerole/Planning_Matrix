@@ -6,8 +6,8 @@
 //
 // LEGAL-VERIFY-MARKER · BayBO Art. 2 Abs. 3 Gebäudeklassen 3 / 4 / 5 · Stand: stabil
 // LEGAL-VERIFY-MARKER · BayBO Art. 2 Abs. 4 Sonderbau-Tatbestände · Stand: stabil
-// LEGAL-VERIFY-MARKER · BayBO Art. 58 vereinfachtes Verfahren · Stand: stabil
-// LEGAL-VERIFY-MARKER · BayBO Art. 59 Baugenehmigungsverfahren · Stand: stabil
+// LEGAL-VERIFY-MARKER · BayBO Art. 59 vereinfachtes Verfahren · Stand: stabil
+// LEGAL-VERIFY-MARKER · BayBO Art. 60 Baugenehmigungsverfahren · Stand: stabil
 // LEGAL-VERIFY-MARKER · BayBO Art. 62a Standsicherheit / Art. 62b Brandschutz · Stand: gesetze-bayern.de 2025
 // LEGAL-VERIFY-MARKER · BayBO Art. 7 Abs. 3 Kinderspielplatz (München Satzung 927, kommunalisiert 01.10.2025) · Stand: 2025
 // LEGAL-VERIFY-MARKER · DIN 4109 Schallschutz im Hochbau · Stand: 2018
@@ -43,21 +43,21 @@ LEITFRAGEN für T-02
    Pflegeheim, Versammlungsstätte) oder Hochhaus-Schwelle.
 
 4. Verfahrensart viertens:
-   • Vereinfachtes Verfahren (Art. 58) — der Default für GK 3-5
-     ohne Sonderbau-Tatbestand
-   • Reguläres Verfahren (Art. 59) — sobald ein Sonderbau-Tatbestand
+   • Vereinfachtes Verfahren (Art. 59) — für GK 3-5 ohne
+     Sonderbau-Tatbestand
+   • Reguläres Verfahren (Art. 60) — sobald ein Sonderbau-Tatbestand
      vorliegt
-   • Genehmigungsfreistellung (Art. 57 Abs. 1) — selten möglich, da
+   • Genehmigungsfreistellung (Art. 58) — selten möglich, da
      MFH meist die Wohngebäude-Schwellen überschreiten
 
 ──────────────────────────────────────────────────────────────────────────
 TYPISCHE VERFAHRENSWEGE für T-02
 ──────────────────────────────────────────────────────────────────────────
 
-• Vereinfachtes Baugenehmigungsverfahren (BayBO Art. 58) — der
-  Standard-Fall für GK 3-5 Wohnneubauten ohne Sonderbau-Trigger.
+• Vereinfachtes Baugenehmigungsverfahren (BayBO Art. 59) — für
+  GK 3-5 Wohnneubauten ohne Sonderbau-Trigger.
 
-• Reguläres Baugenehmigungsverfahren (BayBO Art. 59) — sobald
+• Reguläres Baugenehmigungsverfahren (BayBO Art. 60) — sobald
   Mischnutzung (Gewerbe, Versammlung, Hotel, Pflegeheim, KiTa)
   einen Sonderbau-Tatbestand nach Art. 2 Abs. 4 auslöst.
 
@@ -149,7 +149,7 @@ PERSONA-VERHALTEN für T-02
 VERMEIDE für T-02
 ──────────────────────────────────────────────────────────────────────────
 
-• KEIN Vorschlag der Genehmigungsfreistellung (Art. 57 Abs. 1) ohne
+• KEIN Vorschlag der Genehmigungsfreistellung (Art. 58) ohne
   vorherige Prüfung der Wohngebäude-Schwellen — bei MFH selten
   anwendbar.
 • KEIN Brandschutz-Planer aus der BAYIKA-Liste empfehlen — die
@@ -166,11 +166,10 @@ TYPISCHE KORREKTE ZITATE für T-02
                                   ≤ 400 m² je NE)
   ✓ "BayBO Art. 2 Abs. 3 Nr. 5" — GK 5 (> 13 m, alles übrige)
   ✓ "BayBO Art. 2 Abs. 4"       — Sonderbau-Tatbestände
-  ✓ "BayBO Art. 58"             — vereinfachtes Verfahren (Default
+  ✓ "BayBO Art. 59"             — vereinfachtes Verfahren (für
                                   GK 3-5 ohne Sonderbau)
-  ✓ "BayBO Art. 59"             — reguläres Verfahren (sobald
-                                  Sonderbau)
-  ✓ "BayBO Art. 60"             — Sonderbau-Verfahren
+  ✓ "BayBO Art. 60"             — reguläres Verfahren (sobald
+                                  Sonderbau-Tatbestand)
   ✓ "BayBO Art. 62"             — bautechnische Nachweise / Prüf-
                                   sachverständige (Pflicht ab GK 4)
   ✓ "BayBO Art. 8 Abs. 2"       — Spielplatzpflicht (in
@@ -186,7 +185,7 @@ VERBOTENE ZITATE für T-02
                                   steht direkt in Art. 2 Abs. 4
   ✗ "§ 2 BayBO" / "§ 58 BayBO"  — BayBO verwendet Art.
   ✗ "Art. 57 Abs. 1" für ein MFH — bei MFH selten anwendbar; Default
-                                  ist Art. 58 (vereinfachtes Verfahren)
+                                  ist Art. 59 (vereinfachtes Verfahren)
   ✗ Brandschutz-Listen "BAYIKA" — die Liste der Prüfsachverständigen
                                   für Brandschutz wird bei BAYAK
                                   geführt, nicht BAYIKA

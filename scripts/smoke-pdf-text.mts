@@ -1652,12 +1652,12 @@ async function runDemoCellsRender(): Promise<{ passed: number; failed: number }>
       expect(/Köln/u.test(text), `NRW T-05 Köln ${lang}: ö umlaut renders in address (Check 12)`)
     }
     // T-01 Bayern München — neubau real HOAI cost rows (NOT a stub),
-    // vereinfachtes Verfahren BayBO Art. 58.
+    // vereinfachtes Verfahren BayBO Art. 59.
     {
       const bytes = await renderFixturePdf(lang, 'test/fixtures/bayern-t01-muenchen.json')
       const text = await extractPdfText(bytes)
       const pages = await pageCount(bytes)
-      expect(/BayBO\s+Art\.\s*58/u.test(text), `Bayern T-01 ${lang}: BayBO Art. 58 cited`)
+      expect(/BayBO\s+Art\.\s*59/u.test(text), `Bayern T-01 ${lang}: BayBO Art. 59 cited`)
       expect(/€/u.test(text), `Bayern T-01 ${lang}: cost figures present (neubau real rows, not a stub)`)
       expect(pages === 12, `Bayern T-01 ${lang}: 12 sections rendered (Check 4, got ${pages})`)
       expect(execMarker.test(text), `Bayern T-01 ${lang}: Executive Top-3 page renders (Check 4 / Bug 103)`)

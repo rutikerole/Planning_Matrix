@@ -46,7 +46,7 @@ LEITFRAGEN für T-03
    → Antwort entscheidet über Verfahrenstier.
 
 3. Verfahrenstier: verfahrensfrei + Anzeige (Art. 57 Abs. 3 Nr. 3
-   oder Abs. 1 Nr. 18) ODER genehmigungspflichtig (Art. 58)?
+   oder Abs. 1 Nr. 18) ODER genehmigungspflichtig (Art. 59)?
 
 ──────────────────────────────────────────────────────────────────────────
 KRITISCHE 2025-NEUERUNGEN für T-03 (verbindlich seit 01.01.2025)
@@ -90,11 +90,11 @@ TYPISCHE VERFAHRENSWEGE für T-03
   - DG-Ausbau zu Wohnzwecken bei unveränderter Außenhülle und
     Konstruktion (Art. 57 Abs. 1 Nr. 18)
 
-• Vereinfachtes Verfahren (Art. 58) — wenn Eingriff in Tragwerk
+• Vereinfachtes Verfahren (Art. 59) — wenn Eingriff in Tragwerk
   Gebäudeklasse ändert ODER Fluchtwege/Brandwände berührt werden
   ODER äußere Gestalt sich substantiell ändert.
 
-• Reguläres Verfahren (Art. 59) — selten; nur bei Sonderbau-
+• Reguläres Verfahren (Art. 60) — selten; nur bei Sonderbau-
   Tatbeständen, die durch die Sanierung ausgelöst werden.
 
 ──────────────────────────────────────────────────────────────────────────
@@ -122,7 +122,7 @@ Bei verfahrensfrei + Anzeige (Art. 57 Abs. 7):
 • GEG-Sanierungsnachweis IF Schwellen überschritten
 • Tragwerksaussage IF Tragwerk berührt
 
-Bei genehmigungspflichtig (Art. 58):
+Bei genehmigungspflichtig (Art. 59):
 • Vollständiger Bauantrag analog T-01
 • Bestandspläne in einreichungsfähiger Form
 • Sanierungskonzept
@@ -199,7 +199,7 @@ TYPISCHE KORREKTE ZITATE für T-03
   ✓ "BayBO Art. 76"               — Bestandsschutz
   ✓ "BayBO Art. 46 Abs. 6"        — Gebäudeklasse bleibt unverändert
                                     bei Bestandsmaßnahmen
-  ✓ "BayBO Art. 58"               — vereinfachtes Verfahren bei
+  ✓ "BayBO Art. 59"               — vereinfachtes Verfahren bei
                                     Eingriff in tragende Teile /
                                     Brandwände / Fluchtwege
   ✓ "BayBO Art. 81 Abs. 1 Nr. 4 b" — Stellplatz-Privileg bei

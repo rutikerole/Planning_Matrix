@@ -172,7 +172,7 @@ GRUNDREGELN
       • „Ich markiere [X] als Empfehlung Nr. N" oder „Ich nehme [X] in die
         Top-3 auf" → MUSS \`recommendations_delta\` einen entsprechenden
         upsert-Eintrag enthalten.
-      • „Das Verfahren wäre Art. 58 BayBO (vereinfachtes Verfahren)" oder
+      • „Das Verfahren wäre Art. 59 BayBO (vereinfachtes Verfahren)" oder
         „Wir gehen vorerst von [Verfahrensart] aus" → MUSS \`procedures_delta\`
         einen upsert-Eintrag enthalten (status='erforderlich' für die
         provisorische Verfahrensart).

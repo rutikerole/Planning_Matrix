@@ -21,7 +21,7 @@
       },
       "areas": {
         "A": { "state": "ACTIVE", "reason": "Qualifizierter Bebauungsplan nach § 30 Abs. 1 BauGB; Vorhaben fügt sich nach Art und Maß ein." },
-        "B": { "state": "ACTIVE", "reason": "Vereinfachtes Baugenehmigungsverfahren nach BayBO Art. 58 — Wohngebäude Gebäudeklasse 1, kein Sonderbau." },
+        "B": { "state": "ACTIVE", "reason": "Vereinfachtes Baugenehmigungsverfahren nach BayBO Art. 59 — Wohngebäude Gebäudeklasse 1, kein Sonderbau." },
         "C": { "state": "ACTIVE", "reason": "GEG-Wärmeschutznachweis und PV-Pflicht (BayBO Art. 44a); Stellplatznachweis nach örtlicher Satzung." }
       },
       "facts": [
@@ -33,10 +33,10 @@
         { "key": "bebauungsplan_id", "value": "qualifizierter Bebauungsplan vorhanden", "qualifier": { "source": "DESIGNER", "quality": "VERIFIED", "setAt": "2026-05-26T10:00:00.000Z", "setBy": "user" } },
         { "key": "denkmalschutz", "value": false, "qualifier": { "source": "DESIGNER", "quality": "VERIFIED", "setAt": "2026-05-26T10:00:00.000Z", "setBy": "user" } },
         { "key": "ensembleschutz", "value": false, "qualifier": { "source": "DESIGNER", "quality": "VERIFIED", "setAt": "2026-05-26T10:00:00.000Z", "setBy": "user" } },
-        { "key": "verfahren.typ", "value": "Vereinfachtes Baugenehmigungsverfahren nach BayBO Art. 58", "qualifier": { "source": "DESIGNER", "quality": "VERIFIED", "setAt": "2026-05-26T10:00:00.000Z", "setBy": "user" } }
+        { "key": "verfahren.typ", "value": "Vereinfachtes Baugenehmigungsverfahren nach BayBO Art. 59", "qualifier": { "source": "DESIGNER", "quality": "VERIFIED", "setAt": "2026-05-26T10:00:00.000Z", "setBy": "user" } }
       ],
       "recommendations": [
-        { "id": "rec-1", "rank": 1, "title_de": "Bauvorlageberechtigte:n Architekt:in beauftragen", "title_en": "Engage a submission-authorized architect", "detail_de": "Für das vereinfachte Verfahren (BayBO Art. 58) ist eine bauvorlageberechtigte Person erforderlich; frühzeitig beauftragen.", "detail_en": "The simplified procedure (BayBO Art. 58) requires a submission-authorized person; engage early.", "qualifier": { "source": "DESIGNER", "quality": "VERIFIED" } },
+        { "id": "rec-1", "rank": 1, "title_de": "Bauvorlageberechtigte:n Architekt:in beauftragen", "title_en": "Engage a submission-authorized architect", "detail_de": "Für das vereinfachte Verfahren (BayBO Art. 59) ist eine bauvorlageberechtigte Person erforderlich; frühzeitig beauftragen.", "detail_en": "The simplified procedure (BayBO Art. 59) requires a submission-authorized person; engage early.", "qualifier": { "source": "DESIGNER", "quality": "VERIFIED" } },
         { "id": "rec-2", "rank": 2, "title_de": "GEG-Wärmeschutznachweis vorbereiten", "title_en": "Prepare the GEG thermal-insulation certificate", "detail_de": "GEG verlangt den Wärmeschutznachweis vor Baubeginn; Energieberatung vor LP 4 abschließen.", "detail_en": "GEG requires the thermal certificate before construction; complete energy consulting before LP 4.", "qualifier": { "source": "DESIGNER", "quality": "VERIFIED" } }
       ],
       "procedures": [],

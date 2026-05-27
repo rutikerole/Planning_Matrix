@@ -1,7 +1,14 @@
 # V1.0.34 — Bayern Procedure-Article Correction Plan (for licensed-architect adjudication)
 
-> Status: **FINDING + PLAN ONLY. No code changed.** Branch `phase-2/full-matrix`, Bayern SHA `a2ffc7bb…f31a8` (unchanged).
-> This document exists because the Bayern procedure-article mapping is **systematically wrong** across the codebase — including the SHA-locked constitutional content and the flagship T-01 demo cell. The correction touches the SHA and needs a per-occurrence legal call, so it is staged here for a Bauvorlageberechtigte/r to adjudicate before application.
+> Status: **APPLIED 2026-05-27** — mechanical correction landed; default-procedure wording made conditional pending architect. Branch `phase-2/full-matrix`, Bayern SHA re-baselined `a2ffc7bb…f31a8` → **`85155d2d…417b2`** (length 47959 → 48473). All gates green (tsc, bayern-sha, citation-drift [42 tokens, no 58a], smoke:citations/architect[285·0]/pdf-text[386·0]/pdf-matrix[16/16], bundle 287.7 KB).
+>
+> **⚠ THE §3 PER-OCCURRENCE INVENTORY BELOW WAS INCOMPLETE.** Applying it surfaced the same wrong mapping across a whole result-rendering / locale / landing / facts layer the inventory missed — caught by the **smoke gate**, not the plan. **28 files** corrected, not the ~19 in §3. Beyond §3: `composeLegalDomains.ts` (Domain-B matchers — also wrongly labeled **Art. 57 as Genehmigungsfreistellung**, and had **no Art. 59 matcher** at all), `legalCitations.ts` (added the Art. 59 URL), `humanizeFact.ts`, `locales/factLabels.de.ts` + `factLabels.en.ts`, `landing/addresses.ts`, `landing/chatScript.ts`, `pdfSections/glossary.ts`, `data/factsMuenchen.ts`. `costNormsMuenchen.ts` `detectProcedure` left **unchanged on purpose** — its slugs (`art57_freistellung`/`art58_vereinfacht`) are keyword-driven and unaffected; the slug names are now a cosmetic naming debt, not a citation. This pervasiveness is the wrong-§ class made concrete and is the evidence for the build-time primary-source citation check (§7).
+>
+> **STILL OWED BEFORE PUSH:** (1) the §4 substantive default-procedure call by a Bauvorlageberechtigte/r — the briefs now *describe the conditional* (Genehmigungsfreistellung Art. 58 bei qualifiziertem B-Plan, sonst vereinfachtes Verfahren Art. 59) and route the final call to the architect, rather than asserting a default; (2) operator visual-confirm of the rendered T-01 Bayern PDF. Committed locally, **not pushed.**
+>
+> ---
+>
+> *Original status (for the record):* FINDING + PLAN ONLY. This document existed because the Bayern procedure-article mapping was **systematically wrong** across the codebase — including the SHA-locked constitutional content and the flagship T-01 demo cell. The correction touched the SHA and needed a per-occurrence legal call, so it was staged here for a Bauvorlageberechtigte/r to adjudicate before application.
 
 ---
 

@@ -122,15 +122,15 @@ export const factLabelsEn: Record<string, FactLabel> = {
   // ── Procedure ─────────────────────────────────────────────────────
   'PROCEDURE.TYPE': { label: 'Procedure type' },
   'PROCEDURE.GENEHMIGUNGSFREISTELLUNG': {
-    label: 'Permit-exempt procedure (Art. 57 BayBO)',
+    label: 'Permit-exempt procedure (Art. 58 BayBO)',
   },
-  'PROCEDURE.VEREINFACHT': { label: 'Simplified permit (Art. 58 BayBO)' },
+  'PROCEDURE.VEREINFACHT': { label: 'Simplified permit (Art. 59 BayBO)' },
   'PROCEDURE.VEREINFACHTES_VERFAHREN': {
-    label: 'Simplified permit (Art. 58 BayBO)',
+    label: 'Simplified permit (Art. 59 BayBO)',
   },
-  'PROCEDURE.REGULAR': { label: 'Standard permit (Art. 59 BayBO)' },
-  'PROCEDURE.STANDARD': { label: 'Standard permit (Art. 59 BayBO)' },
-  'PROCEDURE.VOLLPRÜFUNG': { label: 'Full review (Art. 59 BayBO)' },
+  'PROCEDURE.REGULAR': { label: 'Standard permit (Art. 60 BayBO)' },
+  'PROCEDURE.STANDARD': { label: 'Standard permit (Art. 60 BayBO)' },
+  'PROCEDURE.VOLLPRÜFUNG': { label: 'Full review (Art. 60 BayBO)' },
   'PROCEDURE.VORBESCHEID': { label: 'Preliminary ruling (Vorbescheid)' },
 
   // ── Parties ───────────────────────────────────────────────────────

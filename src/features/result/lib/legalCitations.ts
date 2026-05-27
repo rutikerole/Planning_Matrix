@@ -53,6 +53,13 @@ const TABLE: Array<{ pattern: RegExp; cite: LegalCitation }> = [
     },
   },
   {
+    pattern: /baybo\s*art\.?\s*59\b/i,
+    cite: {
+      label: 'BayBO Art. 59',
+      href: 'https://www.gesetze-bayern.de/Content/Document/BayBO-59',
+    },
+  },
+  {
     pattern: /baybo\s*art\.?\s*60\b/i,
     cite: {
       label: 'BayBO Art. 60',

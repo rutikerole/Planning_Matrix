@@ -47,16 +47,16 @@ export const FACTS_MUENCHEN: MuenchenFact[] = [
   },
   {
     id: 'art-58-vereinfachtes',
-    de: 'Das vereinfachte Verfahren nach BayBO Art. 58 ist die häufigste Verfahrensart für Einfamilienhäuser.',
-    en: 'The simplified procedure under BayBO Art. 58 is the most common path for single-family homes.',
-    reference: 'BayBO Art. 58',
+    de: 'Das vereinfachte Verfahren nach BayBO Art. 59 ist die häufigste Verfahrensart für Einfamilienhäuser.',
+    en: 'The simplified procedure under BayBO Art. 59 is the most common path for single-family homes.',
+    reference: 'BayBO Art. 59',
     verifyBeforePublicLaunch: true,
   },
   {
     id: 'art-57-genehmigungsfreistellung',
-    de: 'Die Genehmigungsfreistellung nach BayBO Art. 57 entfällt, sobald tragende Bauteile geändert werden.',
-    en: 'Permit exemption under BayBO Art. 57 lapses as soon as load-bearing components are modified.',
-    reference: 'BayBO Art. 57',
+    de: 'Die Genehmigungsfreistellung nach BayBO Art. 58 entfällt, sobald tragende Bauteile geändert werden.',
+    en: 'Permit exemption under BayBO Art. 58 lapses as soon as load-bearing components are modified.',
+    reference: 'BayBO Art. 58',
     verifyBeforePublicLaunch: true,
   },
   {

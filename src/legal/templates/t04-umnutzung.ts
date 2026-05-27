@@ -9,7 +9,7 @@
 // LEGAL-VERIFY-MARKER · BayBO Art. 57 Abs. 4 Umnutzung verfahrensfrei · Stand: 01.01.2025
 //                       Quelle: planecobuilding.de current-law explainer + STMB (post-cutoff verified by brief)
 // LEGAL-VERIFY-MARKER · BayBO Art. 57 Abs. 7 Anzeigepflicht 2 Wochen · Stand: stabil
-// LEGAL-VERIFY-MARKER · BayBO Art. 58 vereinfachtes Verfahren · Stand: stabil
+// LEGAL-VERIFY-MARKER · BayBO Art. 59 vereinfachtes Verfahren · Stand: stabil
 // LEGAL-VERIFY-MARKER · BayBO Art. 2 Abs. 4 Sonderbau-Tatbestände · Stand: stabil
 // LEGAL-VERIFY-MARKER · BauNVO §§ 1-15 Gebietsverträglichkeit · Stand: stabil
 // LEGAL-VERIFY-MARKER · DIN 4109 Schallschutz (Gewerbe → Wohnen) · Stand: 2018
@@ -48,7 +48,7 @@ LEITFRAGEN für T-04
 4. Sonderbau-Tatbestand entstehung?
    → BayBO Art. 2 Abs. 4: Hotel / Gaststätte ≥ 60 Plätze /
      Versammlungsstätte ≥ 200 Personen / Beherbergung > 12 Betten
-     → reguläres Verfahren (Art. 59).
+     → reguläres Verfahren (Art. 60).
 
 ──────────────────────────────────────────────────────────────────────────
 KRITISCHE 2025-NEUERUNG für T-04 (verbindlich seit 01.01.2025)
@@ -80,11 +80,11 @@ TYPISCHE VERFAHRENSWEGE für T-04
 • Verfahrensfrei + Anzeige nach Art. 57 Abs. 7 (Art. 57 Abs. 4):
   Use-Change ohne Trigger neuer Anforderungen + gebietstypisch.
 
-• Vereinfachtes Verfahren (Art. 58):
+• Vereinfachtes Verfahren (Art. 59):
   Use-Change löst strengere Anforderungen aus (Schallschutz,
   Lüftung, Brandschutz) ABER kein Sonderbau-Tatbestand.
 
-• Reguläres Verfahren (Art. 59):
+• Reguläres Verfahren (Art. 60):
   Sonderbau-Tatbestand entsteht (Hotel, Versammlung, Pflegeheim,
   KiTa, Gaststätte ≥ 60).
 
@@ -180,9 +180,9 @@ TYPISCHE KORREKTE ZITATE für T-04
                                     keine anderen / strengeren
                                     Anforderungen (seit 01.01.2025)
   ✓ "BayBO Art. 57 Abs. 7"        — Anzeigepflicht 2 Wochen
-  ✓ "BayBO Art. 58"               — vereinfachtes Verfahren bei
+  ✓ "BayBO Art. 59"               — vereinfachtes Verfahren bei
                                     strengeren Anforderungen
-  ✓ "BayBO Art. 59"               — reguläres Verfahren bei
+  ✓ "BayBO Art. 60"               — reguläres Verfahren bei
                                     Sonderbau-Tatbestand
   ✓ "BayBO Art. 2 Abs. 4"         — Sonderbau-Trigger (Hotel,
                                     Gaststätte ≥ 60, Versammlung

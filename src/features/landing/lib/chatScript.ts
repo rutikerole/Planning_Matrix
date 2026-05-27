@@ -64,7 +64,7 @@ const scriptDe: Step[] = [
     role: 'assistant',
     delayMs: 0,
     text:
-      'Mit GK 3 und unter 7 m Höhe greift das vereinfachte Verfahren nach BayBO Art. 58. Sonderbau-Tatbestände liegen nicht vor.',
+      'Mit GK 3 und unter 7 m Höhe greift das vereinfachte Verfahren nach BayBO Art. 59. Sonderbau-Tatbestände liegen nicht vor.',
   },
   { kind: 'area', area: 'B', state: 'ACTIVE' },
   {

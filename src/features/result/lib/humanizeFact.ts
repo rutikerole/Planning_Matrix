@@ -130,12 +130,12 @@ const TEMPLATES: Record<string, Template> = {
     en: 'Planned procedure type: {{value}}',
   },
   vereinfachtes_verfahren_anwendbar: {
-    de: 'Vereinfachtes Verfahren (BayBO Art. 58) — Anwendbarkeit zu bestätigen',
-    en: 'Simplified procedure (BayBO Art. 58) — applicability pending',
+    de: 'Vereinfachtes Verfahren (BayBO Art. 59) — Anwendbarkeit zu bestätigen',
+    en: 'Simplified procedure (BayBO Art. 59) — applicability pending',
   },
   freistellung_anwendbar: {
-    de: 'Genehmigungsfreistellung (BayBO Art. 57) — Voraussetzungen offen',
-    en: 'Permit exemption (BayBO Art. 57) — preconditions pending',
+    de: 'Genehmigungsfreistellung (BayBO Art. 58) — Voraussetzungen offen',
+    en: 'Permit exemption (BayBO Art. 58) — preconditions pending',
   },
 
   // ── Sonstige Vorgaben ────────────────────────────────────────────
@@ -172,7 +172,7 @@ const TEMPLATES: Record<string, Template> = {
 }
 
 // v1.0.29 Bug 65 — the curated templates above were authored for Bayern
-// (StPlS 926, BayBO Art. 57/58, Art. 44a BayBO, BaumschutzV 901,
+// (StPlS 926, BayBO Art. 57/58/59, Art. 44a BayBO, BaumschutzV 901,
 // Denkmal-Atlas). On a non-Bayern project those citations are wrong
 // (München/Bayern bleed). For non-Bayern states use a federal-neutral
 // variant; Bayern (and bundesland-less legacy callers) keep the authored

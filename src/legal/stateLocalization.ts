@@ -88,12 +88,12 @@ const BAYERN: StateLocalization = {
       nameEn: 'Notification procedure',
     },
     simplified: {
-      citation: 'BayBO Art. 58',
+      citation: 'BayBO Art. 59',
       nameDe: 'Vereinfachtes Baugenehmigungsverfahren',
       nameEn: 'Simplified building permit',
     },
     regular: {
-      citation: 'BayBO Art. 59',
+      citation: 'BayBO Art. 60',
       nameDe: 'Baugenehmigungsverfahren (regulär)',
       nameEn: 'Regular building permit',
     },

@@ -901,7 +901,7 @@ function readQualifierFromFixture(input, expect) {
 const ALLOW_KEY_SETS = {
   bayern: new Set([
     'baybo|2', 'baybo|6', 'baybo|12', 'baybo|44a', 'baybo|46',
-    'baybo|47', 'baybo|57', 'baybo|58', 'baybo|58a', 'baybo|59',
+    'baybo|47', 'baybo|57', 'baybo|58', 'baybo|59',
     'baybo|60', 'baybo|61', 'baybo|62', 'baybo|64', 'baybo|65',
     'baybo|66', 'baybo|69', 'baybo|76', 'baybo|81', 'baybo|82c',
     'baydschg|6',
@@ -3451,8 +3451,8 @@ async function runStaticGate() {
       msg: 'stateLocalization must export getStateLocalization()',
     },
     {
-      ok: /BayBO Art\. 58/.test(stateLocSrc),
-      msg: 'Bayern simplified-permit citation present (Art. 58 BayBO)',
+      ok: /BayBO Art\. 59/.test(stateLocSrc),
+      msg: 'Bayern simplified-permit citation present (Art. 59 BayBO)',
     },
     {
       ok: /§ 64 BauO NRW/.test(stateLocSrc),
@@ -3492,8 +3492,8 @@ async function runStaticGate() {
       msg: 'must NOT carry the legacy "void bundesland" sentinel',
     },
     {
-      ok: !/BayBO Art\. 58'/.test(baselineProcSrc),
-      msg: 'must NOT hardcode the BayBO Art. 58 string (now state-resolved)',
+      ok: !/BayBO Art\. 59'/.test(baselineProcSrc),
+      msg: 'must NOT hardcode the BayBO Art. 59 string (now state-resolved)',
     },
   ]))
   // costRationales must thread bundesland through findCostRationale.

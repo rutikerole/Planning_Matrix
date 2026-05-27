@@ -316,7 +316,7 @@ function runLegalDomains(): Tally {
     )
   }
   // Bayern regression — BayBO matchers still drive Domain B (corpus has
-  // "BayBO Art. 58" in the area-B reason).
+  // "BayBO Art. 59" in the area-B reason).
   const bayB = domB('test/fixtures/bayern-t03-verified.json', 'de')
   ok(t, (bayB?.rows.length ?? 0) > 0, 'Bayern T-03: Domain B still populated (BayBO matchers)')
   ok(
@@ -800,7 +800,7 @@ function runBayernT01(): Tally {
   const d = resolveProcedure(procedureCaseFromFixture('test/fixtures/bayern-t01-muenchen.json'))
   ok(t, d.kind === 'vereinfachtes', `Bayern T-01: kind 'vereinfachtes' (got '${d.kind}')`)
   ok(t, d.confidence === 'CALCULATED', `Bayern T-01: procedure CALCULATED (Check 2, got '${d.confidence}')`)
-  ok(t, /BayBO\s+Art\.\s*58/.test(d.citation), `Bayern T-01: cites BayBO Art. 58 (got '${d.citation}')`)
+  ok(t, /BayBO\s+Art\.\s*59/.test(d.citation), `Bayern T-01: cites BayBO Art. 59 (got '${d.citation}')`)
   for (const k of ['wohnflaeche_gesamt_m2', 'klasse', 'denkmalschutz', 'ensembleschutz']) labelsOk(t, k)
   // Check 8 — clean cell (all 3 domains ACTIVE, no PENDING, no hard blocker) is
   // not knocked down by the Bug-102 PENDING penalty.

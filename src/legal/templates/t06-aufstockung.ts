@@ -13,7 +13,7 @@
 // LEGAL-VERIFY-MARKER · BayBO Art. 81 Abs. 1 Nr. 4 b Stellplatz-Privileg · Stand: 01.10.2025
 //                       Quelle: Lutz-Abel + byak.de + Graml & Kollegen (post-cutoff verified by brief)
 // LEGAL-VERIFY-MARKER · BayBO Art. 31 Abs. 2 Satz 2 zweiter Rettungsweg · Stand: stabil
-// LEGAL-VERIFY-MARKER · BayBO Art. 58 vereinfachtes Verfahren · Stand: stabil
+// LEGAL-VERIFY-MARKER · BayBO Art. 59 vereinfachtes Verfahren · Stand: stabil
 // LEGAL-VERIFY-MARKER · GEG Sanierungsschwellen · Stand: 2024
 //
 // Reviewed by Bayern-zertifizierter Architekt: ☐ pending
@@ -88,7 +88,7 @@ LEITFRAGEN für T-06
 TYPISCHE VERFAHRENSWEGE für T-06
 ──────────────────────────────────────────────────────────────────────────
 
-• Vereinfachtes Verfahren (BayBO Art. 58) — der Standard-Fall.
+• Vereinfachtes Verfahren (BayBO Art. 59) — der Standard-Fall.
   Aufstockung erweitert das Gebäude; das ist eine Errichtung im
   Sinne von BayBO. Privilegien aus Art. 46 Abs. 6 und Art. 81
   Abs. 1 Nr. 4 b wirken AUF das Verfahren ein, ändern aber den
@@ -130,7 +130,7 @@ TYPISCHE DOKUMENTE für T-06
   Erweiterung)
 • Nachweis zweiter Rettungsweg (Art. 31 Abs. 2 Satz 2)
 • GEG-Nachweis für die neue Nutzfläche
-• Antragsunterlagen analog Art. 58
+• Antragsunterlagen analog Art. 59
 • KEIN Stellplatznachweis (Privileg Art. 81 Abs. 1 Nr. 4 b)
   — explizit nicht erforderlich
 
@@ -184,8 +184,8 @@ VERMEIDE für T-06
   Art. 46 Abs. 6 wirkt explizit gegen das.
 • KEINE neue Gebäudeklassen-Einordnung — das Privileg lässt die
   Bestands-GK weiter gelten.
-• KEINE Empfehlung der Genehmigungsfreistellung nach Art. 57
-  Abs. 1 Allgemein — Aufstockung ist eine Errichtung.
+• KEINE Empfehlung der Genehmigungsfreistellung nach Art. 58 —
+  Aufstockung ist eine Errichtung.
 • KEIN Fokus auf Bauplanungsrecht ohne den Privilegien-Hinweis —
   ohne diesen Kontext fehlt dem Bauherrn das Wert-Verständnis.
 
@@ -211,7 +211,7 @@ TYPISCHE KORREKTE ZITATE für T-06
   ✓ "BayBO Art. 57 Abs. 1 Nr. 18"    — DG-Ausbau verfahrensfrei
                                        (Grenzfall: reiner Speicher-
                                        Ausbau ohne Höhenüberschreitung)
-  ✓ "BayBO Art. 58"                  — vereinfachtes Verfahren
+  ✓ "BayBO Art. 59"                  — vereinfachtes Verfahren
                                        (echter Aufstockungs-Default)
   ✓ "BayBO Art. 62"                  — Prüfsachverständige bei
                                        GK 4 / Sonderbau
@@ -229,7 +229,7 @@ VERBOTENE ZITATE für T-06
   ✗ "§ 46 BayBO"                     — Art., nicht §
   ✗ Aufstockung als verfahrensfrei nach Art. 57 Abs. 1 (allgemein)
                                      — Aufstockung ist eine Errichtung,
-                                       Default-Verfahren ist Art. 58.
+                                       Default-Verfahren ist Art. 59.
                                        Nur reiner DG-Ausbau ohne
                                        Höhenänderung kann unter
                                        Abs. 1 Nr. 18 fallen.

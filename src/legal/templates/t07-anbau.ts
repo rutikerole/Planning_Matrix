@@ -7,7 +7,7 @@
 //
 // LEGAL-VERIFY-MARKER · BayBO Art. 57 Abs. 1 Nr. 1 a 75-m³-Schwelle · Stand: stabil
 // LEGAL-VERIFY-MARKER · BayBO Art. 6 Abstandsflächen · Stand: stabil
-// LEGAL-VERIFY-MARKER · BayBO Art. 58 vereinfachtes Verfahren · Stand: stabil
+// LEGAL-VERIFY-MARKER · BayBO Art. 59 vereinfachtes Verfahren · Stand: stabil
 // LEGAL-VERIFY-MARKER · BauGB § 35 Außenbereich-Privilegierung · Stand: stabil
 // LEGAL-VERIFY-MARKER · GEG Wärmeschutznachweis (beheizter Raum) · Stand: 2024
 // LEGAL-VERIFY-MARKER · DIN 4109 Schallschutz (bei Wohn-Anbindung) · Stand: 2018
@@ -69,12 +69,12 @@ TYPISCHE VERFAHRENSWEGE für T-07
   (formlos, 2 Wochen vorher) — empfohlen, aber strittig je nach
   Gemeindepraxis.
 
-• Vereinfachtes Verfahren (BayBO Art. 58):
+• Vereinfachtes Verfahren (BayBO Art. 59):
   Brutto-Rauminhalt > 75 m³ ODER Außenbereich ODER
   Abstandsflächen nicht eingehalten (mit Befreiungs- oder
   Ausnahme-Antrag).
 
-• Reguläres Verfahren (Art. 59) — selten: nur bei
+• Reguläres Verfahren (Art. 60) — selten: nur bei
   Sonderbau-Tatbeständen.
 
 ──────────────────────────────────────────────────────────────────────────
@@ -103,7 +103,7 @@ Bei verfahrensfrei (Art. 57 Abs. 1 Nr. 1 a):
 • Tragwerksaussage zur Anbindung
 • Wärmeschutz IF beheizt
 
-Bei genehmigungspflichtig (Art. 58):
+Bei genehmigungspflichtig (Art. 59):
 • Bauantrag analog T-01
 • Lageplan amtlich 1:500 mit Abstandsflächen-Berechnung
 • Bauzeichnungen Bestand + Anbau (mit Hervorhebung)
@@ -188,7 +188,7 @@ TYPISCHE KORREKTE ZITATE für T-07
                                      bei verfahrensfreien Anbauten
                                      empfohlen, je nach
                                      Gemeindepraxis)
-  ✓ "BayBO Art. 58"                — vereinfachtes Verfahren
+  ✓ "BayBO Art. 59"                — vereinfachtes Verfahren
                                      bei Anbau > 75 m³, im
                                      Außenbereich oder bei
                                      Abstandsflächen-Verstoß
@@ -219,7 +219,7 @@ VERBOTENE ZITATE für T-07
                                      materiell-rechtliche Verstöße
                                      (z.B. Art. 6) NICHT aufgehoben.
                                      Das Verfahren rückt nicht
-                                     automatisch nach Art. 58 auf —
+                                     automatisch nach Art. 59 auf —
                                      der Verstoß ist eine
                                      materiell-rechtliche Frage,
                                      keine verfahrensrechtliche
