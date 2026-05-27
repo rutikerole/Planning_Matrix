@@ -436,8 +436,11 @@ export const COST_BANDS_BY_TEMPLATE: Record<TemplateId, CostBandPerTemplate> = {
   'T-01': {
     lower: 17_300,
     upper: 32_300,
-    basisDe: 'EFH Neubau, München, ~150 m² Wohnfläche, vereinfachtes Verfahren',
-    basisEn: 'Single-family new build, Munich, ~150 m² living space, simplified procedure',
+    // phase-c/item-4 — state-neutral. T-01 renders the per-category BASE table
+    // (not this band), so the old "München"/"Munich" string was dead; cleaned for
+    // guard-completeness now that the matrix band-leak guard covers all 8 templates.
+    basisDe: 'EFH-Neubau, ~150 m² Wohnfläche, vereinfachtes Verfahren',
+    basisEn: 'Single-family new build, ~150 m² living space, simplified procedure',
   },
   'T-02': {
     lower: 28_000,
@@ -452,8 +455,12 @@ export const COST_BANDS_BY_TEMPLATE: Record<TemplateId, CostBandPerTemplate> = {
   'T-03': {
     lower:  8_000,
     upper: 22_000,
-    basisDe: 'Sanierung verfahrensfrei (Anzeige nach Art. 57 Abs. 7 BayBO), München',
-    basisEn: 'Renovation procedure-exempt (notification per Art. 57 Abs. 7 BayBO), Munich',
+    // phase-c/item-4 — state-neutral. Dropped the "Art. 57 Abs. 7 BayBO, München"
+    // framing (Bayern-specific § + city; the renovation procedure varies by state).
+    // T-03 renders the renovation stub (not this band) — cleaned for completeness +
+    // to kill the latent cross-state BayBO token.
+    basisDe: 'Sanierung — Umfang abhängig vom Eingriff (verfahrensfrei bis genehmigungspflichtig)',
+    basisEn: 'Renovation — scope depends on the intervention (procedure-exempt to permit-required)',
   },
   'T-04': {
     lower:  6_000,
@@ -463,16 +470,18 @@ export const COST_BANDS_BY_TEMPLATE: Record<TemplateId, CostBandPerTemplate> = {
     // project AND was factually wrong (a use change is frequently
     // genehmigungspflichtig, e.g. retail→gastronomy in Leipzig). State-neutral,
     // scope-honest. (T-02 + T-06 — the other headline-band templates rendered
-    // for non-Bayern — are now state-neutral too. T-01/T-03/T-05 bands keep the
-    // München/BayBO framing but are never rendered for non-Bayern, so no bleed.)
+    // for non-Bayern — are now state-neutral too. phase-c/item-4: T-01/T-03/T-05
+    // bands are now state-neutral as well, so ALL 8 bands are city/§-free.)
     basisDe: 'Umnutzung — Umfang abhängig von Schallschutz-/Brandschutz-/TA-Lärm-Gutachten; Fachgutachten erforderlich',
     basisEn: 'Change of use — scope depends on sound-/fire-protection/noise assessments; specialist reports required',
   },
   'T-05': {
     lower:  4_500,
     upper: 12_000,
-    basisDe: 'Abbruch anzeigepflichtig + Standsicherheits­bescheinigung Nachbar, München',
-    basisEn: 'Demolition with notification + neighbour structural certification, Munich',
+    // phase-c/item-4 — state-neutral (dropped "München"). T-05 renders the
+    // demolition stub (not this band) — cleaned for completeness.
+    basisDe: 'Abbruch (anzeige- bis genehmigungspflichtig) + Standsicherheitsbescheinigung Nachbar',
+    basisEn: 'Demolition (notification to permit-required) + neighbour structural certification',
   },
   'T-06': {
     lower: 14_000,
