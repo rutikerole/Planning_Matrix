@@ -175,3 +175,28 @@ state-specific / human-written) vs **LEAK** (wrong — a citation from the wrong
 
 See the 11 per-state files (`berlin.md` … `thueringen.md`) for each state's actual rendered strings,
 quoted and classified against this catalog.
+
+---
+
+## Resolution — rewrite pass (commit on `phase-c/architect-tone`)
+
+Authorized decisions: F1/F2/F3 source from the corpus where it carries the §, honest deferral
+otherwise (no fabrication, no "§ 9" stamp); F7 fixed at the shared composer (touches all 16). All
+fixes render-verified; Bayern SHA MATCH (no SHA-locked file touched); bundle 297.2 KB gz (< 300).
+
+| ID | Status | How |
+|----|--------|-----|
+| **F1** | ✅ closed | New corpus field `brandschutzCitation` (codegen heading-pick `/^Brandschutz\b/`), overlaid via `withCorpus`; `requiredDocuments` reads `cit.brandschutzCitation`. Render: Berlin `§14 BauO Bln`, Sachsen `§14 SächsBO`, RLP `§15 LBauO` — zero foreign NBauO. |
+| **F2** | ✅ closed | New pack field `permitFreeCitation` overlaid from corpus `free` §; preserved BW `§50`/NI `§60`. Render (16/16): each state's own §; only NI = NBauO. |
+| **F3** | ✅ closed | `denkmalCitation` = act name only (`DSchG Bln`, `SächsDSchG`, …); the hard-coded `§ 9` removed for all 16. |
+| **F4** | ✅ closed | `ADJACENT_LAWS.denkmalAuthorityDe/En` = verified Fachbehörde per state (provenance in `_meta/sources.json` → `monument_authorities_phase_c`). Caught: Thüringen renamed Sept 2025. |
+| **F5** | ✅ closed | `denkmalAuthorityCity` → "Untere Denkmalschutzbehörde (Gemeinde bzw. Landkreis des Bauvorhabens)" — no wrong-capital assertion. |
+| **F7** | ✅ closed | Dropped the redundant `${reg.nameDe}`/`${simp.nameDe}` interpolation in both composers (`resolveProcedure.ts` standard + umnutzung). Render: single procedure name in all 16. |
+| **F8** | ✅ closed | The "noch nicht vollständig hinterlegt" caveat now emits only when `!hasCitation` (no regular §); gone for all 16 (all carry a §). |
+| **F10** | ✅ closed | RLP stub-footer reworded to name the specific gap (Statik im Prüf-Regime), not "all Einreichungs-§§". RLP's structural cert stays honest deferral by design. |
+| F6, F9, F11, F12, F14, F15 | ⏸ deferred | Out of scope this pass (per authorization) — F6/F9 → item #3. |
+| **F13** | 🚫 fenced | Cost/timeline = Phase C item #4. Untouched. |
+
+Regression guards added to `scripts/smoke-pdf-matrix.mts`: (1) static citation-leak guard — 16 states ×
+Brandschutz/verfahrensfrei/Denkmal, asserts no foreign NBauO, no "§ 9" stamp, no doubling; (2) per-locale
+PDF-text guards — "NBauO" forbidden outside NI, doubling pattern forbidden.
