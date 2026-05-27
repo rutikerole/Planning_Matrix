@@ -41,5 +41,56 @@
     { "code": "sachsen-anhalt", "law": "BauO LSA", "marker": "§", "tier": "secondary-mirror", "n_paragraphs": 97, "stand": "Neufassung 10.09.2013", "last_amendment": "Gesetz vom 13.06.2024 (GVBl. LSA S. 150)", "sources": ["https://www.baunormenlexikon.de/norm/bauo-lsa/28d526ae-1682-4959-85ab-dd9ca06bcd81"] },
     { "code": "sh", "law": "LBO SH", "marker": "§", "tier": "secondary-mirror", "n_paragraphs": 94, "stand": "Neubek. 05.07.2024 (GVOBl. 2024 S. 504)", "last_amendment": "Gesetz vom 13.12.2024 (GVOBl. S. 875, 928)", "sources": ["https://www.baunormenlexikon.de/norm/lbo-sh/fca4b4ee-210d-4f58-89f6-900425b9860e"] },
     { "code": "thueringen", "law": "ThürBO", "marker": "§", "tier": "secondary-mirror", "n_paragraphs": 102, "stand": "Fassung 02.07.2024 (in Kraft 19.07.2024)", "last_amendment": "Fassung vom 02.07.2024", "sources": ["https://www.baunormenlexikon.de/norm/thuerbo/9c2f12c0-fa74-47fb-8f15-2c3b788db584"] }
-  ]
+  ],
+  "adjacent_laws_phase_c": {
+    "_meta": {
+      "purpose": "Phase C — official Kurzbezeichnungen of the Bauvorlagenverordnung + Landes-Denkmalschutzgesetz for the 11 newly-substantive states; replaces the Phase-A/B deferral sentences in src/legal/stateCitations.ts (ADJACENT_LAWS map). 22 values, 0 unverified.",
+      "fetched_at": "2026-05-27",
+      "tier_note": "primary = official state portal / Landesamt PDF; secondary = umwelt-online / Architektenkammer where the state's primary portal is a JS-shell that served no static text."
+    },
+    "berlin": {
+      "bauVorlagenAct": { "short": "BauVorlV", "tier": "primary", "full_title": "Verordnung über Bauvorlagen und das Verfahren im Einzelnen (Bauvorlagenverordnung – BauVorlV)", "source_url": "https://www.berlin.de/sen/sbw/service/rechtsvorschriften/bereich-bauen/bauaufsicht/verordnungen/", "note": "renamed from BauVerfV under the 2025 Bau-Turbo; v. 19.06.2025 (GVBl. S. 334)" },
+      "denkmalSchutzAct": { "short": "DSchG Bln", "tier": "primary", "full_title": "Gesetz zum Schutz von Denkmalen in Berlin (Denkmalschutzgesetz Berlin – DSchG Bln)", "source_url": "https://gesetze.berlin.de/bsbe/document/jlr-DSchGBE1995rahmen" }
+    },
+    "brandenburg": {
+      "bauVorlagenAct": { "short": "BbgBauVorlV", "tier": "primary", "full_title": "Brandenburgische Bauvorlagenverordnung (BbgBauVorlV)", "source_url": "https://bravors.brandenburg.de/verordnungen/bbgbauvorlv" },
+      "denkmalSchutzAct": { "short": "BbgDSchG", "tier": "primary", "full_title": "Brandenburgisches Denkmalschutzgesetz (BbgDSchG)", "source_url": "https://bravors.brandenburg.de/gesetze/bbgdschg" }
+    },
+    "bremen": {
+      "bauVorlagenAct": { "short": "BremBauVorlV", "tier": "primary", "full_title": "Bremische Bauvorlagenverordnung (BremBauVorlV)", "source_url": "https://www.transparenz.bremen.de/metainformationen/bremische-bauvorlagenverordnung-brembauvorlv-vom-1-september-2022-185587" },
+      "denkmalSchutzAct": { "short": "BremDSchG", "tier": "primary", "full_title": "Bremisches Gesetz zur Pflege und zum Schutz der Kulturdenkmäler (Bremisches Denkmalschutzgesetz – BremDSchG)", "source_url": "https://www.transparenz.bremen.de/metainformationen/bremisches-gesetz-zur-pflege-und-zum-schutz-der-kulturdenkmaeler-bremisches-denkmalschutzgesetz-bremdschg-vom-18-dezember-2018-124518" }
+    },
+    "hamburg": {
+      "bauVorlagenAct": { "short": "BauVorlVO HH", "tier": "primary", "full_title": "Bauvorlagenverordnung (BauVorlVO) vom 30. Juni 2020", "source_url": "https://www.landesrecht-hamburg.de/bsha/document/jlr-BauVorlVHA2020rahmen", "note": "bare amtliche Abkürzung 'BauVorlVO'; 'BauVorlVO HH' is the juris cross-state citation form, used here to disambiguate in the multi-state glossary" },
+      "denkmalSchutzAct": { "short": "DSchG HH", "tier": "primary", "full_title": "Denkmalschutzgesetz (DSchG) vom 5. April 2013", "source_url": "https://www.landesrecht-hamburg.de/bsha/document/jlr-DSchGHA2013rahmen", "note": "bare amtliche Abkürzung 'DSchG'; 'DSchG HH' is the juris cross-state citation form (disambiguation)" }
+    },
+    "mv": {
+      "bauVorlagenAct": { "short": "BauVorlVO M-V", "tier": "primary", "full_title": "Verordnung über Bauvorlagen und bauaufsichtliche Anzeigen (Bauvorlagenverordnung – BauVorlVO M-V)", "source_url": "https://www.landesrecht-mv.de/bsmv/document/jlr-BauVorlVMVrahmen" },
+      "denkmalSchutzAct": { "short": "DSchG M-V", "tier": "primary", "full_title": "Denkmalschutzgesetz (DSchG M-V)", "source_url": "https://www.landesrecht-mv.de/bsmv/document/jlr-DSchGMVV6P3/part/X" }
+    },
+    "rlp": {
+      "bauVorlagenAct": { "short": "BauuntPrüfVO", "tier": "secondary", "full_title": "Landesverordnung über Bauunterlagen und die bautechnische Prüfung", "source_url": "https://www.umwelt-online.de/recht/bau/laender/rp/bpr_ges.htm", "note": "Gl.-Nr. 213-1-1, v. 16.06.1987; landesrecht.rlp.de primary portal is a JS-shell — confirmed via umwelt-online + Architektenkammer RLP" },
+      "denkmalSchutzAct": { "short": "DSchG", "tier": "primary", "full_title": "Landesgesetz zum Schutz und zur Pflege der Kulturdenkmäler (Denkmalschutzgesetz – DSchG)", "source_url": "https://gdke.rlp.de/fileadmin/gdke/Wer_wir_sind/Landesdenkmalpflege/Denkmalschutzgesetz__DSchG_.pdf", "note": "GDKE PDF header: 'Amtliche Abkürzung: DSchG'; 'DSchPflG' is the legacy name / juris URL slug" }
+    },
+    "saarland": {
+      "bauVorlagenAct": { "short": "BauVorlVO", "tier": "primary", "full_title": "Bauvorlagenverordnung (BauVorlVO)", "source_url": "https://recht.saarland.de/bssl/document/jlr-BauVorlVSL2011rahmen", "note": "v. 15.06.2011, Gl.-Nr. 2130-1-1 (not a DVO-LBO)" },
+      "denkmalSchutzAct": { "short": "SDschG", "tier": "secondary", "full_title": "Saarländisches Denkmalschutzgesetz (SDschG)", "source_url": "https://www.umwelt-online.de/regelwerk/cgi-bin/suchausgabe.cgi?pfad=/bau/laender/saarland/dschg77.htm", "note": "casing varies SDschG/SDSchG; the form bound to the official juris doc-ID (jlr-DSchGSL2018) is 'SDschG'; recht.saarland.de primary portal is a JS-shell" }
+    },
+    "sachsen": {
+      "bauVorlagenAct": { "short": "DVOSächsBO", "tier": "primary", "full_title": "Durchführungsverordnung zur Sächsischen Bauordnung (DVOSächsBO)", "source_url": "https://www.revosax.sachsen.de/vorschrift/2089-Durchfuehrungsverordnung-zur-SaechsBO", "note": "official portal form 'DVOSächsBO' (no hyphen); governs Bauvorlagen per § 68 SächsBO; no standalone Bauvorlagenverordnung" },
+      "denkmalSchutzAct": { "short": "SächsDSchG", "tier": "primary", "full_title": "Sächsisches Denkmalschutzgesetz (SächsDSchG)", "source_url": "https://www.revosax.sachsen.de/vorschrift/5198-Saechsisches-Denkmalschutzgesetz" }
+    },
+    "sachsen-anhalt": {
+      "bauVorlagenAct": { "short": "BauVorlVO", "tier": "primary", "full_title": "Verordnung über Bauvorlagen und bauaufsichtliche Anzeigen (Bauvorlagenverordnung)", "source_url": "https://www.landesrecht.sachsen-anhalt.de/bsst/document/jlr-BauVorlVST2006rahmen/part/X", "note": "official short is plain 'BauVorlVO' (no 'LSA' suffix); v. 08.06.2006" },
+      "denkmalSchutzAct": { "short": "DSchG ST", "tier": "primary", "full_title": "Denkmalschutzgesetz des Landes Sachsen-Anhalt (DSchG ST)", "source_url": "https://www.lda-lsa.de/denkmalschutzgesetz-des-landes-sachsen-anhalt", "note": "official portal citation 'DSchG ST'; literature alias 'DenkmSchG LSA' (same act)" }
+    },
+    "sh": {
+      "bauVorlagenAct": { "short": "BauVorlVO", "tier": "primary", "full_title": "Landesverordnung über Bauvorlagen im bauaufsichtlichen Verfahren und bauaufsichtliche Anzeigen (Bauvorlagenverordnung – BauVorlVO)", "source_url": "https://www.gesetze-rechtsprechung.sh.juris.de/bssh/document/jlr-BauVorlVSH2022rahmen", "note": "title-carried abbr 'BauVorlVO'; juris citation key 'BauVorlV SH'; consolidated 2022 Fassung" },
+      "denkmalSchutzAct": { "short": "DSchG SH", "tier": "primary", "full_title": "Gesetz zum Schutz der Denkmale (Denkmalschutzgesetz) vom 30. Dezember 2014", "source_url": "https://www.gesetze-rechtsprechung.sh.juris.de/bssh/document/jlr-DSchGSH2015rahmen", "note": "canonical juris short cite 'DSchG SH'" }
+    },
+    "thueringen": {
+      "bauVorlagenAct": { "short": "ThürBauVorlVO", "tier": "primary", "full_title": "Thüringer Verordnung über Bauvorlagen und bauaufsichtliche Anzeigen (Thüringer Bauvorlagenverordnung)", "source_url": "https://landesrecht.thueringen.de/bsth/document/jlr-BauVorlVTHrahmen/part/X", "note": "v. 23.03.2010; portal is a JS-SPA — confirmed via portal-indexed title + umwelt-online mirror" },
+      "denkmalSchutzAct": { "short": "ThürDSchG", "tier": "primary", "full_title": "Thüringer Gesetz zur Pflege und zum Schutz der Kulturdenkmale (Thüringer Denkmalschutzgesetz)", "source_url": "https://landesrecht.thueringen.de/bsth/document/jlr-DSchGTH2004pIVZ" }
+    }
+  }
 }

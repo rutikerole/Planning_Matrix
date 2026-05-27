@@ -217,15 +217,40 @@ function withCorpus(pack: StateCitationPack): StateCitationPack {
 }
 
 /**
- * Phase B — the 11 formerly-stub states now carry corpus-verified BauO §§ in
- * BOTH chokepoints (here + stateLocalization.ts procedure §§), so flipping them
- * substantive is consistent. withCorpus overlays the real §-fields; any field
- * the corpus lacks (RLP structural; denkmal/Bauvorlagen everywhere — the corpus
- * is BauO-only) keeps the honest STUB_VERIFY deferral — never a fabricated §.
- * (DSchG / Bauvorlagenverordnung detail is a Phase-C authoring pass.)
+ * Phase C — official Kurzbezeichnungen of the adjacent laws (Bauvorlagen-
+ * Verordnung + Landes-Denkmalschutzgesetz) for the 11 newly-substantive states,
+ * replacing the Phase-A/B deferral sentences. Researched from primary sources
+ * (state law portals / official Amtsblatt / Landesamt PDFs); provenance + tier
+ * per value in scripts/legal-corpus/_meta/sources.json (adjacent_laws_phase_c).
+ * Short tokens only → glossary terms no longer truncate (Phase-C item #1).
+ * The 5 substantive states (Bayern/NRW/BW/Hessen/Niedersachsen) keep their own
+ * hand-coded values above and are NOT in this map.
+ */
+const ADJACENT_LAWS: Partial<
+  Record<BundeslandCode, { bauVorlagenAct: string; denkmalSchutzAct: string }>
+> = {
+  berlin: { bauVorlagenAct: 'BauVorlV', denkmalSchutzAct: 'DSchG Bln' },
+  brandenburg: { bauVorlagenAct: 'BbgBauVorlV', denkmalSchutzAct: 'BbgDSchG' },
+  bremen: { bauVorlagenAct: 'BremBauVorlV', denkmalSchutzAct: 'BremDSchG' },
+  hamburg: { bauVorlagenAct: 'BauVorlVO HH', denkmalSchutzAct: 'DSchG HH' },
+  mv: { bauVorlagenAct: 'BauVorlVO M-V', denkmalSchutzAct: 'DSchG M-V' },
+  rlp: { bauVorlagenAct: 'BauuntPrüfVO', denkmalSchutzAct: 'DSchG' },
+  saarland: { bauVorlagenAct: 'BauVorlVO', denkmalSchutzAct: 'SDschG' },
+  sachsen: { bauVorlagenAct: 'DVOSächsBO', denkmalSchutzAct: 'SächsDSchG' },
+  'sachsen-anhalt': { bauVorlagenAct: 'BauVorlVO', denkmalSchutzAct: 'DSchG ST' },
+  sh: { bauVorlagenAct: 'BauVorlVO', denkmalSchutzAct: 'DSchG SH' },
+  thueringen: { bauVorlagenAct: 'ThürBauVorlVO', denkmalSchutzAct: 'ThürDSchG' },
+}
+
+/**
+ * The 11 formerly-stub states carry corpus-verified BauO §§ in both chokepoints
+ * (here + stateLocalization.ts) and now real adjacent-law short names (Phase C).
+ * Order: makeStub (deferral baseline) → ADJACENT_LAWS (real Bauvorlagen/DSchG
+ * short names) → withCorpus (overlays the §-citation fields only). Any field
+ * still uncovered keeps the honest STUB_VERIFY deferral — never a fabricated §.
  */
 function makeCorpusPack(b: BundeslandCode, labelDe: string, labelEn: string): StateCitationPack {
-  return withCorpus({ ...makeStub(b, labelDe, labelEn), isSubstantive: true })
+  return withCorpus({ ...makeStub(b, labelDe, labelEn), isSubstantive: true, ...(ADJACENT_LAWS[b] ?? {}) })
 }
 
 const REGISTRY: Record<BundeslandCode, StateCitationPack> = {

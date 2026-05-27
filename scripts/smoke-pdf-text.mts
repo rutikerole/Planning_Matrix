@@ -1522,14 +1522,19 @@ async function runDeriveGkUnit(): Promise<{ passed: number; failed: number }> {
   return { passed, failed }
 }
 
-// v1.0.25 Bug 26 — stub-state procedure-citation fabrication guard.
+// v1.0.25 Bug 26 — procedure-citation fabrication guard.
 // Pre-fix, resolveProcedure's generic branch emitted
 // `§ 65 BauO ${CODE.toUpperCase()}` for any stub state without a hard
-// blocker (e.g. "§ 65 BauO SACHSEN" — real code is SächsBO). The two
-// no-blocker fixtures below drive that exact branch; the guard asserts
-// NO fabricated "BauO {UPPERCASE}" / "§ NN BauO {CODE}" token survives
-// to the rendered PDF, and that the honest "in Vorbereitung" framing
-// is present instead.
+// blocker (e.g. "§ 65 BauO SACHSEN" — real code is SächsBO). The
+// no-blocker fixtures below drive that exact branch; the guard's CORE
+// assertion (still rigorous) is that NO fabricated "BauO {UPPERCASE}" /
+// "§ NN BauO {CODE}" token survives to the rendered PDF.
+// Phase B/C: Sachsen + Brandenburg are now corpus-substantive (real
+// SächsBO/BbgBO §§ + adjacent-law short names), so the legal "in
+// Vorbereitung" deferral status is correctly gone. The honest-framing
+// check now matches the COST-deferral wording that legitimately remains
+// (cost calibration is Phase C): DE "erarbeitet"/"in Vorbereitung",
+// EN "being finalized"/"in preparation".
 async function runStubStateFabricationGuard(): Promise<{ passed: number; failed: number }> {
   console.log(`\n[smoke-pdf-text] stub-state § 65 BauO fabrication guard (Bug 26)…`)
   let passed = 0
@@ -1555,8 +1560,8 @@ async function runStubStateFabricationGuard(): Promise<{ passed: number; failed:
       const m2 = `${c.label} ${lang}: no "§ NN BauO {UPPERCASE}" fabrication`
       if (!upperHit) { console.log(`  ✓ ${m2}`); passed++ }
       else { console.log(`  ✗ ${m2}`); failed++ }
-      const honestHit = /in Vorbereitung|being finalized|in preparation/u.test(text)
-      const m3 = `${c.label} ${lang}: honest "in Vorbereitung" framing present`
+      const honestHit = /in Vorbereitung|being finalized|in preparation|erarbeitet/u.test(text)
+      const m3 = `${c.label} ${lang}: honest cost-deferral framing present (Phase C)`
       if (honestHit) { console.log(`  ✓ ${m3}`); passed++ }
       else { console.log(`  ✗ ${m3}`); failed++ }
 
