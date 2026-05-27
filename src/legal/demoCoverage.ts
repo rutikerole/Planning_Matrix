@@ -16,10 +16,24 @@
 import type { TemplateId } from '@/types/projectState'
 import { getStateCitations } from './stateCitations'
 
-/** Templates hardened to the 12 PDF MUST checks in v1.0.31. */
-export const PDF_DEMO_TEMPLATE_IDS: readonly TemplateId[] = ['T-01', 'T-03', 'T-05']
+/**
+ * Phase B — all 8 templates are now wired to the legal corpus (citations trace
+ * to scripts/legal-corpus/; the renderer handles every template without
+ * crashing). Cost calibration for T-02/T-04/T-06/T-07/T-08 remains Phase C, but
+ * that is a quality concern, not a gate — the cells render with honest cost
+ * stubs/bands. The v1.0.31 three-cell freeze is lifted.
+ */
+export const PDF_DEMO_TEMPLATE_IDS: readonly TemplateId[] = [
+  'T-01', 'T-02', 'T-03', 'T-04', 'T-05', 'T-06', 'T-07', 'T-08',
+]
 
-/** True for the 5 substantive states (Bayern/NRW/BW/Hessen/Niedersachsen). */
+/**
+ * True for the substantive states (Bayern/NRW/BW/Hessen/Niedersachsen).
+ * Phase B opened the TEMPLATE dimension (all 8) for these; the 11 stub states
+ * stay gated until stateLocalization (procedure §§) is corpus-backed too —
+ * their §§ are already in the codegen pack. Resolves via
+ * getStateCitations(b).isSubstantive.
+ */
 export function isSubstantiveBundesland(
   bundesland: string | null | undefined,
 ): boolean {

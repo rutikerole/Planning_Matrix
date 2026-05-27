@@ -216,6 +216,12 @@ function withCorpus(pack: StateCitationPack): StateCitationPack {
   return c ? ({ ...pack, ...c } as StateCitationPack) : pack
 }
 
+// NB — Phase B lights up the 5 substantive packs' §-citation fields from the
+// corpus (above). The 11 states below stay makeStub() until the SECOND
+// chokepoint, stateLocalization.ts (procedure §§), is also corpus-backed:
+// flipping them substantive on stateCitations alone yields real §-citations
+// but stub procedure framing (inconsistent) — see _meta/unverified.json and the
+// Phase-B report. The codegen pack already carries their §§, ready for it.
 const REGISTRY: Record<BundeslandCode, StateCitationPack> = {
   bayern: withCorpus(BAYERN),
   nrw: withCorpus(NRW),
