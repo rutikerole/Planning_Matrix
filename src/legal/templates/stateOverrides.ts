@@ -263,6 +263,75 @@ DENKMAL & ERHALTUNGSSATZUNG:
   im Korpus). Zuständige Behörde: Landesamt für Denkmalpflege Bremen
   (LfD) plus zuständige untere Denkmalschutzbehörde der Stadtgemeinde
   (Bremen bzw. Bremerhaven).`,
+    // C4 batch — Sachsen × T-01 authored 2026-05-28. SächsBO corpus-verified
+    // (mirror-tier; baunormenlexikon.de + revosax.sachsen.de; SächsBO i.d.F.
+    // Gesetz v. 01.03.2024 SächsGVBl. S. 169). First Flächenland. Path 2''
+    // discipline: cells from corpus, banner STAYS ON. Authority framing:
+    // 3 kreisfreie Städte (Leipzig/Dresden/Chemnitz) + 10 Landkreise.
+    sachsen: `══════════════════════════════════════════════════════════════════════════
+LANDESSPEZIFISCHER ZUSATZ — Sachsen × T-01 (Neubau Einfamilienhaus)
+══════════════════════════════════════════════════════════════════════════
+
+Bei EFH-Projekten in SACHSEN: die §§ der SächsBO (Sächsische Bauordnung)
+ersetzen sämtliche oben genannten Bayern-Verweise. Sachsen ist Flächen-
+land mit drei kreisfreien Städten (Leipzig, Dresden, Chemnitz) und zehn
+Landkreisen. Die zuständige untere Bauaufsichtsbehörde liegt — bei
+Projekten in den kreisfreien Städten — bei der Bauaufsichtsbehörde der
+jeweiligen Stadt (Leipzig, Dresden oder Chemnitz); im übrigen Sachsen
+beim Landratsamt des jeweiligen Landkreises. Quelle: baunormenlexikon.de
+(mirror-tier; bei rechtlich kritischen Fragen die amtliche Fassung beim
+revosax.sachsen.de gegenprüfen). Stand: SächsBO vom 11.05.2016 i.d.F.
+Gesetz vom 01.03.2024 (SächsGVBl. S. 169).
+
+HINWEIS: Der Sächsische systemBlock ist bislang "Mindest-Eckdaten"; die
+hier zitierten §§ stammen aus dem Korpus (secondary-mirror, primary-URL
+hinterlegt) und sind verwendbar, aber das vollständige Sachsen-Profil
+wird erst mit anwaltlich verifizierter systemBlock-Tiefe abschließend
+substantiell.
+
+VERFAHREN — SächsBO:
+• Verfahrensfreie Bauvorhaben (inkl. Beseitigung) — § 61 SächsBO.
+• Genehmigungsfreistellung — § 62 SächsBO (bei qualifiziertem B-Plan).
+• Vereinfachtes Baugenehmigungsverfahren — § 63 SächsBO.
+• Baugenehmigungsverfahren (regulär) — § 64 SächsBO.
+
+ROUTING (EFH-typisch):
+EFH erreicht häufig Gebäudeklasse 1 bis 3 nach § 2 SächsBO. Bei
+qualifiziertem B-Plan und ohne Sonderbau-Eigenschaft (§ 51 SächsBO)
+kommt die Genehmigungsfreistellung nach § 62 SächsBO in Betracht;
+sonst vereinfachtes Verfahren nach § 63 SächsBO. Reguläres Verfahren
+nach § 64 SächsBO nur bei Sonderbau-Tatbestand.
+
+ANTRAG & VORLAGEN:
+• Bauantrag und Bauvorlagen — § 68 SächsBO.
+• Bauvorlageberechtigung — § 65 SächsBO. Entwurfsverfasser —
+  § 54 SächsBO.
+• Form/Inhalt der Bauvorlagen: separate DVOSächsBO bzw. SächsBauVorlVO
+  (kein §-Verweis im Korpus — Verordnung als Quelle referenzieren).
+
+TECHNISCHE ANFORDERUNGEN:
+• Abstandsflächen, Abstände — § 6 SächsBO.
+• Standsicherheit — § 12 SächsBO. Bautechnische Nachweise —
+  § 66 SächsBO.
+• Stellplätze, Garagen, Abstellplätze für Fahrräder — § 49 SächsBO.
+
+BUNDESRECHT (gilt universal):
+• Zulässigkeit — § 30 BauGB, § 31 BauGB, § 34 BauGB, § 35 BauGB.
+• Maß + Baugebiete — § 1 BauNVO, § 3 BauNVO, § 4 BauNVO, § 6 BauNVO,
+  § 16 BauNVO, § 19 BauNVO, § 23 BauNVO.
+• Energie — § 10 GEG. § 80 GEG.
+
+SOLAR-/KLIMASCHUTZ-VORGABEN in Sachsen:
+Sachsen-spezifische Solar-/Klimaschutz-Pflichten sind außerhalb der
+SächsBO geregelt (insbesondere SächsKlimaschutzG). Konkrete §-Verweise
+NICHT im Korpus — geltende Vorschrift referenzieren, nicht erfinden.
+
+DENKMAL & ERHALTUNGSSATZUNG:
+• Bundesanker — § 172 BauGB (Erhaltungssatzungs-Gebiet).
+• Land — SächsDSchG (separate Landesvorschrift; konkrete §-Verweise
+  nicht im Korpus). Zuständige Behörde: Landesamt für Denkmalpflege
+  Sachsen (LfD Sachsen) auf Landesebene; untere Denkmalschutzbehörde
+  bei der Stadt (Leipzig/Dresden/Chemnitz) bzw. beim Landratsamt.`,
   },
   // ── T-02 Neubau MFH ──────────────────────────────────────────────
   'T-02': {
@@ -660,6 +729,72 @@ DENKMAL & ERHALTUNGSSATZUNG:
 • Bundesanker — § 172 BauGB.
 • Land — BremDSchG. Behörde: Landesamt für Denkmalpflege Bremen (LfD)
   plus zuständige untere Denkmalschutzbehörde der Stadtgemeinde.`,
+    // C4 batch — Sachsen × T-02 authored 2026-05-28. SächsBO corpus-verified.
+    // 4-§ brandschutz spread (§ 14/26/30/33) — heading-evident citation
+    // discipline; corpus archetype-tagging only tags § 14 (recommended
+    // future re-tag for § 26/30/33). HBO § 14-alone precedent does NOT apply
+    // (different § numbering: HBO § 26 = Zertifizierung; SächsBO § 26 =
+    // Brandverhalten). v1.0.30 Leipzig walk confirms § 33 SächsBO Rettungsweg.
+    sachsen: `══════════════════════════════════════════════════════════════════════════
+LANDESSPEZIFISCHER ZUSATZ — Sachsen × T-02 (Neubau Mehrfamilienhaus)
+══════════════════════════════════════════════════════════════════════════
+
+Bei MFH-Projekten in SACHSEN: die §§ der SächsBO ersetzen sämtliche oben
+genannten Bayern-Verweise. Flächenland — Bauaufsicht je nach Standort
+bei der Bauaufsichtsbehörde der kreisfreien Stadt (Leipzig, Dresden,
+Chemnitz) bzw. beim Landratsamt des jeweiligen Landkreises. Quelle:
+baunormenlexikon.de (mirror-tier; bei rechtlich kritischen Fragen die
+amtliche Fassung beim revosax.sachsen.de gegenprüfen). Stand: Gesetz vom
+01.03.2024.
+
+HINWEIS: Sächsischer systemBlock weiterhin "preliminary"; die hier
+zitierten §§ sind korpus-verifiziert.
+
+VERFAHREN — SächsBO:
+• Verfahrensfreie Bauvorhaben — § 61 SächsBO.
+• Genehmigungsfreistellung — § 62 SächsBO (bei qualifiziertem B-Plan).
+• Vereinfachtes Baugenehmigungsverfahren — § 63 SächsBO.
+• Baugenehmigungsverfahren (regulär) — § 64 SächsBO.
+
+ROUTING (MFH-typisch):
+MFH erreicht häufig Gebäudeklasse 3 bis 5 nach § 2 SächsBO. Bei
+Sonderbau-Tatbestand (§ 51 SächsBO) ist das reguläre Verfahren nach
+§ 64 SächsBO zwingend. Ohne Sonderbau: vereinfachtes Verfahren nach
+§ 63 SächsBO. Freistellung nach § 62 SächsBO nur bei qualifiziertem
+B-Plan und ohne Sonderbau.
+
+ANTRAG & VORLAGEN:
+• Bauantrag und Bauvorlagen — § 68 SächsBO.
+• Bauvorlageberechtigung — § 65 SächsBO. Entwurfsverfasser —
+  § 54 SächsBO.
+• Form/Inhalt der Bauvorlagen: separate DVOSächsBO bzw. SächsBauVorlVO
+  (kein §-Verweis im Korpus — Verordnung als Quelle referenzieren).
+
+TECHNISCHE ANFORDERUNGEN:
+• Abstandsflächen, Abstände — § 6 SächsBO.
+• Standsicherheit — § 12 SächsBO. Bautechnische Nachweise —
+  § 66 SächsBO.
+• Brandschutz allgemein — § 14 SächsBO. Baustoffe/Bauteile
+  (Brandverhalten) — § 26 SächsBO. Brandwände — § 30 SächsBO. Erster und
+  zweiter Rettungsweg — § 33 SächsBO.
+• Stellplätze, Garagen, Abstellplätze für Fahrräder — § 49 SächsBO.
+
+BUNDESRECHT (gilt universal):
+• Zulässigkeit — § 30 BauGB, § 31 BauGB, § 34 BauGB, § 35 BauGB.
+• Baugebiete + Maß — § 1 BauNVO, § 3 BauNVO, § 4 BauNVO, § 6 BauNVO,
+  § 16 BauNVO, § 19 BauNVO, § 23 BauNVO. Stellplätze — § 12 BauNVO.
+• Energie — § 10 GEG. § 80 GEG.
+
+SOLAR-/KLIMASCHUTZ-VORGABEN in Sachsen:
+Sachsen-spezifische Solar-/Klimaschutz-Pflichten sind außerhalb der
+SächsBO geregelt (insbesondere SächsKlimaschutzG). Konkrete §-Verweise
+NICHT im Korpus — geltende Vorschrift referenzieren, nicht erfinden.
+
+DENKMAL & ERHALTUNGSSATZUNG:
+• Bundesanker — § 172 BauGB.
+• Land — SächsDSchG. Behörde: Landesamt für Denkmalpflege Sachsen (LfD
+  Sachsen) plus zuständige untere Denkmalschutzbehörde (Stadt bzw.
+  Landratsamt).`,
   },
   // ── T-03 Sanierung ───────────────────────────────────────────────
   'T-03': {
@@ -1026,6 +1161,65 @@ NICHT IM Korpus (NICHT erfinden):
 • Land-Denkmal-§§ — wie oben mit LfD / Stadtgemeinde abklären.
 • Solar-/PV-Pflicht bei Sanierung — BremSolarG; nicht in der BremLBO
   geregelt; geltende Vorschrift referenzieren.`,
+    // C4 batch — Sachsen × T-03 authored 2026-05-28. SächsBO corpus-verified.
+    // 4-§ brandschutz spread. No dedicated Nutzungsänderungs-§ in SächsBO
+    // (same deferral pattern as Berlin/Hamburg/Bremen/NRW).
+    sachsen: `══════════════════════════════════════════════════════════════════════════
+LANDESSPEZIFISCHER ZUSATZ — Sachsen × T-03 (Sanierung / Modernisierung)
+══════════════════════════════════════════════════════════════════════════
+
+Bei Sanierungs-/Modernisierungs-Projekten in SACHSEN: die §§ der SächsBO
+ersetzen sämtliche oben genannten Bayern-Verweise. Flächenland —
+Bauaufsicht beim Landratsamt bzw. bei der Bauaufsichtsbehörde der
+kreisfreien Stadt (Leipzig, Dresden, Chemnitz). Quelle: baunormenlexikon.de
+(mirror-tier). Stand: Gesetz vom 01.03.2024.
+
+HINWEIS: Sächsischer systemBlock weiterhin "preliminary"; die hier
+zitierten §§ sind korpus-verifiziert.
+
+ROUTING:
+Reine Instandhaltung/Modernisierung ohne Eingriff in Statik, Brandschutz
+oder Nutzung fällt häufig unter § 61 SächsBO (verfahrensfreie
+Bauvorhaben). Sobald tragende Bauteile, Brandschutz oder die Nutzung
+berührt sind, ist regelmäßig das vereinfachte Verfahren nach § 63 SächsBO
+anzunehmen.
+
+VERFAHREN — SächsBO:
+• Verfahrensfreie Bauvorhaben — § 61 SächsBO.
+• Vereinfachtes Baugenehmigungsverfahren — § 63 SächsBO.
+
+TECHNISCHE NACHWEISE BEI EINGRIFF:
+• Standsicherheit bei tragenden Eingriffen — § 12 SächsBO.
+• Bautechnische Nachweise — § 66 SächsBO.
+• Brandschutz allgemein — § 14 SächsBO. Baustoffe/Bauteile
+  (Brandverhalten) — § 26 SächsBO. Brandwände — § 30 SächsBO. Erster und
+  zweiter Rettungsweg — § 33 SächsBO.
+
+ANTRAG:
+• Bauantrag und Bauvorlagen — § 68 SächsBO. Bauvorlageberechtigung —
+  § 65 SächsBO. Entwurfsverfasser — § 54 SächsBO.
+
+ENERGIE (Bundesrecht):
+• Bestandsänderung — § 48 GEG. Niedrigstenergie-Grundsatz allgemein —
+  § 10 GEG.
+
+NUTZUNGSÄNDERUNG IN Sachsen:
+Sachsen hat KEINEN dedizierten Nutzungsänderungs-§ in der SächsBO. Eine
+Nutzungsänderung im Sanierungskontext ist über § 63 SächsBO (vereinfacht)
+bzw. § 64 SächsBO (regulär bei Sonderbau, § 51 SächsBO) zu beantragen.
+
+DENKMALSCHUTZ:
+Bei eingetragenem Baudenkmal oder Ensemble — SächsDSchG (separate
+Landesvorschrift; konkrete §-Verweise nicht im Korpus). Vor Sanierung ist
+das Landesamt für Denkmalpflege Sachsen (LfD Sachsen) plus zuständige
+untere Denkmalschutzbehörde (Stadt bzw. Landratsamt) anzuhören.
+Federal-Anker bei Erhaltungssatzung — § 172 BauGB.
+
+NICHT IM Korpus (NICHT erfinden):
+• Land-Denkmal-§§ — wie oben mit LfD Sachsen / Stadt bzw. Landratsamt
+  abklären.
+• Solar-/PV-Pflicht bei Sanierung — SächsKlimaschutzG; nicht in der
+  SächsBO geregelt; geltende Vorschrift referenzieren.`,
   },
   // ── T-04 Umnutzung ───────────────────────────────────────────────
   'T-04': {
@@ -1345,6 +1539,68 @@ ANTRAG:
 
 NICHT IM BremLBO-Korpus (NICHT erfinden):
 • Land-Denkmal-§§ — BremDSchG mit LfD / Stadtgemeinde abklären.`,
+    // C4 batch — Sachsen × T-04 authored 2026-05-28. SächsBO corpus-verified.
+    // No dedicated Nutzungsänderungs-§ in SächsBO; routing via § 63/64.
+    // The v1.0.30 Leipzig walk pattern (non-Sonderbau Gaststätte → § 63
+    // vereinfacht; § 33 Rettungsweg) referenced here as the canonical T-04
+    // shape for Sachsen. NB: v1.0.30 deterministic-pipeline bugs are closed;
+    // this cell supplements (not replaces) those fixes.
+    sachsen: `══════════════════════════════════════════════════════════════════════════
+LANDESSPEZIFISCHER ZUSATZ — Sachsen × T-04 (Nutzungsänderung / Umnutzung)
+══════════════════════════════════════════════════════════════════════════
+
+Bei Nutzungsänderungs-Projekten in SACHSEN: die §§ der SächsBO ersetzen
+sämtliche oben genannten Bayern-Verweise. Flächenland — Bauaufsicht
+beim Landratsamt bzw. bei der Bauaufsichtsbehörde der kreisfreien Stadt
+(Leipzig, Dresden, Chemnitz). Quelle: baunormenlexikon.de (mirror-tier).
+Stand: Gesetz vom 01.03.2024.
+
+HINWEIS: Sächsischer systemBlock weiterhin "preliminary"; die hier
+zitierten §§ sind korpus-verifiziert.
+
+ROUTING:
+Eine Nutzungsänderung ist in Sachsen grundsätzlich genehmigungspflichtig,
+sofern nicht ausdrücklich verfahrensfrei nach § 61 SächsBO. Die SächsBO
+hat KEINEN dedizierten Nutzungsänderungs-§ — der Verfahrensweg richtet
+sich nach den allgemeinen Verfahrens-§§. Bei Nicht-Sonderbau-Umnutzung
+(z. B. Einzelhandel → kleine Gaststätte unterhalb der Sonderbau-Schwelle
+nach § 51 SächsBO) ist regelmäßig das vereinfachte Verfahren nach
+§ 63 SächsBO einschlägig; sobald Sonderbau-Tatbestand vorliegt, gilt das
+reguläre Verfahren nach § 64 SächsBO.
+
+VERFAHREN — SächsBO:
+• Vereinfachtes Baugenehmigungsverfahren — § 63 SächsBO.
+• Baugenehmigungsverfahren (regulär) — § 64 SächsBO (bei Sonderbau-
+  Tatbestand der neuen Nutzung, § 51 SächsBO).
+
+GEBIETSVERTRÄGLICHKEIT (Bundesrecht):
+• Zulässigkeit der neuen Nutzung — § 30 BauGB, § 31 BauGB, § 34 BauGB,
+  § 35 BauGB.
+• Baugebiete und Nutzungsarten — § 1 BauNVO bis § 9 BauNVO, § 4a BauNVO
+  (besondere Wohngebiete).
+• Erhaltungssatzung — § 172 BauGB.
+
+TECHNISCHE FOLGEN DER NEUEN NUTZUNG:
+• Brandschutz nach neuer Nutzung — § 14 SächsBO. Baustoffe/Bauteile
+  (Brandverhalten) — § 26 SächsBO. Brandwände — § 30 SächsBO. Erster und
+  zweiter Rettungsweg — § 33 SächsBO. Der Rettungsweg-§ ist bei
+  publikumsbezogenen Umnutzungen (Gaststätten, Versammlungsstätten,
+  Verkauf) praxisrelevant.
+• Stellplatzbedarf nach neuer Nutzung — § 49 SächsBO. Bundes-Maß
+  ergänzend — § 12 BauNVO.
+• Standsicherheit bei strukturellen Anpassungen — § 12 SächsBO.
+  Bautechnische Nachweise — § 66 SächsBO.
+
+ANTRAG:
+• Bauantrag und Bauvorlagen — § 68 SächsBO. Bauvorlageberechtigung —
+  § 65 SächsBO. Entwurfsverfasser — § 54 SächsBO.
+
+NICHT IM SächsBO-Korpus (NICHT erfinden):
+• Land-Denkmal-§§ — SächsDSchG mit LfD Sachsen / Stadt bzw. Landratsamt
+  abklären.
+• Schallschutz/TA-Lärm bei lärmrelevanter Nutzungsänderung — DIN 4109
+  bzw. TA Lärm als Bundes- bzw. technische Normen, nicht in der SächsBO
+  geregelt.`,
   },
   // ── T-05 Abbruch ─────────────────────────────────────────────────
   'T-05': {
@@ -1653,6 +1909,59 @@ NICHT IM BremLBO-Korpus (NICHT erfinden):
 • Schadstoff-/Entsorgungs-§§ — KrWG, GefStoffV, EU-Vorgaben; nicht in der
   BremLBO geregelt; geltende Bundes- bzw. EU-Regelung referenzieren.
 • Land-Denkmal-§§ — wie oben mit LfD / Stadtgemeinde abklären.`,
+    // C4 batch — Sachsen × T-05 authored 2026-05-28. SächsBO corpus-verified.
+    // § 80 SächsBO (Beseitigung/Nutzungsuntersagung) INTENTIONALLY OMITTED
+    // (classic enforcement, same discipline as Berlin/Hamburg § 80).
+    // § 79 SächsBO (Einstellung von Arbeiten) ALSO OMITTED (work-stoppage
+    // order, also enforcement). § 61 SächsBO carries the owner-side
+    // Beseitigungs-Anker (heading lists "Beseitigung von Anlagen" explicitly).
+    sachsen: `══════════════════════════════════════════════════════════════════════════
+LANDESSPEZIFISCHER ZUSATZ — Sachsen × T-05 (Abbruch / Beseitigung)
+══════════════════════════════════════════════════════════════════════════
+
+Bei Abbruch-/Beseitigungsvorhaben in SACHSEN: die §§ der SächsBO ersetzen
+sämtliche oben genannten Bayern-Verweise. Flächenland — Bauaufsicht beim
+Landratsamt bzw. bei der Bauaufsichtsbehörde der kreisfreien Stadt
+(Leipzig, Dresden, Chemnitz). Quelle: baunormenlexikon.de (mirror-tier).
+Stand: Gesetz vom 01.03.2024.
+
+HINWEIS: Sächsischer systemBlock weiterhin "preliminary"; die hier
+zitierten §§ sind korpus-verifiziert.
+
+ROUTING:
+Die Beseitigung baulicher Anlagen ist in Sachsen primär über § 61 SächsBO
+geregelt — die Überschrift nennt "Beseitigung von Anlagen" ausdrücklich
+neben den verfahrensfreien Bauvorhaben.
+
+VERFAHREN — SächsBO:
+• Verfahrensfreie Bauvorhaben und Beseitigung von Anlagen — § 61 SächsBO.
+
+Innerhalb der in § 61 SächsBO genannten Tatbestände ist der Abbruch
+verfahrensfrei (ggf. genügt eine Anzeige); außerhalb dieser Tatbestände
+ist eine Beseitigungsgenehmigung erforderlich (in der Regel über das
+vereinfachte Verfahren nach § 63 SächsBO bzw. das reguläre Verfahren
+nach § 64 SächsBO).
+
+DENKMAL & ERHALTUNGSSATZUNG (OVERRIDE der Verfahrensfreiheit):
+• Federal-Anker — § 172 BauGB: innerhalb eines Erhaltungssatzungs-
+  Bereichs ist der Abbruch genehmigungspflichtig, auch wenn er sonst
+  verfahrensfrei wäre.
+• Land-Denkmal — SächsDSchG (separate Landesvorschrift; konkrete
+  §-Verweise nicht im Korpus). Bei eingetragenem Baudenkmal: Abbruch
+  nur mit denkmalrechtlicher Genehmigung; Landesamt für Denkmalpflege
+  Sachsen (LfD Sachsen) plus zuständige untere Denkmalschutzbehörde
+  (Stadt bzw. Landratsamt) einbeziehen.
+
+DOKUMENTE:
+• Bauvorlageberechtigung — § 65 SächsBO. Entwurfsverfasser —
+  § 54 SächsBO.
+• Statik der Restanlage bei Teilabbruch — § 12 SächsBO.
+
+NICHT IM SächsBO-Korpus (NICHT erfinden):
+• Schadstoff-/Entsorgungs-§§ — KrWG, GefStoffV, EU-Vorgaben; nicht in
+  der SächsBO geregelt; geltende Bundes- bzw. EU-Regelung referenzieren.
+• Land-Denkmal-§§ — wie oben mit LfD Sachsen / Stadt bzw. Landratsamt
+  abklären.`,
   },
   // ── T-06 Aufstockung ─────────────────────────────────────────────
   'T-06': {
@@ -1998,6 +2307,59 @@ BAUPLANUNGSRECHT (Bundesrecht):
 ANTRAG:
 • Bauantrag und Bauvorlagen — § 68 BremLBO. Bauvorlageberechtigung —
   § 65 BremLBO. Entwurfsverfasser — § 54 BremLBO.`,
+    // C4 batch — Sachsen × T-06 authored 2026-05-28. SächsBO corpus-verified.
+    // No dedicated DG/Aufstockungs-§ in SächsBO (unlike BW § 27f); routing
+    // via general procedure § 63. 4-§ brandschutz spread when GK changes.
+    sachsen: `══════════════════════════════════════════════════════════════════════════
+LANDESSPEZIFISCHER ZUSATZ — Sachsen × T-06 (Aufstockung / Dachgeschossausbau)
+══════════════════════════════════════════════════════════════════════════
+
+Bei Aufstockungs-/DG-Ausbau-Projekten in SACHSEN: die §§ der SächsBO
+ersetzen sämtliche oben genannten Bayern-Verweise. Flächenland —
+Bauaufsicht beim Landratsamt bzw. bei der Bauaufsichtsbehörde der
+kreisfreien Stadt (Leipzig, Dresden, Chemnitz). Quelle: baunormenlexikon.de
+(mirror-tier). Stand: Gesetz vom 01.03.2024.
+
+HINWEIS: Sächsischer systemBlock weiterhin "preliminary"; die hier
+zitierten §§ sind korpus-verifiziert.
+
+ROUTING:
+Aufstockung wird regelmäßig im vereinfachten Verfahren nach § 63 SächsBO
+behandelt. Bei Aufstockung können sich Gebäudeklasse, Abstandsflächen
+und Brandschutz ändern; die Standsicherheit der Bestandskonstruktion ist
+gesondert nachzuweisen.
+
+VERFAHREN:
+• Vereinfachtes Baugenehmigungsverfahren — § 63 SächsBO.
+
+GEBÄUDEKLASSE & ABSTANDSFLÄCHEN (kritisch bei Aufstockung):
+• Gebäudeklasse — § 2 SächsBO. Höhen-/Stockwerksgrenzen entscheiden, ob
+  die Aufstockung die GK anhebt. Ein GK-Sprung kann strengeren Brandschutz
+  auslösen.
+• Abstandsflächen, Abstände — § 6 SächsBO. An der neuen, höheren Wand
+  neu zu bemessen.
+
+TECHNISCHE NACHWEISE (BESTANDSSTATIK):
+• Standsicherheit der Bestandskonstruktion und neuer Aufbauten —
+  § 12 SächsBO. Bautechnische Nachweise — § 66 SächsBO.
+• Brandschutz nach ggf. höherer GK — § 14 SächsBO. Baustoffe/Bauteile
+  (Brandverhalten) — § 26 SächsBO. Brandwände — § 30 SächsBO. Erster und
+  zweiter Rettungsweg — § 33 SächsBO.
+
+STELLPLÄTZE (bei neuen Wohneinheiten):
+• Stellplätze, Garagen, Abstellplätze für Fahrräder — § 49 SächsBO.
+
+ENERGIE (Bundesrecht):
+• Bestandsänderung — § 48 GEG. Niedrigstenergie-Grundsatz allgemein —
+  § 10 GEG.
+
+BAUPLANUNGSRECHT (Bundesrecht):
+• Zulässigkeit — § 30 BauGB, § 34 BauGB. Maß — § 19 BauNVO (GRZ),
+  § 20 BauNVO (Vollgeschosse/GFZ), § 23 BauNVO (überbaubare Fläche).
+
+ANTRAG:
+• Bauantrag und Bauvorlagen — § 68 SächsBO. Bauvorlageberechtigung —
+  § 65 SächsBO. Entwurfsverfasser — § 54 SächsBO.`,
   },
   // ── T-07 Anbau ───────────────────────────────────────────────────
   'T-07': {
@@ -2293,6 +2655,52 @@ ENERGIE (Bundesrecht):
 ANTRAG:
 • Bauantrag und Bauvorlagen — § 68 BremLBO. Bauvorlageberechtigung —
   § 65 BremLBO. Entwurfsverfasser — § 54 BremLBO.`,
+    // C4 batch — Sachsen × T-07 authored 2026-05-28. SächsBO corpus-verified.
+    // Anbau brandschutz spread limited to § 14 + § 30 (Anschluss-/Trennwand);
+    // wider 4-§ spread reserved for MFH/Sanierung/Umnutzung/Aufstockung.
+    sachsen: `══════════════════════════════════════════════════════════════════════════
+LANDESSPEZIFISCHER ZUSATZ — Sachsen × T-07 (Anbau / Erweiterung)
+══════════════════════════════════════════════════════════════════════════
+
+Bei Anbau-/Erweiterungsvorhaben in SACHSEN: die §§ der SächsBO ersetzen
+sämtliche oben genannten Bayern-Verweise. Flächenland — Bauaufsicht beim
+Landratsamt bzw. bei der Bauaufsichtsbehörde der kreisfreien Stadt
+(Leipzig, Dresden, Chemnitz). Quelle: baunormenlexikon.de (mirror-tier).
+Stand: Gesetz vom 01.03.2024.
+
+HINWEIS: Sächsischer systemBlock weiterhin "preliminary"; die hier
+zitierten §§ sind korpus-verifiziert.
+
+ROUTING:
+Ein Anbau wird regelmäßig im vereinfachten Verfahren nach § 63 SächsBO
+behandelt. Bei qualifiziertem B-Plan und Einhaltung aller Festsetzungen
+kommt die Genehmigungsfreistellung nach § 62 SächsBO in Betracht.
+
+VERFAHREN:
+• Genehmigungsfreistellung — § 62 SächsBO (bei qualifiziertem B-Plan).
+• Vereinfachtes Baugenehmigungsverfahren — § 63 SächsBO (Regelfall).
+
+GEBIETSVERTRÄGLICHKEIT (Bundesrecht):
+• Einfügen im Innenbereich — § 34 BauGB. Außenbereich — § 35 BauGB.
+• Maß der baulichen Nutzung — § 19 BauNVO (GRZ), § 23 BauNVO
+  (überbaubare Grundstücksfläche).
+
+TECHNISCHE ANFORDERUNGEN AM ANBAU:
+• Abstandsflächen, Abstände an der neuen Wand — § 6 SächsBO.
+• Standsicherheit — § 12 SächsBO. Bautechnische Nachweise —
+  § 66 SächsBO.
+• Brandschutz an der Anschluss-/Trennwand — § 14 SächsBO. Brandwände —
+  § 30 SächsBO.
+
+STELLPLÄTZE (bei neuen Wohneinheiten / Nutzungen):
+• Stellplätze, Garagen, Abstellplätze für Fahrräder — § 49 SächsBO.
+
+ENERGIE (Bundesrecht):
+• Neubau-Teil des Anbaus — § 10 GEG. Anschluss an Bestand — § 48 GEG.
+
+ANTRAG:
+• Bauantrag und Bauvorlagen — § 68 SächsBO. Bauvorlageberechtigung —
+  § 65 SächsBO. Entwurfsverfasser — § 54 SächsBO.`,
   },
   // ── T-08 Sonstiges ───────────────────────────────────────────────
   'T-08': {
@@ -2570,6 +2978,50 @@ HINWEIS:
 T-08 sollte zuerst an einen passenderen Template-Archetyp (T-01 EFH bis
 T-07 Anbau) zugeordnet werden; nur wenn keine Zuordnung möglich ist,
 greift T-08 als Default-Schale. Die obigen BremLBO-§§ sind die
+Mindest-Verweise für Verfahren und Antrag.`,
+    // C4 batch — Sachsen × T-08 authored 2026-05-28. SächsBO corpus-verified.
+    sachsen: `══════════════════════════════════════════════════════════════════════════
+LANDESSPEZIFISCHER ZUSATZ — Sachsen × T-08 (Sonstiges Vorhaben)
+══════════════════════════════════════════════════════════════════════════
+
+Bei sonstigen Vorhaben in SACHSEN: die §§ der SächsBO ersetzen sämtliche
+oben genannten Bayern-Verweise. Flächenland — Bauaufsicht beim
+Landratsamt bzw. bei der Bauaufsichtsbehörde der kreisfreien Stadt
+(Leipzig, Dresden, Chemnitz). Quelle: baunormenlexikon.de (mirror-tier).
+Stand: Gesetz vom 01.03.2024.
+
+HINWEIS: Sächsischer systemBlock weiterhin "preliminary"; die hier
+zitierten §§ sind korpus-verifiziert.
+
+T-08 ist keine feste Vorhabens-Klasse — die einschlägigen SächsBO-§§
+richten sich nach dem konkreten Vorhaben. Die folgenden Verweise decken
+den vollständigen Verfahrensraster ab:
+
+VERFAHREN — SächsBO (vollständiger Raster):
+• Verfahrensfreie Bauvorhaben (inkl. Beseitigung) — § 61 SächsBO.
+• Genehmigungsfreistellung — § 62 SächsBO.
+• Vereinfachtes Baugenehmigungsverfahren — § 63 SächsBO.
+• Baugenehmigungsverfahren (regulär) — § 64 SächsBO.
+
+ANTRAG & VORLAGEN:
+• Bauantrag und Bauvorlagen — § 68 SächsBO.
+• Bauvorlageberechtigung — § 65 SächsBO. Entwurfsverfasser —
+  § 54 SächsBO.
+• Form und Inhalt der Bauvorlagen: separate DVOSächsBO bzw. SächsBauVorlVO
+  (kein §-Verweis im Korpus — Verordnung als Quelle referenzieren).
+
+ALLGEMEINE TECHNISCHE ANFORDERUNGEN:
+• Abstandsflächen, Abstände — § 6 SächsBO.
+• Standsicherheit — § 12 SächsBO. Bautechnische Nachweise —
+  § 66 SächsBO.
+
+BUNDESRECHT (gilt universal):
+• Zulässigkeit — § 30 BauGB, § 31 BauGB, § 34 BauGB, § 35 BauGB.
+
+HINWEIS:
+T-08 sollte zuerst an einen passenderen Template-Archetyp (T-01 EFH bis
+T-07 Anbau) zugeordnet werden; nur wenn keine Zuordnung möglich ist,
+greift T-08 als Default-Schale. Die obigen SächsBO-§§ sind die
 Mindest-Verweise für Verfahren und Antrag.`,
   },
 }
