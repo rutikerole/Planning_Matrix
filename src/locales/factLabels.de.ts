@@ -48,8 +48,8 @@ export const factLabelsDe: Record<string, FactLabel> = {
 
   // ── Building / Gebäude ────────────────────────────────────────────
   'BUILDING.TYPE': { label: 'Gebäudetyp' },
-  'BUILDING.GEBAEUDEKLASSE': { label: 'Gebäudeklasse (Art. 2 BayBO)' },
-  'BUILDING.GEBAUDEKLASSE': { label: 'Gebäudeklasse (Art. 2 BayBO)' },
+  'BUILDING.GEBAEUDEKLASSE': { label: 'Gebäudeklasse' },
+  'BUILDING.GEBAUDEKLASSE': { label: 'Gebäudeklasse' },
   'BUILDING.HEIGHT_M': { label: 'Gebäudehöhe', unit: 'm' },
   'BUILDING.HEIGHT': { label: 'Gebäudehöhe', unit: 'm' },
   'BUILDING.STORIES': { label: 'Geschosse' },
@@ -64,7 +64,7 @@ export const factLabelsDe: Record<string, FactLabel> = {
   'BUILDING.FOOTPRINT': { label: 'Grundfläche', unit: 'm²' },
   'BUILDING.EXISTING': { label: 'Bestandsgebäude' },
   'BUILDING.YEAR_BUILT': { label: 'Baujahr' },
-  'BUILDING.SONDERBAU': { label: 'Sonderbau-Tatbestand (Art. 2 Abs. 4 BayBO)' },
+  'BUILDING.SONDERBAU': { label: 'Sonderbau-Tatbestand' },
   'BUILDING.USE': { label: 'Nutzung' },
   'BUILDING.USAGE': { label: 'Nutzung' },
   'BUILDING.PRIMARY_USE': { label: 'Hauptnutzung' },
@@ -133,19 +133,19 @@ export const factLabelsDe: Record<string, FactLabel> = {
   // ── Procedure / Verfahren ─────────────────────────────────────────
   'PROCEDURE.TYPE': { label: 'Verfahrensart' },
   'PROCEDURE.GENEHMIGUNGSFREISTELLUNG': {
-    label: 'Genehmigungsfreistellung (Art. 58 BayBO)',
+    label: 'Genehmigungsfreistellung',
   },
-  'PROCEDURE.VEREINFACHT': { label: 'Vereinfachtes Verfahren (Art. 59 BayBO)' },
+  'PROCEDURE.VEREINFACHT': { label: 'Vereinfachtes Verfahren' },
   'PROCEDURE.VEREINFACHTES_VERFAHREN': {
-    label: 'Vereinfachtes Verfahren (Art. 59 BayBO)',
+    label: 'Vereinfachtes Verfahren',
   },
   'PROCEDURE.REGULAR': {
-    label: 'Reguläres Baugenehmigungsverfahren (Art. 60 BayBO)',
+    label: 'Reguläres Baugenehmigungsverfahren',
   },
   'PROCEDURE.STANDARD': {
-    label: 'Reguläres Baugenehmigungsverfahren (Art. 60 BayBO)',
+    label: 'Reguläres Baugenehmigungsverfahren',
   },
-  'PROCEDURE.VOLLPRÜFUNG': { label: 'Vollprüfung (Art. 60 BayBO)' },
+  'PROCEDURE.VOLLPRÜFUNG': { label: 'Vollprüfung' },
   'PROCEDURE.VORBESCHEID': { label: 'Vorbescheidsverfahren' },
 
   // ── Parties / Beteiligte ──────────────────────────────────────────
@@ -176,7 +176,7 @@ export const factLabelsDe: Record<string, FactLabel> = {
   },
 
   // ── Abstandsflächen / setbacks ────────────────────────────────────
-  'ABSTANDSFLAECHEN.REQUIRED': { label: 'Abstandsflächen (Art. 6 BayBO)' },
+  'ABSTANDSFLAECHEN.REQUIRED': { label: 'Abstandsflächen' },
   'ABSTANDSFLAECHEN.MIN_DISTANCE_M': {
     label: 'Mindestabstand zur Grundstücksgrenze',
     unit: 'm',
@@ -191,10 +191,10 @@ export const factLabelsDe: Record<string, FactLabel> = {
   // ── Phase 6 A.6 — keys the Phase 6 system prompt encourages
   //                  the model to emit for T-01 in München.
   // Heritage / Denkmal / Erhaltungssatzung
-  'HERITAGE.DENKMAL_PROTECTION': { label: 'Denkmalschutz (BayDSchG Art. 6)' },
+  'HERITAGE.DENKMAL_PROTECTION': { label: 'Denkmalschutz' },
   'HERITAGE.DENKMAL_LISTED': { label: 'Eingetragenes Baudenkmal' },
   'HERITAGE.DENKMAL_ATLAS_CHECK_REQUIRED': {
-    label: 'Bayerischer Denkmal-Atlas zu prüfen',
+    label: 'Denkmal-Atlas zu prüfen',
   },
   'HERITAGE.ERHALTUNGSSATZUNG_AREA': {
     label: 'Im Erhaltungssatzungs-Bereich (BauGB § 172)',
@@ -243,7 +243,7 @@ export const factLabelsDe: Record<string, FactLabel> = {
   'TREES.SPECIES': { label: 'Baumart' },
   'TREES.TRUNK_CIRCUMFERENCE_CM': { label: 'Stammumfang (in 1 m Höhe)', unit: 'cm' },
   'TREES.PROTECTED_BY_BAUMSCHUTZV': {
-    label: 'Geschützt nach BaumschutzV München',
+    label: 'Geschützt nach Baumschutzverordnung',
   },
   'TREES.FELLING_PERMIT_REQUIRED': {
     label: 'Fällgenehmigung erforderlich',
@@ -253,7 +253,7 @@ export const factLabelsDe: Record<string, FactLabel> = {
   'PARTIES.ARCHITEKT.ASSIGNED': {
     label: 'Bauvorlageberechtigte/r Architekt:in zugeordnet',
   },
-  'PARTIES.ARCHITEKT.SOURCE': { label: 'Architekten-Quelle (BAYAK / privat)' },
+  'PARTIES.ARCHITEKT.SOURCE': { label: 'Architekten-Quelle (Architektenkammer / privat)' },
 
   // ── v1.0.23 Bug S — snake_case fact keys emitted by current
   //    fixtures and chat-turn persona output. Both `key` and `KEY`

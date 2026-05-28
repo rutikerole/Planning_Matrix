@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { AnimatePresence, m, useReducedMotion } from 'framer-motion'
 import { useEventEmitter } from '@/hooks/useEventEmitter'
 import { BlueprintSubstrate } from '@/components/shared/BlueprintSubstrate'
+import { PreliminaryStateBanner } from '@/components/shared/PreliminaryStateBanner'
 import type { MessageRow, ProjectRow } from '@/types/db'
 import type { ProjectState } from '@/types/projectState'
 import { useTabState, type WorkspaceTabId } from '../hooks/useTabState'
@@ -104,6 +105,7 @@ export function ResultWorkspace({ project, messages, events, source }: Props) {
 
       <div className={'sticky z-30 ' + (appHeaderOffset ? 'top-12' : 'top-0')}>
         <ResultHeader project={project} source={source} events={events} />
+        <PreliminaryStateBanner bundesland={project.bundesland} />
         <ResultTabs active={active} onChange={setActive} expert={expert} />
       </div>
 

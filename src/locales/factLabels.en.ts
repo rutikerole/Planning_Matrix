@@ -39,8 +39,8 @@ export const factLabelsEn: Record<string, FactLabel> = {
 
   // ── Building ──────────────────────────────────────────────────────
   'BUILDING.TYPE': { label: 'Building type' },
-  'BUILDING.GEBAEUDEKLASSE': { label: 'Building class (Art. 2 BayBO)' },
-  'BUILDING.GEBAUDEKLASSE': { label: 'Building class (Art. 2 BayBO)' },
+  'BUILDING.GEBAEUDEKLASSE': { label: 'Building class' },
+  'BUILDING.GEBAUDEKLASSE': { label: 'Building class' },
   'BUILDING.HEIGHT_M': { label: 'Building height', unit: 'm' },
   'BUILDING.HEIGHT': { label: 'Building height', unit: 'm' },
   'BUILDING.STORIES': { label: 'Stories' },
@@ -55,7 +55,7 @@ export const factLabelsEn: Record<string, FactLabel> = {
   'BUILDING.FOOTPRINT': { label: 'Footprint', unit: 'm²' },
   'BUILDING.EXISTING': { label: 'Existing building' },
   'BUILDING.YEAR_BUILT': { label: 'Year built' },
-  'BUILDING.SONDERBAU': { label: 'Special-occupancy classification (Art. 2(4) BayBO)' },
+  'BUILDING.SONDERBAU': { label: 'Special-occupancy classification' },
   'BUILDING.USE': { label: 'Use' },
   'BUILDING.USAGE': { label: 'Use' },
   'BUILDING.PRIMARY_USE': { label: 'Primary use' },
@@ -122,15 +122,15 @@ export const factLabelsEn: Record<string, FactLabel> = {
   // ── Procedure ─────────────────────────────────────────────────────
   'PROCEDURE.TYPE': { label: 'Procedure type' },
   'PROCEDURE.GENEHMIGUNGSFREISTELLUNG': {
-    label: 'Permit-exempt procedure (Art. 58 BayBO)',
+    label: 'Permit-exempt procedure',
   },
-  'PROCEDURE.VEREINFACHT': { label: 'Simplified permit (Art. 59 BayBO)' },
+  'PROCEDURE.VEREINFACHT': { label: 'Simplified permit' },
   'PROCEDURE.VEREINFACHTES_VERFAHREN': {
-    label: 'Simplified permit (Art. 59 BayBO)',
+    label: 'Simplified permit',
   },
-  'PROCEDURE.REGULAR': { label: 'Standard permit (Art. 60 BayBO)' },
-  'PROCEDURE.STANDARD': { label: 'Standard permit (Art. 60 BayBO)' },
-  'PROCEDURE.VOLLPRÜFUNG': { label: 'Full review (Art. 60 BayBO)' },
+  'PROCEDURE.REGULAR': { label: 'Standard permit' },
+  'PROCEDURE.STANDARD': { label: 'Standard permit' },
+  'PROCEDURE.VOLLPRÜFUNG': { label: 'Full review' },
   'PROCEDURE.VORBESCHEID': { label: 'Preliminary ruling (Vorbescheid)' },
 
   // ── Parties ───────────────────────────────────────────────────────
@@ -159,7 +159,7 @@ export const factLabelsEn: Record<string, FactLabel> = {
   'BRANDSCHUTZ.GEBÄUDEKLASSE_FOLLOW_UP': { label: 'Fire-safety follow-ups' },
 
   // ── Setbacks ──────────────────────────────────────────────────────
-  'ABSTANDSFLAECHEN.REQUIRED': { label: 'Setback areas (Art. 6 BayBO)' },
+  'ABSTANDSFLAECHEN.REQUIRED': { label: 'Setback areas' },
   'ABSTANDSFLAECHEN.MIN_DISTANCE_M': {
     label: 'Minimum distance to plot edge',
     unit: 'm',
@@ -175,11 +175,11 @@ export const factLabelsEn: Record<string, FactLabel> = {
   //                  the model to emit for T-01 in München.
   // Heritage / Denkmal / Erhaltungssatzung
   'HERITAGE.DENKMAL_PROTECTION': {
-    label: 'Heritage protection (BayDSchG Art. 6)',
+    label: 'Heritage protection',
   },
   'HERITAGE.DENKMAL_LISTED': { label: 'Listed monument' },
   'HERITAGE.DENKMAL_ATLAS_CHECK_REQUIRED': {
-    label: 'Bavarian heritage atlas check required',
+    label: 'Heritage atlas check required',
   },
   'HERITAGE.ERHALTUNGSSATZUNG_AREA': {
     label: 'Within preservation ordinance area (BauGB § 172)',
@@ -233,7 +233,7 @@ export const factLabelsEn: Record<string, FactLabel> = {
     unit: 'cm',
   },
   'TREES.PROTECTED_BY_BAUMSCHUTZV': {
-    label: 'Protected by München tree-protection ordinance',
+    label: 'Protected by tree-protection ordinance',
   },
   'TREES.FELLING_PERMIT_REQUIRED': {
     label: 'Felling permit required',
@@ -243,7 +243,7 @@ export const factLabelsEn: Record<string, FactLabel> = {
   'PARTIES.ARCHITEKT.ASSIGNED': {
     label: 'Certified architect assigned',
   },
-  'PARTIES.ARCHITEKT.SOURCE': { label: 'Architect source (BAYAK / private)' },
+  'PARTIES.ARCHITEKT.SOURCE': { label: 'Architect source (chamber / private)' },
 
   // ── v1.0.23 Bug S — snake_case fact keys emitted by current
   //    fixtures and chat-turn persona output. Both `key` and `KEY`

@@ -60,3 +60,50 @@ export function isPdfDemoReady(
     isSubstantiveBundesland(bundesland)
   )
 }
+
+// ───────────────────────────────────────────────────────────────────────
+// State-block depth — sibling helper to isSubstantiveBundesland.
+//
+// Phase B flipped isSubstantive=true for ALL 16 states (PDF readiness gate;
+// stateCitations.ts:364 — makeCorpusPack). That is correct for PDF gating
+// but useless as a banner trigger: the system-prompt-level state block in
+// src/legal/states/{state}.ts is the 42-line "Mindest-Eckdaten" disclaimer
+// for 11 states; only 5 carry a full systemBlock. The chat / result-page
+// honesty banner needs the second classification, not the PDF one.
+//
+// Source: stateCitations.ts:79-182 — exactly these five states carry an
+// inline-hardcoded StateCitationPack with isSubstantive: true PLUS the
+// matching deep state file (bayern/, bw/, hessen/, nrw/, niedersachsen/).
+// The other 11 states get their pack from makeCorpusPack() (line 364) and
+// their state file is the disclaimer skeleton. The locale copy at
+// de.json:861 / en.json:861 (wizard outsideMunich detail) already names
+// this exact 5-state set as the substantive boundary — same source of
+// truth, no drift.
+// ───────────────────────────────────────────────────────────────────────
+
+const STATES_WITH_FULL_STATE_BLOCK: ReadonlySet<string> = new Set([
+  'bayern',
+  'nrw',
+  'bw',
+  'hessen',
+  'niedersachsen',
+])
+
+/**
+ * True when the project's bundesland has a full state-block in
+ * src/legal/states/{state}.ts (BY/BW/HE/NW/NI). False for the 11 thin
+ * states whose systemBlock is the "Mindest-Eckdaten / nicht belastbar"
+ * disclaimer. Use this to gate the chat-UI and result-page preliminary
+ * banner — NOT isSubstantiveBundesland (which is Phase-B true for all 16).
+ *
+ * Input is normalised (trim + toLowerCase) to match the project-wide
+ * canonical-form convention established by getStateCitations
+ * (stateCitations.ts:406). Defensive: a corrupt-cased bundesland from
+ * upstream won't make the banner over-fire on a substantive state.
+ */
+export function hasSubstantiveStateBlock(
+  bundesland: string | null | undefined,
+): boolean {
+  if (!bundesland) return false
+  return STATES_WITH_FULL_STATE_BLOCK.has(bundesland.trim().toLowerCase())
+}

@@ -1197,7 +1197,8 @@
       "offlineQueueFull": "Warteschlange voll — bitte stellen Sie die Verbindung wieder her, bevor Sie weitere Nachrichten senden.",
       "rateLimit": "Sie haben in dieser Stunde sehr viele Nachrichten gesendet ({{count}} von {{max}}). Bitte warten Sie bis {{time}}.",
       "rateLimitDismiss": "Hinweis ausblenden",
-      "errorDismiss": "Schließen"
+      "errorDismiss": "Schließen",
+      "preliminaryState": "Landesspezifische Angaben für {{bundesland}} sind vorläufig — ohne lokale Verifikation nicht belastbar. Substanzielle Daten liegen derzeit für Bayern, NRW, Baden-Württemberg, Hessen und Niedersachsen vor."
     },
     "errors": {
       "streaming_failed": {
