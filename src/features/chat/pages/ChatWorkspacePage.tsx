@@ -44,6 +44,7 @@ import { CapturedToast } from '../components/Chamber/CapturedToast'
 import { OfflineBanner } from '../components/Chamber/OfflineBanner'
 import { RateLimitBanner } from '../components/Chamber/RateLimitBanner'
 import { ErrorBanner } from '../components/Chamber/ErrorBanner'
+import { PreliminaryStateBanner } from '../components/Chamber/PreliminaryStateBanner'
 import { EmptyState } from '../components/Chamber/EmptyState'
 import { useEventEmitter } from '@/hooks/useEventEmitter'
 import { StandUp } from '../components/Chamber/StandUp'
@@ -311,6 +312,7 @@ export function ChatWorkspacePage() {
         thread={
           isWorkspaceReady ? (
             <>
+              <PreliminaryStateBanner bundesland={project.bundesland} />
               <Thread messages={augmentedMessages} />
               <RecoveryBanner
                 messages={messages}

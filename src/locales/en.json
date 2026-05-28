@@ -1197,7 +1197,8 @@
       "offlineQueueFull": "Queue full — please reconnect before sending more messages.",
       "rateLimit": "You have sent a lot of messages this hour ({{count}} of {{max}}). Please wait until {{time}}.",
       "rateLimitDismiss": "Dismiss",
-      "errorDismiss": "Close"
+      "errorDismiss": "Close",
+      "preliminaryState": "State-specific details for {{bundesland}} are preliminary — not reliable without local verification. Substantive data currently exists for Bayern, NRW, Baden-Württemberg, Hessen and Niedersachsen."
     },
     "errors": {
       "streaming_failed": {
