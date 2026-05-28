@@ -237,15 +237,30 @@ export function describeCostInputs(
       ? `HOAI Zone ${inputs.honorarzone}`
       : `HOAI-Zone ${inputs.honorarzone}`,
   )
-  // v1.0.25 Bug 28 — render the proper state LABEL, not the raw
-  // lowercase code (was "Bundesland-Faktor bayern" shown to users).
-  const stateLabel =
-    lang === 'en'
-      ? getStateLocalization(inputs.bundesland).labelEn
-      : getStateLocalization(inputs.bundesland).labelDe
-  parts.push(
-    lang === 'en' ? `${stateLabel} factor` : `Bundesland-Faktor ${stateLabel}`,
-  )
+  // audit-remediation m2/W7 (2026-05-28):
+  // REGION_MULT carries only `bayern: 1.0`; every other state falls
+  // through to 1.0 — i.e. the displayed multiplier is the München
+  // baseline. The previous label "Bundesland-Faktor Berlin" implied a
+  // calibrated regional factor we don't have. Replaced with an honest
+  // basis line so the user reads the band as "München-Richtwert" until
+  // DESTATIS regional calibration (WS1/2/4) lands.
+  const isBayernBaseline =
+    (inputs.bundesland ?? '').trim().toLowerCase() === 'bayern'
+  if (isBayernBaseline) {
+    const stateLabel =
+      lang === 'en'
+        ? getStateLocalization(inputs.bundesland).labelEn
+        : getStateLocalization(inputs.bundesland).labelDe
+    parts.push(
+      lang === 'en' ? `${stateLabel} factor` : `Bundesland-Faktor ${stateLabel}`,
+    )
+  } else {
+    parts.push(
+      lang === 'en'
+        ? 'estimate on München benchmarks (regional calibration pending)'
+        : 'Schätzung auf München-Richtwerte (regionale Kalibrierung ausstehend)',
+    )
+  }
   if (inputs.klasse !== 'unknown') {
     parts.push(
       lang === 'en' ? `building class ${inputs.klasse}` : `GK ${inputs.klasse}`,

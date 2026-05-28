@@ -33,20 +33,26 @@ import { HAMBURG_DELTA } from './states/hamburg.ts'
 import { BREMEN_DELTA } from './states/bremen.ts'
 
 /**
- * State registry. Phase 11 commit 3: full 16-state coverage.
+ * State registry. Full 16-state coverage.
  *
- *   - Bayern        (full content; München cityBlock)
- *   - NRW / BW      (top-state stubs — article numbers, Verfahrenstypen,
- *     Niedersachsen    Architektenkammer, key Modernisierungsdaten)
- *     Hessen
- *   - 11 minimum stubs (Sachsen, Sachsen-Anhalt, Thüringen, RLP,
- *     Saarland, SH, MV, Brandenburg, Berlin, Hamburg, Bremen) —
- *     MBO-default + "in Vorbereitung" framing. allowedCitations is
- *     deliberately empty so the firewall accepts only federal-law
- *     citations until per-state content lands (Phase 14).
+ *   - Bayern        (full systemBlock + München cityBlock)
+ *   - NRW / BW /    (substantive systemBlock — persona-grade content,
+ *     Niedersachsen   stage-2 Architektenkammer + procedure ladders;
+ *     Hessen          banner OFF — see hasSubstantiveStateBlock)
+ *   - 11 thin       (Sachsen, Sachsen-Anhalt, Thüringen, RLP, Saarland,
+ *     states          SH, MV, Brandenburg, Berlin, Hamburg, Bremen) —
+ *                     Pass A+C content lives in TEMPLATE_STATE_OVERRIDES
+ *                     (per-(template × state) addendum, corpus-verified
+ *                     §§), Layer-C allowedCitations now POPULATED for
+ *                     all 11 (Bucket-C commits 2793c08..453655c).
+ *                     systemBlock here remains the "Mindest-Eckdaten"
+ *                     skeleton; the chat + result banner stays ON
+ *                     (PreliminaryStateBanner) until Pass B authors a
+ *                     full systemBlock under licensed-counsel review.
  *
- * Phase 12 expands NRW/BW/Niedersachsen/Hessen to persona-grade.
- * Phase 14 expands the 11 minimum stubs.
+ * Sprint vocabulary: Bucket A done · Bucket B0 + B2 done · Bucket C
+ * Pass A+C done · Bucket C Pass B / Bucket D = next.
+ * See docs/SPRINT_PLAN.md for the living roadmap.
  */
 const REGISTRY: Record<BundeslandCode, StateDelta> = {
   bayern: BAYERN_DELTA,
