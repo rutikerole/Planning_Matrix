@@ -276,7 +276,7 @@ export function CostTimelineTab({ project, state }: Props) {
         </div>
 
         {/* C.3 calendar narrator note. */}
-        <CalendarNarrator lang={lang} />
+        <CalendarNarrator lang={lang} bundesland={project.bundesland} />
       </section>
 
       {/* v1.0.3 — tab-level aggregate. Cost lines themselves have no
@@ -295,9 +295,15 @@ export function CostTimelineTab({ project, state }: Props) {
   )
 }
 
-function CalendarNarrator({ lang }: { lang: 'de' | 'en' }) {
+function CalendarNarrator({
+  lang,
+  bundesland,
+}: {
+  lang: 'de' | 'en'
+  bundesland: string | null
+}) {
   const { t } = useTranslation()
-  const cal = composeCalendar()
+  const cal = composeCalendar({ bundesland })
   const targetLong = formatCalendarDate(cal.targetDate, lang)
   const expectedLong = formatCalendarDate(cal.expectedDate, lang)
   const fallbackLong = cal.fallbackDate

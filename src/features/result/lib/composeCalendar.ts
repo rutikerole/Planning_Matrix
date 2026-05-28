@@ -24,19 +24,28 @@ interface Args {
   now?: Date
   /** Weeks of prep before submission; default 10 (LP 1-3 + Bauamt prep). */
   prepWeeks?: number
+  /**
+   * Project's bundesland. The closure overlay is München-specific
+   * (data/muenchenAuthorityCalendar.ts is honestly Bayern-only data); when
+   * bundesland !== 'bayern' the calendar runs closure-free until Phase 14
+   * authors per-state closures. Default null = no overlay.
+   * Bucket A.4 — closes Bug 27 / audit §3 L5.
+   */
+  bundesland?: string | null
 }
 
 /**
  * Phase 8.3 (C.3) — calendar math for the Cost & Timeline tab's
  * narrator note. Adds prep weeks → submission, then procedure duration
  * → expected approval. If the expected approval falls inside the
- * München authority's Christmas or summer closure, push the target
- * out to the first working day after the window and surface the
- * reason.
+ * München authority's Christmas or summer closure AND the project is
+ * Bayern, push the target out to the first working day after the
+ * window and surface the reason.
  */
 export function composeCalendar({
   now = new Date(),
   prepWeeks = 10,
+  bundesland = null,
 }: Args = {}): CalendarProse {
   const totalWeeks = approximateTotalWeeks()
   const procedureWeeksAvg = (totalWeeks.min + totalWeeks.max) / 2
@@ -44,7 +53,11 @@ export function composeCalendar({
   const targetDate = addWeeks(now, prepWeeks)
   const expectedDate = addWeeks(targetDate, procedureWeeksAvg - 1)
 
-  const closure = findClosure(expectedDate)
+  // Closure overlay is München-specific (Phase 8.3 hardcode). Apply only
+  // when bundesland === 'bayern'; non-Bayern projects fall through to a
+  // closure-free calendar (the bare submit-by / expected dates render
+  // without the deadline pushout sentence).
+  const closure = bundesland === 'bayern' ? findClosure(expectedDate) : null
   let fallbackDate: Date | null = null
   if (closure) {
     fallbackDate = nextWorkingDayAfter(closure, expectedDate)
