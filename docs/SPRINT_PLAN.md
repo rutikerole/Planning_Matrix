@@ -268,6 +268,28 @@ If the team scales to 2–3 engineers + a dedicated legal reviewer, B can
 compress to ~3 sprints and C to ~5–6. The 14–20 sprint total is a
 single-engineer baseline. Do not present it as a fixed quote.
 
+### 9. SächsBO corpus under-tags brandschutz §§ — future re-tag
+
+`scripts/legal-corpus/states/sachsen.json` archetype-tags **only § 14** as
+`brandschutz`. But §§ 26 ("Allg. Anforderungen Brandverhalten Baustoffe/
+Bauteile"), 30 ("Brandwände"), 33 ("Erster und zweiter Rettungsweg") are
+heading-evident brandschutz in SächsBO's § structure and were cited as
+such across Sachsen × T-02/T-03/T-04/T-06 cells (heading-evident
+discipline). v1.0.30 Leipzig T-04 walk also confirmed § 33 SächsBO as
+real-walk persona citation.
+
+**Action item (corpus side, NOT touched this turn):** add `"brandschutz"`
+archetype to §§ 26, 30, 33 in `scripts/legal-corpus/states/sachsen.json`
+so corpus tags align with the heading-evident reality. This is a one-line
+JSON tweak per § + verifier re-run. **Defer until the broader corpus
+re-tag pass** (also worth auditing whether HBO Hessen, Berlin, BW, NI,
+NRW have the same under-tag pattern for any of their §§). Not blocking
+Bucket C progress.
+
+Filed during C4 Sachsen merge (commit `fde3535`); cells use heading-
+evident citation discipline already, so the under-tag does not
+operationally bite any current consumer.
+
 ---
 
 ## Maintenance
