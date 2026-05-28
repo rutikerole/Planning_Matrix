@@ -186,6 +186,33 @@ const ACKNOWLEDGED_OVERRIDES: ReadonlySet<string> = new Set<string>([
   'T-06:sh',
   'T-07:sh',
   'T-08:sh',
+  // C6 batch — Rheinland-Pfalz × T-01..T-08 authored 2026-05-28. §§
+  // verified (mirror-tier LBauO; baunormenlexikon.de; LBauO RP 1998-11-24
+  // i.d.F. Gesetz v. 19.11.2025 GVBl. S. 672, 673 — freshest C-state
+  // amendment authored so far). Third Flächenland. Path 2'' discipline:
+  // cells from corpus, banner STAYS ON. UNIQUE §-NUMBERING (RP's 1998
+  // LBauO predates MBO standardisation): verfahrensfrei = § 62 (not § 61),
+  // Freistellung = § 67, vereinfacht = § 66, regulär = § 61 + § 70.
+  // Abstandsflächen = § 8 (not § 6), Standsicherheit = § 13 (not § 12),
+  // Brandschutz = § 15 (not § 14), Stellplätze = § 47 (not § 49),
+  // Sonderbau = § 50 (not § 51), Entwurfsverfasser = § 56 (not § 54),
+  // Bauantrag = § 63 (not § 68), Bauvorlageberechtigung = § 64 (not § 65).
+  // Brandschutz 2-§ spread (§ 15 + § 30) — RLP has no standalone
+  // Baustoffe-Brandverhalten or Rettungsweg §§ (LBauO RP structural).
+  // §§ 80 (Baueinstellung) + 81 (Beseitigungsanordnung) + 82 (Abbruch
+  // verfallender Anlagen) all omitted (enforcement triple). § 78
+  // (Bauüberwachung), § 87a (TBs) admin omits. § 4 (programmatic), § 9
+  // (Nachbar-Übernahme), § 64a-d (EU recognition) skipped. Authority:
+  // 12 kreisfreie Städte + 24 Landkreise, Kreisverwaltung (RP term, NOT
+  // Landratsamt). Citation prefix bare "LBauO" per gate.
+  'T-01:rlp',
+  'T-02:rlp',
+  'T-03:rlp',
+  'T-04:rlp',
+  'T-05:rlp',
+  'T-06:rlp',
+  'T-07:rlp',
+  'T-08:rlp',
 ])
 
 interface Violation {
