@@ -482,6 +482,79 @@ DENKMAL & ERHALTUNGSSATZUNG:
   im Korpus). Zuständige Behörde: Landesamt für Denkmalpflege Rheinland-
   Pfalz auf Landesebene; untere Denkmalschutzbehörde bei der Kreis-
   verwaltung bzw. kreisfreien Stadt.`,
+    // C7 batch — Mecklenburg-Vorpommern × T-01 authored 2026-05-28.
+    // LBauO M-V corpus-verified (mirror-tier; baunormenlexikon.de;
+    // Bekanntmachung 15.10.2015 i.d.F. Gesetz v. 18.03.2025 GVOBl. M-V
+    // S. 130). Fourth Flächenland. Standard § 61-§ 64 ladder. Authority:
+    // 2 kreisfreie Städte (Rostock, Schwerin) + 6 Landkreise (post-2011
+    // Kreisgebietsreform). Citation prefix "LBauO M-V".
+    mv: `══════════════════════════════════════════════════════════════════════════
+LANDESSPEZIFISCHER ZUSATZ — Mecklenburg-Vorpommern × T-01 (Neubau Einfamilienhaus)
+══════════════════════════════════════════════════════════════════════════
+
+Bei EFH-Projekten in MECKLENBURG-VORPOMMERN: die §§ der LBauO M-V
+(Landesbauordnung Mecklenburg-Vorpommern) ersetzen sämtliche oben
+genannten Bayern-Verweise. Mecklenburg-Vorpommern ist Flächenland mit
+zwei kreisfreien Städten (Rostock, Schwerin) und sechs Landkreisen
+(Mecklenburgische Seenplatte, Rostock, Vorpommern-Rügen, Nordwest-
+mecklenburg, Ludwigslust-Parchim, Vorpommern-Greifswald) nach der
+Kreisgebietsreform 2011. Die zuständige untere Bauaufsichtsbehörde
+liegt — bei Projekten in den kreisfreien Städten — bei der städtischen
+Bauaufsichtsbehörde; im übrigen MV beim Landkreis. Quelle:
+baunormenlexikon.de (mirror-tier; bei rechtlich kritischen Fragen die
+amtliche Fassung beim landesrecht-mv.de gegenprüfen). Stand: LBauO M-V
+Bekanntmachung vom 15.10.2015 (GVOBl. M-V S. 344) i.d.F. Gesetz vom
+18.03.2025 (GVOBl. M-V S. 130).
+
+HINWEIS: Der Mecklenburg-Vorpommersche systemBlock ist bislang
+"Mindest-Eckdaten"; die hier zitierten §§ stammen aus dem Korpus
+(secondary-mirror, primary-URL hinterlegt) und sind verwendbar, aber
+das vollständige MV-Profil wird erst mit anwaltlich verifizierter
+systemBlock-Tiefe abschließend substantiell.
+
+VERFAHREN — LBauO M-V:
+• Verfahrensfreie Bauvorhaben (inkl. Beseitigung) — § 61 LBauO M-V.
+• Genehmigungsfreistellung — § 62 LBauO M-V (bei qualifiziertem B-Plan).
+• Vereinfachtes Baugenehmigungsverfahren — § 63 LBauO M-V.
+• Baugenehmigungsverfahren (regulär) — § 64 LBauO M-V.
+
+ROUTING (EFH-typisch):
+EFH erreicht häufig Gebäudeklasse 1 bis 3 nach § 2 LBauO M-V. Bei
+qualifiziertem B-Plan und ohne Sonderbau-Eigenschaft (§ 51 LBauO M-V)
+kommt die Genehmigungsfreistellung nach § 62 LBauO M-V in Betracht;
+sonst vereinfachtes Verfahren nach § 63 LBauO M-V. Reguläres Verfahren
+nach § 64 LBauO M-V nur bei Sonderbau-Tatbestand.
+
+ANTRAG & VORLAGEN:
+• Bauantrag und Bauvorlagen — § 68 LBauO M-V.
+• Bauvorlageberechtigung — § 65 LBauO M-V. Entwurfsverfasser —
+  § 54 LBauO M-V.
+• Form/Inhalt der Bauvorlagen: separate BauVorlVO M-V (kein §-Verweis
+  im Korpus — Verordnung als Quelle referenzieren).
+
+TECHNISCHE ANFORDERUNGEN:
+• Abstandsflächen, Abstände — § 6 LBauO M-V.
+• Standsicherheit — § 12 LBauO M-V. Bautechnische Nachweise —
+  § 66 LBauO M-V.
+• Stellplätze, Garagen, Abstellplätze für Fahrräder — § 49 LBauO M-V.
+
+BUNDESRECHT (gilt universal):
+• Zulässigkeit — § 30 BauGB, § 31 BauGB, § 34 BauGB, § 35 BauGB.
+• Maß + Baugebiete — § 1 BauNVO, § 3 BauNVO, § 4 BauNVO, § 6 BauNVO,
+  § 16 BauNVO, § 19 BauNVO, § 23 BauNVO.
+• Energie — § 10 GEG. § 80 GEG.
+
+SOLAR-/KLIMASCHUTZ-VORGABEN in Mecklenburg-Vorpommern:
+MV-spezifische Solar-/Klimaschutz-Pflichten sind außerhalb der LBauO M-V
+geregelt. Konkrete §-Verweise NICHT im Korpus — geltende Vorschrift
+referenzieren, nicht erfinden.
+
+DENKMAL & ERHALTUNGSSATZUNG:
+• Bundesanker — § 172 BauGB (Erhaltungssatzungs-Gebiet).
+• Land — DSchG M-V (separate Landesvorschrift; konkrete §-Verweise nicht
+  im Korpus). Zuständige Behörde: Landesamt für Kultur und Denkmalpflege
+  Mecklenburg-Vorpommern auf Landesebene; untere Denkmalschutzbehörde
+  bei der kreisfreien Stadt (Rostock/Schwerin) bzw. beim Landkreis.`,
   },
   // ── T-02 Neubau MFH ──────────────────────────────────────────────
   'T-02': {
@@ -1070,6 +1143,70 @@ DENKMAL & ERHALTUNGSSATZUNG:
 • Land — DSchG RLP. Behörde: Landesamt für Denkmalpflege Rheinland-Pfalz
   plus zuständige untere Denkmalschutzbehörde (Kreisverwaltung bzw.
   kreisfreie Stadt).`,
+    // C7 batch — Mecklenburg-Vorpommern × T-02 authored 2026-05-28. LBauO
+    // M-V corpus-verified. 4-§ brandschutz spread (§ 14/26/30/33);
+    // heading-evident discipline — corpus archetype-tagging covers only
+    // § 14 + § 26 for brandschutz; § 30/§ 33 are heading-evident
+    // (Brandwände / Rettungsweg) but UNDER-TAGGED in MV corpus, mirroring
+    // SächsBO's pattern. Future corpus re-tag noted.
+    mv: `══════════════════════════════════════════════════════════════════════════
+LANDESSPEZIFISCHER ZUSATZ — Mecklenburg-Vorpommern × T-02 (Neubau Mehrfamilienhaus)
+══════════════════════════════════════════════════════════════════════════
+
+Bei MFH-Projekten in MECKLENBURG-VORPOMMERN: die §§ der LBauO M-V
+ersetzen sämtliche oben genannten Bayern-Verweise. Flächenland —
+Bauaufsicht je nach Standort bei der städtischen Bauaufsichtsbehörde der
+kreisfreien Stadt (Rostock, Schwerin) bzw. beim Landkreis. Quelle:
+baunormenlexikon.de (mirror-tier; bei rechtlich kritischen Fragen die
+amtliche Fassung beim landesrecht-mv.de gegenprüfen). Stand: LBauO M-V
+i.d.F. Gesetz vom 18.03.2025.
+
+HINWEIS: Mecklenburg-Vorpommerscher systemBlock weiterhin "preliminary";
+die hier zitierten §§ sind korpus-verifiziert.
+
+VERFAHREN — LBauO M-V:
+• Verfahrensfreie Bauvorhaben — § 61 LBauO M-V.
+• Genehmigungsfreistellung — § 62 LBauO M-V (bei qualifiziertem B-Plan).
+• Vereinfachtes Baugenehmigungsverfahren — § 63 LBauO M-V.
+• Baugenehmigungsverfahren (regulär) — § 64 LBauO M-V.
+
+ROUTING (MFH-typisch):
+MFH erreicht häufig Gebäudeklasse 3 bis 5 nach § 2 LBauO M-V. Bei
+Sonderbau-Tatbestand (§ 51 LBauO M-V) ist das reguläre Verfahren nach
+§ 64 LBauO M-V zwingend. Ohne Sonderbau: vereinfachtes Verfahren nach
+§ 63 LBauO M-V. Freistellung nach § 62 LBauO M-V nur bei qualifiziertem
+B-Plan und ohne Sonderbau.
+
+ANTRAG & VORLAGEN:
+• Bauantrag und Bauvorlagen — § 68 LBauO M-V.
+• Bauvorlageberechtigung — § 65 LBauO M-V. Entwurfsverfasser —
+  § 54 LBauO M-V.
+
+TECHNISCHE ANFORDERUNGEN:
+• Abstandsflächen, Abstände — § 6 LBauO M-V.
+• Standsicherheit — § 12 LBauO M-V. Bautechnische Nachweise —
+  § 66 LBauO M-V.
+• Brandschutz allgemein — § 14 LBauO M-V. Baustoffe/Bauteile
+  (Brandverhalten) — § 26 LBauO M-V. Brandwände — § 30 LBauO M-V. Erster
+  und zweiter Rettungsweg — § 33 LBauO M-V.
+• Stellplätze, Garagen, Abstellplätze für Fahrräder — § 49 LBauO M-V.
+
+BUNDESRECHT (gilt universal):
+• Zulässigkeit — § 30 BauGB, § 31 BauGB, § 34 BauGB, § 35 BauGB.
+• Baugebiete + Maß — § 1 BauNVO, § 3 BauNVO, § 4 BauNVO, § 6 BauNVO,
+  § 16 BauNVO, § 19 BauNVO, § 23 BauNVO. Stellplätze — § 12 BauNVO.
+• Energie — § 10 GEG. § 80 GEG.
+
+SOLAR-/KLIMASCHUTZ-VORGABEN in Mecklenburg-Vorpommern:
+MV-spezifische Solar-/Klimaschutz-Pflichten sind außerhalb der LBauO M-V
+geregelt. Konkrete §-Verweise NICHT im Korpus — geltende Vorschrift
+referenzieren, nicht erfinden.
+
+DENKMAL & ERHALTUNGSSATZUNG:
+• Bundesanker — § 172 BauGB.
+• Land — DSchG M-V. Behörde: Landesamt für Kultur und Denkmalpflege
+  Mecklenburg-Vorpommern plus zuständige untere Denkmalschutzbehörde
+  (kreisfreie Stadt bzw. Landkreis).`,
   },
   // ── T-03 Sanierung ───────────────────────────────────────────────
   'T-03': {
@@ -1612,6 +1749,66 @@ NICHT IM Korpus (NICHT erfinden):
 • Land-Denkmal-§§ — wie oben mit Landesamt / Kreisverwaltung abklären.
 • Solar-/PV-Pflicht bei Sanierung — außerhalb der LBauO geregelt;
   geltende Vorschrift referenzieren.`,
+    // C7 batch — Mecklenburg-Vorpommern × T-03 authored 2026-05-28. LBauO
+    // M-V corpus-verified. No dedicated Nutzungsänd-§; standard deferral.
+    mv: `══════════════════════════════════════════════════════════════════════════
+LANDESSPEZIFISCHER ZUSATZ — Mecklenburg-Vorpommern × T-03 (Sanierung / Modernisierung)
+══════════════════════════════════════════════════════════════════════════
+
+Bei Sanierungs-/Modernisierungs-Projekten in MECKLENBURG-VORPOMMERN: die
+§§ der LBauO M-V ersetzen sämtliche oben genannten Bayern-Verweise.
+Flächenland — Bauaufsicht beim Landkreis bzw. bei der städtischen
+Bauaufsichtsbehörde der kreisfreien Stadt (Rostock, Schwerin). Quelle:
+baunormenlexikon.de (mirror-tier). Stand: LBauO M-V i.d.F. Gesetz vom
+18.03.2025.
+
+HINWEIS: Mecklenburg-Vorpommerscher systemBlock weiterhin "preliminary";
+die hier zitierten §§ sind korpus-verifiziert.
+
+ROUTING:
+Reine Instandhaltung/Modernisierung ohne Eingriff in Statik, Brandschutz
+oder Nutzung fällt häufig unter § 61 LBauO M-V (verfahrensfreie
+Bauvorhaben). Sobald tragende Bauteile, Brandschutz oder die Nutzung
+berührt sind, ist regelmäßig das vereinfachte Verfahren nach
+§ 63 LBauO M-V anzunehmen.
+
+VERFAHREN — LBauO M-V:
+• Verfahrensfreie Bauvorhaben — § 61 LBauO M-V.
+• Vereinfachtes Baugenehmigungsverfahren — § 63 LBauO M-V.
+
+TECHNISCHE NACHWEISE BEI EINGRIFF:
+• Standsicherheit bei tragenden Eingriffen — § 12 LBauO M-V.
+• Bautechnische Nachweise — § 66 LBauO M-V.
+• Brandschutz allgemein — § 14 LBauO M-V. Baustoffe/Bauteile
+  (Brandverhalten) — § 26 LBauO M-V. Brandwände — § 30 LBauO M-V. Erster
+  und zweiter Rettungsweg — § 33 LBauO M-V.
+
+ANTRAG:
+• Bauantrag und Bauvorlagen — § 68 LBauO M-V. Bauvorlageberechtigung —
+  § 65 LBauO M-V. Entwurfsverfasser — § 54 LBauO M-V.
+
+ENERGIE (Bundesrecht):
+• Bestandsänderung — § 48 GEG. Niedrigstenergie-Grundsatz allgemein —
+  § 10 GEG.
+
+NUTZUNGSÄNDERUNG IN Mecklenburg-Vorpommern:
+Mecklenburg-Vorpommern hat KEINEN dedizierten Nutzungsänderungs-§ in der
+LBauO M-V. Eine Nutzungsänderung im Sanierungskontext ist über
+§ 63 LBauO M-V (vereinfacht) bzw. § 64 LBauO M-V (regulär bei Sonderbau,
+§ 51 LBauO M-V) zu beantragen.
+
+DENKMALSCHUTZ:
+Bei eingetragenem Baudenkmal oder Ensemble — DSchG M-V (separate
+Landesvorschrift; konkrete §-Verweise nicht im Korpus). Vor Sanierung
+ist das Landesamt für Kultur und Denkmalpflege Mecklenburg-Vorpommern
+plus zuständige untere Denkmalschutzbehörde (kreisfreie Stadt bzw.
+Landkreis) anzuhören. Federal-Anker bei Erhaltungssatzung — § 172 BauGB.
+
+NICHT IM Korpus (NICHT erfinden):
+• Land-Denkmal-§§ — wie oben mit Landesamt / Landkreis bzw. kreisfreier
+  Stadt abklären.
+• Solar-/PV-Pflicht bei Sanierung — außerhalb der LBauO M-V geregelt;
+  geltende Vorschrift referenzieren.`,
   },
   // ── T-04 Umnutzung ───────────────────────────────────────────────
   'T-04': {
@@ -2102,6 +2299,63 @@ NICHT IM LBauO-RP-Korpus (NICHT erfinden):
 • Schallschutz/TA-Lärm bei lärmrelevanter Nutzungsänderung — DIN 4109
   bzw. TA Lärm als Bundes- bzw. technische Normen, nicht in der LBauO
   geregelt.`,
+    // C7 batch — Mecklenburg-Vorpommern × T-04 authored 2026-05-28. LBauO
+    // M-V corpus-verified. No dedicated change-of-use § in LBauO M-V.
+    mv: `══════════════════════════════════════════════════════════════════════════
+LANDESSPEZIFISCHER ZUSATZ — Mecklenburg-Vorpommern × T-04 (Nutzungsänderung / Umnutzung)
+══════════════════════════════════════════════════════════════════════════
+
+Bei Nutzungsänderungs-Projekten in MECKLENBURG-VORPOMMERN: die §§ der
+LBauO M-V ersetzen sämtliche oben genannten Bayern-Verweise. Flächenland
+— Bauaufsicht beim Landkreis bzw. bei der städtischen Bauaufsichts-
+behörde der kreisfreien Stadt (Rostock, Schwerin). Quelle:
+baunormenlexikon.de (mirror-tier). Stand: LBauO M-V i.d.F. Gesetz vom
+18.03.2025.
+
+HINWEIS: Mecklenburg-Vorpommerscher systemBlock weiterhin "preliminary";
+die hier zitierten §§ sind korpus-verifiziert.
+
+ROUTING:
+Eine Nutzungsänderung ist in Mecklenburg-Vorpommern grundsätzlich
+genehmigungspflichtig, sofern nicht ausdrücklich verfahrensfrei nach
+§ 61 LBauO M-V. Die LBauO M-V hat KEINEN dedizierten
+Nutzungsänderungs-§ — der Verfahrensweg richtet sich nach den
+allgemeinen Verfahrens-§§. Bei Nicht-Sonderbau-Umnutzung ist regelmäßig
+das vereinfachte Verfahren nach § 63 LBauO M-V einschlägig; sobald
+Sonderbau-Tatbestand vorliegt (§ 51 LBauO M-V), gilt das reguläre
+Verfahren nach § 64 LBauO M-V.
+
+VERFAHREN — LBauO M-V:
+• Vereinfachtes Baugenehmigungsverfahren — § 63 LBauO M-V.
+• Baugenehmigungsverfahren (regulär) — § 64 LBauO M-V (bei Sonderbau-
+  Tatbestand der neuen Nutzung, § 51 LBauO M-V).
+
+GEBIETSVERTRÄGLICHKEIT (Bundesrecht):
+• Zulässigkeit der neuen Nutzung — § 30 BauGB, § 31 BauGB, § 34 BauGB,
+  § 35 BauGB.
+• Baugebiete und Nutzungsarten — § 1 BauNVO bis § 9 BauNVO, § 4a BauNVO
+  (besondere Wohngebiete).
+• Erhaltungssatzung — § 172 BauGB.
+
+TECHNISCHE FOLGEN DER NEUEN NUTZUNG:
+• Brandschutz nach neuer Nutzung — § 14 LBauO M-V. Baustoffe/Bauteile
+  (Brandverhalten) — § 26 LBauO M-V. Brandwände — § 30 LBauO M-V. Erster
+  und zweiter Rettungsweg — § 33 LBauO M-V.
+• Stellplatzbedarf nach neuer Nutzung — § 49 LBauO M-V. Bundes-Maß
+  ergänzend — § 12 BauNVO.
+• Standsicherheit bei strukturellen Anpassungen — § 12 LBauO M-V.
+  Bautechnische Nachweise — § 66 LBauO M-V.
+
+ANTRAG:
+• Bauantrag und Bauvorlagen — § 68 LBauO M-V. Bauvorlageberechtigung —
+  § 65 LBauO M-V. Entwurfsverfasser — § 54 LBauO M-V.
+
+NICHT IM LBauO-M-V-Korpus (NICHT erfinden):
+• Land-Denkmal-§§ — DSchG M-V mit Landesamt für Kultur und Denkmalpflege
+  / Landkreis bzw. kreisfreier Stadt abklären.
+• Schallschutz/TA-Lärm bei lärmrelevanter Nutzungsänderung — DIN 4109
+  bzw. TA Lärm als Bundes- bzw. technische Normen, nicht in der LBauO
+  M-V geregelt.`,
   },
   // ── T-05 Abbruch ─────────────────────────────────────────────────
   'T-05': {
@@ -2568,6 +2822,61 @@ NICHT IM LBauO-Korpus (NICHT erfinden):
 • Schadstoff-/Entsorgungs-§§ — KrWG, GefStoffV, EU-Vorgaben; nicht in
   der LBauO geregelt; geltende Bundes- bzw. EU-Regelung referenzieren.
 • Land-Denkmal-§§ — wie oben mit Landesamt / Kreisverwaltung abklären.`,
+    // C7 batch — Mecklenburg-Vorpommern × T-05 authored 2026-05-28. LBauO
+    // M-V corpus-verified. § 80 (Beseitigung/Nutzungsuntersagung)
+    // INTENTIONALLY OMITTED (classic enforcement). § 79 (Einstellung von
+    // Arbeiten), § 80a (Anpassungsverlangen — enforcement-adjacent), § 81
+    // (Bauüberwachung) also omitted.
+    mv: `══════════════════════════════════════════════════════════════════════════
+LANDESSPEZIFISCHER ZUSATZ — Mecklenburg-Vorpommern × T-05 (Abbruch / Beseitigung)
+══════════════════════════════════════════════════════════════════════════
+
+Bei Abbruch-/Beseitigungsvorhaben in MECKLENBURG-VORPOMMERN: die §§ der
+LBauO M-V ersetzen sämtliche oben genannten Bayern-Verweise. Flächenland
+— Bauaufsicht beim Landkreis bzw. bei der städtischen Bauaufsichts-
+behörde der kreisfreien Stadt (Rostock, Schwerin). Quelle:
+baunormenlexikon.de (mirror-tier). Stand: LBauO M-V i.d.F. Gesetz vom
+18.03.2025.
+
+HINWEIS: Mecklenburg-Vorpommerscher systemBlock weiterhin "preliminary";
+die hier zitierten §§ sind korpus-verifiziert.
+
+ROUTING:
+Die Beseitigung baulicher Anlagen ist in Mecklenburg-Vorpommern primär
+über § 61 LBauO M-V geregelt — die Überschrift nennt "Beseitigung von
+Anlagen" ausdrücklich neben den verfahrensfreien Bauvorhaben.
+
+VERFAHREN — LBauO M-V:
+• Verfahrensfreie Bauvorhaben und Beseitigung von Anlagen —
+  § 61 LBauO M-V.
+
+Innerhalb der in § 61 LBauO M-V genannten Tatbestände ist der Abbruch
+verfahrensfrei (ggf. genügt eine Anzeige); außerhalb dieser Tatbestände
+ist eine Beseitigungsgenehmigung erforderlich (in der Regel über das
+vereinfachte Verfahren nach § 63 LBauO M-V bzw. das reguläre Verfahren
+nach § 64 LBauO M-V).
+
+DENKMAL & ERHALTUNGSSATZUNG (OVERRIDE der Verfahrensfreiheit):
+• Federal-Anker — § 172 BauGB: innerhalb eines Erhaltungssatzungs-
+  Bereichs ist der Abbruch genehmigungspflichtig, auch wenn er sonst
+  verfahrensfrei wäre.
+• Land-Denkmal — DSchG M-V (separate Landesvorschrift; konkrete
+  §-Verweise nicht im Korpus). Bei eingetragenem Baudenkmal: Abbruch nur
+  mit denkmalrechtlicher Genehmigung; Landesamt für Kultur und
+  Denkmalpflege Mecklenburg-Vorpommern plus zuständige untere
+  Denkmalschutzbehörde (kreisfreie Stadt bzw. Landkreis) einbeziehen.
+
+DOKUMENTE:
+• Bauvorlageberechtigung — § 65 LBauO M-V. Entwurfsverfasser —
+  § 54 LBauO M-V.
+• Statik der Restanlage bei Teilabbruch — § 12 LBauO M-V.
+
+NICHT IM LBauO-M-V-Korpus (NICHT erfinden):
+• Schadstoff-/Entsorgungs-§§ — KrWG, GefStoffV, EU-Vorgaben; nicht in
+  der LBauO M-V geregelt; geltende Bundes- bzw. EU-Regelung
+  referenzieren.
+• Land-Denkmal-§§ — wie oben mit Landesamt / Landkreis bzw. kreisfreier
+  Stadt abklären.`,
   },
   // ── T-06 Aufstockung ─────────────────────────────────────────────
   'T-06': {
@@ -3068,6 +3377,59 @@ BAUPLANUNGSRECHT (Bundesrecht):
 ANTRAG:
 • Bauantrag — § 63 LBauO. Bauvorlageberechtigung — § 64 LBauO.
   Entwurfsverfasser — § 56 LBauO.`,
+    // C7 batch — Mecklenburg-Vorpommern × T-06 authored 2026-05-28. LBauO
+    // M-V corpus-verified.
+    mv: `══════════════════════════════════════════════════════════════════════════
+LANDESSPEZIFISCHER ZUSATZ — Mecklenburg-Vorpommern × T-06 (Aufstockung / Dachgeschossausbau)
+══════════════════════════════════════════════════════════════════════════
+
+Bei Aufstockungs-/DG-Ausbau-Projekten in MECKLENBURG-VORPOMMERN: die §§
+der LBauO M-V ersetzen sämtliche oben genannten Bayern-Verweise.
+Flächenland — Bauaufsicht beim Landkreis bzw. bei der städtischen
+Bauaufsichtsbehörde der kreisfreien Stadt (Rostock, Schwerin). Quelle:
+baunormenlexikon.de (mirror-tier). Stand: LBauO M-V i.d.F. Gesetz vom
+18.03.2025.
+
+HINWEIS: Mecklenburg-Vorpommerscher systemBlock weiterhin "preliminary";
+die hier zitierten §§ sind korpus-verifiziert.
+
+ROUTING:
+Aufstockung wird regelmäßig im vereinfachten Verfahren nach
+§ 63 LBauO M-V behandelt. Bei Aufstockung können sich Gebäudeklasse,
+Abstandsflächen und Brandschutz ändern; die Standsicherheit der
+Bestandskonstruktion ist gesondert nachzuweisen.
+
+VERFAHREN:
+• Vereinfachtes Baugenehmigungsverfahren — § 63 LBauO M-V.
+
+GEBÄUDEKLASSE & ABSTANDSFLÄCHEN (kritisch bei Aufstockung):
+• Gebäudeklasse — § 2 LBauO M-V. Höhen-/Stockwerksgrenzen entscheiden,
+  ob die Aufstockung die GK anhebt. Ein GK-Sprung kann strengeren
+  Brandschutz auslösen.
+• Abstandsflächen, Abstände — § 6 LBauO M-V. An der neuen, höheren Wand
+  neu zu bemessen.
+
+TECHNISCHE NACHWEISE (BESTANDSSTATIK):
+• Standsicherheit der Bestandskonstruktion und neuer Aufbauten —
+  § 12 LBauO M-V. Bautechnische Nachweise — § 66 LBauO M-V.
+• Brandschutz nach ggf. höherer GK — § 14 LBauO M-V. Baustoffe/Bauteile
+  (Brandverhalten) — § 26 LBauO M-V. Brandwände — § 30 LBauO M-V. Erster
+  und zweiter Rettungsweg — § 33 LBauO M-V.
+
+STELLPLÄTZE (bei neuen Wohneinheiten):
+• Stellplätze, Garagen, Abstellplätze für Fahrräder — § 49 LBauO M-V.
+
+ENERGIE (Bundesrecht):
+• Bestandsänderung — § 48 GEG. Niedrigstenergie-Grundsatz allgemein —
+  § 10 GEG.
+
+BAUPLANUNGSRECHT (Bundesrecht):
+• Zulässigkeit — § 30 BauGB, § 34 BauGB. Maß — § 19 BauNVO (GRZ),
+  § 20 BauNVO (Vollgeschosse/GFZ), § 23 BauNVO (überbaubare Fläche).
+
+ANTRAG:
+• Bauantrag und Bauvorlagen — § 68 LBauO M-V. Bauvorlageberechtigung —
+  § 65 LBauO M-V. Entwurfsverfasser — § 54 LBauO M-V.`,
   },
   // ── T-07 Anbau ───────────────────────────────────────────────────
   'T-07': {
@@ -3501,6 +3863,53 @@ ENERGIE (Bundesrecht):
 ANTRAG:
 • Bauantrag — § 63 LBauO. Bauvorlageberechtigung — § 64 LBauO.
   Entwurfsverfasser — § 56 LBauO.`,
+    // C7 batch — Mecklenburg-Vorpommern × T-07 authored 2026-05-28. LBauO
+    // M-V corpus-verified.
+    mv: `══════════════════════════════════════════════════════════════════════════
+LANDESSPEZIFISCHER ZUSATZ — Mecklenburg-Vorpommern × T-07 (Anbau / Erweiterung)
+══════════════════════════════════════════════════════════════════════════
+
+Bei Anbau-/Erweiterungsvorhaben in MECKLENBURG-VORPOMMERN: die §§ der
+LBauO M-V ersetzen sämtliche oben genannten Bayern-Verweise. Flächenland
+— Bauaufsicht beim Landkreis bzw. bei der städtischen Bauaufsichts-
+behörde der kreisfreien Stadt (Rostock, Schwerin). Quelle:
+baunormenlexikon.de (mirror-tier). Stand: LBauO M-V i.d.F. Gesetz vom
+18.03.2025.
+
+HINWEIS: Mecklenburg-Vorpommerscher systemBlock weiterhin "preliminary";
+die hier zitierten §§ sind korpus-verifiziert.
+
+ROUTING:
+Ein Anbau wird regelmäßig im vereinfachten Verfahren nach
+§ 63 LBauO M-V behandelt. Bei qualifiziertem B-Plan und Einhaltung aller
+Festsetzungen kommt die Genehmigungsfreistellung nach § 62 LBauO M-V in
+Betracht.
+
+VERFAHREN:
+• Genehmigungsfreistellung — § 62 LBauO M-V (bei qualifiziertem B-Plan).
+• Vereinfachtes Baugenehmigungsverfahren — § 63 LBauO M-V (Regelfall).
+
+GEBIETSVERTRÄGLICHKEIT (Bundesrecht):
+• Einfügen im Innenbereich — § 34 BauGB. Außenbereich — § 35 BauGB.
+• Maß der baulichen Nutzung — § 19 BauNVO (GRZ), § 23 BauNVO
+  (überbaubare Grundstücksfläche).
+
+TECHNISCHE ANFORDERUNGEN AM ANBAU:
+• Abstandsflächen, Abstände an der neuen Wand — § 6 LBauO M-V.
+• Standsicherheit — § 12 LBauO M-V. Bautechnische Nachweise —
+  § 66 LBauO M-V.
+• Brandschutz an der Anschluss-/Trennwand — § 14 LBauO M-V. Brandwände —
+  § 30 LBauO M-V.
+
+STELLPLÄTZE (bei neuen Wohneinheiten / Nutzungen):
+• Stellplätze, Garagen, Abstellplätze für Fahrräder — § 49 LBauO M-V.
+
+ENERGIE (Bundesrecht):
+• Neubau-Teil des Anbaus — § 10 GEG. Anschluss an Bestand — § 48 GEG.
+
+ANTRAG:
+• Bauantrag und Bauvorlagen — § 68 LBauO M-V. Bauvorlageberechtigung —
+  § 65 LBauO M-V. Entwurfsverfasser — § 54 LBauO M-V.`,
   },
   // ── T-08 Sonstiges ───────────────────────────────────────────────
   'T-08': {
@@ -3901,6 +4310,50 @@ ANTRAG & VORLAGEN:
 ALLGEMEINE TECHNISCHE ANFORDERUNGEN:
 • Abstandsflächen — § 8 LBauO.
 • Standsicherheit — § 13 LBauO.
+
+BUNDESRECHT (gilt universal):
+• Zulässigkeit — § 30 BauGB, § 31 BauGB, § 34 BauGB, § 35 BauGB.
+
+HINWEIS:
+T-08 sollte zuerst an einen passenderen Template-Archetyp (T-01 EFH bis
+T-07 Anbau) zugeordnet werden; nur wenn keine Zuordnung möglich ist,
+greift T-08 als Default-Schale.`,
+    // C7 batch — Mecklenburg-Vorpommern × T-08 authored 2026-05-28. LBauO
+    // M-V corpus-verified.
+    mv: `══════════════════════════════════════════════════════════════════════════
+LANDESSPEZIFISCHER ZUSATZ — Mecklenburg-Vorpommern × T-08 (Sonstiges Vorhaben)
+══════════════════════════════════════════════════════════════════════════
+
+Bei sonstigen Vorhaben in MECKLENBURG-VORPOMMERN: die §§ der LBauO M-V
+ersetzen sämtliche oben genannten Bayern-Verweise. Flächenland —
+Bauaufsicht beim Landkreis bzw. bei der städtischen Bauaufsichtsbehörde
+der kreisfreien Stadt (Rostock, Schwerin). Quelle: baunormenlexikon.de
+(mirror-tier). Stand: LBauO M-V i.d.F. Gesetz vom 18.03.2025.
+
+HINWEIS: Mecklenburg-Vorpommerscher systemBlock weiterhin "preliminary";
+die hier zitierten §§ sind korpus-verifiziert.
+
+T-08 ist keine feste Vorhabens-Klasse — die einschlägigen LBauO-M-V-§§
+richten sich nach dem konkreten Vorhaben. Die folgenden Verweise decken
+den vollständigen Verfahrensraster ab:
+
+VERFAHREN — LBauO M-V (vollständiger Raster):
+• Verfahrensfreie Bauvorhaben (inkl. Beseitigung) — § 61 LBauO M-V.
+• Genehmigungsfreistellung — § 62 LBauO M-V.
+• Vereinfachtes Baugenehmigungsverfahren — § 63 LBauO M-V.
+• Baugenehmigungsverfahren (regulär) — § 64 LBauO M-V.
+
+ANTRAG & VORLAGEN:
+• Bauantrag und Bauvorlagen — § 68 LBauO M-V.
+• Bauvorlageberechtigung — § 65 LBauO M-V. Entwurfsverfasser —
+  § 54 LBauO M-V.
+• Form und Inhalt der Bauvorlagen: separate BauVorlVO M-V (kein
+  §-Verweis im Korpus — Verordnung als Quelle referenzieren).
+
+ALLGEMEINE TECHNISCHE ANFORDERUNGEN:
+• Abstandsflächen, Abstände — § 6 LBauO M-V.
+• Standsicherheit — § 12 LBauO M-V. Bautechnische Nachweise —
+  § 66 LBauO M-V.
 
 BUNDESRECHT (gilt universal):
 • Zulässigkeit — § 30 BauGB, § 31 BauGB, § 34 BauGB, § 35 BauGB.

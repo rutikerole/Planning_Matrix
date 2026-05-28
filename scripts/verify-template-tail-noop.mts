@@ -213,6 +213,25 @@ const ACKNOWLEDGED_OVERRIDES: ReadonlySet<string> = new Set<string>([
   'T-06:rlp',
   'T-07:rlp',
   'T-08:rlp',
+  // C7 batch — Mecklenburg-Vorpommern × T-01..T-08 authored 2026-05-28.
+  // §§ verified (mirror-tier LBauO M-V; baunormenlexikon.de; Bekanntmachung
+  // 15.10.2015 GVOBl. M-V S. 344 i.d.F. Gesetz v. 18.03.2025 GVOBl. M-V
+  // S. 130). Fourth Flächenland. Standard § 61-§ 64 ladder. Authority:
+  // 2 kreisfreie Städte (Rostock, Schwerin) + 6 Landkreise post-2011
+  // Kreisgebietsreform. § 80 (Beseitigung/Nutzungsuntersagung) omitted
+  // from T-05 (classic enforcement). § 79 (Einstellung), § 80a (Anpassung
+  // — enforcement-adjacent), § 81 (Bauüberwachung), § 85a (TBs) admin
+  // omits. 4-§ brandschutz spread (§ 14+26+30+33) — corpus archetype-tags
+  // § 14 + § 26 fully; § 30 + § 33 UNDER-TAGGED (heading-evident Brandwand
+  // + Rettungsweg). Future corpus re-tag flagged (same pattern as SächsBO).
+  'T-01:mv',
+  'T-02:mv',
+  'T-03:mv',
+  'T-04:mv',
+  'T-05:mv',
+  'T-06:mv',
+  'T-07:mv',
+  'T-08:mv',
 ])
 
 interface Violation {
