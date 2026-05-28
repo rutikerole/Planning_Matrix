@@ -99,6 +99,22 @@ const ACKNOWLEDGED_OVERRIDES: ReadonlySet<string> = new Set<string>([
   'T-06:berlin',
   'T-07:berlin',
   'T-08:berlin',
+  // C2 batch — Hamburg × T-01..T-08 authored 2026-05-28. §§ verified
+  // (mirror-tier HBauO; baunormenlexikon.de; HBauO-Fassung 06.01.2025).
+  // Path 2'' discipline: cells authored from corpus, banner STAYS ON
+  // (systemBlock untouched). Stadtstaat framing: Bauaufsicht beim
+  // Bezirksamt + Denkmalschutzamt Hamburg. § 80 (Beseitigung/Nutzungs-
+  // untersagung/Anpassung) omitted from T-05 (enforcement, same
+  // discipline as Berlin § 80). § 14+26+30+33 brandschutz spread
+  // (all four tagged in HBauO, unlike Berlin's two).
+  'T-01:hamburg',
+  'T-02:hamburg',
+  'T-03:hamburg',
+  'T-04:hamburg',
+  'T-05:hamburg',
+  'T-06:hamburg',
+  'T-07:hamburg',
+  'T-08:hamburg',
 ])
 
 interface Violation {

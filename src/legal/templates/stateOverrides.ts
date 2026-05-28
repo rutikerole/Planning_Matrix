@@ -71,6 +71,69 @@ export type TemplateStateOverrides = Partial<
 export const TEMPLATE_STATE_OVERRIDES: TemplateStateOverrides = {
   // ── T-01 Neubau EFH ──────────────────────────────────────────────
   'T-01': {
+    // C2 batch — Hamburg × T-01 authored 2026-05-28. HBauO §§ corpus-
+    // verified (secondary-mirror tier; baunormenlexikon.de). Hamburg-
+    // Fassung 06.01.2025 (gültig ab 01.01.2026). Stadtstaat: Bauaufsicht
+    // beim Bezirksamt (7 Bezirke). Path 2'' — systemBlock untouched.
+    hamburg: `══════════════════════════════════════════════════════════════════════════
+LANDESSPEZIFISCHER ZUSATZ — Hamburg × T-01 (Neubau Einfamilienhaus)
+══════════════════════════════════════════════════════════════════════════
+
+Bei EFH-Projekten in HAMBURG: die §§ der HBauO (Hamburgische Bauordnung)
+ersetzen sämtliche oben genannten Bayern-Verweise. Hamburg ist Stadtstaat
+— die zuständige Bauaufsicht liegt beim Bezirksamt (Bauaufsicht des
+jeweiligen Bezirks; Hamburg hat 7 Bezirke). Quelle: baunormenlexikon.de
+(mirror-tier; Hamburg-Fassung vom 06.01.2025, gültig ab 01.01.2026; bei
+rechtlich kritischen Fragen die amtliche Fassung beim Landesrecht Hamburg
+gegenprüfen).
+
+HINWEIS: Der Hamburger systemBlock ist bislang "Mindest-Eckdaten"; die
+hier zitierten §§ sind korpus-verifiziert.
+
+VERFAHREN — HBauO:
+• Verfahrensfreie Bauvorhaben (inkl. Beseitigung) — § 61 HBauO.
+• Genehmigungsfreistellung — § 62 HBauO (bei qualifiziertem B-Plan).
+• Vereinfachtes Baugenehmigungsverfahren — § 63 HBauO.
+• Baugenehmigungsverfahren (regulär) — § 64 HBauO.
+
+ROUTING (EFH-typisch):
+EFH erreicht häufig Gebäudeklasse 1 bis 3 nach § 2 HBauO. Bei
+qualifiziertem B-Plan und ohne Sonderbau-Eigenschaft (§ 51 HBauO)
+kommt die Genehmigungsfreistellung nach § 62 HBauO in Betracht;
+sonst vereinfachtes Verfahren nach § 63 HBauO. Reguläres Verfahren
+nach § 64 HBauO nur bei Sonderbau-Tatbestand.
+
+ANTRAG & VORLAGEN:
+• Bauantrag und Bauvorlagen — § 68 HBauO.
+• Bauvorlageberechtigung — § 65 HBauO. Entwurfsverfasser-Pflichten —
+  § 54 HBauO.
+• Form/Inhalt der Bauvorlagen: separate BauVorlVO HH (kein §-Verweis
+  im Korpus — Verordnung als Quelle referenzieren).
+
+TECHNISCHE ANFORDERUNGEN:
+• Abstandsflächen — § 6 HBauO.
+• Standsicherheit — § 12 HBauO. Bautechnische Nachweise —
+  § 66 HBauO.
+• Grundstücksbezogene Mobilität (Stellplätze, Fahrradabstellplätze) —
+  § 49 HBauO.
+
+BUNDESRECHT (gilt universal):
+• Zulässigkeit — § 30 BauGB, § 31 BauGB, § 34 BauGB, § 35 BauGB.
+• Maß + Baugebiete — § 1 BauNVO, § 3 BauNVO, § 4 BauNVO, § 6 BauNVO,
+  § 16 BauNVO, § 19 BauNVO, § 23 BauNVO.
+• Energie — § 10 GEG. § 80 GEG.
+
+PV-PFLICHT in Hamburg:
+NICHT in der HBauO geregelt. Hamburg hat eine PV-Pflicht über das
+HmbKlimaSchG bzw. Folgeverordnungen — konkrete §-Verweise NICHT im
+Korpus. Falls relevant, geltende Solar-Pflicht-Vorschrift
+referenzieren. Nicht erfinden.
+
+DENKMAL & ERHALTUNGSSATZUNG:
+• Bundesanker — § 172 BauGB (Erhaltungssatzungs-Gebiet).
+• Land — DSchG HH (Denkmalschutzgesetz Hamburg) als separate
+  Landesvorschrift (konkrete §-Verweise nicht im Korpus). Zuständige
+  Behörde: Denkmalschutzamt Hamburg.`,
     // C1 batch — Berlin × T-01 authored 2026-05-28. BauO Bln §§ corpus-
     // verified (secondary-mirror tier; baunormenlexikon.de). Stadtstaat
     // framing: Bauaufsicht beim Bezirksamt. NB: state systemBlock remains
@@ -415,6 +478,60 @@ DENKMAL & ERHALTUNGSSATZUNG:
 • Bundesanker — § 172 BauGB.
 • Land — DSchG Bln. Behörde: Landesdenkmalamt Berlin (LDA) plus Untere
   Denkmalschutzbehörde im jeweiligen Bezirksamt.`,
+    // C2 batch — Hamburg × T-02 authored 2026-05-28. HBauO corpus-verified.
+    hamburg: `══════════════════════════════════════════════════════════════════════════
+LANDESSPEZIFISCHER ZUSATZ — Hamburg × T-02 (Neubau Mehrfamilienhaus)
+══════════════════════════════════════════════════════════════════════════
+
+Bei MFH-Projekten in HAMBURG: die §§ der HBauO ersetzen sämtliche oben
+genannten Bayern-Verweise. Stadtstaat — Bauaufsicht beim Bezirksamt.
+Quelle: baunormenlexikon.de (mirror-tier; HBauO-Fassung vom 06.01.2025).
+
+HINWEIS: Hamburger systemBlock weiterhin "preliminary"; die hier
+zitierten §§ sind korpus-verifiziert.
+
+VERFAHREN — HBauO:
+• Verfahrensfreie Bauvorhaben — § 61 HBauO.
+• Genehmigungsfreistellung — § 62 HBauO (bei qualifiziertem B-Plan).
+• Vereinfachtes Baugenehmigungsverfahren — § 63 HBauO.
+• Baugenehmigungsverfahren (regulär) — § 64 HBauO.
+
+ROUTING (MFH-typisch):
+MFH erreicht häufig Gebäudeklasse 3 bis 5 nach § 2 HBauO. Bei Sonderbau-
+Tatbestand (§ 51 HBauO) ist das reguläre Verfahren nach § 64 HBauO
+zwingend. Ohne Sonderbau: vereinfachtes Verfahren nach § 63 HBauO.
+Freistellung nach § 62 HBauO nur bei qualifiziertem B-Plan und ohne
+Sonderbau.
+
+ANTRAG & VORLAGEN:
+• Bauantrag und Bauvorlagen — § 68 HBauO.
+• Bauvorlageberechtigung — § 65 HBauO. Entwurfsverfasser-Pflichten —
+  § 54 HBauO.
+• Form/Inhalt der Bauvorlagen: separate BauVorlVO HH (kein §-Verweis
+  im Korpus — Verordnung als Quelle referenzieren).
+
+TECHNISCHE ANFORDERUNGEN:
+• Abstandsflächen — § 6 HBauO.
+• Standsicherheit — § 12 HBauO. Bautechnische Nachweise — § 66 HBauO.
+• Brandschutz allgemein — § 14 HBauO. Baustoffe/Bauteile (Brandverhalten)
+  — § 26 HBauO. Brandwände — § 30 HBauO. Erster und zweiter Rettungsweg
+  — § 33 HBauO.
+• Grundstücksbezogene Mobilität (Stellplätze, Fahrradabstellplätze) —
+  § 49 HBauO.
+
+BUNDESRECHT (gilt universal):
+• Zulässigkeit — § 30 BauGB, § 31 BauGB, § 34 BauGB, § 35 BauGB.
+• Baugebiete + Maß — § 1 BauNVO, § 3 BauNVO, § 4 BauNVO, § 6 BauNVO,
+  § 16 BauNVO, § 19 BauNVO, § 23 BauNVO. Stellplätze — § 12 BauNVO.
+• Energie — § 10 GEG. § 80 GEG.
+
+PV-PFLICHT in Hamburg:
+NICHT in der HBauO geregelt — HmbKlimaSchG bzw. Folgeverordnungen.
+Geltende Solar-Pflicht-Vorschrift referenzieren, nicht erfinden.
+
+DENKMAL & ERHALTUNGSSATZUNG:
+• Bundesanker — § 172 BauGB.
+• Land — DSchG HH. Behörde: Denkmalschutzamt Hamburg.`,
   },
   // ── T-03 Sanierung ───────────────────────────────────────────────
   'T-03': {
@@ -672,6 +789,58 @@ NICHT IM Korpus (NICHT erfinden):
 • Land-Denkmal-§§ — wie oben mit LDA / Bezirksamt abklären.
 • Solar-/PV-Pflicht bei Sanierung — Berliner Solargesetz; nicht in der
   BauO geregelt; geltende Vorschrift referenzieren.`,
+    // C2 batch — Hamburg × T-03 authored 2026-05-28. HBauO corpus-verified.
+    // No dedicated Nutzungsänderungs-§ (same as NRW/Berlin).
+    hamburg: `══════════════════════════════════════════════════════════════════════════
+LANDESSPEZIFISCHER ZUSATZ — Hamburg × T-03 (Sanierung / Modernisierung)
+══════════════════════════════════════════════════════════════════════════
+
+Bei Sanierungs-/Modernisierungs-Projekten in HAMBURG: die §§ der HBauO
+ersetzen sämtliche oben genannten Bayern-Verweise. Stadtstaat —
+Bauaufsicht beim Bezirksamt. Quelle: baunormenlexikon.de (mirror-tier).
+
+HINWEIS: Hamburger systemBlock weiterhin "preliminary"; die hier
+zitierten §§ sind korpus-verifiziert.
+
+ROUTING:
+Reine Instandhaltung/Modernisierung ohne Eingriff in Statik, Brandschutz
+oder Nutzung fällt häufig unter § 61 HBauO (verfahrensfreie Bauvorhaben).
+Sobald tragende Bauteile, Brandschutz oder die Nutzung berührt sind, ist
+regelmäßig das vereinfachte Verfahren nach § 63 HBauO anzunehmen.
+
+VERFAHREN — HBauO:
+• Verfahrensfreie Bauvorhaben — § 61 HBauO.
+• Vereinfachtes Baugenehmigungsverfahren — § 63 HBauO.
+
+TECHNISCHE NACHWEISE BEI EINGRIFF:
+• Standsicherheit bei tragenden Eingriffen — § 12 HBauO.
+• Bautechnische Nachweise — § 66 HBauO.
+• Brandschutz allgemein — § 14 HBauO. Baustoffe/Bauteile (Brandverhalten)
+  — § 26 HBauO. Brandwände — § 30 HBauO. Rettungswege — § 33 HBauO.
+
+ANTRAG:
+• Bauantrag und Bauvorlagen — § 68 HBauO. Bauvorlageberechtigung —
+  § 65 HBauO. Entwurfsverfasser-Pflichten — § 54 HBauO.
+
+ENERGIE (Bundesrecht):
+• Bestandsänderung — § 48 GEG. Niedrigstenergie-Grundsatz allgemein —
+  § 10 GEG.
+
+NUTZUNGSÄNDERUNG IN Hamburg:
+Hamburg hat KEINEN dedizierten Nutzungsänderungs-§ in der HBauO. Eine
+Nutzungsänderung im Sanierungskontext ist über § 63 HBauO (vereinfacht)
+bzw. § 64 HBauO (regulär bei Sonderbau, § 51 HBauO) zu beantragen.
+
+DENKMALSCHUTZ:
+Bei eingetragenem Baudenkmal oder Ensemble — DSchG HH (separate
+Landesvorschrift; konkrete §-Verweise nicht im Korpus). Vor Sanierung
+ist das Denkmalschutzamt Hamburg anzuhören. Federal-Anker bei
+Erhaltungssatzung — § 172 BauGB.
+
+NICHT IM Korpus (NICHT erfinden):
+• Land-Denkmal-§§ — wie oben mit Denkmalschutzamt Hamburg abklären.
+• Solar-/PV-Pflicht — HmbKlimaSchG; nicht in der HBauO geregelt;
+  geltende Vorschrift referenzieren.`,
   },
   // ── T-04 Umnutzung ───────────────────────────────────────────────
   'T-04': {
@@ -900,6 +1069,50 @@ ANTRAG:
 
 NICHT IM BauO-Bln-Korpus (NICHT erfinden):
 • Land-Denkmal-§§ — DSchG Bln mit LDA / Bezirksamt abklären.`,
+    // C2 batch — Hamburg × T-04 authored 2026-05-28. No dedicated
+    // Nutzungsänderungs-§ in HBauO; routing via general procedure §§.
+    hamburg: `══════════════════════════════════════════════════════════════════════════
+LANDESSPEZIFISCHER ZUSATZ — Hamburg × T-04 (Nutzungsänderung / Umnutzung)
+══════════════════════════════════════════════════════════════════════════
+
+Bei Nutzungsänderungs-Projekten in HAMBURG: die §§ der HBauO ersetzen
+sämtliche oben genannten Bayern-Verweise. Stadtstaat — Bauaufsicht beim
+Bezirksamt. Quelle: baunormenlexikon.de (mirror-tier).
+
+HINWEIS: Hamburger systemBlock weiterhin "preliminary"; die hier
+zitierten §§ sind korpus-verifiziert.
+
+ROUTING:
+Eine Nutzungsänderung ist in Hamburg grundsätzlich genehmigungspflichtig,
+sofern nicht ausdrücklich verfahrensfrei nach § 61 HBauO. Die HBauO hat
+KEINEN dedizierten Nutzungsänderungs-§ — der Verfahrensweg richtet sich
+nach den allgemeinen Verfahrens-§§:
+
+VERFAHREN — HBauO:
+• Vereinfachtes Baugenehmigungsverfahren — § 63 HBauO.
+• Baugenehmigungsverfahren (regulär) — § 64 HBauO (bei Sonderbau-
+  Tatbestand der neuen Nutzung, § 51 HBauO).
+
+GEBIETSVERTRÄGLICHKEIT (Bundesrecht):
+• Zulässigkeit der neuen Nutzung — § 30 BauGB, § 31 BauGB, § 34 BauGB,
+  § 35 BauGB.
+• Baugebiete und Nutzungsarten — § 1 BauNVO bis § 9 BauNVO, § 4a BauNVO.
+• Erhaltungssatzung — § 172 BauGB.
+
+TECHNISCHE FOLGEN DER NEUEN NUTZUNG:
+• Brandschutz nach neuer Nutzung — § 14 HBauO, § 26 HBauO, § 30 HBauO,
+  § 33 HBauO.
+• Stellplatzbedarf nach neuer Nutzung (Grundstücksbezogene Mobilität)
+  — § 49 HBauO. Bundes-Maß ergänzend — § 12 BauNVO.
+• Standsicherheit bei strukturellen Anpassungen — § 12 HBauO.
+  Bautechnische Nachweise — § 66 HBauO.
+
+ANTRAG:
+• Bauantrag und Bauvorlagen — § 68 HBauO. Bauvorlageberechtigung —
+  § 65 HBauO. Entwurfsverfasser — § 54 HBauO.
+
+NICHT IM HBauO-Korpus (NICHT erfinden):
+• Land-Denkmal-§§ — DSchG HH mit Denkmalschutzamt Hamburg abklären.`,
   },
   // ── T-05 Abbruch ─────────────────────────────────────────────────
   'T-05': {
@@ -1113,6 +1326,51 @@ NICHT IM BauO-Bln-Korpus (NICHT erfinden):
 • Schadstoff-/Entsorgungs-§§ — KrWG, GefStoffV, EU-Vorgaben; nicht in
   der BauO geregelt; geltende Bundes- bzw. EU-Regelung referenzieren.
 • Land-Denkmal-§§ — wie oben mit LDA / Bezirksamt abklären.`,
+    // C2 batch — Hamburg × T-05 authored 2026-05-28. § 80 INTENTIONALLY
+    // OMITTED — heading "Beseitigung von Anlagen, Nutzungsuntersagung,
+    // Anpassung bestehender baulicher Anlagen" is enforcement (same
+    // discipline as NI § 79 / BW § 65 / HBO § 82 / Berlin § 80).
+    hamburg: `══════════════════════════════════════════════════════════════════════════
+LANDESSPEZIFISCHER ZUSATZ — Hamburg × T-05 (Abbruch / Beseitigung)
+══════════════════════════════════════════════════════════════════════════
+
+Bei Abbruch-/Beseitigungsvorhaben in HAMBURG: die §§ der HBauO ersetzen
+sämtliche oben genannten Bayern-Verweise. Stadtstaat — Bauaufsicht beim
+Bezirksamt. Quelle: baunormenlexikon.de (mirror-tier).
+
+HINWEIS: Hamburger systemBlock weiterhin "preliminary"; die hier
+zitierten §§ sind korpus-verifiziert.
+
+ROUTING:
+Die Beseitigung baulicher Anlagen ist in Hamburg primär über § 61 HBauO
+geregelt — er kombiniert die verfahrensfreien Bauvorhaben mit der
+Beseitigung von Anlagen unterhalb der Schwellen.
+
+VERFAHREN — HBauO:
+• Verfahrensfreie Bauvorhaben und Beseitigung von Anlagen — § 61 HBauO.
+
+Innerhalb der in § 61 HBauO genannten Tatbestände ist der Abbruch
+verfahrensfrei (ggf. genügt eine Anzeige); außerhalb dieser Tatbestände
+ist eine Beseitigungsgenehmigung erforderlich (in der Regel über das
+vereinfachte Verfahren nach § 63 HBauO bzw. das reguläre Verfahren nach
+§ 64 HBauO).
+
+DENKMAL & ERHALTUNGSSATZUNG (OVERRIDE der Verfahrensfreiheit):
+• Federal-Anker — § 172 BauGB: innerhalb eines Erhaltungssatzungs-
+  Bereichs ist der Abbruch genehmigungspflichtig, auch wenn er sonst
+  verfahrensfrei wäre.
+• Land-Denkmal — DSchG HH (separate Landesvorschrift; konkrete §-Verweise
+  nicht im Korpus). Bei eingetragenem Baudenkmal: Abbruch nur mit
+  denkmalrechtlicher Genehmigung; Denkmalschutzamt Hamburg einbeziehen.
+
+DOKUMENTE:
+• Bauvorlageberechtigung — § 65 HBauO. Entwurfsverfasser — § 54 HBauO.
+• Statik der Restanlage bei Teilabbruch — § 12 HBauO.
+
+NICHT IM HBauO-Korpus (NICHT erfinden):
+• Schadstoff-/Entsorgungs-§§ — KrWG, GefStoffV, EU-Vorgaben; nicht in
+  der HBauO geregelt; geltende Bundes- bzw. EU-Regelung referenzieren.
+• Land-Denkmal-§§ — wie oben mit Denkmalschutzamt Hamburg abklären.`,
   },
   // ── T-06 Aufstockung ─────────────────────────────────────────────
   'T-06': {
@@ -1356,6 +1614,55 @@ BAUPLANUNGSRECHT (Bundesrecht):
 ANTRAG:
 • Bauantrag und Bauvorlagen — § 68 BauO Bln. Bauvorlageberechtigung —
   § 65 BauO Bln.`,
+    // C2 batch — Hamburg × T-06 authored 2026-05-28. HBauO corpus-verified.
+    hamburg: `══════════════════════════════════════════════════════════════════════════
+LANDESSPEZIFISCHER ZUSATZ — Hamburg × T-06 (Aufstockung / Dachgeschossausbau)
+══════════════════════════════════════════════════════════════════════════
+
+Bei Aufstockungs-/DG-Ausbau-Projekten in HAMBURG: die §§ der HBauO
+ersetzen sämtliche oben genannten Bayern-Verweise. Stadtstaat —
+Bauaufsicht beim Bezirksamt. Quelle: baunormenlexikon.de (mirror-tier).
+
+HINWEIS: Hamburger systemBlock weiterhin "preliminary"; die hier
+zitierten §§ sind korpus-verifiziert.
+
+ROUTING:
+Aufstockung wird regelmäßig im vereinfachten Verfahren nach § 63 HBauO
+behandelt. Bei Aufstockung können sich Gebäudeklasse, Abstandsflächen
+und Brandschutz ändern; die Standsicherheit der Bestandskonstruktion ist
+gesondert nachzuweisen.
+
+VERFAHREN:
+• Vereinfachtes Baugenehmigungsverfahren — § 63 HBauO.
+
+GEBÄUDEKLASSE & ABSTANDSFLÄCHEN (kritisch bei Aufstockung):
+• Gebäudeklasse — § 2 HBauO. Höhen-/Stockwerksgrenzen entscheiden, ob
+  die Aufstockung die GK anhebt. Ein GK-Sprung kann strengeren Brandschutz
+  auslösen.
+• Abstandsflächen — § 6 HBauO. An der neuen, höheren Wand neu zu
+  bemessen.
+
+TECHNISCHE NACHWEISE (BESTANDSSTATIK):
+• Standsicherheit der Bestandskonstruktion und neuer Aufbauten —
+  § 12 HBauO. Bautechnische Nachweise — § 66 HBauO.
+• Brandschutz nach ggf. höherer GK — § 14 HBauO, § 26 HBauO, § 30 HBauO,
+  § 33 HBauO.
+
+STELLPLÄTZE (bei neuen Wohneinheiten):
+• Grundstücksbezogene Mobilität (Stellplätze, Fahrradabstellplätze) —
+  § 49 HBauO.
+
+ENERGIE (Bundesrecht):
+• Bestandsänderung — § 48 GEG. Niedrigstenergie-Grundsatz allgemein —
+  § 10 GEG.
+
+BAUPLANUNGSRECHT (Bundesrecht):
+• Zulässigkeit — § 30 BauGB, § 34 BauGB. Maß — § 19 BauNVO (GRZ),
+  § 20 BauNVO (Vollgeschosse/GFZ), § 23 BauNVO (überbaubare Fläche).
+
+ANTRAG:
+• Bauantrag und Bauvorlagen — § 68 HBauO. Bauvorlageberechtigung —
+  § 65 HBauO. Entwurfsverfasser — § 54 HBauO.`,
   },
   // ── T-07 Anbau ───────────────────────────────────────────────────
   'T-07': {
@@ -1566,6 +1873,48 @@ ENERGIE (Bundesrecht):
 ANTRAG:
 • Bauantrag und Bauvorlagen — § 68 BauO Bln. Bauvorlageberechtigung —
   § 65 BauO Bln.`,
+    // C2 batch — Hamburg × T-07 authored 2026-05-28. HBauO corpus-verified.
+    hamburg: `══════════════════════════════════════════════════════════════════════════
+LANDESSPEZIFISCHER ZUSATZ — Hamburg × T-07 (Anbau / Erweiterung)
+══════════════════════════════════════════════════════════════════════════
+
+Bei Anbau-/Erweiterungsvorhaben in HAMBURG: die §§ der HBauO ersetzen
+sämtliche oben genannten Bayern-Verweise. Stadtstaat — Bauaufsicht beim
+Bezirksamt. Quelle: baunormenlexikon.de (mirror-tier).
+
+HINWEIS: Hamburger systemBlock weiterhin "preliminary"; die hier
+zitierten §§ sind korpus-verifiziert.
+
+ROUTING:
+Ein Anbau wird regelmäßig im vereinfachten Verfahren nach § 63 HBauO
+behandelt. Bei qualifiziertem B-Plan und Einhaltung aller Festsetzungen
+kommt die Genehmigungsfreistellung nach § 62 HBauO in Betracht.
+
+VERFAHREN:
+• Genehmigungsfreistellung — § 62 HBauO (bei qualifiziertem B-Plan).
+• Vereinfachtes Baugenehmigungsverfahren — § 63 HBauO (Regelfall).
+
+GEBIETSVERTRÄGLICHKEIT (Bundesrecht):
+• Einfügen im Innenbereich — § 34 BauGB. Außenbereich — § 35 BauGB.
+• Maß der baulichen Nutzung — § 19 BauNVO (GRZ), § 23 BauNVO
+  (überbaubare Grundstücksfläche).
+
+TECHNISCHE ANFORDERUNGEN AM ANBAU:
+• Abstandsflächen an der neuen Wand — § 6 HBauO.
+• Standsicherheit — § 12 HBauO. Bautechnische Nachweise — § 66 HBauO.
+• Brandschutz an der Anschluss-/Trennwand — § 14 HBauO. Brandwände —
+  § 30 HBauO.
+
+STELLPLÄTZE (bei neuen Wohneinheiten / Nutzungen):
+• Grundstücksbezogene Mobilität (Stellplätze, Fahrradabstellplätze) —
+  § 49 HBauO.
+
+ENERGIE (Bundesrecht):
+• Neubau-Teil des Anbaus — § 10 GEG. Anschluss an Bestand — § 48 GEG.
+
+ANTRAG:
+• Bauantrag und Bauvorlagen — § 68 HBauO. Bauvorlageberechtigung —
+  § 65 HBauO. Entwurfsverfasser — § 54 HBauO.`,
   },
   // ── T-08 Sonstiges ───────────────────────────────────────────────
   'T-08': {
@@ -1761,6 +2110,46 @@ HINWEIS:
 T-08 sollte zuerst an einen passenderen Template-Archetyp (T-01 EFH bis
 T-07 Anbau) zugeordnet werden; nur wenn keine Zuordnung möglich ist,
 greift T-08 als Default-Schale. Die obigen BauO-Bln-§§ sind die
+Mindest-Verweise für Verfahren und Antrag.`,
+    // C2 batch — Hamburg × T-08 authored 2026-05-28. HBauO corpus-verified.
+    hamburg: `══════════════════════════════════════════════════════════════════════════
+LANDESSPEZIFISCHER ZUSATZ — Hamburg × T-08 (Sonstiges Vorhaben)
+══════════════════════════════════════════════════════════════════════════
+
+Bei sonstigen Vorhaben in HAMBURG: die §§ der HBauO ersetzen sämtliche
+oben genannten Bayern-Verweise. Stadtstaat — Bauaufsicht beim Bezirksamt.
+Quelle: baunormenlexikon.de (mirror-tier).
+
+HINWEIS: Hamburger systemBlock weiterhin "preliminary"; die hier
+zitierten §§ sind korpus-verifiziert.
+
+T-08 ist keine feste Vorhabens-Klasse — die einschlägigen HBauO-§§
+richten sich nach dem konkreten Vorhaben. Die folgenden Verweise decken
+den vollständigen Verfahrensraster ab:
+
+VERFAHREN — HBauO (vollständiger Raster):
+• Verfahrensfreie Bauvorhaben (inkl. Beseitigung) — § 61 HBauO.
+• Genehmigungsfreistellung — § 62 HBauO.
+• Vereinfachtes Baugenehmigungsverfahren — § 63 HBauO.
+• Baugenehmigungsverfahren (regulär) — § 64 HBauO.
+
+ANTRAG & VORLAGEN:
+• Bauantrag und Bauvorlagen — § 68 HBauO.
+• Bauvorlageberechtigung — § 65 HBauO. Entwurfsverfasser — § 54 HBauO.
+• Form und Inhalt der Bauvorlagen: separate BauVorlVO HH (kein
+  §-Verweis im Korpus — Verordnung als Quelle referenzieren).
+
+ALLGEMEINE TECHNISCHE ANFORDERUNGEN:
+• Abstandsflächen — § 6 HBauO.
+• Standsicherheit — § 12 HBauO. Bautechnische Nachweise — § 66 HBauO.
+
+BUNDESRECHT (gilt universal):
+• Zulässigkeit — § 30 BauGB, § 31 BauGB, § 34 BauGB, § 35 BauGB.
+
+HINWEIS:
+T-08 sollte zuerst an einen passenderen Template-Archetyp (T-01 EFH bis
+T-07 Anbau) zugeordnet werden; nur wenn keine Zuordnung möglich ist,
+greift T-08 als Default-Schale. Die obigen HBauO-§§ sind die
 Mindest-Verweise für Verfahren und Antrag.`,
   },
 }
