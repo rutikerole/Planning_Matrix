@@ -2661,7 +2661,7 @@ GEBIETSVERTRÄGLICHKEIT (Bundesrecht):
 
 TECHNISCHE FOLGEN DER NEUEN NUTZUNG:
 • Brandschutz nach neuer Nutzung — § 15 LBO BW, § 26 LBO BW, § 27c LBO BW.
-• Stellplatzbedarf nach neuer Nutzung — § 37 LBO BW. Bundes-Maß ergänzend
+• Stellplatzbedarf nach neuer Nutzung — § 37 LBO BW. Bundesrecht ergänzend
   — § 12 BauNVO.
 • Standsicherheit bei strukturellen Anpassungen — § 13 LBO BW.
 
@@ -2708,7 +2708,7 @@ GEBIETSVERTRÄGLICHKEIT (Bundesrecht):
 
 TECHNISCHE FOLGEN DER NEUEN NUTZUNG:
 • Brandschutz nach neuer Nutzung — § 14 HBO.
-• Stellplatzbedarf nach neuer Nutzung — § 52 HBO. Bundes-Maß ergänzend
+• Stellplatzbedarf nach neuer Nutzung — § 52 HBO. Bundesrecht ergänzend
   — § 12 BauNVO.
 • Standsicherheit bei strukturellen Anpassungen — § 12 HBO. Bautechnische
   Nachweise — § 68 HBO.
@@ -2795,7 +2795,7 @@ TECHNISCHE FOLGEN DER NEUEN NUTZUNG:
   § 33 NBauO.
 • Stellplatzbedarf nach neuer Nutzung: bauliche Anlagen für Kfz —
   § 46 NBauO. Notwendige Einstellplätze — § 47 NBauO. Fahrradabstell-
-  anlagen — § 48 NBauO. Bundes-Maß ergänzend — § 12 BauNVO.
+  anlagen — § 48 NBauO. Bundesrecht ergänzend — § 12 BauNVO.
 • Standsicherheit bei strukturellen Anpassungen — § 12 NBauO.
   Bautechnische Nachweise — § 65 NBauO.
 
@@ -2884,7 +2884,7 @@ TECHNISCHE FOLGEN DER NEUEN NUTZUNG:
 • Brandschutz nach neuer Nutzung — § 14 HBauO, § 26 HBauO, § 30 HBauO,
   § 33 HBauO.
 • Stellplatzbedarf nach neuer Nutzung (Grundstücksbezogene Mobilität)
-  — § 49 HBauO. Bundes-Maß ergänzend — § 12 BauNVO.
+  — § 49 HBauO. Bundesrecht ergänzend — § 12 BauNVO.
 • Standsicherheit bei strukturellen Anpassungen — § 12 HBauO.
   Bautechnische Nachweise — § 66 HBauO.
 
@@ -3098,7 +3098,7 @@ GEBIETSVERTRÄGLICHKEIT (Bundesrecht):
 
 TECHNISCHE FOLGEN DER NEUEN NUTZUNG:
 • Brandschutz nach neuer Nutzung — § 15 LBauO. Brandwände — § 30 LBauO.
-• Stellplatzbedarf nach neuer Nutzung — § 47 LBauO. Bundes-Maß ergänzend
+• Stellplatzbedarf nach neuer Nutzung — § 47 LBauO. Bundesrecht ergänzend
   — § 12 BauNVO.
 • Standsicherheit bei strukturellen Anpassungen — § 13 LBauO.
 
