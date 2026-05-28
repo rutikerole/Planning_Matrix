@@ -167,7 +167,8 @@ function RoleCard({
     lang === 'en'
       ? role.rationale_en || role.rationale_de
       : role.rationale_de
-  const showEffort = lookup?.rangeHours && lookup.rangeHours !== '—'
+  const effort = lang === 'en' ? lookup?.effortWeeksEn : lookup?.effortWeeksDe
+  const showEffort = effort && effort !== '—'
   return (
     <li className="border border-ink/12 rounded-[10px] bg-paper-card p-4 flex flex-col gap-2.5">
       <div className="flex items-center gap-2.5 flex-wrap">
@@ -195,7 +196,7 @@ function RoleCard({
             {t('result.workspace.team.effortLabel')}
           </span>
           <span className="font-serif italic text-clay-deep tabular-nums">
-            {lookup.rangeHours}
+            {effort}
           </span>
         </p>
       )}

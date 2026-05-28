@@ -1,13 +1,19 @@
 import { getStateCitations } from '@/legal/stateCitations'
 
 /**
- * Phase 3.5 #62 — typical hour-range estimates per role per project class.
+ * Phase 3.5 #62 — typical effort estimates per role per project class.
  *
  * Used in Section VI ("Das Team") to render an effort line below
  * each specialist card. Pure lookup; numbers drawn from common HOAI
  * 2021 fee tables + practitioner ranges. Flagged
  * verifyBeforePublicLaunch in spirit — these are educational
  * orientation values, not quotes.
+ *
+ * Phase D (manager feedback) — effort is now expressed in WEEKS, not
+ * hours. Basis ≈ 40 working hours / week, rounded to the nearest 0.5
+ * and floored at 0.5 (we never surface a sub-half-week figure that
+ * would read as false precision). Locale-rendered: DE uses comma
+ * decimals ("1–1,5 Wochen"), EN uses point decimals ("1–1.5 weeks").
  *
  * v1.0.21 Bug 23 — the qualification line (qualificationDe/En) now
  * keys the § citation off the project's Bundesland. The previous
@@ -27,8 +33,10 @@ export type RoleKey =
   | 'bauamt'
 
 export interface RoleEffort {
-  /** "30–60 h" / "approx. 1 day". Locale-rendered by caller. */
-  rangeHours: string
+  /** Effort range in weeks, German (comma decimals), e.g. "1–1,5 Wochen". */
+  effortWeeksDe: string
+  /** Effort range in weeks, English (point decimals), e.g. "1–1.5 weeks". */
+  effortWeeksEn: string
   /** German display label for the role title. */
   titleDe: string
   /** English display label. */
@@ -49,42 +57,48 @@ export function getRoleEffortLookup(
   const c = getStateCitations(bundesland)
   return {
     architekt: {
-      rangeHours: '30–60 h',
+      effortWeeksDe: '1–1,5 Wochen',
+      effortWeeksEn: '1–1.5 weeks',
       titleDe: 'Architekt:in',
       titleEn: 'Architect',
       qualificationDe: `bauvorlageberechtigt nach ${c.permitSubmissionCitation}`,
       qualificationEn: `licensed for permit submissions (${c.permitSubmissionCitation})`,
     },
     tragwerksplaner: {
-      rangeHours: '15–35 h',
+      effortWeeksDe: '0,5–1 Woche',
+      effortWeeksEn: '0.5–1 week',
       titleDe: 'Tragwerksplaner:in',
       titleEn: 'Structural engineer',
       qualificationDe: `Standsicherheitsnachweis nach ${c.structuralCertCitation}`,
       qualificationEn: `structural certification (${c.structuralCertCitation})`,
     },
     energieberater: {
-      rangeHours: '6–12 h',
+      effortWeeksDe: 'ca. 0,5 Woche',
+      effortWeeksEn: 'approx. 0.5 week',
       titleDe: 'Energieberater:in',
       titleEn: 'Energy consultant',
       qualificationDe: 'Wärmeschutznachweis nach GEG 2024',
       qualificationEn: 'thermal protection certification (GEG 2024)',
     },
     vermesser: {
-      rangeHours: '4–8 h',
+      effortWeeksDe: 'ca. 0,5 Woche',
+      effortWeeksEn: 'approx. 0.5 week',
       titleDe: 'Vermesser:in',
       titleEn: 'Surveyor',
       qualificationDe: 'amtlicher Lageplan',
       qualificationEn: 'official site plan',
     },
     brandschutzplaner: {
-      rangeHours: '8–20 h',
+      effortWeeksDe: '0,5 Woche',
+      effortWeeksEn: '0.5 week',
       titleDe: 'Brandschutzplaner:in',
       titleEn: 'Fire safety planner',
       qualificationDe: 'Brandschutznachweis (gebäudeklassenabhängig)',
       qualificationEn: 'fire protection certification (building-class dependent)',
     },
     bauamt: {
-      rangeHours: '—',
+      effortWeeksDe: '—',
+      effortWeeksEn: '—',
       titleDe: 'Bauamt',
       titleEn: 'Building authority',
       qualificationDe: 'kommunale Baugenehmigungsbehörde',
