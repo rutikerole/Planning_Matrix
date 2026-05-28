@@ -26,6 +26,14 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..')
 const FILES = [
   'src/locales/factLabels.de.ts',
   'src/locales/factLabels.en.ts',
+  // audit-remediation M6 considered extending scan to humanizeFact.ts +
+  // legalCitations.ts. Both have legitimately Bayern-scoped strings
+  // ("BayBO Art. 58" labels for Bayern citation entries, narrative prose
+  // inside `bundesland === 'bayern'` branches). A label-only scan there
+  // would either need a key-level allowlist or a state-branch lint —
+  // neither cheap. M6 instead widens the Bayern token vocabulary and
+  // template-literal matching IN the existing two files; the wider scan
+  // is a future refactor (see audit "where lacking").
 ]
 
 // Keys whose name encodes Bayern scope. Labels for these keys may legitimately
@@ -38,10 +46,16 @@ const ALLOWLIST = new Set([
 
 // Forbidden tokens in label text. \b boundaries guard against false positives
 // inside other words. Order doesn't matter — first match wins per label.
+// audit-remediation M6 widens the BayK*/BayObBO/BayAGBauGB/BAK Bayern tokens.
 const FORBIDDEN = [
   { token: 'BayBO', re: /\bBayBO\b/ },
   { token: 'BayDSchG', re: /\bBayDSchG\b/ },
   { token: 'BayNatSchG', re: /\bBayNatSchG\b/ },
+  { token: 'BayKlimaG', re: /\bBayKlima(?:G|SchG)\b/ },
+  { token: 'BayObBO', re: /\bBayObBO\b/ },
+  { token: 'BayAGBauGB', re: /\bBayAGBauGB\b/ },
+  { token: 'BayBauVorlV', re: /\bBayBauVorlV\b/ },
+  { token: 'BAK Bayern', re: /\bBAK\s+Bayern\b/ },
   { token: 'Bayerisch', re: /\bBayerisch\w*\b/ },
   { token: 'Bavarian', re: /\bBavarian\b/ },
   { token: 'Bavaria', re: /\bBavaria\b/ },
@@ -64,7 +78,12 @@ for (const rel of FILES) {
     const line = lines[i]
     const keyMatch = line.match(/^\s*['"]([^'"]+)['"]\s*:\s*\{/)
     if (keyMatch) currentKey = keyMatch[1]
-    const labelMatch = line.match(/label\s*:\s*['"]([^'"]+)['"]/)
+    // audit-remediation M6: also accept template-literal labels — a future
+    // refactor might switch from `'…'` to `` `…` `` without anyone noticing
+    // the gate silently bypassed.
+    const labelMatch =
+      line.match(/label\s*:\s*['"]([^'"]+)['"]/) ||
+      line.match(/label\s*:\s*`([^`]+)`/)
     if (labelMatch && currentKey) {
       labelsScanned++
       if (ALLOWLIST.has(currentKey)) continue
@@ -82,6 +101,12 @@ for (const rel of FILES) {
         }
       }
     }
+    // Note: a previous iteration tried a string-literal-wide scan over
+    // humanizeFact.ts + legalCitations.ts. Too aggressive — those files
+    // legitimately carry "BayBO Art. 58 / 59 / 60" strings inside
+    // bundesland==='bayern' code branches. Rolled back to label-only
+    // matching; the file-list extension still catches future label-style
+    // entries in those files.
   }
 }
 

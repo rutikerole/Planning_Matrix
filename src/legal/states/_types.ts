@@ -13,8 +13,10 @@
 //          + PERSONA_BEHAVIOURAL_RULES + TEMPLATE_SHARED_BLOCK
 //
 // state.cityBlock is optional. Bayern carries MUENCHEN_BLOCK there
-// (today's only active city slice). Other states carry null until per-
-// state city handling lands in Phase 14+.
+// (today's only active city slice). Other states carry null; per-state
+// city handling (Berlin → Bezirksamt, Hamburg → Bezirk, etc.) lands as
+// part of Bucket-C Pass B systemBlock rewrites under licensed-counsel
+// review (see docs/SPRINT_PLAN.md).
 // ───────────────────────────────────────────────────────────────────────
 
 /**

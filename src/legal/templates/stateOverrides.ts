@@ -715,9 +715,14 @@ DENKMAL & ERHALTUNGSSATZUNG:
     // specific institute between verfahrensfrei und vereinfacht); § 32a
     // Photovoltaikanlagen für die Stromerzeugung auf Dächern (first state
     // with PV-§ in corpus). § 61 = "Genehmigungsfreie Vorhaben" (heading
-    // changes from "verfahrensfrei"). Shifted: § 70 Nachweise, § 72
-    // Bauantrag. Enforcement triple omitted: § 84/§ 85/§ 86 (Einstellung/
-    // Beseitigung-Nutzungsuntersagung/Anpassung).
+    // changes from "verfahrensfrei"). Standard ladder § 66/§ 68 for
+    // Bautechnische Nachweise + Bauantrag, Bauvorlagen (NOT shifted — the
+    // earlier "Shifted: § 70/§ 72" reading was a misread of the
+    // superseded bravors.brandenburg.de 2008 version; corrected
+    // 2026-05-28 per docs/FULL_AUDIT_2026-05-28.md). Enforcement omitted:
+    // § 79 (Einstellung von Arbeiten) / § 80 (Beseitigung von Anlagen,
+    // Nutzungsuntersagung) / § 81 (Anpassung bestehender baulicher
+    // Anlagen) / § 82 (Bauüberwachung).
     brandenburg: `══════════════════════════════════════════════════════════════════════════
 LANDESSPEZIFISCHER ZUSATZ — Brandenburg × T-01 (Neubau Einfamilienhaus)
 ══════════════════════════════════════════════════════════════════════════
@@ -758,7 +763,7 @@ vereinfachtes Verfahren nach § 63 BbgBO. Reguläres Verfahren nach
 § 64 BbgBO nur bei Sonderbau-Tatbestand.
 
 ANTRAG & VORLAGEN:
-• Bauantrag und Bauvorlagen — § 72 BbgBO.
+• Bauantrag und Bauvorlagen — § 68 BbgBO.
 • Bauvorlageberechtigung — § 65 BbgBO. Entwurfsverfasser —
   § 54 BbgBO.
 • Form/Inhalt der Bauvorlagen: separate BauVorlVO Bbg (kein §-Verweis
@@ -767,7 +772,7 @@ ANTRAG & VORLAGEN:
 TECHNISCHE ANFORDERUNGEN:
 • Abstandsflächen, Abstände — § 6 BbgBO.
 • Standsicherheit — § 12 BbgBO. Bautechnische Nachweise —
-  § 70 BbgBO.
+  § 66 BbgBO.
 • Stellplätze, Garagen, Abstellplätze für Fahrräder — § 49 BbgBO.
 
 BUNDESRECHT (gilt universal):
@@ -1679,14 +1684,14 @@ Sonderbau-Tatbestand (§ 51 BbgBO) ist das reguläre Verfahren nach
 § 63 BbgBO. Bauanzeige nach § 62 BbgBO nur in dort genannten Tatbeständen.
 
 ANTRAG & VORLAGEN:
-• Bauantrag und Bauvorlagen — § 72 BbgBO.
+• Bauantrag und Bauvorlagen — § 68 BbgBO.
 • Bauvorlageberechtigung — § 65 BbgBO. Entwurfsverfasser —
   § 54 BbgBO.
 
 TECHNISCHE ANFORDERUNGEN:
 • Abstandsflächen, Abstände — § 6 BbgBO.
 • Standsicherheit — § 12 BbgBO. Bautechnische Nachweise —
-  § 70 BbgBO.
+  § 66 BbgBO.
 • Brandschutz allgemein — § 14 BbgBO. Allgemeine Anforderungen
   Brandverhalten Baustoffe/Bauteile — § 26 BbgBO. Brandwände —
   § 30 BbgBO. Erster und zweiter Rettungsweg — § 33 BbgBO.
@@ -2521,13 +2526,13 @@ VERFAHREN — BbgBO:
 
 TECHNISCHE NACHWEISE BEI EINGRIFF:
 • Standsicherheit bei tragenden Eingriffen — § 12 BbgBO.
-• Bautechnische Nachweise — § 70 BbgBO.
+• Bautechnische Nachweise — § 66 BbgBO.
 • Brandschutz allgemein — § 14 BbgBO. Brandverhalten Baustoffe/Bauteile
   — § 26 BbgBO. Brandwände — § 30 BbgBO. Erster und zweiter Rettungsweg
   — § 33 BbgBO.
 
 ANTRAG:
-• Bauantrag und Bauvorlagen — § 72 BbgBO. Bauvorlageberechtigung —
+• Bauantrag und Bauvorlagen — § 68 BbgBO. Bauvorlageberechtigung —
   § 65 BbgBO. Entwurfsverfasser — § 54 BbgBO.
 
 ENERGIE (Bundesrecht):
@@ -2656,7 +2661,7 @@ GEBIETSVERTRÄGLICHKEIT (Bundesrecht):
 
 TECHNISCHE FOLGEN DER NEUEN NUTZUNG:
 • Brandschutz nach neuer Nutzung — § 15 LBO BW, § 26 LBO BW, § 27c LBO BW.
-• Stellplatzbedarf nach neuer Nutzung — § 37 LBO BW. Bundes-Maß ergänzend
+• Stellplatzbedarf nach neuer Nutzung — § 37 LBO BW. Bundesrecht ergänzend
   — § 12 BauNVO.
 • Standsicherheit bei strukturellen Anpassungen — § 13 LBO BW.
 
@@ -2703,7 +2708,7 @@ GEBIETSVERTRÄGLICHKEIT (Bundesrecht):
 
 TECHNISCHE FOLGEN DER NEUEN NUTZUNG:
 • Brandschutz nach neuer Nutzung — § 14 HBO.
-• Stellplatzbedarf nach neuer Nutzung — § 52 HBO. Bundes-Maß ergänzend
+• Stellplatzbedarf nach neuer Nutzung — § 52 HBO. Bundesrecht ergänzend
   — § 12 BauNVO.
 • Standsicherheit bei strukturellen Anpassungen — § 12 HBO. Bautechnische
   Nachweise — § 68 HBO.
@@ -2790,7 +2795,7 @@ TECHNISCHE FOLGEN DER NEUEN NUTZUNG:
   § 33 NBauO.
 • Stellplatzbedarf nach neuer Nutzung: bauliche Anlagen für Kfz —
   § 46 NBauO. Notwendige Einstellplätze — § 47 NBauO. Fahrradabstell-
-  anlagen — § 48 NBauO. Bundes-Maß ergänzend — § 12 BauNVO.
+  anlagen — § 48 NBauO. Bundesrecht ergänzend — § 12 BauNVO.
 • Standsicherheit bei strukturellen Anpassungen — § 12 NBauO.
   Bautechnische Nachweise — § 65 NBauO.
 
@@ -2879,7 +2884,7 @@ TECHNISCHE FOLGEN DER NEUEN NUTZUNG:
 • Brandschutz nach neuer Nutzung — § 14 HBauO, § 26 HBauO, § 30 HBauO,
   § 33 HBauO.
 • Stellplatzbedarf nach neuer Nutzung (Grundstücksbezogene Mobilität)
-  — § 49 HBauO. Bundes-Maß ergänzend — § 12 BauNVO.
+  — § 49 HBauO. Bundesrecht ergänzend — § 12 BauNVO.
 • Standsicherheit bei strukturellen Anpassungen — § 12 HBauO.
   Bautechnische Nachweise — § 66 HBauO.
 
@@ -3093,7 +3098,7 @@ GEBIETSVERTRÄGLICHKEIT (Bundesrecht):
 
 TECHNISCHE FOLGEN DER NEUEN NUTZUNG:
 • Brandschutz nach neuer Nutzung — § 15 LBauO. Brandwände — § 30 LBauO.
-• Stellplatzbedarf nach neuer Nutzung — § 47 LBauO. Bundes-Maß ergänzend
+• Stellplatzbedarf nach neuer Nutzung — § 47 LBauO. Bundesrecht ergänzend
   — § 12 BauNVO.
 • Standsicherheit bei strukturellen Anpassungen — § 13 LBauO.
 
@@ -3316,10 +3321,10 @@ TECHNISCHE FOLGEN DER NEUEN NUTZUNG:
 • Stellplatzbedarf nach neuer Nutzung — § 49 BbgBO. Bundes-Maß
   ergänzend — § 12 BauNVO.
 • Standsicherheit bei strukturellen Anpassungen — § 12 BbgBO.
-  Bautechnische Nachweise — § 70 BbgBO.
+  Bautechnische Nachweise — § 66 BbgBO.
 
 ANTRAG:
-• Bauantrag und Bauvorlagen — § 72 BbgBO. Bauvorlageberechtigung —
+• Bauantrag und Bauvorlagen — § 68 BbgBO. Bauvorlageberechtigung —
   § 65 BbgBO. Entwurfsverfasser — § 54 BbgBO.
 
 NICHT IM BbgBO-Korpus (NICHT erfinden):
@@ -4062,7 +4067,7 @@ DENKMAL & ERHALTUNGSSATZUNG (OVERRIDE der Verfahrensfreiheit):
 
 DOKUMENTE:
 • Bauvorlageberechtigung — § 65 BbgBO. Entwurfsverfasser — § 54 BbgBO.
-  Bauantrag-Vorlagen — § 72 BbgBO.
+  Bauantrag-Vorlagen — § 68 BbgBO.
 • Statik der Restanlage bei Teilabbruch — § 12 BbgBO.
 
 NICHT IM BbgBO-Korpus (NICHT erfinden):
@@ -4815,7 +4820,7 @@ GEBÄUDEKLASSE & ABSTANDSFLÄCHEN (kritisch bei Aufstockung):
 
 TECHNISCHE NACHWEISE (BESTANDSSTATIK):
 • Standsicherheit der Bestandskonstruktion und neuer Aufbauten —
-  § 12 BbgBO. Bautechnische Nachweise — § 70 BbgBO.
+  § 12 BbgBO. Bautechnische Nachweise — § 66 BbgBO.
 • Brandschutz nach ggf. höherer GK — § 14 BbgBO. Brandverhalten
   Baustoffe — § 26 BbgBO. Brandwände — § 30 BbgBO. Erster und zweiter
   Rettungsweg — § 33 BbgBO.
@@ -4836,7 +4841,7 @@ BAUPLANUNGSRECHT (Bundesrecht):
   § 20 BauNVO (Vollgeschosse/GFZ), § 23 BauNVO (überbaubare Fläche).
 
 ANTRAG:
-• Bauantrag und Bauvorlagen — § 72 BbgBO. Bauvorlageberechtigung —
+• Bauantrag und Bauvorlagen — § 68 BbgBO. Bauvorlageberechtigung —
   § 65 BbgBO. Entwurfsverfasser — § 54 BbgBO.`,
     // C11 batch — Saarland × T-06 authored 2026-05-28. LBO Saarland corpus-
     // verified.
@@ -5504,7 +5509,7 @@ GEBIETSVERTRÄGLICHKEIT (Bundesrecht):
 TECHNISCHE ANFORDERUNGEN AM ANBAU:
 • Abstandsflächen, Abstände an der neuen Wand — § 6 BbgBO.
 • Standsicherheit — § 12 BbgBO. Bautechnische Nachweise —
-  § 70 BbgBO.
+  § 66 BbgBO.
 • Brandschutz an der Anschluss-/Trennwand — § 14 BbgBO. Brandwände —
   § 30 BbgBO.
 
@@ -5515,7 +5520,7 @@ ENERGIE (Bundesrecht):
 • Neubau-Teil des Anbaus — § 10 GEG. Anschluss an Bestand — § 48 GEG.
 
 ANTRAG:
-• Bauantrag und Bauvorlagen — § 72 BbgBO. Bauvorlageberechtigung —
+• Bauantrag und Bauvorlagen — § 68 BbgBO. Bauvorlageberechtigung —
   § 65 BbgBO. Entwurfsverfasser — § 54 BbgBO.`,
     // C11 batch — Saarland × T-07 authored 2026-05-28. LBO Saarland corpus-
     // verified.
@@ -6128,14 +6133,14 @@ VERFAHREN — BbgBO (BB-Raster mit Bauanzeige, vollständig):
 • Baugenehmigungsverfahren (regulär) — § 64 BbgBO.
 
 ANTRAG & VORLAGEN:
-• Bauantrag und Bauvorlagen — § 72 BbgBO.
+• Bauantrag und Bauvorlagen — § 68 BbgBO.
 • Bauvorlageberechtigung — § 65 BbgBO. Entwurfsverfasser —
   § 54 BbgBO.
 
 ALLGEMEINE TECHNISCHE ANFORDERUNGEN:
 • Abstandsflächen, Abstände — § 6 BbgBO.
 • Standsicherheit — § 12 BbgBO. Bautechnische Nachweise —
-  § 70 BbgBO.
+  § 66 BbgBO.
 
 BUNDESRECHT (gilt universal):
 • Zulässigkeit — § 30 BauGB, § 31 BauGB, § 34 BauGB, § 35 BauGB.

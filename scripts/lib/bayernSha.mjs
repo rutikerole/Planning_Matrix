@@ -11,6 +11,46 @@
 // update EXPECTED_BAYERN_SHA below and call out the change in the
 // commit message.
 //
+// SCOPE — what this SHA DOES and DOES NOT cover (audit-remediation M5):
+//
+//   The SHA hashes ONLY the six string constants that build the
+//   composeLegalContext('bayern') PREFIX (Block 1 of the multi-block
+//   cache architecture):
+//     SHARED_BLOCK + FEDERAL_BLOCK + BAYERN_BLOCK + MUENCHEN_BLOCK
+//       + PERSONA_BEHAVIOURAL_RULES + TEMPLATE_SHARED_BLOCK
+//   joined by SLICE_SEPARATOR and capped with the PROJEKTKONTEXT TAIL.
+//
+//   ✅ Caught by this SHA:
+//      • Any byte-level edit to one of the six string constants above.
+//      • Re-ordering of SLICE_SEPARATOR concatenation in compose.ts
+//        (mirrored exactly here).
+//      • Bayern's StateDelta swapping cityBlock — would change MUENCHEN.
+//
+//   ❌ NOT caught by this SHA (pinned by OTHER gates — listed for the
+//      next reader so the "Bayern unchanged" claim isn't oversold):
+//      • BLOCKS[T-01..T-08] (the per-template TAIL Bayern projects
+//        receive as Block 2). Pinned by `verify:template-tail-noop`
+//        via the `(no-bundesland) controls` step + every cell stays in
+//        ACKNOWLEDGED_OVERRIDES.
+//      • src/legal/templates/stateOverrides.ts['T-xx'].bayern — none
+//        registered today, but a future entry would alter Bayern's
+//        Block 2 output. Same `verify:template-tail-noop` gate catches.
+//      • src/legal/stateCitations.ts BAYERN_PACK / allowedCitations /
+//        procedure labels — affect Bayern UI cards + Layer-C firewall,
+//        not the prompt prefix. Pinned by `verify:citation-drift` for
+//        the citation-allowlist drift axis only.
+//      • factLabels.de.ts / factLabels.en.ts — Bayern UI labels. Pinned
+//        by `verify:factlabels-leak` for the cross-state-leak axis only;
+//        an intentional Bayern label change goes uncaught by SHA.
+//      • src/legal/states/bayern.ts wrapper — wires BAYERN_BLOCK into
+//        StateDelta. Wrapper changes don't alter the computed prefix
+//        (which is what SHA hashes), so SHA stays MATCH while the
+//        wrapper drifts. Pinned only by tsc + the wrapper's own tests.
+//
+//   When a gate-suite change touches one of the ❌ items, run the
+//   matching gate AND verify:bayern-sha together — neither alone gives
+//   "Bayern unchanged" full coverage.
+//
 // RE-BASELINE LOG:
 //   - 667bb44 (Phase 11): b18d3f7f…b3471 (held across 34+ commits).
 //   - v1.0.34 C4a (phase-2/full-matrix): a2ffc7bb…f31a8 — INTENTIONAL.

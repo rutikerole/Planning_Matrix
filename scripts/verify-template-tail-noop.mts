@@ -286,15 +286,19 @@ const ACKNOWLEDGED_OVERRIDES: ReadonlySet<string> = new Set<string>([
   // with PV-§ inside the BO corpus). § 61 = "Genehmigungsfreie Vorhaben"
   // (heading change from standard "Verfahrensfreie Bauvorhaben,
   // Beseitigung von Anlagen" — note: no explicit "Beseitigung" anchor).
-  // Shifted: Nachweise § 70, Bauantrag § 72. Brandschutz 4-§ heading-
-  // evident (§ 14+§ 26+§ 30+§ 33) — only § 14 corpus-tagged. § 85
-  // (Beseitigung/Nutzungsuntersagung) classic enforcement omit; § 84
-  // (Einstellung Arbeiten), § 86 (Anpassung — enforcement-adjacent),
-  // § 87 (Bauüberwachung), § 92 (TBs) admin omits. Authority: 4 kreisfreie
-  // Städte (Cottbus/Frankfurt-Oder/Potsdam/Brandenburg-Havel) + 14
-  // Landkreise; § 58 BbgBO acknowledges amtsfreie Gemeinden/Ämter/
-  // Verbandsgemeinden as Sonderordnungsbehörden (BB-specific local-
-  // government layer). Citation prefix "BbgBO".
+  // Standard ladder for Nachweise (§ 66) and Bauantrag, Bauvorlagen
+  // (§ 68) — NOT shifted (the original "§ 70 Nachweise, § 72 Bauantrag"
+  // reading misread the superseded bravors.brandenburg.de 2008 version;
+  // corrected 2026-05-28 per docs/FULL_AUDIT_2026-05-28.md). Brandschutz
+  // 4-§ heading-evident (§ 14+§ 26+§ 30+§ 33) — only § 14 corpus-tagged.
+  // Enforcement quartet omitted: § 79 (Einstellung von Arbeiten) / § 80
+  // (Beseitigung von Anlagen, Nutzungsuntersagung) / § 81 (Anpassung
+  // bestehender baulicher Anlagen) / § 82 (Bauüberwachung); § 86a
+  // (Technische Baubestimmungen) and § 87 (Örtliche Bauvorschriften)
+  // admin omits. Authority: 4 kreisfreie Städte (Cottbus/Frankfurt-Oder/
+  // Potsdam/Brandenburg-Havel) + 14 Landkreise; § 58 BbgBO acknowledges
+  // amtsfreie Gemeinden/Ämter/Verbandsgemeinden as Sonderordnungsbehörden
+  // (BB-specific local-government layer). Citation prefix "BbgBO".
   'T-01:brandenburg',
   'T-02:brandenburg',
   'T-03:brandenburg',

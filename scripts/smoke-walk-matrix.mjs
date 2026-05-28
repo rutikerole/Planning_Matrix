@@ -11,11 +11,13 @@
 //
 // COST + SIDE-EFFECT WARNING
 // Each cell makes 5 chat-turn calls (configurable via --turns=N).
-// Default 14 cells × 5 turns = 70 Anthropic chat-turn invocations.
+// Default 34 cells × 5 turns = 170 Anthropic chat-turn invocations
+// (5 substantive × T-01 + Bayern × T-02..T-08 + 11 thin states × T-01
+// + 11 thin states × T-05; updated 2026-05-28 audit-remediation P4).
 // Sonnet 4.6 with MAX_TOKENS=1280: rough order-of-magnitude
-// $10-20 per matrix run. Each cell also creates a row in live
+// $25-50 per matrix run. Each cell also creates a row in live
 // public.projects (teardown deletes it by default; --keep-projects
-// to retain for debugging).
+// to retain for debugging). Use --cells=1,2,…,N to sample a subset.
 //
 // DO NOT WIRE THIS INTO `npm run build` OR daily-gate scripts.
 // It is operator-triggered via:
@@ -130,23 +132,58 @@ const BAUHERR_USER_ID = env.BAUHERR_TEST_USER_ID
 // ── Matrix definition ─────────────────────────────────────────────────
 // Cell index → { bundesland, template_id, addressHint, expectedAnchor }
 // expectedAnchor regex MUST match at least once in the persona's
-// transcript for the cell to pass. Stub states (sachsen) accept the
-// honest "in Vorbereitung" framing as the marker.
+// transcript for the cell to pass.
+//
+// `stub: true` historically meant "no substantive state content; accept
+// the honest 'in Vorbereitung' framing." Bucket C Pass A+C (commits
+// 2793c08..453655c) authored T-01..T-08 cells for every Stadtstaat +
+// Flächenland; the systemBlock banner stays ON until Pass B, but the
+// per-template addendum carries verified state-§§. So all 11 thin-state
+// rows now expect state-specific markers (stub:false) and any Bayern leak
+// (BayBO Art.) FAILs them via FORBIDDEN_NON_BAYERN.
 const CELLS = [
+  // ── 5 substantive states × T-01 ─────────────────────────────────────
   { i: 1,  bundesland: 'bayern',        template_id: 'T-01', address: 'Marienplatz 8, 80331 München',          expectedAnchor: /BayBO|Art\.\s*\d+|München/i,             stub: false },
-  { i: 2,  bundesland: 'nrw',           template_id: 'T-01', address: 'Marktplatz 2, 40213 Düsseldorf',        expectedAnchor: /BauO NRW|§\s*\d+\s*BauO NRW/i,         stub: false },
-  { i: 3,  bundesland: 'bw',            template_id: 'T-01', address: 'Marktplatz 1, 70173 Stuttgart',          expectedAnchor: /\bLBO\b|§\s*\d+\s*LBO/i,                stub: false },
-  { i: 4,  bundesland: 'hessen',        template_id: 'T-01', address: 'Römerberg 27, 60311 Frankfurt am Main',  expectedAnchor: /HBO|§\s*\d+\s*HBO/i,                    stub: false },
-  { i: 5,  bundesland: 'niedersachsen', template_id: 'T-01', address: 'Trammplatz 2, 30159 Hannover',           expectedAnchor: /NBauO|§\s*\d+\s*NBauO/i,                stub: false },
-  { i: 6,  bundesland: 'bayern',        template_id: 'T-02', address: 'Marienplatz 8, 80331 München',           expectedAnchor: /BayBO|Mehrfamilien|Wohneinheit/i,       stub: false },
-  { i: 7,  bundesland: 'bayern',        template_id: 'T-03', address: 'Marienplatz 8, 80331 München',           expectedAnchor: /Sanierung|Instandsetzung|Bestand/i,     stub: false },
-  { i: 8,  bundesland: 'bayern',        template_id: 'T-04', address: 'Marienplatz 8, 80331 München',           expectedAnchor: /Umnutzung|Nutzungsänderung/i,           stub: false },
-  { i: 9,  bundesland: 'bayern',        template_id: 'T-05', address: 'Marienplatz 8, 80331 München',           expectedAnchor: /Abbruch|Anzeige/i,                      stub: false },
-  { i: 10, bundesland: 'bayern',        template_id: 'T-06', address: 'Marienplatz 8, 80331 München',           expectedAnchor: /Aufstockung|GK|Gebäudeklasse/i,         stub: false },
-  { i: 11, bundesland: 'bayern',        template_id: 'T-07', address: 'Marienplatz 8, 80331 München',           expectedAnchor: /Anbau|Abstand/i,                        stub: false },
-  { i: 12, bundesland: 'bayern',        template_id: 'T-08', address: 'Marienplatz 8, 80331 München',           expectedAnchor: /Sonstig|klärend/i,                      stub: false },
-  { i: 13, bundesland: 'sachsen',       template_id: 'T-01', address: 'Theaterplatz 1, 01067 Dresden',          expectedAnchor: /Vorbereitung|Sachsen-spezifisch/i,      stub: true  },
-  { i: 14, bundesland: 'berlin',        template_id: 'T-01', address: 'Schönhauser Allee 36, 10115 Berlin',     expectedAnchor: /Berlin|Stadtstaat|Vorbereitung/i,       stub: true  },
+  { i: 2,  bundesland: 'nrw',           template_id: 'T-01', address: 'Marktplatz 2, 40213 Düsseldorf',        expectedAnchor: /BauO NRW|§\s*\d+\s*BauO NRW/i,           stub: false },
+  { i: 3,  bundesland: 'bw',            template_id: 'T-01', address: 'Marktplatz 1, 70173 Stuttgart',          expectedAnchor: /\bLBO\b|§\s*\d+\s*LBO/i,                 stub: false },
+  { i: 4,  bundesland: 'hessen',        template_id: 'T-01', address: 'Römerberg 27, 60311 Frankfurt am Main',  expectedAnchor: /HBO|§\s*\d+\s*HBO/i,                     stub: false },
+  { i: 5,  bundesland: 'niedersachsen', template_id: 'T-01', address: 'Trammplatz 2, 30159 Hannover',           expectedAnchor: /NBauO|§\s*\d+\s*NBauO/i,                 stub: false },
+  // ── Bayern × T-02..T-08 (BLOCKS[T] tail = Bayern default) ──────────
+  { i: 6,  bundesland: 'bayern',        template_id: 'T-02', address: 'Marienplatz 8, 80331 München',           expectedAnchor: /BayBO|Mehrfamilien|Wohneinheit/i,         stub: false },
+  { i: 7,  bundesland: 'bayern',        template_id: 'T-03', address: 'Marienplatz 8, 80331 München',           expectedAnchor: /Sanierung|Instandsetzung|Bestand/i,       stub: false },
+  { i: 8,  bundesland: 'bayern',        template_id: 'T-04', address: 'Marienplatz 8, 80331 München',           expectedAnchor: /Umnutzung|Nutzungsänderung/i,             stub: false },
+  { i: 9,  bundesland: 'bayern',        template_id: 'T-05', address: 'Marienplatz 8, 80331 München',           expectedAnchor: /Abbruch|Anzeige/i,                        stub: false },
+  { i: 10, bundesland: 'bayern',        template_id: 'T-06', address: 'Marienplatz 8, 80331 München',           expectedAnchor: /Aufstockung|GK|Gebäudeklasse/i,           stub: false },
+  { i: 11, bundesland: 'bayern',        template_id: 'T-07', address: 'Marienplatz 8, 80331 München',           expectedAnchor: /Anbau|Abstand/i,                          stub: false },
+  { i: 12, bundesland: 'bayern',        template_id: 'T-08', address: 'Marienplatz 8, 80331 München',           expectedAnchor: /Sonstig|klärend/i,                        stub: false },
+  // ── 11 thin-state Bucket-C states × T-01 (EFH) — Pass A+C content ──
+  // Anchors match each state's BauO law-short. Bayern-leak guard fires
+  // on these (FORBIDDEN_NON_BAYERN).
+  { i: 13, bundesland: 'sachsen',         template_id: 'T-01', address: 'Theaterplatz 1, 01067 Dresden',         expectedAnchor: /SächsBO|§\s*\d+\s*SächsBO/i,             stub: false },
+  { i: 14, bundesland: 'berlin',          template_id: 'T-01', address: 'Schönhauser Allee 36, 10115 Berlin',    expectedAnchor: /BauO Bln|Bezirksamt/i,                    stub: false },
+  { i: 15, bundesland: 'hamburg',         template_id: 'T-01', address: 'Rathausmarkt 1, 20095 Hamburg',          expectedAnchor: /HBauO|§\s*\d+\s*HBauO|Bezirksamt/i,       stub: false },
+  { i: 16, bundesland: 'bremen',          template_id: 'T-01', address: 'Am Markt 21, 28195 Bremen',              expectedAnchor: /BremLBO|§\s*\d+\s*BremLBO/i,              stub: false },
+  { i: 17, bundesland: 'sh',              template_id: 'T-01', address: 'Rathausplatz 1, 24103 Kiel',             expectedAnchor: /LBO SH|§\s*\d+\s*LBO SH/i,                stub: false },
+  { i: 18, bundesland: 'rlp',             template_id: 'T-01', address: 'Rathausplatz 1, 55116 Mainz',            expectedAnchor: /LBauO\b|§\s*\d+\s*LBauO\b/i,              stub: false },
+  { i: 19, bundesland: 'mv',              template_id: 'T-01', address: 'Am Markt 1, 18055 Rostock',              expectedAnchor: /LBauO M-V|§\s*\d+\s*LBauO M-V/i,          stub: false },
+  { i: 20, bundesland: 'sachsen-anhalt',  template_id: 'T-01', address: 'Alter Markt 6, 39104 Magdeburg',         expectedAnchor: /BauO LSA|§\s*\d+\s*BauO LSA/i,            stub: false },
+  { i: 21, bundesland: 'thueringen',      template_id: 'T-01', address: 'Fischmarkt 1, 99084 Erfurt',             expectedAnchor: /ThürBO|§\s*\d+\s*ThürBO/i,                stub: false },
+  { i: 22, bundesland: 'brandenburg',     template_id: 'T-01', address: 'Friedrich-Ebert-Str. 79, 14467 Potsdam', expectedAnchor: /BbgBO|§\s*\d+\s*BbgBO/i,                  stub: false },
+  { i: 23, bundesland: 'saarland',        template_id: 'T-01', address: 'Rathausplatz, 66111 Saarbrücken',        expectedAnchor: /LBO Saarland|§\s*\d+\s*LBO Saarland/i,    stub: false },
+  // ── 11 thin-state Bucket-C states × T-05 (Abbruch) ──────────────────
+  // Bayern's T-05 cell (#9) is the substantive baseline; these confirm
+  // the per-template tail correctly addends the state's abbruch/§-§§ overlay.
+  { i: 24, bundesland: 'berlin',          template_id: 'T-05', address: 'Schönhauser Allee 36, 10115 Berlin',    expectedAnchor: /BauO Bln|Abbruch|Beseitigung/i,           stub: false },
+  { i: 25, bundesland: 'hamburg',         template_id: 'T-05', address: 'Rathausmarkt 1, 20095 Hamburg',          expectedAnchor: /HBauO|Abbruch|Beseitigung/i,              stub: false },
+  { i: 26, bundesland: 'bremen',          template_id: 'T-05', address: 'Am Markt 21, 28195 Bremen',              expectedAnchor: /BremLBO|Abbruch|Beseitigung/i,            stub: false },
+  { i: 27, bundesland: 'sachsen',         template_id: 'T-05', address: 'Theaterplatz 1, 01067 Dresden',          expectedAnchor: /SächsBO|Abbruch|Beseitigung/i,            stub: false },
+  { i: 28, bundesland: 'sh',              template_id: 'T-05', address: 'Rathausplatz 1, 24103 Kiel',             expectedAnchor: /LBO SH|Abbruch|Beseitigung/i,             stub: false },
+  { i: 29, bundesland: 'rlp',             template_id: 'T-05', address: 'Rathausplatz 1, 55116 Mainz',            expectedAnchor: /LBauO\b|Abbruch|Beseitigung/i,            stub: false },
+  { i: 30, bundesland: 'mv',              template_id: 'T-05', address: 'Am Markt 1, 18055 Rostock',              expectedAnchor: /LBauO M-V|Abbruch|Beseitigung/i,          stub: false },
+  { i: 31, bundesland: 'sachsen-anhalt',  template_id: 'T-05', address: 'Alter Markt 6, 39104 Magdeburg',         expectedAnchor: /BauO LSA|Abbruch|Beseitigung/i,           stub: false },
+  { i: 32, bundesland: 'thueringen',      template_id: 'T-05', address: 'Fischmarkt 1, 99084 Erfurt',             expectedAnchor: /ThürBO|Abbruch|Beseitigung/i,             stub: false },
+  { i: 33, bundesland: 'brandenburg',     template_id: 'T-05', address: 'Friedrich-Ebert-Str. 79, 14467 Potsdam', expectedAnchor: /BbgBO|Abbruch|Beseitigung/i,              stub: false },
+  { i: 34, bundesland: 'saarland',        template_id: 'T-05', address: 'Rathausplatz, 66111 Saarbrücken',        expectedAnchor: /LBO Saarland|Abbruch|Beseitigung/i,       stub: false },
 ]
 const activeCells = CELL_FILTER ? CELLS.filter((c) => CELL_FILTER.has(c.i)) : CELLS
 
