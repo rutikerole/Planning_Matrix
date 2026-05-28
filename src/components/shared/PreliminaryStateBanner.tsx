@@ -1,12 +1,13 @@
-// Bucket A.2 — chat-UI preliminary banner for stub states.
+// Bucket A.2 + A.3 — shared honesty banner for stub-state projects.
 //
-// Renders above the chat message stream when the project's bundesland has
-// a thin state-block (11 of 16 states; see hasSubstantiveStateBlock in
-// src/legal/demoCoverage.ts). Persistent (no dismiss) because the state
-// IS preliminary for the entire session. Single inline div following the
-// RecoveryBanner pattern (mx-auto / max-w-2xl / bg-paper-card), not the
-// fixed-top OfflineBanner pattern. data-no-print so PDF rendering does
-// not capture it.
+// Renders when the project's bundesland has a thin state-block (11 of 16
+// states; see hasSubstantiveStateBlock in src/legal/demoCoverage.ts).
+// Mounted on the chat workspace above the message stream (Bucket A.2) and
+// on the result workspace above the tab strip (Bucket A.3). Persistent
+// (no dismiss) because the state IS preliminary for the entire session.
+// Inline pattern (mx-auto / max-w-2xl / bg-paper-card) following
+// RecoveryBanner; NOT the fixed-top OfflineBanner pattern. data-no-print
+// so PDF rendering does not capture it.
 
 import { Info } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
