@@ -129,8 +129,62 @@ DENKMAL & ERHALTUNGSSATZUNG:
 • Land — DSchG BW als separate Landesvorschrift (konkrete §-Verweise
   nicht im Korpus). Zuständige Behörde: Landesamt für Denkmalpflege
   Baden-Württemberg (LAD).`,
-    // BUCKET-B-CONTENT: needs verified §§ from legal review (HE HBO).
-    hessen: null,
+    // B2 batch 4 — HE × T-02 authored 2026-05-28. HBO §§ corpus-verified
+    // (secondary-mirror tier; baunormenlexikon.de). § 64a Erweiterte
+    // Genehmigungsfreistellung für Wohngebäude cited — strong match for MFH.
+    hessen: `══════════════════════════════════════════════════════════════════════════
+LANDESSPEZIFISCHER ZUSATZ — Hessen × T-02 (Neubau Mehrfamilienhaus)
+══════════════════════════════════════════════════════════════════════════
+
+Bei Projekten in HESSEN: die §§ der HBO (Hessische Bauordnung) ersetzen
+sämtliche oben genannten Bayern-Verweise. Quelle: baunormenlexikon.de
+(mirror-tier; bei rechtlich kritischen Fragen die amtliche Fassung beim
+Landesrecht-Portal gegenprüfen).
+
+VERFAHREN — HBO (Hessen hat zwei Freistellungs-§§ + vereinfacht + regulär):
+• Verfahrensfreie / baugenehmigungsfreie Bauvorhaben — § 63 HBO.
+• Genehmigungsfreistellung — § 64 HBO (bei qualifiziertem B-Plan).
+• Erweiterte Genehmigungsfreistellung für Wohngebäude — § 64a HBO.
+• Vereinfachtes Baugenehmigungsverfahren — § 65 HBO.
+• Baugenehmigungsverfahren (regulär) — § 66 HBO.
+
+ROUTING (MFH-typisch):
+MFH erreicht häufig Gebäudeklasse 3 bis 5 nach § 2 HBO. Bei Sonderbau-
+Tatbestand (§ 53 HBO) ist das reguläre Baugenehmigungsverfahren nach
+§ 66 HBO zwingend. Ohne Sonderbau: vereinfachtes Verfahren nach § 65 HBO.
+Für MFH-Neubauten als Wohngebäude kann zusätzlich die erweiterte
+Genehmigungsfreistellung nach § 64a HBO einschlägig sein, sofern deren
+Voraussetzungen erfüllt sind.
+
+ANTRAG & VORLAGEN:
+• Bauantrag und Bauvorlagen — § 69 HBO.
+• Bauvorlageberechtigung — § 67 HBO.
+• Form und Inhalt der Bauvorlagen: separate BauVorlV Hessen (kein
+  §-Verweis im Korpus — Verordnung als Quelle referenzieren).
+
+TECHNISCHE ANFORDERUNGEN:
+• Abstandsflächen, Abstände — § 6 HBO.
+• Standsicherheit — § 12 HBO. Bautechnische Nachweise (Standsicherheit,
+  Brandschutz, Typenprüfung) — § 68 HBO.
+• Brandschutz — § 14 HBO.
+• Stellplätze, Garagen, Fahrradabstellplätze — § 52 HBO.
+
+BUNDESRECHT (gilt universal):
+• Zulässigkeit — § 30 BauGB, § 31 BauGB, § 34 BauGB, § 35 BauGB.
+• Baugebiete + Maß — § 1 BauNVO, § 3 BauNVO, § 4 BauNVO, § 6 BauNVO,
+  § 16 BauNVO, § 19 BauNVO, § 23 BauNVO. Stellplätze — § 12 BauNVO.
+• Energie — § 10 GEG. § 80 GEG.
+
+PV-PFLICHT in Hessen:
+NICHT in der HBO geregelt. Falls eine landesrechtliche Solar-/Klima-
+Pflicht für Hessen besteht und einschlägig ist, separate Vorschrift
+referenzieren — nicht erfinden.
+
+DENKMAL & ERHALTUNGSSATZUNG:
+• Bundesanker — § 172 BauGB (Erhaltungssatzungs-Gebiet).
+• Land — HDSchG als separate Landesvorschrift (konkrete §-Verweise nicht
+  im Korpus). Zuständige Behörde: Landesamt für Denkmalpflege Hessen
+  (LfDH).`,
     // B2 batch 1 — NRW × T-02 authored 2026-05-28. Every § verified
     // against scripts/legal-corpus/states/nrw.json (primary-source tier)
     // or scripts/legal-corpus/federal.json.
@@ -295,8 +349,59 @@ NICHT IM Korpus (NICHT erfinden):
 • Land-Denkmal-§§ — wie oben mit LAD abklären.
 • PV-Pflicht bei Sanierung — KlimaG BW oder separate Solar-Verordnung;
   nicht in der LBO BW geregelt; geltende Vorschrift referenzieren.`,
-    // BUCKET-B-CONTENT: needs verified §§ from legal review (HE HBO).
-    hessen: null,
+    // B2 batch 4 — HE × T-03 authored 2026-05-28. HBO §§ corpus-verified.
+    // § 92 HBO mentioned with explicit NARROW scope (ex-land-/forstwirtsch.).
+    hessen: `══════════════════════════════════════════════════════════════════════════
+LANDESSPEZIFISCHER ZUSATZ — Hessen × T-03 (Sanierung / Modernisierung)
+══════════════════════════════════════════════════════════════════════════
+
+Bei Sanierungs-/Modernisierungs-Projekten in HESSEN: die §§ der HBO
+ersetzen sämtliche oben genannten Bayern-Verweise. Quelle:
+baunormenlexikon.de (mirror-tier).
+
+ROUTING:
+Reine Instandhaltung/Modernisierung ohne Eingriff in Statik, Brandschutz
+oder Nutzung fällt häufig unter § 63 HBO (baugenehmigungsfreie
+Bauvorhaben). Sobald tragende Bauteile, Brandschutz oder die Nutzung
+berührt sind, ist regelmäßig das vereinfachte Verfahren nach § 65 HBO
+anzunehmen.
+
+VERFAHREN — HBO:
+• Baugenehmigungsfreie Bauvorhaben — § 63 HBO.
+• Vereinfachtes Baugenehmigungsverfahren — § 65 HBO.
+
+TECHNISCHE NACHWEISE BEI EINGRIFF:
+• Standsicherheit bei tragenden Eingriffen — § 12 HBO.
+• Bautechnische Nachweise (Standsicherheit, Brandschutz, Typenprüfung)
+  — § 68 HBO.
+• Brandschutz — § 14 HBO.
+
+ANTRAG:
+• Bauantrag und Bauvorlagen — § 69 HBO. Bauvorlageberechtigung —
+  § 67 HBO.
+
+ENERGIE (Bundesrecht):
+• Bestandsänderung — § 48 GEG. Niedrigstenergie-Grundsatz allgemein —
+  § 10 GEG.
+
+NUTZUNGSÄNDERUNG IN HESSEN (sehr enger §-Anker):
+Der einzige in der HBO im Korpus tagged-Nutzungsänderungs-§ ist § 92 HBO
+— und dieser regelt NUR die Frist zur Umnutzung ehemaliger land- oder
+forstwirtschaftlicher Gebäude (sehr enger Anwendungsbereich). Für
+allgemeine Nutzungsänderungen ist KEIN dedizierter HBO-§ vorhanden;
+der Verfahrensweg geht über § 65 HBO (vereinfacht) bzw. § 66 HBO (regulär).
+
+DENKMALSCHUTZ:
+Bei eingetragenem Baudenkmal oder Ensemble — HDSchG (separate
+Landesvorschrift; konkrete §-Verweise nicht im Korpus). Vor Sanierung
+ist das Landesamt für Denkmalpflege Hessen (LfDH) anzuhören. Federal-
+Anker bei Erhaltungssatzung — § 172 BauGB.
+
+NICHT IM Korpus (NICHT erfinden):
+• Land-Denkmal-§§ — wie oben mit LfDH abklären.
+• PV-Pflicht bei Sanierung — keine im HBO-Korpus; falls eine
+  landesrechtliche Hessen-Solar-Pflicht einschlägig ist, separate
+  Vorschrift referenzieren.`,
     // B2 batch 1 — NRW × T-03 authored 2026-05-28. §§ corpus-verified.
     nrw: `══════════════════════════════════════════════════════════════════════════
 LANDESSPEZIFISCHER ZUSATZ — NRW × T-03 (Sanierung / Modernisierung)
@@ -442,8 +547,54 @@ ANTRAG:
 
 NICHT IM LBO BW-Korpus (NICHT erfinden):
 • Land-Denkmal-§§ — DSchG BW mit LAD abklären.`,
-    // BUCKET-B-CONTENT: needs verified §§ from legal review (HE HBO).
-    hessen: null,
+    // B2 batch 4 — HE × T-04 authored 2026-05-28. HBO §§ corpus-verified.
+    // § 92 HBO is the ONLY tagged Nutzungsänderungs-§ — narrow scope
+    // (ex-land-/forstwirtschaftliche Gebäude only); flagged explicitly.
+    // § 82 (enforcement) omitted from owner-side prose.
+    hessen: `══════════════════════════════════════════════════════════════════════════
+LANDESSPEZIFISCHER ZUSATZ — Hessen × T-04 (Nutzungsänderung / Umnutzung)
+══════════════════════════════════════════════════════════════════════════
+
+Bei Nutzungsänderungs-Projekten in HESSEN: die §§ der HBO ersetzen
+sämtliche oben genannten Bayern-Verweise. Quelle: baunormenlexikon.de
+(mirror-tier).
+
+ROUTING:
+Hessen hat KEINEN allgemeinen Nutzungsänderungs-§ in der HBO. Der einzige
+Nutzungsänderungs-§ im Korpus ist § 92 HBO — und dieser regelt
+ausschließlich die FRIST zur Umnutzung ehemaliger land- oder
+forstwirtschaftlicher Gebäude (sehr enger Anwendungsbereich). Für
+allgemeine Nutzungsänderungen läuft der Verfahrensweg über die
+allgemeinen Verfahrens-§§:
+
+VERFAHREN — HBO:
+• Vereinfachtes Baugenehmigungsverfahren — § 65 HBO.
+• Baugenehmigungsverfahren (regulär) — § 66 HBO (bei Sonderbau-
+  Tatbestand der neuen Nutzung, § 53 HBO).
+
+SPEZIALFALL (nur bei ex-Land-/Forstwirtschaft):
+• Frist zur Umnutzung ehemaliger land- oder forstwirtschaftlicher
+  Gebäude — § 92 HBO.
+
+GEBIETSVERTRÄGLICHKEIT (Bundesrecht):
+• Zulässigkeit der neuen Nutzung — § 30 BauGB, § 31 BauGB, § 34 BauGB,
+  § 35 BauGB.
+• Baugebiete und Nutzungsarten — § 1 BauNVO bis § 9 BauNVO, § 4a BauNVO.
+• Erhaltungssatzung — § 172 BauGB.
+
+TECHNISCHE FOLGEN DER NEUEN NUTZUNG:
+• Brandschutz nach neuer Nutzung — § 14 HBO.
+• Stellplatzbedarf nach neuer Nutzung — § 52 HBO. Bundes-Maß ergänzend
+  — § 12 BauNVO.
+• Standsicherheit bei strukturellen Anpassungen — § 12 HBO. Bautechnische
+  Nachweise — § 68 HBO.
+
+ANTRAG:
+• Bauantrag und Bauvorlagen — § 69 HBO. Bauvorlageberechtigung —
+  § 67 HBO.
+
+NICHT IM HBO-Korpus (NICHT erfinden):
+• Land-Denkmal-§§ — HDSchG mit LfDH abklären.`,
     // B2 batch 1 — NRW × T-04 authored 2026-05-28. §§ corpus-verified.
     nrw: `══════════════════════════════════════════════════════════════════════════
 LANDESSPEZIFISCHER ZUSATZ — NRW × T-04 (Nutzungsänderung / Umnutzung)
@@ -575,8 +726,49 @@ NICHT IM LBO BW-Korpus (NICHT erfinden):
 • Schadstoff-/Entsorgungs-§§ — KrWG, GefStoffV, EU-Vorgaben; nicht in
   der LBO BW geregelt; geltende Bundes- bzw. EU-Regelung referenzieren.
 • Land-Denkmal-§§ — wie oben mit LAD abklären.`,
-    // BUCKET-B-CONTENT: needs verified §§ from legal review (HE HBO).
-    hessen: null,
+    // B2 batch 4 — HE × T-05 authored 2026-05-28. HBO §§ corpus-verified.
+    // § 63a HBO ("Abbruch, Beseitigung") cited as owner-side Anker; § 82
+    // intentionally omitted (heading is enforcement: Nutzungsverbot,
+    // Beseitigungsanordnung).
+    hessen: `══════════════════════════════════════════════════════════════════════════
+LANDESSPEZIFISCHER ZUSATZ — Hessen × T-05 (Abbruch / Beseitigung)
+══════════════════════════════════════════════════════════════════════════
+
+Bei Abbruch-/Beseitigungsvorhaben in HESSEN: die §§ der HBO ersetzen
+sämtliche oben genannten Bayern-Verweise. Quelle: baunormenlexikon.de
+(mirror-tier).
+
+ROUTING:
+Hessen hat einen dedizierten Abbruch-§ — § 63a HBO (Abbruch, Beseitigung).
+Innerhalb der dort genannten Tatbestände sind kleinere Abbrüche
+baugenehmigungsfrei bzw. anzeigepflichtig; allgemein-baugenehmigungsfreie
+Vorhaben listet § 63 HBO auf. Größere oder kritische Abbrüche laufen
+über das vereinfachte Verfahren nach § 65 HBO bzw. das Baugenehmigungs-
+verfahren nach § 66 HBO.
+
+VERFAHREN — HBO:
+• Abbruch, Beseitigung — § 63a HBO.
+• Baugenehmigungsfreie Bauvorhaben — § 63 HBO.
+• Vereinfachtes Baugenehmigungsverfahren — § 65 HBO.
+• Baugenehmigungsverfahren — § 66 HBO.
+
+DENKMAL & ERHALTUNGSSATZUNG (OVERRIDE der Verfahrensfreiheit):
+• Federal-Anker — § 172 BauGB: innerhalb eines Erhaltungssatzungs-
+  Bereichs ist der Abbruch genehmigungspflichtig, auch wenn er sonst
+  verfahrensfrei wäre.
+• Land-Denkmal — HDSchG (separate Landesvorschrift; konkrete §-Verweise
+  nicht im Korpus). Bei eingetragenem Baudenkmal: Abbruch nur mit
+  denkmalrechtlicher Genehmigung; Landesamt für Denkmalpflege Hessen
+  (LfDH) einbeziehen.
+
+DOKUMENTE:
+• Bauvorlageberechtigung — § 67 HBO.
+• Statik der Restanlage bei Teilabbruch — § 12 HBO.
+
+NICHT IM HBO-Korpus (NICHT erfinden):
+• Schadstoff-/Entsorgungs-§§ — KrWG, GefStoffV, EU-Vorgaben; nicht in
+  der HBO geregelt; geltende Bundes- bzw. EU-Regelung referenzieren.
+• Land-Denkmal-§§ — wie oben mit LfDH abklären.`,
     // B2 batch 1 — NRW × T-05 authored 2026-05-28. §§ corpus-verified.
     nrw: `══════════════════════════════════════════════════════════════════════════
 LANDESSPEZIFISCHER ZUSATZ — NRW × T-05 (Abbruch / Beseitigung)
@@ -714,8 +906,50 @@ BAUPLANUNGSRECHT (Bundesrecht):
 ANTRAG:
 • Bauvorlagen und Bauantrag — § 53 LBO BW.
 • Bauvorlageberechtigung — § 63 LBO BW. Entwurfsverfasser — § 43 LBO BW.`,
-    // BUCKET-B-CONTENT: needs verified §§ from legal review (HE HBO).
-    hessen: null,
+    // B2 batch 4 — HE × T-06 authored 2026-05-28. HBO §§ corpus-verified.
+    hessen: `══════════════════════════════════════════════════════════════════════════
+LANDESSPEZIFISCHER ZUSATZ — Hessen × T-06 (Aufstockung / Dachgeschossausbau)
+══════════════════════════════════════════════════════════════════════════
+
+Bei Aufstockungs-/DG-Ausbau-Projekten in HESSEN: die §§ der HBO ersetzen
+sämtliche oben genannten Bayern-Verweise. Quelle: baunormenlexikon.de
+(mirror-tier).
+
+ROUTING:
+Aufstockung wird regelmäßig im vereinfachten Verfahren nach § 65 HBO
+behandelt. Bei Aufstockung können sich Gebäudeklasse, Abstandsflächen
+und Brandschutz ändern; die Standsicherheit der Bestandskonstruktion ist
+gesondert nachzuweisen.
+
+VERFAHREN:
+• Vereinfachtes Baugenehmigungsverfahren — § 65 HBO.
+
+GEBÄUDEKLASSE & ABSTANDSFLÄCHEN (kritisch bei Aufstockung):
+• Gebäudeklasse — § 2 HBO. Höhen-/Stockwerksgrenzen entscheiden, ob die
+  Aufstockung die GK anhebt. Ein GK-Sprung kann strengeren Brandschutz
+  auslösen.
+• Abstandsflächen, Abstände — § 6 HBO. An der neuen, höheren Wand neu
+  zu bemessen.
+
+TECHNISCHE NACHWEISE (BESTANDSSTATIK):
+• Standsicherheit der Bestandskonstruktion und neuer Aufbauten —
+  § 12 HBO. Bautechnische Nachweise — § 68 HBO.
+• Brandschutz nach ggf. höherer GK — § 14 HBO.
+
+STELLPLÄTZE (bei neuen Wohneinheiten):
+• Stellplätze, Garagen, Fahrradabstellplätze — § 52 HBO.
+
+ENERGIE (Bundesrecht):
+• Bestandsänderung — § 48 GEG. Niedrigstenergie-Grundsatz allgemein —
+  § 10 GEG.
+
+BAUPLANUNGSRECHT (Bundesrecht):
+• Zulässigkeit — § 30 BauGB, § 34 BauGB. Maß — § 19 BauNVO (GRZ),
+  § 20 BauNVO (Vollgeschosse/GFZ), § 23 BauNVO (überbaubare Fläche).
+
+ANTRAG:
+• Bauantrag und Bauvorlagen — § 69 HBO. Bauvorlageberechtigung —
+  § 67 HBO.`,
     // B2 batch 1 — NRW × T-06 authored 2026-05-28. §§ corpus-verified.
     nrw: `══════════════════════════════════════════════════════════════════════════
 LANDESSPEZIFISCHER ZUSATZ — NRW × T-06 (Aufstockung / Dachgeschossausbau)
@@ -856,8 +1090,46 @@ ENERGIE (Bundesrecht):
 ANTRAG:
 • Bauvorlagen und Bauantrag — § 53 LBO BW.
 • Bauvorlageberechtigung — § 63 LBO BW. Entwurfsverfasser — § 43 LBO BW.`,
-    // BUCKET-B-CONTENT: needs verified §§ from legal review (HE HBO).
-    hessen: null,
+    // B2 batch 4 — HE × T-07 authored 2026-05-28. HBO §§ corpus-verified.
+    // § 64a Erweiterte Genehmigungsfreistellung relevant when Anbau is Wohngebäude.
+    hessen: `══════════════════════════════════════════════════════════════════════════
+LANDESSPEZIFISCHER ZUSATZ — Hessen × T-07 (Anbau / Erweiterung)
+══════════════════════════════════════════════════════════════════════════
+
+Bei Anbau-/Erweiterungsvorhaben in HESSEN: die §§ der HBO ersetzen
+sämtliche oben genannten Bayern-Verweise. Quelle: baunormenlexikon.de
+(mirror-tier).
+
+ROUTING:
+Ein Anbau wird regelmäßig im vereinfachten Verfahren nach § 65 HBO
+behandelt. Bei qualifiziertem B-Plan kann die Genehmigungsfreistellung
+nach § 64 HBO in Betracht kommen — bei Wohngebäuden ggf. erweitert
+nach § 64a HBO.
+
+VERFAHREN:
+• Genehmigungsfreistellung — § 64 HBO (bei qualifiziertem B-Plan).
+• Erweiterte Genehmigungsfreistellung für Wohngebäude — § 64a HBO.
+• Vereinfachtes Baugenehmigungsverfahren — § 65 HBO (Regelfall).
+
+GEBIETSVERTRÄGLICHKEIT (Bundesrecht):
+• Einfügen im Innenbereich — § 34 BauGB. Außenbereich — § 35 BauGB.
+• Maß der baulichen Nutzung — § 19 BauNVO (GRZ), § 23 BauNVO
+  (überbaubare Grundstücksfläche).
+
+TECHNISCHE ANFORDERUNGEN AM ANBAU:
+• Abstandsflächen an der neuen Wand — § 6 HBO.
+• Standsicherheit — § 12 HBO. Bautechnische Nachweise — § 68 HBO.
+• Brandschutz an der Anschluss-/Trennwand — § 14 HBO.
+
+STELLPLÄTZE (bei neuen Wohneinheiten / Nutzungen):
+• Stellplätze, Garagen, Fahrradabstellplätze — § 52 HBO.
+
+ENERGIE (Bundesrecht):
+• Neubau-Teil des Anbaus — § 10 GEG. Anschluss an Bestand — § 48 GEG.
+
+ANTRAG:
+• Bauantrag und Bauvorlagen — § 69 HBO. Bauvorlageberechtigung —
+  § 67 HBO.`,
     // B2 batch 1 — NRW × T-07 authored 2026-05-28. §§ corpus-verified.
     nrw: `══════════════════════════════════════════════════════════════════════════
 LANDESSPEZIFISCHER ZUSATZ — NRW × T-07 (Anbau / Erweiterung)
@@ -982,8 +1254,43 @@ T-08 sollte zuerst an einen passenderen Template-Archetyp (T-01 EFH bis
 T-07 Anbau) zugeordnet werden; nur wenn keine Zuordnung möglich ist,
 greift T-08 als Default-Schale. Die obigen BW-§§ sind die Mindest-
 Verweise für Verfahren und Antrag.`,
-    // BUCKET-B-CONTENT: needs verified §§ from legal review (HE HBO).
-    hessen: null,
+    // B2 batch 4 — HE × T-08 authored 2026-05-28. HBO §§ corpus-verified.
+    hessen: `══════════════════════════════════════════════════════════════════════════
+LANDESSPEZIFISCHER ZUSATZ — Hessen × T-08 (Sonstiges Vorhaben)
+══════════════════════════════════════════════════════════════════════════
+
+Bei sonstigen Vorhaben in HESSEN: die §§ der HBO ersetzen sämtliche
+oben genannten Bayern-Verweise. Quelle: baunormenlexikon.de (mirror-tier).
+
+T-08 ist keine feste Vorhabens-Klasse — die einschlägigen HBO-§§ richten
+sich nach dem konkreten Vorhaben. Die folgenden Verweise decken den
+vollständigen Verfahrensraster ab:
+
+VERFAHREN — HBO (vollständiger Raster):
+• Baugenehmigungsfreie Bauvorhaben — § 63 HBO.
+• Genehmigungsfreistellung — § 64 HBO.
+• Erweiterte Genehmigungsfreistellung für Wohngebäude — § 64a HBO.
+• Vereinfachtes Baugenehmigungsverfahren — § 65 HBO.
+• Baugenehmigungsverfahren — § 66 HBO.
+
+ANTRAG & VORLAGEN:
+• Bauantrag und Bauvorlagen — § 69 HBO.
+• Bauvorlageberechtigung — § 67 HBO.
+• Form und Inhalt der Bauvorlagen: separate BauVorlV Hessen (kein
+  §-Verweis im Korpus — Verordnung als Quelle referenzieren).
+
+ALLGEMEINE TECHNISCHE ANFORDERUNGEN:
+• Abstandsflächen, Abstände — § 6 HBO.
+• Standsicherheit — § 12 HBO. Bautechnische Nachweise — § 68 HBO.
+
+BUNDESRECHT (gilt universal):
+• Zulässigkeit — § 30 BauGB, § 31 BauGB, § 34 BauGB, § 35 BauGB.
+
+HINWEIS:
+T-08 sollte zuerst an einen passenderen Template-Archetyp (T-01 EFH bis
+T-07 Anbau) zugeordnet werden; nur wenn keine Zuordnung möglich ist,
+greift T-08 als Default-Schale. Die obigen HBO-§§ sind die Mindest-
+Verweise für Verfahren und Antrag.`,
     // B2 batch 1 — NRW × T-08 authored 2026-05-28. §§ corpus-verified.
     nrw: `══════════════════════════════════════════════════════════════════════════
 LANDESSPEZIFISCHER ZUSATZ — NRW × T-08 (Sonstiges Vorhaben)

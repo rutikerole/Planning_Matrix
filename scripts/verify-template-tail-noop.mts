@@ -67,6 +67,23 @@ const ACKNOWLEDGED_OVERRIDES: ReadonlySet<string> = new Set<string>([
   'T-06:bw',
   'T-07:bw',
   'T-08:bw',
+  // B2 batch 4 — Hessen × T-02..T-08 authored 2026-05-28. §§ verified
+  // (mirror-tier HBO; baunormenlexikon.de). Mirror-tier discipline:
+  // § 64a Erweiterte Genehmigungsfreistellung für Wohngebäude cited as
+  // named institute (corpus confirms); § 63a (Abbruch/Beseitigung) cited
+  // as owner-side Anker for T-05; § 82 (Nutzungsverbot/Beseitigungs-
+  // anordnung) intentionally omitted (heading is enforcement); § 92
+  // (Frist Umnutzung ex-Land-/Forstwirtschaft) cited only with narrow
+  // explicit scope. § 14 cited alone for brandschutz (corpus tags only
+  // § 14 for HBO brandschutz archetype — not the multi-§ pattern of
+  // NRW/NI/BW). § 68 substantive Nachweis-§ (unlike BW § 73a admin-meta).
+  'T-02:hessen',
+  'T-03:hessen',
+  'T-04:hessen',
+  'T-05:hessen',
+  'T-06:hessen',
+  'T-07:hessen',
+  'T-08:hessen',
 ])
 
 interface Violation {
