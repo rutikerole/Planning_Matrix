@@ -789,6 +789,90 @@ DENKMAL & ERHALTUNGSSATZUNG:
   im Korpus). Zuständige Behörde: Brandenburgisches Landesamt für
   Denkmalpflege und Archäologisches Landesmuseum auf Landesebene; untere
   Denkmalschutzbehörde bei der kreisfreien Stadt bzw. beim Landkreis.`,
+    // C11 batch — Saarland × T-01 authored 2026-05-28. LBO Saarland corpus-
+    // verified (mirror-tier; baunormenlexikon.de; LBO Saarland 2004-02-18
+    // i.d.F. Gesetz v. 27.08.2025 Amtsbl. I S. 854, 855). Eighth and last
+    // Flächenland — completes Bucket C Pass A+C. SHIFTED §-NUMBERING:
+    // § 7 Abstandsflächen (not § 6), § 13 Standsicherheit (not § 12),
+    // § 15 Brandschutz (not § 14), § 47 Stellplätze (not § 49), § 63
+    // Freistellung (not § 62), § 64 vereinfacht (not § 63), § 65 regulär
+    // (not § 64), § 69 Bauantrag (not § 68). § 62 = "Vorhaben des Bundes
+    // und der Länder" (not Freistellung as in standard!). UNIQUE: 3 PV-§§
+    // (§ 12a/12b/12c) — MOST COMPREHENSIVE PV-Pflicht in corpus across
+    // all states (gewerblich/öffentlich + Vorbereitungspflicht). Authority:
+    // 1 Regionalverband Saarbrücken + 5 Landkreise (NO kreisfreie Städte).
+    saarland: `══════════════════════════════════════════════════════════════════════════
+LANDESSPEZIFISCHER ZUSATZ — Saarland × T-01 (Neubau Einfamilienhaus)
+══════════════════════════════════════════════════════════════════════════
+
+Bei EFH-Projekten im SAARLAND: die §§ der LBO Saarland (Landesbauordnung
+des Saarlandes) ersetzen sämtliche oben genannten Bayern-Verweise. Das
+Saarland ist Flächenland mit besonderer Verwaltungsstruktur: keine
+kreisfreien Städte, sondern ein Regionalverband Saarbrücken (mit der
+Landeshauptstadt Saarbrücken) plus fünf Landkreise (Merzig-Wadern,
+Neunkirchen, Saarlouis, Saarpfalz-Kreis, St. Wendel). Die zuständige
+untere Bauaufsichtsbehörde liegt beim Landkreis bzw. — im
+Regionalverband Saarbrücken — bei der jeweils zuständigen Stelle des
+Regionalverbands bzw. der Landeshauptstadt. Quelle: baunormenlexikon.de
+(mirror-tier; bei rechtlich kritischen Fragen die amtliche Fassung beim
+recht.saarland.de gegenprüfen). Stand: LBO Saarland Fassung vom
+18.02.2004 i.d.F. Gesetz vom 27.08.2025 (Amtsbl. I S. 854, 855).
+
+HINWEIS: Der Saarländische systemBlock ist bislang "Mindest-Eckdaten";
+die hier zitierten §§ stammen aus dem Korpus (secondary-mirror, primary-
+URL hinterlegt) und sind verwendbar, aber das vollständige SL-Profil
+wird erst mit anwaltlich verifizierter systemBlock-Tiefe abschließend
+substantiell.
+
+VERFAHREN — LBO Saarland (SL-spezifische Nummerierung):
+• Verfahrensfreie Vorhaben (inkl. Beseitigung) — § 61 LBO Saarland.
+• Baugenehmigungsfreistellung — § 63 LBO Saarland (bei qualifiziertem
+  B-Plan).
+• Vereinfachtes Baugenehmigungsverfahren — § 64 LBO Saarland.
+• Baugenehmigungsverfahren (regulär) — § 65 LBO Saarland.
+
+ROUTING (EFH-typisch):
+EFH erreicht häufig Gebäudeklasse 1 bis 3 nach § 2 LBO Saarland. Bei
+qualifiziertem B-Plan und ohne Sonderbau-Eigenschaft (§ 51 LBO Saarland)
+kommt die Baugenehmigungsfreistellung nach § 63 LBO Saarland in
+Betracht; sonst vereinfachtes Verfahren nach § 64 LBO Saarland.
+Reguläres Verfahren nach § 65 LBO Saarland nur bei Sonderbau-Tatbestand.
+
+ANTRAG & VORLAGEN:
+• Bauantrag und Bauvorlagen — § 69 LBO Saarland.
+• Bauvorlageberechtigung — § 66 LBO Saarland. Entwurfsverfasser/
+  Fachplaner — § 54 LBO Saarland.
+• Form/Inhalt der Bauvorlagen: separate BauVorlVO Saar (kein §-Verweis
+  im Korpus — Verordnung als Quelle referenzieren).
+
+TECHNISCHE ANFORDERUNGEN:
+• Abstandsflächen, Abstände — § 7 LBO Saarland.
+• Standsicherheit — § 13 LBO Saarland. Bautechnische Nachweise —
+  § 67 LBO Saarland.
+• Stellplätze und Garagen, Abstellplätze für Fahrräder —
+  § 47 LBO Saarland.
+
+BUNDESRECHT (gilt universal):
+• Zulässigkeit — § 30 BauGB, § 31 BauGB, § 34 BauGB, § 35 BauGB.
+• Maß + Baugebiete — § 1 BauNVO, § 3 BauNVO, § 4 BauNVO, § 6 BauNVO,
+  § 16 BauNVO, § 19 BauNVO, § 23 BauNVO.
+• Energie — § 10 GEG. § 80 GEG.
+
+SOLAR-/PV-VORGABEN im Saarland (KORPUS-SPEZIFISCH — SL-EINZIGARTIG):
+Das Saarland hat — anders als alle anderen erfassten C-Staaten — DREI
+PV-§§ direkt in der LBO Saarland: § 12a (Photovoltaikanlagen auf
+gewerblichen Gebäuden und Stellplätzen), § 12b (Photovoltaikanlagen auf
+öffentlichen Gebäuden und Stellplätzen), § 12c (Vorbereitung von
+Gebäuden für die spätere Installation von Photovoltaikanlagen). Für
+EFH-Neubau ist v.a. § 12c einschlägig (PV-Vorbereitungspflicht); § 12a/
+§ 12b primär bei gewerblicher/öffentlicher Nutzung.
+
+DENKMAL & ERHALTUNGSSATZUNG:
+• Bundesanker — § 172 BauGB (Erhaltungssatzungs-Gebiet).
+• Land — SDschG (separate Landesvorschrift; konkrete §-Verweise nicht
+  im Korpus). Zuständige Behörde: Landesdenkmalamt im Saarland auf
+  Landesebene; untere Denkmalschutzbehörde beim Landkreis bzw.
+  Regionalverband Saarbrücken.`,
   },
   // ── T-02 Neubau MFH ──────────────────────────────────────────────
   'T-02': {
@@ -1626,6 +1710,67 @@ DENKMAL & ERHALTUNGSSATZUNG:
 • Land — BbgDSchG. Behörde: Brandenburgisches Landesamt für
   Denkmalpflege plus zuständige untere Denkmalschutzbehörde
   (kreisfreie Stadt bzw. Landkreis).`,
+    // C11 batch — Saarland × T-02 authored 2026-05-28. LBO Saarland corpus-
+    // verified. 4-§ brandschutz spread (§ 15+§ 27+§ 30+§ 33). § 12c PV-
+    // preparation cited for MFH (residential prep).
+    saarland: `══════════════════════════════════════════════════════════════════════════
+LANDESSPEZIFISCHER ZUSATZ — Saarland × T-02 (Neubau Mehrfamilienhaus)
+══════════════════════════════════════════════════════════════════════════
+
+Bei MFH-Projekten im SAARLAND: die §§ der LBO Saarland ersetzen sämtliche
+oben genannten Bayern-Verweise. Flächenland mit besonderer Struktur:
+Regionalverband Saarbrücken (mit Landeshauptstadt Saarbrücken) + 5
+Landkreise (Merzig-Wadern, Neunkirchen, Saarlouis, Saarpfalz-Kreis,
+St. Wendel). Bauaufsicht je nach Standort. Quelle: baunormenlexikon.de
+(mirror-tier). Stand: LBO Saarland i.d.F. Gesetz vom 27.08.2025.
+
+HINWEIS: Saarländischer systemBlock weiterhin "preliminary"; die hier
+zitierten §§ sind korpus-verifiziert.
+
+VERFAHREN — LBO Saarland (SL-Nummerierung):
+• Verfahrensfreie Vorhaben — § 61 LBO Saarland.
+• Baugenehmigungsfreistellung — § 63 LBO Saarland (bei qualifiziertem
+  B-Plan).
+• Vereinfachtes Baugenehmigungsverfahren — § 64 LBO Saarland.
+• Baugenehmigungsverfahren (regulär) — § 65 LBO Saarland.
+
+ROUTING (MFH-typisch):
+MFH erreicht häufig Gebäudeklasse 3 bis 5 nach § 2 LBO Saarland. Bei
+Sonderbau-Tatbestand (§ 51 LBO Saarland) ist das reguläre Verfahren
+nach § 65 LBO Saarland zwingend. Ohne Sonderbau: vereinfachtes Verfahren
+nach § 64 LBO Saarland. Freistellung nach § 63 LBO Saarland nur bei
+qualifiziertem B-Plan und ohne Sonderbau.
+
+ANTRAG & VORLAGEN:
+• Bauantrag und Bauvorlagen — § 69 LBO Saarland.
+• Bauvorlageberechtigung — § 66 LBO Saarland. Entwurfsverfasser/
+  Fachplaner — § 54 LBO Saarland.
+
+TECHNISCHE ANFORDERUNGEN:
+• Abstandsflächen, Abstände — § 7 LBO Saarland.
+• Standsicherheit — § 13 LBO Saarland. Bautechnische Nachweise —
+  § 67 LBO Saarland.
+• Brandschutz allgemein — § 15 LBO Saarland. Brandverhalten Baustoffe/
+  Bauteile — § 27 LBO Saarland. Brandwände — § 30 LBO Saarland. Erster
+  und zweiter Rettungsweg — § 33 LBO Saarland.
+• Stellplätze und Garagen, Abstellplätze für Fahrräder —
+  § 47 LBO Saarland.
+
+PV-VORBEREITUNG (SL-spezifisch):
+• Vorbereitung für spätere PV-Installation — § 12c LBO Saarland
+  (Wohngebäude-relevant; § 12a/§ 12b primär gewerblich/öffentlich).
+
+BUNDESRECHT (gilt universal):
+• Zulässigkeit — § 30 BauGB, § 31 BauGB, § 34 BauGB, § 35 BauGB.
+• Baugebiete + Maß — § 1 BauNVO, § 3 BauNVO, § 4 BauNVO, § 6 BauNVO,
+  § 16 BauNVO, § 19 BauNVO, § 23 BauNVO. Stellplätze — § 12 BauNVO.
+• Energie — § 10 GEG. § 80 GEG.
+
+DENKMAL & ERHALTUNGSSATZUNG:
+• Bundesanker — § 172 BauGB.
+• Land — SDschG. Behörde: Landesdenkmalamt im Saarland plus zuständige
+  untere Denkmalschutzbehörde (Landkreis bzw. Regionalverband
+  Saarbrücken).`,
   },
   // ── T-03 Sanierung ───────────────────────────────────────────────
   'T-03': {
@@ -2409,6 +2554,69 @@ Federal-Anker bei Erhaltungssatzung — § 172 BauGB.
 NICHT IM Korpus (NICHT erfinden):
 • Land-Denkmal-§§ — wie oben mit Landesamt / Landkreis bzw. kreisfreier
   Stadt abklären.`,
+    // C11 batch — Saarland × T-03 authored 2026-05-28. LBO Saarland corpus-
+    // verified.
+    saarland: `══════════════════════════════════════════════════════════════════════════
+LANDESSPEZIFISCHER ZUSATZ — Saarland × T-03 (Sanierung / Modernisierung)
+══════════════════════════════════════════════════════════════════════════
+
+Bei Sanierungs-/Modernisierungs-Projekten im SAARLAND: die §§ der LBO
+Saarland ersetzen sämtliche oben genannten Bayern-Verweise. Flächenland
+mit Regionalverband Saarbrücken (Landeshauptstadt) + 5 Landkreisen.
+Quelle: baunormenlexikon.de (mirror-tier). Stand: LBO Saarland i.d.F.
+Gesetz vom 27.08.2025.
+
+HINWEIS: Saarländischer systemBlock weiterhin "preliminary"; die hier
+zitierten §§ sind korpus-verifiziert.
+
+ROUTING:
+Reine Instandhaltung/Modernisierung ohne Eingriff in Statik, Brandschutz
+oder Nutzung fällt häufig unter § 61 LBO Saarland (verfahrensfreie
+Vorhaben). Sobald tragende Bauteile, Brandschutz oder die Nutzung
+berührt sind, ist regelmäßig das vereinfachte Verfahren nach
+§ 64 LBO Saarland anzunehmen.
+
+VERFAHREN — LBO Saarland:
+• Verfahrensfreie Vorhaben — § 61 LBO Saarland.
+• Vereinfachtes Baugenehmigungsverfahren — § 64 LBO Saarland.
+
+TECHNISCHE NACHWEISE BEI EINGRIFF:
+• Standsicherheit bei tragenden Eingriffen — § 13 LBO Saarland.
+• Bautechnische Nachweise — § 67 LBO Saarland.
+• Brandschutz allgemein — § 15 LBO Saarland. Brandverhalten Baustoffe/
+  Bauteile — § 27 LBO Saarland. Brandwände — § 30 LBO Saarland. Erster
+  und zweiter Rettungsweg — § 33 LBO Saarland.
+
+ANTRAG:
+• Bauantrag und Bauvorlagen — § 69 LBO Saarland. Bauvorlageberechtigung
+  — § 66 LBO Saarland. Entwurfsverfasser/Fachplaner — § 54 LBO Saarland.
+
+ENERGIE (Bundesrecht):
+• Bestandsänderung — § 48 GEG. Niedrigstenergie-Grundsatz allgemein —
+  § 10 GEG.
+
+PV-NACHRÜSTUNG bei Sanierung (SL-spezifisch):
+• § 12a LBO Saarland (gewerbliche Gebäude/Stellplätze), § 12b
+  (öffentliche Gebäude/Stellplätze), § 12c (Vorbereitung Wohngebäude
+  für spätere PV-Installation) — bei Dachsanierung mit PV-Bezug
+  einschlägig.
+
+NUTZUNGSÄNDERUNG IM Saarland:
+Saarland hat KEINEN dedizierten Nutzungsänderungs-§ in der LBO Saarland.
+Eine Nutzungsänderung im Sanierungskontext ist über § 64 LBO Saarland
+(vereinfacht) bzw. § 65 LBO Saarland (regulär bei Sonderbau,
+§ 51 LBO Saarland) zu beantragen.
+
+DENKMALSCHUTZ:
+Bei eingetragenem Baudenkmal oder Ensemble — SDschG (separate
+Landesvorschrift; konkrete §-Verweise nicht im Korpus). Vor Sanierung
+ist das Landesdenkmalamt im Saarland plus zuständige untere Denkmal-
+schutzbehörde (Landkreis bzw. Regionalverband Saarbrücken) anzuhören.
+Federal-Anker bei Erhaltungssatzung — § 172 BauGB.
+
+NICHT IM Korpus (NICHT erfinden):
+• Land-Denkmal-§§ — wie oben mit Landesamt / Landkreis bzw. Regional-
+  verband abklären.`,
   },
   // ── T-04 Umnutzung ───────────────────────────────────────────────
   'T-04': {
@@ -3120,6 +3328,68 @@ NICHT IM BbgBO-Korpus (NICHT erfinden):
 • Schallschutz/TA-Lärm bei lärmrelevanter Nutzungsänderung — DIN 4109
   bzw. TA Lärm als Bundes- bzw. technische Normen, nicht in der BbgBO
   geregelt.`,
+    // C11 batch — Saarland × T-04 authored 2026-05-28. LBO Saarland corpus-
+    // verified. § 12a + § 12b PV-Pflicht für gewerbl./öffentl. Umnutzungen
+    // relevant (only state with these directly in corpus).
+    saarland: `══════════════════════════════════════════════════════════════════════════
+LANDESSPEZIFISCHER ZUSATZ — Saarland × T-04 (Nutzungsänderung / Umnutzung)
+══════════════════════════════════════════════════════════════════════════
+
+Bei Nutzungsänderungs-Projekten im SAARLAND: die §§ der LBO Saarland
+ersetzen sämtliche oben genannten Bayern-Verweise. Flächenland mit
+Regionalverband Saarbrücken + 5 Landkreisen. Quelle: baunormenlexikon.de
+(mirror-tier). Stand: LBO Saarland i.d.F. Gesetz vom 27.08.2025.
+
+HINWEIS: Saarländischer systemBlock weiterhin "preliminary"; die hier
+zitierten §§ sind korpus-verifiziert.
+
+ROUTING:
+Eine Nutzungsänderung ist im Saarland grundsätzlich genehmigungs-
+pflichtig, sofern nicht ausdrücklich verfahrensfrei nach § 61 LBO
+Saarland. Die LBO Saarland hat KEINEN dedizierten Nutzungsänderungs-§ —
+der Verfahrensweg richtet sich nach den allgemeinen Verfahrens-§§. Bei
+Nicht-Sonderbau-Umnutzung ist regelmäßig das vereinfachte Verfahren
+nach § 64 LBO Saarland einschlägig; sobald Sonderbau-Tatbestand
+vorliegt (§ 51 LBO Saarland), gilt das reguläre Verfahren nach
+§ 65 LBO Saarland.
+
+VERFAHREN — LBO Saarland:
+• Vereinfachtes Baugenehmigungsverfahren — § 64 LBO Saarland.
+• Baugenehmigungsverfahren (regulär) — § 65 LBO Saarland (bei
+  Sonderbau-Tatbestand der neuen Nutzung, § 51 LBO Saarland).
+
+GEBIETSVERTRÄGLICHKEIT (Bundesrecht):
+• Zulässigkeit der neuen Nutzung — § 30 BauGB, § 31 BauGB, § 34 BauGB,
+  § 35 BauGB.
+• Baugebiete und Nutzungsarten — § 1 BauNVO bis § 9 BauNVO, § 4a BauNVO.
+• Erhaltungssatzung — § 172 BauGB.
+
+TECHNISCHE FOLGEN DER NEUEN NUTZUNG:
+• Brandschutz nach neuer Nutzung — § 15 LBO Saarland. Brandverhalten
+  Baustoffe/Bauteile — § 27 LBO Saarland. Brandwände — § 30 LBO Saarland.
+  Erster und zweiter Rettungsweg — § 33 LBO Saarland.
+• Stellplatzbedarf nach neuer Nutzung — § 47 LBO Saarland. Bundes-Maß
+  ergänzend — § 12 BauNVO.
+• Standsicherheit bei strukturellen Anpassungen — § 13 LBO Saarland.
+  Bautechnische Nachweise — § 67 LBO Saarland.
+
+PV-PFLICHT BEI UMNUTZUNG (SL-spezifisch, korpus-einzigartig):
+• Bei Umnutzung zu gewerblicher Nutzung — § 12a LBO Saarland
+  (Photovoltaikanlagen auf gewerblichen Gebäuden und Stellplätzen).
+• Bei Umnutzung zu öffentlicher Nutzung — § 12b LBO Saarland.
+• Vorbereitung für spätere PV-Installation — § 12c LBO Saarland.
+
+ANTRAG:
+• Bauantrag und Bauvorlagen — § 69 LBO Saarland. Bauvorlage-
+  berechtigung — § 66 LBO Saarland. Entwurfsverfasser/Fachplaner —
+  § 54 LBO Saarland.
+
+NICHT IM LBO-Saarland-Korpus (NICHT erfinden):
+• Land-Denkmal-§§ — SDschG mit Landesdenkmalamt / Landkreis bzw.
+  Regionalverband abklären.
+• Schallschutz/TA-Lärm bei lärmrelevanter Nutzungsänderung — DIN 4109
+  bzw. TA Lärm als Bundes- bzw. technische Normen, nicht in der LBO
+  Saarland geregelt.`,
   },
   // ── T-05 Abbruch ─────────────────────────────────────────────────
   'T-05': {
@@ -3800,6 +4070,59 @@ NICHT IM BbgBO-Korpus (NICHT erfinden):
   der BbgBO geregelt; geltende Bundes- bzw. EU-Regelung referenzieren.
 • Land-Denkmal-§§ — wie oben mit Landesamt / Landkreis bzw.
   kreisfreier Stadt abklären.`,
+    // C11 batch — Saarland × T-05 authored 2026-05-28. LBO Saarland corpus-
+    // verified. § 82 (Beseitigung/Nutzungsuntersagung) INTENTIONALLY
+    // OMITTED (classic enforcement — though corpus tags it
+    // `nutzungsaenderung`, the heading is enforcement-side). § 81
+    // (Einstellung Arbeiten), § 78 (Bauüberwachung) admin omits.
+    saarland: `══════════════════════════════════════════════════════════════════════════
+LANDESSPEZIFISCHER ZUSATZ — Saarland × T-05 (Abbruch / Beseitigung)
+══════════════════════════════════════════════════════════════════════════
+
+Bei Abbruch-/Beseitigungsvorhaben im SAARLAND: die §§ der LBO Saarland
+ersetzen sämtliche oben genannten Bayern-Verweise. Flächenland mit
+Regionalverband Saarbrücken + 5 Landkreisen. Quelle: baunormenlexikon.de
+(mirror-tier). Stand: LBO Saarland i.d.F. Gesetz vom 27.08.2025.
+
+HINWEIS: Saarländischer systemBlock weiterhin "preliminary"; die hier
+zitierten §§ sind korpus-verifiziert.
+
+ROUTING:
+Die Beseitigung baulicher Anlagen im Saarland ist primär über
+§ 61 LBO Saarland geregelt — die Überschrift nennt "Beseitigung von
+Anlagen" ausdrücklich neben den verfahrensfreien Vorhaben.
+
+VERFAHREN — LBO Saarland:
+• Verfahrensfreie Vorhaben und Beseitigung von Anlagen —
+  § 61 LBO Saarland.
+
+Innerhalb der in § 61 LBO Saarland genannten Tatbestände ist der
+Abbruch verfahrensfrei (ggf. genügt eine Anzeige); außerhalb dieser
+Tatbestände ist eine Beseitigungsgenehmigung erforderlich (in der Regel
+über das vereinfachte Verfahren nach § 64 LBO Saarland bzw. das
+reguläre Verfahren nach § 65 LBO Saarland).
+
+DENKMAL & ERHALTUNGSSATZUNG (OVERRIDE der Verfahrensfreiheit):
+• Federal-Anker — § 172 BauGB: innerhalb eines Erhaltungssatzungs-
+  Bereichs ist der Abbruch genehmigungspflichtig, auch wenn er sonst
+  verfahrensfrei wäre.
+• Land-Denkmal — SDschG (separate Landesvorschrift; konkrete §-Verweise
+  nicht im Korpus). Bei eingetragenem Baudenkmal: Abbruch nur mit
+  denkmalrechtlicher Genehmigung; Landesdenkmalamt im Saarland plus
+  zuständige untere Denkmalschutzbehörde (Landkreis bzw. Regionalverband
+  Saarbrücken) einbeziehen.
+
+DOKUMENTE:
+• Bauvorlageberechtigung — § 66 LBO Saarland. Entwurfsverfasser/
+  Fachplaner — § 54 LBO Saarland.
+• Statik der Restanlage bei Teilabbruch — § 13 LBO Saarland.
+
+NICHT IM LBO-Saarland-Korpus (NICHT erfinden):
+• Schadstoff-/Entsorgungs-§§ — KrWG, GefStoffV, EU-Vorgaben; nicht in
+  der LBO Saarland geregelt; geltende Bundes- bzw. EU-Regelung
+  referenzieren.
+• Land-Denkmal-§§ — wie oben mit Landesamt / Landkreis bzw.
+  Regionalverband abklären.`,
   },
   // ── T-06 Aufstockung ─────────────────────────────────────────────
   'T-06': {
@@ -4515,6 +4838,64 @@ BAUPLANUNGSRECHT (Bundesrecht):
 ANTRAG:
 • Bauantrag und Bauvorlagen — § 72 BbgBO. Bauvorlageberechtigung —
   § 65 BbgBO. Entwurfsverfasser — § 54 BbgBO.`,
+    // C11 batch — Saarland × T-06 authored 2026-05-28. LBO Saarland corpus-
+    // verified.
+    saarland: `══════════════════════════════════════════════════════════════════════════
+LANDESSPEZIFISCHER ZUSATZ — Saarland × T-06 (Aufstockung / Dachgeschossausbau)
+══════════════════════════════════════════════════════════════════════════
+
+Bei Aufstockungs-/DG-Ausbau-Projekten im SAARLAND: die §§ der LBO
+Saarland ersetzen sämtliche oben genannten Bayern-Verweise. Flächenland
+mit Regionalverband Saarbrücken + 5 Landkreisen. Quelle:
+baunormenlexikon.de (mirror-tier). Stand: LBO Saarland i.d.F. Gesetz
+vom 27.08.2025.
+
+HINWEIS: Saarländischer systemBlock weiterhin "preliminary"; die hier
+zitierten §§ sind korpus-verifiziert.
+
+ROUTING:
+Aufstockung wird regelmäßig im vereinfachten Verfahren nach
+§ 64 LBO Saarland behandelt. Bei Aufstockung können sich Gebäudeklasse,
+Abstandsflächen und Brandschutz ändern; die Standsicherheit der
+Bestandskonstruktion ist gesondert nachzuweisen.
+
+VERFAHREN:
+• Vereinfachtes Baugenehmigungsverfahren — § 64 LBO Saarland.
+
+GEBÄUDEKLASSE & ABSTANDSFLÄCHEN (kritisch bei Aufstockung):
+• Gebäudeklasse — § 2 LBO Saarland. Höhen-/Stockwerksgrenzen
+  entscheiden, ob die Aufstockung die GK anhebt.
+• Abstandsflächen, Abstände — § 7 LBO Saarland. An der neuen, höheren
+  Wand neu zu bemessen.
+
+TECHNISCHE NACHWEISE (BESTANDSSTATIK):
+• Standsicherheit der Bestandskonstruktion und neuer Aufbauten —
+  § 13 LBO Saarland. Bautechnische Nachweise — § 67 LBO Saarland.
+• Brandschutz nach ggf. höherer GK — § 15 LBO Saarland. Brandverhalten
+  Baustoffe — § 27 LBO Saarland. Brandwände — § 30 LBO Saarland. Erster
+  und zweiter Rettungsweg — § 33 LBO Saarland.
+
+PV-DACHANLAGE (SL-spezifisch):
+• § 12c LBO Saarland (Vorbereitung Gebäude für spätere PV-Installation)
+  einschlägig bei DG-Ausbau / Dachneuaufbau; § 12a/§ 12b primär bei
+  gewerblicher/öffentlicher Nutzung.
+
+STELLPLÄTZE (bei neuen Wohneinheiten):
+• Stellplätze und Garagen, Abstellplätze für Fahrräder —
+  § 47 LBO Saarland.
+
+ENERGIE (Bundesrecht):
+• Bestandsänderung — § 48 GEG. Niedrigstenergie-Grundsatz allgemein —
+  § 10 GEG.
+
+BAUPLANUNGSRECHT (Bundesrecht):
+• Zulässigkeit — § 30 BauGB, § 34 BauGB. Maß — § 19 BauNVO (GRZ),
+  § 20 BauNVO (Vollgeschosse/GFZ), § 23 BauNVO (überbaubare Fläche).
+
+ANTRAG:
+• Bauantrag und Bauvorlagen — § 69 LBO Saarland. Bauvorlage-
+  berechtigung — § 66 LBO Saarland. Entwurfsverfasser/Fachplaner —
+  § 54 LBO Saarland.`,
   },
   // ── T-07 Anbau ───────────────────────────────────────────────────
   'T-07': {
@@ -5136,6 +5517,54 @@ ENERGIE (Bundesrecht):
 ANTRAG:
 • Bauantrag und Bauvorlagen — § 72 BbgBO. Bauvorlageberechtigung —
   § 65 BbgBO. Entwurfsverfasser — § 54 BbgBO.`,
+    // C11 batch — Saarland × T-07 authored 2026-05-28. LBO Saarland corpus-
+    // verified.
+    saarland: `══════════════════════════════════════════════════════════════════════════
+LANDESSPEZIFISCHER ZUSATZ — Saarland × T-07 (Anbau / Erweiterung)
+══════════════════════════════════════════════════════════════════════════
+
+Bei Anbau-/Erweiterungsvorhaben im SAARLAND: die §§ der LBO Saarland
+ersetzen sämtliche oben genannten Bayern-Verweise. Flächenland mit
+Regionalverband Saarbrücken + 5 Landkreisen. Quelle: baunormenlexikon.de
+(mirror-tier). Stand: LBO Saarland i.d.F. Gesetz vom 27.08.2025.
+
+HINWEIS: Saarländischer systemBlock weiterhin "preliminary"; die hier
+zitierten §§ sind korpus-verifiziert.
+
+ROUTING:
+Ein Anbau wird regelmäßig im vereinfachten Verfahren nach
+§ 64 LBO Saarland behandelt. Bei qualifiziertem B-Plan und Einhaltung
+aller Festsetzungen kommt die Baugenehmigungsfreistellung nach
+§ 63 LBO Saarland in Betracht.
+
+VERFAHREN:
+• Baugenehmigungsfreistellung — § 63 LBO Saarland (bei qualifiziertem
+  B-Plan).
+• Vereinfachtes Baugenehmigungsverfahren — § 64 LBO Saarland (Regelfall).
+
+GEBIETSVERTRÄGLICHKEIT (Bundesrecht):
+• Einfügen im Innenbereich — § 34 BauGB. Außenbereich — § 35 BauGB.
+• Maß der baulichen Nutzung — § 19 BauNVO (GRZ), § 23 BauNVO
+  (überbaubare Grundstücksfläche).
+
+TECHNISCHE ANFORDERUNGEN AM ANBAU:
+• Abstandsflächen, Abstände an der neuen Wand — § 7 LBO Saarland.
+• Standsicherheit — § 13 LBO Saarland. Bautechnische Nachweise —
+  § 67 LBO Saarland.
+• Brandschutz an der Anschluss-/Trennwand — § 15 LBO Saarland.
+  Brandwände — § 30 LBO Saarland.
+
+STELLPLÄTZE (bei neuen Wohneinheiten / Nutzungen):
+• Stellplätze und Garagen, Abstellplätze für Fahrräder —
+  § 47 LBO Saarland.
+
+ENERGIE (Bundesrecht):
+• Neubau-Teil des Anbaus — § 10 GEG. Anschluss an Bestand — § 48 GEG.
+
+ANTRAG:
+• Bauantrag und Bauvorlagen — § 69 LBO Saarland. Bauvorlage-
+  berechtigung — § 66 LBO Saarland. Entwurfsverfasser/Fachplaner —
+  § 54 LBO Saarland.`,
   },
   // ── T-08 Sonstiges ───────────────────────────────────────────────
   'T-08': {
@@ -5707,6 +6136,47 @@ ALLGEMEINE TECHNISCHE ANFORDERUNGEN:
 • Abstandsflächen, Abstände — § 6 BbgBO.
 • Standsicherheit — § 12 BbgBO. Bautechnische Nachweise —
   § 70 BbgBO.
+
+BUNDESRECHT (gilt universal):
+• Zulässigkeit — § 30 BauGB, § 31 BauGB, § 34 BauGB, § 35 BauGB.
+
+HINWEIS:
+T-08 sollte zuerst an einen passenderen Template-Archetyp (T-01 EFH bis
+T-07 Anbau) zugeordnet werden; nur wenn keine Zuordnung möglich ist,
+greift T-08 als Default-Schale.`,
+    // C11 batch — Saarland × T-08 authored 2026-05-28. LBO Saarland corpus-
+    // verified. Closes Bucket C Pass A+C — all 11 thin states authored.
+    saarland: `══════════════════════════════════════════════════════════════════════════
+LANDESSPEZIFISCHER ZUSATZ — Saarland × T-08 (Sonstiges Vorhaben)
+══════════════════════════════════════════════════════════════════════════
+
+Bei sonstigen Vorhaben im SAARLAND: die §§ der LBO Saarland ersetzen
+sämtliche oben genannten Bayern-Verweise. Flächenland mit Regionalverband
+Saarbrücken + 5 Landkreisen. Quelle: baunormenlexikon.de (mirror-tier).
+Stand: LBO Saarland i.d.F. Gesetz vom 27.08.2025.
+
+HINWEIS: Saarländischer systemBlock weiterhin "preliminary"; die hier
+zitierten §§ sind korpus-verifiziert.
+
+T-08 ist keine feste Vorhabens-Klasse — die einschlägigen LBO-Saarland-§§
+richten sich nach dem konkreten Vorhaben. Die folgenden Verweise decken
+den vollständigen Verfahrensraster ab:
+
+VERFAHREN — LBO Saarland (SL-Nummerierung, vollständiger Raster):
+• Verfahrensfreie Vorhaben (inkl. Beseitigung) — § 61 LBO Saarland.
+• Baugenehmigungsfreistellung — § 63 LBO Saarland.
+• Vereinfachtes Baugenehmigungsverfahren — § 64 LBO Saarland.
+• Baugenehmigungsverfahren (regulär) — § 65 LBO Saarland.
+
+ANTRAG & VORLAGEN:
+• Bauantrag und Bauvorlagen — § 69 LBO Saarland.
+• Bauvorlageberechtigung — § 66 LBO Saarland. Entwurfsverfasser/
+  Fachplaner — § 54 LBO Saarland.
+
+ALLGEMEINE TECHNISCHE ANFORDERUNGEN:
+• Abstandsflächen, Abstände — § 7 LBO Saarland.
+• Standsicherheit — § 13 LBO Saarland. Bautechnische Nachweise —
+  § 67 LBO Saarland.
 
 BUNDESRECHT (gilt universal):
 • Zulässigkeit — § 30 BauGB, § 31 BauGB, § 34 BauGB, § 35 BauGB.

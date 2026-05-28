@@ -303,6 +303,29 @@ const ACKNOWLEDGED_OVERRIDES: ReadonlySet<string> = new Set<string>([
   'T-06:brandenburg',
   'T-07:brandenburg',
   'T-08:brandenburg',
+  // C11 batch — Saarland × T-01..T-08 authored 2026-05-28. §§ verified
+  // (mirror-tier LBO Saarland; baunormenlexikon.de; LBO Saarland 2004-
+  // 02-18 i.d.F. Gesetz v. 27.08.2025 Amtsbl. I S. 854, 855). EIGHTH
+  // and LAST Flächenland — completes Bucket C Pass A+C. SHIFTED §-
+  // NUMBERING: § 7 Abstand, § 13 Standsicherheit, § 15 Brandschutz,
+  // § 47 Stellplätze, § 63 Freistellung, § 64 vereinfacht, § 65 regulär,
+  // § 69 Bauantrag. NB: § 62 = "Vorhaben des Bundes und der Länder" (NOT
+  // Freistellung as in standard ladder). UNIQUE: 3 PV-§§ (§ 12a/§ 12b/
+  // § 12c) — MOST comprehensive PV-Pflicht in any C-state corpus
+  // (gewerbl./öffentl./Vorbereitung). § 82 (Beseitigung/Nutzungsuntersagung)
+  // classic enforcement omit; § 81 (Einstellung), § 78 (Bauüberwachung)
+  // admin omits. Authority: 1 Regionalverband Saarbrücken + 5 Landkreise
+  // (NO kreisfreie Städte — Saarland-spezifisch). Citation prefix
+  // "LBO Saarland". 4-§ brandschutz (§ 15+§ 27+§ 30+§ 33), corpus tags
+  // 4 of them (§ 30 + § 33 cleanly tagged unlike SächsBO/MV/Thüringen).
+  'T-01:saarland',
+  'T-02:saarland',
+  'T-03:saarland',
+  'T-04:saarland',
+  'T-05:saarland',
+  'T-06:saarland',
+  'T-07:saarland',
+  'T-08:saarland',
 ])
 
 interface Violation {

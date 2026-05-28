@@ -106,11 +106,15 @@ const ALLOWED_NOT_IN_CORPUS_LAWS_PER_STATE: Record<string, ReadonlySet<string>> 
 // We do NOT try to parse Abs. / Nr. sub-clauses — corpus only needs the
 // top-level § number to verify existence.
 
+// State-suffix tokens — order matters: longer patterns FIRST so the regex
+// matches "Saarland" before "Saar" (otherwise greedy-leftmost alternation
+// truncates "LBO Saarland" → "LBO Saar" and the parsed law name no longer
+// matches the corpus law_short).
 const CITATION_REGEX_FORWARD =
-  /(?:§|Art\.)\s*(\d+[a-z]?)\b(?:\s+Abs\.\s+\d+(?:\s+Nr\.\s+\d+\s*[a-z]?)?)?\s+([A-ZÄÖÜ][A-Za-zäöüß-]*(?:\s+(?:NRW|NW|BW|RP|M-V|HH|HB|Bln|Nds|SN|LSA|SH|TH|Hessen|Saar|Bbg|Saar)|\s+[A-ZÄÖÜ][A-Za-zäöüß-]*)*)/g
+  /(?:§|Art\.)\s*(\d+[a-z]?)\b(?:\s+Abs\.\s+\d+(?:\s+Nr\.\s+\d+\s*[a-z]?)?)?\s+([A-ZÄÖÜ][A-Za-zäöüß-]*(?:\s+(?:Saarland|NRW|NW|BW|RP|M-V|HH|HB|Bln|Nds|SN|LSA|SH|TH|Hessen|Saar|Bbg)|\s+[A-ZÄÖÜ][A-Za-zäöüß-]*)*)/g
 
 const CITATION_REGEX_REVERSE =
-  /\b([A-ZÄÖÜ][A-Za-zäöüß-]*(?:\s+(?:NRW|NW|BW|RP|M-V|HH|HB|Bln|Nds|SN|LSA|SH|TH|Hessen|Saar|Bbg)|\s+[A-ZÄÖÜ][A-Za-zäöüß-]*)*)\s+(?:§|Art\.)\s*(\d+[a-z]?)\b/g
+  /\b([A-ZÄÖÜ][A-Za-zäöüß-]*(?:\s+(?:Saarland|NRW|NW|BW|RP|M-V|HH|HB|Bln|Nds|SN|LSA|SH|TH|Hessen|Saar|Bbg)|\s+[A-ZÄÖÜ][A-Za-zäöüß-]*)*)\s+(?:§|Art\.)\s*(\d+[a-z]?)\b/g
 
 interface Citation {
   num: string
@@ -118,13 +122,20 @@ interface Citation {
   raw: string
 }
 
+// Normalize whitespace inside the matched law name: collapse newlines and
+// multi-spaces (from prose word-wrap) to a single space so "LBO\nSaarland"
+// matches the corpus law_short "LBO Saarland".
+function normalizeLaw(s: string): string {
+  return s.trim().replace(/\s+/g, ' ')
+}
+
 function extractCitations(text: string): Citation[] {
   const out: Citation[] = []
   for (const m of text.matchAll(CITATION_REGEX_FORWARD)) {
-    out.push({ num: m[1], law: m[2].trim(), raw: m[0] })
+    out.push({ num: m[1], law: normalizeLaw(m[2]), raw: m[0] })
   }
   for (const m of text.matchAll(CITATION_REGEX_REVERSE)) {
-    out.push({ num: m[2], law: m[1].trim(), raw: m[0] })
+    out.push({ num: m[2], law: normalizeLaw(m[1]), raw: m[0] })
   }
   return out
 }
