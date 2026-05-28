@@ -25,9 +25,20 @@ import { BLOCKS, getTemplateBlock } from '../src/legal/templates/index.ts'
 import { listRegisteredStates } from '../src/legal/legalRegistry.ts'
 import type { TemplateId } from '../src/types/projectState.ts'
 
-// Empty at B0. Append `<T>:<bundesland>` (e.g. `'T-02:nrw'`) when a
-// content author fills a verified state-specific addendum.
-const ACKNOWLEDGED_OVERRIDES: ReadonlySet<string> = new Set<string>([])
+// Append `<T>:<bundesland>` (e.g. `'T-02:nrw'`) when a content author
+// fills a verified state-specific addendum.
+const ACKNOWLEDGED_OVERRIDES: ReadonlySet<string> = new Set<string>([
+  // B2 batch 1 — NRW × T-02..T-08 authored 2026-05-28. §§ verified via
+  // verify:template-tail-citations against corpus (primary-source tier
+  // for NRW; federal verified for BauGB/BauNVO/GEG).
+  'T-02:nrw',
+  'T-03:nrw',
+  'T-04:nrw',
+  'T-05:nrw',
+  'T-06:nrw',
+  'T-07:nrw',
+  'T-08:nrw',
+])
 
 interface Violation {
   template: TemplateId
