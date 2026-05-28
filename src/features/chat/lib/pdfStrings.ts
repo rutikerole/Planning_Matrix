@@ -62,7 +62,7 @@ const EN: PdfStrings = {
   'toc.entry.4': 'Timeline · Gantt overview',
   'toc.entry.5': 'Procedures · permit path',
   'toc.entry.6': 'Documents',
-  'toc.entry.7': 'Team & stakeholders',
+  'toc.entry.7': 'Team & project stakeholders',
   'toc.entry.8': 'Recommendations · prioritised',
   'toc.entry.9': 'Key project data · qualifier table',
   'toc.entry.10': 'Verification status & signature',
@@ -102,7 +102,7 @@ const EN: PdfStrings = {
 
   // ─── v1.0.16 Renaissance Part 2B — Costs ──────────────────────
   'costs.kicker': 'SECTION 03 · COSTS',
-  'costs.title': 'Estimated cost range',
+  'costs.title': 'Estimated consultation cost',
   // v1.0.22 Bug I — drop the "{state} regional BKI factor" framing.
   // The cost engine REGION_MULT table maps Bayern → 1.0 and silently
   // falls through to 1.0 for every other state; the label promised a
@@ -249,11 +249,11 @@ const EN: PdfStrings = {
     'A few state-specific certificate §§ (e.g. the structural certificate under the separate inspection regime) are still being aligned — confirm the exact requirements for those documents with the local building authority.',
 
   // ─── v1.0.17 — Team & Stakeholders ────────────────────────────
-  'team.kicker': 'SECTION 07 · TEAM & STAKEHOLDERS',
-  'team.title': 'Team & stakeholders',
+  'team.kicker': 'SECTION 07 · TEAM & PROJECT STAKEHOLDERS',
+  'team.title': 'Team & project stakeholders',
   'team.specialists.h': 'SPECIALISTS',
   'team.specialists.empty': 'No specialists identified yet.',
-  'team.stakeholders.h': 'STAKEHOLDERS',
+  'team.stakeholders.h': 'PROJECT STAKEHOLDERS',
   'team.role.owner': 'Owner (Bauherr:in)',
   'team.role.owner.body':
     'Commissions the project, carries the costs, makes decisions.',
@@ -320,7 +320,7 @@ const DE: PdfStrings = {
   'toc.entry.4': 'Zeitplan · Gantt-Übersicht',
   'toc.entry.5': 'Verfahren · Genehmigungspfad',
   'toc.entry.6': 'Dokumente',
-  'toc.entry.7': 'Team & Beteiligte',
+  'toc.entry.7': 'Team & Projektbeteiligte',
   'toc.entry.8': 'Empfehlungen · priorisiert',
   'toc.entry.9': 'Projektdaten · Qualifikatorentabelle',
   'toc.entry.10': 'Verifizierungsstatus & Unterschrift',
@@ -358,7 +358,7 @@ const DE: PdfStrings = {
 
   // ─── v1.0.16 Renaissance Part 2B — Costs ──────────────────────
   'costs.kicker': 'ABSCHNITT 03 · KOSTEN',
-  'costs.title': 'Geschätzte Kostenspanne',
+  'costs.title': 'Geschätzte Planungs- & Beratungskosten',
   // v1.0.22 Bug I — see EN counterpart above. Honest baseline framing.
   'costs.basisTemplate':
     'Berechnet aus {n} m² Fassade · HOAI Zone III · deutscher Basiswert (regionale Varianz +/-10%)',
@@ -486,12 +486,12 @@ const DE: PdfStrings = {
     'Einzelne landesspezifische Nachweis-§§ (z. B. der Statik-Nachweis im Prüf-Regime) noch in Abstimmung — die genauen Anforderungen für diese Nachweise mit dem lokalen Bauamt bestätigen.',
 
   // ─── v1.0.17 — Team & Stakeholders ────────────────────────────
-  'team.kicker': 'ABSCHNITT 07 · TEAM & BETEILIGTE',
-  'team.title': 'Team & Beteiligte',
+  'team.kicker': 'ABSCHNITT 07 · TEAM & PROJEKTBETEILIGTE',
+  'team.title': 'Team & Projektbeteiligte',
   'team.specialists.h': 'FACHPLANER:INNEN',
   'team.specialists.empty':
     'Noch keine Fachplaner:innen identifiziert.',
-  'team.stakeholders.h': 'BETEILIGTE',
+  'team.stakeholders.h': 'PROJEKTBETEILIGTE',
   'team.role.owner': 'Bauherr:in',
   'team.role.owner.body':
     'Beauftragt das Vorhaben, trägt die Kosten, entscheidet.',

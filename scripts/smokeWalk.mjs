@@ -2315,8 +2315,8 @@ async function runStaticGate() {
       msg: 'costs.kicker bilingual',
     },
     {
-      ok: /'costs\.title':\s*'Estimated cost range'/.test(stringsV16Costs) &&
-          /'costs\.title':\s*'Geschätzte Kostenspanne'/.test(stringsV16Costs),
+      ok: /'costs\.title':\s*'Estimated consultation cost'/.test(stringsV16Costs) &&
+          /'costs\.title':\s*'Geschätzte Planungs- & Beratungskosten'/.test(stringsV16Costs),
       msg: 'costs.title bilingual',
     },
     {
@@ -3977,9 +3977,9 @@ async function runStaticGate() {
       msg: 'Documents section VI kickers bilingual in pdfStrings',
     },
     {
-      ok: /'team\.kicker':\s*'SECTION 07 · TEAM & STAKEHOLDERS'/.test(stringsForV16Sec) &&
-          /'team\.kicker':\s*'ABSCHNITT 07 · TEAM & BETEILIGTE'/.test(stringsForV16Sec),
-      msg: 'Team & Stakeholders section VII kickers bilingual in pdfStrings',
+      ok: /'team\.kicker':\s*'SECTION 07 · TEAM & PROJECT STAKEHOLDERS'/.test(stringsForV16Sec) &&
+          /'team\.kicker':\s*'ABSCHNITT 07 · TEAM & PROJEKTBETEILIGTE'/.test(stringsForV16Sec),
+      msg: 'Team & Project Stakeholders section VII kickers bilingual in pdfStrings',
     },
     {
       ok: /team\.role\.owner/.test(stringsForV16Sec) &&

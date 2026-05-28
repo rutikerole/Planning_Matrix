@@ -205,8 +205,8 @@ const BAYERN_LEAK_TOKENS: Array<{ rx: RegExp; label: string }> = [
 
 // Core section headers — parity proxy (must exist in BOTH locales).
 const SECTION_HEADERS = {
-  de: ['Inhaltsverzeichnis', 'A · B · C Status', 'Geschätzte Kostenspanne', 'Geschätzter Zeitplan'],
-  en: ['Table of contents', 'A · B · C status', 'Estimated cost range', 'Estimated timeline'],
+  de: ['Inhaltsverzeichnis', 'A · B · C Status', 'Geschätzte Planungs- & Beratungskosten', 'Geschätzter Zeitplan'],
+  en: ['Table of contents', 'A · B · C status', 'Estimated consultation cost', 'Estimated timeline'],
 } as const
 
 const HONEST_FRAMING_RX = /in Vorbereitung|being finalized|in preparation/u

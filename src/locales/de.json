@@ -1980,17 +1980,33 @@
         "tab": "Noch nicht genug Informationen — setzen Sie die Beratung fort, um diesen Abschnitt zu vervollständigen.",
         "continue": "Beratung fortsetzen →"
       },
+      "overview": {
+        "govResources": {
+          "eyebrow": "Behörden & amtliche Quellen",
+          "intro": "Amtliche Quellen für Ihren Bauantrag — bundesweit und für Ihr Bundesland.",
+          "disclaimer": "Amtliche Links; öffnen in einem neuen Tab. Inhalte werden von der jeweiligen Behörde gepflegt.",
+          "cat": {
+            "authority": "Bauaufsicht / Ministerium",
+            "geoportal": "Bebauungspläne (Geoportal)",
+            "chamber": "Architektenkammer",
+            "lawText": "Gesetzestext",
+            "city": "Lokale Baubehörde",
+            "funding": "Förderung",
+            "fees": "Honorartabelle"
+          }
+        }
+      },
       "team": {
         "eyebrow": "Benötigtes Team",
         "count_one": "{{count}} Fachperson",
         "count_other": "{{count}} Fachpersonen",
-        "stakeholdersEyebrow": "Beteiligte",
+        "stakeholdersEyebrow": "Projektbeteiligte",
         "effortLabel": "Aufwand",
         "baselineNote": "Vorgeschlagener Standard für Vorhaben dieser Art — wird durch konkrete Berater:innen-Empfehlungen überschrieben.",
         "likelyBadge": "wahrscheinlich"
       },
       "cost": {
-        "costEyebrow": "Kostenrahmen",
+        "costEyebrow": "Planungs- & Beratungskosten",
         "confidence": "Sicherheit der Schätzung: ±25 %",
         "totalEstimated": "Summe (geschätzt)",
         "caveat": "Orientierungswerte aus den HOAI-Honorartafeln · keine verbindlichen Quoten.",

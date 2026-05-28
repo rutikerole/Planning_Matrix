@@ -111,7 +111,6 @@ export function CostTimelineTab({ project, state }: Props) {
   const band = costBandFor(state.templateId)
 
   const totalWeight = totalPhaseWeight()
-  const maxBar = Math.max(...COST_LINES.map((l) => cost[l.key].max), 1)
 
   return (
     <div className="flex flex-col gap-10 max-w-[1100px]">
@@ -163,8 +162,6 @@ export function CostTimelineTab({ project, state }: Props) {
         <div className="border border-ink/12 rounded-[10px] bg-paper-card p-4 sm:p-5 flex flex-col gap-3">
           {COST_LINES.map((line) => {
             const bucket = cost[line.key]
-            const startPct = (bucket.min / maxBar) * 100
-            const widthPct = ((bucket.max - bucket.min) / maxBar) * 100
             const rationale =
               line.key !== 'total'
                 ? findCostRationale(line.key, project.bundesland)
@@ -172,7 +169,7 @@ export function CostTimelineTab({ project, state }: Props) {
             return (
               <div
                 key={line.key}
-                className="grid grid-cols-1 sm:grid-cols-[170px_1fr_auto] sm:items-start gap-1.5 sm:gap-3 text-[12.5px]"
+                className="grid grid-cols-1 sm:grid-cols-[1fr_auto] sm:items-baseline gap-0.5 sm:gap-6 text-[12.5px]"
                 title={t('result.workspace.cost.computedFromTooltip', {
                   inputs: inputsLabel,
                 })}
@@ -189,31 +186,18 @@ export function CostTimelineTab({ project, state }: Props) {
                     </span>
                   )}
                 </div>
-                <div
-                  aria-hidden="true"
-                  className="relative h-2 bg-ink/8 rounded-[1px] overflow-hidden mt-1.5"
-                >
-                  <span
-                    className="absolute top-0 h-2 bg-clay/55 rounded-[1px]"
-                    style={{
-                      left: `${startPct}%`,
-                      width: `${Math.max(widthPct, 1)}%`,
-                    }}
-                  />
-                </div>
-                <span className="font-serif italic text-clay-deep tabular-nums whitespace-nowrap text-right mt-1">
+                <span className="font-serif italic text-clay-deep tabular-nums whitespace-nowrap sm:text-right">
                   {formatEurRange(bucket, lang)}
                 </span>
               </div>
             )
           })}
           <span aria-hidden="true" className="block h-px w-full bg-ink/12 mt-1" />
-          <div className="grid grid-cols-1 sm:grid-cols-[170px_1fr_auto] sm:items-baseline gap-1.5 sm:gap-3 text-[13.5px]">
+          <div className="grid grid-cols-1 sm:grid-cols-[1fr_auto] sm:items-baseline gap-0.5 sm:gap-6 text-[13.5px]">
             <span className="font-medium text-ink leading-snug">
               {t('result.workspace.cost.totalEstimated')}
             </span>
-            <span aria-hidden="true" className="hidden sm:block" />
-            <span className="font-serif italic text-clay-deep tabular-nums whitespace-nowrap text-right">
+            <span className="font-serif italic text-clay-deep tabular-nums whitespace-nowrap sm:text-right">
               {formatEurRange(cost.total, lang)}
             </span>
           </div>

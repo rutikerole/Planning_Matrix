@@ -287,56 +287,44 @@ function runErosion(): Tally {
 }
 
 function runLegalDomains(): Tally {
-  console.log('\n[smoke-architect] composeLegalDomains Domain B (Commit 3 / Bug 54)…')
+  console.log('\n[smoke-architect] composeLegalDomains jurisdictional bands (Phase D · N/R/M; Bug 54/66)…')
   const t: Tally = { passed: 0, failed: 0 }
-  const domB = (file: string, lang: 'de' | 'en') => {
+  // Phase D — bands are jurisdictional: N national/Bundesrecht, R
+  // regional/Landesrecht, M municipal/Kommunalrecht. The Landesbauordnung
+  // procedure citation now lands in the Regional band; GEG/DIN/TA Lärm
+  // (federal) land in the National band.
+  const labelsOf = (file: string, lang: 'de' | 'en', key: 'N' | 'R' | 'M') => {
     const { state, bundesland } = loadFixtureState(file)
     const domains = composeLegalDomains(state as never, lang, bundesland)
-    return domains.find((d) => d.key === 'B')
+    return (domains.find((d) => d.key === key)?.rows ?? []).map((r) => r.label)
   }
 
-  // NRW T-05 (substantive, verfahrensfrei) → B populated with § 62.
+  // NRW T-05 (substantive, verfahrensfrei) → Regional band cites § 62 BauO NRW.
   for (const lang of ['de', 'en'] as const) {
-    const b = domB('test/fixtures/nrw-t05-bonn-verfahrensfrei.json', lang)
-    ok(t, (b?.rows.length ?? 0) > 0, `NRW T-05 ${lang}: Domain B has rows (was empty pre-Bug-54)`)
-    ok(
-      t,
-      b?.rows.some((r) => /§\s*62\s+BauO\s+NRW/.test(r.label)) ?? false,
-      `NRW T-05 ${lang}: Domain B cites § 62 BauO NRW`,
-    )
+    const r = labelsOf('test/fixtures/nrw-t05-bonn-verfahrensfrei.json', lang, 'R')
+    ok(t, r.length > 0, `NRW T-05 ${lang}: Regional band has rows (was empty pre-Bug-54)`)
+    ok(t, r.some((l) => /§\s*62\s+BauO\s+NRW/.test(l)), `NRW T-05 ${lang}: Regional band cites § 62 BauO NRW`)
   }
-  // Sachsen T-01 — was a STUB ("Landesbauordnung Sachsen") pre-Phase-B; Phase B
-  // flipped Sachsen substantive (corpus-backed SächsBO), so Domain B now cites a
-  // real "§ NN SächsBO". The old stub-label assertion went silently red after
-  // that flip (smoke:architect was not in CI — fixed in this sprint). Assert the
-  // substantive behaviour instead.
+  // Sachsen T-01 — Phase B flipped Sachsen substantive (corpus-backed SächsBO),
+  // so the Regional band cites a real "§ NN SächsBO", not the old stub label.
   for (const lang of ['de', 'en'] as const) {
-    const b = domB('test/fixtures/sachsen-t01-leipzig.json', lang)
-    ok(t, (b?.rows.length ?? 0) > 0, `Sachsen T-01 ${lang}: Domain B has rows (substantive, not empty)`)
-    ok(
-      t,
-      b?.rows.some((r) => /§\s*\d+[a-z]?\s+SächsBO/.test(r.label)) ?? false,
-      `Sachsen T-01 ${lang}: Domain B cites a real SächsBO § (substantive, not the old stub)`,
-    )
+    const r = labelsOf('test/fixtures/sachsen-t01-leipzig.json', lang, 'R')
+    ok(t, r.length > 0, `Sachsen T-01 ${lang}: Regional band has rows (substantive, not empty)`)
+    ok(t, r.some((l) => /§\s*\d+[a-z]?\s+SächsBO/.test(l)), `Sachsen T-01 ${lang}: Regional band cites a real SächsBO §`)
   }
-  // Bayern regression — BayBO matchers still drive Domain B (corpus has
-  // "BayBO Art. 59" in the area-B reason).
-  const bayB = domB('test/fixtures/bayern-t03-verified.json', 'de')
-  ok(t, (bayB?.rows.length ?? 0) > 0, 'Bayern T-03: Domain B still populated (BayBO matchers)')
-  ok(
-    t,
-    bayB?.rows.some((r) => /BayBO/.test(r.label)) ?? false,
-    'Bayern T-03: Domain B still cites BayBO (no regression)',
-  )
-  // C4 / Bug 66 — Hamburg T-02 GK 4 MFH Domain B is substantive (§ 61 HBauO
-  // procedure + GEG 2024 + Brandschutz + DIN 4109), not a single stub row.
+  // Bayern regression — BayBO matchers drive the Regional band.
+  const bayR = labelsOf('test/fixtures/bayern-t03-verified.json', 'de', 'R')
+  ok(t, bayR.length > 0, 'Bayern T-03: Regional band populated (BayBO matchers)')
+  ok(t, bayR.some((l) => /BayBO/.test(l)), 'Bayern T-03: Regional band cites BayBO (no regression)')
+  // C4 / Bug 66 + Phase D — Hamburg T-02 GK 4 MFH: § 61 HBauO + Brandschutz in
+  // the Regional band; GEG 2024 + DIN 4109 are federal → National band.
   for (const lang of ['de', 'en'] as const) {
-    const b = domB('test/fixtures/hamburg-t02-mfh.json', lang)
-    const labels = (b?.rows ?? []).map((r) => r.label)
-    ok(t, labels.some((l) => /§\s*61\s+HBauO/.test(l)), `Hamburg T-02 ${lang}: Domain B cites § 61 HBauO`)
-    ok(t, labels.includes('GEG 2024'), `Hamburg T-02 ${lang}: Domain B has GEG 2024`)
-    ok(t, labels.includes('Brandschutz'), `Hamburg T-02 ${lang}: Domain B has Brandschutz`)
-    ok(t, labels.includes('DIN 4109'), `Hamburg T-02 ${lang}: Domain B has DIN 4109 (Bug 66 fill)`)
+    const r = labelsOf('test/fixtures/hamburg-t02-mfh.json', lang, 'R')
+    const n = labelsOf('test/fixtures/hamburg-t02-mfh.json', lang, 'N')
+    ok(t, r.some((l) => /§\s*61\s+HBauO/.test(l)), `Hamburg T-02 ${lang}: Regional band cites § 61 HBauO`)
+    ok(t, r.includes('Brandschutz'), `Hamburg T-02 ${lang}: Regional band has Brandschutz`)
+    ok(t, n.includes('GEG 2024'), `Hamburg T-02 ${lang}: National band has GEG 2024`)
+    ok(t, n.includes('DIN 4109'), `Hamburg T-02 ${lang}: National band has DIN 4109 (Bug 66 fill)`)
   }
   return t
 }
@@ -704,16 +692,17 @@ function runSaxonyT04(): Tally {
   const project = fx.project
   const state = fx.project.state
 
-  // Bug 89 — Domain B picks up the substantive building-law topics.
+  // Bug 89 + Phase D — substantive building-law topics land in their
+  // jurisdictional band: TA Lärm + DIN 4109 are federal → National (N);
+  // Rettungsweg + Brandschutz are state-governed → Regional (R).
   for (const lang of ['de', 'en'] as const) {
-    const b = composeLegalDomains(state, lang, project.bundesland).find(
-      (d) => d.key === 'B',
-    )
-    const labels = (b?.rows ?? []).map((r) => r.label)
-    ok(t, labels.includes('TA Lärm'), `T-04 ${lang}: Domain B has TA Lärm (Bug 89)`)
-    ok(t, labels.includes('Rettungsweg'), `T-04 ${lang}: Domain B has Rettungsweg (Bug 89)`)
-    ok(t, labels.includes('DIN 4109'), `T-04 ${lang}: Domain B has DIN 4109 (Bug 89)`)
-    ok(t, labels.includes('Brandschutz'), `T-04 ${lang}: Domain B has Brandschutz (Bug 89)`)
+    const domains = composeLegalDomains(state, lang, project.bundesland)
+    const n = (domains.find((d) => d.key === 'N')?.rows ?? []).map((r) => r.label)
+    const r = (domains.find((d) => d.key === 'R')?.rows ?? []).map((r) => r.label)
+    ok(t, n.includes('TA Lärm'), `T-04 ${lang}: National band has TA Lärm (Bug 89)`)
+    ok(t, n.includes('DIN 4109'), `T-04 ${lang}: National band has DIN 4109 (Bug 89)`)
+    ok(t, r.includes('Rettungsweg'), `T-04 ${lang}: Regional band has Rettungsweg (Bug 89)`)
+    ok(t, r.includes('Brandschutz'), `T-04 ${lang}: Regional band has Brandschutz (Bug 89)`)
   }
 
   // Bug 96 — Heritage risk suppressed (denkmalschutz ASSUMED "nicht bekannt").
