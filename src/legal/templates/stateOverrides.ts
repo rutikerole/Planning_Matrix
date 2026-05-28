@@ -129,8 +129,63 @@ DENKMAL & ERHALTUNGSSATZUNG:
 • Land — DSchG NRW als separate Landesvorschrift (konkrete §-Verweise
   nicht im Korpus). Zuständige Behörde: LVR-Amt für Denkmalpflege im
   Rheinland bzw. LWL-Denkmalpflege Westfalen.`,
-    // BUCKET-B-CONTENT: needs verified §§ from legal review (NI NBauO).
-    niedersachsen: null,
+    // B2 batch 2 — NI × T-02 authored 2026-05-28. NBauO §§ corpus-verified
+    // (secondary-mirror tier — baunormenlexikon.de + voris). § 62 cited as
+    // "sonstige genehmigungsfreie" per heading; NOT called "Genehmigungsfreistellung".
+    niedersachsen: `══════════════════════════════════════════════════════════════════════════
+LANDESSPEZIFISCHER ZUSATZ — NI × T-02 (Neubau Mehrfamilienhaus)
+══════════════════════════════════════════════════════════════════════════
+
+Bei Projekten in NIEDERSACHSEN: die §§ der NBauO (Niedersächsische
+Bauordnung) ersetzen sämtliche oben genannten Bayern-Verweise. Quelle:
+baunormenlexikon.de und voris (mirror-tier; bei rechtlich kritischen
+Fragen voris.niedersachsen.de als Primärquelle gegenprüfen).
+
+VERFAHREN — NBauO:
+• Verfahrensfreie Baumaßnahmen — § 60 NBauO (Hauptkatalog inkl. Abbruchanzeige).
+• Sonstige genehmigungsfreie Baumaßnahmen — § 62 NBauO.
+• Vereinfachtes Baugenehmigungsverfahren — § 63 NBauO.
+• Reguläres Baugenehmigungsverfahren — § 64 NBauO.
+
+ROUTING (MFH-typisch):
+MFH erreicht häufig Gebäudeklasse 3 bis 5 nach § 2 NBauO. Bei Sonderbau-
+Tatbestand (§ 51 NBauO) ist das reguläre Verfahren nach § 64 NBauO
+zwingend. Ohne Sonderbau-Eigenschaft: vereinfachtes Verfahren nach
+§ 63 NBauO.
+
+ANTRAG & VORLAGEN:
+• Bauantrag und Bauvorlagen — § 67 NBauO.
+• Entwurfsverfasser-Eignung (NI-Pendant zur Bauvorlageberechtigung) —
+  § 53 NBauO.
+• Form und Inhalt der Bauvorlagen: separate BauVorlVO Nds (kein §-Verweis
+  im Korpus — Verordnung als Quelle referenzieren).
+
+TECHNISCHE ANFORDERUNGEN:
+• Grenzabstände (NI-Pendant zu Abstandsflächen) — § 5 NBauO. Abstände
+  auf demselben Baugrundstück — § 7 NBauO.
+• Standsicherheit — § 12 NBauO. Bautechnische Nachweise — § 65 NBauO.
+• Brandschutz allgemein — § 14 NBauO. Baustoffe/Bauteile — § 26 NBauO.
+  Brandwände — § 30 NBauO. Rettungswege — § 33 NBauO.
+• Stellplätze (NI gliedert in drei §§): bauliche Anlagen für Kfz —
+  § 46 NBauO. Notwendige Einstellplätze — § 47 NBauO. Fahrradabstell-
+  anlagen — § 48 NBauO.
+
+BUNDESRECHT (gilt universal):
+• Zulässigkeit — § 30 BauGB, § 31 BauGB, § 34 BauGB, § 35 BauGB.
+• Baugebiete + Maß — § 1 BauNVO, § 3 BauNVO, § 4 BauNVO, § 6 BauNVO,
+  § 16 BauNVO, § 19 BauNVO, § 23 BauNVO. Stellplätze — § 12 BauNVO.
+• Energie — § 10 GEG (Niedrigstenergiegebäude). § 80 GEG (Energieausweis).
+
+PV-PFLICHT in NI:
+NICHT in der NBauO geregelt, sondern im NKlimaG bzw. einer separaten
+Solar-Verordnung. Konkrete §-Verweise NICHT im Korpus — falls relevant,
+geltende NI-Solar-Pflicht-Vorschrift referenzieren. Nicht erfinden.
+
+DENKMAL & ERHALTUNGSSATZUNG:
+• Bundesanker — § 172 BauGB (Erhaltungssatzungs-Gebiet).
+• Land — NDSchG als separate Landesvorschrift (konkrete §-Verweise nicht
+  im Korpus). Zuständige Behörde: Niedersächsisches Landesamt für
+  Denkmalpflege (NLD).`,
   },
   // ── T-03 Sanierung ───────────────────────────────────────────────
   'T-03': {
@@ -186,8 +241,54 @@ NICHT IM Korpus (NICHT erfinden):
 • Land-DSchG-§§ — wie oben; mit Denkmalpflege abklären.
 • Solar-/PV-Pflicht bei Sanierung — separate NRW-Vorschrift; nicht in der
   BauO geregelt; geltende Verordnung referenzieren.`,
-    // BUCKET-B-CONTENT: needs verified §§ from legal review (NI NBauO).
-    niedersachsen: null,
+    // B2 batch 2 — NI × T-03 authored 2026-05-28. NBauO §§ corpus-verified.
+    // § 85a NBauO = dedicated Umbau/Nutzungsänderungs-§ (NI HAS this, unlike NRW).
+    niedersachsen: `══════════════════════════════════════════════════════════════════════════
+LANDESSPEZIFISCHER ZUSATZ — NI × T-03 (Sanierung / Modernisierung)
+══════════════════════════════════════════════════════════════════════════
+
+Bei Sanierungs-/Modernisierungs-Projekten in NIEDERSACHSEN: die §§ der
+NBauO ersetzen sämtliche oben genannten Bayern-Verweise. Quelle:
+baunormenlexikon.de und voris (mirror-tier).
+
+ROUTING:
+Reine Instandhaltung/Modernisierung ohne Eingriff in Statik, Brandschutz
+oder Nutzung fällt häufig unter § 60 NBauO (verfahrensfreie Baumaßnahmen).
+Bei Umbau bzw. wesentlicher struktureller Änderung ist § 85a NBauO
+einschlägig (Umbaumaßnahmen und Nutzungsänderungen); je nach Tiefe folgt
+das vereinfachte Verfahren nach § 63 NBauO oder das reguläre Verfahren
+nach § 64 NBauO.
+
+VERFAHREN — NBauO:
+• Verfahrensfreie Maßnahmen — § 60 NBauO.
+• Umbaumaßnahmen und Nutzungsänderungen — § 85a NBauO.
+• Vereinfachtes Baugenehmigungsverfahren — § 63 NBauO.
+
+TECHNISCHE NACHWEISE BEI EINGRIFF:
+• Standsicherheit bei tragenden Eingriffen — § 12 NBauO.
+• Bautechnische Nachweise — § 65 NBauO.
+• Brandschutz allgemein — § 14 NBauO. Baustoffe/Bauteile — § 26 NBauO.
+  Brandwände — § 30 NBauO. Rettungswege — § 33 NBauO.
+
+ANTRAG:
+• Bauantrag + Bauvorlagen — § 67 NBauO. Entwurfsverfasser-Eignung —
+  § 53 NBauO.
+
+ENERGIE (Bundesrecht):
+• Bestandsänderung — § 48 GEG (Anforderungen bei Änderung bestehender
+  Gebäude). Niedrigstenergie-Grundsatz allgemein — § 10 GEG.
+
+DENKMALSCHUTZ:
+Bei eingetragenem Baudenkmal oder Ensemble — NDSchG (separate
+Landesvorschrift; konkrete §-Verweise nicht im Korpus). Vor Sanierung
+ist das Niedersächsische Landesamt für Denkmalpflege (NLD) anzuhören.
+Federal-Anker bei Erhaltungssatzung — § 172 BauGB.
+
+NICHT IM Korpus (NICHT erfinden):
+• Land-Denkmal-§§ — wie oben mit NLD abklären.
+• Solar-/PV-Pflicht bei Sanierung — NKlimaG bzw. separate NI-Solar-
+  Verordnung; nicht in der NBauO geregelt; geltende Vorschrift
+  referenzieren.`,
   },
   // ── T-04 Umnutzung ───────────────────────────────────────────────
   'T-04': {
@@ -238,8 +339,49 @@ NICHT IM BauO-NRW-Korpus (NICHT erfinden):
 • Dedizierter Nutzungsänderungs-§ existiert nicht in NRW — das ist KEIN
   Korpus-Defekt, sondern die Rechtslage.
 • Land-DSchG-§§ — separate Vorschrift, mit Denkmalpflege abzustimmen.`,
-    // BUCKET-B-CONTENT: needs verified §§ from legal review (NI NBauO).
-    niedersachsen: null,
+    // B2 batch 2 — NI × T-04 authored 2026-05-28. NBauO §§ corpus-verified.
+    // § 85a NBauO is the dedicated Nutzungsänderungs-§ (NI has this, NRW doesn't).
+    niedersachsen: `══════════════════════════════════════════════════════════════════════════
+LANDESSPEZIFISCHER ZUSATZ — NI × T-04 (Nutzungsänderung / Umnutzung)
+══════════════════════════════════════════════════════════════════════════
+
+Bei Nutzungsänderungs-Projekten in NIEDERSACHSEN: die §§ der NBauO
+ersetzen sämtliche oben genannten Bayern-Verweise. Quelle:
+baunormenlexikon.de und voris (mirror-tier).
+
+ROUTING:
+NI hat einen dedizierten §-Anker für Nutzungsänderungen — § 85a NBauO
+(Umbaumaßnahmen und Nutzungsänderungen). Der Verfahrensweg richtet sich
+nach Größe und Sonderbau-Tatbestand:
+
+VERFAHREN — NBauO:
+• Nutzungsänderungs-Anker — § 85a NBauO.
+• Vereinfachtes Baugenehmigungsverfahren — § 63 NBauO.
+• Reguläres Baugenehmigungsverfahren — § 64 NBauO (bei Sonderbau-
+  Tatbestand der neuen Nutzung, § 51 NBauO).
+
+GEBIETSVERTRÄGLICHKEIT (Bundesrecht):
+• Zulässigkeit der neuen Nutzung — § 30 BauGB, § 31 BauGB, § 34 BauGB,
+  § 35 BauGB.
+• Baugebiete und Nutzungsarten — § 1 BauNVO bis § 9 BauNVO, § 4a BauNVO
+  (besondere Wohngebiete).
+• Erhaltungssatzung — § 172 BauGB.
+
+TECHNISCHE FOLGEN DER NEUEN NUTZUNG:
+• Brandschutz nach neuer Nutzung — § 14 NBauO, § 26 NBauO, § 30 NBauO,
+  § 33 NBauO.
+• Stellplatzbedarf nach neuer Nutzung: bauliche Anlagen für Kfz —
+  § 46 NBauO. Notwendige Einstellplätze — § 47 NBauO. Fahrradabstell-
+  anlagen — § 48 NBauO. Bundes-Maß ergänzend — § 12 BauNVO.
+• Standsicherheit bei strukturellen Anpassungen — § 12 NBauO.
+  Bautechnische Nachweise — § 65 NBauO.
+
+ANTRAG:
+• Bauantrag + Bauvorlagen — § 67 NBauO. Entwurfsverfasser-Eignung —
+  § 53 NBauO.
+
+NICHT IM NBauO-Korpus (NICHT erfinden):
+• Land-Denkmal-§§ — NDSchG mit NLD abklären.`,
   },
   // ── T-05 Abbruch ─────────────────────────────────────────────────
   'T-05': {
@@ -284,8 +426,49 @@ NICHT IM BauO-NRW-Korpus (NICHT erfinden):
   nicht in der BauO geregelt; auf die jeweils geltende Bundes- bzw.
   EU-Regelung verweisen.
 • Land-DSchG-§§ — wie oben mit Denkmalpflege abklären.`,
-    // BUCKET-B-CONTENT: needs verified §§ from legal review (NI NBauO).
-    niedersachsen: null,
+    // B2 batch 2 — NI × T-05 authored 2026-05-28. NBauO §§ corpus-verified.
+    // § 79 NBauO INTENTIONALLY OMITTED — its heading is enforcement against
+    // illegal/decaying structures, not owner-initiated demolition procedure.
+    niedersachsen: `══════════════════════════════════════════════════════════════════════════
+LANDESSPEZIFISCHER ZUSATZ — NI × T-05 (Abbruch / Beseitigung)
+══════════════════════════════════════════════════════════════════════════
+
+Bei Abbruch-/Beseitigungsvorhaben in NIEDERSACHSEN: die §§ der NBauO
+ersetzen sämtliche oben genannten Bayern-Verweise. Quelle:
+baunormenlexikon.de und voris (mirror-tier).
+
+ROUTING:
+Die Beseitigung baulicher Anlagen ist in NI primär über § 60 NBauO
+geregelt — er kombiniert die verfahrensfreien Baumaßnahmen mit dem
+Institut der Abbruchanzeige.
+
+VERFAHREN — NBauO:
+• Verfahrensfreie Baumaßnahmen und Abbruchanzeige — § 60 NBauO.
+
+Innerhalb der in § 60 NBauO genannten Tatbestände ist der Abbruch
+verfahrensfrei bzw. genügt eine Abbruchanzeige; außerhalb dieser
+Tatbestände ist eine Beseitigungsgenehmigung erforderlich (in der Regel
+über das vereinfachte Verfahren nach § 63 NBauO bzw. das reguläre
+Verfahren nach § 64 NBauO).
+
+DENKMAL & ERHALTUNGSSATZUNG (OVERRIDE der Verfahrensfreiheit):
+• Federal-Anker — § 172 BauGB: innerhalb eines Erhaltungssatzungs-
+  Bereichs ist der Abbruch genehmigungspflichtig, auch wenn er sonst
+  verfahrensfrei wäre.
+• Land-Denkmal — NDSchG (separate Landesvorschrift; konkrete §-Verweise
+  nicht im Korpus). Bei eingetragenem Baudenkmal: Abbruch nur mit
+  denkmalrechtlicher Genehmigung; Niedersächsisches Landesamt für
+  Denkmalpflege (NLD) einbeziehen.
+
+DOKUMENTE:
+• Entwurfsverfasser-Eignung — § 53 NBauO.
+• Statik der Restanlage bei Teilabbruch — § 12 NBauO.
+
+NICHT IM NBauO-Korpus (NICHT erfinden):
+• Schadstoff-/Entsorgungs-§§ — KrWG, GefStoffV und EU-Vorgaben sind
+  nicht in der NBauO geregelt; auf die jeweils geltende Bundes- bzw.
+  EU-Regelung verweisen.
+• Land-Denkmal-§§ — wie oben mit NLD abklären.`,
   },
   // ── T-06 Aufstockung ─────────────────────────────────────────────
   'T-06': {
@@ -338,8 +521,55 @@ BAUPLANUNGSRECHT (Bundesrecht):
 ANTRAG:
 • Bauantrag + Bauvorlagen — § 70 BauO NRW. Bauvorlageberechtigung —
   § 67 BauO NRW.`,
-    // BUCKET-B-CONTENT: needs verified §§ from legal review (NI NBauO).
-    niedersachsen: null,
+    // B2 batch 2 — NI × T-06 authored 2026-05-28. NBauO §§ corpus-verified.
+    niedersachsen: `══════════════════════════════════════════════════════════════════════════
+LANDESSPEZIFISCHER ZUSATZ — NI × T-06 (Aufstockung / Dachgeschossausbau)
+══════════════════════════════════════════════════════════════════════════
+
+Bei Aufstockungs-/DG-Ausbau-Projekten in NIEDERSACHSEN: die §§ der NBauO
+ersetzen sämtliche oben genannten Bayern-Verweise. Quelle:
+baunormenlexikon.de und voris (mirror-tier).
+
+ROUTING:
+Aufstockung wird regelmäßig im vereinfachten Verfahren nach § 63 NBauO
+behandelt. Bei Aufstockung können sich Gebäudeklasse, Grenzabstände und
+Brandschutz ändern; die Standsicherheit der Bestandskonstruktion ist
+gesondert nachzuweisen. Bei wesentlichem Umbauanteil ist § 85a NBauO
+einschlägig.
+
+VERFAHREN:
+• Vereinfachtes Baugenehmigungsverfahren — § 63 NBauO.
+• Umbaumaßnahmen und Nutzungsänderungen — § 85a NBauO (bei Umbau).
+
+GEBÄUDEKLASSE & GRENZABSTÄNDE (kritisch bei Aufstockung):
+• Gebäudeklasse — § 2 NBauO. Höhen-/Stockwerksgrenzen entscheiden, ob
+  die Aufstockung die GK anhebt. Ein GK-Sprung kann strengeren Brandschutz
+  auslösen.
+• Grenzabstände (NI-Pendant zu Abstandsflächen) — § 5 NBauO. An der
+  neuen, höheren Wand neu zu bemessen. Abstände auf demselben Baugrund-
+  stück — § 7 NBauO.
+
+TECHNISCHE NACHWEISE (BESTANDSSTATIK):
+• Standsicherheit der Bestandskonstruktion und neuer Aufbauten —
+  § 12 NBauO. Bautechnische Nachweise — § 65 NBauO.
+• Brandschutz nach ggf. höherer GK — § 14 NBauO, § 26 NBauO, § 30 NBauO,
+  § 33 NBauO.
+
+STELLPLÄTZE (bei neuen Wohneinheiten):
+• Bauliche Anlagen für Kfz — § 46 NBauO. Notwendige Einstellplätze —
+  § 47 NBauO. Fahrradabstellanlagen — § 48 NBauO.
+
+ENERGIE (Bundesrecht):
+• Bestandsänderung — § 48 GEG. Niedrigstenergie-Grundsatz allgemein —
+  § 10 GEG.
+
+BAUPLANUNGSRECHT (Bundesrecht):
+• Zulässigkeit — § 30 BauGB, § 34 BauGB. Maß — § 19 BauNVO (GRZ),
+  § 20 BauNVO (Vollgeschosse/GFZ), § 23 BauNVO (überbaubare Fläche).
+
+ANTRAG:
+• Bauantrag + Bauvorlagen — § 67 NBauO. Entwurfsverfasser-Eignung —
+  § 53 NBauO.`,
   },
   // ── T-07 Anbau ───────────────────────────────────────────────────
   'T-07': {
@@ -386,8 +616,49 @@ ENERGIE (Bundesrecht):
 ANTRAG:
 • Bauantrag + Bauvorlagen — § 70 BauO NRW. Bauvorlageberechtigung —
   § 67 BauO NRW.`,
-    // BUCKET-B-CONTENT: needs verified §§ from legal review (NI NBauO).
-    niedersachsen: null,
+    // B2 batch 2 — NI × T-07 authored 2026-05-28. NBauO §§ corpus-verified.
+    // § 62 NBauO cited as "sonstige genehmigungsfreie" per heading; NOT called Freistellung.
+    niedersachsen: `══════════════════════════════════════════════════════════════════════════
+LANDESSPEZIFISCHER ZUSATZ — NI × T-07 (Anbau / Erweiterung)
+══════════════════════════════════════════════════════════════════════════
+
+Bei Anbau-/Erweiterungsvorhaben in NIEDERSACHSEN: die §§ der NBauO
+ersetzen sämtliche oben genannten Bayern-Verweise. Quelle:
+baunormenlexikon.de und voris (mirror-tier).
+
+ROUTING:
+Ein Anbau wird regelmäßig im vereinfachten Verfahren nach § 63 NBauO
+behandelt. Kleinere Anbau-Tatbestände können unter § 60 NBauO
+(verfahrensfrei) oder § 62 NBauO (sonstige genehmigungsfreie Baumaßnahmen)
+fallen.
+
+VERFAHREN:
+• Verfahrensfreie Baumaßnahmen — § 60 NBauO.
+• Sonstige genehmigungsfreie Baumaßnahmen — § 62 NBauO.
+• Vereinfachtes Baugenehmigungsverfahren — § 63 NBauO (Regelfall).
+
+GEBIETSVERTRÄGLICHKEIT (Bundesrecht):
+• Einfügen im Innenbereich — § 34 BauGB. Außenbereich — § 35 BauGB.
+• Maß der baulichen Nutzung — § 19 BauNVO (GRZ), § 23 BauNVO
+  (überbaubare Grundstücksfläche).
+
+TECHNISCHE ANFORDERUNGEN AM ANBAU:
+• Grenzabstände an der neuen Wand — § 5 NBauO. Abstände auf demselben
+  Baugrundstück — § 7 NBauO.
+• Standsicherheit — § 12 NBauO. Bautechnische Nachweise — § 65 NBauO.
+• Brandschutz an der Anschluss-/Trennwand — § 14 NBauO. Brandwände —
+  § 30 NBauO.
+
+STELLPLÄTZE (bei neuen Wohneinheiten / Nutzungen):
+• Bauliche Anlagen für Kfz — § 46 NBauO. Notwendige Einstellplätze —
+  § 47 NBauO. Fahrradabstellanlagen — § 48 NBauO.
+
+ENERGIE (Bundesrecht):
+• Neubau-Teil des Anbaus — § 10 GEG. Anschluss an Bestand — § 48 GEG.
+
+ANTRAG:
+• Bauantrag + Bauvorlagen — § 67 NBauO. Entwurfsverfasser-Eignung —
+  § 53 NBauO.`,
   },
   // ── T-08 Sonstiges ───────────────────────────────────────────────
   'T-08': {
@@ -432,7 +703,44 @@ T-08 sollte zuerst an einen passenderen Template-Archetyp (T-01 EFH bis
 T-07 Anbau) zugeordnet werden; nur wenn keine Zuordnung möglich ist,
 greift T-08 als Default-Schale. Die obigen NRW-§§ sind die Mindest-
 Verweise für Verfahren und Antrag.`,
-    // BUCKET-B-CONTENT: needs verified §§ from legal review (NI NBauO).
-    niedersachsen: null,
+    // B2 batch 2 — NI × T-08 authored 2026-05-28. NBauO §§ corpus-verified.
+    niedersachsen: `══════════════════════════════════════════════════════════════════════════
+LANDESSPEZIFISCHER ZUSATZ — NI × T-08 (Sonstiges Vorhaben)
+══════════════════════════════════════════════════════════════════════════
+
+Bei sonstigen Vorhaben in NIEDERSACHSEN: die §§ der NBauO ersetzen
+sämtliche oben genannten Bayern-Verweise. Quelle: baunormenlexikon.de
+und voris (mirror-tier).
+
+T-08 ist keine feste Vorhabens-Klasse — die einschlägigen NI-§§ richten
+sich nach dem konkreten Vorhaben. Die folgenden Verweise decken den
+vollständigen Verfahrensraster ab:
+
+VERFAHREN — NBauO (vollständiger Raster):
+• Verfahrensfreie Baumaßnahmen — § 60 NBauO.
+• Sonstige genehmigungsfreie Baumaßnahmen — § 62 NBauO.
+• Vereinfachtes Baugenehmigungsverfahren — § 63 NBauO.
+• Reguläres Baugenehmigungsverfahren — § 64 NBauO.
+
+ANTRAG & VORLAGEN:
+• Bauantrag und Bauvorlagen — § 67 NBauO.
+• Entwurfsverfasser-Eignung (NI-Pendant zur Bauvorlageberechtigung) —
+  § 53 NBauO.
+• Form und Inhalt der Bauvorlagen: separate BauVorlVO Nds (kein §-Verweis
+  im Korpus — Verordnung als Quelle referenzieren).
+
+ALLGEMEINE TECHNISCHE ANFORDERUNGEN:
+• Grenzabstände — § 5 NBauO. Abstände auf demselben Baugrundstück —
+  § 7 NBauO.
+• Standsicherheit — § 12 NBauO. Bautechnische Nachweise — § 65 NBauO.
+
+BUNDESRECHT (gilt universal):
+• Zulässigkeit — § 30 BauGB, § 31 BauGB, § 34 BauGB, § 35 BauGB.
+
+HINWEIS:
+T-08 sollte zuerst an einen passenderen Template-Archetyp (T-01 EFH bis
+T-07 Anbau) zugeordnet werden; nur wenn keine Zuordnung möglich ist,
+greift T-08 als Default-Schale. Die obigen NI-§§ sind die Mindest-
+Verweise für Verfahren und Antrag.`,
   },
 }
