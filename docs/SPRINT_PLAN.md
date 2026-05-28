@@ -15,22 +15,29 @@ the wrong Land's law, not absence of content.
 
 Order is A → B → C. D is "do not touch."
 
-## Status — 2026-05-28
+## Status — 2026-05-28 (updated)
 
-| Bucket | Scope (one line)                                                                  | Status        | Estimate sprints | Gating                |
-|--------|-----------------------------------------------------------------------------------|---------------|------------------|-----------------------|
-| A      | Kill silent-wrong paths; stub-state banners; de-München the calendar              | IN PROGRESS   | ~1               | None (code-only)      |
-| B      | Deepen the 5 substantive states (BY/BW/HE/NW/NI) across T-02..T-08 → 40 cells     | TODO          | ~5–7             | Light legal review    |
-| C      | Author the 11 thin states (Berlin → Saarland order below) → 88 cells              | TODO          | ~8–12            | **Real legal counsel**|
-| D      | DO NOT TOUCH — Bayern, prompt-cache key, PDF renderer, smart suggestions, design  | LOCKED        | 0                | n/a                   |
+| Bucket | Scope (one line)                                                                  | Status              | Estimate sprints | Gating                |
+|--------|-----------------------------------------------------------------------------------|---------------------|------------------|-----------------------|
+| A      | Kill silent-wrong paths; stub-state banners; de-München the calendar              | **DONE — live**     | ~1 (delivered)   | None (code-only)      |
+| B0     | State-aware template-tail rails + 28 empty TODO scaffolds + golden noop gate      | **DONE (spike)**    | ~1 day actual    | None (code-only)      |
+| B      | Deepen the 5 substantive states (BY/BW/HE/NW/NI) across T-02..T-08 → 40 cells     | TODO                | ~4–5 (revised down from 5–7 after B0) | Light legal review    |
+| C      | Author the 11 thin states (Berlin → Saarland order below) → 88 cells              | TODO                | ~8–12            | **Real legal counsel**|
+| D      | DO NOT TOUCH — Bayern, prompt-cache key, PDF renderer, smart suggestions, design  | LOCKED              | 0                | n/a                   |
 
-**Bucket A in progress on `fix/bucket-a-honest-stubs` as of 2026-05-28.**
-4 commits landed locally (`f2fbde0` → `41a66eb` → `1d79434` → `7cc3f6f`),
-not pushed, not merged. Ready for review.
+**Bucket A merged to `main` and live on prod (commit `ce554ad`) on 2026-05-28.**
+5 commits in `fix/bucket-a-honest-stubs` (`f2fbde0` → `41a66eb` → `1d79434` →
+`7cc3f6f` → `65a8310`) + audit + sprint-plan docs.
 
-**Total estimate range: ~14–20 sprints from today** until every cell is
-either substantive or honestly labelled. Most of that is C, gated on legal
-counsel availability; the team can keep shipping on A/B in parallel.
+**Bucket B0 spike on `spike/b0-state-aware-templates`** as of 2026-05-28. 3
+commits (`8a562c4` → `7cd12ad` → this commit), not pushed, not merged. See
+`docs/B0_TEMPLATE_STATE_RAILS.md` for the design + how to author a verified
+cell + the fabrication-safety rule.
+
+**Total estimate range revised: ~13–18 sprints** (was ~14–20 pre-B0). B0
+absorbed the hidden infrastructure risk from open question #1 below; B's
+revised 4–5 sprint estimate assumes open question #2 (corpus coverage of
+T-02..T-08 §§) resolves favourably.
 
 ---
 
@@ -87,13 +94,13 @@ honestly-stubbed (Bucket A handles the honesty).
 
 ### Work breakdown
 
-| # | Item                                                                              | Estimate      | Notes |
-|---|-----------------------------------------------------------------------------------|---------------|-------|
-| B0 | **Template-state infrastructure**: per-state template tails, OR a snippet composer that pulls state-specific §§ into a shared scaffold | ~1 sprint     | Prerequisite. Templates are currently single text blocks (`t0X-*.ts`); they must become state-aware. |
-| B1 | Populate `allowedCitations` lists for BW/HE/NW/NI across T-02..T-08              | ~1 sprint     | Mechanical once B0 is in. 28 list updates. |
-| B2 | Author state-correct template tails: 4 states × 7 templates = 28 tails           | ~3–4 sprints  | One §-set per cell, reviewed by an architect. Each cell ≈ ½–1 day. |
-| B3 | Extend `smoke-walk-matrix.mjs` to pin the 28 new cells                            | ~½ sprint     | 28 new fixtures + assertions. |
-| B4 | De-München cost-engine framing (`costNormsMuenchen.ts`)                          | ~½ sprint     | Audit §3 L4. Quantitative path already falls through; only framing leaks. |
+| # | Item                                                                              | Estimate      | Status | Notes |
+|---|-----------------------------------------------------------------------------------|---------------|--------|-------|
+| B0 | **Template-state infrastructure**: additive `getTemplateBlock(T, B?)` resolver + `TEMPLATE_STATE_OVERRIDES` registry + golden noop gate | < 1 day actual | **DONE** | Spike on `spike/b0-state-aware-templates`. See `docs/B0_TEMPLATE_STATE_RAILS.md`. Output unchanged for every state; gate proven to catch authoring drift. |
+| B1 | Populate `allowedCitations` lists for BW/HE/NW/NI across T-02..T-08              | ~½ sprint     | TODO   | Decoupled from B0; just adds entries to allowedCitations arrays. |
+| B2 | Author state-correct template tails: 4 states × 7 templates = 28 tails           | ~3–4 sprints  | TODO   | One §-set per cell, reviewed by an architect. Each cell ≈ ½–1 day. Drop into the 28 scaffolded `null` cells in `src/legal/templates/stateOverrides.ts`. |
+| B3 | Extend `smoke-walk-matrix.mjs` to pin the 28 new cells                            | ~½ sprint     | TODO   | 28 new fixtures + assertions. Smoke harness already calls `getTemplateBlock(T, B)` via the new signature — no harness change needed beyond fixture additions. |
+| B4 | De-München cost-engine framing (`costNormsMuenchen.ts`)                          | ~½ sprint     | TODO   | Audit §3 L4. Quantitative path already falls through; only framing leaks. |
 
 ### What B explicitly does NOT do
 
@@ -169,18 +176,16 @@ re-using B0/B1 infrastructure.
 The user explicitly asked me to question my own judgment. Here are the
 honest doubts about the plan above.
 
-### 1. Bucket B has a hidden prerequisite that may bend the estimate
+### 1. ~~Bucket B has a hidden prerequisite that may bend the estimate~~ **RESOLVED 2026-05-28**
 
-B currently assumes templates can branch by bundesland. They **cannot today**
-— `src/legal/templates/t0X-*.ts` files are single state-agnostic text blocks
-(audit §0 surprise #1). B0 (template-state infrastructure) is listed at
-"~1 sprint" but is actually the riskiest item in B — the API shape choice
-(per-state files vs. composer vs. registry) determines the cost of B1–B4 and
-the whole of C. If B0 takes 2 sprints, B slides to 6–8 and C slides too
-because it reuses the same infrastructure.
-
-**Suggestion:** treat B0 as a discovery spike (1–2 days) before locking B's
-estimate. The spike picks the API; then B1–B4 estimates firm up.
+~~B currently assumes templates can branch by bundesland. They **cannot today**.~~
+**Status: closed by B0 spike on `spike/b0-state-aware-templates`.** The chosen
+design (additive addendum, not full replacement, not sectioned restructure) was
+implemented with zero output change for every state, Bayern SHA preserved, 136
+gate assertions green. Spike took < 1 day actual vs ~1 sprint estimated. See
+`docs/B0_TEMPLATE_STATE_RAILS.md` for the design + authoring workflow. B1–B4
+estimates can now firm up — Bucket B revised from ~5–7 to ~4–5 sprints in the
+status table.
 
 ### 2. "Light legal review" in Bucket B is fuzzy
 
