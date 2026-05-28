@@ -162,7 +162,7 @@ export function DashboardPage() {
     <div className="relative isolate flex min-h-dvh flex-col bg-pm-paper">
       <BlueprintSubstrate />
 
-      <header className="relative z-10 border-b border-pm-hair bg-pm-paper/85 backdrop-blur-[2px] pt-safe">
+      <header className="relative z-10 pt-safe">
         <div className="mx-auto flex h-16 max-w-[1320px] items-center justify-between px-8 md:h-[72px]">
           <Wordmark tone="drafting-blue" to="/dashboard" />
           <div className="flex items-center gap-5">

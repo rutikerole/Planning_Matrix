@@ -40,8 +40,10 @@ export function AppHeader({ className }: Props) {
         // arithmetic and the visible gap above the Spine.
         'fixed top-0 left-0 right-0 z-50 w-full',
         'h-12',
-        'bg-[hsl(var(--paper)/0.92)] backdrop-blur-[6px]',
-        'border-b border-[var(--hairline,rgba(26,22,18,0.10))]',
+        // Seamless on-page navbar: fully-opaque paper, no hairline,
+        // no backdrop-blur. Matches the wizard shell's bare header so
+        // the bar reads as part of the page, not a separate strip.
+        'bg-[hsl(var(--paper))]',
         className,
       )}
       style={{ height: `${APP_HEADER_HEIGHT}px` }}
