@@ -134,6 +134,32 @@ const ACKNOWLEDGED_OVERRIDES: ReadonlySet<string> = new Set<string>([
   'T-06:bremen',
   'T-07:bremen',
   'T-08:bremen',
+  // C4 batch — Sachsen × T-01..T-08 authored 2026-05-28. §§ verified
+  // (mirror-tier SächsBO; baunormenlexikon.de + revosax.sachsen.de;
+  // SächsBO i.d.F. Gesetz v. 01.03.2024 SächsGVBl. S. 169). First
+  // Flächenland. Path 2'' discipline: cells authored from corpus, banner
+  // STAYS ON (systemBlock untouched). Flächenland authority framing:
+  // 3 kreisfreie Städte (Leipzig/Dresden/Chemnitz) + 10 Landkreise; untere
+  // Bauaufsichtsbehörde je nach Standort bei Stadt-Bauaufsicht bzw.
+  // Landratsamt (NOT Stadtstaat Bezirksamt). § 80 (Beseitigung/Nutzungs-
+  // untersagung) omitted from T-05 (classic enforcement, same discipline
+  // as Berlin/Hamburg § 80). § 79 (Einstellung von Arbeiten) and § 81
+  // (Bauüberwachung) also omitted from cells (admin/enforcement-adjacent).
+  // § 88a (Technische Baubestimmungen) omitted (admin meta, BW § 73a
+  // precedent). 4-§ brandschutz spread (§ 14 + § 26 + § 30 + § 33) —
+  // heading-evident citation, NOT HBO § 14-alone precedent (HBO's § 26 =
+  // Zertifizierung, structurally different). Corpus archetype-tagging
+  // under-tags brandschutz for SächsBO (only § 14 tagged); recommend
+  // future re-tag for § 26/30/33. v1.0.30 Leipzig T-04 walk confirms
+  // § 33 SächsBO Rettungsweg as real persona citation.
+  'T-01:sachsen',
+  'T-02:sachsen',
+  'T-03:sachsen',
+  'T-04:sachsen',
+  'T-05:sachsen',
+  'T-06:sachsen',
+  'T-07:sachsen',
+  'T-08:sachsen',
 ])
 
 interface Violation {
