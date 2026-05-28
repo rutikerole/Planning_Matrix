@@ -631,6 +631,83 @@ DENKMAL & ERHALTUNGSSATZUNG:
   im Korpus). Zuständige Behörde: Landesamt für Denkmalpflege und
   Archäologie Sachsen-Anhalt auf Landesebene; untere Denkmalschutz-
   behörde bei der kreisfreien Stadt bzw. beim Landkreis.`,
+    // C9 batch — Thüringen × T-01 authored 2026-05-28. ThürBO corpus-
+    // verified (mirror-tier; baunormenlexikon.de + landesrecht.thueringen.de;
+    // ThürBO Fassung 02.07.2024, in Kraft ab 19.07.2024). Sixth Flächenland.
+    // SHIFTED §-NUMBERING (current 2024 fassung verified): verfahrensfrei
+    // § 63 (not § 61), Freistellung § 64, vereinfacht § 65, regulär § 66.
+    // Bauvorlage § 67, Nachweise § 72, Bauantrag § 74. Stellplätze § 52,
+    // Sonderbau § 54, Entwurfsverfasser § 57. Brandschutz §§: § 14 + § 29
+    // + § 33 + § 36 (heading-evident; § 14 only corpus-tagged — under-tag
+    // pattern). § 87 (Beseitigung/Nutzungsuntersagung) classic enforcement
+    // omit; § 86 (Baueinstellung), § 88 (Bauüberwachung), § 96 (TBs) admin
+    // omits. § 98 (Bestehende bauliche Anlagen) + § 99 (Windenergie)
+    // SKIPPED (Phase-B caution / out of scope).
+    thueringen: `══════════════════════════════════════════════════════════════════════════
+LANDESSPEZIFISCHER ZUSATZ — Thüringen × T-01 (Neubau Einfamilienhaus)
+══════════════════════════════════════════════════════════════════════════
+
+Bei EFH-Projekten in THÜRINGEN: die §§ der ThürBO (Thüringer Bauordnung)
+ersetzen sämtliche oben genannten Bayern-Verweise. Thüringen ist
+Flächenland mit sechs kreisfreien Städten (Erfurt, Jena, Gera, Suhl,
+Weimar, Eisenach) und 17 Landkreisen. Die zuständige untere Bauaufsichts-
+behörde liegt — bei Projekten in den kreisfreien Städten — bei der
+städtischen Bauaufsichtsbehörde; im übrigen Thüringen beim Landratsamt
+des jeweiligen Landkreises. Quelle: baunormenlexikon.de (mirror-tier; bei
+rechtlich kritischen Fragen die amtliche Fassung beim
+landesrecht.thueringen.de gegenprüfen). Stand: ThürBO Fassung vom
+02.07.2024 (in Kraft ab 19.07.2024).
+
+HINWEIS: Der Thüringer systemBlock ist bislang "Mindest-Eckdaten"; die
+hier zitierten §§ stammen aus dem Korpus (secondary-mirror, primary-URL
+hinterlegt) und sind verwendbar, aber das vollständige TH-Profil wird
+erst mit anwaltlich verifizierter systemBlock-Tiefe abschließend
+substantiell.
+
+VERFAHREN — ThürBO (TH-spezifische Nummerierung der Fassung 2024):
+• Verfahrensfreie Bauvorhaben (inkl. Beseitigung) — § 63 ThürBO.
+• Genehmigungsfreistellung — § 64 ThürBO (bei qualifiziertem B-Plan).
+• Vereinfachtes Baugenehmigungsverfahren — § 65 ThürBO.
+• Baugenehmigungsverfahren (regulär) — § 66 ThürBO.
+
+ROUTING (EFH-typisch):
+EFH erreicht häufig Gebäudeklasse 1 bis 3 nach § 2 ThürBO. Bei
+qualifiziertem B-Plan und ohne Sonderbau-Eigenschaft (§ 54 ThürBO) kommt
+die Genehmigungsfreistellung nach § 64 ThürBO in Betracht; sonst
+vereinfachtes Verfahren nach § 65 ThürBO. Reguläres Verfahren nach
+§ 66 ThürBO nur bei Sonderbau-Tatbestand.
+
+ANTRAG & VORLAGEN:
+• Bauantrag und Bauvorlagen — § 74 ThürBO.
+• Bauvorlageberechtigung — § 67 ThürBO. Entwurfsverfasser —
+  § 57 ThürBO.
+• Form/Inhalt der Bauvorlagen: separate BauVorlVO TH (kein §-Verweis
+  im Korpus — Verordnung als Quelle referenzieren).
+
+TECHNISCHE ANFORDERUNGEN:
+• Abstandsflächen, Abstände — § 6 ThürBO.
+• Standsicherheit — § 12 ThürBO. Bautechnische Nachweise —
+  § 72 ThürBO.
+• Notwendige Stellplätze und Abstellplätze für Fahrräder —
+  § 52 ThürBO.
+
+BUNDESRECHT (gilt universal):
+• Zulässigkeit — § 30 BauGB, § 31 BauGB, § 34 BauGB, § 35 BauGB.
+• Maß + Baugebiete — § 1 BauNVO, § 3 BauNVO, § 4 BauNVO, § 6 BauNVO,
+  § 16 BauNVO, § 19 BauNVO, § 23 BauNVO.
+• Energie — § 10 GEG. § 80 GEG.
+
+SOLAR-/KLIMASCHUTZ-VORGABEN in Thüringen:
+TH-spezifische Solar-/Klimaschutz-Pflichten sind außerhalb der ThürBO
+geregelt. Konkrete §-Verweise NICHT im Korpus — geltende Vorschrift
+referenzieren, nicht erfinden.
+
+DENKMAL & ERHALTUNGSSATZUNG:
+• Bundesanker — § 172 BauGB (Erhaltungssatzungs-Gebiet).
+• Land — ThürDSchG (separate Landesvorschrift; konkrete §-Verweise
+  nicht im Korpus). Zuständige Behörde: Thüringisches Landesamt für
+  Denkmalpflege und Archäologie auf Landesebene; untere Denkmalschutz-
+  behörde bei der kreisfreien Stadt bzw. beim Landratsamt.`,
   },
   // ── T-02 Neubau MFH ──────────────────────────────────────────────
   'T-02': {
@@ -1346,6 +1423,67 @@ DENKMAL & ERHALTUNGSSATZUNG:
 • Land — DSchG LSA. Behörde: Landesamt für Denkmalpflege und
   Archäologie Sachsen-Anhalt plus zuständige untere Denkmalschutz-
   behörde (kreisfreie Stadt bzw. Landkreis).`,
+    // C9 batch — Thüringen × T-02 authored 2026-05-28. ThürBO corpus-
+    // verified. 4-§ brandschutz (heading-evident: § 14 + § 29 + § 33 + § 36;
+    // only § 14 corpus-tagged — under-tag pattern, future re-tag flagged).
+    thueringen: `══════════════════════════════════════════════════════════════════════════
+LANDESSPEZIFISCHER ZUSATZ — Thüringen × T-02 (Neubau Mehrfamilienhaus)
+══════════════════════════════════════════════════════════════════════════
+
+Bei MFH-Projekten in THÜRINGEN: die §§ der ThürBO ersetzen sämtliche
+oben genannten Bayern-Verweise. Flächenland — Bauaufsicht je nach
+Standort bei der städtischen Bauaufsichtsbehörde der kreisfreien Stadt
+(Erfurt, Jena, Gera, Suhl, Weimar, Eisenach) bzw. beim Landratsamt des
+jeweiligen Landkreises. Quelle: baunormenlexikon.de (mirror-tier).
+Stand: ThürBO Fassung vom 02.07.2024.
+
+HINWEIS: Thüringer systemBlock weiterhin "preliminary"; die hier
+zitierten §§ sind korpus-verifiziert.
+
+VERFAHREN — ThürBO (TH-Nummerierung):
+• Verfahrensfreie Bauvorhaben — § 63 ThürBO.
+• Genehmigungsfreistellung — § 64 ThürBO (bei qualifiziertem B-Plan).
+• Vereinfachtes Baugenehmigungsverfahren — § 65 ThürBO.
+• Baugenehmigungsverfahren (regulär) — § 66 ThürBO.
+
+ROUTING (MFH-typisch):
+MFH erreicht häufig Gebäudeklasse 3 bis 5 nach § 2 ThürBO. Bei
+Sonderbau-Tatbestand (§ 54 ThürBO) ist das reguläre Verfahren nach
+§ 66 ThürBO zwingend. Ohne Sonderbau: vereinfachtes Verfahren nach
+§ 65 ThürBO. Freistellung nach § 64 ThürBO nur bei qualifiziertem
+B-Plan und ohne Sonderbau.
+
+ANTRAG & VORLAGEN:
+• Bauantrag und Bauvorlagen — § 74 ThürBO.
+• Bauvorlageberechtigung — § 67 ThürBO. Entwurfsverfasser —
+  § 57 ThürBO.
+
+TECHNISCHE ANFORDERUNGEN:
+• Abstandsflächen, Abstände — § 6 ThürBO.
+• Standsicherheit — § 12 ThürBO. Bautechnische Nachweise —
+  § 72 ThürBO.
+• Brandschutz allgemein — § 14 ThürBO. Brandverhalten Baustoffe/
+  Bauteile — § 29 ThürBO. Brandwände — § 33 ThürBO. Erster und zweiter
+  Rettungsweg — § 36 ThürBO.
+• Notwendige Stellplätze und Abstellplätze für Fahrräder —
+  § 52 ThürBO.
+
+BUNDESRECHT (gilt universal):
+• Zulässigkeit — § 30 BauGB, § 31 BauGB, § 34 BauGB, § 35 BauGB.
+• Baugebiete + Maß — § 1 BauNVO, § 3 BauNVO, § 4 BauNVO, § 6 BauNVO,
+  § 16 BauNVO, § 19 BauNVO, § 23 BauNVO. Stellplätze — § 12 BauNVO.
+• Energie — § 10 GEG. § 80 GEG.
+
+SOLAR-/KLIMASCHUTZ-VORGABEN in Thüringen:
+TH-spezifische Solar-/Klimaschutz-Pflichten sind außerhalb der ThürBO
+geregelt. Konkrete §-Verweise NICHT im Korpus — geltende Vorschrift
+referenzieren, nicht erfinden.
+
+DENKMAL & ERHALTUNGSSATZUNG:
+• Bundesanker — § 172 BauGB.
+• Land — ThürDSchG. Behörde: Thüringisches Landesamt für Denkmalpflege
+  und Archäologie plus zuständige untere Denkmalschutzbehörde
+  (kreisfreie Stadt bzw. Landratsamt).`,
   },
   // ── T-03 Sanierung ───────────────────────────────────────────────
   'T-03': {
@@ -2008,6 +2146,64 @@ NICHT IM Korpus (NICHT erfinden):
   Stadt abklären.
 • Solar-/PV-Pflicht bei Sanierung — außerhalb der BauO LSA geregelt;
   geltende Vorschrift referenzieren.`,
+    // C9 batch — Thüringen × T-03 authored 2026-05-28. ThürBO corpus-
+    // verified.
+    thueringen: `══════════════════════════════════════════════════════════════════════════
+LANDESSPEZIFISCHER ZUSATZ — Thüringen × T-03 (Sanierung / Modernisierung)
+══════════════════════════════════════════════════════════════════════════
+
+Bei Sanierungs-/Modernisierungs-Projekten in THÜRINGEN: die §§ der ThürBO
+ersetzen sämtliche oben genannten Bayern-Verweise. Flächenland —
+Bauaufsicht beim Landratsamt bzw. bei der städtischen Bauaufsichts-
+behörde der kreisfreien Stadt (Erfurt, Jena, Gera, Suhl, Weimar,
+Eisenach). Quelle: baunormenlexikon.de (mirror-tier). Stand: ThürBO
+Fassung vom 02.07.2024.
+
+HINWEIS: Thüringer systemBlock weiterhin "preliminary"; die hier
+zitierten §§ sind korpus-verifiziert.
+
+ROUTING:
+Reine Instandhaltung/Modernisierung ohne Eingriff in Statik, Brandschutz
+oder Nutzung fällt häufig unter § 63 ThürBO (verfahrensfreie Bauvorhaben).
+Sobald tragende Bauteile, Brandschutz oder die Nutzung berührt sind, ist
+regelmäßig das vereinfachte Verfahren nach § 65 ThürBO anzunehmen.
+
+VERFAHREN — ThürBO:
+• Verfahrensfreie Bauvorhaben — § 63 ThürBO.
+• Vereinfachtes Baugenehmigungsverfahren — § 65 ThürBO.
+
+TECHNISCHE NACHWEISE BEI EINGRIFF:
+• Standsicherheit bei tragenden Eingriffen — § 12 ThürBO.
+• Bautechnische Nachweise — § 72 ThürBO.
+• Brandschutz allgemein — § 14 ThürBO. Brandverhalten Baustoffe/Bauteile
+  — § 29 ThürBO. Brandwände — § 33 ThürBO. Erster und zweiter Rettungsweg
+  — § 36 ThürBO.
+
+ANTRAG:
+• Bauantrag und Bauvorlagen — § 74 ThürBO. Bauvorlageberechtigung —
+  § 67 ThürBO. Entwurfsverfasser — § 57 ThürBO.
+
+ENERGIE (Bundesrecht):
+• Bestandsänderung — § 48 GEG. Niedrigstenergie-Grundsatz allgemein —
+  § 10 GEG.
+
+NUTZUNGSÄNDERUNG IN Thüringen:
+Thüringen hat KEINEN dedizierten Nutzungsänderungs-§ in der ThürBO. Eine
+Nutzungsänderung im Sanierungskontext ist über § 65 ThürBO (vereinfacht)
+bzw. § 66 ThürBO (regulär bei Sonderbau, § 54 ThürBO) zu beantragen.
+
+DENKMALSCHUTZ:
+Bei eingetragenem Baudenkmal oder Ensemble — ThürDSchG (separate
+Landesvorschrift; konkrete §-Verweise nicht im Korpus). Vor Sanierung
+ist das Thüringische Landesamt für Denkmalpflege und Archäologie plus
+zuständige untere Denkmalschutzbehörde (kreisfreie Stadt bzw.
+Landratsamt) anzuhören. Federal-Anker bei Erhaltungssatzung — § 172 BauGB.
+
+NICHT IM Korpus (NICHT erfinden):
+• Land-Denkmal-§§ — wie oben mit Landesamt / Landratsamt bzw. kreisfreier
+  Stadt abklären.
+• Solar-/PV-Pflicht bei Sanierung — außerhalb der ThürBO geregelt;
+  geltende Vorschrift referenzieren.`,
   },
   // ── T-04 Umnutzung ───────────────────────────────────────────────
   'T-04': {
@@ -2610,6 +2806,60 @@ NICHT IM BauO-LSA-Korpus (NICHT erfinden):
 • Schallschutz/TA-Lärm bei lärmrelevanter Nutzungsänderung — DIN 4109
   bzw. TA Lärm als Bundes- bzw. technische Normen, nicht in der BauO LSA
   geregelt.`,
+    // C9 batch — Thüringen × T-04 authored 2026-05-28. ThürBO corpus-
+    // verified.
+    thueringen: `══════════════════════════════════════════════════════════════════════════
+LANDESSPEZIFISCHER ZUSATZ — Thüringen × T-04 (Nutzungsänderung / Umnutzung)
+══════════════════════════════════════════════════════════════════════════
+
+Bei Nutzungsänderungs-Projekten in THÜRINGEN: die §§ der ThürBO ersetzen
+sämtliche oben genannten Bayern-Verweise. Flächenland — Bauaufsicht beim
+Landratsamt bzw. bei der städtischen Bauaufsichtsbehörde der kreisfreien
+Stadt (Erfurt, Jena, Gera, Suhl, Weimar, Eisenach). Quelle:
+baunormenlexikon.de (mirror-tier). Stand: ThürBO Fassung vom 02.07.2024.
+
+HINWEIS: Thüringer systemBlock weiterhin "preliminary"; die hier
+zitierten §§ sind korpus-verifiziert.
+
+ROUTING:
+Eine Nutzungsänderung ist in Thüringen grundsätzlich genehmigungs-
+pflichtig, sofern nicht ausdrücklich verfahrensfrei nach § 63 ThürBO.
+Die ThürBO hat KEINEN dedizierten Nutzungsänderungs-§ — der
+Verfahrensweg richtet sich nach den allgemeinen Verfahrens-§§. Bei
+Nicht-Sonderbau-Umnutzung ist regelmäßig das vereinfachte Verfahren
+nach § 65 ThürBO einschlägig; sobald Sonderbau-Tatbestand vorliegt
+(§ 54 ThürBO), gilt das reguläre Verfahren nach § 66 ThürBO.
+
+VERFAHREN — ThürBO:
+• Vereinfachtes Baugenehmigungsverfahren — § 65 ThürBO.
+• Baugenehmigungsverfahren (regulär) — § 66 ThürBO (bei Sonderbau-
+  Tatbestand der neuen Nutzung, § 54 ThürBO).
+
+GEBIETSVERTRÄGLICHKEIT (Bundesrecht):
+• Zulässigkeit der neuen Nutzung — § 30 BauGB, § 31 BauGB, § 34 BauGB,
+  § 35 BauGB.
+• Baugebiete und Nutzungsarten — § 1 BauNVO bis § 9 BauNVO, § 4a BauNVO.
+• Erhaltungssatzung — § 172 BauGB.
+
+TECHNISCHE FOLGEN DER NEUEN NUTZUNG:
+• Brandschutz nach neuer Nutzung — § 14 ThürBO. Brandverhalten
+  Baustoffe/Bauteile — § 29 ThürBO. Brandwände — § 33 ThürBO. Erster und
+  zweiter Rettungsweg — § 36 ThürBO.
+• Stellplatzbedarf nach neuer Nutzung — § 52 ThürBO. Bundes-Maß
+  ergänzend — § 12 BauNVO.
+• Standsicherheit bei strukturellen Anpassungen — § 12 ThürBO.
+  Bautechnische Nachweise — § 72 ThürBO.
+
+ANTRAG:
+• Bauantrag und Bauvorlagen — § 74 ThürBO. Bauvorlageberechtigung —
+  § 67 ThürBO. Entwurfsverfasser — § 57 ThürBO.
+
+NICHT IM ThürBO-Korpus (NICHT erfinden):
+• Land-Denkmal-§§ — ThürDSchG mit Landesamt / Landratsamt bzw.
+  kreisfreier Stadt abklären.
+• Schallschutz/TA-Lärm bei lärmrelevanter Nutzungsänderung — DIN 4109
+  bzw. TA Lärm als Bundes- bzw. technische Normen, nicht in der ThürBO
+  geregelt.`,
   },
   // ── T-05 Abbruch ─────────────────────────────────────────────────
   'T-05': {
@@ -3184,6 +3434,58 @@ NICHT IM BauO-LSA-Korpus (NICHT erfinden):
   der BauO LSA geregelt; geltende Bundes- bzw. EU-Regelung referenzieren.
 • Land-Denkmal-§§ — wie oben mit Landesamt / Landkreis bzw. kreisfreier
   Stadt abklären.`,
+    // C9 batch — Thüringen × T-05 authored 2026-05-28. ThürBO corpus-
+    // verified. § 87 (Beseitigung/Nutzungsuntersagung) INTENTIONALLY
+    // OMITTED (classic enforcement). § 86 (Baueinstellung), § 88
+    // (Bauüberwachung), § 96 (TBs) admin omits.
+    thueringen: `══════════════════════════════════════════════════════════════════════════
+LANDESSPEZIFISCHER ZUSATZ — Thüringen × T-05 (Abbruch / Beseitigung)
+══════════════════════════════════════════════════════════════════════════
+
+Bei Abbruch-/Beseitigungsvorhaben in THÜRINGEN: die §§ der ThürBO
+ersetzen sämtliche oben genannten Bayern-Verweise. Flächenland —
+Bauaufsicht beim Landratsamt bzw. bei der städtischen Bauaufsichts-
+behörde der kreisfreien Stadt (Erfurt, Jena, Gera, Suhl, Weimar,
+Eisenach). Quelle: baunormenlexikon.de (mirror-tier). Stand: ThürBO
+Fassung vom 02.07.2024.
+
+HINWEIS: Thüringer systemBlock weiterhin "preliminary"; die hier
+zitierten §§ sind korpus-verifiziert.
+
+ROUTING:
+Die Beseitigung baulicher Anlagen ist in Thüringen primär über
+§ 63 ThürBO geregelt — die Überschrift nennt "Beseitigung von Anlagen"
+ausdrücklich neben den verfahrensfreien Bauvorhaben.
+
+VERFAHREN — ThürBO:
+• Verfahrensfreie Bauvorhaben und Beseitigung von Anlagen —
+  § 63 ThürBO.
+
+Innerhalb der in § 63 ThürBO genannten Tatbestände ist der Abbruch
+verfahrensfrei (ggf. genügt eine Anzeige); außerhalb dieser Tatbestände
+ist eine Beseitigungsgenehmigung erforderlich (in der Regel über das
+vereinfachte Verfahren nach § 65 ThürBO bzw. das reguläre Verfahren
+nach § 66 ThürBO).
+
+DENKMAL & ERHALTUNGSSATZUNG (OVERRIDE der Verfahrensfreiheit):
+• Federal-Anker — § 172 BauGB: innerhalb eines Erhaltungssatzungs-
+  Bereichs ist der Abbruch genehmigungspflichtig, auch wenn er sonst
+  verfahrensfrei wäre.
+• Land-Denkmal — ThürDSchG (separate Landesvorschrift; konkrete
+  §-Verweise nicht im Korpus). Bei eingetragenem Baudenkmal: Abbruch nur
+  mit denkmalrechtlicher Genehmigung; Thüringisches Landesamt für
+  Denkmalpflege und Archäologie plus zuständige untere Denkmalschutz-
+  behörde (kreisfreie Stadt bzw. Landratsamt) einbeziehen.
+
+DOKUMENTE:
+• Bauvorlageberechtigung — § 67 ThürBO. Entwurfsverfasser — § 57 ThürBO.
+• Statik der Restanlage bei Teilabbruch — § 12 ThürBO.
+
+NICHT IM ThürBO-Korpus (NICHT erfinden):
+• Schadstoff-/Entsorgungs-§§ — KrWG, GefStoffV, EU-Vorgaben; nicht in
+  der ThürBO geregelt; geltende Bundes- bzw. EU-Regelung referenzieren.
+• Land-Denkmal-§§ — wie oben mit Landesamt / Landratsamt bzw.
+  kreisfreier Stadt abklären.`,
   },
   // ── T-06 Aufstockung ─────────────────────────────────────────────
   'T-06': {
@@ -3790,6 +4092,59 @@ BAUPLANUNGSRECHT (Bundesrecht):
 ANTRAG:
 • Bauantrag und Bauvorlagen — § 67 BauO LSA. Bauvorlageberechtigung —
   § 64 BauO LSA. Entwurfsverfasser — § 53 BauO LSA.`,
+    // C9 batch — Thüringen × T-06 authored 2026-05-28. ThürBO corpus-
+    // verified.
+    thueringen: `══════════════════════════════════════════════════════════════════════════
+LANDESSPEZIFISCHER ZUSATZ — Thüringen × T-06 (Aufstockung / Dachgeschossausbau)
+══════════════════════════════════════════════════════════════════════════
+
+Bei Aufstockungs-/DG-Ausbau-Projekten in THÜRINGEN: die §§ der ThürBO
+ersetzen sämtliche oben genannten Bayern-Verweise. Flächenland —
+Bauaufsicht beim Landratsamt bzw. bei der städtischen Bauaufsichts-
+behörde der kreisfreien Stadt (Erfurt, Jena, Gera, Suhl, Weimar,
+Eisenach). Quelle: baunormenlexikon.de (mirror-tier). Stand: ThürBO
+Fassung vom 02.07.2024.
+
+HINWEIS: Thüringer systemBlock weiterhin "preliminary"; die hier
+zitierten §§ sind korpus-verifiziert.
+
+ROUTING:
+Aufstockung wird regelmäßig im vereinfachten Verfahren nach § 65 ThürBO
+behandelt. Bei Aufstockung können sich Gebäudeklasse, Abstandsflächen
+und Brandschutz ändern; die Standsicherheit der Bestandskonstruktion ist
+gesondert nachzuweisen.
+
+VERFAHREN:
+• Vereinfachtes Baugenehmigungsverfahren — § 65 ThürBO.
+
+GEBÄUDEKLASSE & ABSTANDSFLÄCHEN (kritisch bei Aufstockung):
+• Gebäudeklasse — § 2 ThürBO. Höhen-/Stockwerksgrenzen entscheiden, ob
+  die Aufstockung die GK anhebt.
+• Abstandsflächen, Abstände — § 6 ThürBO. An der neuen, höheren Wand
+  neu zu bemessen.
+
+TECHNISCHE NACHWEISE (BESTANDSSTATIK):
+• Standsicherheit der Bestandskonstruktion und neuer Aufbauten —
+  § 12 ThürBO. Bautechnische Nachweise — § 72 ThürBO.
+• Brandschutz nach ggf. höherer GK — § 14 ThürBO. Brandverhalten
+  Baustoffe — § 29 ThürBO. Brandwände — § 33 ThürBO. Erster und zweiter
+  Rettungsweg — § 36 ThürBO.
+
+STELLPLÄTZE (bei neuen Wohneinheiten):
+• Notwendige Stellplätze und Abstellplätze für Fahrräder —
+  § 52 ThürBO.
+
+ENERGIE (Bundesrecht):
+• Bestandsänderung — § 48 GEG. Niedrigstenergie-Grundsatz allgemein —
+  § 10 GEG.
+
+BAUPLANUNGSRECHT (Bundesrecht):
+• Zulässigkeit — § 30 BauGB, § 34 BauGB. Maß — § 19 BauNVO (GRZ),
+  § 20 BauNVO (Vollgeschosse/GFZ), § 23 BauNVO (überbaubare Fläche).
+
+ANTRAG:
+• Bauantrag und Bauvorlagen — § 74 ThürBO. Bauvorlageberechtigung —
+  § 67 ThürBO. Entwurfsverfasser — § 57 ThürBO.`,
   },
   // ── T-07 Anbau ───────────────────────────────────────────────────
   'T-07': {
@@ -4317,6 +4672,52 @@ ENERGIE (Bundesrecht):
 ANTRAG:
 • Bauantrag und Bauvorlagen — § 67 BauO LSA. Bauvorlageberechtigung —
   § 64 BauO LSA. Entwurfsverfasser — § 53 BauO LSA.`,
+    // C9 batch — Thüringen × T-07 authored 2026-05-28. ThürBO corpus-
+    // verified.
+    thueringen: `══════════════════════════════════════════════════════════════════════════
+LANDESSPEZIFISCHER ZUSATZ — Thüringen × T-07 (Anbau / Erweiterung)
+══════════════════════════════════════════════════════════════════════════
+
+Bei Anbau-/Erweiterungsvorhaben in THÜRINGEN: die §§ der ThürBO ersetzen
+sämtliche oben genannten Bayern-Verweise. Flächenland — Bauaufsicht beim
+Landratsamt bzw. bei der städtischen Bauaufsichtsbehörde der kreisfreien
+Stadt (Erfurt, Jena, Gera, Suhl, Weimar, Eisenach). Quelle:
+baunormenlexikon.de (mirror-tier). Stand: ThürBO Fassung vom 02.07.2024.
+
+HINWEIS: Thüringer systemBlock weiterhin "preliminary"; die hier
+zitierten §§ sind korpus-verifiziert.
+
+ROUTING:
+Ein Anbau wird regelmäßig im vereinfachten Verfahren nach § 65 ThürBO
+behandelt. Bei qualifiziertem B-Plan und Einhaltung aller Festsetzungen
+kommt die Genehmigungsfreistellung nach § 64 ThürBO in Betracht.
+
+VERFAHREN:
+• Genehmigungsfreistellung — § 64 ThürBO (bei qualifiziertem B-Plan).
+• Vereinfachtes Baugenehmigungsverfahren — § 65 ThürBO (Regelfall).
+
+GEBIETSVERTRÄGLICHKEIT (Bundesrecht):
+• Einfügen im Innenbereich — § 34 BauGB. Außenbereich — § 35 BauGB.
+• Maß der baulichen Nutzung — § 19 BauNVO (GRZ), § 23 BauNVO
+  (überbaubare Grundstücksfläche).
+
+TECHNISCHE ANFORDERUNGEN AM ANBAU:
+• Abstandsflächen, Abstände an der neuen Wand — § 6 ThürBO.
+• Standsicherheit — § 12 ThürBO. Bautechnische Nachweise —
+  § 72 ThürBO.
+• Brandschutz an der Anschluss-/Trennwand — § 14 ThürBO. Brandwände —
+  § 33 ThürBO.
+
+STELLPLÄTZE (bei neuen Wohneinheiten / Nutzungen):
+• Notwendige Stellplätze und Abstellplätze für Fahrräder —
+  § 52 ThürBO.
+
+ENERGIE (Bundesrecht):
+• Neubau-Teil des Anbaus — § 10 GEG. Anschluss an Bestand — § 48 GEG.
+
+ANTRAG:
+• Bauantrag und Bauvorlagen — § 74 ThürBO. Bauvorlageberechtigung —
+  § 67 ThürBO. Entwurfsverfasser — § 57 ThürBO.`,
   },
   // ── T-08 Sonstiges ───────────────────────────────────────────────
   'T-08': {
@@ -4803,6 +5204,48 @@ ALLGEMEINE TECHNISCHE ANFORDERUNGEN:
 • Abstandsflächen, Abstände — § 6 BauO LSA.
 • Standsicherheit — § 12 BauO LSA. Bautechnische Nachweise —
   § 65 BauO LSA.
+
+BUNDESRECHT (gilt universal):
+• Zulässigkeit — § 30 BauGB, § 31 BauGB, § 34 BauGB, § 35 BauGB.
+
+HINWEIS:
+T-08 sollte zuerst an einen passenderen Template-Archetyp (T-01 EFH bis
+T-07 Anbau) zugeordnet werden; nur wenn keine Zuordnung möglich ist,
+greift T-08 als Default-Schale.`,
+    // C9 batch — Thüringen × T-08 authored 2026-05-28. ThürBO corpus-
+    // verified.
+    thueringen: `══════════════════════════════════════════════════════════════════════════
+LANDESSPEZIFISCHER ZUSATZ — Thüringen × T-08 (Sonstiges Vorhaben)
+══════════════════════════════════════════════════════════════════════════
+
+Bei sonstigen Vorhaben in THÜRINGEN: die §§ der ThürBO ersetzen
+sämtliche oben genannten Bayern-Verweise. Flächenland — Bauaufsicht beim
+Landratsamt bzw. bei der städtischen Bauaufsichtsbehörde der kreisfreien
+Stadt (Erfurt, Jena, Gera, Suhl, Weimar, Eisenach). Quelle:
+baunormenlexikon.de (mirror-tier). Stand: ThürBO Fassung vom 02.07.2024.
+
+HINWEIS: Thüringer systemBlock weiterhin "preliminary"; die hier
+zitierten §§ sind korpus-verifiziert.
+
+T-08 ist keine feste Vorhabens-Klasse — die einschlägigen ThürBO-§§
+richten sich nach dem konkreten Vorhaben. Die folgenden Verweise decken
+den vollständigen Verfahrensraster ab:
+
+VERFAHREN — ThürBO (TH-Nummerierung, vollständiger Raster):
+• Verfahrensfreie Bauvorhaben (inkl. Beseitigung) — § 63 ThürBO.
+• Genehmigungsfreistellung — § 64 ThürBO.
+• Vereinfachtes Baugenehmigungsverfahren — § 65 ThürBO.
+• Baugenehmigungsverfahren (regulär) — § 66 ThürBO.
+
+ANTRAG & VORLAGEN:
+• Bauantrag und Bauvorlagen — § 74 ThürBO.
+• Bauvorlageberechtigung — § 67 ThürBO. Entwurfsverfasser —
+  § 57 ThürBO.
+
+ALLGEMEINE TECHNISCHE ANFORDERUNGEN:
+• Abstandsflächen, Abstände — § 6 ThürBO.
+• Standsicherheit — § 12 ThürBO. Bautechnische Nachweise —
+  § 72 ThürBO.
 
 BUNDESRECHT (gilt universal):
 • Zulässigkeit — § 30 BauGB, § 31 BauGB, § 34 BauGB, § 35 BauGB.

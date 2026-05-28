@@ -255,6 +255,28 @@ const ACKNOWLEDGED_OVERRIDES: ReadonlySet<string> = new Set<string>([
   'T-06:sachsen-anhalt',
   'T-07:sachsen-anhalt',
   'T-08:sachsen-anhalt',
+  // C9 batch — Thüringen × T-01..T-08 authored 2026-05-28. §§ verified
+  // (mirror-tier ThürBO; baunormenlexikon.de + landesrecht.thueringen.de;
+  // ThürBO Fassung vom 02.07.2024 — current 2024 numbering audit-
+  // confirmed per corpus _meta.phase_c_legal_correctness_note). Sixth
+  // Flächenland. SHIFTED §-NUMBERING: § 63 verfahrensfrei, § 64
+  // Freistellung, § 65 vereinfacht, § 66 regulär; § 67 Bauvorlage,
+  // § 72 Nachweise, § 74 Bauantrag. § 52 Stellplätze, § 54 Sonderbau,
+  // § 57 Entwurfsverfasser. 4-§ brandschutz heading-evident
+  // (§ 14+§ 29+§ 33+§ 36) — only § 14 corpus-tagged (under-tag pattern).
+  // § 87 (Beseitigung/Nutzungsuntersagung) classic enforcement omit;
+  // § 86 (Baueinstellung), § 88 (Bauüberwachung), § 96 (TBs) admin omits.
+  // § 98 (Bestehende bauliche Anlagen) + § 99 (Windenergie) SKIPPED.
+  // Authority: 6 kreisfreie Städte (Erfurt/Jena/Gera/Suhl/Weimar/Eisenach)
+  // + 17 Landkreise. Citation prefix "ThürBO".
+  'T-01:thueringen',
+  'T-02:thueringen',
+  'T-03:thueringen',
+  'T-04:thueringen',
+  'T-05:thueringen',
+  'T-06:thueringen',
+  'T-07:thueringen',
+  'T-08:thueringen',
 ])
 
 interface Violation {
