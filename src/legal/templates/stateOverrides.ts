@@ -48,8 +48,102 @@ export type TemplateStateOverrides = Partial<
 /**
  * The (template × bundesland) → override-addendum registry.
  *
- * EMPTY at B0 (this commit). Bucket B scaffolds 28 explicit null entries
- * for BW/HE/NW/NI × T-02..T-08; content authors fill them after verified
- * legal review.
+ * 28 SCAFFOLDED CELLS (BW/HE/NW/NI × T-02..T-08), all `null` = no-op.
+ *
+ * These cells are the Bucket B "deepen 5 substantive states" target
+ * (SPRINT_PLAN.md §B). T-01 across the 4 substantive non-Bayern states
+ * is NOT scaffolded because it is already smoke-pinned in
+ * scripts/smoke-walk-matrix.mjs (those cells have asserted state-correct
+ * output today; Bucket B will revisit them after the bigger gaps close).
+ *
+ * Bayern × T-01..T-08 is NOT scaffolded because BLOCKS[T] is the Bayern
+ * default — no override needed for Bayern projects.
+ *
+ * The 11 stub-state cells (Stadtstaaten + Flächenländer ohne deep
+ * systemBlock) are NOT scaffolded yet; they belong to Bucket C, which
+ * is gated on real legal counsel.
+ *
+ * EACH null IS A TODO: replace with the verified §§ addendum string AND
+ * add `'<T>:<bundesland>'` to ACKNOWLEDGED_OVERRIDES in
+ * scripts/verify-template-tail-noop.mts. Until filled, the gate
+ * confirms output stays byte-identical to BLOCKS[T].
  */
-export const TEMPLATE_STATE_OVERRIDES: TemplateStateOverrides = {}
+export const TEMPLATE_STATE_OVERRIDES: TemplateStateOverrides = {
+  // ── T-02 Neubau MFH ──────────────────────────────────────────────
+  'T-02': {
+    // BUCKET-B-CONTENT: needs verified §§ from legal review (BW LBO).
+    bw: null,
+    // BUCKET-B-CONTENT: needs verified §§ from legal review (HE HBO).
+    hessen: null,
+    // BUCKET-B-CONTENT: needs verified §§ from legal review (NW BauO NRW).
+    nrw: null,
+    // BUCKET-B-CONTENT: needs verified §§ from legal review (NI NBauO).
+    niedersachsen: null,
+  },
+  // ── T-03 Sanierung ───────────────────────────────────────────────
+  'T-03': {
+    // BUCKET-B-CONTENT: needs verified §§ from legal review (BW LBO).
+    bw: null,
+    // BUCKET-B-CONTENT: needs verified §§ from legal review (HE HBO).
+    hessen: null,
+    // BUCKET-B-CONTENT: needs verified §§ from legal review (NW BauO NRW).
+    nrw: null,
+    // BUCKET-B-CONTENT: needs verified §§ from legal review (NI NBauO).
+    niedersachsen: null,
+  },
+  // ── T-04 Umnutzung ───────────────────────────────────────────────
+  'T-04': {
+    // BUCKET-B-CONTENT: needs verified §§ from legal review (BW LBO).
+    bw: null,
+    // BUCKET-B-CONTENT: needs verified §§ from legal review (HE HBO).
+    hessen: null,
+    // BUCKET-B-CONTENT: needs verified §§ from legal review (NW BauO NRW).
+    nrw: null,
+    // BUCKET-B-CONTENT: needs verified §§ from legal review (NI NBauO).
+    niedersachsen: null,
+  },
+  // ── T-05 Abbruch ─────────────────────────────────────────────────
+  'T-05': {
+    // BUCKET-B-CONTENT: needs verified §§ from legal review (BW LBO).
+    bw: null,
+    // BUCKET-B-CONTENT: needs verified §§ from legal review (HE HBO).
+    hessen: null,
+    // BUCKET-B-CONTENT: needs verified §§ from legal review (NW BauO NRW).
+    nrw: null,
+    // BUCKET-B-CONTENT: needs verified §§ from legal review (NI NBauO).
+    niedersachsen: null,
+  },
+  // ── T-06 Aufstockung ─────────────────────────────────────────────
+  'T-06': {
+    // BUCKET-B-CONTENT: needs verified §§ from legal review (BW LBO).
+    bw: null,
+    // BUCKET-B-CONTENT: needs verified §§ from legal review (HE HBO).
+    hessen: null,
+    // BUCKET-B-CONTENT: needs verified §§ from legal review (NW BauO NRW).
+    nrw: null,
+    // BUCKET-B-CONTENT: needs verified §§ from legal review (NI NBauO).
+    niedersachsen: null,
+  },
+  // ── T-07 Anbau ───────────────────────────────────────────────────
+  'T-07': {
+    // BUCKET-B-CONTENT: needs verified §§ from legal review (BW LBO).
+    bw: null,
+    // BUCKET-B-CONTENT: needs verified §§ from legal review (HE HBO).
+    hessen: null,
+    // BUCKET-B-CONTENT: needs verified §§ from legal review (NW BauO NRW).
+    nrw: null,
+    // BUCKET-B-CONTENT: needs verified §§ from legal review (NI NBauO).
+    niedersachsen: null,
+  },
+  // ── T-08 Sonstiges ───────────────────────────────────────────────
+  'T-08': {
+    // BUCKET-B-CONTENT: needs verified §§ from legal review (BW LBO).
+    bw: null,
+    // BUCKET-B-CONTENT: needs verified §§ from legal review (HE HBO).
+    hessen: null,
+    // BUCKET-B-CONTENT: needs verified §§ from legal review (NW BauO NRW).
+    nrw: null,
+    // BUCKET-B-CONTENT: needs verified §§ from legal review (NI NBauO).
+    niedersachsen: null,
+  },
+}
