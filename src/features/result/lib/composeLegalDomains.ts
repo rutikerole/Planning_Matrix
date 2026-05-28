@@ -290,18 +290,23 @@ export function composeLegalDomains(
     })
   }
 
-  // Band relevance: HIGH if the band carries a HIGH row or its feeding
-  // consultation area is ACTIVE; PARTIAL if it has any row or the feeding
-  // area is PENDING; otherwise NONE. The feeding map keeps the badge tied
-  // to the persona's Areas state machine (N←A planning, R←B building,
-  // M←C other) while the rows themselves are bucketed by true jurisdiction.
+  // Band relevance. HIGH iff the band carries a HIGH row, OR it carries
+  // any rows and its feeding consultation area is ACTIVE. PARTIAL when it
+  // has rows but no HIGH ones, or when its feeding area is PENDING/ACTIVE
+  // but no rows surfaced for this band yet. NONE otherwise. The feeding
+  // map keeps the badge tied to the persona's Areas state machine
+  // (N←A planning, R←B building, M←C other), but a band is NEVER
+  // promoted to HIGH on the strength of the area state alone — that
+  // produced an incoherent "HIGHLY RELEVANT badge + empty body" once
+  // the jurisdictional re-bucket moved e.g. Denkmalschutz out of the
+  // band the area state covers (Hessen T-03 case caught in render check).
   const deriveRelevance = (
     rows: LegalDomainRow[],
     feedingArea: AreaState | undefined,
   ): LegalRelevance => {
-    if (feedingArea === 'ACTIVE' || rows.some((r) => r.relevance === 'HIGH'))
-      return 'HIGH'
-    if (feedingArea === 'PENDING' || rows.length > 0) return 'PARTIAL'
+    if (rows.some((r) => r.relevance === 'HIGH')) return 'HIGH'
+    if (rows.length > 0) return feedingArea === 'ACTIVE' ? 'HIGH' : 'PARTIAL'
+    if (feedingArea === 'ACTIVE' || feedingArea === 'PENDING') return 'PARTIAL'
     return 'NONE'
   }
 
