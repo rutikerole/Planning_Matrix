@@ -708,6 +708,87 @@ DENKMAL & ERHALTUNGSSATZUNG:
   nicht im Korpus). Zuständige Behörde: Thüringisches Landesamt für
   Denkmalpflege und Archäologie auf Landesebene; untere Denkmalschutz-
   behörde bei der kreisfreien Stadt bzw. beim Landratsamt.`,
+    // C10 batch — Brandenburg × T-01 authored 2026-05-28. BbgBO corpus-
+    // verified (mirror-tier; baunormenlexikon.de; BbgBO Bekanntmachung
+    // 15.11.2018 i.d.F. Gesetz v. 28.09.2023 GVBl. I/23 Nr. 18). Seventh
+    // Flächenland. Unique BB features: § 62 Bauanzeigeverfahren (BB-
+    // specific institute between verfahrensfrei und vereinfacht); § 32a
+    // Photovoltaikanlagen für die Stromerzeugung auf Dächern (first state
+    // with PV-§ in corpus). § 61 = "Genehmigungsfreie Vorhaben" (heading
+    // changes from "verfahrensfrei"). Shifted: § 70 Nachweise, § 72
+    // Bauantrag. Enforcement triple omitted: § 84/§ 85/§ 86 (Einstellung/
+    // Beseitigung-Nutzungsuntersagung/Anpassung).
+    brandenburg: `══════════════════════════════════════════════════════════════════════════
+LANDESSPEZIFISCHER ZUSATZ — Brandenburg × T-01 (Neubau Einfamilienhaus)
+══════════════════════════════════════════════════════════════════════════
+
+Bei EFH-Projekten in BRANDENBURG: die §§ der BbgBO (Brandenburgische
+Bauordnung) ersetzen sämtliche oben genannten Bayern-Verweise. Brandenburg
+ist Flächenland mit vier kreisfreien Städten (Cottbus, Frankfurt (Oder),
+Potsdam, Brandenburg an der Havel) und 14 Landkreisen. Die zuständige
+untere Bauaufsichtsbehörde liegt — bei Projekten in den kreisfreien
+Städten — bei der städtischen Bauaufsichtsbehörde; im übrigen
+Brandenburg beim Landkreis (häufig in Kooperation mit amtsfreien
+Gemeinden, Ämtern oder Verbandsgemeinden gemäß § 58 BbgBO). Quelle:
+baunormenlexikon.de (mirror-tier; bei rechtlich kritischen Fragen die
+amtliche Fassung beim bravors.brandenburg.de gegenprüfen — Achtung:
+Portal liefert teilweise die superseded 2008er Fassung). Stand: BbgBO
+Bekanntmachung vom 15.11.2018 i.d.F. Gesetz vom 28.09.2023 (GVBl. I/23,
+Nr. 18).
+
+HINWEIS: Der Brandenburger systemBlock ist bislang "Mindest-Eckdaten";
+die hier zitierten §§ stammen aus dem Korpus (secondary-mirror, primary-
+URL hinterlegt) und sind verwendbar, aber das vollständige BB-Profil
+wird erst mit anwaltlich verifizierter systemBlock-Tiefe abschließend
+substantiell.
+
+VERFAHREN — BbgBO (BB-spezifischer Raster mit Bauanzeige):
+• Genehmigungsfreie Vorhaben — § 61 BbgBO.
+• Bauanzeigeverfahren — § 62 BbgBO (BB-spezifisches Institut zwischen
+  Verfahrensfreiheit und Vereinfachung; Vorhaben werden der Behörde
+  angezeigt, vor Baubeginn-Schweige-Frist).
+• Vereinfachtes Baugenehmigungsverfahren — § 63 BbgBO.
+• Baugenehmigungsverfahren (regulär) — § 64 BbgBO.
+
+ROUTING (EFH-typisch):
+EFH erreicht häufig Gebäudeklasse 1 bis 3 nach § 2 BbgBO. Bei
+qualifiziertem B-Plan und ohne Sonderbau-Eigenschaft (§ 51 BbgBO) ist
+zunächst das Bauanzeigeverfahren nach § 62 BbgBO zu prüfen; sonst
+vereinfachtes Verfahren nach § 63 BbgBO. Reguläres Verfahren nach
+§ 64 BbgBO nur bei Sonderbau-Tatbestand.
+
+ANTRAG & VORLAGEN:
+• Bauantrag und Bauvorlagen — § 72 BbgBO.
+• Bauvorlageberechtigung — § 65 BbgBO. Entwurfsverfasser —
+  § 54 BbgBO.
+• Form/Inhalt der Bauvorlagen: separate BauVorlVO Bbg (kein §-Verweis
+  im Korpus — Verordnung als Quelle referenzieren).
+
+TECHNISCHE ANFORDERUNGEN:
+• Abstandsflächen, Abstände — § 6 BbgBO.
+• Standsicherheit — § 12 BbgBO. Bautechnische Nachweise —
+  § 70 BbgBO.
+• Stellplätze, Garagen, Abstellplätze für Fahrräder — § 49 BbgBO.
+
+BUNDESRECHT (gilt universal):
+• Zulässigkeit — § 30 BauGB, § 31 BauGB, § 34 BauGB, § 35 BauGB.
+• Maß + Baugebiete — § 1 BauNVO, § 3 BauNVO, § 4 BauNVO, § 6 BauNVO,
+  § 16 BauNVO, § 19 BauNVO, § 23 BauNVO.
+• Energie — § 10 GEG. § 80 GEG.
+
+SOLAR-/PV-VORGABEN in Brandenburg (KORPUS-SPEZIFISCH):
+Brandenburg hat — anders als die meisten anderen Bundesländer — einen
+§ direkt in der BbgBO: § 32a BbgBO "Photovoltaikanlagen für die
+Stromerzeugung auf Dächern". Weitere Klimaschutz-Pflichten ggf. außer-
+halb der BbgBO; insoweit konkrete §-Verweise NICHT im Korpus — geltende
+Vorschrift referenzieren, nicht erfinden.
+
+DENKMAL & ERHALTUNGSSATZUNG:
+• Bundesanker — § 172 BauGB (Erhaltungssatzungs-Gebiet).
+• Land — BbgDSchG (separate Landesvorschrift; konkrete §-Verweise nicht
+  im Korpus). Zuständige Behörde: Brandenburgisches Landesamt für
+  Denkmalpflege und Archäologisches Landesmuseum auf Landesebene; untere
+  Denkmalschutzbehörde bei der kreisfreien Stadt bzw. beim Landkreis.`,
   },
   // ── T-02 Neubau MFH ──────────────────────────────────────────────
   'T-02': {
@@ -1484,6 +1565,67 @@ DENKMAL & ERHALTUNGSSATZUNG:
 • Land — ThürDSchG. Behörde: Thüringisches Landesamt für Denkmalpflege
   und Archäologie plus zuständige untere Denkmalschutzbehörde
   (kreisfreie Stadt bzw. Landratsamt).`,
+    // C10 batch — Brandenburg × T-02 authored 2026-05-28. BbgBO corpus-
+    // verified. 4-§ brandschutz heading-evident; § 32a PV-§ cited as
+    // BB-spezifische TECHNISCHE Vorschrift bei Dach.
+    brandenburg: `══════════════════════════════════════════════════════════════════════════
+LANDESSPEZIFISCHER ZUSATZ — Brandenburg × T-02 (Neubau Mehrfamilienhaus)
+══════════════════════════════════════════════════════════════════════════
+
+Bei MFH-Projekten in BRANDENBURG: die §§ der BbgBO ersetzen sämtliche
+oben genannten Bayern-Verweise. Flächenland — Bauaufsicht je nach
+Standort bei der städtischen Bauaufsichtsbehörde der kreisfreien Stadt
+(Cottbus, Frankfurt (Oder), Potsdam, Brandenburg an der Havel) bzw. beim
+Landkreis. Quelle: baunormenlexikon.de (mirror-tier). Stand: BbgBO
+Bekanntmachung 15.11.2018 i.d.F. Gesetz vom 28.09.2023.
+
+HINWEIS: Brandenburger systemBlock weiterhin "preliminary"; die hier
+zitierten §§ sind korpus-verifiziert.
+
+VERFAHREN — BbgBO (BB-Raster mit Bauanzeige):
+• Genehmigungsfreie Vorhaben — § 61 BbgBO.
+• Bauanzeigeverfahren — § 62 BbgBO (BB-spezifisches Institut).
+• Vereinfachtes Baugenehmigungsverfahren — § 63 BbgBO.
+• Baugenehmigungsverfahren (regulär) — § 64 BbgBO.
+
+ROUTING (MFH-typisch):
+MFH erreicht häufig Gebäudeklasse 3 bis 5 nach § 2 BbgBO. Bei
+Sonderbau-Tatbestand (§ 51 BbgBO) ist das reguläre Verfahren nach
+§ 64 BbgBO zwingend. Ohne Sonderbau: vereinfachtes Verfahren nach
+§ 63 BbgBO. Bauanzeige nach § 62 BbgBO nur in dort genannten Tatbeständen.
+
+ANTRAG & VORLAGEN:
+• Bauantrag und Bauvorlagen — § 72 BbgBO.
+• Bauvorlageberechtigung — § 65 BbgBO. Entwurfsverfasser —
+  § 54 BbgBO.
+
+TECHNISCHE ANFORDERUNGEN:
+• Abstandsflächen, Abstände — § 6 BbgBO.
+• Standsicherheit — § 12 BbgBO. Bautechnische Nachweise —
+  § 70 BbgBO.
+• Brandschutz allgemein — § 14 BbgBO. Allgemeine Anforderungen
+  Brandverhalten Baustoffe/Bauteile — § 26 BbgBO. Brandwände —
+  § 30 BbgBO. Erster und zweiter Rettungsweg — § 33 BbgBO.
+• Photovoltaikanlagen für die Stromerzeugung auf Dächern —
+  § 32a BbgBO (BB-spezifische BO-§, einzigartig unter den C-Staaten).
+• Stellplätze, Garagen, Abstellplätze für Fahrräder — § 49 BbgBO.
+
+BUNDESRECHT (gilt universal):
+• Zulässigkeit — § 30 BauGB, § 31 BauGB, § 34 BauGB, § 35 BauGB.
+• Baugebiete + Maß — § 1 BauNVO, § 3 BauNVO, § 4 BauNVO, § 6 BauNVO,
+  § 16 BauNVO, § 19 BauNVO, § 23 BauNVO. Stellplätze — § 12 BauNVO.
+• Energie — § 10 GEG. § 80 GEG.
+
+SOLAR-/PV-VORGABEN in Brandenburg:
+§ 32a BbgBO ist im Korpus (siehe oben). Weitere Klimaschutz-Pflichten
+ggf. außerhalb der BbgBO; insoweit konkrete §-Verweise NICHT im Korpus —
+geltende Vorschrift referenzieren, nicht erfinden.
+
+DENKMAL & ERHALTUNGSSATZUNG:
+• Bundesanker — § 172 BauGB.
+• Land — BbgDSchG. Behörde: Brandenburgisches Landesamt für
+  Denkmalpflege plus zuständige untere Denkmalschutzbehörde
+  (kreisfreie Stadt bzw. Landkreis).`,
   },
   // ── T-03 Sanierung ───────────────────────────────────────────────
   'T-03': {
@@ -2204,6 +2346,69 @@ NICHT IM Korpus (NICHT erfinden):
   Stadt abklären.
 • Solar-/PV-Pflicht bei Sanierung — außerhalb der ThürBO geregelt;
   geltende Vorschrift referenzieren.`,
+    // C10 batch — Brandenburg × T-03 authored 2026-05-28. BbgBO corpus-
+    // verified.
+    brandenburg: `══════════════════════════════════════════════════════════════════════════
+LANDESSPEZIFISCHER ZUSATZ — Brandenburg × T-03 (Sanierung / Modernisierung)
+══════════════════════════════════════════════════════════════════════════
+
+Bei Sanierungs-/Modernisierungs-Projekten in BRANDENBURG: die §§ der
+BbgBO ersetzen sämtliche oben genannten Bayern-Verweise. Flächenland —
+Bauaufsicht beim Landkreis bzw. bei der städtischen Bauaufsichts-
+behörde der kreisfreien Stadt (Cottbus, Frankfurt (Oder), Potsdam,
+Brandenburg an der Havel). Quelle: baunormenlexikon.de (mirror-tier).
+Stand: BbgBO i.d.F. Gesetz vom 28.09.2023.
+
+HINWEIS: Brandenburger systemBlock weiterhin "preliminary"; die hier
+zitierten §§ sind korpus-verifiziert.
+
+ROUTING:
+Reine Instandhaltung/Modernisierung ohne Eingriff in Statik, Brandschutz
+oder Nutzung fällt häufig unter § 61 BbgBO (genehmigungsfreie Vorhaben).
+Sobald tragende Bauteile, Brandschutz oder die Nutzung berührt sind, ist
+regelmäßig das vereinfachte Verfahren nach § 63 BbgBO anzunehmen — bei
+qualifizierten Tatbeständen ggf. das Bauanzeigeverfahren nach § 62 BbgBO.
+
+VERFAHREN — BbgBO:
+• Genehmigungsfreie Vorhaben — § 61 BbgBO.
+• Bauanzeigeverfahren — § 62 BbgBO (BB-spezifisches Institut).
+• Vereinfachtes Baugenehmigungsverfahren — § 63 BbgBO.
+
+TECHNISCHE NACHWEISE BEI EINGRIFF:
+• Standsicherheit bei tragenden Eingriffen — § 12 BbgBO.
+• Bautechnische Nachweise — § 70 BbgBO.
+• Brandschutz allgemein — § 14 BbgBO. Brandverhalten Baustoffe/Bauteile
+  — § 26 BbgBO. Brandwände — § 30 BbgBO. Erster und zweiter Rettungsweg
+  — § 33 BbgBO.
+
+ANTRAG:
+• Bauantrag und Bauvorlagen — § 72 BbgBO. Bauvorlageberechtigung —
+  § 65 BbgBO. Entwurfsverfasser — § 54 BbgBO.
+
+ENERGIE (Bundesrecht):
+• Bestandsänderung — § 48 GEG. Niedrigstenergie-Grundsatz allgemein —
+  § 10 GEG.
+
+NUTZUNGSÄNDERUNG IN Brandenburg:
+Brandenburg hat KEINEN dedizierten Nutzungsänderungs-§ in der BbgBO.
+Eine Nutzungsänderung im Sanierungskontext ist über § 63 BbgBO
+(vereinfacht) bzw. § 64 BbgBO (regulär bei Sonderbau, § 51 BbgBO) zu
+beantragen.
+
+PV-NACHRÜSTUNG bei Sanierung:
+§ 32a BbgBO regelt Photovoltaikanlagen auf Dächern — bei Dachsanierung
+mit PV-Bezug einschlägig.
+
+DENKMALSCHUTZ:
+Bei eingetragenem Baudenkmal oder Ensemble — BbgDSchG (separate
+Landesvorschrift; konkrete §-Verweise nicht im Korpus). Vor Sanierung
+ist das Brandenburgische Landesamt für Denkmalpflege plus zuständige
+untere Denkmalschutzbehörde (kreisfreie Stadt bzw. Landkreis) anzuhören.
+Federal-Anker bei Erhaltungssatzung — § 172 BauGB.
+
+NICHT IM Korpus (NICHT erfinden):
+• Land-Denkmal-§§ — wie oben mit Landesamt / Landkreis bzw. kreisfreier
+  Stadt abklären.`,
   },
   // ── T-04 Umnutzung ───────────────────────────────────────────────
   'T-04': {
@@ -2860,6 +3065,61 @@ NICHT IM ThürBO-Korpus (NICHT erfinden):
 • Schallschutz/TA-Lärm bei lärmrelevanter Nutzungsänderung — DIN 4109
   bzw. TA Lärm als Bundes- bzw. technische Normen, nicht in der ThürBO
   geregelt.`,
+    // C10 batch — Brandenburg × T-04 authored 2026-05-28. BbgBO corpus-
+    // verified.
+    brandenburg: `══════════════════════════════════════════════════════════════════════════
+LANDESSPEZIFISCHER ZUSATZ — Brandenburg × T-04 (Nutzungsänderung / Umnutzung)
+══════════════════════════════════════════════════════════════════════════
+
+Bei Nutzungsänderungs-Projekten in BRANDENBURG: die §§ der BbgBO
+ersetzen sämtliche oben genannten Bayern-Verweise. Flächenland —
+Bauaufsicht beim Landkreis bzw. bei der städtischen Bauaufsichtsbehörde
+der kreisfreien Stadt (Cottbus, Frankfurt (Oder), Potsdam, Brandenburg
+an der Havel). Quelle: baunormenlexikon.de (mirror-tier). Stand: BbgBO
+i.d.F. Gesetz vom 28.09.2023.
+
+HINWEIS: Brandenburger systemBlock weiterhin "preliminary"; die hier
+zitierten §§ sind korpus-verifiziert.
+
+ROUTING:
+Eine Nutzungsänderung ist in Brandenburg grundsätzlich genehmigungs-
+pflichtig, sofern nicht ausdrücklich genehmigungsfrei nach § 61 BbgBO.
+Die BbgBO hat KEINEN dedizierten Nutzungsänderungs-§ — der
+Verfahrensweg richtet sich nach den allgemeinen Verfahrens-§§. Bei
+Nicht-Sonderbau-Umnutzung ist regelmäßig das vereinfachte Verfahren
+nach § 63 BbgBO einschlägig; sobald Sonderbau-Tatbestand vorliegt
+(§ 51 BbgBO), gilt das reguläre Verfahren nach § 64 BbgBO.
+
+VERFAHREN — BbgBO:
+• Vereinfachtes Baugenehmigungsverfahren — § 63 BbgBO.
+• Baugenehmigungsverfahren (regulär) — § 64 BbgBO (bei Sonderbau-
+  Tatbestand der neuen Nutzung, § 51 BbgBO).
+
+GEBIETSVERTRÄGLICHKEIT (Bundesrecht):
+• Zulässigkeit der neuen Nutzung — § 30 BauGB, § 31 BauGB, § 34 BauGB,
+  § 35 BauGB.
+• Baugebiete und Nutzungsarten — § 1 BauNVO bis § 9 BauNVO, § 4a BauNVO.
+• Erhaltungssatzung — § 172 BauGB.
+
+TECHNISCHE FOLGEN DER NEUEN NUTZUNG:
+• Brandschutz nach neuer Nutzung — § 14 BbgBO. Brandverhalten Baustoffe
+  — § 26 BbgBO. Brandwände — § 30 BbgBO. Erster und zweiter Rettungsweg
+  — § 33 BbgBO.
+• Stellplatzbedarf nach neuer Nutzung — § 49 BbgBO. Bundes-Maß
+  ergänzend — § 12 BauNVO.
+• Standsicherheit bei strukturellen Anpassungen — § 12 BbgBO.
+  Bautechnische Nachweise — § 70 BbgBO.
+
+ANTRAG:
+• Bauantrag und Bauvorlagen — § 72 BbgBO. Bauvorlageberechtigung —
+  § 65 BbgBO. Entwurfsverfasser — § 54 BbgBO.
+
+NICHT IM BbgBO-Korpus (NICHT erfinden):
+• Land-Denkmal-§§ — BbgDSchG mit Brandenburgischem Landesamt für
+  Denkmalpflege / Landkreis bzw. kreisfreier Stadt abklären.
+• Schallschutz/TA-Lärm bei lärmrelevanter Nutzungsänderung — DIN 4109
+  bzw. TA Lärm als Bundes- bzw. technische Normen, nicht in der BbgBO
+  geregelt.`,
   },
   // ── T-05 Abbruch ─────────────────────────────────────────────────
   'T-05': {
@@ -3485,6 +3745,60 @@ NICHT IM ThürBO-Korpus (NICHT erfinden):
 • Schadstoff-/Entsorgungs-§§ — KrWG, GefStoffV, EU-Vorgaben; nicht in
   der ThürBO geregelt; geltende Bundes- bzw. EU-Regelung referenzieren.
 • Land-Denkmal-§§ — wie oben mit Landesamt / Landratsamt bzw.
+  kreisfreier Stadt abklären.`,
+    // C10 batch — Brandenburg × T-05 authored 2026-05-28. BbgBO corpus-
+    // verified. Enforcement triple omitted: § 84 (Einstellung Arbeiten),
+    // § 85 (Beseitigung/Nutzungsuntersagung — classic), § 86 (Anpassung
+    // bestehender baulicher Anlagen — enforcement-adjacent).
+    brandenburg: `══════════════════════════════════════════════════════════════════════════
+LANDESSPEZIFISCHER ZUSATZ — Brandenburg × T-05 (Abbruch / Beseitigung)
+══════════════════════════════════════════════════════════════════════════
+
+Bei Abbruch-/Beseitigungsvorhaben in BRANDENBURG: die §§ der BbgBO
+ersetzen sämtliche oben genannten Bayern-Verweise. Flächenland —
+Bauaufsicht beim Landkreis bzw. bei der städtischen Bauaufsichtsbehörde
+der kreisfreien Stadt (Cottbus, Frankfurt (Oder), Potsdam, Brandenburg
+an der Havel). Quelle: baunormenlexikon.de (mirror-tier). Stand: BbgBO
+i.d.F. Gesetz vom 28.09.2023.
+
+HINWEIS: Brandenburger systemBlock weiterhin "preliminary"; die hier
+zitierten §§ sind korpus-verifiziert.
+
+ROUTING:
+Die Beseitigung baulicher Anlagen in Brandenburg richtet sich nach dem
+Katalog der genehmigungsfreien Vorhaben (§ 61 BbgBO) bzw. nach den
+allgemeinen Verfahrens-§§ (§ 63 / § 64 BbgBO), wenn die Schwelle zur
+Genehmigungspflicht überschritten ist. NB: § 61 BbgBO trägt — anders
+als die meisten Standardländer — KEINEN expliziten "Beseitigung von
+Anlagen"-Anker in der Überschrift (nur "Genehmigungsfreie Vorhaben");
+das Katalog-Inhalt deckt Kleinabbrüche dennoch ab.
+
+VERFAHREN — BbgBO:
+• Genehmigungsfreie Vorhaben (Katalog) — § 61 BbgBO.
+• Bauanzeigeverfahren — § 62 BbgBO (BB-spezifisches Institut für
+  bestimmte Tatbestände).
+• Vereinfachtes Verfahren — § 63 BbgBO bzw. reguläres Verfahren —
+  § 64 BbgBO, wenn Genehmigungspflicht.
+
+DENKMAL & ERHALTUNGSSATZUNG (OVERRIDE der Verfahrensfreiheit):
+• Federal-Anker — § 172 BauGB: innerhalb eines Erhaltungssatzungs-
+  Bereichs ist der Abbruch genehmigungspflichtig, auch wenn er sonst
+  genehmigungsfrei wäre.
+• Land-Denkmal — BbgDSchG (separate Landesvorschrift; konkrete
+  §-Verweise nicht im Korpus). Bei eingetragenem Baudenkmal: Abbruch nur
+  mit denkmalrechtlicher Genehmigung; Brandenburgisches Landesamt für
+  Denkmalpflege plus zuständige untere Denkmalschutzbehörde (kreisfreie
+  Stadt bzw. Landkreis) einbeziehen.
+
+DOKUMENTE:
+• Bauvorlageberechtigung — § 65 BbgBO. Entwurfsverfasser — § 54 BbgBO.
+  Bauantrag-Vorlagen — § 72 BbgBO.
+• Statik der Restanlage bei Teilabbruch — § 12 BbgBO.
+
+NICHT IM BbgBO-Korpus (NICHT erfinden):
+• Schadstoff-/Entsorgungs-§§ — KrWG, GefStoffV, EU-Vorgaben; nicht in
+  der BbgBO geregelt; geltende Bundes- bzw. EU-Regelung referenzieren.
+• Land-Denkmal-§§ — wie oben mit Landesamt / Landkreis bzw.
   kreisfreier Stadt abklären.`,
   },
   // ── T-06 Aufstockung ─────────────────────────────────────────────
@@ -4145,6 +4459,62 @@ BAUPLANUNGSRECHT (Bundesrecht):
 ANTRAG:
 • Bauantrag und Bauvorlagen — § 74 ThürBO. Bauvorlageberechtigung —
   § 67 ThürBO. Entwurfsverfasser — § 57 ThürBO.`,
+    // C10 batch — Brandenburg × T-06 authored 2026-05-28. BbgBO corpus-
+    // verified. § 32a PV-§ cited at Dach-Bezug.
+    brandenburg: `══════════════════════════════════════════════════════════════════════════
+LANDESSPEZIFISCHER ZUSATZ — Brandenburg × T-06 (Aufstockung / Dachgeschossausbau)
+══════════════════════════════════════════════════════════════════════════
+
+Bei Aufstockungs-/DG-Ausbau-Projekten in BRANDENBURG: die §§ der BbgBO
+ersetzen sämtliche oben genannten Bayern-Verweise. Flächenland —
+Bauaufsicht beim Landkreis bzw. bei der städtischen Bauaufsichtsbehörde
+der kreisfreien Stadt (Cottbus, Frankfurt (Oder), Potsdam, Brandenburg
+an der Havel). Quelle: baunormenlexikon.de (mirror-tier). Stand: BbgBO
+i.d.F. Gesetz vom 28.09.2023.
+
+HINWEIS: Brandenburger systemBlock weiterhin "preliminary"; die hier
+zitierten §§ sind korpus-verifiziert.
+
+ROUTING:
+Aufstockung wird regelmäßig im vereinfachten Verfahren nach § 63 BbgBO
+behandelt. Bei Aufstockung können sich Gebäudeklasse, Abstandsflächen
+und Brandschutz ändern; die Standsicherheit der Bestandskonstruktion ist
+gesondert nachzuweisen.
+
+VERFAHREN:
+• Vereinfachtes Baugenehmigungsverfahren — § 63 BbgBO.
+
+GEBÄUDEKLASSE & ABSTANDSFLÄCHEN (kritisch bei Aufstockung):
+• Gebäudeklasse — § 2 BbgBO. Höhen-/Stockwerksgrenzen entscheiden, ob
+  die Aufstockung die GK anhebt.
+• Abstandsflächen, Abstände — § 6 BbgBO. An der neuen, höheren Wand
+  neu zu bemessen.
+
+TECHNISCHE NACHWEISE (BESTANDSSTATIK):
+• Standsicherheit der Bestandskonstruktion und neuer Aufbauten —
+  § 12 BbgBO. Bautechnische Nachweise — § 70 BbgBO.
+• Brandschutz nach ggf. höherer GK — § 14 BbgBO. Brandverhalten
+  Baustoffe — § 26 BbgBO. Brandwände — § 30 BbgBO. Erster und zweiter
+  Rettungsweg — § 33 BbgBO.
+
+PV-DACHANLAGE (BB-spezifisch):
+Bei DG-Ausbau / Dachneuaufbau mit PV-Bezug — § 32a BbgBO einschlägig
+(Photovoltaikanlagen für die Stromerzeugung auf Dächern).
+
+STELLPLÄTZE (bei neuen Wohneinheiten):
+• Stellplätze, Garagen, Abstellplätze für Fahrräder — § 49 BbgBO.
+
+ENERGIE (Bundesrecht):
+• Bestandsänderung — § 48 GEG. Niedrigstenergie-Grundsatz allgemein —
+  § 10 GEG.
+
+BAUPLANUNGSRECHT (Bundesrecht):
+• Zulässigkeit — § 30 BauGB, § 34 BauGB. Maß — § 19 BauNVO (GRZ),
+  § 20 BauNVO (Vollgeschosse/GFZ), § 23 BauNVO (überbaubare Fläche).
+
+ANTRAG:
+• Bauantrag und Bauvorlagen — § 72 BbgBO. Bauvorlageberechtigung —
+  § 65 BbgBO. Entwurfsverfasser — § 54 BbgBO.`,
   },
   // ── T-07 Anbau ───────────────────────────────────────────────────
   'T-07': {
@@ -4718,6 +5088,54 @@ ENERGIE (Bundesrecht):
 ANTRAG:
 • Bauantrag und Bauvorlagen — § 74 ThürBO. Bauvorlageberechtigung —
   § 67 ThürBO. Entwurfsverfasser — § 57 ThürBO.`,
+    // C10 batch — Brandenburg × T-07 authored 2026-05-28. BbgBO corpus-
+    // verified.
+    brandenburg: `══════════════════════════════════════════════════════════════════════════
+LANDESSPEZIFISCHER ZUSATZ — Brandenburg × T-07 (Anbau / Erweiterung)
+══════════════════════════════════════════════════════════════════════════
+
+Bei Anbau-/Erweiterungsvorhaben in BRANDENBURG: die §§ der BbgBO
+ersetzen sämtliche oben genannten Bayern-Verweise. Flächenland —
+Bauaufsicht beim Landkreis bzw. bei der städtischen Bauaufsichtsbehörde
+der kreisfreien Stadt (Cottbus, Frankfurt (Oder), Potsdam, Brandenburg
+an der Havel). Quelle: baunormenlexikon.de (mirror-tier). Stand: BbgBO
+i.d.F. Gesetz vom 28.09.2023.
+
+HINWEIS: Brandenburger systemBlock weiterhin "preliminary"; die hier
+zitierten §§ sind korpus-verifiziert.
+
+ROUTING:
+Ein Anbau wird regelmäßig im vereinfachten Verfahren nach § 63 BbgBO
+behandelt. Bei qualifiziertem B-Plan und bestimmten Tatbeständen kommt
+das Bauanzeigeverfahren nach § 62 BbgBO in Betracht (BB-spezifisches
+Institut).
+
+VERFAHREN:
+• Bauanzeigeverfahren — § 62 BbgBO (BB-spezifisches Institut bei
+  qualifizierten Tatbeständen).
+• Vereinfachtes Baugenehmigungsverfahren — § 63 BbgBO (Regelfall).
+
+GEBIETSVERTRÄGLICHKEIT (Bundesrecht):
+• Einfügen im Innenbereich — § 34 BauGB. Außenbereich — § 35 BauGB.
+• Maß der baulichen Nutzung — § 19 BauNVO (GRZ), § 23 BauNVO
+  (überbaubare Grundstücksfläche).
+
+TECHNISCHE ANFORDERUNGEN AM ANBAU:
+• Abstandsflächen, Abstände an der neuen Wand — § 6 BbgBO.
+• Standsicherheit — § 12 BbgBO. Bautechnische Nachweise —
+  § 70 BbgBO.
+• Brandschutz an der Anschluss-/Trennwand — § 14 BbgBO. Brandwände —
+  § 30 BbgBO.
+
+STELLPLÄTZE (bei neuen Wohneinheiten / Nutzungen):
+• Stellplätze, Garagen, Abstellplätze für Fahrräder — § 49 BbgBO.
+
+ENERGIE (Bundesrecht):
+• Neubau-Teil des Anbaus — § 10 GEG. Anschluss an Bestand — § 48 GEG.
+
+ANTRAG:
+• Bauantrag und Bauvorlagen — § 72 BbgBO. Bauvorlageberechtigung —
+  § 65 BbgBO. Entwurfsverfasser — § 54 BbgBO.`,
   },
   // ── T-08 Sonstiges ───────────────────────────────────────────────
   'T-08': {
@@ -5246,6 +5664,49 @@ ALLGEMEINE TECHNISCHE ANFORDERUNGEN:
 • Abstandsflächen, Abstände — § 6 ThürBO.
 • Standsicherheit — § 12 ThürBO. Bautechnische Nachweise —
   § 72 ThürBO.
+
+BUNDESRECHT (gilt universal):
+• Zulässigkeit — § 30 BauGB, § 31 BauGB, § 34 BauGB, § 35 BauGB.
+
+HINWEIS:
+T-08 sollte zuerst an einen passenderen Template-Archetyp (T-01 EFH bis
+T-07 Anbau) zugeordnet werden; nur wenn keine Zuordnung möglich ist,
+greift T-08 als Default-Schale.`,
+    // C10 batch — Brandenburg × T-08 authored 2026-05-28. BbgBO corpus-
+    // verified.
+    brandenburg: `══════════════════════════════════════════════════════════════════════════
+LANDESSPEZIFISCHER ZUSATZ — Brandenburg × T-08 (Sonstiges Vorhaben)
+══════════════════════════════════════════════════════════════════════════
+
+Bei sonstigen Vorhaben in BRANDENBURG: die §§ der BbgBO ersetzen
+sämtliche oben genannten Bayern-Verweise. Flächenland — Bauaufsicht beim
+Landkreis bzw. bei der städtischen Bauaufsichtsbehörde der kreisfreien
+Stadt (Cottbus, Frankfurt (Oder), Potsdam, Brandenburg an der Havel).
+Quelle: baunormenlexikon.de (mirror-tier). Stand: BbgBO i.d.F. Gesetz
+vom 28.09.2023.
+
+HINWEIS: Brandenburger systemBlock weiterhin "preliminary"; die hier
+zitierten §§ sind korpus-verifiziert.
+
+T-08 ist keine feste Vorhabens-Klasse — die einschlägigen BbgBO-§§
+richten sich nach dem konkreten Vorhaben. Die folgenden Verweise decken
+den vollständigen Verfahrensraster ab:
+
+VERFAHREN — BbgBO (BB-Raster mit Bauanzeige, vollständig):
+• Genehmigungsfreie Vorhaben — § 61 BbgBO.
+• Bauanzeigeverfahren — § 62 BbgBO (BB-spezifisches Institut).
+• Vereinfachtes Baugenehmigungsverfahren — § 63 BbgBO.
+• Baugenehmigungsverfahren (regulär) — § 64 BbgBO.
+
+ANTRAG & VORLAGEN:
+• Bauantrag und Bauvorlagen — § 72 BbgBO.
+• Bauvorlageberechtigung — § 65 BbgBO. Entwurfsverfasser —
+  § 54 BbgBO.
+
+ALLGEMEINE TECHNISCHE ANFORDERUNGEN:
+• Abstandsflächen, Abstände — § 6 BbgBO.
+• Standsicherheit — § 12 BbgBO. Bautechnische Nachweise —
+  § 70 BbgBO.
 
 BUNDESRECHT (gilt universal):
 • Zulässigkeit — § 30 BauGB, § 31 BauGB, § 34 BauGB, § 35 BauGB.
