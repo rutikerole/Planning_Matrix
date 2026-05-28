@@ -20,11 +20,11 @@ interface Props {
 }
 
 /**
- * Phase 8 — Tab 2 Legal landscape. Three vertically-stacked domain
- * bands (A · Planungsrecht / B · Bauordnungsrecht / C · Sonstige
- * Vorgaben) with rule rows. Click a row → expand to show full citation
- * source. Empty domain → calm "not yet assessed" line + CTA back to
- * chat.
+ * Phase 8 — Tab 2 Legal landscape. Three vertically-stacked
+ * jurisdictional bands (N · Bundesrecht / R · Landesrecht / M ·
+ * Kommunalrecht — Phase D, was topical Planning/Building/Other) with
+ * rule rows. Click a row → expand to show full citation source. Empty
+ * domain → calm "not yet assessed" line + CTA back to chat.
  */
 export function LegalLandscapeTab({ project, state }: Props) {
   const { t, i18n } = useTranslation()

@@ -1,4 +1,4 @@
-import type { ProjectState } from '@/types/projectState'
+import type { AreaState, ProjectState } from '@/types/projectState'
 import { getStateCitations } from '@/legal/stateCitations'
 import { extractProcedureCitation } from '@/legal/resolveProcedure'
 
@@ -14,7 +14,9 @@ export interface LegalDomainRow {
 }
 
 export interface LegalDomain {
-  key: 'A' | 'B' | 'C'
+  /** Jurisdictional level: N = national/Bundesrecht, R = regional/
+   *  Landesrecht, M = municipal/Kommunalrecht. */
+  key: 'N' | 'R' | 'M'
   /** Localised title. */
   title: string
   relevance: LegalRelevance
@@ -30,8 +32,18 @@ export interface LegalDomain {
  * + procedures + documents with citation evidence; we sniff for the
  * canonical statutes (§§ 30/34/35 BauGB, BayBO Art. 2/57/58/59/60/6,
  * GEG, Brandschutz, Stellplatz, Denkmal, Baulast) and emit one row
- * per hit with HIGH / PARTIAL / NONE relevance. The Areas A/B/C state
- * machine adjusts each domain's overall relevance.
+ * per hit with HIGH / PARTIAL / NONE relevance.
+ *
+ * Phase D (manager feedback) — the three bands are now JURISDICTIONAL
+ * levels (National / Regional / Municipal) instead of topical
+ * (Planning / Building / Other). Rows are bucketed by which level of
+ * government actually owns the rule: BauGB / BauNVO / GEG / DIN 4109 /
+ * TA Lärm are federal → National; the Landesbauordnung procedure,
+ * Brandschutz, Rettungsweg and the Denkmalschutzgesetz (state law) →
+ * Regional; Stellplatzsatzung and Baulasten → Municipal. The band
+ * relevance badge is still informed by the persona's Areas state
+ * machine, mapped N←A (planning), R←B (building order), M←C (other);
+ * see deriveRelevance.
  */
 export function composeLegalDomains(
   state: Partial<ProjectState>,
@@ -80,159 +92,129 @@ export function composeLegalDomains(
 
   const has = (re: RegExp) => re.test(corpus)
 
-  // Domain A — Planungsrecht
-  const aRows: LegalDomainRow[] = []
+  // ── N · National — Bundesrecht ──────────────────────────────────
+  // Federal statutes & standards: the urban-planning code (BauGB §§
+  // 30/34/35 + BauNVO), the federal energy act (GEG 2024), the federal
+  // sound-insulation standard (DIN 4109, Bug 66) and the federal noise
+  // administrative regulation (TA Lärm, Bug 89). These bind every
+  // project in Germany regardless of state or municipality.
+  const nRows: LegalDomainRow[] = []
   if (has(/§\s*30\s*baugb|baugb\s*§?\s*30/)) {
-    aRows.push({
+    nRows.push({
       label: '§ 30 BauGB',
       relevance: 'HIGH',
       status: lang === 'en' ? 'qualified inner area' : 'qualifizierter Innenbereich',
     })
   }
   if (has(/§\s*34\s*baugb|baugb\s*§?\s*34/)) {
-    aRows.push({
+    nRows.push({
       label: '§ 34 BauGB',
       relevance: 'HIGH',
       status: lang === 'en' ? 'unplanned inner area' : 'unbeplanter Innenbereich',
     })
   }
   if (has(/§\s*35\s*baugb|baugb\s*§?\s*35/)) {
-    aRows.push({
+    nRows.push({
       label: '§ 35 BauGB',
       relevance: 'PARTIAL',
       status: lang === 'en' ? 'outer area' : 'Außenbereich',
     })
   }
   if (has(/baunvo/)) {
-    aRows.push({
+    nRows.push({
       label: 'BauNVO',
       relevance: 'PARTIAL',
       status: lang === 'en' ? 'land use' : 'Nutzungsart',
     })
   }
-  const areaA = areas?.A
-  const aRelevance: LegalRelevance =
-    areaA?.state === 'ACTIVE'
-      ? 'HIGH'
-      : areaA?.state === 'PENDING'
-        ? 'PARTIAL'
-        : aRows.length > 0
-          ? 'PARTIAL'
-          : 'NONE'
+  if (has(/\bgeg\b/)) {
+    nRows.push({
+      label: 'GEG 2024',
+      relevance: 'HIGH',
+      status: lang === 'en' ? 'thermal protection' : 'Wärmeschutz · Energiebilanz',
+    })
+  }
+  // v1.0.29 Bug 66 — DIN 4109 sound insulation is a federal (national)
+  // standard, mandatory for MFH.
+  if (has(/din\s*4109|schallschutz/)) {
+    nRows.push({
+      label: 'DIN 4109',
+      relevance: 'PARTIAL',
+      status: lang === 'en' ? 'sound insulation' : 'Schallschutz',
+    })
+  }
+  // v1.0.30 Bug 89 — TA Lärm (Außenlärm/Immissionsschutz) is a federal
+  // administrative regulation; it surfaces without a state citation.
+  if (has(/ta[\s-]*l(ä|ae)rm/)) {
+    nRows.push({
+      label: 'TA Lärm',
+      relevance: 'PARTIAL',
+      status: lang === 'en' ? 'noise immission control' : 'Immissionsschutz · Lärm',
+    })
+  }
 
-  // Domain B — Bauordnungsrecht
-  // v1.0.21 Bug 23d — BayBO matchers gated to bayern. Non-Bayern
-  // projects no longer surface BayBO rows even if a stray BayBO
-  // citation slipped through the persona's anti-Bayern-leak shield;
-  // state-specific LBO matchers for the other 15 bundeslaender will
-  // be wired in v1.0.22+.
-  const bRows: LegalDomainRow[] = []
+  // ── R · Regional — Landesrecht ──────────────────────────────────
+  // State law: the Landesbauordnung (procedure + building classes +
+  // setbacks), fire protection and the second escape route (governed by
+  // every LBO), and the state Denkmalschutzgesetz (monument protection
+  // is state, not municipal, law — Bug 23d keeps the citation
+  // state-specific). The LBO/procedure row leads the band.
+  const rRows: LegalDomainRow[] = []
   if (isBayern) {
+    // v1.0.21 Bug 23d — BayBO matchers gated to bayern. Non-Bayern
+    // projects never surface a BayBO row even if a stray BayBO citation
+    // slipped through the persona's anti-Bayern-leak shield.
     if (has(/baybo\s*art\.?\s*2\b/)) {
-      bRows.push({
+      rRows.push({
         label: 'BayBO Art. 2',
         relevance: 'HIGH',
         status: lang === 'en' ? 'building class' : 'Gebäudeklasse',
       })
     }
     if (has(/baybo\s*art\.?\s*57\b/)) {
-      bRows.push({
+      rRows.push({
         label: 'BayBO Art. 57',
         relevance: 'PARTIAL',
         status: lang === 'en' ? 'permit-free works' : 'verfahrensfreie Vorhaben',
       })
     }
     if (has(/baybo\s*art\.?\s*58\b/)) {
-      bRows.push({
+      rRows.push({
         label: 'BayBO Art. 58',
         relevance: 'PARTIAL',
         status: lang === 'en' ? 'permit exemption check' : 'Genehmigungsfreistellung',
       })
     }
     if (has(/baybo\s*art\.?\s*59\b/)) {
-      bRows.push({
+      rRows.push({
         label: 'BayBO Art. 59',
         relevance: 'HIGH',
         status: lang === 'en' ? 'simplified procedure' : 'vereinfachtes Verfahren',
       })
     }
     if (has(/baybo\s*art\.?\s*60\b/)) {
-      bRows.push({
+      rRows.push({
         label: 'BayBO Art. 60',
         relevance: 'HIGH',
         status: lang === 'en' ? 'full permit' : 'Baugenehmigungsverfahren',
       })
     }
     if (has(/baybo\s*art\.?\s*6\b/)) {
-      bRows.push({
+      rRows.push({
         label: 'BayBO Art. 6',
         relevance: 'PARTIAL',
         status: lang === 'en' ? 'setbacks' : 'Abstandsflächen',
       })
     }
-  }
-  if (has(/\bgeg\b/)) {
-    bRows.push({
-      label: 'GEG 2024',
-      relevance: 'HIGH',
-      status: lang === 'en' ? 'thermal protection' : 'Wärmeschutz · Energiebilanz',
-    })
-  }
-  if (has(/brandschutz/)) {
-    bRows.push({
-      label: 'Brandschutz',
-      relevance: 'PARTIAL',
-      status: lang === 'en' ? 'GK-dependent fire protection' : 'gebäudeklassenabhängig',
-    })
-  }
-  // v1.0.29 Bug 66 — DIN 4109 sound insulation is a federal (national)
-  // standard, mandatory for MFH. composeLegalDomains had no matcher, so the
-  // T-02 GK 4 MFH Domain B under-produced on the web Legal Landscape tab.
-  if (has(/din\s*4109|schallschutz/)) {
-    bRows.push({
-      label: 'DIN 4109',
-      relevance: 'PARTIAL',
-      status: lang === 'en' ? 'sound insulation' : 'Schallschutz',
-    })
-  }
-  // v1.0.30 Bug 89 — the T-04 Leipzig walk (retail → gastronomy) raised two
-  // substantive building-law topics composeLegalDomains had no matcher for, so
-  // the web Legal Landscape Domain B under-produced after 6 rounds of content:
-  //   • TA Lärm — Außenlärm/Immissionsschutz for the gastronomy use
-  //   • Rettungsweg — second escape route (Hinterhof) for the changed use
-  // Both are state-neutral (TA Lärm is federal; a second Rettungsweg is
-  // required by every Landesbauordnung), so they surface as topic rows without
-  // a state-specific citation — same shape as the Brandschutz / DIN 4109 rows.
-  if (has(/ta[\s-]*l(ä|ae)rm/)) {
-    bRows.push({
-      label: 'TA Lärm',
-      relevance: 'PARTIAL',
-      status: lang === 'en' ? 'noise immission control' : 'Immissionsschutz · Lärm',
-    })
-  }
-  if (has(/rettungsweg/)) {
-    bRows.push({
-      label: 'Rettungsweg',
-      relevance: 'PARTIAL',
-      status: lang === 'en' ? 'second escape route' : 'zweiter Rettungsweg',
-    })
-  }
-  // v1.0.28 Bug 54 — Domain B was Bayern-only (the BayBO matchers above
-  // sit inside `if (isBayern)`), so ALL 15 non-Bayern states rendered an
-  // empty Building-law section ("Not enough information yet") on the web
-  // Legal Landscape tab. The 16-state matrix never caught it — it only
-  // asserts the PDF. Surface the state's procedure for every non-Bayern
-  // state. No fabrication: substantive states carry a real
-  // permitFormCitation; stub states render the honest "Landesbauordnung
-  // {Land}" label with an "in Vorbereitung" status (their pack §-fields
-  // are deliberately unverified deferral text).
-  if (!isBayern) {
-    // v1.0.29.1 Bug 83 — read the persona's explicit procedure-type fact across
-    // every key convention. The T-02 Hamburg walk emitted it via `verfahren.typ`
-    // (dotted), not `verfahren_indikation` — so the v1.0.28/29 read missed it
-    // and Domain B fell to the "Landesbauordnung {Land}" stub instead of the
-    // cited §. NOT sourced from state.procedures (the Königsallee fixture proved
-    // procedures[0] can be less precise than the deterministic verdict).
+  } else {
+    // v1.0.28 Bug 54 — surface the state's procedure for every non-Bayern
+    // state so the band is never empty. No fabrication: substantive states
+    // carry a real permitFormCitation; stub states render the honest
+    // "Landesbauordnung {Land}" label with an "in Vorbereitung" status.
+    // v1.0.29.1 Bug 83 — read the persona's explicit procedure-type fact
+    // across every key convention (e.g. T-02 Hamburg's dotted `verfahren.typ`).
+    // NOT sourced from state.procedures (procedures[0] can be less precise
+    // than the deterministic verdict).
     const verfahrenFact = facts.find(
       (f) =>
         f.key === 'verfahren_indikation' ||
@@ -261,74 +243,86 @@ export function composeLegalDomains(
       label = `Landesbauordnung ${citations.labelDe}`
       status = lang === 'en' ? 'details in preparation' : 'Detail-Spezifika in Vorbereitung'
     }
-    bRows.unshift({ label, relevance: 'HIGH', status })
+    rRows.push({ label, relevance: 'HIGH', status })
   }
-  const areaB = areas?.B
-  const bRelevance: LegalRelevance =
-    areaB?.state === 'ACTIVE'
-      ? 'HIGH'
-      : areaB?.state === 'PENDING'
-        ? 'PARTIAL'
-        : bRows.length > 0
-          ? 'HIGH'
-          : 'NONE'
-
-  // Domain C — Sonstige Vorgaben
-  const cRows: LegalDomainRow[] = []
-  if (has(/baybo\s*art\.?\s*47\b|stellplatz/)) {
-    cRows.push({
-      label: 'Stellplatzsatzung',
+  if (has(/brandschutz/)) {
+    rRows.push({
+      label: 'Brandschutz',
       relevance: 'PARTIAL',
-      status: lang === 'en' ? 'municipal' : 'kommunal',
+      status: lang === 'en' ? 'GK-dependent fire protection' : 'gebäudeklassenabhängig',
+    })
+  }
+  if (has(/rettungsweg/)) {
+    rRows.push({
+      label: 'Rettungsweg',
+      relevance: 'PARTIAL',
+      status: lang === 'en' ? 'second escape route' : 'zweiter Rettungsweg',
     })
   }
   if (has(/denkmal|baydschg|dschg/)) {
     // v1.0.21 Bug 23d — row label is the state-specific
     // Denkmalschutzgesetz short name (BayDSchG / DSchG NRW / DSchG Bln /
-    // HDSchG / NDSchG / DSchG BW), so a Berlin project no longer
-    // surfaces "BayDSchG" as its monument-protection citation. Stub
-    // states render the honest-deferral wording from the citation pack.
-    cRows.push({
+    // HDSchG / NDSchG / DSchG BW). Denkmalschutz is STATE law, so it
+    // belongs to the Regional band (was "Other" pre-Phase-D).
+    rRows.push({
       label: citations.denkmalSchutzAct,
       relevance: 'HIGH',
       status: lang === 'en' ? 'listed building applicable' : 'denkmalrechtlich',
     })
   }
+
+  // ── M · Municipal — Kommunalrecht ───────────────────────────────
+  // Local rules administered by the municipality: the parking ordinance
+  // (Stellplatzsatzung) and the land-charges register (Baulastenverzeichnis).
+  const mRows: LegalDomainRow[] = []
+  if (has(/baybo\s*art\.?\s*47\b|stellplatz/)) {
+    mRows.push({
+      label: 'Stellplatzsatzung',
+      relevance: 'PARTIAL',
+      status: lang === 'en' ? 'municipal' : 'kommunal',
+    })
+  }
   if (has(/baulast/)) {
-    cRows.push({
+    mRows.push({
       label: 'Baulasten',
       relevance: 'PARTIAL',
       status: lang === 'en' ? 'check land charges' : 'Baulastenverzeichnis',
     })
   }
-  const areaC = areas?.C
-  const cRelevance: LegalRelevance =
-    areaC?.state === 'ACTIVE'
-      ? 'HIGH'
-      : areaC?.state === 'PENDING'
-        ? 'PARTIAL'
-        : cRows.length > 0
-          ? 'PARTIAL'
-          : 'NONE'
+
+  // Band relevance: HIGH if the band carries a HIGH row or its feeding
+  // consultation area is ACTIVE; PARTIAL if it has any row or the feeding
+  // area is PENDING; otherwise NONE. The feeding map keeps the badge tied
+  // to the persona's Areas state machine (N←A planning, R←B building,
+  // M←C other) while the rows themselves are bucketed by true jurisdiction.
+  const deriveRelevance = (
+    rows: LegalDomainRow[],
+    feedingArea: AreaState | undefined,
+  ): LegalRelevance => {
+    if (feedingArea === 'ACTIVE' || rows.some((r) => r.relevance === 'HIGH'))
+      return 'HIGH'
+    if (feedingArea === 'PENDING' || rows.length > 0) return 'PARTIAL'
+    return 'NONE'
+  }
 
   return [
     {
-      key: 'A',
-      title: lang === 'en' ? 'Planning law' : 'Planungsrecht',
-      relevance: aRelevance,
-      rows: aRows,
+      key: 'N',
+      title: lang === 'en' ? 'National law' : 'Bundesrecht',
+      relevance: deriveRelevance(nRows, areas?.A?.state),
+      rows: nRows,
     },
     {
-      key: 'B',
-      title: lang === 'en' ? 'Building law' : 'Bauordnungsrecht',
-      relevance: bRelevance,
-      rows: bRows,
+      key: 'R',
+      title: lang === 'en' ? 'Regional law' : 'Landesrecht',
+      relevance: deriveRelevance(rRows, areas?.B?.state),
+      rows: rRows,
     },
     {
-      key: 'C',
-      title: lang === 'en' ? 'Other requirements' : 'Sonstige Vorgaben',
-      relevance: cRelevance,
-      rows: cRows,
+      key: 'M',
+      title: lang === 'en' ? 'Municipal law' : 'Kommunalrecht',
+      relevance: deriveRelevance(mRows, areas?.C?.state),
+      rows: mRows,
     },
   ]
 }
