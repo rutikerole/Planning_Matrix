@@ -1984,7 +1984,7 @@
         "eyebrow": "Benötigtes Team",
         "count_one": "{{count}} Fachperson",
         "count_other": "{{count}} Fachpersonen",
-        "stakeholdersEyebrow": "Beteiligte",
+        "stakeholdersEyebrow": "Projektbeteiligte",
         "effortLabel": "Aufwand",
         "baselineNote": "Vorgeschlagener Standard für Vorhaben dieser Art — wird durch konkrete Berater:innen-Empfehlungen überschrieben.",
         "likelyBadge": "wahrscheinlich"

@@ -249,11 +249,11 @@ const EN: PdfStrings = {
     'A few state-specific certificate §§ (e.g. the structural certificate under the separate inspection regime) are still being aligned — confirm the exact requirements for those documents with the local building authority.',
 
   // ─── v1.0.17 — Team & Stakeholders ────────────────────────────
-  'team.kicker': 'SECTION 07 · TEAM & STAKEHOLDERS',
-  'team.title': 'Team & stakeholders',
+  'team.kicker': 'SECTION 07 · TEAM & PROJECT STAKEHOLDERS',
+  'team.title': 'Team & project stakeholders',
   'team.specialists.h': 'SPECIALISTS',
   'team.specialists.empty': 'No specialists identified yet.',
-  'team.stakeholders.h': 'STAKEHOLDERS',
+  'team.stakeholders.h': 'PROJECT STAKEHOLDERS',
   'team.role.owner': 'Owner (Bauherr:in)',
   'team.role.owner.body':
     'Commissions the project, carries the costs, makes decisions.',
@@ -486,12 +486,12 @@ const DE: PdfStrings = {
     'Einzelne landesspezifische Nachweis-§§ (z. B. der Statik-Nachweis im Prüf-Regime) noch in Abstimmung — die genauen Anforderungen für diese Nachweise mit dem lokalen Bauamt bestätigen.',
 
   // ─── v1.0.17 — Team & Stakeholders ────────────────────────────
-  'team.kicker': 'ABSCHNITT 07 · TEAM & BETEILIGTE',
-  'team.title': 'Team & Beteiligte',
+  'team.kicker': 'ABSCHNITT 07 · TEAM & PROJEKTBETEILIGTE',
+  'team.title': 'Team & Projektbeteiligte',
   'team.specialists.h': 'FACHPLANER:INNEN',
   'team.specialists.empty':
     'Noch keine Fachplaner:innen identifiziert.',
-  'team.stakeholders.h': 'BETEILIGTE',
+  'team.stakeholders.h': 'PROJEKTBETEILIGTE',
   'team.role.owner': 'Bauherr:in',
   'team.role.owner.body':
     'Beauftragt das Vorhaben, trägt die Kosten, entscheidet.',

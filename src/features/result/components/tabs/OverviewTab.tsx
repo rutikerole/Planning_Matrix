@@ -4,6 +4,7 @@ import { ExecutiveRead } from '../Cards/ExecutiveRead'
 import { AtAGlance } from '../Cards/AtAGlance'
 import { ActionCards } from '../Cards/ActionCards'
 import { ComparableProjectsSlot } from '../Cards/ComparableProjectsSlot'
+import { ProjectStakeholders } from '../Cards/ProjectStakeholders'
 import {
   VorlaeufigFooter,
   isPending,
@@ -52,6 +53,7 @@ export function OverviewTab({ project, state }: Props) {
       </div>
       <ActionCards project={project} state={state} />
       <ComparableProjectsSlot />
+      <ProjectStakeholders />
       {anyPending && <VorlaeufigFooter source={null} quality={null} />}
     </div>
   )

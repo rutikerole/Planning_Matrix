@@ -15,51 +15,14 @@ interface Props {
   state: Partial<ProjectState>
 }
 
-interface StakeholderRow {
-  key: 'bauherr' | 'designer' | 'engineer' | 'authority'
-  titleDe: string
-  titleEn: string
-  detailDe: string
-  detailEn: string
-}
-
-const STAKEHOLDERS: StakeholderRow[] = [
-  {
-    key: 'bauherr',
-    titleDe: 'Bauherr:in',
-    titleEn: 'Owner',
-    detailDe: 'Sie. Beauftragt das Vorhaben, trägt die Kosten, entscheidet.',
-    detailEn: 'You. Commissions the project, carries the costs, decides.',
-  },
-  {
-    key: 'designer',
-    titleDe: 'Architekt:in',
-    titleEn: 'Architect',
-    detailDe: 'Bauvorlageberechtigt. Reicht im Namen der Bauherrschaft ein.',
-    detailEn: 'Licensed for submissions. Files on the owner’s behalf.',
-  },
-  {
-    key: 'engineer',
-    titleDe: 'Fachplaner:innen',
-    titleEn: 'Engineers',
-    detailDe: 'Tragwerksplanung, Energieberatung, Brandschutz, Vermessung.',
-    detailEn: 'Structural, energy, fire protection, surveying.',
-  },
-  {
-    key: 'authority',
-    titleDe: 'Bauamt',
-    titleEn: 'Building authority',
-    detailDe: 'Kommunale Genehmigungsbehörde. Prüft und entscheidet.',
-    detailEn: 'Municipal permitting body. Reviews and decides.',
-  },
-]
-
 /**
- * Phase 8 — Tab 4 Team. Two sections: needed roles (one card per
+ * Phase 8 — Tab 4 Team. One section: needed roles (one card per
  * `state.roles.filter(r.needed === true)`, with glyph + qualification +
- * rationale + effort estimate from ROLE_EFFORT_LOOKUP) and a canonical
- * Stakeholders section below (Bauherr / Architekt / Fachplaner /
- * Bauamt — the four-actor mental model).
+ * rationale + effort estimate from ROLE_EFFORT_LOOKUP).
+ *
+ * Phase D (manager feedback) — the canonical Projektbeteiligte block
+ * (Bauherr / Architekt / Fachplaner / Bauamt) moved off this hire-list
+ * tab to the Overview tab; see Cards/ProjectStakeholders.tsx.
  */
 export function TeamTab({ project, state }: Props) {
   const { t, i18n } = useTranslation()
@@ -104,31 +67,6 @@ export function TeamTab({ project, state }: Props) {
             ))}
           </ul>
         )}
-      </section>
-
-      {/* Stakeholders */}
-      <section aria-labelledby="stake-eyebrow" className="flex flex-col gap-3">
-        <p
-          id="stake-eyebrow"
-          className="text-[10px] font-medium uppercase tracking-[0.22em] text-clay leading-none"
-        >
-          {t('result.workspace.team.stakeholdersEyebrow')}
-        </p>
-        <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          {STAKEHOLDERS.map((s) => (
-            <li
-              key={s.key}
-              className="border border-ink/12 rounded-[10px] bg-paper-card p-4 flex flex-col gap-1.5"
-            >
-              <p className="text-[11.5px] font-medium uppercase tracking-[0.18em] text-clay leading-none">
-                {lang === 'en' ? s.titleEn : s.titleDe}
-              </p>
-              <p className="text-[12.5px] text-ink/85 leading-snug">
-                {lang === 'en' ? s.detailEn : s.detailDe}
-              </p>
-            </li>
-          ))}
-        </ul>
       </section>
 
       {/* v1.0.3 — tab-level aggregate. Renders if any role on this
