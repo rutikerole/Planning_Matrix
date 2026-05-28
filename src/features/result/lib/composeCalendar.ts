@@ -56,8 +56,11 @@ export function composeCalendar({
   // Closure overlay is München-specific (Phase 8.3 hardcode). Apply only
   // when bundesland === 'bayern'; non-Bayern projects fall through to a
   // closure-free calendar (the bare submit-by / expected dates render
-  // without the deadline pushout sentence).
-  const closure = bundesland === 'bayern' ? findClosure(expectedDate) : null
+  // without the deadline pushout sentence). Input normalised (trim +
+  // toLowerCase) so a corrupt-cased Bayern project does not silently
+  // lose the overlay — matches getStateCitations.ts:406 convention.
+  const isBayern = (bundesland ?? '').trim().toLowerCase() === 'bayern'
+  const closure = isBayern ? findClosure(expectedDate) : null
   let fallbackDate: Date | null = null
   if (closure) {
     fallbackDate = nextWorkingDayAfter(closure, expectedDate)

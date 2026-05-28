@@ -95,10 +95,15 @@ const STATES_WITH_FULL_STATE_BLOCK: ReadonlySet<string> = new Set([
  * states whose systemBlock is the "Mindest-Eckdaten / nicht belastbar"
  * disclaimer. Use this to gate the chat-UI and result-page preliminary
  * banner — NOT isSubstantiveBundesland (which is Phase-B true for all 16).
+ *
+ * Input is normalised (trim + toLowerCase) to match the project-wide
+ * canonical-form convention established by getStateCitations
+ * (stateCitations.ts:406). Defensive: a corrupt-cased bundesland from
+ * upstream won't make the banner over-fire on a substantive state.
  */
 export function hasSubstantiveStateBlock(
   bundesland: string | null | undefined,
 ): boolean {
   if (!bundesland) return false
-  return STATES_WITH_FULL_STATE_BLOCK.has(bundesland)
+  return STATES_WITH_FULL_STATE_BLOCK.has(bundesland.trim().toLowerCase())
 }
