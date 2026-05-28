@@ -84,15 +84,25 @@ export function ResultWorkspace({ project, messages, events, source }: Props) {
     }
   }, [active, resultEmit])
 
+  // Owner mode mounts the global <AppHeader/> (fixed, h-12 = 48px,
+  // z-50). It is fixed-not-sticky by design and "never consumes layout
+  // space" (Phase 7.7 §1.2) — so the page below must reserve those 48px
+  // itself; otherwise the breadcrumb + back-pill row paints UNDER the
+  // AppHeader at scroll=0, and the sticky tab band slides back under it
+  // mid-scroll. Shared-link mode renders no AppHeader → no offset.
+  const appHeaderOffset = ownerMode
   return (
     <div
-      className="min-h-dvh bg-paper relative isolate flex flex-col"
+      className={
+        'min-h-dvh bg-paper relative isolate flex flex-col' +
+        (appHeaderOffset ? ' pt-12' : '')
+      }
       data-print-target="result-workspace"
       data-document-no={project.id}
     >
       <BlueprintSubstrate lensRadius={260} breathing={false} driftPx={0} />
 
-      <div className="sticky top-0 z-30">
+      <div className={'sticky z-30 ' + (appHeaderOffset ? 'top-12' : 'top-0')}>
         <ResultHeader project={project} source={source} events={events} />
         <ResultTabs active={active} onChange={setActive} expert={expert} />
       </div>
