@@ -57,14 +57,19 @@ No new content authored; no legal §§ added; no design tokens introduced.
 
 These were flagged during A but deferred for scope discipline:
 
-- **Rename `isSubstantiveBundesland()`** → e.g. `isPdfDemoReadyBundesland()`. The
-  current name is a naming trap (gates PDF readiness; not state-block depth).
-  ~30 LOC across 1-2 call sites. **ESTIMATE: <1 day.**
-- **Remove dead `src/data/factsMuenchen.ts`** (no consumer; only the
-  hardcoded-de linter's exclusion list references it). **ESTIMATE: <1 day.**
+- ~~**Rename `isSubstantiveBundesland()`** → `isPdfDemoReadyBundesland()`.~~
+  **DONE 2026-05-28** on `chore/bucket-a5-cleanups` commit `4aa4491`.
+  Zero external consumers; pure rename. No behaviour change.
+- ~~**Remove dead `src/data/factsMuenchen.ts`**~~ **DONE 2026-05-28** on
+  `chore/bucket-a5-cleanups` commit `c821fdd`. 266 LOC removed. Linter
+  exclusion list also cleaned.
 - **Reword `src/legal/shared.ts:175`** — the quoted Bayern example
   „Das Verfahren wäre Art. 59 BayBO" inside the SHARED persona block.
-  Replace with a state-neutral example. **ESTIMATE: 1 day.**
+  Replace with a state-neutral example. **DEFERRED — NOT autonomously
+  safe:** SHARED_BLOCK is in Bayern SHA scope; rewording it
+  re-baselines the SHA. Requires founder authorization for the
+  intentional re-baseline. **ESTIMATE: 1 day** including the SHA
+  re-baseline ceremony.
 
 ---
 
