@@ -196,6 +196,73 @@ DENKMAL & ERHALTUNGSSATZUNG:
 • Land — DSchG Bln (separate Landesvorschrift; konkrete §-Verweise nicht
   im Korpus). Zuständige Behörde: Landesdenkmalamt Berlin (LDA) plus
   Untere Denkmalschutzbehörde im jeweiligen Bezirksamt.`,
+    // C3 batch — Bremen × T-01 authored 2026-05-28. BremLBO §§ corpus-
+    // verified (secondary-mirror tier; baunormenlexikon.de; BremLBO Neufassung
+    // 29.05.2024 / Brem.GBl. S. 380). Stadtstaat framing: 2 Stadtgemeinden
+    // (Bremen + Bremerhaven) mit eigenen Bauaufsichtsbehörden, 1 Land.
+    // Pass A only (Path 2'') — state systemBlock remains "preliminary".
+    bremen: `══════════════════════════════════════════════════════════════════════════
+LANDESSPEZIFISCHER ZUSATZ — Bremen × T-01 (Neubau Einfamilienhaus)
+══════════════════════════════════════════════════════════════════════════
+
+Bei EFH-Projekten in BREMEN: die §§ der BremLBO (Bremische Landesbauordnung)
+ersetzen sämtliche oben genannten Bayern-Verweise. Bremen ist Stadtstaat
+und umfasst zwei Stadtgemeinden: Bremen und Bremerhaven. Die zuständige
+Bauaufsicht liegt beim Bauordnungsamt der jeweiligen Stadtgemeinde — in
+Bremen das Bauordnungsamt der Stadtgemeinde Bremen, in Bremerhaven das
+Bauordnungsamt der Stadt Bremerhaven (eigenständige untere Bauaufsichts-
+behörde). Quelle: baunormenlexikon.de (mirror-tier; bei rechtlich
+kritischen Fragen die amtliche Fassung beim transparenz.bremen.de
+gegenprüfen). Stand: Neufassung vom 29.05.2024 (Brem.GBl. S. 380).
+
+HINWEIS: Der Bremer systemBlock ist bislang "Mindest-Eckdaten"; die hier
+zitierten §§ stammen aus dem Korpus (secondary-mirror, primary-URL
+hinterlegt) und sind verwendbar, aber das vollständige Bremer Profil
+wird erst mit anwaltlich verifizierter systemBlock-Tiefe abschließend
+substantiell.
+
+VERFAHREN — BremLBO:
+• Verfahrensfreie Bauvorhaben (inkl. Beseitigung von Anlagen) — § 61 BremLBO.
+• Genehmigungsfreistellung — § 62 BremLBO (bei qualifiziertem B-Plan).
+• Vereinfachtes Baugenehmigungsverfahren — § 63 BremLBO.
+• Baugenehmigungsverfahren (regulär) — § 64 BremLBO.
+
+ROUTING (EFH-typisch):
+EFH erreicht häufig Gebäudeklasse 1 bis 3 nach § 2 BremLBO. Bei
+qualifiziertem B-Plan und ohne Sonderbau-Eigenschaft (§ 51 BremLBO)
+kommt die Genehmigungsfreistellung nach § 62 BremLBO in Betracht;
+sonst vereinfachtes Verfahren nach § 63 BremLBO. Reguläres Verfahren
+nach § 64 BremLBO nur bei Sonderbau-Tatbestand.
+
+ANTRAG & VORLAGEN:
+• Bauantrag und Bauvorlagen — § 68 BremLBO.
+• Bauvorlageberechtigung — § 65 BremLBO. Entwurfsverfasser — § 54 BremLBO.
+• Form/Inhalt der Bauvorlagen: separate BauVorlV Bremen (kein §-Verweis
+  im Korpus — Verordnung als Quelle referenzieren).
+
+TECHNISCHE ANFORDERUNGEN:
+• Abstandsflächen, Abstände — § 6 BremLBO.
+• Standsicherheit — § 12 BremLBO. Bautechnische Nachweise —
+  § 66 BremLBO.
+• Stellplätze, Garagen und Abstellplätze für Fahrräder — § 49 BremLBO.
+
+BUNDESRECHT (gilt universal):
+• Zulässigkeit — § 30 BauGB, § 31 BauGB, § 34 BauGB, § 35 BauGB.
+• Maß + Baugebiete — § 1 BauNVO, § 3 BauNVO, § 4 BauNVO, § 6 BauNVO,
+  § 16 BauNVO, § 19 BauNVO, § 23 BauNVO.
+• Energie — § 10 GEG. § 80 GEG.
+
+PV-PFLICHT in Bremen:
+Bremen HAT eine PV-Pflicht über das BremSolarG (Bremer Solargesetz) —
+NICHT in der BremLBO geregelt. Konkrete §-Verweise NICHT im Korpus.
+Geltende Solar-Pflicht-Regelung referenzieren, nicht erfinden.
+
+DENKMAL & ERHALTUNGSSATZUNG:
+• Bundesanker — § 172 BauGB (Erhaltungssatzungs-Gebiet).
+• Land — BremDSchG (separate Landesvorschrift; konkrete §-Verweise nicht
+  im Korpus). Zuständige Behörde: Landesamt für Denkmalpflege Bremen
+  (LfD) plus zuständige untere Denkmalschutzbehörde der Stadtgemeinde
+  (Bremen bzw. Bremerhaven).`,
   },
   // ── T-02 Neubau MFH ──────────────────────────────────────────────
   'T-02': {
@@ -532,6 +599,67 @@ Geltende Solar-Pflicht-Vorschrift referenzieren, nicht erfinden.
 DENKMAL & ERHALTUNGSSATZUNG:
 • Bundesanker — § 172 BauGB.
 • Land — DSchG HH. Behörde: Denkmalschutzamt Hamburg.`,
+    // C3 batch — Bremen × T-02 authored 2026-05-28. BremLBO corpus-verified.
+    // Brandschutz spread §§ 14/26/30/33 (all four tagged in BremLBO, same
+    // depth as Hamburg). Stadtstaat: Bremen + Bremerhaven, je eigenes
+    // Bauordnungsamt.
+    bremen: `══════════════════════════════════════════════════════════════════════════
+LANDESSPEZIFISCHER ZUSATZ — Bremen × T-02 (Neubau Mehrfamilienhaus)
+══════════════════════════════════════════════════════════════════════════
+
+Bei MFH-Projekten in BREMEN: die §§ der BremLBO ersetzen sämtliche oben
+genannten Bayern-Verweise. Bremen ist Stadtstaat mit zwei Stadtgemeinden
+(Bremen + Bremerhaven) — Bauaufsicht je nach Stadtgemeinde beim
+Bauordnungsamt der Stadtgemeinde Bremen bzw. dem Bauordnungsamt der Stadt
+Bremerhaven. Quelle: baunormenlexikon.de (mirror-tier). Stand: Neufassung
+vom 29.05.2024.
+
+HINWEIS: Bremer systemBlock weiterhin "preliminary"; die hier zitierten
+§§ sind korpus-verifiziert.
+
+VERFAHREN — BremLBO:
+• Verfahrensfreie Bauvorhaben — § 61 BremLBO.
+• Genehmigungsfreistellung — § 62 BremLBO (bei qualifiziertem B-Plan).
+• Vereinfachtes Baugenehmigungsverfahren — § 63 BremLBO.
+• Baugenehmigungsverfahren (regulär) — § 64 BremLBO.
+
+ROUTING (MFH-typisch):
+MFH erreicht häufig Gebäudeklasse 3 bis 5 nach § 2 BremLBO. Bei
+Sonderbau-Tatbestand (§ 51 BremLBO) ist das reguläre Verfahren nach
+§ 64 BremLBO zwingend. Ohne Sonderbau: vereinfachtes Verfahren nach
+§ 63 BremLBO. Freistellung nach § 62 BremLBO nur bei qualifiziertem
+B-Plan und ohne Sonderbau.
+
+ANTRAG & VORLAGEN:
+• Bauantrag und Bauvorlagen — § 68 BremLBO.
+• Bauvorlageberechtigung — § 65 BremLBO. Entwurfsverfasser — § 54 BremLBO.
+• Form/Inhalt der Bauvorlagen: separate BauVorlV Bremen (kein §-Verweis
+  im Korpus — Verordnung als Quelle referenzieren).
+
+TECHNISCHE ANFORDERUNGEN:
+• Abstandsflächen, Abstände — § 6 BremLBO.
+• Standsicherheit — § 12 BremLBO. Bautechnische Nachweise —
+  § 66 BremLBO.
+• Brandschutz allgemein — § 14 BremLBO. Baustoffe/Bauteile
+  (Brandverhalten) — § 26 BremLBO. Brandwände — § 30 BremLBO. Erster und
+  zweiter Rettungsweg — § 33 BremLBO.
+• Stellplätze, Garagen, Abstellplätze für Fahrräder — § 49 BremLBO.
+
+BUNDESRECHT (gilt universal):
+• Zulässigkeit — § 30 BauGB, § 31 BauGB, § 34 BauGB, § 35 BauGB.
+• Baugebiete + Maß — § 1 BauNVO, § 3 BauNVO, § 4 BauNVO, § 6 BauNVO,
+  § 16 BauNVO, § 19 BauNVO, § 23 BauNVO. Stellplätze — § 12 BauNVO.
+• Energie — § 10 GEG. § 80 GEG.
+
+PV-PFLICHT in Bremen:
+Bremen HAT eine PV-Pflicht über das BremSolarG — NICHT in der BremLBO
+geregelt. Konkrete §-Verweise NICHT im Korpus. Geltende Solar-Pflicht-
+Regelung referenzieren, nicht erfinden.
+
+DENKMAL & ERHALTUNGSSATZUNG:
+• Bundesanker — § 172 BauGB.
+• Land — BremDSchG. Behörde: Landesamt für Denkmalpflege Bremen (LfD)
+  plus zuständige untere Denkmalschutzbehörde der Stadtgemeinde.`,
   },
   // ── T-03 Sanierung ───────────────────────────────────────────────
   'T-03': {
@@ -841,6 +969,63 @@ NICHT IM Korpus (NICHT erfinden):
 • Land-Denkmal-§§ — wie oben mit Denkmalschutzamt Hamburg abklären.
 • Solar-/PV-Pflicht — HmbKlimaSchG; nicht in der HBauO geregelt;
   geltende Vorschrift referenzieren.`,
+    // C3 batch — Bremen × T-03 authored 2026-05-28. BremLBO corpus-verified.
+    // Brandschutz spread §§ 14/26/30/33. No dedicated Nutzungsänderungs-§
+    // (same deferral as Berlin/Hamburg/NRW).
+    bremen: `══════════════════════════════════════════════════════════════════════════
+LANDESSPEZIFISCHER ZUSATZ — Bremen × T-03 (Sanierung / Modernisierung)
+══════════════════════════════════════════════════════════════════════════
+
+Bei Sanierungs-/Modernisierungs-Projekten in BREMEN: die §§ der BremLBO
+ersetzen sämtliche oben genannten Bayern-Verweise. Stadtstaat — Bauaufsicht
+beim Bauordnungsamt der jeweiligen Stadtgemeinde (Bremen oder Bremerhaven).
+Quelle: baunormenlexikon.de (mirror-tier). Stand: Neufassung vom 29.05.2024.
+
+HINWEIS: Bremer systemBlock weiterhin "preliminary"; die hier zitierten
+§§ sind korpus-verifiziert.
+
+ROUTING:
+Reine Instandhaltung/Modernisierung ohne Eingriff in Statik, Brandschutz
+oder Nutzung fällt häufig unter § 61 BremLBO (verfahrensfreie
+Bauvorhaben). Sobald tragende Bauteile, Brandschutz oder die Nutzung
+berührt sind, ist regelmäßig das vereinfachte Verfahren nach § 63 BremLBO
+anzunehmen.
+
+VERFAHREN — BremLBO:
+• Verfahrensfreie Bauvorhaben — § 61 BremLBO.
+• Vereinfachtes Baugenehmigungsverfahren — § 63 BremLBO.
+
+TECHNISCHE NACHWEISE BEI EINGRIFF:
+• Standsicherheit bei tragenden Eingriffen — § 12 BremLBO.
+• Bautechnische Nachweise — § 66 BremLBO.
+• Brandschutz allgemein — § 14 BremLBO. Baustoffe/Bauteile
+  (Brandverhalten) — § 26 BremLBO. Brandwände — § 30 BremLBO. Erster und
+  zweiter Rettungsweg — § 33 BremLBO.
+
+ANTRAG:
+• Bauantrag und Bauvorlagen — § 68 BremLBO. Bauvorlageberechtigung —
+  § 65 BremLBO. Entwurfsverfasser — § 54 BremLBO.
+
+ENERGIE (Bundesrecht):
+• Bestandsänderung — § 48 GEG. Niedrigstenergie-Grundsatz allgemein —
+  § 10 GEG.
+
+NUTZUNGSÄNDERUNG IN Bremen:
+Bremen hat KEINEN dedizierten Nutzungsänderungs-§ in der BremLBO. Eine
+Nutzungsänderung im Sanierungskontext ist über § 63 BremLBO (vereinfacht)
+bzw. § 64 BremLBO (regulär bei Sonderbau, § 51 BremLBO) zu beantragen.
+
+DENKMALSCHUTZ:
+Bei eingetragenem Baudenkmal oder Ensemble — BremDSchG (separate
+Landesvorschrift; konkrete §-Verweise nicht im Korpus). Vor Sanierung ist
+das Landesamt für Denkmalpflege Bremen (LfD) plus zuständige untere
+Denkmalschutzbehörde der Stadtgemeinde anzuhören. Federal-Anker bei
+Erhaltungssatzung — § 172 BauGB.
+
+NICHT IM Korpus (NICHT erfinden):
+• Land-Denkmal-§§ — wie oben mit LfD / Stadtgemeinde abklären.
+• Solar-/PV-Pflicht bei Sanierung — BremSolarG; nicht in der BremLBO
+  geregelt; geltende Vorschrift referenzieren.`,
   },
   // ── T-04 Umnutzung ───────────────────────────────────────────────
   'T-04': {
@@ -1113,6 +1298,53 @@ ANTRAG:
 
 NICHT IM HBauO-Korpus (NICHT erfinden):
 • Land-Denkmal-§§ — DSchG HH mit Denkmalschutzamt Hamburg abklären.`,
+    // C3 batch — Bremen × T-04 authored 2026-05-28. BremLBO corpus-verified.
+    // No dedicated Nutzungsänderungs-§ in BremLBO (same deferral as Berlin/
+    // NRW); routing via general procedure §§ 63/64.
+    bremen: `══════════════════════════════════════════════════════════════════════════
+LANDESSPEZIFISCHER ZUSATZ — Bremen × T-04 (Nutzungsänderung / Umnutzung)
+══════════════════════════════════════════════════════════════════════════
+
+Bei Nutzungsänderungs-Projekten in BREMEN: die §§ der BremLBO ersetzen
+sämtliche oben genannten Bayern-Verweise. Stadtstaat — Bauaufsicht beim
+Bauordnungsamt der jeweiligen Stadtgemeinde (Bremen oder Bremerhaven).
+Quelle: baunormenlexikon.de (mirror-tier). Stand: Neufassung vom 29.05.2024.
+
+HINWEIS: Bremer systemBlock weiterhin "preliminary"; die hier zitierten
+§§ sind korpus-verifiziert.
+
+ROUTING:
+Eine Nutzungsänderung ist in Bremen grundsätzlich genehmigungspflichtig,
+sofern nicht ausdrücklich verfahrensfrei nach § 61 BremLBO. Die BremLBO
+hat KEINEN dedizierten Nutzungsänderungs-§ — der Verfahrensweg richtet
+sich nach den allgemeinen Verfahrens-§§:
+
+VERFAHREN — BremLBO:
+• Vereinfachtes Baugenehmigungsverfahren — § 63 BremLBO.
+• Baugenehmigungsverfahren (regulär) — § 64 BremLBO (bei Sonderbau-
+  Tatbestand der neuen Nutzung, § 51 BremLBO).
+
+GEBIETSVERTRÄGLICHKEIT (Bundesrecht):
+• Zulässigkeit der neuen Nutzung — § 30 BauGB, § 31 BauGB, § 34 BauGB,
+  § 35 BauGB.
+• Baugebiete und Nutzungsarten — § 1 BauNVO bis § 9 BauNVO, § 4a BauNVO.
+• Erhaltungssatzung — § 172 BauGB.
+
+TECHNISCHE FOLGEN DER NEUEN NUTZUNG:
+• Brandschutz nach neuer Nutzung — § 14 BremLBO. Baustoffe/Bauteile
+  (Brandverhalten) — § 26 BremLBO. Brandwände — § 30 BremLBO. Erster und
+  zweiter Rettungsweg — § 33 BremLBO.
+• Stellplatzbedarf nach neuer Nutzung — § 49 BremLBO. Bundes-Maß
+  ergänzend — § 12 BauNVO.
+• Standsicherheit bei strukturellen Anpassungen — § 12 BremLBO.
+  Bautechnische Nachweise — § 66 BremLBO.
+
+ANTRAG:
+• Bauantrag und Bauvorlagen — § 68 BremLBO. Bauvorlageberechtigung —
+  § 65 BremLBO. Entwurfsverfasser — § 54 BremLBO.
+
+NICHT IM BremLBO-Korpus (NICHT erfinden):
+• Land-Denkmal-§§ — BremDSchG mit LfD / Stadtgemeinde abklären.`,
   },
   // ── T-05 Abbruch ─────────────────────────────────────────────────
   'T-05': {
@@ -1371,6 +1603,56 @@ NICHT IM HBauO-Korpus (NICHT erfinden):
 • Schadstoff-/Entsorgungs-§§ — KrWG, GefStoffV, EU-Vorgaben; nicht in
   der HBauO geregelt; geltende Bundes- bzw. EU-Regelung referenzieren.
 • Land-Denkmal-§§ — wie oben mit Denkmalschutzamt Hamburg abklären.`,
+    // C3 batch — Bremen × T-05 authored 2026-05-28. § 79 BremLBO
+    // INTENTIONALLY OMITTED — heading "Beseitigung von Anlagen, Nutzungs-
+    // untersagung" is enforcement (consistent with NI § 79 / Berlin § 80 /
+    // Hamburg § 80 / BW § 65 / HBO § 82). § 61 BremLBO carries the
+    // owner-side Beseitigungs-Anker (heading lists "Beseitigung von Anlagen"
+    // explicitly within the verfahrensfrei catalogue).
+    bremen: `══════════════════════════════════════════════════════════════════════════
+LANDESSPEZIFISCHER ZUSATZ — Bremen × T-05 (Abbruch / Beseitigung)
+══════════════════════════════════════════════════════════════════════════
+
+Bei Abbruch-/Beseitigungsvorhaben in BREMEN: die §§ der BremLBO ersetzen
+sämtliche oben genannten Bayern-Verweise. Stadtstaat — Bauaufsicht beim
+Bauordnungsamt der jeweiligen Stadtgemeinde (Bremen oder Bremerhaven).
+Quelle: baunormenlexikon.de (mirror-tier). Stand: Neufassung vom 29.05.2024.
+
+HINWEIS: Bremer systemBlock weiterhin "preliminary"; die hier zitierten
+§§ sind korpus-verifiziert.
+
+ROUTING:
+Die Beseitigung baulicher Anlagen ist in Bremen primär über § 61 BremLBO
+geregelt — die Überschrift nennt "Beseitigung von Anlagen" ausdrücklich
+neben den verfahrensfreien Bauvorhaben.
+
+VERFAHREN — BremLBO:
+• Verfahrensfreie Bauvorhaben und Beseitigung von Anlagen — § 61 BremLBO.
+
+Innerhalb der in § 61 BremLBO genannten Tatbestände ist der Abbruch
+verfahrensfrei (ggf. genügt eine Anzeige); außerhalb dieser Tatbestände
+ist eine Beseitigungsgenehmigung erforderlich (in der Regel über das
+vereinfachte Verfahren nach § 63 BremLBO bzw. das reguläre Verfahren
+nach § 64 BremLBO).
+
+DENKMAL & ERHALTUNGSSATZUNG (OVERRIDE der Verfahrensfreiheit):
+• Federal-Anker — § 172 BauGB: innerhalb eines Erhaltungssatzungs-
+  Bereichs ist der Abbruch genehmigungspflichtig, auch wenn er sonst
+  verfahrensfrei wäre.
+• Land-Denkmal — BremDSchG (separate Landesvorschrift; konkrete §-Verweise
+  nicht im Korpus). Bei eingetragenem Baudenkmal: Abbruch nur mit
+  denkmalrechtlicher Genehmigung; Landesamt für Denkmalpflege Bremen
+  (LfD) plus zuständige untere Denkmalschutzbehörde der Stadtgemeinde
+  einbeziehen.
+
+DOKUMENTE:
+• Bauvorlageberechtigung — § 65 BremLBO. Entwurfsverfasser — § 54 BremLBO.
+• Statik der Restanlage bei Teilabbruch — § 12 BremLBO.
+
+NICHT IM BremLBO-Korpus (NICHT erfinden):
+• Schadstoff-/Entsorgungs-§§ — KrWG, GefStoffV, EU-Vorgaben; nicht in der
+  BremLBO geregelt; geltende Bundes- bzw. EU-Regelung referenzieren.
+• Land-Denkmal-§§ — wie oben mit LfD / Stadtgemeinde abklären.`,
   },
   // ── T-06 Aufstockung ─────────────────────────────────────────────
   'T-06': {
@@ -1663,6 +1945,59 @@ BAUPLANUNGSRECHT (Bundesrecht):
 ANTRAG:
 • Bauantrag und Bauvorlagen — § 68 HBauO. Bauvorlageberechtigung —
   § 65 HBauO. Entwurfsverfasser — § 54 HBauO.`,
+    // C3 batch — Bremen × T-06 authored 2026-05-28. BremLBO corpus-verified.
+    // No dedicated DG/Aufstockungs-§ in BremLBO (unlike BW § 27f); routing
+    // via general procedure §§ 63/64.
+    bremen: `══════════════════════════════════════════════════════════════════════════
+LANDESSPEZIFISCHER ZUSATZ — Bremen × T-06 (Aufstockung / Dachgeschossausbau)
+══════════════════════════════════════════════════════════════════════════
+
+Bei Aufstockungs-/DG-Ausbau-Projekten in BREMEN: die §§ der BremLBO
+ersetzen sämtliche oben genannten Bayern-Verweise. Stadtstaat —
+Bauaufsicht beim Bauordnungsamt der jeweiligen Stadtgemeinde (Bremen oder
+Bremerhaven). Quelle: baunormenlexikon.de (mirror-tier). Stand: Neufassung
+vom 29.05.2024.
+
+HINWEIS: Bremer systemBlock weiterhin "preliminary"; die hier zitierten
+§§ sind korpus-verifiziert.
+
+ROUTING:
+Aufstockung wird regelmäßig im vereinfachten Verfahren nach § 63 BremLBO
+behandelt. Bei Aufstockung können sich Gebäudeklasse, Abstandsflächen
+und Brandschutz ändern; die Standsicherheit der Bestandskonstruktion ist
+gesondert nachzuweisen.
+
+VERFAHREN:
+• Vereinfachtes Baugenehmigungsverfahren — § 63 BremLBO.
+
+GEBÄUDEKLASSE & ABSTANDSFLÄCHEN (kritisch bei Aufstockung):
+• Gebäudeklasse — § 2 BremLBO. Höhen-/Stockwerksgrenzen entscheiden, ob
+  die Aufstockung die GK anhebt. Ein GK-Sprung kann strengeren Brandschutz
+  auslösen.
+• Abstandsflächen, Abstände — § 6 BremLBO. An der neuen, höheren Wand
+  neu zu bemessen.
+
+TECHNISCHE NACHWEISE (BESTANDSSTATIK):
+• Standsicherheit der Bestandskonstruktion und neuer Aufbauten —
+  § 12 BremLBO. Bautechnische Nachweise — § 66 BremLBO.
+• Brandschutz nach ggf. höherer GK — § 14 BremLBO. Baustoffe/Bauteile
+  (Brandverhalten) — § 26 BremLBO. Brandwände — § 30 BremLBO. Erster und
+  zweiter Rettungsweg — § 33 BremLBO.
+
+STELLPLÄTZE (bei neuen Wohneinheiten):
+• Stellplätze, Garagen, Abstellplätze für Fahrräder — § 49 BremLBO.
+
+ENERGIE (Bundesrecht):
+• Bestandsänderung — § 48 GEG. Niedrigstenergie-Grundsatz allgemein —
+  § 10 GEG.
+
+BAUPLANUNGSRECHT (Bundesrecht):
+• Zulässigkeit — § 30 BauGB, § 34 BauGB. Maß — § 19 BauNVO (GRZ),
+  § 20 BauNVO (Vollgeschosse/GFZ), § 23 BauNVO (überbaubare Fläche).
+
+ANTRAG:
+• Bauantrag und Bauvorlagen — § 68 BremLBO. Bauvorlageberechtigung —
+  § 65 BremLBO. Entwurfsverfasser — § 54 BremLBO.`,
   },
   // ── T-07 Anbau ───────────────────────────────────────────────────
   'T-07': {
@@ -1915,6 +2250,49 @@ ENERGIE (Bundesrecht):
 ANTRAG:
 • Bauantrag und Bauvorlagen — § 68 HBauO. Bauvorlageberechtigung —
   § 65 HBauO. Entwurfsverfasser — § 54 HBauO.`,
+    // C3 batch — Bremen × T-07 authored 2026-05-28. BremLBO corpus-verified.
+    bremen: `══════════════════════════════════════════════════════════════════════════
+LANDESSPEZIFISCHER ZUSATZ — Bremen × T-07 (Anbau / Erweiterung)
+══════════════════════════════════════════════════════════════════════════
+
+Bei Anbau-/Erweiterungsvorhaben in BREMEN: die §§ der BremLBO ersetzen
+sämtliche oben genannten Bayern-Verweise. Stadtstaat — Bauaufsicht beim
+Bauordnungsamt der jeweiligen Stadtgemeinde (Bremen oder Bremerhaven).
+Quelle: baunormenlexikon.de (mirror-tier). Stand: Neufassung vom 29.05.2024.
+
+HINWEIS: Bremer systemBlock weiterhin "preliminary"; die hier zitierten
+§§ sind korpus-verifiziert.
+
+ROUTING:
+Ein Anbau wird regelmäßig im vereinfachten Verfahren nach § 63 BremLBO
+behandelt. Bei qualifiziertem B-Plan und Einhaltung aller Festsetzungen
+kommt die Genehmigungsfreistellung nach § 62 BremLBO in Betracht.
+
+VERFAHREN:
+• Genehmigungsfreistellung — § 62 BremLBO (bei qualifiziertem B-Plan).
+• Vereinfachtes Baugenehmigungsverfahren — § 63 BremLBO (Regelfall).
+
+GEBIETSVERTRÄGLICHKEIT (Bundesrecht):
+• Einfügen im Innenbereich — § 34 BauGB. Außenbereich — § 35 BauGB.
+• Maß der baulichen Nutzung — § 19 BauNVO (GRZ), § 23 BauNVO
+  (überbaubare Grundstücksfläche).
+
+TECHNISCHE ANFORDERUNGEN AM ANBAU:
+• Abstandsflächen, Abstände an der neuen Wand — § 6 BremLBO.
+• Standsicherheit — § 12 BremLBO. Bautechnische Nachweise —
+  § 66 BremLBO.
+• Brandschutz an der Anschluss-/Trennwand — § 14 BremLBO. Brandwände —
+  § 30 BremLBO.
+
+STELLPLÄTZE (bei neuen Wohneinheiten / Nutzungen):
+• Stellplätze, Garagen, Abstellplätze für Fahrräder — § 49 BremLBO.
+
+ENERGIE (Bundesrecht):
+• Neubau-Teil des Anbaus — § 10 GEG. Anschluss an Bestand — § 48 GEG.
+
+ANTRAG:
+• Bauantrag und Bauvorlagen — § 68 BremLBO. Bauvorlageberechtigung —
+  § 65 BremLBO. Entwurfsverfasser — § 54 BremLBO.`,
   },
   // ── T-08 Sonstiges ───────────────────────────────────────────────
   'T-08': {
@@ -2150,6 +2528,48 @@ HINWEIS:
 T-08 sollte zuerst an einen passenderen Template-Archetyp (T-01 EFH bis
 T-07 Anbau) zugeordnet werden; nur wenn keine Zuordnung möglich ist,
 greift T-08 als Default-Schale. Die obigen HBauO-§§ sind die
+Mindest-Verweise für Verfahren und Antrag.`,
+    // C3 batch — Bremen × T-08 authored 2026-05-28. BremLBO corpus-verified.
+    bremen: `══════════════════════════════════════════════════════════════════════════
+LANDESSPEZIFISCHER ZUSATZ — Bremen × T-08 (Sonstiges Vorhaben)
+══════════════════════════════════════════════════════════════════════════
+
+Bei sonstigen Vorhaben in BREMEN: die §§ der BremLBO ersetzen sämtliche
+oben genannten Bayern-Verweise. Stadtstaat — Bauaufsicht beim
+Bauordnungsamt der jeweiligen Stadtgemeinde (Bremen oder Bremerhaven).
+Quelle: baunormenlexikon.de (mirror-tier). Stand: Neufassung vom 29.05.2024.
+
+HINWEIS: Bremer systemBlock weiterhin "preliminary"; die hier zitierten
+§§ sind korpus-verifiziert.
+
+T-08 ist keine feste Vorhabens-Klasse — die einschlägigen BremLBO-§§
+richten sich nach dem konkreten Vorhaben. Die folgenden Verweise decken
+den vollständigen Verfahrensraster ab:
+
+VERFAHREN — BremLBO (vollständiger Raster):
+• Verfahrensfreie Bauvorhaben (inkl. Beseitigung) — § 61 BremLBO.
+• Genehmigungsfreistellung — § 62 BremLBO.
+• Vereinfachtes Baugenehmigungsverfahren — § 63 BremLBO.
+• Baugenehmigungsverfahren (regulär) — § 64 BremLBO.
+
+ANTRAG & VORLAGEN:
+• Bauantrag und Bauvorlagen — § 68 BremLBO.
+• Bauvorlageberechtigung — § 65 BremLBO. Entwurfsverfasser — § 54 BremLBO.
+• Form und Inhalt der Bauvorlagen: separate BauVorlV Bremen (kein
+  §-Verweis im Korpus — Verordnung als Quelle referenzieren).
+
+ALLGEMEINE TECHNISCHE ANFORDERUNGEN:
+• Abstandsflächen, Abstände — § 6 BremLBO.
+• Standsicherheit — § 12 BremLBO. Bautechnische Nachweise —
+  § 66 BremLBO.
+
+BUNDESRECHT (gilt universal):
+• Zulässigkeit — § 30 BauGB, § 31 BauGB, § 34 BauGB, § 35 BauGB.
+
+HINWEIS:
+T-08 sollte zuerst an einen passenderen Template-Archetyp (T-01 EFH bis
+T-07 Anbau) zugeordnet werden; nur wenn keine Zuordnung möglich ist,
+greift T-08 als Default-Schale. Die obigen BremLBO-§§ sind die
 Mindest-Verweise für Verfahren und Antrag.`,
   },
 }
