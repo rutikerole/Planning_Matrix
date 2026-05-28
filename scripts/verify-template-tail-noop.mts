@@ -160,6 +160,32 @@ const ACKNOWLEDGED_OVERRIDES: ReadonlySet<string> = new Set<string>([
   'T-06:sachsen',
   'T-07:sachsen',
   'T-08:sachsen',
+  // C5 batch — Schleswig-Holstein × T-01..T-08 authored 2026-05-28.
+  // §§ verified (mirror-tier LBO SH; baunormenlexikon.de; LBO SH i.d.F.
+  // Gesetz v. 13.12.2024 — most recent C-state amendment authored so far).
+  // Second Flächenland. Path 2'' discipline: cells from corpus, banner
+  // STAYS ON (systemBlock untouched). Flächenland authority framing:
+  // 4 kreisfreie Städte (Kiel/Lübeck/Flensburg/Neumünster) + 11 Kreise
+  // (NOT Bezirksamt, NOT NRW LVR/LWL, NOT Bremen Stadtgemeinde-form).
+  // § 80 LBO SH (Beseitigung/Nutzungsuntersagung) omitted from T-05
+  // (classic enforcement, same discipline as Sachsen/Berlin/Hamburg § 80).
+  // § 79 (Einstellung von Arbeiten), § 81 (Bauüberwachung), § 85a
+  // (Technische Baubestimmungen — BW § 73a precedent) also omitted. § 4
+  // (Anwendungsbereich), § 70a (Beteiligung Öffentlichkeit), § 77
+  // (Bauaufsichtliche Zustimmung) skipped as narrow/admin. § 58a
+  // "Bestehende Anlagen" SKIPPED entirely per corpus self-flag (the
+  // corpus authors recommended Phase-B confirm; coincidental Bayern
+  // fabrication echo on the same §-number). 4-§ brandschutz spread
+  // (§ 14+26+30+33) — all four corpus-tagged in LBO SH (no under-tag
+  // like SächsBO; no deviation note needed).
+  'T-01:sh',
+  'T-02:sh',
+  'T-03:sh',
+  'T-04:sh',
+  'T-05:sh',
+  'T-06:sh',
+  'T-07:sh',
+  'T-08:sh',
 ])
 
 interface Violation {

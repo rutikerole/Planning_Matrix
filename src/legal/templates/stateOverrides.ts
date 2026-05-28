@@ -332,6 +332,83 @@ DENKMAL & ERHALTUNGSSATZUNG:
   nicht im Korpus). Zuständige Behörde: Landesamt für Denkmalpflege
   Sachsen (LfD Sachsen) auf Landesebene; untere Denkmalschutzbehörde
   bei der Stadt (Leipzig/Dresden/Chemnitz) bzw. beim Landratsamt.`,
+    // C5 batch — Schleswig-Holstein × T-01 authored 2026-05-28. LBO SH
+    // corpus-verified (mirror-tier; baunormenlexikon.de; LBO SH i.d.F.
+    // Gesetz v. 13.12.2024 GVOBl. S. 875, 928 — most recent of all C-states
+    // authored so far). Second Flächenland. Path 2'' discipline: cells from
+    // corpus, banner STAYS ON. Authority framing: 4 kreisfreie Städte
+    // (Kiel/Lübeck/Flensburg/Neumünster) + 11 Kreise. NB: § 58a
+    // ("Bestehende Anlagen") SKIPPED per corpus self-flag (Phase-B confirm
+    // pending; corpus notes a coincidental Bayern fabrication echo).
+    sh: `══════════════════════════════════════════════════════════════════════════
+LANDESSPEZIFISCHER ZUSATZ — Schleswig-Holstein × T-01 (Neubau Einfamilienhaus)
+══════════════════════════════════════════════════════════════════════════
+
+Bei EFH-Projekten in SCHLESWIG-HOLSTEIN: die §§ der LBO SH (Landesbau-
+ordnung für das Land Schleswig-Holstein) ersetzen sämtliche oben
+genannten Bayern-Verweise. Schleswig-Holstein ist Flächenland mit vier
+kreisfreien Städten (Kiel, Lübeck, Flensburg, Neumünster) und elf Kreisen
+(Dithmarschen, Herzogtum Lauenburg, Nordfriesland, Ostholstein,
+Pinneberg, Plön, Rendsburg-Eckernförde, Schleswig-Flensburg, Segeberg,
+Steinburg, Stormarn). Die zuständige untere Bauaufsichtsbehörde liegt —
+bei Projekten in den kreisfreien Städten — bei der städtischen
+Bauaufsichtsbehörde; im übrigen Schleswig-Holstein beim Landratsamt des
+jeweiligen Kreises. Quelle: baunormenlexikon.de (mirror-tier; bei
+rechtlich kritischen Fragen die amtliche Fassung beim
+gesetze-rechtsprechung.sh.juris.de gegenprüfen). Stand: LBO SH
+Neubekanntmachung vom 05.07.2024 i.d.F. Gesetz vom 13.12.2024 (GVOBl.
+S. 875, 928).
+
+HINWEIS: Der Schleswig-Holsteinische systemBlock ist bislang
+"Mindest-Eckdaten"; die hier zitierten §§ stammen aus dem Korpus
+(secondary-mirror, primary-URL hinterlegt) und sind verwendbar, aber das
+vollständige SH-Profil wird erst mit anwaltlich verifizierter
+systemBlock-Tiefe abschließend substantiell.
+
+VERFAHREN — LBO SH:
+• Verfahrensfreie Bauvorhaben (inkl. Beseitigung) — § 61 LBO SH.
+• Genehmigungsfreistellung — § 62 LBO SH (bei qualifiziertem B-Plan).
+• Vereinfachtes Baugenehmigungsverfahren — § 63 LBO SH.
+• Baugenehmigungsverfahren (regulär) — § 64 LBO SH.
+
+ROUTING (EFH-typisch):
+EFH erreicht häufig Gebäudeklasse 1 bis 3 nach § 2 LBO SH. Bei
+qualifiziertem B-Plan und ohne Sonderbau-Eigenschaft (§ 51 LBO SH)
+kommt die Genehmigungsfreistellung nach § 62 LBO SH in Betracht;
+sonst vereinfachtes Verfahren nach § 63 LBO SH. Reguläres Verfahren
+nach § 64 LBO SH nur bei Sonderbau-Tatbestand.
+
+ANTRAG & VORLAGEN:
+• Bauantrag und Bauvorlagen — § 68 LBO SH.
+• Bauvorlageberechtigung — § 65 LBO SH. Entwurfsverfasser —
+  § 54 LBO SH.
+• Form/Inhalt der Bauvorlagen: separate BauVorlVO SH (kein §-Verweis
+  im Korpus — Verordnung als Quelle referenzieren).
+
+TECHNISCHE ANFORDERUNGEN:
+• Abstandsflächen, Abstände — § 6 LBO SH.
+• Standsicherheit — § 12 LBO SH. Bautechnische Nachweise —
+  § 66 LBO SH.
+• Stellplätze, Garagen, Abstellanlagen für Fahrräder — § 49 LBO SH.
+
+BUNDESRECHT (gilt universal):
+• Zulässigkeit — § 30 BauGB, § 31 BauGB, § 34 BauGB, § 35 BauGB.
+• Maß + Baugebiete — § 1 BauNVO, § 3 BauNVO, § 4 BauNVO, § 6 BauNVO,
+  § 16 BauNVO, § 19 BauNVO, § 23 BauNVO.
+• Energie — § 10 GEG. § 80 GEG.
+
+SOLAR-/KLIMASCHUTZ-VORGABEN in Schleswig-Holstein:
+SH-spezifische Solar-/Klimaschutz-Pflichten sind außerhalb der LBO SH
+geregelt. Konkrete §-Verweise NICHT im Korpus — geltende Vorschrift
+referenzieren, nicht erfinden.
+
+DENKMAL & ERHALTUNGSSATZUNG:
+• Bundesanker — § 172 BauGB (Erhaltungssatzungs-Gebiet).
+• Land — DSchG SH (separate Landesvorschrift; konkrete §-Verweise
+  nicht im Korpus). Zuständige Behörde: Landesamt für Denkmalpflege
+  Schleswig-Holstein (LfD SH) auf Landesebene; untere Denkmalschutz-
+  behörde bei der kreisfreien Stadt (Kiel/Lübeck/Flensburg/Neumünster)
+  bzw. beim Landratsamt des Kreises.`,
   },
   // ── T-02 Neubau MFH ──────────────────────────────────────────────
   'T-02': {
@@ -795,6 +872,70 @@ DENKMAL & ERHALTUNGSSATZUNG:
 • Land — SächsDSchG. Behörde: Landesamt für Denkmalpflege Sachsen (LfD
   Sachsen) plus zuständige untere Denkmalschutzbehörde (Stadt bzw.
   Landratsamt).`,
+    // C5 batch — Schleswig-Holstein × T-02 authored 2026-05-28. LBO SH
+    // corpus-verified. 4-§ brandschutz spread (§ 14/26/30/33) — all four
+    // corpus-tagged (no under-tag like SächsBO; clean tag coverage).
+    sh: `══════════════════════════════════════════════════════════════════════════
+LANDESSPEZIFISCHER ZUSATZ — Schleswig-Holstein × T-02 (Neubau Mehrfamilienhaus)
+══════════════════════════════════════════════════════════════════════════
+
+Bei MFH-Projekten in SCHLESWIG-HOLSTEIN: die §§ der LBO SH ersetzen
+sämtliche oben genannten Bayern-Verweise. Flächenland — Bauaufsicht je
+nach Standort bei der städtischen Bauaufsichtsbehörde der kreisfreien
+Stadt (Kiel, Lübeck, Flensburg, Neumünster) bzw. beim Landratsamt des
+jeweiligen Kreises. Quelle: baunormenlexikon.de (mirror-tier; bei
+rechtlich kritischen Fragen die amtliche Fassung beim
+gesetze-rechtsprechung.sh.juris.de gegenprüfen). Stand: LBO SH i.d.F.
+Gesetz vom 13.12.2024.
+
+HINWEIS: Schleswig-Holsteinischer systemBlock weiterhin "preliminary";
+die hier zitierten §§ sind korpus-verifiziert.
+
+VERFAHREN — LBO SH:
+• Verfahrensfreie Bauvorhaben — § 61 LBO SH.
+• Genehmigungsfreistellung — § 62 LBO SH (bei qualifiziertem B-Plan).
+• Vereinfachtes Baugenehmigungsverfahren — § 63 LBO SH.
+• Baugenehmigungsverfahren (regulär) — § 64 LBO SH.
+
+ROUTING (MFH-typisch):
+MFH erreicht häufig Gebäudeklasse 3 bis 5 nach § 2 LBO SH. Bei
+Sonderbau-Tatbestand (§ 51 LBO SH) ist das reguläre Verfahren nach
+§ 64 LBO SH zwingend. Ohne Sonderbau: vereinfachtes Verfahren nach
+§ 63 LBO SH. Freistellung nach § 62 LBO SH nur bei qualifiziertem
+B-Plan und ohne Sonderbau.
+
+ANTRAG & VORLAGEN:
+• Bauantrag und Bauvorlagen — § 68 LBO SH.
+• Bauvorlageberechtigung — § 65 LBO SH. Entwurfsverfasser —
+  § 54 LBO SH.
+• Form/Inhalt der Bauvorlagen: separate BauVorlVO SH (kein §-Verweis
+  im Korpus — Verordnung als Quelle referenzieren).
+
+TECHNISCHE ANFORDERUNGEN:
+• Abstandsflächen, Abstände — § 6 LBO SH.
+• Standsicherheit — § 12 LBO SH. Bautechnische Nachweise —
+  § 66 LBO SH.
+• Brandschutz allgemein — § 14 LBO SH. Baustoffe/Bauteile
+  (Brandverhalten) — § 26 LBO SH. Brandwände — § 30 LBO SH. Erster und
+  zweiter Rettungsweg — § 33 LBO SH.
+• Stellplätze, Garagen, Abstellanlagen für Fahrräder — § 49 LBO SH.
+
+BUNDESRECHT (gilt universal):
+• Zulässigkeit — § 30 BauGB, § 31 BauGB, § 34 BauGB, § 35 BauGB.
+• Baugebiete + Maß — § 1 BauNVO, § 3 BauNVO, § 4 BauNVO, § 6 BauNVO,
+  § 16 BauNVO, § 19 BauNVO, § 23 BauNVO. Stellplätze — § 12 BauNVO.
+• Energie — § 10 GEG. § 80 GEG.
+
+SOLAR-/KLIMASCHUTZ-VORGABEN in Schleswig-Holstein:
+SH-spezifische Solar-/Klimaschutz-Pflichten sind außerhalb der LBO SH
+geregelt. Konkrete §-Verweise NICHT im Korpus — geltende Vorschrift
+referenzieren, nicht erfinden.
+
+DENKMAL & ERHALTUNGSSATZUNG:
+• Bundesanker — § 172 BauGB.
+• Land — DSchG SH. Behörde: Landesamt für Denkmalpflege Schleswig-
+  Holstein (LfD SH) plus zuständige untere Denkmalschutzbehörde
+  (kreisfreie Stadt bzw. Landratsamt).`,
   },
   // ── T-03 Sanierung ───────────────────────────────────────────────
   'T-03': {
@@ -1220,6 +1361,68 @@ NICHT IM Korpus (NICHT erfinden):
   abklären.
 • Solar-/PV-Pflicht bei Sanierung — SächsKlimaschutzG; nicht in der
   SächsBO geregelt; geltende Vorschrift referenzieren.`,
+    // C5 batch — Schleswig-Holstein × T-03 authored 2026-05-28. LBO SH
+    // corpus-verified. 4-§ brandschutz spread. No dedicated Nutzungsänd-§
+    // in LBO SH; standard deferral pattern.
+    sh: `══════════════════════════════════════════════════════════════════════════
+LANDESSPEZIFISCHER ZUSATZ — Schleswig-Holstein × T-03 (Sanierung / Modernisierung)
+══════════════════════════════════════════════════════════════════════════
+
+Bei Sanierungs-/Modernisierungs-Projekten in SCHLESWIG-HOLSTEIN: die §§
+der LBO SH ersetzen sämtliche oben genannten Bayern-Verweise. Flächenland
+— Bauaufsicht beim Landratsamt bzw. bei der städtischen Bauaufsichts-
+behörde der kreisfreien Stadt (Kiel, Lübeck, Flensburg, Neumünster).
+Quelle: baunormenlexikon.de (mirror-tier). Stand: LBO SH i.d.F. Gesetz
+vom 13.12.2024.
+
+HINWEIS: Schleswig-Holsteinischer systemBlock weiterhin "preliminary";
+die hier zitierten §§ sind korpus-verifiziert.
+
+ROUTING:
+Reine Instandhaltung/Modernisierung ohne Eingriff in Statik, Brandschutz
+oder Nutzung fällt häufig unter § 61 LBO SH (verfahrensfreie
+Bauvorhaben). Sobald tragende Bauteile, Brandschutz oder die Nutzung
+berührt sind, ist regelmäßig das vereinfachte Verfahren nach § 63 LBO SH
+anzunehmen.
+
+VERFAHREN — LBO SH:
+• Verfahrensfreie Bauvorhaben — § 61 LBO SH.
+• Vereinfachtes Baugenehmigungsverfahren — § 63 LBO SH.
+
+TECHNISCHE NACHWEISE BEI EINGRIFF:
+• Standsicherheit bei tragenden Eingriffen — § 12 LBO SH.
+• Bautechnische Nachweise — § 66 LBO SH.
+• Brandschutz allgemein — § 14 LBO SH. Baustoffe/Bauteile
+  (Brandverhalten) — § 26 LBO SH. Brandwände — § 30 LBO SH. Erster und
+  zweiter Rettungsweg — § 33 LBO SH.
+
+ANTRAG:
+• Bauantrag und Bauvorlagen — § 68 LBO SH. Bauvorlageberechtigung —
+  § 65 LBO SH. Entwurfsverfasser — § 54 LBO SH.
+
+ENERGIE (Bundesrecht):
+• Bestandsänderung — § 48 GEG. Niedrigstenergie-Grundsatz allgemein —
+  § 10 GEG.
+
+NUTZUNGSÄNDERUNG IN Schleswig-Holstein:
+Schleswig-Holstein hat KEINEN dedizierten Nutzungsänderungs-§ in der
+LBO SH. Eine Nutzungsänderung im Sanierungskontext ist über § 63 LBO SH
+(vereinfacht) bzw. § 64 LBO SH (regulär bei Sonderbau, § 51 LBO SH) zu
+beantragen.
+
+DENKMALSCHUTZ:
+Bei eingetragenem Baudenkmal oder Ensemble — DSchG SH (separate
+Landesvorschrift; konkrete §-Verweise nicht im Korpus). Vor Sanierung
+ist das Landesamt für Denkmalpflege Schleswig-Holstein (LfD SH) plus
+zuständige untere Denkmalschutzbehörde (kreisfreie Stadt bzw.
+Landratsamt) anzuhören. Federal-Anker bei Erhaltungssatzung —
+§ 172 BauGB.
+
+NICHT IM Korpus (NICHT erfinden):
+• Land-Denkmal-§§ — wie oben mit LfD SH / Kreis bzw. kreisfreier Stadt
+  abklären.
+• Solar-/PV-Pflicht bei Sanierung — außerhalb der LBO SH geregelt;
+  geltende Vorschrift referenzieren.`,
   },
   // ── T-04 Umnutzung ───────────────────────────────────────────────
   'T-04': {
@@ -1601,6 +1804,63 @@ NICHT IM SächsBO-Korpus (NICHT erfinden):
 • Schallschutz/TA-Lärm bei lärmrelevanter Nutzungsänderung — DIN 4109
   bzw. TA Lärm als Bundes- bzw. technische Normen, nicht in der SächsBO
   geregelt.`,
+    // C5 batch — Schleswig-Holstein × T-04 authored 2026-05-28. LBO SH
+    // corpus-verified. No dedicated change-of-use § in LBO SH; route via
+    // § 63/64. 4-§ brandschutz spread (all corpus-tagged).
+    sh: `══════════════════════════════════════════════════════════════════════════
+LANDESSPEZIFISCHER ZUSATZ — Schleswig-Holstein × T-04 (Nutzungsänderung / Umnutzung)
+══════════════════════════════════════════════════════════════════════════
+
+Bei Nutzungsänderungs-Projekten in SCHLESWIG-HOLSTEIN: die §§ der LBO SH
+ersetzen sämtliche oben genannten Bayern-Verweise. Flächenland —
+Bauaufsicht beim Landratsamt bzw. bei der städtischen Bauaufsichts-
+behörde der kreisfreien Stadt (Kiel, Lübeck, Flensburg, Neumünster).
+Quelle: baunormenlexikon.de (mirror-tier). Stand: LBO SH i.d.F. Gesetz
+vom 13.12.2024.
+
+HINWEIS: Schleswig-Holsteinischer systemBlock weiterhin "preliminary";
+die hier zitierten §§ sind korpus-verifiziert.
+
+ROUTING:
+Eine Nutzungsänderung ist in Schleswig-Holstein grundsätzlich
+genehmigungspflichtig, sofern nicht ausdrücklich verfahrensfrei nach
+§ 61 LBO SH. Die LBO SH hat KEINEN dedizierten Nutzungsänderungs-§ —
+der Verfahrensweg richtet sich nach den allgemeinen Verfahrens-§§. Bei
+Nicht-Sonderbau-Umnutzung ist regelmäßig das vereinfachte Verfahren
+nach § 63 LBO SH einschlägig; sobald Sonderbau-Tatbestand vorliegt
+(§ 51 LBO SH), gilt das reguläre Verfahren nach § 64 LBO SH.
+
+VERFAHREN — LBO SH:
+• Vereinfachtes Baugenehmigungsverfahren — § 63 LBO SH.
+• Baugenehmigungsverfahren (regulär) — § 64 LBO SH (bei Sonderbau-
+  Tatbestand der neuen Nutzung, § 51 LBO SH).
+
+GEBIETSVERTRÄGLICHKEIT (Bundesrecht):
+• Zulässigkeit der neuen Nutzung — § 30 BauGB, § 31 BauGB, § 34 BauGB,
+  § 35 BauGB.
+• Baugebiete und Nutzungsarten — § 1 BauNVO bis § 9 BauNVO, § 4a BauNVO
+  (besondere Wohngebiete).
+• Erhaltungssatzung — § 172 BauGB.
+
+TECHNISCHE FOLGEN DER NEUEN NUTZUNG:
+• Brandschutz nach neuer Nutzung — § 14 LBO SH. Baustoffe/Bauteile
+  (Brandverhalten) — § 26 LBO SH. Brandwände — § 30 LBO SH. Erster und
+  zweiter Rettungsweg — § 33 LBO SH.
+• Stellplatzbedarf nach neuer Nutzung — § 49 LBO SH. Bundes-Maß
+  ergänzend — § 12 BauNVO.
+• Standsicherheit bei strukturellen Anpassungen — § 12 LBO SH.
+  Bautechnische Nachweise — § 66 LBO SH.
+
+ANTRAG:
+• Bauantrag und Bauvorlagen — § 68 LBO SH. Bauvorlageberechtigung —
+  § 65 LBO SH. Entwurfsverfasser — § 54 LBO SH.
+
+NICHT IM LBO-SH-Korpus (NICHT erfinden):
+• Land-Denkmal-§§ — DSchG SH mit LfD SH / kreisfreier Stadt bzw.
+  Landratsamt abklären.
+• Schallschutz/TA-Lärm bei lärmrelevanter Nutzungsänderung — DIN 4109
+  bzw. TA Lärm als Bundes- bzw. technische Normen, nicht in der LBO SH
+  geregelt.`,
   },
   // ── T-05 Abbruch ─────────────────────────────────────────────────
   'T-05': {
@@ -1961,6 +2221,60 @@ NICHT IM SächsBO-Korpus (NICHT erfinden):
 • Schadstoff-/Entsorgungs-§§ — KrWG, GefStoffV, EU-Vorgaben; nicht in
   der SächsBO geregelt; geltende Bundes- bzw. EU-Regelung referenzieren.
 • Land-Denkmal-§§ — wie oben mit LfD Sachsen / Stadt bzw. Landratsamt
+  abklären.`,
+    // C5 batch — Schleswig-Holstein × T-05 authored 2026-05-28. LBO SH
+    // corpus-verified. § 80 LBO SH (Beseitigung/Nutzungsuntersagung)
+    // INTENTIONALLY OMITTED (classic enforcement, same heading as
+    // Sachsen/Berlin/Hamburg § 80). § 79 (Einstellung von Arbeiten) also
+    // omitted (work-stoppage = enforcement). § 61 LBO SH carries owner-side
+    // Beseitigungs-Anker.
+    sh: `══════════════════════════════════════════════════════════════════════════
+LANDESSPEZIFISCHER ZUSATZ — Schleswig-Holstein × T-05 (Abbruch / Beseitigung)
+══════════════════════════════════════════════════════════════════════════
+
+Bei Abbruch-/Beseitigungsvorhaben in SCHLESWIG-HOLSTEIN: die §§ der
+LBO SH ersetzen sämtliche oben genannten Bayern-Verweise. Flächenland —
+Bauaufsicht beim Landratsamt bzw. bei der städtischen Bauaufsichts-
+behörde der kreisfreien Stadt (Kiel, Lübeck, Flensburg, Neumünster).
+Quelle: baunormenlexikon.de (mirror-tier). Stand: LBO SH i.d.F. Gesetz
+vom 13.12.2024.
+
+HINWEIS: Schleswig-Holsteinischer systemBlock weiterhin "preliminary";
+die hier zitierten §§ sind korpus-verifiziert.
+
+ROUTING:
+Die Beseitigung baulicher Anlagen ist in Schleswig-Holstein primär über
+§ 61 LBO SH geregelt — die Überschrift nennt "Beseitigung von Anlagen"
+ausdrücklich neben den verfahrensfreien Bauvorhaben.
+
+VERFAHREN — LBO SH:
+• Verfahrensfreie Bauvorhaben und Beseitigung von Anlagen — § 61 LBO SH.
+
+Innerhalb der in § 61 LBO SH genannten Tatbestände ist der Abbruch
+verfahrensfrei (ggf. genügt eine Anzeige); außerhalb dieser Tatbestände
+ist eine Beseitigungsgenehmigung erforderlich (in der Regel über das
+vereinfachte Verfahren nach § 63 LBO SH bzw. das reguläre Verfahren
+nach § 64 LBO SH).
+
+DENKMAL & ERHALTUNGSSATZUNG (OVERRIDE der Verfahrensfreiheit):
+• Federal-Anker — § 172 BauGB: innerhalb eines Erhaltungssatzungs-
+  Bereichs ist der Abbruch genehmigungspflichtig, auch wenn er sonst
+  verfahrensfrei wäre.
+• Land-Denkmal — DSchG SH (separate Landesvorschrift; konkrete
+  §-Verweise nicht im Korpus). Bei eingetragenem Baudenkmal: Abbruch
+  nur mit denkmalrechtlicher Genehmigung; Landesamt für Denkmalpflege
+  Schleswig-Holstein (LfD SH) plus zuständige untere Denkmalschutz-
+  behörde (kreisfreie Stadt bzw. Landratsamt) einbeziehen.
+
+DOKUMENTE:
+• Bauvorlageberechtigung — § 65 LBO SH. Entwurfsverfasser —
+  § 54 LBO SH.
+• Statik der Restanlage bei Teilabbruch — § 12 LBO SH.
+
+NICHT IM LBO-SH-Korpus (NICHT erfinden):
+• Schadstoff-/Entsorgungs-§§ — KrWG, GefStoffV, EU-Vorgaben; nicht in
+  der LBO SH geregelt; geltende Bundes- bzw. EU-Regelung referenzieren.
+• Land-Denkmal-§§ — wie oben mit LfD SH / Kreis bzw. kreisfreier Stadt
   abklären.`,
   },
   // ── T-06 Aufstockung ─────────────────────────────────────────────
@@ -2360,6 +2674,60 @@ BAUPLANUNGSRECHT (Bundesrecht):
 ANTRAG:
 • Bauantrag und Bauvorlagen — § 68 SächsBO. Bauvorlageberechtigung —
   § 65 SächsBO. Entwurfsverfasser — § 54 SächsBO.`,
+    // C5 batch — Schleswig-Holstein × T-06 authored 2026-05-28. LBO SH
+    // corpus-verified. No dedicated Aufstockungs-§ in LBO SH (no BW § 27f-
+    // equivalent); routing via § 63. 4-§ brandschutz spread when GK changes.
+    sh: `══════════════════════════════════════════════════════════════════════════
+LANDESSPEZIFISCHER ZUSATZ — Schleswig-Holstein × T-06 (Aufstockung / Dachgeschossausbau)
+══════════════════════════════════════════════════════════════════════════
+
+Bei Aufstockungs-/DG-Ausbau-Projekten in SCHLESWIG-HOLSTEIN: die §§ der
+LBO SH ersetzen sämtliche oben genannten Bayern-Verweise. Flächenland —
+Bauaufsicht beim Landratsamt bzw. bei der städtischen Bauaufsichts-
+behörde der kreisfreien Stadt (Kiel, Lübeck, Flensburg, Neumünster).
+Quelle: baunormenlexikon.de (mirror-tier). Stand: LBO SH i.d.F. Gesetz
+vom 13.12.2024.
+
+HINWEIS: Schleswig-Holsteinischer systemBlock weiterhin "preliminary";
+die hier zitierten §§ sind korpus-verifiziert.
+
+ROUTING:
+Aufstockung wird regelmäßig im vereinfachten Verfahren nach § 63 LBO SH
+behandelt. Bei Aufstockung können sich Gebäudeklasse, Abstandsflächen
+und Brandschutz ändern; die Standsicherheit der Bestandskonstruktion ist
+gesondert nachzuweisen.
+
+VERFAHREN:
+• Vereinfachtes Baugenehmigungsverfahren — § 63 LBO SH.
+
+GEBÄUDEKLASSE & ABSTANDSFLÄCHEN (kritisch bei Aufstockung):
+• Gebäudeklasse — § 2 LBO SH. Höhen-/Stockwerksgrenzen entscheiden, ob
+  die Aufstockung die GK anhebt. Ein GK-Sprung kann strengeren Brandschutz
+  auslösen.
+• Abstandsflächen, Abstände — § 6 LBO SH. An der neuen, höheren Wand
+  neu zu bemessen.
+
+TECHNISCHE NACHWEISE (BESTANDSSTATIK):
+• Standsicherheit der Bestandskonstruktion und neuer Aufbauten —
+  § 12 LBO SH. Bautechnische Nachweise — § 66 LBO SH.
+• Brandschutz nach ggf. höherer GK — § 14 LBO SH. Baustoffe/Bauteile
+  (Brandverhalten) — § 26 LBO SH. Brandwände — § 30 LBO SH. Erster und
+  zweiter Rettungsweg — § 33 LBO SH.
+
+STELLPLÄTZE (bei neuen Wohneinheiten):
+• Stellplätze, Garagen, Abstellanlagen für Fahrräder — § 49 LBO SH.
+
+ENERGIE (Bundesrecht):
+• Bestandsänderung — § 48 GEG. Niedrigstenergie-Grundsatz allgemein —
+  § 10 GEG.
+
+BAUPLANUNGSRECHT (Bundesrecht):
+• Zulässigkeit — § 30 BauGB, § 34 BauGB. Maß — § 19 BauNVO (GRZ),
+  § 20 BauNVO (Vollgeschosse/GFZ), § 23 BauNVO (überbaubare Fläche).
+
+ANTRAG:
+• Bauantrag und Bauvorlagen — § 68 LBO SH. Bauvorlageberechtigung —
+  § 65 LBO SH. Entwurfsverfasser — § 54 LBO SH.`,
   },
   // ── T-07 Anbau ───────────────────────────────────────────────────
   'T-07': {
@@ -2701,6 +3069,54 @@ ENERGIE (Bundesrecht):
 ANTRAG:
 • Bauantrag und Bauvorlagen — § 68 SächsBO. Bauvorlageberechtigung —
   § 65 SächsBO. Entwurfsverfasser — § 54 SächsBO.`,
+    // C5 batch — Schleswig-Holstein × T-07 authored 2026-05-28. LBO SH
+    // corpus-verified. Anbau brandschutz spread limited to § 14 + § 30
+    // (Anschluss-/Trennwand); wider 4-§ spread reserved for MFH/Sanierung/
+    // Umnutzung/Aufstockung — same shape as Sachsen.
+    sh: `══════════════════════════════════════════════════════════════════════════
+LANDESSPEZIFISCHER ZUSATZ — Schleswig-Holstein × T-07 (Anbau / Erweiterung)
+══════════════════════════════════════════════════════════════════════════
+
+Bei Anbau-/Erweiterungsvorhaben in SCHLESWIG-HOLSTEIN: die §§ der LBO SH
+ersetzen sämtliche oben genannten Bayern-Verweise. Flächenland —
+Bauaufsicht beim Landratsamt bzw. bei der städtischen Bauaufsichts-
+behörde der kreisfreien Stadt (Kiel, Lübeck, Flensburg, Neumünster).
+Quelle: baunormenlexikon.de (mirror-tier). Stand: LBO SH i.d.F. Gesetz
+vom 13.12.2024.
+
+HINWEIS: Schleswig-Holsteinischer systemBlock weiterhin "preliminary";
+die hier zitierten §§ sind korpus-verifiziert.
+
+ROUTING:
+Ein Anbau wird regelmäßig im vereinfachten Verfahren nach § 63 LBO SH
+behandelt. Bei qualifiziertem B-Plan und Einhaltung aller Festsetzungen
+kommt die Genehmigungsfreistellung nach § 62 LBO SH in Betracht.
+
+VERFAHREN:
+• Genehmigungsfreistellung — § 62 LBO SH (bei qualifiziertem B-Plan).
+• Vereinfachtes Baugenehmigungsverfahren — § 63 LBO SH (Regelfall).
+
+GEBIETSVERTRÄGLICHKEIT (Bundesrecht):
+• Einfügen im Innenbereich — § 34 BauGB. Außenbereich — § 35 BauGB.
+• Maß der baulichen Nutzung — § 19 BauNVO (GRZ), § 23 BauNVO
+  (überbaubare Grundstücksfläche).
+
+TECHNISCHE ANFORDERUNGEN AM ANBAU:
+• Abstandsflächen, Abstände an der neuen Wand — § 6 LBO SH.
+• Standsicherheit — § 12 LBO SH. Bautechnische Nachweise —
+  § 66 LBO SH.
+• Brandschutz an der Anschluss-/Trennwand — § 14 LBO SH. Brandwände —
+  § 30 LBO SH.
+
+STELLPLÄTZE (bei neuen Wohneinheiten / Nutzungen):
+• Stellplätze, Garagen, Abstellanlagen für Fahrräder — § 49 LBO SH.
+
+ENERGIE (Bundesrecht):
+• Neubau-Teil des Anbaus — § 10 GEG. Anschluss an Bestand — § 48 GEG.
+
+ANTRAG:
+• Bauantrag und Bauvorlagen — § 68 LBO SH. Bauvorlageberechtigung —
+  § 65 LBO SH. Entwurfsverfasser — § 54 LBO SH.`,
   },
   // ── T-08 Sonstiges ───────────────────────────────────────────────
   'T-08': {
@@ -3022,6 +3438,51 @@ HINWEIS:
 T-08 sollte zuerst an einen passenderen Template-Archetyp (T-01 EFH bis
 T-07 Anbau) zugeordnet werden; nur wenn keine Zuordnung möglich ist,
 greift T-08 als Default-Schale. Die obigen SächsBO-§§ sind die
+Mindest-Verweise für Verfahren und Antrag.`,
+    // C5 batch — Schleswig-Holstein × T-08 authored 2026-05-28. LBO SH
+    // corpus-verified.
+    sh: `══════════════════════════════════════════════════════════════════════════
+LANDESSPEZIFISCHER ZUSATZ — Schleswig-Holstein × T-08 (Sonstiges Vorhaben)
+══════════════════════════════════════════════════════════════════════════
+
+Bei sonstigen Vorhaben in SCHLESWIG-HOLSTEIN: die §§ der LBO SH ersetzen
+sämtliche oben genannten Bayern-Verweise. Flächenland — Bauaufsicht beim
+Landratsamt bzw. bei der städtischen Bauaufsichtsbehörde der kreisfreien
+Stadt (Kiel, Lübeck, Flensburg, Neumünster). Quelle: baunormenlexikon.de
+(mirror-tier). Stand: LBO SH i.d.F. Gesetz vom 13.12.2024.
+
+HINWEIS: Schleswig-Holsteinischer systemBlock weiterhin "preliminary";
+die hier zitierten §§ sind korpus-verifiziert.
+
+T-08 ist keine feste Vorhabens-Klasse — die einschlägigen LBO-SH-§§
+richten sich nach dem konkreten Vorhaben. Die folgenden Verweise decken
+den vollständigen Verfahrensraster ab:
+
+VERFAHREN — LBO SH (vollständiger Raster):
+• Verfahrensfreie Bauvorhaben (inkl. Beseitigung) — § 61 LBO SH.
+• Genehmigungsfreistellung — § 62 LBO SH.
+• Vereinfachtes Baugenehmigungsverfahren — § 63 LBO SH.
+• Baugenehmigungsverfahren (regulär) — § 64 LBO SH.
+
+ANTRAG & VORLAGEN:
+• Bauantrag und Bauvorlagen — § 68 LBO SH.
+• Bauvorlageberechtigung — § 65 LBO SH. Entwurfsverfasser —
+  § 54 LBO SH.
+• Form und Inhalt der Bauvorlagen: separate BauVorlVO SH (kein §-Verweis
+  im Korpus — Verordnung als Quelle referenzieren).
+
+ALLGEMEINE TECHNISCHE ANFORDERUNGEN:
+• Abstandsflächen, Abstände — § 6 LBO SH.
+• Standsicherheit — § 12 LBO SH. Bautechnische Nachweise —
+  § 66 LBO SH.
+
+BUNDESRECHT (gilt universal):
+• Zulässigkeit — § 30 BauGB, § 31 BauGB, § 34 BauGB, § 35 BauGB.
+
+HINWEIS:
+T-08 sollte zuerst an einen passenderen Template-Archetyp (T-01 EFH bis
+T-07 Anbau) zugeordnet werden; nur wenn keine Zuordnung möglich ist,
+greift T-08 als Default-Schale. Die obigen LBO-SH-§§ sind die
 Mindest-Verweise für Verfahren und Antrag.`,
   },
 }
