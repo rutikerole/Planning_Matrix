@@ -51,6 +51,22 @@ const ACKNOWLEDGED_OVERRIDES: ReadonlySet<string> = new Set<string>([
   'T-06:niedersachsen',
   'T-07:niedersachsen',
   'T-08:niedersachsen',
+  // B2 batch 3 — BW × T-02..T-08 authored 2026-05-28. §§ verified
+  // (mirror-tier LBO; baunormenlexikon.de + dejure.org). Mirror-tier
+  // discipline applied: § 51 Kenntnisgabeverfahren cited as the named
+  // BW-specific institute (corpus confirms heading + gloss); § 65
+  // intentionally omitted from T-04/T-05 (heading is enforcement, not
+  // owner-initiated procedure); § 73a intentionally omitted from client-
+  // facing prose (heading is admin meta on Technische Baubestimmungen,
+  // not substantive Nachweis-§); § 27f + § 28d cited as narrow
+  // substantive Anforderungen for specific Eingriffs-Tatbestände.
+  'T-02:bw',
+  'T-03:bw',
+  'T-04:bw',
+  'T-05:bw',
+  'T-06:bw',
+  'T-07:bw',
+  'T-08:bw',
 ])
 
 interface Violation {
