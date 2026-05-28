@@ -277,6 +277,32 @@ const ACKNOWLEDGED_OVERRIDES: ReadonlySet<string> = new Set<string>([
   'T-06:thueringen',
   'T-07:thueringen',
   'T-08:thueringen',
+  // C10 batch — Brandenburg × T-01..T-08 authored 2026-05-28. §§
+  // verified (mirror-tier BbgBO; baunormenlexikon.de; BbgBO Bekanntmachung
+  // 15.11.2018 i.d.F. Gesetz v. 28.09.2023 GVBl. I/23 Nr. 18). Seventh
+  // Flächenland. UNIQUE BB FEATURES: § 62 Bauanzeigeverfahren (BB-
+  // specific institute between verfahrensfrei and vereinfacht) + § 32a
+  // Photovoltaikanlagen für die Stromerzeugung auf Dächern (first state
+  // with PV-§ inside the BO corpus). § 61 = "Genehmigungsfreie Vorhaben"
+  // (heading change from standard "Verfahrensfreie Bauvorhaben,
+  // Beseitigung von Anlagen" — note: no explicit "Beseitigung" anchor).
+  // Shifted: Nachweise § 70, Bauantrag § 72. Brandschutz 4-§ heading-
+  // evident (§ 14+§ 26+§ 30+§ 33) — only § 14 corpus-tagged. § 85
+  // (Beseitigung/Nutzungsuntersagung) classic enforcement omit; § 84
+  // (Einstellung Arbeiten), § 86 (Anpassung — enforcement-adjacent),
+  // § 87 (Bauüberwachung), § 92 (TBs) admin omits. Authority: 4 kreisfreie
+  // Städte (Cottbus/Frankfurt-Oder/Potsdam/Brandenburg-Havel) + 14
+  // Landkreise; § 58 BbgBO acknowledges amtsfreie Gemeinden/Ämter/
+  // Verbandsgemeinden as Sonderordnungsbehörden (BB-specific local-
+  // government layer). Citation prefix "BbgBO".
+  'T-01:brandenburg',
+  'T-02:brandenburg',
+  'T-03:brandenburg',
+  'T-04:brandenburg',
+  'T-05:brandenburg',
+  'T-06:brandenburg',
+  'T-07:brandenburg',
+  'T-08:brandenburg',
 ])
 
 interface Violation {
