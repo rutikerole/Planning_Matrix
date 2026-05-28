@@ -71,7 +71,7 @@ export type TemplateStateOverrides = Partial<
 export const TEMPLATE_STATE_OVERRIDES: TemplateStateOverrides = {
   // ── T-02 Neubau MFH ──────────────────────────────────────────────
   'T-02': {
-    // B2 batch 3 — BW × T-02 authored 2026-05-28. LBO §§ corpus-verified
+    // B2 batch 3 — BW × T-02 authored 2026-05-28. LBO BW §§ corpus-verified
     // (secondary-mirror tier; baunormenlexikon.de + dejure.org). § 51
     // Kenntnisgabeverfahren cited as BW-specific institute; § 65 + § 73a
     // intentionally omitted (enforcement / admin-meta).
@@ -79,39 +79,39 @@ export const TEMPLATE_STATE_OVERRIDES: TemplateStateOverrides = {
 LANDESSPEZIFISCHER ZUSATZ — BW × T-02 (Neubau Mehrfamilienhaus)
 ══════════════════════════════════════════════════════════════════════════
 
-Bei Projekten in BADEN-WÜRTTEMBERG: die §§ der LBO (Landesbauordnung
+Bei Projekten in BADEN-WÜRTTEMBERG: die §§ der LBO BW (Landesbauordnung
 Baden-Württemberg) ersetzen sämtliche oben genannten Bayern-Verweise.
 Quelle: baunormenlexikon.de und dejure.org (mirror-tier; bei rechtlich
 kritischen Fragen die amtliche Fassung beim Landesrecht-Portal
 gegenprüfen).
 
-VERFAHREN — LBO (BW hat eigenen Verfahrensraster mit Kenntnisgabeverfahren):
-• Verfahrensfreie Vorhaben — § 50 LBO (Anhang 1 listet die Tatbestände).
-• Kenntnisgabeverfahren — § 51 LBO (BW-spezifisches Verfahren ohne
+VERFAHREN — LBO BW (BW hat eigenen Verfahrensraster mit Kenntnisgabeverfahren):
+• Verfahrensfreie Vorhaben — § 50 LBO BW (Anhang 1 listet die Tatbestände).
+• Kenntnisgabeverfahren — § 51 LBO BW (BW-spezifisches Verfahren ohne
   Baugenehmigung; Vorhaben wird der Gemeinde zur Kenntnis gegeben).
-• Vereinfachtes Baugenehmigungsverfahren — § 52 LBO.
-• Baugenehmigung (reguläres Verfahren) — § 58 LBO.
+• Vereinfachtes Baugenehmigungsverfahren — § 52 LBO BW.
+• Baugenehmigung (reguläres Verfahren) — § 58 LBO BW.
 
 ROUTING (MFH-typisch):
-MFH erreicht häufig Gebäudeklasse 3 bis 5 nach § 2 LBO. Bei Sonderbau-
-Tatbestand (§ 38 LBO) ist die volle Baugenehmigung nach § 58 LBO
+MFH erreicht häufig Gebäudeklasse 3 bis 5 nach § 2 LBO BW. Bei Sonderbau-
+Tatbestand (§ 38 LBO BW) ist die volle Baugenehmigung nach § 58 LBO BW
 zwingend. Ohne Sonderbau-Eigenschaft: vereinfachtes Verfahren nach
-§ 52 LBO. Das Kenntnisgabeverfahren nach § 51 LBO ist nur bei den dort
+§ 52 LBO BW. Das Kenntnisgabeverfahren nach § 51 LBO BW ist nur bei den dort
 genannten Tatbeständen anwendbar — typische MFH erreichen es selten.
 
 ANTRAG & VORLAGEN:
-• Bauvorlagen und Bauantrag — § 53 LBO.
-• Bauvorlageberechtigung — § 63 LBO. Entwurfsverfasser — § 43 LBO.
+• Bauvorlagen und Bauantrag — § 53 LBO BW.
+• Bauvorlageberechtigung — § 63 LBO BW. Entwurfsverfasser — § 43 LBO BW.
 • Form und Inhalt der Bauvorlagen: separate LBOVVO BW (kein §-Verweis
   im Korpus — Verordnung als Quelle referenzieren).
 
 TECHNISCHE ANFORDERUNGEN:
-• Abstandsflächen — § 5 LBO (Grundregel). Sonderfälle — § 6 LBO.
-  Übernahme auf Nachbargrundstücke — § 7 LBO.
-• Standsicherheit — § 13 LBO.
-• Brandschutz allgemein — § 15 LBO. Baustoffe/Bauteile — § 26 LBO.
-  Brandwände — § 27c LBO.
-• Stellplätze für Kraftfahrzeuge und Fahrräder — § 37 LBO.
+• Abstandsflächen — § 5 LBO BW (Grundregel). Sonderfälle — § 6 LBO BW.
+  Übernahme auf Nachbargrundstücke — § 7 LBO BW.
+• Standsicherheit — § 13 LBO BW.
+• Brandschutz allgemein — § 15 LBO BW. Baustoffe/Bauteile — § 26 LBO BW.
+  Brandwände — § 27c LBO BW.
+• Stellplätze für Kraftfahrzeuge und Fahrräder — § 37 LBO BW.
 
 BUNDESRECHT (gilt universal):
 • Zulässigkeit — § 30 BauGB, § 31 BauGB, § 34 BauGB, § 35 BauGB.
@@ -120,7 +120,7 @@ BUNDESRECHT (gilt universal):
 • Energie — § 10 GEG. § 80 GEG.
 
 PV-PFLICHT in BW:
-BW HAT eine PV-Pflicht über das KlimaG BW — NICHT in der LBO geregelt.
+BW HAT eine PV-Pflicht über das KlimaG BW — NICHT in der LBO BW geregelt.
 Konkrete §-Verweise NICHT im Korpus. Geltende Solar-Pflicht-Regelung
 referenzieren, nicht erfinden.
 
@@ -245,7 +245,7 @@ DENKMAL & ERHALTUNGSSATZUNG:
   },
   // ── T-03 Sanierung ───────────────────────────────────────────────
   'T-03': {
-    // B2 batch 3 — BW × T-03 authored 2026-05-28. LBO §§ corpus-verified.
+    // B2 batch 3 — BW × T-03 authored 2026-05-28. LBO BW §§ corpus-verified.
     // § 27f / § 28d cited as narrow substantive Anforderungen; § 65 + § 73a
     // omitted.
     bw: `══════════════════════════════════════════════════════════════════════════
@@ -253,33 +253,33 @@ LANDESSPEZIFISCHER ZUSATZ — BW × T-03 (Sanierung / Modernisierung)
 ══════════════════════════════════════════════════════════════════════════
 
 Bei Sanierungs-/Modernisierungs-Projekten in BADEN-WÜRTTEMBERG: die §§
-der LBO ersetzen sämtliche oben genannten Bayern-Verweise. Quelle:
+der LBO BW ersetzen sämtliche oben genannten Bayern-Verweise. Quelle:
 baunormenlexikon.de und dejure.org (mirror-tier).
 
 ROUTING:
 Reine Instandhaltung/Modernisierung ohne Eingriff in Statik, Brandschutz
-oder Nutzung fällt häufig unter § 50 LBO (verfahrensfreie Vorhaben).
+oder Nutzung fällt häufig unter § 50 LBO BW (verfahrensfreie Vorhaben).
 Sobald tragende Bauteile berührt werden oder DG-Ausbauten zu Wohnzwecken
-erfolgen, ist § 27f LBO einschlägig. Bei Eingriffen in Rettungswege gilt
-§ 28d LBO. Je nach Tiefe folgt das vereinfachte Verfahren nach § 52 LBO
-oder die Baugenehmigung nach § 58 LBO.
+erfolgen, ist § 27f LBO BW einschlägig. Bei Eingriffen in Rettungswege gilt
+§ 28d LBO BW. Je nach Tiefe folgt das vereinfachte Verfahren nach § 52 LBO BW
+oder die Baugenehmigung nach § 58 LBO BW.
 
-VERFAHREN — LBO:
-• Verfahrensfreie Vorhaben — § 50 LBO.
-• Vereinfachtes Baugenehmigungsverfahren — § 52 LBO.
-• Baugenehmigung — § 58 LBO.
+VERFAHREN — LBO BW:
+• Verfahrensfreie Vorhaben — § 50 LBO BW.
+• Vereinfachtes Baugenehmigungsverfahren — § 52 LBO BW.
+• Baugenehmigung — § 58 LBO BW.
 
 SUBSTANTIVE ANFORDERUNGEN BEI EINGRIFF:
 • Bei tragenden / aussteifenden / raumabschließenden Bauteilen sowie
-  DG-Ausbauten oder Aufstockungen zu Wohnzwecken — § 27f LBO.
-• Bei Eingriffen in Bauteile in Rettungswegen — § 28d LBO.
-• Standsicherheit — § 13 LBO.
-• Brandschutz allgemein — § 15 LBO. Baustoffe/Bauteile — § 26 LBO.
-  Brandwände — § 27c LBO.
+  DG-Ausbauten oder Aufstockungen zu Wohnzwecken — § 27f LBO BW.
+• Bei Eingriffen in Bauteile in Rettungswegen — § 28d LBO BW.
+• Standsicherheit — § 13 LBO BW.
+• Brandschutz allgemein — § 15 LBO BW. Baustoffe/Bauteile — § 26 LBO BW.
+  Brandwände — § 27c LBO BW.
 
 ANTRAG:
-• Bauvorlagen und Bauantrag — § 53 LBO.
-• Bauvorlageberechtigung — § 63 LBO. Entwurfsverfasser — § 43 LBO.
+• Bauvorlagen und Bauantrag — § 53 LBO BW.
+• Bauvorlageberechtigung — § 63 LBO BW. Entwurfsverfasser — § 43 LBO BW.
 
 ENERGIE (Bundesrecht):
 • Bestandsänderung — § 48 GEG. Niedrigstenergie-Grundsatz allgemein —
@@ -294,7 +294,7 @@ Federal-Anker bei Erhaltungssatzung — § 172 BauGB.
 NICHT IM Korpus (NICHT erfinden):
 • Land-Denkmal-§§ — wie oben mit LAD abklären.
 • PV-Pflicht bei Sanierung — KlimaG BW oder separate Solar-Verordnung;
-  nicht in der LBO geregelt; geltende Vorschrift referenzieren.`,
+  nicht in der LBO BW geregelt; geltende Vorschrift referenzieren.`,
     // BUCKET-B-CONTENT: needs verified §§ from legal review (HE HBO).
     hessen: null,
     // B2 batch 1 — NRW × T-03 authored 2026-05-28. §§ corpus-verified.
@@ -396,33 +396,33 @@ NICHT IM Korpus (NICHT erfinden):
   },
   // ── T-04 Umnutzung ───────────────────────────────────────────────
   'T-04': {
-    // B2 batch 3 — BW × T-04 authored 2026-05-28. LBO §§ corpus-verified.
+    // B2 batch 3 — BW × T-04 authored 2026-05-28. LBO BW §§ corpus-verified.
     // BW has NO general Nutzungsänderungs-§; § 27f + § 28d are narrow
     // substantive Anforderungen, NOT the procedure anchor. § 65 omitted.
     bw: `══════════════════════════════════════════════════════════════════════════
 LANDESSPEZIFISCHER ZUSATZ — BW × T-04 (Nutzungsänderung / Umnutzung)
 ══════════════════════════════════════════════════════════════════════════
 
-Bei Nutzungsänderungs-Projekten in BADEN-WÜRTTEMBERG: die §§ der LBO
+Bei Nutzungsänderungs-Projekten in BADEN-WÜRTTEMBERG: die §§ der LBO BW
 ersetzen sämtliche oben genannten Bayern-Verweise. Quelle:
 baunormenlexikon.de und dejure.org (mirror-tier).
 
 ROUTING:
 Eine Nutzungsänderung ist in BW grundsätzlich genehmigungspflichtig,
-sofern nicht ausdrücklich verfahrensfrei nach § 50 LBO. Die LBO hat
+sofern nicht ausdrücklich verfahrensfrei nach § 50 LBO BW. Die LBO BW hat
 KEIN eigenständig benanntes "Nutzungsänderungs-Verfahren" — der
 Verfahrensweg richtet sich nach den allgemeinen Verfahrens-§§. Substantive
-Anforderungen sind in § 27f LBO (tragende Bauteile, DG-Ausbau zu
-Wohnzwecken) und § 28d LBO (Rettungswege) geregelt.
+Anforderungen sind in § 27f LBO BW (tragende Bauteile, DG-Ausbau zu
+Wohnzwecken) und § 28d LBO BW (Rettungswege) geregelt.
 
-VERFAHREN — LBO:
-• Vereinfachtes Baugenehmigungsverfahren — § 52 LBO.
-• Baugenehmigung (regulär) — § 58 LBO (bei Sonderbau-Tatbestand der
-  neuen Nutzung, § 38 LBO).
+VERFAHREN — LBO BW:
+• Vereinfachtes Baugenehmigungsverfahren — § 52 LBO BW.
+• Baugenehmigung (regulär) — § 58 LBO BW (bei Sonderbau-Tatbestand der
+  neuen Nutzung, § 38 LBO BW).
 
 SUBSTANTIVE ANKER BEI NUTZUNGSÄNDERUNG:
-• Bei tragenden Bauteilen / DG-Ausbau zu Wohnzwecken — § 27f LBO.
-• Bei Bauteilen in Rettungswegen — § 28d LBO.
+• Bei tragenden Bauteilen / DG-Ausbau zu Wohnzwecken — § 27f LBO BW.
+• Bei Bauteilen in Rettungswegen — § 28d LBO BW.
 
 GEBIETSVERTRÄGLICHKEIT (Bundesrecht):
 • Zulässigkeit der neuen Nutzung — § 30 BauGB, § 31 BauGB, § 34 BauGB,
@@ -431,16 +431,16 @@ GEBIETSVERTRÄGLICHKEIT (Bundesrecht):
 • Erhaltungssatzung — § 172 BauGB.
 
 TECHNISCHE FOLGEN DER NEUEN NUTZUNG:
-• Brandschutz nach neuer Nutzung — § 15 LBO, § 26 LBO, § 27c LBO.
-• Stellplatzbedarf nach neuer Nutzung — § 37 LBO. Bundes-Maß ergänzend
+• Brandschutz nach neuer Nutzung — § 15 LBO BW, § 26 LBO BW, § 27c LBO BW.
+• Stellplatzbedarf nach neuer Nutzung — § 37 LBO BW. Bundes-Maß ergänzend
   — § 12 BauNVO.
-• Standsicherheit bei strukturellen Anpassungen — § 13 LBO.
+• Standsicherheit bei strukturellen Anpassungen — § 13 LBO BW.
 
 ANTRAG:
-• Bauvorlagen und Bauantrag — § 53 LBO.
-• Bauvorlageberechtigung — § 63 LBO. Entwurfsverfasser — § 43 LBO.
+• Bauvorlagen und Bauantrag — § 53 LBO BW.
+• Bauvorlageberechtigung — § 63 LBO BW. Entwurfsverfasser — § 43 LBO BW.
 
-NICHT IM LBO-Korpus (NICHT erfinden):
+NICHT IM LBO BW-Korpus (NICHT erfinden):
 • Land-Denkmal-§§ — DSchG BW mit LAD abklären.`,
     // BUCKET-B-CONTENT: needs verified §§ from legal review (HE HBO).
     hessen: null,
@@ -533,30 +533,30 @@ NICHT IM NBauO-Korpus (NICHT erfinden):
   },
   // ── T-05 Abbruch ─────────────────────────────────────────────────
   'T-05': {
-    // B2 batch 3 — BW × T-05 authored 2026-05-28. LBO §§ corpus-verified.
-    // § 65 LBO INTENTIONALLY OMITTED — heading "Abbruchsanordnung und
+    // B2 batch 3 — BW × T-05 authored 2026-05-28. LBO BW §§ corpus-verified.
+    // § 65 LBO BW INTENTIONALLY OMITTED — heading "Abbruchsanordnung und
     // Nutzungsuntersagung" is enforcement, not owner-initiated demolition
     // (same discipline as NI § 79).
     bw: `══════════════════════════════════════════════════════════════════════════
 LANDESSPEZIFISCHER ZUSATZ — BW × T-05 (Abbruch / Beseitigung)
 ══════════════════════════════════════════════════════════════════════════
 
-Bei Abbruch-/Beseitigungsvorhaben in BADEN-WÜRTTEMBERG: die §§ der LBO
+Bei Abbruch-/Beseitigungsvorhaben in BADEN-WÜRTTEMBERG: die §§ der LBO BW
 ersetzen sämtliche oben genannten Bayern-Verweise. Quelle:
 baunormenlexikon.de und dejure.org (mirror-tier).
 
 ROUTING:
-Der Abbruch baulicher Anlagen ist in BW primär über § 50 LBO geregelt
+Der Abbruch baulicher Anlagen ist in BW primär über § 50 LBO BW geregelt
 (verfahrensfreie Vorhaben; Anhang 1 listet die Tatbestände). Innerhalb
-der in Anhang 1 zu § 50 LBO genannten Tatbestände ist der Abbruch
+der in Anhang 1 zu § 50 LBO BW genannten Tatbestände ist der Abbruch
 verfahrensfrei; außerhalb dieser Tatbestände ist eine Genehmigung
-erforderlich (vereinfachtes Verfahren nach § 52 LBO bzw. Baugenehmigung
-nach § 58 LBO).
+erforderlich (vereinfachtes Verfahren nach § 52 LBO BW bzw. Baugenehmigung
+nach § 58 LBO BW).
 
-VERFAHREN — LBO:
-• Verfahrensfreie Vorhaben (mit Anhang 1) — § 50 LBO.
-• Vereinfachtes Baugenehmigungsverfahren — § 52 LBO.
-• Baugenehmigung — § 58 LBO.
+VERFAHREN — LBO BW:
+• Verfahrensfreie Vorhaben (mit Anhang 1) — § 50 LBO BW.
+• Vereinfachtes Baugenehmigungsverfahren — § 52 LBO BW.
+• Baugenehmigung — § 58 LBO BW.
 
 DENKMAL & ERHALTUNGSSATZUNG (OVERRIDE der Verfahrensfreiheit):
 • Federal-Anker — § 172 BauGB: innerhalb eines Erhaltungssatzungs-
@@ -568,12 +568,12 @@ DENKMAL & ERHALTUNGSSATZUNG (OVERRIDE der Verfahrensfreiheit):
   Baden-Württemberg (LAD) einbeziehen.
 
 DOKUMENTE:
-• Bauvorlageberechtigung — § 63 LBO. Entwurfsverfasser — § 43 LBO.
-• Statik der Restanlage bei Teilabbruch — § 13 LBO.
+• Bauvorlageberechtigung — § 63 LBO BW. Entwurfsverfasser — § 43 LBO BW.
+• Statik der Restanlage bei Teilabbruch — § 13 LBO BW.
 
-NICHT IM LBO-Korpus (NICHT erfinden):
+NICHT IM LBO BW-Korpus (NICHT erfinden):
 • Schadstoff-/Entsorgungs-§§ — KrWG, GefStoffV, EU-Vorgaben; nicht in
-  der LBO geregelt; geltende Bundes- bzw. EU-Regelung referenzieren.
+  der LBO BW geregelt; geltende Bundes- bzw. EU-Regelung referenzieren.
 • Land-Denkmal-§§ — wie oben mit LAD abklären.`,
     // BUCKET-B-CONTENT: needs verified §§ from legal review (HE HBO).
     hessen: null,
@@ -660,8 +660,8 @@ NICHT IM NBauO-Korpus (NICHT erfinden):
   },
   // ── T-06 Aufstockung ─────────────────────────────────────────────
   'T-06': {
-    // B2 batch 3 — BW × T-06 authored 2026-05-28. LBO §§ corpus-verified.
-    // § 27f LBO's heading explicitly names "Dachgeschossausbauten oder
+    // B2 batch 3 — BW × T-06 authored 2026-05-28. LBO BW §§ corpus-verified.
+    // § 27f LBO BW's heading explicitly names "Dachgeschossausbauten oder
     // Aufstockungen zu Wohnzwecken" — strong match for T-06.
     bw: `══════════════════════════════════════════════════════════════════════════
 LANDESSPEZIFISCHER ZUSATZ — BW × T-06 (Aufstockung / Dachgeschossausbau)
@@ -673,35 +673,35 @@ baunormenlexikon.de und dejure.org (mirror-tier).
 
 ROUTING:
 Aufstockungen und DG-Ausbauten zu Wohnzwecken sind in BW substantiell
-durch § 27f LBO geregelt (Nutzungsänderungen und bauliche Änderungen im
+durch § 27f LBO BW geregelt (Nutzungsänderungen und bauliche Änderungen im
 Bestand bei tragenden, aussteifenden und raumabschließenden Bauteilen
 sowie Dachgeschossausbauten oder Aufstockungen zu Wohnzwecken). Bei
-Eingriffen in Rettungswege gilt § 28d LBO. Verfahrensseitig regelmäßig
-das vereinfachte Verfahren nach § 52 LBO.
+Eingriffen in Rettungswege gilt § 28d LBO BW. Verfahrensseitig regelmäßig
+das vereinfachte Verfahren nach § 52 LBO BW.
 
 VERFAHREN:
-• Vereinfachtes Baugenehmigungsverfahren — § 52 LBO.
+• Vereinfachtes Baugenehmigungsverfahren — § 52 LBO BW.
 
 SUBSTANTIVE ANKER FÜR AUFSTOCKUNG / DG-AUSBAU:
 • Tragende / aussteifende / raumabschließende Bauteile bei Umbau,
-  DG-Ausbau oder Aufstockung zu Wohnzwecken — § 27f LBO.
-• Eingriffe in Bauteile in Rettungswegen — § 28d LBO.
+  DG-Ausbau oder Aufstockung zu Wohnzwecken — § 27f LBO BW.
+• Eingriffe in Bauteile in Rettungswegen — § 28d LBO BW.
 
 GEBÄUDEKLASSE & ABSTANDSFLÄCHEN (kritisch bei Aufstockung):
-• Gebäudeklasse — § 2 LBO. Höhen-/Stockwerksgrenzen entscheiden, ob die
+• Gebäudeklasse — § 2 LBO BW. Höhen-/Stockwerksgrenzen entscheiden, ob die
   Aufstockung die GK anhebt. Ein GK-Sprung kann strengeren Brandschutz
   auslösen.
-• Abstandsflächen — § 5 LBO. An der neuen, höheren Wand neu zu
-  bemessen. Sonderfälle — § 6 LBO. Übernahme auf Nachbargrundstücke
-  — § 7 LBO.
+• Abstandsflächen — § 5 LBO BW. An der neuen, höheren Wand neu zu
+  bemessen. Sonderfälle — § 6 LBO BW. Übernahme auf Nachbargrundstücke
+  — § 7 LBO BW.
 
 TECHNISCHE NACHWEISE (BESTANDSSTATIK):
 • Standsicherheit der Bestandskonstruktion und neuer Aufbauten —
-  § 13 LBO.
-• Brandschutz nach ggf. höherer GK — § 15 LBO, § 26 LBO, § 27c LBO.
+  § 13 LBO BW.
+• Brandschutz nach ggf. höherer GK — § 15 LBO BW, § 26 LBO BW, § 27c LBO BW.
 
 STELLPLÄTZE (bei neuen Wohneinheiten):
-• Stellplätze für Kraftfahrzeuge und Fahrräder — § 37 LBO.
+• Stellplätze für Kraftfahrzeuge und Fahrräder — § 37 LBO BW.
 
 ENERGIE (Bundesrecht):
 • Bestandsänderung — § 48 GEG. Niedrigstenergie-Grundsatz allgemein —
@@ -712,8 +712,8 @@ BAUPLANUNGSRECHT (Bundesrecht):
   § 20 BauNVO (Vollgeschosse/GFZ), § 23 BauNVO (überbaubare Fläche).
 
 ANTRAG:
-• Bauvorlagen und Bauantrag — § 53 LBO.
-• Bauvorlageberechtigung — § 63 LBO. Entwurfsverfasser — § 43 LBO.`,
+• Bauvorlagen und Bauantrag — § 53 LBO BW.
+• Bauvorlageberechtigung — § 63 LBO BW. Entwurfsverfasser — § 43 LBO BW.`,
     // BUCKET-B-CONTENT: needs verified §§ from legal review (HE HBO).
     hessen: null,
     // B2 batch 1 — NRW × T-06 authored 2026-05-28. §§ corpus-verified.
@@ -813,27 +813,27 @@ ANTRAG:
   },
   // ── T-07 Anbau ───────────────────────────────────────────────────
   'T-07': {
-    // B2 batch 3 — BW × T-07 authored 2026-05-28. LBO §§ corpus-verified.
+    // B2 batch 3 — BW × T-07 authored 2026-05-28. LBO BW §§ corpus-verified.
     // § 51 Kenntnisgabe cited as BW-specific institute for qualifying Anbau cases.
     bw: `══════════════════════════════════════════════════════════════════════════
 LANDESSPEZIFISCHER ZUSATZ — BW × T-07 (Anbau / Erweiterung)
 ══════════════════════════════════════════════════════════════════════════
 
-Bei Anbau-/Erweiterungsvorhaben in BADEN-WÜRTTEMBERG: die §§ der LBO
+Bei Anbau-/Erweiterungsvorhaben in BADEN-WÜRTTEMBERG: die §§ der LBO BW
 ersetzen sämtliche oben genannten Bayern-Verweise. Quelle:
 baunormenlexikon.de und dejure.org (mirror-tier).
 
 ROUTING:
-Ein Anbau wird regelmäßig im vereinfachten Verfahren nach § 52 LBO
-behandelt. Kleinere Anbau-Tatbestände können unter § 50 LBO
+Ein Anbau wird regelmäßig im vereinfachten Verfahren nach § 52 LBO BW
+behandelt. Kleinere Anbau-Tatbestände können unter § 50 LBO BW
 (verfahrensfreie Vorhaben) fallen. Bei qualifiziertem B-Plan kann das
-Kenntnisgabeverfahren nach § 51 LBO in Betracht kommen — die genauen
-Voraussetzungen ergeben sich aus § 51 LBO selbst.
+Kenntnisgabeverfahren nach § 51 LBO BW in Betracht kommen — die genauen
+Voraussetzungen ergeben sich aus § 51 LBO BW selbst.
 
 VERFAHREN:
-• Verfahrensfreie Vorhaben — § 50 LBO.
-• Kenntnisgabeverfahren — § 51 LBO (BW-spezifisch).
-• Vereinfachtes Baugenehmigungsverfahren — § 52 LBO (Regelfall).
+• Verfahrensfreie Vorhaben — § 50 LBO BW.
+• Kenntnisgabeverfahren — § 51 LBO BW (BW-spezifisch).
+• Vereinfachtes Baugenehmigungsverfahren — § 52 LBO BW (Regelfall).
 
 GEBIETSVERTRÄGLICHKEIT (Bundesrecht):
 • Einfügen im Innenbereich — § 34 BauGB. Außenbereich — § 35 BauGB.
@@ -841,21 +841,21 @@ GEBIETSVERTRÄGLICHKEIT (Bundesrecht):
   (überbaubare Grundstücksfläche).
 
 TECHNISCHE ANFORDERUNGEN AM ANBAU:
-• Abstandsflächen an der neuen Wand — § 5 LBO. Sonderfälle —
-  § 6 LBO. Übernahme auf Nachbargrundstücke — § 7 LBO.
-• Standsicherheit — § 13 LBO.
-• Brandschutz an der Anschluss-/Trennwand — § 15 LBO. Brandwände —
-  § 27c LBO.
+• Abstandsflächen an der neuen Wand — § 5 LBO BW. Sonderfälle —
+  § 6 LBO BW. Übernahme auf Nachbargrundstücke — § 7 LBO BW.
+• Standsicherheit — § 13 LBO BW.
+• Brandschutz an der Anschluss-/Trennwand — § 15 LBO BW. Brandwände —
+  § 27c LBO BW.
 
 STELLPLÄTZE (bei neuen Wohneinheiten / Nutzungen):
-• Stellplätze für Kraftfahrzeuge und Fahrräder — § 37 LBO.
+• Stellplätze für Kraftfahrzeuge und Fahrräder — § 37 LBO BW.
 
 ENERGIE (Bundesrecht):
 • Neubau-Teil des Anbaus — § 10 GEG. Anschluss an Bestand — § 48 GEG.
 
 ANTRAG:
-• Bauvorlagen und Bauantrag — § 53 LBO.
-• Bauvorlageberechtigung — § 63 LBO. Entwurfsverfasser — § 43 LBO.`,
+• Bauvorlagen und Bauantrag — § 53 LBO BW.
+• Bauvorlageberechtigung — § 63 LBO BW. Entwurfsverfasser — § 43 LBO BW.`,
     // BUCKET-B-CONTENT: needs verified §§ from legal review (HE HBO).
     hessen: null,
     // B2 batch 1 — NRW × T-07 authored 2026-05-28. §§ corpus-verified.
@@ -943,12 +943,12 @@ ANTRAG:
   },
   // ── T-08 Sonstiges ───────────────────────────────────────────────
   'T-08': {
-    // B2 batch 3 — BW × T-08 authored 2026-05-28. LBO §§ corpus-verified.
+    // B2 batch 3 — BW × T-08 authored 2026-05-28. LBO BW §§ corpus-verified.
     bw: `══════════════════════════════════════════════════════════════════════════
 LANDESSPEZIFISCHER ZUSATZ — BW × T-08 (Sonstiges Vorhaben)
 ══════════════════════════════════════════════════════════════════════════
 
-Bei sonstigen Vorhaben in BADEN-WÜRTTEMBERG: die §§ der LBO ersetzen
+Bei sonstigen Vorhaben in BADEN-WÜRTTEMBERG: die §§ der LBO BW ersetzen
 sämtliche oben genannten Bayern-Verweise. Quelle: baunormenlexikon.de
 und dejure.org (mirror-tier).
 
@@ -956,23 +956,23 @@ T-08 ist keine feste Vorhabens-Klasse — die einschlägigen BW-§§ richten
 sich nach dem konkreten Vorhaben. Die folgenden Verweise decken den
 vollständigen Verfahrensraster ab:
 
-VERFAHREN — LBO (vollständiger Raster, BW-spezifisch):
-• Verfahrensfreie Vorhaben — § 50 LBO (Anhang 1 listet Tatbestände).
-• Kenntnisgabeverfahren — § 51 LBO (BW-spezifisches Verfahren ohne
+VERFAHREN — LBO BW (vollständiger Raster, BW-spezifisch):
+• Verfahrensfreie Vorhaben — § 50 LBO BW (Anhang 1 listet Tatbestände).
+• Kenntnisgabeverfahren — § 51 LBO BW (BW-spezifisches Verfahren ohne
   Baugenehmigung).
-• Vereinfachtes Baugenehmigungsverfahren — § 52 LBO.
-• Baugenehmigung — § 58 LBO.
+• Vereinfachtes Baugenehmigungsverfahren — § 52 LBO BW.
+• Baugenehmigung — § 58 LBO BW.
 
 ANTRAG & VORLAGEN:
-• Bauvorlagen und Bauantrag — § 53 LBO.
-• Bauvorlageberechtigung — § 63 LBO. Entwurfsverfasser — § 43 LBO.
+• Bauvorlagen und Bauantrag — § 53 LBO BW.
+• Bauvorlageberechtigung — § 63 LBO BW. Entwurfsverfasser — § 43 LBO BW.
 • Form und Inhalt der Bauvorlagen: separate LBOVVO BW (kein §-Verweis
   im Korpus — Verordnung als Quelle referenzieren).
 
 ALLGEMEINE TECHNISCHE ANFORDERUNGEN:
-• Abstandsflächen — § 5 LBO. Sonderfälle — § 6 LBO. Übernahme auf
-  Nachbargrundstücke — § 7 LBO.
-• Standsicherheit — § 13 LBO.
+• Abstandsflächen — § 5 LBO BW. Sonderfälle — § 6 LBO BW. Übernahme auf
+  Nachbargrundstücke — § 7 LBO BW.
+• Standsicherheit — § 13 LBO BW.
 
 BUNDESRECHT (gilt universal):
 • Zulässigkeit — § 30 BauGB, § 31 BauGB, § 34 BauGB, § 35 BauGB.
