@@ -46,7 +46,6 @@ const ALLOWLIST = [
   // legal-domain text mirroring the EN side; same pattern as the
   // chat-side legal modules.
   'src/features/chat/lib/pdfSections/glossary.ts',
-  'src/data/factsMuenchen.ts',
   'src/data/smartSuggestionsMuenchen.ts',
   // Sommelier-locked: specialist tag's role-label map is German by
   // explicit decision (see SpecialistTag.tsx + factLabel.ts comments).
