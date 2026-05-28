@@ -409,6 +409,79 @@ DENKMAL & ERHALTUNGSSATZUNG:
   Schleswig-Holstein (LfD SH) auf Landesebene; untere Denkmalschutz-
   behörde bei der kreisfreien Stadt (Kiel/Lübeck/Flensburg/Neumünster)
   bzw. beim Landratsamt des Kreises.`,
+    // C6 batch — Rheinland-Pfalz × T-01 authored 2026-05-28. LBauO corpus-
+    // verified (mirror-tier; baunormenlexikon.de; LBauO RP 1998-11-24
+    // i.d.F. Gesetz v. 19.11.2025 — freshest C-state amendment). Third
+    // Flächenland. UNIQUE §-NUMBERING: verfahrensfrei = § 62 (not § 61),
+    // Freistellung = § 67, vereinfacht = § 66, regulär = § 61 + § 70.
+    // Brandschutz 2-§ (§ 15 + § 30). Citation prefix bare "LBauO" per gate.
+    rlp: `══════════════════════════════════════════════════════════════════════════
+LANDESSPEZIFISCHER ZUSATZ — Rheinland-Pfalz × T-01 (Neubau Einfamilienhaus)
+══════════════════════════════════════════════════════════════════════════
+
+Bei EFH-Projekten in RHEINLAND-PFALZ: die §§ der LBauO (Landesbauordnung
+Rheinland-Pfalz) ersetzen sämtliche oben genannten Bayern-Verweise.
+Rheinland-Pfalz ist Flächenland mit zwölf kreisfreien Städten (u. a.
+Mainz, Ludwigshafen am Rhein, Koblenz, Trier, Kaiserslautern) und 24
+Landkreisen. Die zuständige untere Bauaufsichtsbehörde liegt — bei
+Projekten in den kreisfreien Städten — bei der städtischen Bauaufsichts-
+behörde; im übrigen Rheinland-Pfalz bei der Kreisverwaltung des
+jeweiligen Landkreises. Quelle: baunormenlexikon.de (mirror-tier; bei
+rechtlich kritischen Fragen die amtliche Fassung beim landesrecht.rlp.de
+gegenprüfen). Stand: LBauO Rheinland-Pfalz vom 24.11.1998 i.d.F. Gesetz
+vom 19.11.2025 (GVBl. S. 672, 673).
+
+HINWEIS: Der Rheinland-Pfälzische systemBlock ist bislang "Mindest-
+Eckdaten"; die hier zitierten §§ stammen aus dem Korpus (secondary-mirror,
+primary-URL hinterlegt) und sind verwendbar, aber das vollständige
+RP-Profil wird erst mit anwaltlich verifizierter systemBlock-Tiefe
+abschließend substantiell.
+
+VERFAHREN — LBauO (RP-spezifische Nummerierung, abweichend vom MBO-Schema):
+• Genehmigungsfreie Vorhaben — § 62 LBauO.
+• Freistellungsverfahren — § 67 LBauO (bei qualifiziertem B-Plan).
+• Vereinfachtes Genehmigungsverfahren — § 66 LBauO.
+• Genehmigungsbedürftige Vorhaben — § 61 LBauO. Baugenehmigung —
+  § 70 LBauO (reguläres Verfahren).
+
+ROUTING (EFH-typisch):
+EFH erreicht häufig Gebäudeklasse 1 bis 3 nach § 2 LBauO. Bei
+qualifiziertem B-Plan und ohne Sonderbau-Eigenschaft (§ 50 LBauO) kommt
+das Freistellungsverfahren nach § 67 LBauO in Betracht; sonst
+vereinfachtes Verfahren nach § 66 LBauO. Reguläres Verfahren nach § 61 +
+§ 70 LBauO nur bei Sonderbau-Tatbestand.
+
+ANTRAG & VORLAGEN:
+• Bauantrag — § 63 LBauO.
+• Bauvorlageberechtigung — § 64 LBauO. Entwurfsverfasser — § 56 LBauO.
+• Form/Inhalt der Bauvorlagen: separate BauuntPrüfVO und Landes-
+  Verordnungen (kein §-Verweis im Korpus — Verordnung als Quelle
+  referenzieren).
+
+TECHNISCHE ANFORDERUNGEN:
+• Abstandsflächen — § 8 LBauO.
+• Standsicherheit — § 13 LBauO (in der LBauO RP kein eigener
+  "Bautechnische Nachweise"-§; § 13 trägt den substanziellen
+  Standsicherheits-Anker).
+• Stellplätze und Garagen — § 47 LBauO.
+
+BUNDESRECHT (gilt universal):
+• Zulässigkeit — § 30 BauGB, § 31 BauGB, § 34 BauGB, § 35 BauGB.
+• Maß + Baugebiete — § 1 BauNVO, § 3 BauNVO, § 4 BauNVO, § 6 BauNVO,
+  § 16 BauNVO, § 19 BauNVO, § 23 BauNVO.
+• Energie — § 10 GEG. § 80 GEG.
+
+SOLAR-/KLIMASCHUTZ-VORGABEN in Rheinland-Pfalz:
+RP-spezifische Solar-/Klimaschutz-Pflichten sind außerhalb der LBauO
+geregelt. Konkrete §-Verweise NICHT im Korpus — geltende Vorschrift
+referenzieren, nicht erfinden.
+
+DENKMAL & ERHALTUNGSSATZUNG:
+• Bundesanker — § 172 BauGB (Erhaltungssatzungs-Gebiet).
+• Land — DSchG RLP (separate Landesvorschrift; konkrete §-Verweise nicht
+  im Korpus). Zuständige Behörde: Landesamt für Denkmalpflege Rheinland-
+  Pfalz auf Landesebene; untere Denkmalschutzbehörde bei der Kreis-
+  verwaltung bzw. kreisfreien Stadt.`,
   },
   // ── T-02 Neubau MFH ──────────────────────────────────────────────
   'T-02': {
@@ -936,6 +1009,67 @@ DENKMAL & ERHALTUNGSSATZUNG:
 • Land — DSchG SH. Behörde: Landesamt für Denkmalpflege Schleswig-
   Holstein (LfD SH) plus zuständige untere Denkmalschutzbehörde
   (kreisfreie Stadt bzw. Landratsamt).`,
+    // C6 batch — Rheinland-Pfalz × T-02 authored 2026-05-28. LBauO corpus-
+    // verified. 2-§ brandschutz spread (§ 15 + § 30) — RLP's LBauO has no
+    // standalone Baustoffe-Brandverhalten or Rettungsweg §§.
+    rlp: `══════════════════════════════════════════════════════════════════════════
+LANDESSPEZIFISCHER ZUSATZ — Rheinland-Pfalz × T-02 (Neubau Mehrfamilienhaus)
+══════════════════════════════════════════════════════════════════════════
+
+Bei MFH-Projekten in RHEINLAND-PFALZ: die §§ der LBauO ersetzen sämtliche
+oben genannten Bayern-Verweise. Flächenland — Bauaufsicht je nach
+Standort bei der städtischen Bauaufsichtsbehörde der kreisfreien Stadt
+(u. a. Mainz, Ludwigshafen, Koblenz, Trier, Kaiserslautern) bzw. bei der
+Kreisverwaltung des jeweiligen Landkreises. Quelle: baunormenlexikon.de
+(mirror-tier). Stand: LBauO RP i.d.F. Gesetz vom 19.11.2025.
+
+HINWEIS: Rheinland-Pfälzischer systemBlock weiterhin "preliminary"; die
+hier zitierten §§ sind korpus-verifiziert.
+
+VERFAHREN — LBauO (RP-spezifische Nummerierung):
+• Genehmigungsfreie Vorhaben — § 62 LBauO.
+• Freistellungsverfahren — § 67 LBauO (bei qualifiziertem B-Plan).
+• Vereinfachtes Genehmigungsverfahren — § 66 LBauO.
+• Genehmigungsbedürftige Vorhaben — § 61 LBauO. Baugenehmigung —
+  § 70 LBauO (reguläres Verfahren).
+
+ROUTING (MFH-typisch):
+MFH erreicht häufig Gebäudeklasse 3 bis 5 nach § 2 LBauO. Bei
+Sonderbau-Tatbestand (§ 50 LBauO) ist das reguläre Verfahren nach
+§ 61 + § 70 LBauO zwingend. Ohne Sonderbau: vereinfachtes Verfahren nach
+§ 66 LBauO. Freistellung nach § 67 LBauO nur bei qualifiziertem B-Plan
+und ohne Sonderbau.
+
+ANTRAG & VORLAGEN:
+• Bauantrag — § 63 LBauO.
+• Bauvorlageberechtigung — § 64 LBauO. Entwurfsverfasser — § 56 LBauO.
+
+TECHNISCHE ANFORDERUNGEN:
+• Abstandsflächen — § 8 LBauO.
+• Standsicherheit — § 13 LBauO.
+• Brandschutz allgemein — § 15 LBauO. Brandwände — § 30 LBauO.
+  (LBauO RP hat keine eigenen §§ für Baustoffe-Brandverhalten oder
+  Erster/zweiter Rettungsweg — Brandschutz-Detailanforderungen ergeben
+  sich aus den Technischen Baubestimmungen und einer Brandschutz-
+  konzeption.)
+• Stellplätze und Garagen — § 47 LBauO.
+
+BUNDESRECHT (gilt universal):
+• Zulässigkeit — § 30 BauGB, § 31 BauGB, § 34 BauGB, § 35 BauGB.
+• Baugebiete + Maß — § 1 BauNVO, § 3 BauNVO, § 4 BauNVO, § 6 BauNVO,
+  § 16 BauNVO, § 19 BauNVO, § 23 BauNVO. Stellplätze — § 12 BauNVO.
+• Energie — § 10 GEG. § 80 GEG.
+
+SOLAR-/KLIMASCHUTZ-VORGABEN in Rheinland-Pfalz:
+RP-spezifische Solar-/Klimaschutz-Pflichten sind außerhalb der LBauO
+geregelt. Konkrete §-Verweise NICHT im Korpus — geltende Vorschrift
+referenzieren, nicht erfinden.
+
+DENKMAL & ERHALTUNGSSATZUNG:
+• Bundesanker — § 172 BauGB.
+• Land — DSchG RLP. Behörde: Landesamt für Denkmalpflege Rheinland-Pfalz
+  plus zuständige untere Denkmalschutzbehörde (Kreisverwaltung bzw.
+  kreisfreie Stadt).`,
   },
   // ── T-03 Sanierung ───────────────────────────────────────────────
   'T-03': {
@@ -1423,6 +1557,61 @@ NICHT IM Korpus (NICHT erfinden):
   abklären.
 • Solar-/PV-Pflicht bei Sanierung — außerhalb der LBO SH geregelt;
   geltende Vorschrift referenzieren.`,
+    // C6 batch — Rheinland-Pfalz × T-03 authored 2026-05-28. LBauO corpus-
+    // verified. No dedicated Nutzungsänderungs-§ in LBauO RP; standard
+    // deferral pattern.
+    rlp: `══════════════════════════════════════════════════════════════════════════
+LANDESSPEZIFISCHER ZUSATZ — Rheinland-Pfalz × T-03 (Sanierung / Modernisierung)
+══════════════════════════════════════════════════════════════════════════
+
+Bei Sanierungs-/Modernisierungs-Projekten in RHEINLAND-PFALZ: die §§ der
+LBauO ersetzen sämtliche oben genannten Bayern-Verweise. Flächenland —
+Bauaufsicht bei der Kreisverwaltung bzw. bei der städtischen Bauaufsichts-
+behörde der kreisfreien Stadt. Quelle: baunormenlexikon.de (mirror-tier).
+Stand: LBauO RP i.d.F. Gesetz vom 19.11.2025.
+
+HINWEIS: Rheinland-Pfälzischer systemBlock weiterhin "preliminary"; die
+hier zitierten §§ sind korpus-verifiziert.
+
+ROUTING:
+Reine Instandhaltung/Modernisierung ohne Eingriff in Statik, Brandschutz
+oder Nutzung fällt häufig unter § 62 LBauO (genehmigungsfreie Vorhaben).
+Sobald tragende Bauteile, Brandschutz oder die Nutzung berührt sind, ist
+regelmäßig das vereinfachte Verfahren nach § 66 LBauO anzunehmen.
+
+VERFAHREN — LBauO:
+• Genehmigungsfreie Vorhaben — § 62 LBauO.
+• Vereinfachtes Genehmigungsverfahren — § 66 LBauO.
+
+TECHNISCHE NACHWEISE BEI EINGRIFF:
+• Standsicherheit bei tragenden Eingriffen — § 13 LBauO.
+• Brandschutz allgemein — § 15 LBauO. Brandwände — § 30 LBauO.
+
+ANTRAG:
+• Bauantrag — § 63 LBauO. Bauvorlageberechtigung — § 64 LBauO.
+  Entwurfsverfasser — § 56 LBauO.
+
+ENERGIE (Bundesrecht):
+• Bestandsänderung — § 48 GEG. Niedrigstenergie-Grundsatz allgemein —
+  § 10 GEG.
+
+NUTZUNGSÄNDERUNG IN Rheinland-Pfalz:
+Rheinland-Pfalz hat KEINEN dedizierten Nutzungsänderungs-§ in der LBauO.
+Eine Nutzungsänderung im Sanierungskontext ist über § 66 LBauO
+(vereinfacht) bzw. § 61 + § 70 LBauO (regulär bei Sonderbau, § 50 LBauO)
+zu beantragen.
+
+DENKMALSCHUTZ:
+Bei eingetragenem Baudenkmal oder Ensemble — DSchG RLP (separate
+Landesvorschrift; konkrete §-Verweise nicht im Korpus). Vor Sanierung
+ist das Landesamt für Denkmalpflege Rheinland-Pfalz plus zuständige
+untere Denkmalschutzbehörde (Kreisverwaltung bzw. kreisfreie Stadt)
+anzuhören. Federal-Anker bei Erhaltungssatzung — § 172 BauGB.
+
+NICHT IM Korpus (NICHT erfinden):
+• Land-Denkmal-§§ — wie oben mit Landesamt / Kreisverwaltung abklären.
+• Solar-/PV-Pflicht bei Sanierung — außerhalb der LBauO geregelt;
+  geltende Vorschrift referenzieren.`,
   },
   // ── T-04 Umnutzung ───────────────────────────────────────────────
   'T-04': {
@@ -1861,6 +2050,58 @@ NICHT IM LBO-SH-Korpus (NICHT erfinden):
 • Schallschutz/TA-Lärm bei lärmrelevanter Nutzungsänderung — DIN 4109
   bzw. TA Lärm als Bundes- bzw. technische Normen, nicht in der LBO SH
   geregelt.`,
+    // C6 batch — Rheinland-Pfalz × T-04 authored 2026-05-28. LBauO corpus-
+    // verified. No dedicated change-of-use § in LBauO RP; route via § 66/
+    // § 61+§ 70.
+    rlp: `══════════════════════════════════════════════════════════════════════════
+LANDESSPEZIFISCHER ZUSATZ — Rheinland-Pfalz × T-04 (Nutzungsänderung / Umnutzung)
+══════════════════════════════════════════════════════════════════════════
+
+Bei Nutzungsänderungs-Projekten in RHEINLAND-PFALZ: die §§ der LBauO
+ersetzen sämtliche oben genannten Bayern-Verweise. Flächenland —
+Bauaufsicht bei der Kreisverwaltung bzw. bei der städtischen Bauaufsichts-
+behörde der kreisfreien Stadt. Quelle: baunormenlexikon.de (mirror-tier).
+Stand: LBauO RP i.d.F. Gesetz vom 19.11.2025.
+
+HINWEIS: Rheinland-Pfälzischer systemBlock weiterhin "preliminary"; die
+hier zitierten §§ sind korpus-verifiziert.
+
+ROUTING:
+Eine Nutzungsänderung ist in Rheinland-Pfalz grundsätzlich genehmigungs-
+pflichtig, sofern nicht ausdrücklich verfahrensfrei nach § 62 LBauO. Die
+LBauO RP hat KEINEN dedizierten Nutzungsänderungs-§ — der Verfahrensweg
+richtet sich nach den allgemeinen Verfahrens-§§. Bei Nicht-Sonderbau-
+Umnutzung ist regelmäßig das vereinfachte Verfahren nach § 66 LBauO
+einschlägig; sobald Sonderbau-Tatbestand vorliegt (§ 50 LBauO), gilt das
+reguläre Verfahren nach § 61 + § 70 LBauO.
+
+VERFAHREN — LBauO:
+• Vereinfachtes Genehmigungsverfahren — § 66 LBauO.
+• Genehmigungsbedürftige Vorhaben — § 61 LBauO. Baugenehmigung —
+  § 70 LBauO.
+
+GEBIETSVERTRÄGLICHKEIT (Bundesrecht):
+• Zulässigkeit der neuen Nutzung — § 30 BauGB, § 31 BauGB, § 34 BauGB,
+  § 35 BauGB.
+• Baugebiete und Nutzungsarten — § 1 BauNVO bis § 9 BauNVO, § 4a BauNVO.
+• Erhaltungssatzung — § 172 BauGB.
+
+TECHNISCHE FOLGEN DER NEUEN NUTZUNG:
+• Brandschutz nach neuer Nutzung — § 15 LBauO. Brandwände — § 30 LBauO.
+• Stellplatzbedarf nach neuer Nutzung — § 47 LBauO. Bundes-Maß ergänzend
+  — § 12 BauNVO.
+• Standsicherheit bei strukturellen Anpassungen — § 13 LBauO.
+
+ANTRAG:
+• Bauantrag — § 63 LBauO. Bauvorlageberechtigung — § 64 LBauO.
+  Entwurfsverfasser — § 56 LBauO.
+
+NICHT IM LBauO-RP-Korpus (NICHT erfinden):
+• Land-Denkmal-§§ — DSchG RLP mit Landesamt für Denkmalpflege /
+  Kreisverwaltung bzw. kreisfreier Stadt abklären.
+• Schallschutz/TA-Lärm bei lärmrelevanter Nutzungsänderung — DIN 4109
+  bzw. TA Lärm als Bundes- bzw. technische Normen, nicht in der LBauO
+  geregelt.`,
   },
   // ── T-05 Abbruch ─────────────────────────────────────────────────
   'T-05': {
@@ -2276,6 +2517,57 @@ NICHT IM LBO-SH-Korpus (NICHT erfinden):
   der LBO SH geregelt; geltende Bundes- bzw. EU-Regelung referenzieren.
 • Land-Denkmal-§§ — wie oben mit LfD SH / Kreis bzw. kreisfreier Stadt
   abklären.`,
+    // C6 batch — Rheinland-Pfalz × T-05 authored 2026-05-28. LBauO corpus-
+    // verified. §§ 80 (Baueinstellung), 81 (Beseitigungsanordnung), 82
+    // (Abbruch verfallender Anlagen) INTENTIONALLY OMITTED (enforcement
+    // triple — RLP has 3 enforcement-class §§ vs single § 80 in most states).
+    rlp: `══════════════════════════════════════════════════════════════════════════
+LANDESSPEZIFISCHER ZUSATZ — Rheinland-Pfalz × T-05 (Abbruch / Beseitigung)
+══════════════════════════════════════════════════════════════════════════
+
+Bei Abbruch-/Beseitigungsvorhaben in RHEINLAND-PFALZ: die §§ der LBauO
+ersetzen sämtliche oben genannten Bayern-Verweise. Flächenland —
+Bauaufsicht bei der Kreisverwaltung bzw. bei der städtischen Bauaufsichts-
+behörde der kreisfreien Stadt. Quelle: baunormenlexikon.de (mirror-tier).
+Stand: LBauO RP i.d.F. Gesetz vom 19.11.2025.
+
+HINWEIS: Rheinland-Pfälzischer systemBlock weiterhin "preliminary"; die
+hier zitierten §§ sind korpus-verifiziert.
+
+ROUTING:
+Die Beseitigung baulicher Anlagen in Rheinland-Pfalz richtet sich nach
+dem Katalog der genehmigungsfreien Vorhaben (§ 62 LBauO) bzw. nach den
+allgemeinen Verfahrens-§§ (§ 66 / § 61 + § 70 LBauO), wenn die Schwelle
+zur Genehmigungspflicht überschritten ist.
+
+VERFAHREN — LBauO:
+• Genehmigungsfreie Vorhaben (Katalog) — § 62 LBauO.
+
+Innerhalb des in § 62 LBauO geregelten Tatbestandskatalogs ist der
+Abbruch genehmigungsfrei (ggf. genügt eine Anzeige); außerhalb dieser
+Tatbestände ist eine Beseitigungsgenehmigung erforderlich (in der Regel
+über das vereinfachte Verfahren nach § 66 LBauO bzw. das reguläre
+Verfahren nach § 61 + § 70 LBauO).
+
+DENKMAL & ERHALTUNGSSATZUNG (OVERRIDE der Verfahrensfreiheit):
+• Federal-Anker — § 172 BauGB: innerhalb eines Erhaltungssatzungs-
+  Bereichs ist der Abbruch genehmigungspflichtig, auch wenn er sonst
+  verfahrensfrei wäre.
+• Land-Denkmal — DSchG RLP (separate Landesvorschrift; konkrete
+  §-Verweise nicht im Korpus). Bei eingetragenem Baudenkmal: Abbruch nur
+  mit denkmalrechtlicher Genehmigung; Landesamt für Denkmalpflege
+  Rheinland-Pfalz plus zuständige untere Denkmalschutzbehörde
+  (Kreisverwaltung bzw. kreisfreie Stadt) einbeziehen.
+
+DOKUMENTE:
+• Bauvorlageberechtigung — § 64 LBauO. Entwurfsverfasser — § 56 LBauO.
+  Bauantrag-Vorlagen — § 63 LBauO.
+• Statik der Restanlage bei Teilabbruch — § 13 LBauO.
+
+NICHT IM LBauO-Korpus (NICHT erfinden):
+• Schadstoff-/Entsorgungs-§§ — KrWG, GefStoffV, EU-Vorgaben; nicht in
+  der LBauO geregelt; geltende Bundes- bzw. EU-Regelung referenzieren.
+• Land-Denkmal-§§ — wie oben mit Landesamt / Kreisverwaltung abklären.`,
   },
   // ── T-06 Aufstockung ─────────────────────────────────────────────
   'T-06': {
@@ -2728,6 +3020,54 @@ BAUPLANUNGSRECHT (Bundesrecht):
 ANTRAG:
 • Bauantrag und Bauvorlagen — § 68 LBO SH. Bauvorlageberechtigung —
   § 65 LBO SH. Entwurfsverfasser — § 54 LBO SH.`,
+    // C6 batch — Rheinland-Pfalz × T-06 authored 2026-05-28. LBauO corpus-
+    // verified. No dedicated Aufstockungs-§; routing via § 66 vereinfacht.
+    rlp: `══════════════════════════════════════════════════════════════════════════
+LANDESSPEZIFISCHER ZUSATZ — Rheinland-Pfalz × T-06 (Aufstockung / Dachgeschossausbau)
+══════════════════════════════════════════════════════════════════════════
+
+Bei Aufstockungs-/DG-Ausbau-Projekten in RHEINLAND-PFALZ: die §§ der
+LBauO ersetzen sämtliche oben genannten Bayern-Verweise. Flächenland —
+Bauaufsicht bei der Kreisverwaltung bzw. bei der städtischen Bauaufsichts-
+behörde der kreisfreien Stadt. Quelle: baunormenlexikon.de (mirror-tier).
+Stand: LBauO RP i.d.F. Gesetz vom 19.11.2025.
+
+HINWEIS: Rheinland-Pfälzischer systemBlock weiterhin "preliminary"; die
+hier zitierten §§ sind korpus-verifiziert.
+
+ROUTING:
+Aufstockung wird regelmäßig im vereinfachten Verfahren nach § 66 LBauO
+behandelt. Bei Aufstockung können sich Gebäudeklasse, Abstandsflächen
+und Brandschutz ändern; die Standsicherheit der Bestandskonstruktion ist
+gesondert nachzuweisen.
+
+VERFAHREN:
+• Vereinfachtes Genehmigungsverfahren — § 66 LBauO.
+
+GEBÄUDEKLASSE & ABSTANDSFLÄCHEN (kritisch bei Aufstockung):
+• Gebäudeklasse — § 2 LBauO. Höhen-/Stockwerksgrenzen entscheiden, ob
+  die Aufstockung die GK anhebt.
+• Abstandsflächen — § 8 LBauO. An der neuen, höheren Wand neu zu bemessen.
+
+TECHNISCHE NACHWEISE (BESTANDSSTATIK):
+• Standsicherheit der Bestandskonstruktion und neuer Aufbauten —
+  § 13 LBauO.
+• Brandschutz nach ggf. höherer GK — § 15 LBauO. Brandwände — § 30 LBauO.
+
+STELLPLÄTZE (bei neuen Wohneinheiten):
+• Stellplätze und Garagen — § 47 LBauO.
+
+ENERGIE (Bundesrecht):
+• Bestandsänderung — § 48 GEG. Niedrigstenergie-Grundsatz allgemein —
+  § 10 GEG.
+
+BAUPLANUNGSRECHT (Bundesrecht):
+• Zulässigkeit — § 30 BauGB, § 34 BauGB. Maß — § 19 BauNVO (GRZ),
+  § 20 BauNVO (Vollgeschosse/GFZ), § 23 BauNVO (überbaubare Fläche).
+
+ANTRAG:
+• Bauantrag — § 63 LBauO. Bauvorlageberechtigung — § 64 LBauO.
+  Entwurfsverfasser — § 56 LBauO.`,
   },
   // ── T-07 Anbau ───────────────────────────────────────────────────
   'T-07': {
@@ -3117,6 +3457,50 @@ ENERGIE (Bundesrecht):
 ANTRAG:
 • Bauantrag und Bauvorlagen — § 68 LBO SH. Bauvorlageberechtigung —
   § 65 LBO SH. Entwurfsverfasser — § 54 LBO SH.`,
+    // C6 batch — Rheinland-Pfalz × T-07 authored 2026-05-28. LBauO corpus-
+    // verified. 2-§ brandschutz at Anschluss/Brandwand only (§ 15 + § 30).
+    rlp: `══════════════════════════════════════════════════════════════════════════
+LANDESSPEZIFISCHER ZUSATZ — Rheinland-Pfalz × T-07 (Anbau / Erweiterung)
+══════════════════════════════════════════════════════════════════════════
+
+Bei Anbau-/Erweiterungsvorhaben in RHEINLAND-PFALZ: die §§ der LBauO
+ersetzen sämtliche oben genannten Bayern-Verweise. Flächenland —
+Bauaufsicht bei der Kreisverwaltung bzw. bei der städtischen Bauaufsichts-
+behörde der kreisfreien Stadt. Quelle: baunormenlexikon.de (mirror-tier).
+Stand: LBauO RP i.d.F. Gesetz vom 19.11.2025.
+
+HINWEIS: Rheinland-Pfälzischer systemBlock weiterhin "preliminary"; die
+hier zitierten §§ sind korpus-verifiziert.
+
+ROUTING:
+Ein Anbau wird regelmäßig im vereinfachten Verfahren nach § 66 LBauO
+behandelt. Bei qualifiziertem B-Plan und Einhaltung aller Festsetzungen
+kommt das Freistellungsverfahren nach § 67 LBauO in Betracht.
+
+VERFAHREN:
+• Freistellungsverfahren — § 67 LBauO (bei qualifiziertem B-Plan).
+• Vereinfachtes Genehmigungsverfahren — § 66 LBauO (Regelfall).
+
+GEBIETSVERTRÄGLICHKEIT (Bundesrecht):
+• Einfügen im Innenbereich — § 34 BauGB. Außenbereich — § 35 BauGB.
+• Maß der baulichen Nutzung — § 19 BauNVO (GRZ), § 23 BauNVO
+  (überbaubare Grundstücksfläche).
+
+TECHNISCHE ANFORDERUNGEN AM ANBAU:
+• Abstandsflächen an der neuen Wand — § 8 LBauO.
+• Standsicherheit — § 13 LBauO.
+• Brandschutz an der Anschluss-/Trennwand — § 15 LBauO. Brandwände —
+  § 30 LBauO.
+
+STELLPLÄTZE (bei neuen Wohneinheiten / Nutzungen):
+• Stellplätze und Garagen — § 47 LBauO.
+
+ENERGIE (Bundesrecht):
+• Neubau-Teil des Anbaus — § 10 GEG. Anschluss an Bestand — § 48 GEG.
+
+ANTRAG:
+• Bauantrag — § 63 LBauO. Bauvorlageberechtigung — § 64 LBauO.
+  Entwurfsverfasser — § 56 LBauO.`,
   },
   // ── T-08 Sonstiges ───────────────────────────────────────────────
   'T-08': {
@@ -3484,5 +3868,46 @@ T-08 sollte zuerst an einen passenderen Template-Archetyp (T-01 EFH bis
 T-07 Anbau) zugeordnet werden; nur wenn keine Zuordnung möglich ist,
 greift T-08 als Default-Schale. Die obigen LBO-SH-§§ sind die
 Mindest-Verweise für Verfahren und Antrag.`,
+    // C6 batch — Rheinland-Pfalz × T-08 authored 2026-05-28. LBauO corpus-
+    // verified.
+    rlp: `══════════════════════════════════════════════════════════════════════════
+LANDESSPEZIFISCHER ZUSATZ — Rheinland-Pfalz × T-08 (Sonstiges Vorhaben)
+══════════════════════════════════════════════════════════════════════════
+
+Bei sonstigen Vorhaben in RHEINLAND-PFALZ: die §§ der LBauO ersetzen
+sämtliche oben genannten Bayern-Verweise. Flächenland — Bauaufsicht bei
+der Kreisverwaltung bzw. bei der städtischen Bauaufsichtsbehörde der
+kreisfreien Stadt. Quelle: baunormenlexikon.de (mirror-tier). Stand:
+LBauO RP i.d.F. Gesetz vom 19.11.2025.
+
+HINWEIS: Rheinland-Pfälzischer systemBlock weiterhin "preliminary"; die
+hier zitierten §§ sind korpus-verifiziert.
+
+T-08 ist keine feste Vorhabens-Klasse — die einschlägigen LBauO-§§
+richten sich nach dem konkreten Vorhaben. Die folgenden Verweise decken
+den vollständigen Verfahrensraster ab:
+
+VERFAHREN — LBauO (RP-spezifischer vollständiger Raster):
+• Genehmigungsfreie Vorhaben — § 62 LBauO.
+• Freistellungsverfahren — § 67 LBauO.
+• Vereinfachtes Genehmigungsverfahren — § 66 LBauO.
+• Genehmigungsbedürftige Vorhaben — § 61 LBauO. Baugenehmigung —
+  § 70 LBauO (regulär).
+
+ANTRAG & VORLAGEN:
+• Bauantrag — § 63 LBauO.
+• Bauvorlageberechtigung — § 64 LBauO. Entwurfsverfasser — § 56 LBauO.
+
+ALLGEMEINE TECHNISCHE ANFORDERUNGEN:
+• Abstandsflächen — § 8 LBauO.
+• Standsicherheit — § 13 LBauO.
+
+BUNDESRECHT (gilt universal):
+• Zulässigkeit — § 30 BauGB, § 31 BauGB, § 34 BauGB, § 35 BauGB.
+
+HINWEIS:
+T-08 sollte zuerst an einen passenderen Template-Archetyp (T-01 EFH bis
+T-07 Anbau) zugeordnet werden; nur wenn keine Zuordnung möglich ist,
+greift T-08 als Default-Schale.`,
   },
 }
