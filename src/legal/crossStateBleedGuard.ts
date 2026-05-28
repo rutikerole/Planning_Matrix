@@ -55,6 +55,45 @@ const TOKENS: ReadonlyArray<BlockerToken> = [
   // Niedersachsen-only tokens
   { state: 'niedersachsen', pattern: /\bNBauO\b/g, replacement: 'state-LBO' },
   { state: 'niedersachsen', pattern: /\bNDSchG\b/g, replacement: 'state-DSchG' },
+  // ── Bucket-C states (audit-remediation M4). Each has a (Bau)O law-short
+  //    plus a DSchG variant the corpus references via ALLOWED_NOT_IN_CORPUS_
+  //    LAWS_PER_STATE. Token list grows as new cross-state leaks land in
+  //    PDF text. Order matters for LBauO: "LBauO M-V" MUST be tested before
+  //    bare "LBauO" so the longer pattern wins greedy-leftmost.
+  // Berlin (Stadtstaat)
+  { state: 'berlin',         pattern: /\bBauO\s+Bln\b/g,   replacement: 'state-LBO' },
+  { state: 'berlin',         pattern: /\bDSchG\s+Bln\b/g,  replacement: 'state-DSchG' },
+  // Hamburg (Stadtstaat)
+  { state: 'hamburg',        pattern: /\bHBauO\b/g,        replacement: 'state-LBO' },
+  { state: 'hamburg',        pattern: /\bDSchG\s+HH\b/g,   replacement: 'state-DSchG' },
+  // Bremen (Stadtstaat)
+  { state: 'bremen',         pattern: /\bBremLBO\b/g,      replacement: 'state-LBO' },
+  { state: 'bremen',         pattern: /\bDSchG\s+HB\b/g,   replacement: 'state-DSchG' },
+  // Sachsen (Flächenland)
+  { state: 'sachsen',        pattern: /\bSächsBO\b/g,      replacement: 'state-LBO' },
+  { state: 'sachsen',        pattern: /\bSächsDSchG\b/g,   replacement: 'state-DSchG' },
+  // Sachsen-Anhalt (Flächenland)
+  { state: 'sachsen-anhalt', pattern: /\bBauO\s+LSA\b/g,   replacement: 'state-LBO' },
+  { state: 'sachsen-anhalt', pattern: /\bDSchG\s+LSA\b/g,  replacement: 'state-DSchG' },
+  // Thüringen (Flächenland)
+  { state: 'thueringen',     pattern: /\bThürBO\b/g,       replacement: 'state-LBO' },
+  { state: 'thueringen',     pattern: /\bThürDSchG\b/g,    replacement: 'state-DSchG' },
+  // Schleswig-Holstein (Flächenland)
+  { state: 'sh',             pattern: /\bLBO\s+SH\b/g,     replacement: 'state-LBO' },
+  { state: 'sh',             pattern: /\bDSchG\s+SH\b/g,   replacement: 'state-DSchG' },
+  // Brandenburg (Flächenland)
+  { state: 'brandenburg',    pattern: /\bBbgBO\b/g,        replacement: 'state-LBO' },
+  { state: 'brandenburg',    pattern: /\bBbgDSchG\b/g,     replacement: 'state-DSchG' },
+  // Mecklenburg-Vorpommern (Flächenland) — MUST come BEFORE bare LBauO
+  { state: 'mv',             pattern: /\bLBauO\s+M-V\b/g,  replacement: 'state-LBO' },
+  { state: 'mv',             pattern: /\bDSchG\s+M-V\b/g,  replacement: 'state-DSchG' },
+  // Rheinland-Pfalz (Flächenland) — bare LBauO, anchored not to match
+  // "LBauO M-V"; \b after LBauO blocks matching when " M-V" follows.
+  { state: 'rlp',            pattern: /\bLBauO\b(?!\s+M-V)/g, replacement: 'state-LBO' },
+  { state: 'rlp',            pattern: /\bDSchG\s+RLP\b/g,  replacement: 'state-DSchG' },
+  // Saarland (Flächenland) — note SDschG capitalisation
+  { state: 'saarland',       pattern: /\bLBO\s+Saarland\b/g, replacement: 'state-LBO' },
+  { state: 'saarland',       pattern: /\bSDschG\b/g,       replacement: 'state-DSchG' },
 ]
 
 /**
