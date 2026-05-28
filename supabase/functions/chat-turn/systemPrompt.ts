@@ -258,9 +258,12 @@ export function buildSystemBlocks(
       cache_control: { type: 'ephemeral' as const },
     },
     // Phase 10 — per-template tail, cached separately.
+    // Bucket B0 — bundesland threaded through so state-specific overrides
+    // (when registered in TEMPLATE_STATE_OVERRIDES) get appended; with no
+    // override the call returns byte-identical to pre-B0.
     {
       type: 'text' as const,
-      text: getTemplateBlock(templateId),
+      text: getTemplateBlock(templateId, bundesland),
       cache_control: { type: 'ephemeral' as const },
     },
     // Phase 3.7 #79 — locale-aware addendum. NOT cached.
