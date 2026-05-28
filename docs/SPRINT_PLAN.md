@@ -112,45 +112,90 @@ honestly-stubbed (Bucket A handles the honesty).
 
 ## Bucket C — author the 11 thin states (GATED on legal counsel)
 
-**Status:** Stadtstaaten Pass A + Pass C **DONE** (2026-05-28, push range
-`2793c08..a6388ca` → live on prod). Pass B (substantive systemBlock prose
-rewrite) **still legal-review-gated** for all 11 thin states. **Estimate
-remaining:** ~6–9 sprints (8 Flächenländer × Pass A+C+B + 3 Stadtstaaten
-Pass B). **Legal help:** REAL counsel per state for Pass B; corpus + Pass
-A+C work uses existing mirror-tier captures.
+**Status:** Pass A + Pass C **FULLY DONE** across all 11 thin states
+(2026-05-28, push range `2793c08..93d694b` → live on prod). Pass B
+(substantive `systemBlock` prose rewrite) **still legal-review-gated**
+for all 11. **Estimate remaining:** ~4–7 sprints for 11 × Pass B (full
+counsel per state, substantive prose) + smoke-walk pins + banner flips.
+**Legal help:** REAL counsel per state for Pass B.
 
-### Priority order (locked by founder)
+### Priority order (locked by founder) — ALL Pass A+C DONE
 
-1. ~~Berlin — Pass A+C done, Pass B pending~~
-2. ~~Hamburg — Pass A+C done, Pass B pending~~
-3. ~~Bremen — Pass A+C done, Pass B pending~~
-4. Sachsen
-5. Schleswig-Holstein
-6. Rheinland-Pfalz
-7. Mecklenburg-Vorpommern
-8. Sachsen-Anhalt
-9. Thüringen
-10. Brandenburg
-11. Saarland
+1. ~~Berlin — Pass A+C done, Pass B pending~~ (push `2793c08`)
+2. ~~Hamburg — Pass A+C done, Pass B pending~~ (merge `e51c4d1`)
+3. ~~Bremen — Pass A+C done, Pass B pending~~ (merge `a6388ca`)
+4. ~~Sachsen — Pass A+C done, Pass B pending~~ (merge `fde3535`)
+5. ~~Schleswig-Holstein — Pass A+C done, Pass B pending~~ (merge `bf62a27`)
+6. ~~Rheinland-Pfalz — Pass A+C done, Pass B pending~~ (merge `223c009`)
+7. ~~Mecklenburg-Vorpommern — Pass A+C done, Pass B pending~~ (merge `74cf5c3`)
+8. ~~Sachsen-Anhalt — Pass A+C done, Pass B pending~~ (merge `fe1e866`)
+9. ~~Thüringen — Pass A+C done, Pass B pending~~ (merge `d804508`)
+10. ~~Brandenburg — Pass A+C done, Pass B pending~~ (merge `851cbf0`)
+11. ~~Saarland — Pass A+C done, Pass B pending~~ (merge `93d694b`)
 
-### Stadtstaaten batch 1 outcome (2026-05-28)
+### Bucket C Pass A+C final outcome (2026-05-28)
 
-* **52 / 128** (template × state) cells now substantive on main (was 36
-  pre-Stadtstaaten = 28 B2 + 8 Berlin).
-* **1055** corpus-verified citations across the 52 authored cells.
-* **3 Stadtstaaten allowedCitations** populated → Layer-C positive-list
-  enforcement live (was [] bypass at `citationLint.ts:597`).
-* **All 3 banners stay ON** (`hasSubstantiveStateBlock = false` for
-  berlin/hamburg/bremen) — Pass B is the gate.
-* **Bayern SHA** `cdf3c625…23f9daaf` unchanged end-to-end.
+* **116 / 128** (template × state) cells now substantive on main (was 36
+  pre-Bucket-C = 28 B2 + Bayern T-01..T-08 implicit via BLOCKS[T]).
+  Math: 28 B2 (NRW/NI/BW/HE × T-02..T-08) + 88 C-cells (11 states × 8) =
+  116. Remaining 12 = 8 Bayern cells (inherit BLOCKS[T] by design) + 4
+  B2 T-01 cells (NRW/NI/BW/HE × T-01 — Bayern-default baseline is OK).
+* **2442** corpus-verified citations across the 116 authored cells.
+* **All 11 allowedCitations** populated → Layer-C positive-list
+  enforcement live for every thin state (was `[]` bypass at
+  `citationLint.ts:597`).
+* **All 11 banners stay ON** (`hasSubstantiveStateBlock = false` for
+  every thin state) — Pass B is the gate.
+* **Bayern SHA** `cdf3c625…23f9daaf` unchanged end-to-end across all
+  9 batch merges.
 
-What was deferred per Path 2'' discipline:
+### What Pass A+C taught us (corpus-side learnings flagged)
+
+Three patterns of §-numbering divergence surfaced during authoring:
+
+* **Standard ladder** (8 states): § 61-§ 64 verfahrensfrei/Freistellung/
+  vereinfacht/regulär; § 65/66/68 Bauvorlage/Nachweise/Bauantrag. Used
+  by Berlin/Hamburg/Bremen/Sachsen/SH/MV/Thüringen-headings/Brandenburg-
+  mostly.
+* **Shifted ladder** (3 states): Sachsen-Anhalt § 60-§ 63 (down-1);
+  Thüringen § 63-§ 66 (up-2); Saarland § 61/63/64/65 (off-by-1
+  Freistellung-shift); RLP § 62/67/66/61+70 (unique 1998 LBauO numbering).
+* **Unique institutes**: BW § 51 Kenntnisgabe (B2), HE § 64a Erweiterte
+  Freistellung (B2), Brandenburg § 62 Bauanzeigeverfahren, SL § 12a/§ 12b/
+  § 12c Photovoltaikpflicht (most comprehensive PV in corpus).
+
+Brandschutz tagging quality varies — see open-question #9 for the
+under-tag pattern (SächsBO/MV/Thüringen tag only § 14; § 26/30/33 are
+heading-evident but not corpus-tagged). Future re-tag pass recommended
+for: SächsBO, LBauO M-V, ThürBO.
+
+Corpus self-flags handled: SH § 58a "Bestehende Anlagen" (Phase-B
+confirm pending — SKIPPED); LSA § 86 same heading (SKIPPED for same
+reason); Thüringen § 98 + § 99 (Bestehende + Windenergie — SKIPPED).
+
+### What was deferred per Path 2'' discipline
+
 * Pass B (substantive `systemBlock` rewrite) — needs real legal counsel
-  per state. Skeleton remains 42 lines of "Mindest-Eckdaten / nicht
+  per state. Skeleton remains the per-state "Mindest-Eckdaten / nicht
   belastbar" framing.
 * C-s.4 calendar / authority closures (per the per-state work template).
-* C-s.5 smoke-walk pins.
+* C-s.5 smoke-walk pins for all 11 states.
 * C-s.6 banner flip (locked OFF until Pass B done).
+* Out-of-corpus law families: every state's DSchG, PV-Pflicht (except
+  Brandenburg § 32a + Saarland § 12a-c which ARE in corpus), and
+  BauVorlVO — flagged in cells as "geltende Vorschrift referenzieren,
+  nicht erfinden".
+
+### Gate regex hardening (2026-05-28, surfaced by Saarland)
+
+Two surgical fixes to `scripts/verify-template-tail-citations.mts`:
+1. Added "Saarland" before "Saar" in state-suffix alternation so the
+   regex doesn't truncate "LBO Saarland" → "LBO Saar".
+2. Added `normalizeLaw()` to collapse internal whitespace (newlines from
+   prose word-wrap) before law-name comparison.
+
+Both fixes are general-purpose hardening — they protect all future
+multi-word law-name citations.
 
 ### Per-state work template
 
