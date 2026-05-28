@@ -69,6 +69,71 @@ export type TemplateStateOverrides = Partial<
  * confirms output stays byte-identical to BLOCKS[T].
  */
 export const TEMPLATE_STATE_OVERRIDES: TemplateStateOverrides = {
+  // ── T-01 Neubau EFH ──────────────────────────────────────────────
+  'T-01': {
+    // C1 batch — Berlin × T-01 authored 2026-05-28. BauO Bln §§ corpus-
+    // verified (secondary-mirror tier; baunormenlexikon.de). Stadtstaat
+    // framing: Bauaufsicht beim Bezirksamt. NB: state systemBlock remains
+    // "preliminary" — Pass A only (Path 2'' per founder decision).
+    berlin: `══════════════════════════════════════════════════════════════════════════
+LANDESSPEZIFISCHER ZUSATZ — Berlin × T-01 (Neubau Einfamilienhaus)
+══════════════════════════════════════════════════════════════════════════
+
+Bei EFH-Projekten in BERLIN: die §§ der BauO Bln (Bauordnung für Berlin)
+ersetzen sämtliche oben genannten Bayern-Verweise. Berlin ist Stadtstaat
+— die zuständige Bauaufsicht liegt beim Bezirksamt (Bauaufsicht des
+Bezirks, in dem das Grundstück liegt). Quelle: baunormenlexikon.de
+(mirror-tier; bei rechtlich kritischen Fragen die amtliche Fassung beim
+Berliner Landesrecht-Portal gegenprüfen).
+
+HINWEIS: Der Berliner systemBlock ist bislang "Mindest-Eckdaten"; die
+hier zitierten §§ stammen aus dem Korpus (secondary-mirror, primary-URL
+hinterlegt) und sind verwendbar, aber das vollständige Berliner Profil
+wird erst mit anwaltlich verifizierter systemBlock-Tiefe abschließend
+substantiell.
+
+VERFAHREN — BauO Bln:
+• Verfahrensfreie Bauvorhaben (inkl. Beseitigung) — § 61 BauO Bln.
+• Genehmigungsfreistellung — § 62 BauO Bln (bei qualifiziertem B-Plan).
+• Vereinfachtes Baugenehmigungsverfahren — § 63 BauO Bln.
+• Baugenehmigungsverfahren (regulär) — § 64 BauO Bln.
+
+ROUTING (EFH-typisch):
+EFH erreicht häufig Gebäudeklasse 1 bis 3 nach § 2 BauO Bln. Bei
+qualifiziertem B-Plan und ohne Sonderbau-Eigenschaft (§ 51 BauO Bln)
+kommt die Genehmigungsfreistellung nach § 62 BauO Bln in Betracht;
+sonst vereinfachtes Verfahren nach § 63 BauO Bln. Reguläres Verfahren
+nach § 64 BauO Bln nur bei Sonderbau-Tatbestand.
+
+ANTRAG & VORLAGEN:
+• Bauantrag und Bauvorlagen — § 68 BauO Bln.
+• Bauvorlageberechtigung — § 65 BauO Bln.
+• Form/Inhalt der Bauvorlagen: separate BauVorlV Berlin (kein §-Verweis
+  im Korpus — Verordnung als Quelle referenzieren).
+
+TECHNISCHE ANFORDERUNGEN:
+• Abstandsflächen, Abstände — § 6 BauO Bln.
+• Standsicherheit — § 12 BauO Bln. Bautechnische Nachweise —
+  § 66 BauO Bln.
+• Stellplätze, Abstellplätze für Fahrräder — § 49 BauO Bln.
+
+BUNDESRECHT (gilt universal):
+• Zulässigkeit — § 30 BauGB, § 31 BauGB, § 34 BauGB, § 35 BauGB.
+• Maß + Baugebiete — § 1 BauNVO, § 3 BauNVO, § 4 BauNVO, § 6 BauNVO,
+  § 16 BauNVO, § 19 BauNVO, § 23 BauNVO.
+• Energie — § 10 GEG. § 80 GEG.
+
+PV-PFLICHT in Berlin:
+NICHT in der BauO Bln geregelt, sondern im Berliner Solargesetz. Konkrete
+§-Verweise NICHT im Korpus — falls relevant, geltende Solar-Pflicht-
+Vorschrift referenzieren. Nicht erfinden.
+
+DENKMAL & ERHALTUNGSSATZUNG:
+• Bundesanker — § 172 BauGB (Erhaltungssatzungs-Gebiet).
+• Land — DSchG Bln (separate Landesvorschrift; konkrete §-Verweise nicht
+  im Korpus). Zuständige Behörde: Landesdenkmalamt Berlin (LDA) plus
+  Untere Denkmalschutzbehörde im jeweiligen Bezirksamt.`,
+  },
   // ── T-02 Neubau MFH ──────────────────────────────────────────────
   'T-02': {
     // B2 batch 3 — BW × T-02 authored 2026-05-28. LBO BW §§ corpus-verified
@@ -296,6 +361,60 @@ DENKMAL & ERHALTUNGSSATZUNG:
 • Land — NDSchG als separate Landesvorschrift (konkrete §-Verweise nicht
   im Korpus). Zuständige Behörde: Niedersächsisches Landesamt für
   Denkmalpflege (NLD).`,
+    // C1 batch — Berlin × T-02 authored 2026-05-28. BauO Bln corpus-verified.
+    berlin: `══════════════════════════════════════════════════════════════════════════
+LANDESSPEZIFISCHER ZUSATZ — Berlin × T-02 (Neubau Mehrfamilienhaus)
+══════════════════════════════════════════════════════════════════════════
+
+Bei MFH-Projekten in BERLIN: die §§ der BauO Bln ersetzen sämtliche oben
+genannten Bayern-Verweise. Berlin ist Stadtstaat — Bauaufsicht liegt
+beim Bezirksamt. Quelle: baunormenlexikon.de (mirror-tier).
+
+HINWEIS: Berliner systemBlock weiterhin "preliminary"; die hier
+zitierten §§ sind korpus-verifiziert.
+
+VERFAHREN — BauO Bln:
+• Verfahrensfreie Bauvorhaben — § 61 BauO Bln.
+• Genehmigungsfreistellung — § 62 BauO Bln (bei qualifiziertem B-Plan).
+• Vereinfachtes Baugenehmigungsverfahren — § 63 BauO Bln.
+• Baugenehmigungsverfahren (regulär) — § 64 BauO Bln.
+
+ROUTING (MFH-typisch):
+MFH erreicht häufig Gebäudeklasse 3 bis 5 nach § 2 BauO Bln. Bei
+Sonderbau-Tatbestand (§ 51 BauO Bln) ist das reguläre Verfahren nach
+§ 64 BauO Bln zwingend. Ohne Sonderbau: vereinfachtes Verfahren nach
+§ 63 BauO Bln. Freistellung nach § 62 BauO Bln nur bei qualifiziertem
+B-Plan und ohne Sonderbau.
+
+ANTRAG & VORLAGEN:
+• Bauantrag und Bauvorlagen — § 68 BauO Bln.
+• Bauvorlageberechtigung — § 65 BauO Bln.
+• Form/Inhalt der Bauvorlagen: separate BauVorlV Berlin (kein §-Verweis
+  im Korpus — Verordnung als Quelle referenzieren).
+
+TECHNISCHE ANFORDERUNGEN:
+• Abstandsflächen, Abstände — § 6 BauO Bln.
+• Standsicherheit — § 12 BauO Bln. Bautechnische Nachweise —
+  § 66 BauO Bln.
+• Brandschutz allgemein — § 14 BauO Bln. Baustoffe/Bauteile
+  (Brandverhalten) — § 26 BauO Bln.
+• Stellplätze, Abstellplätze für Fahrräder — § 49 BauO Bln.
+
+BUNDESRECHT (gilt universal):
+• Zulässigkeit — § 30 BauGB, § 31 BauGB, § 34 BauGB, § 35 BauGB.
+• Baugebiete + Maß — § 1 BauNVO, § 3 BauNVO, § 4 BauNVO, § 6 BauNVO,
+  § 16 BauNVO, § 19 BauNVO, § 23 BauNVO. Stellplätze — § 12 BauNVO.
+• Energie — § 10 GEG. § 80 GEG.
+
+PV-PFLICHT in Berlin:
+NICHT in der BauO Bln geregelt, sondern im Berliner Solargesetz. Konkrete
+§-Verweise NICHT im Korpus — geltende Vorschrift referenzieren, nicht
+erfinden.
+
+DENKMAL & ERHALTUNGSSATZUNG:
+• Bundesanker — § 172 BauGB.
+• Land — DSchG Bln. Behörde: Landesdenkmalamt Berlin (LDA) plus Untere
+  Denkmalschutzbehörde im jeweiligen Bezirksamt.`,
   },
   // ── T-03 Sanierung ───────────────────────────────────────────────
   'T-03': {
@@ -498,6 +617,61 @@ NICHT IM Korpus (NICHT erfinden):
 • Solar-/PV-Pflicht bei Sanierung — NKlimaG bzw. separate NI-Solar-
   Verordnung; nicht in der NBauO geregelt; geltende Vorschrift
   referenzieren.`,
+    // C1 batch — Berlin × T-03 authored 2026-05-28. BauO Bln corpus-verified.
+    // Berlin BauO has no dedicated Nutzungsänderungs-§ (same as NRW); routing
+    // via § 63/§ 64. Denkmal: DSchG Bln out of corpus.
+    berlin: `══════════════════════════════════════════════════════════════════════════
+LANDESSPEZIFISCHER ZUSATZ — Berlin × T-03 (Sanierung / Modernisierung)
+══════════════════════════════════════════════════════════════════════════
+
+Bei Sanierungs-/Modernisierungs-Projekten in BERLIN: die §§ der BauO Bln
+ersetzen sämtliche oben genannten Bayern-Verweise. Stadtstaat — Bauaufsicht
+beim Bezirksamt. Quelle: baunormenlexikon.de (mirror-tier).
+
+HINWEIS: Berliner systemBlock weiterhin "preliminary"; die hier zitierten
+§§ sind korpus-verifiziert.
+
+ROUTING:
+Reine Instandhaltung/Modernisierung ohne Eingriff in Statik, Brandschutz
+oder Nutzung fällt häufig unter § 61 BauO Bln (verfahrensfreie
+Bauvorhaben). Sobald tragende Bauteile, Brandschutz oder die Nutzung
+berührt sind, ist regelmäßig das vereinfachte Verfahren nach § 63 BauO Bln
+anzunehmen.
+
+VERFAHREN — BauO Bln:
+• Verfahrensfreie Bauvorhaben — § 61 BauO Bln.
+• Vereinfachtes Baugenehmigungsverfahren — § 63 BauO Bln.
+
+TECHNISCHE NACHWEISE BEI EINGRIFF:
+• Standsicherheit bei tragenden Eingriffen — § 12 BauO Bln.
+• Bautechnische Nachweise — § 66 BauO Bln.
+• Brandschutz allgemein — § 14 BauO Bln. Baustoffe/Bauteile
+  (Brandverhalten) — § 26 BauO Bln.
+
+ANTRAG:
+• Bauantrag und Bauvorlagen — § 68 BauO Bln. Bauvorlageberechtigung —
+  § 65 BauO Bln.
+
+ENERGIE (Bundesrecht):
+• Bestandsänderung — § 48 GEG. Niedrigstenergie-Grundsatz allgemein —
+  § 10 GEG.
+
+NUTZUNGSÄNDERUNG IN Berlin:
+Berlin hat KEINEN dedizierten Nutzungsänderungs-§ in der BauO Bln. Eine
+Nutzungsänderung im Sanierungskontext ist über § 63 BauO Bln (vereinfacht)
+bzw. § 64 BauO Bln (regulär bei Sonderbau, § 51 BauO Bln) zu beantragen.
+
+DENKMALSCHUTZ:
+Bei eingetragenem Baudenkmal oder Ensemble — DSchG Bln (separate
+Landesvorschrift; konkrete §-Verweise nicht im Korpus). Vor Sanierung ist
+das Landesamt für Denkmalpflege Berlin (LDA) plus Untere Denkmalschutz-
+behörde des Bezirksamts anzuhören. Federal-Anker bei Erhaltungssatzung
+— § 172 BauGB.
+
+NICHT IM Korpus (NICHT erfinden):
+• Land-Denkmal-§§ — wie oben mit LDA / Bezirksamt abklären.
+• Solar-/PV-Pflicht bei Sanierung — Berliner Solargesetz; nicht in der
+  BauO geregelt; geltende Vorschrift referenzieren.`,
   },
   // ── T-04 Umnutzung ───────────────────────────────────────────────
   'T-04': {
@@ -681,6 +855,51 @@ ANTRAG:
 
 NICHT IM NBauO-Korpus (NICHT erfinden):
 • Land-Denkmal-§§ — NDSchG mit NLD abklären.`,
+    // C1 batch — Berlin × T-04 authored 2026-05-28. BauO Bln corpus-verified.
+    // No dedicated Nutzungsänderungs-§ in BauO Bln (same as NRW); routing
+    // via general procedure §§ 63/64.
+    berlin: `══════════════════════════════════════════════════════════════════════════
+LANDESSPEZIFISCHER ZUSATZ — Berlin × T-04 (Nutzungsänderung / Umnutzung)
+══════════════════════════════════════════════════════════════════════════
+
+Bei Nutzungsänderungs-Projekten in BERLIN: die §§ der BauO Bln ersetzen
+sämtliche oben genannten Bayern-Verweise. Stadtstaat — Bauaufsicht beim
+Bezirksamt. Quelle: baunormenlexikon.de (mirror-tier).
+
+HINWEIS: Berliner systemBlock weiterhin "preliminary"; die hier zitierten
+§§ sind korpus-verifiziert.
+
+ROUTING:
+Eine Nutzungsänderung ist in Berlin grundsätzlich genehmigungspflichtig,
+sofern nicht ausdrücklich verfahrensfrei nach § 61 BauO Bln. Die BauO Bln
+hat KEINEN dedizierten Nutzungsänderungs-§ — der Verfahrensweg richtet
+sich nach den allgemeinen Verfahrens-§§:
+
+VERFAHREN — BauO Bln:
+• Vereinfachtes Baugenehmigungsverfahren — § 63 BauO Bln.
+• Baugenehmigungsverfahren (regulär) — § 64 BauO Bln (bei Sonderbau-
+  Tatbestand der neuen Nutzung, § 51 BauO Bln).
+
+GEBIETSVERTRÄGLICHKEIT (Bundesrecht):
+• Zulässigkeit der neuen Nutzung — § 30 BauGB, § 31 BauGB, § 34 BauGB,
+  § 35 BauGB.
+• Baugebiete und Nutzungsarten — § 1 BauNVO bis § 9 BauNVO, § 4a BauNVO.
+• Erhaltungssatzung — § 172 BauGB.
+
+TECHNISCHE FOLGEN DER NEUEN NUTZUNG:
+• Brandschutz nach neuer Nutzung — § 14 BauO Bln. Baustoffe/Bauteile
+  (Brandverhalten) — § 26 BauO Bln.
+• Stellplatzbedarf nach neuer Nutzung — § 49 BauO Bln. Bundes-Maß
+  ergänzend — § 12 BauNVO.
+• Standsicherheit bei strukturellen Anpassungen — § 12 BauO Bln.
+  Bautechnische Nachweise — § 66 BauO Bln.
+
+ANTRAG:
+• Bauantrag und Bauvorlagen — § 68 BauO Bln. Bauvorlageberechtigung —
+  § 65 BauO Bln.
+
+NICHT IM BauO-Bln-Korpus (NICHT erfinden):
+• Land-Denkmal-§§ — DSchG Bln mit LDA / Bezirksamt abklären.`,
   },
   // ── T-05 Abbruch ─────────────────────────────────────────────────
   'T-05': {
@@ -849,6 +1068,51 @@ NICHT IM NBauO-Korpus (NICHT erfinden):
   nicht in der NBauO geregelt; auf die jeweils geltende Bundes- bzw.
   EU-Regelung verweisen.
 • Land-Denkmal-§§ — wie oben mit NLD abklären.`,
+    // C1 batch — Berlin × T-05 authored 2026-05-28. § 80 INTENTIONALLY
+    // OMITTED — heading "Beseitigung von Anlagen, Nutzungsuntersagung"
+    // is enforcement (same discipline as NI § 79, BW § 65, HBO § 82).
+    berlin: `══════════════════════════════════════════════════════════════════════════
+LANDESSPEZIFISCHER ZUSATZ — Berlin × T-05 (Abbruch / Beseitigung)
+══════════════════════════════════════════════════════════════════════════
+
+Bei Abbruch-/Beseitigungsvorhaben in BERLIN: die §§ der BauO Bln ersetzen
+sämtliche oben genannten Bayern-Verweise. Stadtstaat — Bauaufsicht beim
+Bezirksamt. Quelle: baunormenlexikon.de (mirror-tier).
+
+HINWEIS: Berliner systemBlock weiterhin "preliminary"; die hier zitierten
+§§ sind korpus-verifiziert.
+
+ROUTING:
+Die Beseitigung baulicher Anlagen ist in Berlin primär über § 61 BauO Bln
+geregelt — er kombiniert die verfahrensfreien Bauvorhaben mit der
+Beseitigung von Anlagen unterhalb der Schwellen.
+
+VERFAHREN — BauO Bln:
+• Verfahrensfreie Bauvorhaben und Beseitigung von Anlagen — § 61 BauO Bln.
+
+Innerhalb der in § 61 BauO Bln genannten Tatbestände ist der Abbruch
+verfahrensfrei (ggf. genügt eine Anzeige); außerhalb dieser Tatbestände
+ist eine Beseitigungsgenehmigung erforderlich (in der Regel über das
+vereinfachte Verfahren nach § 63 BauO Bln bzw. das reguläre Verfahren
+nach § 64 BauO Bln).
+
+DENKMAL & ERHALTUNGSSATZUNG (OVERRIDE der Verfahrensfreiheit):
+• Federal-Anker — § 172 BauGB: innerhalb eines Erhaltungssatzungs-
+  Bereichs ist der Abbruch genehmigungspflichtig, auch wenn er sonst
+  verfahrensfrei wäre.
+• Land-Denkmal — DSchG Bln (separate Landesvorschrift; konkrete §-Verweise
+  nicht im Korpus). Bei eingetragenem Baudenkmal: Abbruch nur mit
+  denkmalrechtlicher Genehmigung; Landesdenkmalamt Berlin (LDA) plus
+  Untere Denkmalschutzbehörde des Bezirksamts einbeziehen.
+
+DOKUMENTE:
+• Bauvorlageberechtigung — § 65 BauO Bln.
+• Statik der Restanlage bei Teilabbruch — § 12 BauO Bln.
+
+NICHT IM BauO-Bln-Korpus (NICHT erfinden):
+• Schadstoff-/Entsorgungs-§§ — KrWG, GefStoffV, EU-Vorgaben; nicht in
+  der BauO geregelt; geltende Bundes- bzw. EU-Regelung referenzieren.
+• Land-Denkmal-§§ — wie oben mit LDA / Bezirksamt abklären.`,
   },
   // ── T-06 Aufstockung ─────────────────────────────────────────────
   'T-06': {
@@ -1044,6 +1308,54 @@ BAUPLANUNGSRECHT (Bundesrecht):
 ANTRAG:
 • Bauantrag + Bauvorlagen — § 67 NBauO. Entwurfsverfasser-Eignung —
   § 53 NBauO.`,
+    // C1 batch — Berlin × T-06 authored 2026-05-28. BauO Bln corpus-verified.
+    berlin: `══════════════════════════════════════════════════════════════════════════
+LANDESSPEZIFISCHER ZUSATZ — Berlin × T-06 (Aufstockung / Dachgeschossausbau)
+══════════════════════════════════════════════════════════════════════════
+
+Bei Aufstockungs-/DG-Ausbau-Projekten in BERLIN: die §§ der BauO Bln
+ersetzen sämtliche oben genannten Bayern-Verweise. Stadtstaat —
+Bauaufsicht beim Bezirksamt. Quelle: baunormenlexikon.de (mirror-tier).
+
+HINWEIS: Berliner systemBlock weiterhin "preliminary"; die hier zitierten
+§§ sind korpus-verifiziert.
+
+ROUTING:
+Aufstockung wird regelmäßig im vereinfachten Verfahren nach § 63 BauO Bln
+behandelt. Bei Aufstockung können sich Gebäudeklasse, Abstandsflächen
+und Brandschutz ändern; die Standsicherheit der Bestandskonstruktion ist
+gesondert nachzuweisen.
+
+VERFAHREN:
+• Vereinfachtes Baugenehmigungsverfahren — § 63 BauO Bln.
+
+GEBÄUDEKLASSE & ABSTANDSFLÄCHEN (kritisch bei Aufstockung):
+• Gebäudeklasse — § 2 BauO Bln. Höhen-/Stockwerksgrenzen entscheiden, ob
+  die Aufstockung die GK anhebt. Ein GK-Sprung kann strengeren Brandschutz
+  auslösen.
+• Abstandsflächen, Abstände — § 6 BauO Bln. An der neuen, höheren Wand
+  neu zu bemessen.
+
+TECHNISCHE NACHWEISE (BESTANDSSTATIK):
+• Standsicherheit der Bestandskonstruktion und neuer Aufbauten —
+  § 12 BauO Bln. Bautechnische Nachweise — § 66 BauO Bln.
+• Brandschutz nach ggf. höherer GK — § 14 BauO Bln. Baustoffe/Bauteile
+  (Brandverhalten) — § 26 BauO Bln.
+
+STELLPLÄTZE (bei neuen Wohneinheiten):
+• Stellplätze, Abstellplätze für Fahrräder — § 49 BauO Bln.
+
+ENERGIE (Bundesrecht):
+• Bestandsänderung — § 48 GEG. Niedrigstenergie-Grundsatz allgemein —
+  § 10 GEG.
+
+BAUPLANUNGSRECHT (Bundesrecht):
+• Zulässigkeit — § 30 BauGB, § 34 BauGB. Maß — § 19 BauNVO (GRZ),
+  § 20 BauNVO (Vollgeschosse/GFZ), § 23 BauNVO (überbaubare Fläche).
+
+ANTRAG:
+• Bauantrag und Bauvorlagen — § 68 BauO Bln. Bauvorlageberechtigung —
+  § 65 BauO Bln.`,
   },
   // ── T-07 Anbau ───────────────────────────────────────────────────
   'T-07': {
@@ -1212,6 +1524,48 @@ ENERGIE (Bundesrecht):
 ANTRAG:
 • Bauantrag + Bauvorlagen — § 67 NBauO. Entwurfsverfasser-Eignung —
   § 53 NBauO.`,
+    // C1 batch — Berlin × T-07 authored 2026-05-28. BauO Bln corpus-verified.
+    berlin: `══════════════════════════════════════════════════════════════════════════
+LANDESSPEZIFISCHER ZUSATZ — Berlin × T-07 (Anbau / Erweiterung)
+══════════════════════════════════════════════════════════════════════════
+
+Bei Anbau-/Erweiterungsvorhaben in BERLIN: die §§ der BauO Bln ersetzen
+sämtliche oben genannten Bayern-Verweise. Stadtstaat — Bauaufsicht beim
+Bezirksamt. Quelle: baunormenlexikon.de (mirror-tier).
+
+HINWEIS: Berliner systemBlock weiterhin "preliminary"; die hier zitierten
+§§ sind korpus-verifiziert.
+
+ROUTING:
+Ein Anbau wird regelmäßig im vereinfachten Verfahren nach § 63 BauO Bln
+behandelt. Bei qualifiziertem B-Plan und Einhaltung aller Festsetzungen
+kommt die Genehmigungsfreistellung nach § 62 BauO Bln in Betracht.
+
+VERFAHREN:
+• Genehmigungsfreistellung — § 62 BauO Bln (bei qualifiziertem B-Plan).
+• Vereinfachtes Baugenehmigungsverfahren — § 63 BauO Bln (Regelfall).
+
+GEBIETSVERTRÄGLICHKEIT (Bundesrecht):
+• Einfügen im Innenbereich — § 34 BauGB. Außenbereich — § 35 BauGB.
+• Maß der baulichen Nutzung — § 19 BauNVO (GRZ), § 23 BauNVO
+  (überbaubare Grundstücksfläche).
+
+TECHNISCHE ANFORDERUNGEN AM ANBAU:
+• Abstandsflächen, Abstände an der neuen Wand — § 6 BauO Bln.
+• Standsicherheit — § 12 BauO Bln. Bautechnische Nachweise —
+  § 66 BauO Bln.
+• Brandschutz an der Anschluss-/Trennwand — § 14 BauO Bln. Baustoffe/
+  Bauteile (Brandverhalten) — § 26 BauO Bln.
+
+STELLPLÄTZE (bei neuen Wohneinheiten / Nutzungen):
+• Stellplätze, Abstellplätze für Fahrräder — § 49 BauO Bln.
+
+ENERGIE (Bundesrecht):
+• Neubau-Teil des Anbaus — § 10 GEG. Anschluss an Bestand — § 48 GEG.
+
+ANTRAG:
+• Bauantrag und Bauvorlagen — § 68 BauO Bln. Bauvorlageberechtigung —
+  § 65 BauO Bln.`,
   },
   // ── T-08 Sonstiges ───────────────────────────────────────────────
   'T-08': {
@@ -1367,5 +1721,46 @@ T-08 sollte zuerst an einen passenderen Template-Archetyp (T-01 EFH bis
 T-07 Anbau) zugeordnet werden; nur wenn keine Zuordnung möglich ist,
 greift T-08 als Default-Schale. Die obigen NI-§§ sind die Mindest-
 Verweise für Verfahren und Antrag.`,
+    // C1 batch — Berlin × T-08 authored 2026-05-28. BauO Bln corpus-verified.
+    berlin: `══════════════════════════════════════════════════════════════════════════
+LANDESSPEZIFISCHER ZUSATZ — Berlin × T-08 (Sonstiges Vorhaben)
+══════════════════════════════════════════════════════════════════════════
+
+Bei sonstigen Vorhaben in BERLIN: die §§ der BauO Bln ersetzen sämtliche
+oben genannten Bayern-Verweise. Stadtstaat — Bauaufsicht beim Bezirksamt.
+Quelle: baunormenlexikon.de (mirror-tier).
+
+HINWEIS: Berliner systemBlock weiterhin "preliminary"; die hier zitierten
+§§ sind korpus-verifiziert.
+
+T-08 ist keine feste Vorhabens-Klasse — die einschlägigen BauO-Bln-§§
+richten sich nach dem konkreten Vorhaben. Die folgenden Verweise decken
+den vollständigen Verfahrensraster ab:
+
+VERFAHREN — BauO Bln (vollständiger Raster):
+• Verfahrensfreie Bauvorhaben (inkl. Beseitigung) — § 61 BauO Bln.
+• Genehmigungsfreistellung — § 62 BauO Bln.
+• Vereinfachtes Baugenehmigungsverfahren — § 63 BauO Bln.
+• Baugenehmigungsverfahren (regulär) — § 64 BauO Bln.
+
+ANTRAG & VORLAGEN:
+• Bauantrag und Bauvorlagen — § 68 BauO Bln.
+• Bauvorlageberechtigung — § 65 BauO Bln.
+• Form und Inhalt der Bauvorlagen: separate BauVorlV Berlin (kein
+  §-Verweis im Korpus — Verordnung als Quelle referenzieren).
+
+ALLGEMEINE TECHNISCHE ANFORDERUNGEN:
+• Abstandsflächen, Abstände — § 6 BauO Bln.
+• Standsicherheit — § 12 BauO Bln. Bautechnische Nachweise —
+  § 66 BauO Bln.
+
+BUNDESRECHT (gilt universal):
+• Zulässigkeit — § 30 BauGB, § 31 BauGB, § 34 BauGB, § 35 BauGB.
+
+HINWEIS:
+T-08 sollte zuerst an einen passenderen Template-Archetyp (T-01 EFH bis
+T-07 Anbau) zugeordnet werden; nur wenn keine Zuordnung möglich ist,
+greift T-08 als Default-Schale. Die obigen BauO-Bln-§§ sind die
+Mindest-Verweise für Verfahren und Antrag.`,
   },
 }

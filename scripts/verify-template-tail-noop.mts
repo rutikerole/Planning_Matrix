@@ -84,6 +84,21 @@ const ACKNOWLEDGED_OVERRIDES: ReadonlySet<string> = new Set<string>([
   'T-06:hessen',
   'T-07:hessen',
   'T-08:hessen',
+  // C1 batch — Berlin × T-01..T-08 authored 2026-05-28. §§ verified
+  // (mirror-tier BauO Bln; baunormenlexikon.de). Path 2'' discipline:
+  // cells authored from corpus, banner STAYS ON (systemBlock untouched).
+  // Stadtstaat framing: Bauaufsicht beim Bezirksamt + LDA + Untere
+  // Denkmalschutzbehörde. § 80 (Beseitigung/Nutzungsuntersagung)
+  // omitted from T-05 (enforcement, same discipline as NI § 79).
+  // § 14 + § 26 cited for brandschutz (only those two tagged in corpus).
+  'T-01:berlin',
+  'T-02:berlin',
+  'T-03:berlin',
+  'T-04:berlin',
+  'T-05:berlin',
+  'T-06:berlin',
+  'T-07:berlin',
+  'T-08:berlin',
 ])
 
 interface Violation {
