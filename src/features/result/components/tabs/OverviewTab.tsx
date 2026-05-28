@@ -5,6 +5,7 @@ import { AtAGlance } from '../Cards/AtAGlance'
 import { ActionCards } from '../Cards/ActionCards'
 import { ComparableProjectsSlot } from '../Cards/ComparableProjectsSlot'
 import { ProjectStakeholders } from '../Cards/ProjectStakeholders'
+import { GovernmentResources } from '../Cards/GovernmentResources'
 import {
   VorlaeufigFooter,
   isPending,
@@ -54,6 +55,7 @@ export function OverviewTab({ project, state }: Props) {
       <ActionCards project={project} state={state} />
       <ComparableProjectsSlot />
       <ProjectStakeholders />
+      <GovernmentResources bundesland={project.bundesland} />
       {anyPending && <VorlaeufigFooter source={null} quality={null} />}
     </div>
   )

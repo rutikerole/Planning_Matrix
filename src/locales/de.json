@@ -1980,6 +1980,22 @@
         "tab": "Noch nicht genug Informationen — setzen Sie die Beratung fort, um diesen Abschnitt zu vervollständigen.",
         "continue": "Beratung fortsetzen →"
       },
+      "overview": {
+        "govResources": {
+          "eyebrow": "Behörden & amtliche Quellen",
+          "intro": "Amtliche Quellen für Ihren Bauantrag — bundesweit und für Ihr Bundesland.",
+          "disclaimer": "Amtliche Links; öffnen in einem neuen Tab. Inhalte werden von der jeweiligen Behörde gepflegt.",
+          "cat": {
+            "authority": "Bauaufsicht / Ministerium",
+            "geoportal": "Bebauungspläne (Geoportal)",
+            "chamber": "Architektenkammer",
+            "lawText": "Gesetzestext",
+            "city": "Lokale Baubehörde",
+            "funding": "Förderung",
+            "fees": "Honorartabelle"
+          }
+        }
+      },
       "team": {
         "eyebrow": "Benötigtes Team",
         "count_one": "{{count}} Fachperson",

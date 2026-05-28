@@ -1980,6 +1980,22 @@
         "tab": "Not enough information yet — continue the consultation to build out this section.",
         "continue": "Continue consultation →"
       },
+      "overview": {
+        "govResources": {
+          "eyebrow": "Government resources",
+          "intro": "Official sources for your building permit — nationwide and for your state.",
+          "disclaimer": "Official links; each opens in a new tab. Content is maintained by the respective authority.",
+          "cat": {
+            "authority": "Building authority",
+            "geoportal": "Development plans",
+            "chamber": "Chamber of architects",
+            "lawText": "Statute text",
+            "city": "Local authority",
+            "funding": "Funding",
+            "fees": "Fee schedule"
+          }
+        }
+      },
       "team": {
         "eyebrow": "Team needed",
         "count_one": "{{count}} specialist",

@@ -114,6 +114,10 @@ const ALLOWLIST = [
   // Architekt:in / Fachplaner / Bauamt) moved off the Team tab to the
   // Overview-tab Projektbeteiligte card. Same pattern.
   'src/features/result/components/Cards/ProjectStakeholders.tsx',
+  // Phase D — official government-resource catalogue: proper nouns of
+  // German authorities, ministries, geoportals, chambers and statutes
+  // (Bauordnung / Bauaufsicht / Architektenkammer …), DE/EN paired.
+  'src/data/governmentResources.ts',
   // Phase 8 — Cost & timeline tab; bilingual phase + cost-line maps
   // mirror the legacy CostTimelinePanel.
   'src/features/result/components/tabs/CostTimelineTab.tsx',
