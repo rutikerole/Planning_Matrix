@@ -112,16 +112,18 @@ honestly-stubbed (Bucket A handles the honesty).
 
 ## Bucket C — author the 11 thin states (GATED on legal counsel)
 
-**Status:** TODO. **Estimate:** ~8–12 sprints. **Legal help:** REAL counsel
-per state. The current `src/legal/states/{state}.ts` files are 42-line
-"Mindest-Eckdaten / nicht belastbar" skeletons; turning them into substantive
-content is a legal-research task, not a code task.
+**Status:** Stadtstaaten Pass A + Pass C **DONE** (2026-05-28, push range
+`2793c08..a6388ca` → live on prod). Pass B (substantive systemBlock prose
+rewrite) **still legal-review-gated** for all 11 thin states. **Estimate
+remaining:** ~6–9 sprints (8 Flächenländer × Pass A+C+B + 3 Stadtstaaten
+Pass B). **Legal help:** REAL counsel per state for Pass B; corpus + Pass
+A+C work uses existing mirror-tier captures.
 
 ### Priority order (locked by founder)
 
-1. Berlin
-2. Hamburg
-3. Bremen
+1. ~~Berlin — Pass A+C done, Pass B pending~~
+2. ~~Hamburg — Pass A+C done, Pass B pending~~
+3. ~~Bremen — Pass A+C done, Pass B pending~~
 4. Sachsen
 5. Schleswig-Holstein
 6. Rheinland-Pfalz
@@ -130,6 +132,25 @@ content is a legal-research task, not a code task.
 9. Thüringen
 10. Brandenburg
 11. Saarland
+
+### Stadtstaaten batch 1 outcome (2026-05-28)
+
+* **52 / 128** (template × state) cells now substantive on main (was 36
+  pre-Stadtstaaten = 28 B2 + 8 Berlin).
+* **1055** corpus-verified citations across the 52 authored cells.
+* **3 Stadtstaaten allowedCitations** populated → Layer-C positive-list
+  enforcement live (was [] bypass at `citationLint.ts:597`).
+* **All 3 banners stay ON** (`hasSubstantiveStateBlock = false` for
+  berlin/hamburg/bremen) — Pass B is the gate.
+* **Bayern SHA** `cdf3c625…23f9daaf` unchanged end-to-end.
+
+What was deferred per Path 2'' discipline:
+* Pass B (substantive `systemBlock` rewrite) — needs real legal counsel
+  per state. Skeleton remains 42 lines of "Mindest-Eckdaten / nicht
+  belastbar" framing.
+* C-s.4 calendar / authority closures (per the per-state work template).
+* C-s.5 smoke-walk pins.
+* C-s.6 banner flip (locked OFF until Pass B done).
 
 ### Per-state work template
 
