@@ -262,8 +262,9 @@ Die Beseitigung von Anlagen ist in NRW über zwei §-Verweise geregelt:
 • Beseitigung von Anlagen / Nutzungsuntersagung — § 82 BauO NRW
   (Eingriffsbefugnis der Bauaufsicht).
 
-Unter den Schwellen ist der Abbruch verfahrensfrei (ggf. Anzeige genügt);
-oberhalb der Schwellen ist eine Genehmigung erforderlich.
+Innerhalb der in § 62 BauO NRW genannten Tatbestände ist der Abbruch
+verfahrensfrei (ggf. genügt eine Anzeige); außerhalb dieser Tatbestände ist
+eine Beseitigungsgenehmigung erforderlich.
 
 DENKMAL & ERHALTUNGSSATZUNG (OVERRIDE der Verfahrensfreiheit):
 • Federal-Anker — § 172 BauGB: innerhalb eines Erhaltungssatzungs-
