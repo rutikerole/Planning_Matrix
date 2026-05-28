@@ -555,6 +555,82 @@ DENKMAL & ERHALTUNGSSATZUNG:
   im Korpus). Zuständige Behörde: Landesamt für Kultur und Denkmalpflege
   Mecklenburg-Vorpommern auf Landesebene; untere Denkmalschutzbehörde
   bei der kreisfreien Stadt (Rostock/Schwerin) bzw. beim Landkreis.`,
+    // C8 batch — Sachsen-Anhalt × T-01 authored 2026-05-28. BauO LSA
+    // corpus-verified (mirror-tier; baunormenlexikon.de; BauO LSA 2013-09-10
+    // i.d.F. Gesetz v. 13.06.2024 GVBl. LSA S. 150). Fifth Flächenland.
+    // SHIFTED §-NUMBERING: verfahrensfrei § 60, Freistellung § 61,
+    // vereinfacht § 62, regulär § 63, Bauvorlage § 64, Nachweise § 65,
+    // Bauantrag § 67. Stellplätze § 48 (not § 49). Sonderbau § 50 (not
+    // § 51). Entwurfsverfasser § 53 (not § 54). 3-§ brandschutz: § 14
+    // (umbrella + Baustoffe combined per heading) + § 29 (Brandwände) +
+    // § 32 (Rettungsweg). § 86 ("Bestehende bauliche Anlagen") SKIPPED
+    // (heading-evident relevance but no corpus self-flag clarity — defer
+    // to Phase B, same caution as SH § 58a).
+    'sachsen-anhalt': `══════════════════════════════════════════════════════════════════════════
+LANDESSPEZIFISCHER ZUSATZ — Sachsen-Anhalt × T-01 (Neubau Einfamilienhaus)
+══════════════════════════════════════════════════════════════════════════
+
+Bei EFH-Projekten in SACHSEN-ANHALT: die §§ der BauO LSA (Bauordnung des
+Landes Sachsen-Anhalt) ersetzen sämtliche oben genannten Bayern-Verweise.
+Sachsen-Anhalt ist Flächenland mit drei kreisfreien Städten (Magdeburg,
+Halle (Saale), Dessau-Roßlau) und elf Landkreisen. Die zuständige untere
+Bauaufsichtsbehörde liegt — bei Projekten in den kreisfreien Städten —
+bei der städtischen Bauaufsichtsbehörde; im übrigen Sachsen-Anhalt beim
+Landkreis. Quelle: baunormenlexikon.de (mirror-tier; bei rechtlich
+kritischen Fragen die amtliche Fassung beim landesrecht.sachsen-anhalt.de
+gegenprüfen). Stand: BauO LSA Fassung vom 10.09.2013 i.d.F. Gesetz vom
+13.06.2024 (GVBl. LSA S. 150).
+
+HINWEIS: Der Sachsen-Anhaltinische systemBlock ist bislang "Mindest-
+Eckdaten"; die hier zitierten §§ stammen aus dem Korpus (secondary-mirror,
+primary-URL hinterlegt) und sind verwendbar, aber das vollständige
+LSA-Profil wird erst mit anwaltlich verifizierter systemBlock-Tiefe
+abschließend substantiell.
+
+VERFAHREN — BauO LSA (LSA-spezifische Nummerierung, um 1 versetzt):
+• Verfahrensfreie Bauvorhaben (inkl. Beseitigung) — § 60 BauO LSA.
+• Genehmigungsfreistellung — § 61 BauO LSA (bei qualifiziertem B-Plan).
+• Vereinfachtes Baugenehmigungsverfahren — § 62 BauO LSA.
+• Baugenehmigungsverfahren (regulär) — § 63 BauO LSA.
+
+ROUTING (EFH-typisch):
+EFH erreicht häufig Gebäudeklasse 1 bis 3 nach § 2 BauO LSA. Bei
+qualifiziertem B-Plan und ohne Sonderbau-Eigenschaft (§ 50 BauO LSA)
+kommt die Genehmigungsfreistellung nach § 61 BauO LSA in Betracht;
+sonst vereinfachtes Verfahren nach § 62 BauO LSA. Reguläres Verfahren
+nach § 63 BauO LSA nur bei Sonderbau-Tatbestand.
+
+ANTRAG & VORLAGEN:
+• Bauantrag und Bauvorlagen — § 67 BauO LSA.
+• Bauvorlageberechtigung — § 64 BauO LSA. Entwurfsverfasser —
+  § 53 BauO LSA.
+• Form/Inhalt der Bauvorlagen: separate BauVorlVO LSA (kein §-Verweis
+  im Korpus — Verordnung als Quelle referenzieren).
+
+TECHNISCHE ANFORDERUNGEN:
+• Abstandsflächen, Abstände — § 6 BauO LSA.
+• Standsicherheit — § 12 BauO LSA. Bautechnische Nachweise —
+  § 65 BauO LSA.
+• Notwendige Stellplätze, Garagen, Abstellplätze für Fahrräder —
+  § 48 BauO LSA.
+
+BUNDESRECHT (gilt universal):
+• Zulässigkeit — § 30 BauGB, § 31 BauGB, § 34 BauGB, § 35 BauGB.
+• Maß + Baugebiete — § 1 BauNVO, § 3 BauNVO, § 4 BauNVO, § 6 BauNVO,
+  § 16 BauNVO, § 19 BauNVO, § 23 BauNVO.
+• Energie — § 10 GEG. § 80 GEG.
+
+SOLAR-/KLIMASCHUTZ-VORGABEN in Sachsen-Anhalt:
+LSA-spezifische Solar-/Klimaschutz-Pflichten sind außerhalb der BauO LSA
+geregelt. Konkrete §-Verweise NICHT im Korpus — geltende Vorschrift
+referenzieren, nicht erfinden.
+
+DENKMAL & ERHALTUNGSSATZUNG:
+• Bundesanker — § 172 BauGB (Erhaltungssatzungs-Gebiet).
+• Land — DSchG LSA (separate Landesvorschrift; konkrete §-Verweise nicht
+  im Korpus). Zuständige Behörde: Landesamt für Denkmalpflege und
+  Archäologie Sachsen-Anhalt auf Landesebene; untere Denkmalschutz-
+  behörde bei der kreisfreien Stadt bzw. beim Landkreis.`,
   },
   // ── T-02 Neubau MFH ──────────────────────────────────────────────
   'T-02': {
@@ -1207,6 +1283,69 @@ DENKMAL & ERHALTUNGSSATZUNG:
 • Land — DSchG M-V. Behörde: Landesamt für Kultur und Denkmalpflege
   Mecklenburg-Vorpommern plus zuständige untere Denkmalschutzbehörde
   (kreisfreie Stadt bzw. Landkreis).`,
+    // C8 batch — Sachsen-Anhalt × T-02 authored 2026-05-28. BauO LSA
+    // corpus-verified. 3-§ brandschutz (§ 14 absorbs Baustoffe per heading;
+    // + § 29 Brandwände + § 32 Rettungsweg). § 26 LSA = Tragende Wände
+    // (different topic — NOT brandschutz).
+    'sachsen-anhalt': `══════════════════════════════════════════════════════════════════════════
+LANDESSPEZIFISCHER ZUSATZ — Sachsen-Anhalt × T-02 (Neubau Mehrfamilienhaus)
+══════════════════════════════════════════════════════════════════════════
+
+Bei MFH-Projekten in SACHSEN-ANHALT: die §§ der BauO LSA ersetzen
+sämtliche oben genannten Bayern-Verweise. Flächenland — Bauaufsicht je
+nach Standort bei der städtischen Bauaufsichtsbehörde der kreisfreien
+Stadt (Magdeburg, Halle (Saale), Dessau-Roßlau) bzw. beim Landkreis.
+Quelle: baunormenlexikon.de (mirror-tier; bei rechtlich kritischen Fragen
+die amtliche Fassung beim landesrecht.sachsen-anhalt.de gegenprüfen).
+Stand: BauO LSA i.d.F. Gesetz vom 13.06.2024.
+
+HINWEIS: Sachsen-Anhaltinischer systemBlock weiterhin "preliminary"; die
+hier zitierten §§ sind korpus-verifiziert.
+
+VERFAHREN — BauO LSA (versetzte Nummerierung):
+• Verfahrensfreie Bauvorhaben — § 60 BauO LSA.
+• Genehmigungsfreistellung — § 61 BauO LSA (bei qualifiziertem B-Plan).
+• Vereinfachtes Baugenehmigungsverfahren — § 62 BauO LSA.
+• Baugenehmigungsverfahren (regulär) — § 63 BauO LSA.
+
+ROUTING (MFH-typisch):
+MFH erreicht häufig Gebäudeklasse 3 bis 5 nach § 2 BauO LSA. Bei
+Sonderbau-Tatbestand (§ 50 BauO LSA) ist das reguläre Verfahren nach
+§ 63 BauO LSA zwingend. Ohne Sonderbau: vereinfachtes Verfahren nach
+§ 62 BauO LSA. Freistellung nach § 61 BauO LSA nur bei qualifiziertem
+B-Plan und ohne Sonderbau.
+
+ANTRAG & VORLAGEN:
+• Bauantrag und Bauvorlagen — § 67 BauO LSA.
+• Bauvorlageberechtigung — § 64 BauO LSA. Entwurfsverfasser —
+  § 53 BauO LSA.
+
+TECHNISCHE ANFORDERUNGEN:
+• Abstandsflächen, Abstände — § 6 BauO LSA.
+• Standsicherheit — § 12 BauO LSA. Bautechnische Nachweise —
+  § 65 BauO LSA.
+• Brandschutz allgemein und Brandverhalten Baustoffe/Bauteile —
+  § 14 BauO LSA (Überschrift bündelt beide Aspekte). Brandwände —
+  § 29 BauO LSA. Erster und zweiter Rettungsweg — § 32 BauO LSA.
+• Notwendige Stellplätze, Garagen, Abstellplätze für Fahrräder —
+  § 48 BauO LSA.
+
+BUNDESRECHT (gilt universal):
+• Zulässigkeit — § 30 BauGB, § 31 BauGB, § 34 BauGB, § 35 BauGB.
+• Baugebiete + Maß — § 1 BauNVO, § 3 BauNVO, § 4 BauNVO, § 6 BauNVO,
+  § 16 BauNVO, § 19 BauNVO, § 23 BauNVO. Stellplätze — § 12 BauNVO.
+• Energie — § 10 GEG. § 80 GEG.
+
+SOLAR-/KLIMASCHUTZ-VORGABEN in Sachsen-Anhalt:
+LSA-spezifische Solar-/Klimaschutz-Pflichten sind außerhalb der BauO LSA
+geregelt. Konkrete §-Verweise NICHT im Korpus — geltende Vorschrift
+referenzieren, nicht erfinden.
+
+DENKMAL & ERHALTUNGSSATZUNG:
+• Bundesanker — § 172 BauGB.
+• Land — DSchG LSA. Behörde: Landesamt für Denkmalpflege und
+  Archäologie Sachsen-Anhalt plus zuständige untere Denkmalschutz-
+  behörde (kreisfreie Stadt bzw. Landkreis).`,
   },
   // ── T-03 Sanierung ───────────────────────────────────────────────
   'T-03': {
@@ -1809,6 +1948,66 @@ NICHT IM Korpus (NICHT erfinden):
   Stadt abklären.
 • Solar-/PV-Pflicht bei Sanierung — außerhalb der LBauO M-V geregelt;
   geltende Vorschrift referenzieren.`,
+    // C8 batch — Sachsen-Anhalt × T-03 authored 2026-05-28. BauO LSA
+    // corpus-verified.
+    'sachsen-anhalt': `══════════════════════════════════════════════════════════════════════════
+LANDESSPEZIFISCHER ZUSATZ — Sachsen-Anhalt × T-03 (Sanierung / Modernisierung)
+══════════════════════════════════════════════════════════════════════════
+
+Bei Sanierungs-/Modernisierungs-Projekten in SACHSEN-ANHALT: die §§ der
+BauO LSA ersetzen sämtliche oben genannten Bayern-Verweise. Flächenland
+— Bauaufsicht beim Landkreis bzw. bei der städtischen Bauaufsichts-
+behörde der kreisfreien Stadt (Magdeburg, Halle, Dessau-Roßlau). Quelle:
+baunormenlexikon.de (mirror-tier). Stand: BauO LSA i.d.F. Gesetz vom
+13.06.2024.
+
+HINWEIS: Sachsen-Anhaltinischer systemBlock weiterhin "preliminary"; die
+hier zitierten §§ sind korpus-verifiziert.
+
+ROUTING:
+Reine Instandhaltung/Modernisierung ohne Eingriff in Statik, Brandschutz
+oder Nutzung fällt häufig unter § 60 BauO LSA (verfahrensfreie
+Bauvorhaben). Sobald tragende Bauteile, Brandschutz oder die Nutzung
+berührt sind, ist regelmäßig das vereinfachte Verfahren nach
+§ 62 BauO LSA anzunehmen.
+
+VERFAHREN — BauO LSA:
+• Verfahrensfreie Bauvorhaben — § 60 BauO LSA.
+• Vereinfachtes Baugenehmigungsverfahren — § 62 BauO LSA.
+
+TECHNISCHE NACHWEISE BEI EINGRIFF:
+• Standsicherheit bei tragenden Eingriffen — § 12 BauO LSA.
+• Bautechnische Nachweise — § 65 BauO LSA.
+• Brandschutz allgemein und Brandverhalten Baustoffe — § 14 BauO LSA.
+  Brandwände — § 29 BauO LSA. Erster und zweiter Rettungsweg —
+  § 32 BauO LSA.
+
+ANTRAG:
+• Bauantrag und Bauvorlagen — § 67 BauO LSA. Bauvorlageberechtigung —
+  § 64 BauO LSA. Entwurfsverfasser — § 53 BauO LSA.
+
+ENERGIE (Bundesrecht):
+• Bestandsänderung — § 48 GEG. Niedrigstenergie-Grundsatz allgemein —
+  § 10 GEG.
+
+NUTZUNGSÄNDERUNG IN Sachsen-Anhalt:
+Sachsen-Anhalt hat KEINEN dedizierten Nutzungsänderungs-§ in der
+BauO LSA. Eine Nutzungsänderung im Sanierungskontext ist über
+§ 62 BauO LSA (vereinfacht) bzw. § 63 BauO LSA (regulär bei Sonderbau,
+§ 50 BauO LSA) zu beantragen.
+
+DENKMALSCHUTZ:
+Bei eingetragenem Baudenkmal oder Ensemble — DSchG LSA (separate
+Landesvorschrift; konkrete §-Verweise nicht im Korpus). Vor Sanierung
+ist das Landesamt für Denkmalpflege und Archäologie Sachsen-Anhalt plus
+zuständige untere Denkmalschutzbehörde (kreisfreie Stadt bzw. Landkreis)
+anzuhören. Federal-Anker bei Erhaltungssatzung — § 172 BauGB.
+
+NICHT IM Korpus (NICHT erfinden):
+• Land-Denkmal-§§ — wie oben mit Landesamt / Landkreis bzw. kreisfreier
+  Stadt abklären.
+• Solar-/PV-Pflicht bei Sanierung — außerhalb der BauO LSA geregelt;
+  geltende Vorschrift referenzieren.`,
   },
   // ── T-04 Umnutzung ───────────────────────────────────────────────
   'T-04': {
@@ -2356,6 +2555,61 @@ NICHT IM LBauO-M-V-Korpus (NICHT erfinden):
 • Schallschutz/TA-Lärm bei lärmrelevanter Nutzungsänderung — DIN 4109
   bzw. TA Lärm als Bundes- bzw. technische Normen, nicht in der LBauO
   M-V geregelt.`,
+    // C8 batch — Sachsen-Anhalt × T-04 authored 2026-05-28. BauO LSA
+    // corpus-verified.
+    'sachsen-anhalt': `══════════════════════════════════════════════════════════════════════════
+LANDESSPEZIFISCHER ZUSATZ — Sachsen-Anhalt × T-04 (Nutzungsänderung / Umnutzung)
+══════════════════════════════════════════════════════════════════════════
+
+Bei Nutzungsänderungs-Projekten in SACHSEN-ANHALT: die §§ der BauO LSA
+ersetzen sämtliche oben genannten Bayern-Verweise. Flächenland —
+Bauaufsicht beim Landkreis bzw. bei der städtischen Bauaufsichtsbehörde
+der kreisfreien Stadt (Magdeburg, Halle, Dessau-Roßlau). Quelle:
+baunormenlexikon.de (mirror-tier). Stand: BauO LSA i.d.F. Gesetz vom
+13.06.2024.
+
+HINWEIS: Sachsen-Anhaltinischer systemBlock weiterhin "preliminary"; die
+hier zitierten §§ sind korpus-verifiziert.
+
+ROUTING:
+Eine Nutzungsänderung ist in Sachsen-Anhalt grundsätzlich genehmigungs-
+pflichtig, sofern nicht ausdrücklich verfahrensfrei nach § 60 BauO LSA.
+Die BauO LSA hat KEINEN dedizierten Nutzungsänderungs-§ — der
+Verfahrensweg richtet sich nach den allgemeinen Verfahrens-§§. Bei
+Nicht-Sonderbau-Umnutzung ist regelmäßig das vereinfachte Verfahren nach
+§ 62 BauO LSA einschlägig; sobald Sonderbau-Tatbestand vorliegt
+(§ 50 BauO LSA), gilt das reguläre Verfahren nach § 63 BauO LSA.
+
+VERFAHREN — BauO LSA:
+• Vereinfachtes Baugenehmigungsverfahren — § 62 BauO LSA.
+• Baugenehmigungsverfahren (regulär) — § 63 BauO LSA (bei Sonderbau-
+  Tatbestand der neuen Nutzung, § 50 BauO LSA).
+
+GEBIETSVERTRÄGLICHKEIT (Bundesrecht):
+• Zulässigkeit der neuen Nutzung — § 30 BauGB, § 31 BauGB, § 34 BauGB,
+  § 35 BauGB.
+• Baugebiete und Nutzungsarten — § 1 BauNVO bis § 9 BauNVO, § 4a BauNVO.
+• Erhaltungssatzung — § 172 BauGB.
+
+TECHNISCHE FOLGEN DER NEUEN NUTZUNG:
+• Brandschutz allgemein und Brandverhalten Baustoffe nach neuer Nutzung
+  — § 14 BauO LSA. Brandwände — § 29 BauO LSA. Erster und zweiter
+  Rettungsweg — § 32 BauO LSA.
+• Stellplatzbedarf nach neuer Nutzung — § 48 BauO LSA. Bundes-Maß
+  ergänzend — § 12 BauNVO.
+• Standsicherheit bei strukturellen Anpassungen — § 12 BauO LSA.
+  Bautechnische Nachweise — § 65 BauO LSA.
+
+ANTRAG:
+• Bauantrag und Bauvorlagen — § 67 BauO LSA. Bauvorlageberechtigung —
+  § 64 BauO LSA. Entwurfsverfasser — § 53 BauO LSA.
+
+NICHT IM BauO-LSA-Korpus (NICHT erfinden):
+• Land-Denkmal-§§ — DSchG LSA mit Landesamt für Denkmalpflege und
+  Archäologie / Landkreis bzw. kreisfreier Stadt abklären.
+• Schallschutz/TA-Lärm bei lärmrelevanter Nutzungsänderung — DIN 4109
+  bzw. TA Lärm als Bundes- bzw. technische Normen, nicht in der BauO LSA
+  geregelt.`,
   },
   // ── T-05 Abbruch ─────────────────────────────────────────────────
   'T-05': {
@@ -2875,6 +3129,59 @@ NICHT IM LBauO-M-V-Korpus (NICHT erfinden):
 • Schadstoff-/Entsorgungs-§§ — KrWG, GefStoffV, EU-Vorgaben; nicht in
   der LBauO M-V geregelt; geltende Bundes- bzw. EU-Regelung
   referenzieren.
+• Land-Denkmal-§§ — wie oben mit Landesamt / Landkreis bzw. kreisfreier
+  Stadt abklären.`,
+    // C8 batch — Sachsen-Anhalt × T-05 authored 2026-05-28. BauO LSA
+    // corpus-verified. § 79 (Beseitigung/Nutzungsuntersagung)
+    // INTENTIONALLY OMITTED (classic enforcement). § 78 (Einstellung
+    // Arbeiten), § 80 (Bauüberwachung), § 85a (TBs) admin omits.
+    'sachsen-anhalt': `══════════════════════════════════════════════════════════════════════════
+LANDESSPEZIFISCHER ZUSATZ — Sachsen-Anhalt × T-05 (Abbruch / Beseitigung)
+══════════════════════════════════════════════════════════════════════════
+
+Bei Abbruch-/Beseitigungsvorhaben in SACHSEN-ANHALT: die §§ der BauO LSA
+ersetzen sämtliche oben genannten Bayern-Verweise. Flächenland —
+Bauaufsicht beim Landkreis bzw. bei der städtischen Bauaufsichtsbehörde
+der kreisfreien Stadt (Magdeburg, Halle, Dessau-Roßlau). Quelle:
+baunormenlexikon.de (mirror-tier). Stand: BauO LSA i.d.F. Gesetz vom
+13.06.2024.
+
+HINWEIS: Sachsen-Anhaltinischer systemBlock weiterhin "preliminary"; die
+hier zitierten §§ sind korpus-verifiziert.
+
+ROUTING:
+Die Beseitigung baulicher Anlagen ist in Sachsen-Anhalt primär über
+§ 60 BauO LSA geregelt — die Überschrift nennt "Beseitigung von Anlagen"
+ausdrücklich neben den verfahrensfreien Bauvorhaben.
+
+VERFAHREN — BauO LSA:
+• Verfahrensfreie Bauvorhaben und Beseitigung von Anlagen —
+  § 60 BauO LSA.
+
+Innerhalb der in § 60 BauO LSA genannten Tatbestände ist der Abbruch
+verfahrensfrei (ggf. genügt eine Anzeige); außerhalb dieser Tatbestände
+ist eine Beseitigungsgenehmigung erforderlich (in der Regel über das
+vereinfachte Verfahren nach § 62 BauO LSA bzw. das reguläre Verfahren
+nach § 63 BauO LSA).
+
+DENKMAL & ERHALTUNGSSATZUNG (OVERRIDE der Verfahrensfreiheit):
+• Federal-Anker — § 172 BauGB: innerhalb eines Erhaltungssatzungs-
+  Bereichs ist der Abbruch genehmigungspflichtig, auch wenn er sonst
+  verfahrensfrei wäre.
+• Land-Denkmal — DSchG LSA (separate Landesvorschrift; konkrete
+  §-Verweise nicht im Korpus). Bei eingetragenem Baudenkmal: Abbruch nur
+  mit denkmalrechtlicher Genehmigung; Landesamt für Denkmalpflege und
+  Archäologie Sachsen-Anhalt plus zuständige untere Denkmalschutz-
+  behörde (kreisfreie Stadt bzw. Landkreis) einbeziehen.
+
+DOKUMENTE:
+• Bauvorlageberechtigung — § 64 BauO LSA. Entwurfsverfasser —
+  § 53 BauO LSA.
+• Statik der Restanlage bei Teilabbruch — § 12 BauO LSA.
+
+NICHT IM BauO-LSA-Korpus (NICHT erfinden):
+• Schadstoff-/Entsorgungs-§§ — KrWG, GefStoffV, EU-Vorgaben; nicht in
+  der BauO LSA geregelt; geltende Bundes- bzw. EU-Regelung referenzieren.
 • Land-Denkmal-§§ — wie oben mit Landesamt / Landkreis bzw. kreisfreier
   Stadt abklären.`,
   },
@@ -3430,6 +3737,59 @@ BAUPLANUNGSRECHT (Bundesrecht):
 ANTRAG:
 • Bauantrag und Bauvorlagen — § 68 LBauO M-V. Bauvorlageberechtigung —
   § 65 LBauO M-V. Entwurfsverfasser — § 54 LBauO M-V.`,
+    // C8 batch — Sachsen-Anhalt × T-06 authored 2026-05-28. BauO LSA
+    // corpus-verified.
+    'sachsen-anhalt': `══════════════════════════════════════════════════════════════════════════
+LANDESSPEZIFISCHER ZUSATZ — Sachsen-Anhalt × T-06 (Aufstockung / Dachgeschossausbau)
+══════════════════════════════════════════════════════════════════════════
+
+Bei Aufstockungs-/DG-Ausbau-Projekten in SACHSEN-ANHALT: die §§ der
+BauO LSA ersetzen sämtliche oben genannten Bayern-Verweise. Flächenland
+— Bauaufsicht beim Landkreis bzw. bei der städtischen Bauaufsichts-
+behörde der kreisfreien Stadt (Magdeburg, Halle, Dessau-Roßlau). Quelle:
+baunormenlexikon.de (mirror-tier). Stand: BauO LSA i.d.F. Gesetz vom
+13.06.2024.
+
+HINWEIS: Sachsen-Anhaltinischer systemBlock weiterhin "preliminary"; die
+hier zitierten §§ sind korpus-verifiziert.
+
+ROUTING:
+Aufstockung wird regelmäßig im vereinfachten Verfahren nach
+§ 62 BauO LSA behandelt. Bei Aufstockung können sich Gebäudeklasse,
+Abstandsflächen und Brandschutz ändern; die Standsicherheit der
+Bestandskonstruktion ist gesondert nachzuweisen.
+
+VERFAHREN:
+• Vereinfachtes Baugenehmigungsverfahren — § 62 BauO LSA.
+
+GEBÄUDEKLASSE & ABSTANDSFLÄCHEN (kritisch bei Aufstockung):
+• Gebäudeklasse — § 2 BauO LSA. Höhen-/Stockwerksgrenzen entscheiden,
+  ob die Aufstockung die GK anhebt.
+• Abstandsflächen, Abstände — § 6 BauO LSA. An der neuen, höheren Wand
+  neu zu bemessen.
+
+TECHNISCHE NACHWEISE (BESTANDSSTATIK):
+• Standsicherheit der Bestandskonstruktion und neuer Aufbauten —
+  § 12 BauO LSA. Bautechnische Nachweise — § 65 BauO LSA.
+• Brandschutz allgemein und Brandverhalten Baustoffe — § 14 BauO LSA.
+  Brandwände — § 29 BauO LSA. Erster und zweiter Rettungsweg —
+  § 32 BauO LSA.
+
+STELLPLÄTZE (bei neuen Wohneinheiten):
+• Notwendige Stellplätze, Garagen, Abstellplätze für Fahrräder —
+  § 48 BauO LSA.
+
+ENERGIE (Bundesrecht):
+• Bestandsänderung — § 48 GEG. Niedrigstenergie-Grundsatz allgemein —
+  § 10 GEG.
+
+BAUPLANUNGSRECHT (Bundesrecht):
+• Zulässigkeit — § 30 BauGB, § 34 BauGB. Maß — § 19 BauNVO (GRZ),
+  § 20 BauNVO (Vollgeschosse/GFZ), § 23 BauNVO (überbaubare Fläche).
+
+ANTRAG:
+• Bauantrag und Bauvorlagen — § 67 BauO LSA. Bauvorlageberechtigung —
+  § 64 BauO LSA. Entwurfsverfasser — § 53 BauO LSA.`,
   },
   // ── T-07 Anbau ───────────────────────────────────────────────────
   'T-07': {
@@ -3910,6 +4270,53 @@ ENERGIE (Bundesrecht):
 ANTRAG:
 • Bauantrag und Bauvorlagen — § 68 LBauO M-V. Bauvorlageberechtigung —
   § 65 LBauO M-V. Entwurfsverfasser — § 54 LBauO M-V.`,
+    // C8 batch — Sachsen-Anhalt × T-07 authored 2026-05-28. BauO LSA
+    // corpus-verified.
+    'sachsen-anhalt': `══════════════════════════════════════════════════════════════════════════
+LANDESSPEZIFISCHER ZUSATZ — Sachsen-Anhalt × T-07 (Anbau / Erweiterung)
+══════════════════════════════════════════════════════════════════════════
+
+Bei Anbau-/Erweiterungsvorhaben in SACHSEN-ANHALT: die §§ der BauO LSA
+ersetzen sämtliche oben genannten Bayern-Verweise. Flächenland —
+Bauaufsicht beim Landkreis bzw. bei der städtischen Bauaufsichtsbehörde
+der kreisfreien Stadt (Magdeburg, Halle, Dessau-Roßlau). Quelle:
+baunormenlexikon.de (mirror-tier). Stand: BauO LSA i.d.F. Gesetz vom
+13.06.2024.
+
+HINWEIS: Sachsen-Anhaltinischer systemBlock weiterhin "preliminary"; die
+hier zitierten §§ sind korpus-verifiziert.
+
+ROUTING:
+Ein Anbau wird regelmäßig im vereinfachten Verfahren nach § 62 BauO LSA
+behandelt. Bei qualifiziertem B-Plan und Einhaltung aller Festsetzungen
+kommt die Genehmigungsfreistellung nach § 61 BauO LSA in Betracht.
+
+VERFAHREN:
+• Genehmigungsfreistellung — § 61 BauO LSA (bei qualifiziertem B-Plan).
+• Vereinfachtes Baugenehmigungsverfahren — § 62 BauO LSA (Regelfall).
+
+GEBIETSVERTRÄGLICHKEIT (Bundesrecht):
+• Einfügen im Innenbereich — § 34 BauGB. Außenbereich — § 35 BauGB.
+• Maß der baulichen Nutzung — § 19 BauNVO (GRZ), § 23 BauNVO
+  (überbaubare Grundstücksfläche).
+
+TECHNISCHE ANFORDERUNGEN AM ANBAU:
+• Abstandsflächen, Abstände an der neuen Wand — § 6 BauO LSA.
+• Standsicherheit — § 12 BauO LSA. Bautechnische Nachweise —
+  § 65 BauO LSA.
+• Brandschutz an der Anschluss-/Trennwand — § 14 BauO LSA. Brandwände —
+  § 29 BauO LSA.
+
+STELLPLÄTZE (bei neuen Wohneinheiten / Nutzungen):
+• Notwendige Stellplätze, Garagen, Abstellplätze für Fahrräder —
+  § 48 BauO LSA.
+
+ENERGIE (Bundesrecht):
+• Neubau-Teil des Anbaus — § 10 GEG. Anschluss an Bestand — § 48 GEG.
+
+ANTRAG:
+• Bauantrag und Bauvorlagen — § 67 BauO LSA. Bauvorlageberechtigung —
+  § 64 BauO LSA. Entwurfsverfasser — § 53 BauO LSA.`,
   },
   // ── T-08 Sonstiges ───────────────────────────────────────────────
   'T-08': {
@@ -4354,6 +4761,48 @@ ALLGEMEINE TECHNISCHE ANFORDERUNGEN:
 • Abstandsflächen, Abstände — § 6 LBauO M-V.
 • Standsicherheit — § 12 LBauO M-V. Bautechnische Nachweise —
   § 66 LBauO M-V.
+
+BUNDESRECHT (gilt universal):
+• Zulässigkeit — § 30 BauGB, § 31 BauGB, § 34 BauGB, § 35 BauGB.
+
+HINWEIS:
+T-08 sollte zuerst an einen passenderen Template-Archetyp (T-01 EFH bis
+T-07 Anbau) zugeordnet werden; nur wenn keine Zuordnung möglich ist,
+greift T-08 als Default-Schale.`,
+    // C8 batch — Sachsen-Anhalt × T-08 authored 2026-05-28. BauO LSA
+    // corpus-verified.
+    'sachsen-anhalt': `══════════════════════════════════════════════════════════════════════════
+LANDESSPEZIFISCHER ZUSATZ — Sachsen-Anhalt × T-08 (Sonstiges Vorhaben)
+══════════════════════════════════════════════════════════════════════════
+
+Bei sonstigen Vorhaben in SACHSEN-ANHALT: die §§ der BauO LSA ersetzen
+sämtliche oben genannten Bayern-Verweise. Flächenland — Bauaufsicht beim
+Landkreis bzw. bei der städtischen Bauaufsichtsbehörde der kreisfreien
+Stadt (Magdeburg, Halle, Dessau-Roßlau). Quelle: baunormenlexikon.de
+(mirror-tier). Stand: BauO LSA i.d.F. Gesetz vom 13.06.2024.
+
+HINWEIS: Sachsen-Anhaltinischer systemBlock weiterhin "preliminary"; die
+hier zitierten §§ sind korpus-verifiziert.
+
+T-08 ist keine feste Vorhabens-Klasse — die einschlägigen BauO-LSA-§§
+richten sich nach dem konkreten Vorhaben. Die folgenden Verweise decken
+den vollständigen Verfahrensraster ab:
+
+VERFAHREN — BauO LSA (versetzte Nummerierung, vollständiger Raster):
+• Verfahrensfreie Bauvorhaben (inkl. Beseitigung) — § 60 BauO LSA.
+• Genehmigungsfreistellung — § 61 BauO LSA.
+• Vereinfachtes Baugenehmigungsverfahren — § 62 BauO LSA.
+• Baugenehmigungsverfahren (regulär) — § 63 BauO LSA.
+
+ANTRAG & VORLAGEN:
+• Bauantrag und Bauvorlagen — § 67 BauO LSA.
+• Bauvorlageberechtigung — § 64 BauO LSA. Entwurfsverfasser —
+  § 53 BauO LSA.
+
+ALLGEMEINE TECHNISCHE ANFORDERUNGEN:
+• Abstandsflächen, Abstände — § 6 BauO LSA.
+• Standsicherheit — § 12 BauO LSA. Bautechnische Nachweise —
+  § 65 BauO LSA.
 
 BUNDESRECHT (gilt universal):
 • Zulässigkeit — § 30 BauGB, § 31 BauGB, § 34 BauGB, § 35 BauGB.

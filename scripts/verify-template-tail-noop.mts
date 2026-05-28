@@ -232,6 +232,29 @@ const ACKNOWLEDGED_OVERRIDES: ReadonlySet<string> = new Set<string>([
   'T-06:mv',
   'T-07:mv',
   'T-08:mv',
+  // C8 batch — Sachsen-Anhalt × T-01..T-08 authored 2026-05-28. §§
+  // verified (mirror-tier BauO LSA; baunormenlexikon.de; BauO LSA
+  // 2013-09-10 i.d.F. Gesetz v. 13.06.2024 GVBl. LSA S. 150). Fifth
+  // Flächenland. SHIFTED §-NUMBERING: § 60 verfahrensfrei, § 61
+  // Freistellung, § 62 vereinfacht, § 63 regulär; § 64 Bauvorlage,
+  // § 65 Nachweise, § 67 Bauantrag. Also: § 48 Stellplätze (not § 49),
+  // § 50 Sonderbau (not § 51), § 53 Entwurfsverfasser (not § 54),
+  // § 29 Brandwände (not § 30), § 32 Rettungsweg (not § 33). 3-§
+  // brandschutz: § 14 (umbrella + Baustoffe combined per official
+  // heading) + § 29 + § 32. § 79 (Beseitigung/Nutzungsuntersagung)
+  // omitted from T-05 (classic enforcement). § 78 (Einstellung Arbeiten),
+  // § 80 (Bauüberwachung), § 85a (TBs admin) also omitted. § 86
+  // ("Bestehende bauliche Anlagen") SKIPPED (same Phase-B caution as
+  // SH § 58a — heading-evident relevance but unclear scope). Authority:
+  // 3 kreisfreie Städte (Magdeburg, Halle, Dessau-Roßlau) + 11 Landkreise.
+  'T-01:sachsen-anhalt',
+  'T-02:sachsen-anhalt',
+  'T-03:sachsen-anhalt',
+  'T-04:sachsen-anhalt',
+  'T-05:sachsen-anhalt',
+  'T-06:sachsen-anhalt',
+  'T-07:sachsen-anhalt',
+  'T-08:sachsen-anhalt',
 ])
 
 interface Violation {
