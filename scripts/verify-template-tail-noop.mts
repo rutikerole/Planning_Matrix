@@ -38,6 +38,19 @@ const ACKNOWLEDGED_OVERRIDES: ReadonlySet<string> = new Set<string>([
   'T-06:nrw',
   'T-07:nrw',
   'T-08:nrw',
+  // B2 batch 2 — NI × T-02..T-08 authored 2026-05-28. §§ verified
+  // (mirror-tier NBauO; cited via baunormenlexikon.de + voris).
+  // Mirror-tier discipline applied: § 62 cited as "sonstige genehmigungs-
+  // freie" per heading (NOT "Genehmigungsfreistellung" institute); § 79
+  // intentionally omitted from T-05 (heading is enforcement, not owner-
+  // initiated demolition).
+  'T-02:niedersachsen',
+  'T-03:niedersachsen',
+  'T-04:niedersachsen',
+  'T-05:niedersachsen',
+  'T-06:niedersachsen',
+  'T-07:niedersachsen',
+  'T-08:niedersachsen',
 ])
 
 interface Violation {
