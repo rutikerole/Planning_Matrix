@@ -2315,8 +2315,8 @@ async function runStaticGate() {
       msg: 'costs.kicker bilingual',
     },
     {
-      ok: /'costs\.title':\s*'Estimated cost range'/.test(stringsV16Costs) &&
-          /'costs\.title':\s*'Geschätzte Kostenspanne'/.test(stringsV16Costs),
+      ok: /'costs\.title':\s*'Estimated consultation cost'/.test(stringsV16Costs) &&
+          /'costs\.title':\s*'Geschätzte Planungs- & Beratungskosten'/.test(stringsV16Costs),
       msg: 'costs.title bilingual',
     },
     {

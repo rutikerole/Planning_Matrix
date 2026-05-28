@@ -102,7 +102,7 @@ const EN: PdfStrings = {
 
   // ─── v1.0.16 Renaissance Part 2B — Costs ──────────────────────
   'costs.kicker': 'SECTION 03 · COSTS',
-  'costs.title': 'Estimated cost range',
+  'costs.title': 'Estimated consultation cost',
   // v1.0.22 Bug I — drop the "{state} regional BKI factor" framing.
   // The cost engine REGION_MULT table maps Bayern → 1.0 and silently
   // falls through to 1.0 for every other state; the label promised a
@@ -358,7 +358,7 @@ const DE: PdfStrings = {
 
   // ─── v1.0.16 Renaissance Part 2B — Costs ──────────────────────
   'costs.kicker': 'ABSCHNITT 03 · KOSTEN',
-  'costs.title': 'Geschätzte Kostenspanne',
+  'costs.title': 'Geschätzte Planungs- & Beratungskosten',
   // v1.0.22 Bug I — see EN counterpart above. Honest baseline framing.
   'costs.basisTemplate':
     'Berechnet aus {n} m² Fassade · HOAI Zone III · deutscher Basiswert (regionale Varianz +/-10%)',

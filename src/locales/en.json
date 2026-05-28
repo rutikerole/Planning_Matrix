@@ -1990,7 +1990,7 @@
         "likelyBadge": "likely"
       },
       "cost": {
-        "costEyebrow": "Cost range",
+        "costEyebrow": "Consultation cost",
         "confidence": "Estimate confidence: ±25%",
         "totalEstimated": "Total (estimated)",
         "caveat": "Orientation values from the HOAI fee tables · not binding quotes.",

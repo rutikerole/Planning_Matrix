@@ -1,5 +1,5 @@
 // ───────────────────────────────────────────────────────────────────────
-// v1.0.16 — Costs page (Section 03 · Estimated cost range).
+// v1.0.16 — Costs page (Section 03 · Estimated consultation cost).
 //
 // Replaces the v1.0.6 plain-text drawCostsPage with the approved
 // editorial layout: kicker + 26pt italic-serif title + 11pt CLAY
