@@ -99,6 +99,25 @@ const ACKNOWLEDGED_OVERRIDES: ReadonlySet<string> = new Set<string>([
   'T-06:berlin',
   'T-07:berlin',
   'T-08:berlin',
+  // C3 batch — Bremen × T-01..T-08 authored 2026-05-28. §§ verified
+  // (mirror-tier BremLBO; baunormenlexikon.de; Neufassung 29.05.2024 /
+  // Brem.GBl. S. 380). Path 2'' discipline: cells authored from corpus,
+  // banner STAYS ON (systemBlock untouched). Stadtstaat framing: 2 Stadt-
+  // gemeinden (Bremen + Bremerhaven) je eigenes Bauordnungsamt; 1 Land.
+  // Denkmal: Landesamt für Denkmalpflege Bremen (LfD) + untere Behörde
+  // der Stadtgemeinde. § 79 (Beseitigung/Nutzungsuntersagung) omitted
+  // from T-05 (enforcement — Bremen's § 80 is "Bauüberwachung" not
+  // enforcement, so the enforcement § here is § 79, same heading-discipline
+  // as NI § 79). § 14+26+30+33 brandschutz spread (all four tagged in
+  // BremLBO, same depth as Hamburg).
+  'T-01:bremen',
+  'T-02:bremen',
+  'T-03:bremen',
+  'T-04:bremen',
+  'T-05:bremen',
+  'T-06:bremen',
+  'T-07:bremen',
+  'T-08:bremen',
 ])
 
 interface Violation {
