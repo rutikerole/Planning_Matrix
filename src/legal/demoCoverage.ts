@@ -28,13 +28,23 @@ export const PDF_DEMO_TEMPLATE_IDS: readonly TemplateId[] = [
 ]
 
 /**
- * Phase B: true for ALL 16 states. The 11 former stubs now carry corpus-backed
- * BauO §§ in both chokepoints (stateCitations citations + stateLocalization
- * procedure §§), so they are substantive; combined with all 8 templates, every
- * one of the 128 cells is demo-ready. Resolves via
- * getStateCitations(b).isSubstantive.
+ * True when the bundesland is "PDF-demo-ready" — the gate isPdfDemoReady
+ * AND's this with a template-in-list check. Phase B flipped this to TRUE
+ * for ALL 16 states (the 11 former stubs gained corpus-backed BauO §§ in
+ * both chokepoints — stateCitations citations + stateLocalization procedure
+ * §§); so this returns true for any recognized bundesland and false only
+ * for null / undefined / unknown codes.
+ *
+ * DO NOT use this for "is the state's systemBlock substantive" — that's a
+ * different question (only 5 states have a deep systemBlock today).
+ * Use hasSubstantiveStateBlock below for that classification.
+ *
+ * Renamed from isSubstantiveBundesland (Bucket A.5 / SPRINT_PLAN naming-
+ * trap fix). The old name implied "this state has substantive content"
+ * but the function actually gates PDF readiness — and the two diverged
+ * when Phase B flipped all 16 states to isSubstantive=true.
  */
-export function isSubstantiveBundesland(
+export function isPdfDemoReadyBundesland(
   bundesland: string | null | undefined,
 ): boolean {
   if (!bundesland) return false
@@ -57,12 +67,12 @@ export function isPdfDemoReady(
   return (
     !!templateId &&
     (PDF_DEMO_TEMPLATE_IDS as readonly string[]).includes(templateId) &&
-    isSubstantiveBundesland(bundesland)
+    isPdfDemoReadyBundesland(bundesland)
   )
 }
 
 // ───────────────────────────────────────────────────────────────────────
-// State-block depth — sibling helper to isSubstantiveBundesland.
+// State-block depth — sibling helper to isPdfDemoReadyBundesland.
 //
 // Phase B flipped isSubstantive=true for ALL 16 states (PDF readiness gate;
 // stateCitations.ts:364 — makeCorpusPack). That is correct for PDF gating
@@ -94,7 +104,7 @@ const STATES_WITH_FULL_STATE_BLOCK: ReadonlySet<string> = new Set([
  * src/legal/states/{state}.ts (BY/BW/HE/NW/NI). False for the 11 thin
  * states whose systemBlock is the "Mindest-Eckdaten / nicht belastbar"
  * disclaimer. Use this to gate the chat-UI and result-page preliminary
- * banner — NOT isSubstantiveBundesland (which is Phase-B true for all 16).
+ * banner — NOT isPdfDemoReadyBundesland (which is Phase-B true for all 16).
  *
  * Input is normalised (trim + toLowerCase) to match the project-wide
  * canonical-form convention established by getStateCitations
