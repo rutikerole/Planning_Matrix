@@ -335,6 +335,40 @@ Filed during C4 Sachsen merge (commit `fde3535`); cells use heading-
 evident citation discipline already, so the under-tag does not
 operationally bite any current consumer.
 
+### 10. T-01 manual-test follow-ups — two PDF-template REDs DEFERRED
+
+Surfaced by the T-01 cross-state manual walk (Bayern/Augsburg + RLP/Mainz,
+`docs/T-01_Cross-State_Audit_Report.md`, 2026-05-29). The branch
+`fix/t01-post-test` closed the three founder-contracted findings (München-
+string leak, RLP glossary mislabel, cost-basis caption honesty). Two further
+audit REDs were **explicitly deferred** out of that fix run and are filed here:
+
+- **RED-1 — Procedure self-contradiction inside one signed PDF (BASELINE-WIDE).**
+  The Key-Data/Overview/chat layers state the *computed* `procedureLikely`
+  (vereinfacht — BY Art. 59 / RLP § 66), but the Section-05 Procedures block +
+  Legal-Area-B render a *static default* "Standard building permit · {regulär §}"
+  (BY Art. 60 / RLP § 70) that never inherits the computed result. Reproduces
+  identically on a deep state (BY) and a thin scrambled state (RLP) → template-
+  layer bug, not corpus. **Fix leverage: one field** — make the Section-05 /
+  Legal-B procedure field read `procedureLikely` instead of a hardcoded regulär
+  article. Propagates to all 16 states × all 8 templates. **Highest harm
+  (trust-contract breach), do before further template testing.** Confirm whether
+  the field is presentation (UI-only, safe) or content (route to backend owner).
+
+- **RED-3 — Cost engine drops elicited size + two inconsistent basis paths
+  (BASELINE-WIDE).** BY p.5 said "Computed from 400 m² façade" (hardcoded
+  default) while the elicited net floor area was 290 m²; RLP said "floor area
+  only (façade not captured)" — a different basis branch entirely. Neither reads
+  the elicited `nettoNutzflaeche`. This is a *silent input-drop* (distinct from
+  the W7 calibration gap that #10's caption fix already addressed), producing a
+  ~2× cross-state cost divergence a user would misread as regional. Fix: wire the
+  elicited area into the cost-engine input contract and unify the two basis
+  code-paths.
+
+Lower-priority T-01 YELLOWs also logged in the audit doc (asbestos/PCB on new
+build, DIN 4109 conditional-vs-required, exec-summary field-key truncation
+leakage). Not blocking; address in a template-hygiene pass.
+
 ---
 
 ## Maintenance
