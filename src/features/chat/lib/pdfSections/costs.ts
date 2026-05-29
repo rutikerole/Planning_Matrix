@@ -114,11 +114,20 @@ export function renderCostsBody(
     data.areaSqm > 0
       ? pdfStr(strings, 'costs.basisTemplate')
       : pdfStr(strings, 'costs.basisTemplate.noArea')
+  // T-01 audit W7 — the cost numbers are München-tuned (cost engine
+  // REGION_MULT = 1.0 for every state). Bayern owns that baseline; every
+  // other state inherits the figures uncalibrated, so the {basis} suffix
+  // says so out loud instead of implying a nationwide "German baseline".
+  const basisFraming =
+    data.bundeslandCode.toLowerCase() === 'bayern'
+      ? pdfStr(strings, 'costs.basis.bayern')
+      : pdfStr(strings, 'costs.basis.other')
   const basisText =
     data.subtitle ??
     basisRaw
       .replace(/\{n\}/g, String(data.areaSqm))
       .replace(/\{state\}/g, data.bundeslandCode)
+      .replace(/\{basis\}/g, basisFraming)
   drawSafeText(page, basisText, {
     x: MARGIN,
     y: headerY - 56,
