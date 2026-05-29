@@ -347,9 +347,9 @@ export const SMART_SUGGESTIONS_MUENCHEN: SmartSuggestion[] = [
     titleDe: 'Amtlichen Lageplan (M = 1:500) beauftragen',
     titleEn: 'Commission an official site plan (M = 1:500)',
     bodyDe:
-      'Bauanträge in München erfordern einen amtlichen Lageplan im Maßstab 1:500. Vermesser:in in LP 3 binden, sonst staut sich die Antragstellung. Liegt ein älterer Plan vor: vom Vermesser auf Aktualität prüfen lassen.',
+      'Bauanträge in Bayern erfordern einen amtlichen Lageplan im Maßstab 1:500. Vermesser:in in LP 3 binden, sonst staut sich die Antragstellung. Liegt ein älterer Plan vor: vom Vermesser auf Aktualität prüfen lassen.',
     bodyEn:
-      'Munich permit applications require an official site plan at scale 1:500. Engage the surveyor in LP 3 — otherwise the application backs up. If an older plan exists, have the surveyor verify currency.',
+      'Bavarian permit applications require an official site plan at scale 1:500. Engage the surveyor in LP 3 — otherwise the application backs up. If an older plan exists, have the surveyor verify currency.',
     reasoningDe:
       'Ohne aktuellen Lageplan keine vollständige Antragstellung — typische Verzögerungsursache.',
     reasoningEn:
