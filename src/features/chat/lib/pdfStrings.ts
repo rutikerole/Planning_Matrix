@@ -108,13 +108,20 @@ const EN: PdfStrings = {
   // falls through to 1.0 for every other state; the label promised a
   // regional adjustment the formula does not apply. Honest baseline
   // framing replaces it. See docs/cost-formula.md.
-  'costs.basisTemplate':
-    'Computed from {n} m² façade · HOAI Zone III · German baseline (regional variance +/-10%)',
+  // T-01 audit W7 — the {basis} suffix is resolved per state at render
+  // time (costs.ts): Bayern owns the München-tuned numbers, every other
+  // state shares them verbatim, so non-Bayern says so out loud.
+  'costs.basisTemplate': 'Computed from {n} m² façade · {basis}',
   // v1.0.23 Bug L — honest no-area fallback when fassadenflaeche_m2 is
   // unset or zero. Replaces the v1.0.20-era "Computed from 0 m² façade"
   // leak that read as a measurement rather than a missing-data marker.
   'costs.basisTemplate.noArea':
-    'Computed from floor area only (façade area not captured) · HOAI Zone III · German baseline (regional variance +/-10%)',
+    'Computed from floor area only (façade area not captured) · {basis}',
+  // T-01 audit W7 — state-conditional cost-basis honesty. Numbers are
+  // unchanged; only the framing differs. Bayern is the baseline source;
+  // all other states inherit the München-tuned figures uncalibrated.
+  'costs.basis.bayern': 'HOAI Zone III · Bayern baseline',
+  'costs.basis.other': 'HOAI Zone III · München baseline · regional calibration pending',
   'costs.th.item': 'ITEM',
   'costs.th.basis': 'BASIS',
   'costs.th.range': 'EUR RANGE',
@@ -360,11 +367,14 @@ const DE: PdfStrings = {
   'costs.kicker': 'ABSCHNITT 03 · KOSTEN',
   'costs.title': 'Geschätzte Planungs- & Beratungskosten',
   // v1.0.22 Bug I — see EN counterpart above. Honest baseline framing.
-  'costs.basisTemplate':
-    'Berechnet aus {n} m² Fassade · HOAI Zone III · deutscher Basiswert (regionale Varianz +/-10%)',
+  // T-01 audit W7 — {basis} resolved per state at render time (costs.ts).
+  'costs.basisTemplate': 'Berechnet aus {n} m² Fassade · {basis}',
   // v1.0.23 Bug L — see EN counterpart above.
   'costs.basisTemplate.noArea':
-    'Berechnet ausschließlich aus Wohnfläche (Fassade noch nicht erfasst) · HOAI Zone III · deutscher Basiswert (regionale Varianz +/-10%)',
+    'Berechnet ausschließlich aus Wohnfläche (Fassade noch nicht erfasst) · {basis}',
+  // T-01 audit W7 — state-conditional cost-basis honesty (see EN counterpart).
+  'costs.basis.bayern': 'HOAI Zone III · Bayern-Basiswert',
+  'costs.basis.other': 'HOAI Zone III · München-Basiswert · regionale Kalibrierung ausstehend',
   'costs.th.item': 'POSITION',
   'costs.th.basis': 'GRUNDLAGE',
   'costs.th.range': 'EUR-SPANNE',
