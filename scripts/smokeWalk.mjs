@@ -2320,14 +2320,20 @@ async function runStaticGate() {
       msg: 'costs.title bilingual',
     },
     {
-      // v1.0.22 Bug I — {state} interpolation in costs.basisTemplate
-      // was retired. The honest-baseline framing dropped the per-state
-      // suffix because the cost engine REGION_MULT does not actually
-      // apply a state-specific factor. {n} m² façade substitution is
-      // preserved.
-      ok: /'costs\.basisTemplate':[\s\S]{0,200}\{n\} m² façade[\s\S]{0,200}German baseline/.test(stringsV16Costs) &&
-          /'costs\.basisTemplate':[\s\S]{0,200}\{n\} m² Fassade[\s\S]{0,200}deutscher Basiswert/.test(stringsV16Costs),
-      msg: 'costs.basisTemplate carries {n} m²/Fassade tokens + honest baseline framing in both locales (Bug I)',
+      // v1.0.22 Bug I — {state} interpolation in costs.basisTemplate was
+      // retired (REGION_MULT applies no state factor). T-01 audit W7 — the
+      // baseline-framing suffix moved out of the template into a {basis}
+      // token resolved per state at render time (costs.ts): Bayern owns the
+      // München-tuned numbers; every other state inherits them uncalibrated.
+      // The template now carries the {n} m²/Fassade token + the {basis}
+      // placeholder; the honest framing lives in costs.basis.bayern/.other.
+      ok: /'costs\.basisTemplate':[\s\S]{0,120}\{n\} m² façade[\s\S]{0,40}\{basis\}/.test(stringsV16Costs) &&
+          /'costs\.basisTemplate':[\s\S]{0,120}\{n\} m² Fassade[\s\S]{0,40}\{basis\}/.test(stringsV16Costs) &&
+          /'costs\.basis\.bayern':[\s\S]{0,120}Bayern baseline/.test(stringsV16Costs) &&
+          /'costs\.basis\.other':[\s\S]{0,120}München baseline · regional calibration pending/.test(stringsV16Costs) &&
+          /'costs\.basis\.bayern':[\s\S]{0,120}Bayern-Basiswert/.test(stringsV16Costs) &&
+          /'costs\.basis\.other':[\s\S]{0,120}München-Basiswert · regionale Kalibrierung ausstehend/.test(stringsV16Costs),
+      msg: 'costs.basisTemplate carries {n} m²/Fassade + {basis} token; honest per-state framing in costs.basis.bayern/.other (Bug I / T-01 W7)',
     },
     {
       ok: /'costs\.th\.item':/.test(stringsV16Costs) &&
