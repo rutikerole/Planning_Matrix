@@ -134,7 +134,16 @@ export interface ProcedureCase {
  * no recognizable citation is present.
  */
 export function extractProcedureCitation(s: string): string | null {
-  const para = s.match(/§\s*\d+[a-z]?(?:\s+Abs\.\s*\d+)?\s+\S+(?:\s+\S+)?/u)
+  // T-01 RED-1 (Part B) — the optional trailing law-name token must START
+  // UPPERCASE so a multi-word law name is still captured ("BauO NRW",
+  // "LBauO M-V", "BauO Bln") but a verbose parenthetical / lowercase
+  // continuation is NOT swallowed. Previously `(?:\s+\S+)?` greedily ate
+  // "(vereinfachtes" out of "§ 66 LBauO (vereinfachtes Genehmigungsverfahren)",
+  // yielding the mangled "§ 66 LBauO (vereinfachtes". Backward-compatible for
+  // every existing honored value (BayBO Art. nn uses the art branch below).
+  const para = s.match(
+    /§\s*\d+[a-z]?(?:\s+Abs\.\s*\d+)?\s+\S+(?:\s+[A-ZÄÖÜ][\wÄÖÜäöüß.-]*)?/u,
+  )
   if (para) return para[0].replace(/\s+/g, ' ').trim()
   const art = s.match(/BayBO\s+Art\.\s*\d+[a-z]?/u)
   if (art) return art[0]
