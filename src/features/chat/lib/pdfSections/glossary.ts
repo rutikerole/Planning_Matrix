@@ -150,11 +150,23 @@ function stateEntries(bundeslandLower: string | null | undefined): GlossaryEntry
       },
     ]
   }
+  // T-01 audit YEL-3 / RLP glossary fix: the term must name the state BUILDING
+  // CODE (LBauO/BauO/…) — what the description actually glosses — not the
+  // Bauvorlagen/inspection regulation (`bauVorlagenAct`). For RLP that mislabel
+  // was glaring ("BauuntPrüfVO … state building code"); it was latently wrong
+  // for all 15 non-Bayern substantive states. Derive the code short-name from
+  // permitFormCitation (e.g. "§ 63 LBauO" → "LBauO", "§ 70 BauO NRW" →
+  // "BauO NRW"); fall back to bauVorlagenAct only if there is no §/Art. citation
+  // to strip. The structural § (which for RLP lives in BauuntPrüfVO) is now
+  // framed as a separate "structural proof per …" clause, not as the code.
+  const stripped = cit.permitFormCitation.replace(/^(§|Art\.)\s*\S+\s+/, '').trim()
+  const codeLabel =
+    stripped && stripped !== cit.permitFormCitation ? stripped : cit.bauVorlagenAct
   return [
     {
-      term: `${cit.bauVorlagenAct} · ${cit.labelDe}`,
-      en: `${cit.labelEn} state building code (e.g. ${cit.permitFormCitation} permit form, ${cit.structuralCertCitation} structural).`,
-      de: `Landesbauordnung ${cit.labelDe} (z.B. ${cit.permitFormCitation} Bauantrag, ${cit.structuralCertCitation} Tragwerk).`,
+      term: `${codeLabel} · ${cit.labelDe}`,
+      en: `${cit.labelEn} state building code (e.g. ${cit.permitFormCitation} permit form; structural proof per ${cit.structuralCertCitation}).`,
+      de: `Landesbauordnung ${cit.labelDe} (z.B. ${cit.permitFormCitation} Bauantrag; Standsicherheitsnachweis nach ${cit.structuralCertCitation}).`,
     },
     {
       term: `${cit.denkmalSchutzAct} · Denkmalschutz`,
