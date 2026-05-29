@@ -629,11 +629,16 @@ async function runCrossStateBleed(): Promise<{ passed: number; failed: number }>
     // promised a regional adjustment the formula does not apply.
     // pdf-parse may split the rendered line across newlines on wrap;
     // use a token-pair check ([\s\S]) to survive that.
+    // T-01 audit W7 — Berlin is a non-Bayern state, so the cost basis line now
+    // names the München baseline + "regional calibration pending" instead of
+    // the old "German baseline (regional variance)" (which falsely implied a
+    // nationwide calibration the engine does not apply). Bayern keeps its own
+    // "Bayern baseline" framing. Still the Bug-I honesty contract, new wording.
     const honestBasisRe = lang === 'en'
-      ? /German\s+baseline[\s\S]{0,30}regional\s+variance/u
-      : /deutscher\s+Basiswert[\s\S]{0,30}regionale\s+Varianz/u
+      ? /München\s+baseline[\s\S]{0,40}regional\s+calibration\s+pending/u
+      : /München-Basiswert[\s\S]{0,40}regionale\s+Kalibrierung/u
     const honestBasisHit = honestBasisRe.test(text)
-    const honestBasisMsg = `Berlin ${lang}: cost basis line uses honest "German baseline" framing (Bug I)`
+    const honestBasisMsg = `Berlin ${lang}: cost basis line uses honest München-baseline framing (Bug I / T-01 W7)`
     if (honestBasisHit) { console.log(`  ✓ ${honestBasisMsg}`); passed++ }
     else {
       const ctx = lang === 'en'

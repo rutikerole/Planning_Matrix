@@ -393,6 +393,41 @@ export async function buildExportPdf({
     const f = factsEarly.find((x) => x.key === key)
     return typeof f?.value === 'string' ? f.value : undefined
   }
+  // T-01 RED-1 — broadened procedure-verdict pickup.
+  //
+  // The persona names its procedure conclusion under FREE-FORM, walk-varying
+  // fact keys that the four explicit reads below do NOT cover: the T-01 Bayern
+  // walk emitted it as `procedure_likely` + `verfahren` ("BayBO Art. 59
+  // vereinfachtes …"), the T-01 RLP walk as `verfahrensart_hypothese` ("§ 66
+  // LBauO (vereinfachtes …)"). Neither matched `verfahren_indikation` /
+  // PROCEDURE.TYPE / verfahren.typ / verfahren_typ, so resolveProcedure fell to
+  // its generic "regulär · ASSUMED" branch — and Section-05 + Legal-Area-B +
+  // the synthesized Key-Data "Verfahren Indikation" row contradicted the
+  // persona's vereinfacht verdict rendered alongside them (BY Art.60 vs Art.59,
+  // RLP § 70 vs § 66). These keys exist nowhere in the codebase; they are
+  // model-emitted at runtime, so an enumerated list cannot keep up — we scan by
+  // shape instead. The matcher is anchored + excludes non-verdict keys
+  // (`verfahren_genehmigungspflichtig`, `procedure_freistellung_excluded`).
+  // resolveProcedure only acts on a permit-free/simplified verdict and never
+  // downgrades a real obligation, so a regulär/blocked case falls through
+  // unchanged.
+  //
+  // NOTE: resolveProcedure.ts's v1.0.18 header still claims "Bayern resolves via
+  // detectProcedure … so it never reaches the generic branch" — that comment is
+  // now STALE for the PDF path (Bayern T-01 DID reach it pre-fix). This gate is
+  // what actually keeps Bayern (and every state) off the generic branch when the
+  // persona stated a verdict. See resolveProcedure.ts:412-462.
+  const PROCEDURE_VERDICT_KEY =
+    /^(verfahren(typ|indikation|sart\w*)?|procedure(likely|type|typ|vereinfacht\w*)?)$/
+  const procedureVerdictFromFacts = (): string | undefined => {
+    const f = factsEarly.find(
+      (x) =>
+        PROCEDURE_VERDICT_KEY.test(x.key.toLowerCase().replace(/[._]/g, '')) &&
+        typeof x.value === 'string' &&
+        x.value.trim().length > 0,
+    )
+    return typeof f?.value === 'string' ? f.value : undefined
+  }
   const procedureCase: ProcedureCase = {
     intent: intentFromTemplate(state.templateId ?? 'T-03'),
     bundesland: (project.bundesland ?? 'nrw') as BundeslandCode,
@@ -428,7 +463,11 @@ export async function buildExportPdf({
       factStr('verfahren_indikation') ??
       factStr('PROCEDURE.TYPE') ??
       factStr('verfahren.typ') ??
-      factStr('verfahren_typ'),
+      factStr('verfahren_typ') ??
+      // T-01 RED-1 — last-resort shape scan for the persona's free-form
+      // verdict key (procedure_likely / verfahren / verfahrensart_hypothese …).
+      // Tried AFTER the explicit keys so existing priority is unchanged.
+      procedureVerdictFromFacts(),
   }
   const procedureDecision: ProcedureDecision = resolveProcedure(procedureCase)
   // v1.0.21 Bug E — derive an explicit BLOCKER summary that the
