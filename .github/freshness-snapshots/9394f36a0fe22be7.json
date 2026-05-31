@@ -1,7 +1,7 @@
 {
   "url": "https://www.muenchen.info/plan/bebauungsplan/t_8190_1180.pdf",
   "fingerprint": "6bd9106895a3d6d13ce89de877574faac7cba6500443e45ba4827e61318c895d",
-  "lastChecked": "2026-05-24",
+  "lastChecked": "2026-05-31",
   "lastChanged": "2026-05-03",
   "statusHistory": [
     {
@@ -19,6 +19,10 @@
     {
       "status": "UNCHANGED",
       "date": "2026-05-24"
+    },
+    {
+      "status": "UNCHANGED",
+      "date": "2026-05-31"
     }
   ]
 }

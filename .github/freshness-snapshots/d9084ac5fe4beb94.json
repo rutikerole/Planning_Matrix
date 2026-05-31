@@ -1,7 +1,7 @@
 {
   "url": "https://www.muenchen.info/plan/bebauungsplan/t_7038_337.pdf",
   "fingerprint": "3b7640b9d5020511673ddff89042262d70283cbd3de33f029b5b34a7b29303be",
-  "lastChecked": "2026-05-24",
+  "lastChecked": "2026-05-31",
   "lastChanged": "2026-05-03",
   "statusHistory": [
     {
@@ -19,6 +19,10 @@
     {
       "status": "UNCHANGED",
       "date": "2026-05-24"
+    },
+    {
+      "status": "UNCHANGED",
+      "date": "2026-05-31"
     }
   ]
 }

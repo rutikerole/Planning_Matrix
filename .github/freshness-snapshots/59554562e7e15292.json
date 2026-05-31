@@ -1,8 +1,8 @@
 {
   "url": "https://www.gesetze-bayern.de/Content/Document/BayBO",
-  "fingerprint": "0fc8852081bb76e2818d21ec16432e6e60ad4de7745ecc216c0fcba85efa02de",
-  "lastChecked": "2026-05-24",
-  "lastChanged": "2026-05-24",
+  "fingerprint": "6c3c12698be775e58ac54962c7512eb26d39d2ee3a3a6c753fa047bd09e4c2f8",
+  "lastChecked": "2026-05-31",
+  "lastChanged": "2026-05-31",
   "statusHistory": [
     {
       "status": "UNCHANGED",
@@ -23,6 +23,10 @@
     {
       "status": "CHANGED",
       "date": "2026-05-24"
+    },
+    {
+      "status": "CHANGED",
+      "date": "2026-05-31"
     }
   ]
 }

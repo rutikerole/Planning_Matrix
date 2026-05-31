@@ -1,8 +1,8 @@
 {
   "url": "https://www.gesetze-bayern.de/Content/Document/BayDSchG",
-  "fingerprint": "2ade0fcf429dd703d6cacd7a961c121916057ffdc54cc0465b0fd52e561176f3",
-  "lastChecked": "2026-05-24",
-  "lastChanged": "2026-05-24",
+  "fingerprint": "247407b6283cb75cae6a6d37e809ca53bcfacc444df40cf46995f239413b2b64",
+  "lastChecked": "2026-05-31",
+  "lastChanged": "2026-05-31",
   "statusHistory": [
     {
       "status": "UNCHANGED",
@@ -23,6 +23,10 @@
     {
       "status": "CHANGED",
       "date": "2026-05-24"
+    },
+    {
+      "status": "CHANGED",
+      "date": "2026-05-31"
     }
   ]
 }

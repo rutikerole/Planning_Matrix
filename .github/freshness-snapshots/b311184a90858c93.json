@@ -1,7 +1,7 @@
 {
   "url": "https://www.muenchen.info/plan/bebauungsplan/t_8874_1898b.pdf",
   "fingerprint": "46676949705edc0375ca61ad2364396b31fd1d44e0bc6706462da38e49cef6f0",
-  "lastChecked": "2026-05-24",
+  "lastChecked": "2026-05-31",
   "lastChanged": "2026-05-03",
   "statusHistory": [
     {
@@ -19,6 +19,10 @@
     {
       "status": "UNCHANGED",
       "date": "2026-05-24"
+    },
+    {
+      "status": "UNCHANGED",
+      "date": "2026-05-31"
     }
   ]
 }

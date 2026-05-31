@@ -1,7 +1,7 @@
 {
   "url": "https://www.muenchen.info/plan/bebauungsplan/t_8050_1164.pdf",
   "fingerprint": "ed0512310f9c3d52c8e44a73f728484b129a20eea803b8fedb01c63aedabaadd",
-  "lastChecked": "2026-05-24",
+  "lastChecked": "2026-05-31",
   "lastChanged": "2026-05-03",
   "statusHistory": [
     {
@@ -19,6 +19,10 @@
     {
       "status": "UNCHANGED",
       "date": "2026-05-24"
+    },
+    {
+      "status": "UNCHANGED",
+      "date": "2026-05-31"
     }
   ]
 }

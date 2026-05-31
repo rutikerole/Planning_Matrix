@@ -1,7 +1,7 @@
 {
   "url": "https://www.adbv-muenchen.de/",
   "fingerprint": "5847826f6dfc360bd2159425661c7fcf2c9f36410d7f2d1a05bb5a106c70be87",
-  "lastChecked": "2026-05-24",
+  "lastChecked": "2026-05-31",
   "lastChanged": "2026-05-24",
   "statusHistory": [
     {
@@ -23,6 +23,10 @@
     {
       "status": "CHANGED",
       "date": "2026-05-24"
+    },
+    {
+      "status": "UNCHANGED",
+      "date": "2026-05-31"
     }
   ]
 }
