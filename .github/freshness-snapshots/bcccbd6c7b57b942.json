@@ -1,7 +1,7 @@
 {
   "url": "https://www.muenchen.info/plan/bebauungsplan/p_8530_1505a.pdf",
   "fingerprint": "c7c17a83ec63836b8a25a0e34547aa9880bbac2b95e1051199d98f4ff72beb52",
-  "lastChecked": "2026-05-31",
+  "lastChecked": "2026-06-07",
   "lastChanged": "2026-05-03",
   "statusHistory": [
     {
@@ -23,6 +23,10 @@
     {
       "status": "UNCHANGED",
       "date": "2026-05-31"
+    },
+    {
+      "status": "UNCHANGED",
+      "date": "2026-06-07"
     }
   ]
 }

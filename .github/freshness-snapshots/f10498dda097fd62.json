@@ -1,7 +1,7 @@
 {
   "url": "https://stadt.muenchen.de/infos/freiflaechengestaltung-in-muenchen.html",
   "fingerprint": "ca14e4e1d422dcc654b54c60d0f4adf02d27963e47397b11e1f3e5f2e6905d02",
-  "lastChecked": "2026-05-31",
+  "lastChecked": "2026-06-07",
   "lastChanged": "2026-05-24",
   "statusHistory": [
     {
@@ -27,6 +27,10 @@
     {
       "status": "UNCHANGED",
       "date": "2026-05-31"
+    },
+    {
+      "status": "UNCHANGED",
+      "date": "2026-06-07"
     }
   ]
 }

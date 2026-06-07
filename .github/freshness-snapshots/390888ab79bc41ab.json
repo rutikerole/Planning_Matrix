@@ -1,7 +1,7 @@
 {
   "url": "https://www.byak.de/planen-und-bauen/architektensuche.html",
   "fingerprint": "b703853619eeda51328b9841965662b952d4daa83511328759afbb9d702bad1e",
-  "lastChecked": "2026-05-31",
+  "lastChecked": "2026-06-07",
   "lastChanged": "2026-05-31",
   "statusHistory": [
     {
@@ -27,6 +27,10 @@
     {
       "status": "CHANGED",
       "date": "2026-05-31"
+    },
+    {
+      "status": "UNCHANGED",
+      "date": "2026-06-07"
     }
   ]
 }
