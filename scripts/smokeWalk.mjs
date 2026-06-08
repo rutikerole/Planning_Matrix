@@ -3486,6 +3486,67 @@ async function runStaticGate() {
   }
   results.push(failures('Sprint 0 P1-A + addendum: all 4 cost surfaces share one area AND one procedure resolver', areaChecks))
 
+  // ── Sprint 1 (RED-1 + Y-1) — single facts-first procedure + cost resolvers ──
+  // Lock the structural fixes so they can't silently regress:
+  //  • resolveProcedure honors the reguläres verdict AND the Sonderbau rule;
+  //  • buildProcedureCase is the ONE ProcedureCase builder (no inline rebuilds,
+  //    no resurrected dead `sonderbau_scope` key);
+  //  • resolveHeadlineCostRange is the ONE headline cost-range source.
+  const resolveProcLegalSrc = await readFileText('src/legal/resolveProcedure.ts')
+  const exportPdfSrcS1 = await readFileText('src/features/chat/lib/exportPdf.ts')
+  const resolveProcsSrcS1 = await readFileText('src/features/result/lib/resolveProcedures.ts')
+  const resolveDocsSrcS1 = await readFileText('src/features/result/lib/resolveDocuments.ts')
+  const ataGlanceSrcS1 = await readFileText('src/features/result/components/Cards/AtAGlance.tsx')
+  const execReadSrcS1 = await readFileText('src/features/result/lib/composeExecutiveRead.ts')
+  const costNormsSrcS1 = await readFileText('src/features/result/lib/costNormsMuenchen.ts')
+  results.push(failures('Sprint 1 RED-1: facts-first procedure resolver (reguläres + Sonderbau, one builder)', [
+    {
+      ok: /export function buildProcedureCase/.test(resolveProcLegalSrc),
+      msg: 'resolveProcedure must export the shared buildProcedureCase',
+    },
+    {
+      ok: /sonderbau_count/.test(resolveProcLegalSrc) && /detectSonderbauCount/.test(resolveProcLegalSrc),
+      msg: 'resolveProcedure must wire the Sonderbau rule via sonderbau_count / detectSonderbauCount (not the dead sonderbau_scope)',
+    },
+    {
+      ok: /\/regul\[äa\]r\|standard\//.test(resolveProcLegalSrc) || /regul\[äa\]r\|standard/.test(resolveProcLegalSrc),
+      msg: 'resolveProcedure must honor the reguläres/standard verdict (the third verdict direction)',
+    },
+    {
+      // code usage (field decl / property access / string key), not prose mentions
+      ok: !/sonderbau_scope\s*[?:]|[.']sonderbau_scope/.test(resolveProcLegalSrc),
+      msg: 'the dead sonderbau_scope key must stay removed from resolveProcedure (code usage)',
+    },
+    // exportPdf, resolveProcedures, resolveDocuments all use the ONE builder
+    ...[
+      ['exportPdf.ts', exportPdfSrcS1],
+      ['resolveProcedures.ts', resolveProcsSrcS1],
+      ['resolveDocuments.ts', resolveDocsSrcS1],
+    ].flatMap(([name, src]) => [
+      {
+        ok: /buildProcedureCase\(/.test(src),
+        msg: `${name} must build its ProcedureCase via the shared buildProcedureCase`,
+      },
+      {
+        ok: !/sonderbau_scope\s*[?:]|[.']sonderbau_scope/.test(src),
+        msg: `${name} must not reference the dead sonderbau_scope key (code usage)`,
+      },
+    ]),
+    // Y-1 — headline cost range single source
+    {
+      ok: /export function resolveHeadlineCostRange/.test(costNormsSrcS1),
+      msg: 'costNormsMuenchen must export resolveHeadlineCostRange',
+    },
+    {
+      ok: /resolveHeadlineCostRange\(/.test(ataGlanceSrcS1),
+      msg: 'At-a-Glance must render its headline cost via resolveHeadlineCostRange (band for T-02/06/07/08)',
+    },
+    {
+      ok: /resolveHeadlineCostRange\(/.test(execReadSrcS1),
+      msg: 'Executive Read must render its headline cost via resolveHeadlineCostRange',
+    },
+  ]))
+
   // ── v1.0.11 Bug 22 — PDF ligature corruption fix ──────────────────
   // The brand-TTF path previously bypassed sanitization entirely, so
   // pdf-lib + fontkit could auto-apply OpenType `liga` GSUB. The

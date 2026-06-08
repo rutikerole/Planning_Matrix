@@ -120,9 +120,8 @@ export interface ProcedureCase {
    *  forces the full regular procedure (§ 65 BauO NRW etc.) and removes
    *  Genehmigungsfreistellung (§ 63) and the simplified procedure (§ 64) from
    *  eligibility — the German Baurecht rule a GK5 + Sonderbau building must
-   *  follow. Replaces the dead `sonderbau_scope` boolean, which keyed off a
-   *  fact the persona never wrote (`factBool('sonderbau_scope')` was always
-   *  false), so the rule never fired. */
+   *  follow. Replaces the dead boolean that keyed off a fact the persona never
+   *  wrote (the prior factBool read was always false), so the rule never fired. */
   sonderbau_count?: number
   /** v1.0.28 Bug 52 — the persona's synthesized procedure conclusion
    *  (e.g. "verfahrensfrei nach § 62 BauO NRW"), read from the
