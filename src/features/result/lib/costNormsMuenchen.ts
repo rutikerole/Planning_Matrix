@@ -268,8 +268,8 @@ export function describeCostInputs(
   } else {
     parts.push(
       lang === 'en'
-        ? 'estimate on München benchmarks (regional calibration pending)'
-        : 'Schätzung auf München-Richtwerte (regionale Kalibrierung ausstehend)',
+        ? 'orientation value (regional calibration pending)'
+        : 'Richtwert (regionale Kalibrierung ausstehend)',
     )
   }
   if (inputs.klasse !== 'unknown') {

@@ -629,16 +629,20 @@ async function runCrossStateBleed(): Promise<{ passed: number; failed: number }>
     // promised a regional adjustment the formula does not apply.
     // pdf-parse may split the rendered line across newlines on wrap;
     // use a token-pair check ([\s\S]) to survive that.
-    // T-01 audit W7 — Berlin is a non-Bayern state, so the cost basis line now
-    // names the München baseline + "regional calibration pending" instead of
-    // the old "German baseline (regional variance)" (which falsely implied a
-    // nationwide calibration the engine does not apply). Bayern keeps its own
-    // "Bayern baseline" framing. Still the Bug-I honesty contract, new wording.
+    // T-01 audit W7 — Berlin is a non-Bayern state, so the cost basis line is
+    // framed as an uncalibrated orientation value + "regional calibration
+    // pending" instead of the old "German baseline (regional variance)" (which
+    // falsely implied a nationwide calibration the engine does not apply).
+    // Option A (pdf-matrix München-caption fix) — the city name "München" is
+    // DROPPED from non-Bayern captions ("orientation value" / "Richtwert"); the
+    // honesty contract is now the "regional calibration pending" phrase. Assert
+    // that honest framing IS present AND that "München" is NOT (lock the city
+    // name out of non-Bayern deliverables). Bayern keeps its own framing.
     const honestBasisRe = lang === 'en'
-      ? /München\s+baseline[\s\S]{0,40}regional\s+calibration\s+pending/u
-      : /München-Basiswert[\s\S]{0,40}regionale\s+Kalibrierung/u
-    const honestBasisHit = honestBasisRe.test(text)
-    const honestBasisMsg = `Berlin ${lang}: cost basis line uses honest München-baseline framing (Bug I / T-01 W7)`
+      ? /orientation\s+value[\s\S]{0,40}regional\s+calibration\s+pending/u
+      : /Richtwert[\s\S]{0,40}regionale\s+Kalibrierung/u
+    const honestBasisHit = honestBasisRe.test(text) && !/München/u.test(text)
+    const honestBasisMsg = `Berlin ${lang}: cost basis = honest no-city orientation framing, no München (Bug I / T-01 W7 / Option A)`
     if (honestBasisHit) { console.log(`  ✓ ${honestBasisMsg}`); passed++ }
     else {
       const ctx = lang === 'en'
