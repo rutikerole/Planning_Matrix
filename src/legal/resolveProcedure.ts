@@ -150,6 +150,55 @@ export function extractProcedureCitation(s: string): string | null {
   return null
 }
 
+/**
+ * Sprint 0 (P2-C / RED-1) — THE single resolver for the persona's
+ * procedure-type verdict out of project facts. RED-1 was the PDF and the
+ * result page disagreeing because each read the verdict differently: the
+ * PDF gained a free-form shape-scan (T-01 fix), but the result page still
+ * hardcoded four keys and fell through to a generic "Landesbauordnung
+ * {Land}" stub on any other key the model emits (procedure_likely,
+ * verfahren, verfahrensart_hypothese …). Both surfaces now call THIS, so
+ * the verdict can never drift between them again.
+ *
+ * Resolution order:
+ *   1. the four canonical keys, in priority order (verfahren_indikation
+ *      wins over verfahren.typ — preserves the established precedence);
+ *   2. a shape-scan backstop matching any free-form verdict key the
+ *      persona emits. Key match is case- and dot/underscore-insensitive
+ *      and anchored, so non-verdict keys (verfahren_genehmigungspflichtig,
+ *      procedure_freistellung_excluded) are excluded.
+ */
+const PROCEDURE_VERDICT_KEY =
+  /^(verfahren(typ|indikation|sart\w*)?|procedure(likely|type|typ|vereinfacht\w*)?)$/
+
+const EXPLICIT_VERDICT_KEYS = [
+  'verfahren_indikation',
+  'PROCEDURE.TYPE',
+  'verfahren.typ',
+  'verfahren_typ',
+] as const
+
+export function resolveVerfahrensIndikation(
+  facts: ReadonlyArray<{ key: string; value: unknown }> | undefined,
+): string | undefined {
+  if (!facts || facts.length === 0) return undefined
+  const asStr = (v: unknown): string | undefined =>
+    typeof v === 'string' && v.trim().length > 0 ? v : undefined
+  // 1. Canonical keys, in priority order.
+  for (const key of EXPLICIT_VERDICT_KEYS) {
+    const hit = asStr(facts.find((f) => f.key === key)?.value)
+    if (hit) return hit
+  }
+  // 2. Free-form shape-scan backstop (RED-1): first fact whose normalized
+  //    key matches the verdict-key shape and carries a non-empty string.
+  const scan = facts.find(
+    (f) =>
+      PROCEDURE_VERDICT_KEY.test(f.key.toLowerCase().replace(/[._]/g, '')) &&
+      asStr(f.value) !== undefined,
+  )
+  return asStr(scan?.value)
+}
+
 // v1.0.21 Bug E — describe an active hard blocker for the renderer.
 export interface ProcedureHardBlocker {
   /** Slug for the blocker type. */

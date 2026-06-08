@@ -3,11 +3,11 @@ import type { ProjectRow } from '@/types/db'
 import type { ProjectState } from '@/types/projectState'
 import {
   buildCostBreakdown,
-  detectAreaSqm,
   detectKlasse,
-  detectProcedure,
   formatEurRange,
+  resolveCostAreaSqm,
 } from '../../lib/costNormsMuenchen'
+import { resolveCostProcedureType } from '../../lib/resolveProcedures'
 import { useResolvedRoles } from '../../hooks/useResolvedRoles'
 import { useResolvedProcedures } from '../../hooks/useResolvedProcedures'
 import { computeOpenItems } from '../../lib/computeOpenItems'
@@ -80,9 +80,15 @@ export function AtAGlance({ project, state }: Props) {
     .map((f) => `${f.key} ${typeof f.value === 'string' ? f.value : ''}`)
     .join(' ')
     .toLowerCase()
-  const procedureType = detectProcedure(primaryProcedure?.rationale_de ?? '')
+  // Sprint 0 addendum — shared cost procedure-type resolver (same canonical
+  // resolveProcedures the procedure label above already uses), so cost +
+  // timeline + the other surfaces can't diverge.
+  const procedureType = resolveCostProcedureType(project, state)
   const klasseDetected = detectKlasse(corpus)
-  const areaSqm = detectAreaSqm(corpus)
+  // Sprint 0 (P1-A) — single shared cost-area resolver (template-aware,
+  // with corpus-regex backstop) so this card cannot diverge from the
+  // Cost tab / PDF / Executive Read for a T-02 MFH.
+  const areaSqm = resolveCostAreaSqm(facts, state.templateId)
   const cost = buildCostBreakdown(procedureType, klasseDetected, {
     areaSqm,
     bundesland: project.bundesland,

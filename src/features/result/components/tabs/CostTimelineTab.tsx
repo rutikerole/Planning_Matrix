@@ -5,14 +5,13 @@ import {
   buildCostBreakdown,
   costBandFor,
   describeCostInputs,
-  detectAreaSqm,
   detectKlasse,
-  detectProcedure,
   formatEurRange,
-  resolveAreaSqmByTemplate,
+  resolveCostAreaSqm,
   resolveInputs,
   type CostBreakdown,
 } from '../../lib/costNormsMuenchen'
+import { resolveCostProcedureType } from '../../lib/resolveProcedures'
 import { PROCEDURE_PHASES, totalPhaseWeight } from '../../lib/composeTimeline'
 import { findCostRationale } from '@/data/costRationales'
 import { findTimelineAnnotation } from '@/data/timelineAnnotations'
@@ -70,27 +69,27 @@ export function CostTimelineTab({ project, state }: Props) {
   const lang = (i18n.resolvedLanguage ?? 'de') as 'de' | 'en'
 
   const procedures = state.procedures ?? []
-  const primaryRationale =
-    procedures.find((p) => p.status === 'erforderlich')?.rationale_de ??
-    procedures[0]?.rationale_de ??
-    ''
-  const procedure = detectProcedure(primaryRationale)
+  // Sprint 0 addendum — shared cost procedure-type resolver (canonical
+  // resolveProcedures → primary → detectProcedure) used by every cost surface
+  // so the procedure multiplier can never diverge from the PDF / At-a-Glance /
+  // Executive Read (mirrors resolveCostAreaSqm for the area axis).
+  const procedure = resolveCostProcedureType(project, state)
   const corpus = (state.facts ?? [])
     .map((f) => `${f.key} ${typeof f.value === 'string' ? f.value : ''}`)
     .join(' ')
     .toLowerCase()
   const klasse = detectKlasse(corpus)
-  // v1.0.11 Bug 24 — try the per-template field map first (catches
-  // T-03's fassadenflaeche_m2 numeric value where the corpus regex
-  // misses), then fall back to the corpus regex (Bayern T-01 path
-  // and any template whose persona emits unit-suffixed strings).
-  const areaSqm =
-    resolveAreaSqmByTemplate(state.facts, state.templateId) ??
-    detectAreaSqm(corpus)
+  // Sprint 0 (P1-A) — single shared cost-area resolver (template-aware
+  // first, corpus-regex backstop) used by every cost surface so the
+  // Cost tab can never diverge from the PDF / At-a-Glance / Executive Read.
+  const areaSqm = resolveCostAreaSqm(state.facts, state.templateId)
   const opts = { areaSqm, bundesland: project.bundesland }
   const cost = buildCostBreakdown(procedure, klasse, opts)
   const inputs = resolveInputs(procedure, klasse, opts)
-  const inputsLabel = describeCostInputs(inputs, lang)
+  // Sprint 0 addendum — when no area resolved from facts, the engine uses the
+  // BASE_AREA_SQM default; label it "(Annahme)" so the caption is as honest as
+  // the PDF's no-area phrasing (numbers already agree).
+  const inputsLabel = describeCostInputs(inputs, lang, areaSqm == null)
   // v1.0.28 Bug 53 — T-05 demolition is cost-template-blind (HOAI new-build
   // engine + 180 m² silent default + a GEG energy row). No sourced BKI
   // demolition factors exist (C11_DATA_GAPS GAP-4) → honest stub, not wrong

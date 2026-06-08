@@ -1,6 +1,9 @@
 import type { AreaState, ProjectState } from '@/types/projectState'
 import { getStateCitations } from '@/legal/stateCitations'
-import { extractProcedureCitation } from '@/legal/resolveProcedure'
+import {
+  extractProcedureCitation,
+  resolveVerfahrensIndikation,
+} from '@/legal/resolveProcedure'
 
 export type LegalRelevance = 'HIGH' | 'PARTIAL' | 'NONE'
 
@@ -215,15 +218,12 @@ export function composeLegalDomains(
     // across every key convention (e.g. T-02 Hamburg's dotted `verfahren.typ`).
     // NOT sourced from state.procedures (procedures[0] can be less precise
     // than the deterministic verdict).
-    const verfahrenFact = facts.find(
-      (f) =>
-        f.key === 'verfahren_indikation' ||
-        f.key === 'PROCEDURE.TYPE' ||
-        f.key === 'verfahren.typ' ||
-        f.key === 'verfahren_typ',
-    )
-    const verfahrenStr =
-      typeof verfahrenFact?.value === 'string' ? verfahrenFact.value : ''
+    // Sprint 0 (P2-C / RED-1) — shared verdict resolver, identical to the PDF
+    // (exportPdf). Covers the canonical keys AND the free-form keys the persona
+    // emits (procedure_likely / verfahren / verfahrensart_hypothese …) so this
+    // domain row can no longer fall through to the generic "Landesbauordnung
+    // {Land}" stub while the PDF shows the real verdict for the same project.
+    const verfahrenStr = resolveVerfahrensIndikation(facts) ?? ''
     const isFree = /verfahrensfrei|permit-free|genehmigungsfrei/i.test(verfahrenStr)
     let label: string
     let status: string

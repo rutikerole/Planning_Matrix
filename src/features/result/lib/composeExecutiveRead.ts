@@ -1,15 +1,14 @@
 import type { ProjectRow } from '@/types/db'
 import type { Fact, ProjectState } from '@/types/projectState'
-import { deriveBaselineProcedure } from './deriveBaselineProcedure'
 import { computeOpenItems } from './computeOpenItems'
 import { approximateTotalWeeks } from './composeTimeline'
 import {
   buildCostBreakdown,
-  detectAreaSqm,
   detectKlasse,
-  detectProcedure,
   formatEurRange,
+  resolveCostAreaSqm,
 } from './costNormsMuenchen'
+import { resolveProcedures, resolveCostProcedureType } from './resolveProcedures'
 
 interface Args {
   project: ProjectRow
@@ -61,11 +60,11 @@ export function composeExecutiveRead({
     return { paragraphs: [], isPopulated: false }
   }
 
-  // Resolve procedures (persona or baseline)
-  const procs = state.procedures && state.procedures.length > 0
-    ? state.procedures
-    : deriveBaselineProcedure({ intent, bundesland: project.bundesland })
-  const isBaselineProc = !state.procedures || state.procedures.length === 0
+  // Resolve procedures via the canonical resolver (persona when present, else
+  // the labelled baseline) — same source the cost procedure-type resolver uses,
+  // so the narrated procedure and the costed procedure cannot disagree.
+  const { procedures: procs, isFromState } = resolveProcedures(project, state)
+  const isBaselineProc = !isFromState
   const primary =
     procs.find((p) => p.status === 'erforderlich') ?? procs[0]
   const fallback = procs.find((p) => p.id !== primary?.id)
@@ -75,9 +74,14 @@ export function composeExecutiveRead({
     .map((f) => `${f.key} ${typeof f.value === 'string' ? f.value : ''}`)
     .join(' ')
     .toLowerCase()
-  const procedureType = detectProcedure(primary?.rationale_de ?? '')
+  // Sprint 0 addendum — shared cost procedure-type resolver so the executive
+  // read's cost can't diverge from the Cost tab / PDF / At-a-Glance. Resolves
+  // the same primary (persona or labelled baseline) this read already narrates.
+  const procedureType = resolveCostProcedureType(project, state)
   const klasse = detectKlasse(corpus)
-  const areaSqm = detectAreaSqm(corpus)
+  // Sprint 0 (P1-A) — single shared cost-area resolver so the executive
+  // read cannot diverge from the Cost tab / PDF / At-a-Glance.
+  const areaSqm = resolveCostAreaSqm(facts, state.templateId)
   const cost = buildCostBreakdown(procedureType, klasse, {
     areaSqm,
     bundesland: project.bundesland,
