@@ -134,6 +134,7 @@ import {
   procedureLabel,
   procedureStatusLabel,
   resolveProcedure,
+  resolveVerfahrensIndikation,
   type ProcedureCase,
   type ProcedureDecision,
 } from '@/legal/resolveProcedure'
@@ -386,47 +387,6 @@ export async function buildExportPdf({
     const n = Number(f.value)
     return Number.isFinite(n) ? n : undefined
   }
-  // v1.0.28 Bug 52 — string fact getter; reads the persona's procedure
-  // conclusion so resolveProcedure can honor a verfahrensfrei verdict.
-  const factStr = (key: string): string | undefined => {
-    const f = factsEarly.find((x) => x.key === key)
-    return typeof f?.value === 'string' ? f.value : undefined
-  }
-  // T-01 RED-1 — broadened procedure-verdict pickup.
-  //
-  // The persona names its procedure conclusion under FREE-FORM, walk-varying
-  // fact keys that the four explicit reads below do NOT cover: the T-01 Bayern
-  // walk emitted it as `procedure_likely` + `verfahren` ("BayBO Art. 59
-  // vereinfachtes …"), the T-01 RLP walk as `verfahrensart_hypothese` ("§ 66
-  // LBauO (vereinfachtes …)"). Neither matched `verfahren_indikation` /
-  // PROCEDURE.TYPE / verfahren.typ / verfahren_typ, so resolveProcedure fell to
-  // its generic "regulär · ASSUMED" branch — and Section-05 + Legal-Area-B +
-  // the synthesized Key-Data "Verfahren Indikation" row contradicted the
-  // persona's vereinfacht verdict rendered alongside them (BY Art.60 vs Art.59,
-  // RLP § 70 vs § 66). These keys exist nowhere in the codebase; they are
-  // model-emitted at runtime, so an enumerated list cannot keep up — we scan by
-  // shape instead. The matcher is anchored + excludes non-verdict keys
-  // (`verfahren_genehmigungspflichtig`, `procedure_freistellung_excluded`).
-  // resolveProcedure only acts on a permit-free/simplified verdict and never
-  // downgrades a real obligation, so a regulär/blocked case falls through
-  // unchanged.
-  //
-  // NOTE: resolveProcedure.ts's v1.0.18 header still claims "Bayern resolves via
-  // detectProcedure … so it never reaches the generic branch" — that comment is
-  // now STALE for the PDF path (Bayern T-01 DID reach it pre-fix). This gate is
-  // what actually keeps Bayern (and every state) off the generic branch when the
-  // persona stated a verdict. See resolveProcedure.ts:412-462.
-  const PROCEDURE_VERDICT_KEY =
-    /^(verfahren(typ|indikation|sart\w*)?|procedure(likely|type|typ|vereinfacht\w*)?)$/
-  const procedureVerdictFromFacts = (): string | undefined => {
-    const f = factsEarly.find(
-      (x) =>
-        PROCEDURE_VERDICT_KEY.test(x.key.toLowerCase().replace(/[._]/g, '')) &&
-        typeof x.value === 'string' &&
-        x.value.trim().length > 0,
-    )
-    return typeof f?.value === 'string' ? f.value : undefined
-  }
   const procedureCase: ProcedureCase = {
     intent: intentFromTemplate(state.templateId ?? 'T-03'),
     bundesland: (project.bundesland ?? 'nrw') as BundeslandCode,
@@ -448,25 +408,15 @@ export async function buildExportPdf({
     mk_gebietsart: factBool('mk_gebietsart'),
     bauvoranfrage_hard_blocker: factBool('bauvoranfrage_hard_blocker'),
     sonderbau_scope: factBool('sonderbau_scope'),
-    // v1.0.28 Bug 52 + v1.0.29.1 Bug 83 — persona's explicit procedure-type
-    // conclusion, read across every fact-key convention. The T-02 Hamburg walk
-    // emitted it under the dotted `verfahren.typ` (PDF Key Data), not
-    // `verfahren_indikation` — so the v1.0.28/29 read missed it and the PDF
-    // fell to the generic "regulär · ASSUMED" branch. NOT sourced from
-    // state.procedures: the Königsallee T-03 fixture proved the persona's
-    // procedures[0] title ("Vereinfachtes Bauantragsverfahren", no §) can
-    // CONTRADICT the more-correct deterministic verdict (verfahrensfrei § 62
-    // via resolveNrwSanierung), which must still win when no explicit
-    // procedure-type fact is present.
-    verfahren_indikation:
-      factStr('verfahren_indikation') ??
-      factStr('PROCEDURE.TYPE') ??
-      factStr('verfahren.typ') ??
-      factStr('verfahren_typ') ??
-      // T-01 RED-1 — last-resort shape scan for the persona's free-form
-      // verdict key (procedure_likely / verfahren / verfahrensart_hypothese …).
-      // Tried AFTER the explicit keys so existing priority is unchanged.
-      procedureVerdictFromFacts(),
+    // Sprint 0 (P2-C / RED-1) — persona's procedure-type verdict, via the
+    // shared resolver (canonical keys in priority order, then a free-form
+    // shape-scan for procedure_likely / verfahren / verfahrensart_hypothese …).
+    // Identical to the result page (composeLegalDomains) so the two surfaces
+    // cannot contradict. NOT sourced from state.procedures: the Königsallee
+    // T-03 fixture proved the persona's procedures[0] title can CONTRADICT the
+    // more-correct deterministic verdict (verfahrensfrei § 62 via
+    // resolveNrwSanierung), which must still win when no verdict fact is present.
+    verfahren_indikation: resolveVerfahrensIndikation(factsEarly),
   }
   const procedureDecision: ProcedureDecision = resolveProcedure(procedureCase)
   // v1.0.21 Bug E — derive an explicit BLOCKER summary that the
