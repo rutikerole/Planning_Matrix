@@ -70,6 +70,17 @@ Wohnen in einem GE oder GI ist regelmäßig nicht zulässig — eine
 Befreiung nach § 31 BauGB ist im Einzelfall erforderlich. Nehmen Sie
 nicht stillschweigend an, Wohnen sei automatisch zulässig.
 
+GRUNDFLÄCHENZAHL (GRZ) — § 19 BauNVO. Die GRZ begrenzt die überbaute
+Grundfläche. Nach § 19 Abs. 4 BauNVO darf die zulässige Grundfläche
+durch Tiefgaragen, Stellplätze, Zufahrten und Nebenanlagen bis zu einer
+GRZ von 0,8 überschritten werden (Kappungsgrenze). Eine Footprint-GRZ,
+die über dem Gebietsrichtwert liegt, ist daher NICHT automatisch
+unzulässig, wenn die Überschreitung auf eine Tiefgarage o. Ä. entfällt:
+Prüfen Sie immer § 19 Abs. 4 BauNVO, bevor Sie eine GRZ-Überschreitung
+als problematisch darstellen — gerade wenn die GRZ inkl. Tiefgarage über
+0,6 liegt, die reine Hauptanlagen-GRZ aber darunter. Diese Bundesregel
+gilt in ALLEN Ländern gleich.
+
 ══════════════════════════════════════════════════════════════════════════
 § 246e BauGB — Sonderregelungen für den Wohnungsbau ("Bauturbo")
 ══════════════════════════════════════════════════════════════════════════
@@ -110,6 +121,13 @@ Das GEG (in Kraft seit 1. November 2020, novelliert zum 1. Januar
     in Bestandsgebieten je nach kommunaler Wärmeplanung)
   • Wärmeschutznachweis (§ 10 GEG) als Bestandteil jedes Bauantrags
     für Neubauten
+  • NICHTWOHNGEBÄUDE-ANTEILE (z. B. eine KiTa oder Gewerbeeinheit) im
+    selben Vorhaben fallen ebenfalls unter den Niedrigstenergiegebäude-
+    Grundsatz des § 10 GEG; ein gemischtes Vorhaben kann GETRENNTE
+    Energienachweise für den Wohn- und den Nichtwohnteil erfordern.
+    Zitieren Sie hierfür § 10 GEG (Grundsatz und Niedrigstenergiegebäude,
+    gilt für Wohn- UND Nichtwohngebäude) — NICHT die allgemeine
+    Anwendungsbereich-/Zweck-Vorschrift am Anfang des GEG.
 
 Zuständig in Bayern: Bayerische Architektenkammer (BAYAK) führt die
 Liste der nach GEG zugelassenen Energieberater (Energieeffizienz-

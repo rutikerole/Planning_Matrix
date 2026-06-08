@@ -3547,6 +3547,61 @@ async function runStaticGate() {
     },
   ]))
 
+  // ── Sprint 2 — fact-capture directive ↔ result-layer key CONTRACT ──
+  // The capture directive lives in the shared persona/federal blocks (which the
+  // chat-turn edge function imports at build time). The LLM behaviour it drives
+  // can't be tested headlessly, but the CONTRACT can: the canonical keys the
+  // directive tells the persona to WRITE must equal the keys the result layer
+  // READS. A future edit that deletes the directive OR renames a key on one side
+  // only would break capture silently — this guard catches both.
+  const personaSrcS2 = await readFileText('src/legal/personaBehaviour.ts')
+  const federalSrcS2 = await readFileText('src/legal/federal.ts')
+  const ataGlanceSrcS2 = await readFileText('src/features/result/components/Cards/AtAGlance.tsx')
+  const resolveProcSrcS2 = await readFileText('src/legal/resolveProcedure.ts')
+  const exportPdfSrcS2 = await readFileText('src/features/chat/lib/exportPdf.ts')
+  results.push(failures('Sprint 2: fact-capture directive present + keys match result layer', [
+    // Directive present in the shared (Bayern-SHA-covered) persona block
+    {
+      ok: /MUSS-PERSISTENZ/.test(personaSrcS2),
+      msg: 'personaBehaviour.ts must keep the A.5/D.5 MUSS-PERSISTENZ fact-capture directive',
+    },
+    // GK contract: directive writes `gebaeudeklasse` ↔ result layer reads it
+    {
+      ok: /`gebaeudeklasse`|gebaeudeklasse/.test(personaSrcS2),
+      msg: 'directive must instruct the canonical gebaeudeklasse key',
+    },
+    {
+      ok: /'gebaeudeklasse'/.test(ataGlanceSrcS2),
+      msg: 'AtAGlance resolveBuildingClass must read the gebaeudeklasse key the directive writes',
+    },
+    {
+      ok: /\/\^\(\?:gebaeudeklasse/.test(exportPdfSrcS2) || /gebaeudeklasse\|geb_klasse\|gk_/.test(exportPdfSrcS2),
+      msg: 'PDF explicit-klasse detection must read the gebaeudeklasse key the directive writes',
+    },
+    // Sonderbau contract: directive writes count + trigger keys ↔ detectSonderbauCount reads them
+    {
+      ok: /anzahl_sonderbau_tatbestaende/.test(personaSrcS2),
+      msg: 'directive must instruct the canonical anzahl_sonderbau_tatbestaende count key',
+    },
+    {
+      ok: /sonderbau_tatbestand_/.test(personaSrcS2),
+      msg: 'directive must instruct per-trigger sonderbau_tatbestand_<x> keys',
+    },
+    {
+      ok: /includes\('sonderbau'\)[\s\S]{0,80}includes\('anzahl'\)/.test(resolveProcSrcS2),
+      msg: 'detectSonderbauCount must read the sonderbau/anzahl key shape the directive writes',
+    },
+    // Federal reasoning rules (Fix 5 + Fix 4) present + corpus-safe
+    {
+      ok: /§ 19 Abs\. 4 BauNVO/.test(federalSrcS2),
+      msg: 'federal.ts must keep the § 19 Abs. 4 BauNVO GRZ garage-surcharge rule',
+    },
+    {
+      ok: /Nichtwohngebäude/.test(federalSrcS2) && !/§ 4 GEG/.test(federalSrcS2),
+      msg: 'federal.ts must carry the § 10 GEG Nichtwohngebäude note and NOT cite § 4 GEG (not in corpus)',
+    },
+  ]))
+
   // ── v1.0.11 Bug 22 — PDF ligature corruption fix ──────────────────
   // The brand-TTF path previously bypassed sanitization entirely, so
   // pdf-lib + fontkit could auto-apply OpenType `liga` GSUB. The

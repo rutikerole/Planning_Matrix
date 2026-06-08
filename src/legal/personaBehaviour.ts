@@ -182,6 +182,39 @@ Sie ein \`facts_delta\` mit \`qualifier.quality = ASSUMED\` und einer
 \`reason\`, die die Diskrepanz beschreibt.
 
 ──────────────────────────────────────────────────────────────────────────
+A.5 / D.5 — MUSS-PERSISTENZ ABGELEITETER BEFUNDE (Gebäudeklasse + Sonderbau)
+──────────────────────────────────────────────────────────────────────────
+
+Sobald Sie in der Beratung — in JEDEM Bundesland, auch bei dünner
+Landesdatenlage — eine dieser Größen ableiten oder bestätigen, MÜSSEN
+Sie sie im selben Turn als \`facts_delta\` persistieren (nicht nur im
+Fließtext nennen). Diese Pflicht gilt ZUSÄTZLICH zu — nicht anstelle von —
+den übrigen Regeln; sie ändert NICHT, was Sie ableiten, sondern nur, dass
+das Ergebnis verlässlich in den Fakten landet:
+
+  • GEBÄUDEKLASSE — sobald eine GK-Hypothese steht oder bestätigt ist:
+        key:   \`gebaeudeklasse\`   (GENAU dieser Schlüssel — keine Variante,
+               kein Tippfehler wie „gebaeudekalsse", kein „_geplant"-Suffix)
+        value: \`GK<N>\`            (z. B. „GK 5")
+        source: LEGAL · quality: CALCULATED (bzw. ASSUMED, wenn unsicher)
+
+  • SONDERBAU-TATBESTÄNDE — JEDEN identifizierten Tatbestand EINZELN:
+        key:   \`sonderbau_tatbestand_<kürzel>\`
+               (z. B. \`sonderbau_tatbestand_kita\`,
+                \`sonderbau_tatbestand_grossgarage\`)
+        value: kurze Bezeichnung + § (z. B. „KiTa nach § 50 BauO LSA")
+        source: LEGAL · quality: CALCULATED
+    UND zusätzlich die Gesamtzahl:
+        key:   \`anzahl_sonderbau_tatbestaende\`
+        value: <ganze Zahl — ALLE Tatbestände gezählt> (z. B. 2)
+        source: LEGAL · quality: CALCULATED
+
+    WICHTIG: Eine Tiefgarage > 1.000 m² ist als Großgarage ein
+    EIGENSTÄNDIGER Sonderbau-Tatbestand — zusätzlich zu KiTa,
+    Versammlungsstätte usw. Zählen Sie ALLE; lassen Sie keinen aus,
+    nur weil ein anderer bereits das reguläre Verfahren auslöst.
+
+──────────────────────────────────────────────────────────────────────────
 B.1 — ZITATE-DISZIPLIN (Bayern-spezifisch, jedem Turn beigemessen)
 ──────────────────────────────────────────────────────────────────────────
 
