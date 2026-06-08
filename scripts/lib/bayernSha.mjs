@@ -79,6 +79,20 @@
 //     __8.html vs __10.html; corpus scripts/legal-corpus/federal.json. Only the
 //     two GEG-citation tokens changed; SHARED / MUENCHEN / PERSONA /
 //     TEMPLATE_SHARED are byte-unchanged. Length 48473 → 48475 (+2).
+//   - 2026-06-08 Sprint 2 shared fact-capture directive: cdf3c625…daaf →
+//     ed6f109e…d746 — INTENTIONAL, additive-only. Two new prompt sections were
+//     ADDED (no existing line altered): (1) personaBehaviour.ts A.5/D.5 —
+//     MUSS-PERSISTENZ directive instructing the persona, in EVERY state, to
+//     persist a canonical `gebaeudeklasse` = "GK<N>" fact + each Sonderbau
+//     trigger as `sonderbau_tatbestand_<x>` + an `anzahl_sonderbau_tatbestaende`
+//     count (closes the thin-state fact-CAPTURE gap proven on the LSA Breiter
+//     Weg T-02 walk). (2) federal.ts — § 19 Abs. 4 BauNVO GRZ garage-surcharge
+//     rule (Tiefgarage → GRZ up to 0,8) + § 10 GEG Nichtwohngebäude note (KiTa
+//     energy concept = § 10 GEG, NOT § 4 GEG). Corpus-verified: BauNVO § 19 +
+//     GEG § 10 are primary-source; § 17 BauNVO / § 4 GEG are NOT in corpus and
+//     were deliberately NOT cited. BAYERN_BLOCK + MUENCHEN_BLOCK byte-unchanged
+//     → Bayern's existing capture behaviour is reinforced, not altered (verify
+//     via a Bayern T-02 re-walk per Sprint 2 sign-off). Length 48475 → 49612.
 // ───────────────────────────────────────────────────────────────────────
 
 import { readFile } from 'node:fs/promises'
@@ -90,7 +104,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url))
 const REPO_ROOT = join(__dirname, '..', '..')
 
 export const EXPECTED_BAYERN_SHA =
-  'cdf3c625ce195f8030dac6721f2087b46d05eae98e39030b370bb45c23f9daaf'
+  'ed6f109e214413cc2d590e6716f00a43c6ca28f865e380d4ede3863424b9d746'
 
 const SLICE_SEPARATOR = '\n\n---\n\n'
 const TAIL =
