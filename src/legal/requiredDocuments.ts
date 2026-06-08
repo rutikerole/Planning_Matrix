@@ -208,12 +208,19 @@ export function requiredDocumentsForCase(
     })
     out.push({
       key: 'geg_waermeschutznachweis_neubau',
-      name_de: 'GEG-Wärmeschutznachweis (Neubau)',
-      name_en: 'GEG thermal-insulation certificate (new build)',
+      name_de: 'GEG-Wärmeschutznachweis (Neubau, Niedrigstenergiegebäude)',
+      name_en: 'GEG thermal-insulation certificate (new build, NZEB)',
       status: 'required',
+      // Sprint 1 (Y-3) — § 48 GEG governs "Anforderungen an ein bestehendes
+      // Gebäude bei Änderung" (renovation), NOT new construction. A new build's
+      // thermal obligation is the Niedrigstenergiegebäude standard under § 10
+      // GEG (corpus heading: "Grundsatz und Niedrigstenergiegebäude") — the §
+      // the persona correctly used in chat. The geg_trigger doc above keeps
+      // § 48 for the renovation case (it only fires on eingriff_aussenhuelle +
+      // fassadenflaeche, which a new build never sets).
       delivery_de: 'Energieberater:in (dena-Liste)',
       delivery_en: 'Energy consultant (dena registry)',
-      citation: '§ 48 GEG',
+      citation: '§ 10 GEG',
     })
     out.push({
       key: 'schallschutznachweis',

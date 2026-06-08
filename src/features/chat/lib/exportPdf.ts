@@ -346,14 +346,6 @@ export async function buildExportPdf({
   // for substantive states (incl. Bayern → "BayBO Art. 57 / Art. 58"),
   // honest generic "Landesbauordnung {Land}" for stubs (no fabricated §).
   const execLoc = getStateLocalization(project.bundesland)
-  const execRefParts = [
-    execLoc.procedure.free?.citation,
-    execLoc.procedure.simplified.citation,
-  ].filter((s): s is string => !!s && s.trim().length > 0)
-  const stateLegalRef =
-    execRefParts.length > 0
-      ? execRefParts.join(' / ')
-      : `Landesbauordnung ${execLoc.labelDe}`
   // v1.0.25 Bug 26 — state-correct structural-cert ref for the cost
   // table's structural basis line (was hardcoded "§ 68 BauO {state}").
   const structuralRef =
@@ -490,10 +482,30 @@ export async function buildExportPdf({
         sourceLabel: formatQualifier({ source: 'LEGAL', quality: 'CALCULATED' }, pdfStrings),
       }
     })
+    // Sprint 1 (Y-2) — footer citations from the project's COMPUTED §§, not the
+    // generic "§ 30 BauGB · § 62/§ 64 · § 48 GEG" template default: the planning
+    // § scanned from facts (e.g. § 34 BauGB), the canonical procedure decision
+    // (e.g. § 65 BauO NRW), and the intent-correct GEG § (§ 10 new-build /
+    // § 48 renovation — see Y-3).
+    const planningRef = (() => {
+      for (const f of state.facts ?? []) {
+        if (typeof f.value !== 'string') continue
+        const m = f.value.match(/§\s*\d+[a-z]?\s*BauGB/i)
+        if (m) return m[0].replace(/\s+/g, ' ').trim()
+      }
+      return undefined
+    })()
+    const gegRef =
+      procedureCase.intent === 'sanierung' || procedureCase.intent === 'umnutzung'
+        ? '§ 48 GEG'
+        : '§ 10 GEG'
+    const legalRefs = [planningRef, procedureDecision.citation, gegRef]
+      .filter((s): s is string => !!s && s.trim().length > 0)
+      .join(' · ')
     renderExecutiveBody(executivePage, editorialFonts, pdfStrings, {
       templateLabel,
       bundeslandCode: bundeslandCodeUpper,
-      stateLegalRef,
+      stateLegalRef: legalRefs,
       topThree,
     })
   }
