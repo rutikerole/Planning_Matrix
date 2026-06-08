@@ -2406,10 +2406,14 @@ async function runStaticGate() {
       ok: /'costs\.basisTemplate':[\s\S]{0,120}\{n\} m² façade[\s\S]{0,40}\{basis\}/.test(stringsV16Costs) &&
           /'costs\.basisTemplate':[\s\S]{0,120}\{n\} m² Fassade[\s\S]{0,40}\{basis\}/.test(stringsV16Costs) &&
           /'costs\.basis\.bayern':[\s\S]{0,120}Bayern baseline/.test(stringsV16Costs) &&
-          /'costs\.basis\.other':[\s\S]{0,120}München baseline · regional calibration pending/.test(stringsV16Costs) &&
+          // Option A — non-Bayern caption drops the city name; honesty contract is
+          // "regional calibration pending" on an "orientation value" / "Richtwert".
+          // (The rendered-output no-München guard is smoke:pdf-matrix; here we pin
+          // the genericized string VALUES — code comments naming München are fine.)
+          /'costs\.basis\.other':[\s\S]{0,120}orientation value · regional calibration pending/.test(stringsV16Costs) &&
           /'costs\.basis\.bayern':[\s\S]{0,120}Bayern-Basiswert/.test(stringsV16Costs) &&
-          /'costs\.basis\.other':[\s\S]{0,120}München-Basiswert · regionale Kalibrierung ausstehend/.test(stringsV16Costs),
-      msg: 'costs.basisTemplate carries {n} m²/Fassade + {basis} token; honest per-state framing in costs.basis.bayern/.other (Bug I / T-01 W7)',
+          /'costs\.basis\.other':[\s\S]{0,120}Richtwert · regionale Kalibrierung ausstehend/.test(stringsV16Costs),
+      msg: 'costs.basisTemplate carries {n} m²/Fassade + {basis} token; honest no-city framing in costs.basis.bayern/.other, no München (Bug I / T-01 W7 / Option A)',
     },
     {
       ok: /'costs\.th\.item':/.test(stringsV16Costs) &&

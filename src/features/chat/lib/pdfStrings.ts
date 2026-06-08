@@ -121,7 +121,7 @@ const EN: PdfStrings = {
   // unchanged; only the framing differs. Bayern is the baseline source;
   // all other states inherit the München-tuned figures uncalibrated.
   'costs.basis.bayern': 'HOAI Zone III · Bayern baseline',
-  'costs.basis.other': 'HOAI Zone III · München baseline · regional calibration pending',
+  'costs.basis.other': 'HOAI Zone III · orientation value · regional calibration pending',
   'costs.th.item': 'ITEM',
   'costs.th.basis': 'BASIS',
   'costs.th.range': 'EUR RANGE',
@@ -374,7 +374,7 @@ const DE: PdfStrings = {
     'Berechnet ausschließlich aus Wohnfläche (Fassade noch nicht erfasst) · {basis}',
   // T-01 audit W7 — state-conditional cost-basis honesty (see EN counterpart).
   'costs.basis.bayern': 'HOAI Zone III · Bayern-Basiswert',
-  'costs.basis.other': 'HOAI Zone III · München-Basiswert · regionale Kalibrierung ausstehend',
+  'costs.basis.other': 'HOAI Zone III · Richtwert · regionale Kalibrierung ausstehend',
   'costs.th.item': 'POSITION',
   'costs.th.basis': 'GRUNDLAGE',
   'costs.th.range': 'EUR-SPANNE',
