@@ -33,7 +33,7 @@
 //   node scripts/smokeWalk.mjs --live       # static + live
 // ───────────────────────────────────────────────────────────────────────
 
-import { readFile } from 'node:fs/promises'
+import { readFile, readdir } from 'node:fs/promises'
 import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'node:path'
 import { computeBayernSha, EXPECTED_BAYERN_SHA } from './lib/bayernSha.mjs'
@@ -1239,24 +1239,100 @@ async function runStaticGate() {
     },
   ]))
 
-  // 4c. Each of the 11 minimum-stub states must surface a
-  // "Vorbereitung" Hinweis in its systemBlock. The persona reads
-  // this and gives the user honest "MBO-default, full state content
-  // pending" framing instead of fabricating state-specific advice.
+  // 4c. The 11 preliminary ("thin") states.
+  //
+  // HISTORY: this block used to assert `allowedCitations: []` — correct in
+  // the pre-Phase-C world. Bucket C Pass A+C deliberately populated those
+  // arrays with corpus-verified §§, so the empty-array assertion went RED on
+  // clean main and silently masked every other regression in this gate
+  // (docs/ACCURACY_HARDENING_2026-06-08.md §P1-B). Rewritten to assert the
+  // invariant that actually matters now that content exists.
+  //
+  // WHAT EACH OTHER GATE ALREADY COVERS (so we don't duplicate):
+  //   • verify:citations --strict — every cited §/Art. in src/legal/*.ts
+  //     RESOLVES to the corpus + heading-meaning matches + version currency.
+  //   • audit-heading-match.mts — §-meaning of template/content cite-sites.
+  // THE GAP THIS BLOCK CLOSES: verify:citations confirms a citation exists
+  // *somewhere* in the corpus — it does NOT check it belongs to the RIGHT
+  // state. If Berlin's allowedCitations listed "§ 6 BauO NRW", verify:citations
+  // would pass it (it's a real NRW §). That is exactly the cross-state law
+  // bleed we fear, and nothing else statically catches it. We do, here.
   const MINIMUM_STUBS = [
     'sachsen', 'sachsen-anhalt', 'thueringen', 'rlp', 'saarland',
     'sh', 'mv', 'brandenburg', 'berlin', 'hamburg', 'bremen',
   ]
+
+  // Source of truth: the legal corpus. Map each Bundesland → its own
+  // state building-order law_short, and learn the full set of state laws
+  // so we can detect a token that belongs to ANOTHER state.
+  const ownLawByBundesland = {}
+  {
+    const statesDir = join(REPO_ROOT, 'scripts', 'legal-corpus', 'states')
+    const corpusFiles = (await readdir(statesDir)).filter((f) => f.endsWith('.json'))
+    for (const f of corpusFiles) {
+      const st = JSON.parse(await readFile(join(statesDir, f), 'utf-8'))
+      const bl = st?._meta?.bundesland
+      const law = st?._meta?.law_short
+      if (bl && law) ownLawByBundesland[bl] = law
+    }
+  }
+  const STATE_LAWS = Object.values(ownLawByBundesland)
+  const lawToBundesland = Object.fromEntries(
+    Object.entries(ownLawByBundesland).map(([bl, law]) => [law, bl]),
+  )
+  // Longest-first alternation so "LBO Saarland"/"LBO SH" win over "LBO" (BW),
+  // and "LBauO M-V" over "LBauO" (RLP) — same discipline as verify-citations.
+  const lawAlt = STATE_LAWS
+    .slice()
+    .sort((a, b) => b.length - a.length)
+    .map((s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
+    .join('|')
+  const NUM = '(\\d+[a-z]?)'
+  const MARK = '(?:§§?|Art\\.?)'
+  const RE_LAW_FIRST = new RegExp(`(${lawAlt})\\s*${MARK}\\s*${NUM}`, 'g')
+  const RE_NUM_FIRST = new RegExp(`${MARK}\\s*${NUM}\\s*(${lawAlt})`, 'g')
+
+  // Extract the `ALLOWED_CITATIONS = [ ... ]` array literal from a state
+  // source file (so we never scan the systemBlock / anti-leak prose, which
+  // legitimately NAMES BayBO as the thing to avoid).
+  const extractAllowedBlock = (src) => {
+    const m = src.match(/ALLOWED_CITATIONS[^=]*=\s*\[([\s\S]*?)\n\s*\]/)
+    return m ? m[1] : ''
+  }
+
   for (const code of MINIMUM_STUBS) {
     const stubSource = await readFileText(`src/legal/states/${code}.ts`)
-    results.push(failures(`minimum stub ${code}: "Vorbereitung" Hinweis present`, [
+    const ownLaw = ownLawByBundesland[code]
+    const block = extractAllowedBlock(stubSource)
+
+    // Collect the state building-order law tokens cited inside the array.
+    const citedStateLaws = []
+    for (const mm of block.matchAll(RE_LAW_FIRST)) citedStateLaws.push(mm[1])
+    for (const mm of block.matchAll(RE_NUM_FIRST)) citedStateLaws.push(mm[2])
+    const foreign = [
+      ...new Set(citedStateLaws.filter((law) => lawToBundesland[law] !== code)),
+    ]
+    // Count citation-shaped entries (any §/Art. quoted string) for the
+    // "content actually landed" floor — guards an accidental Phase-C revert.
+    const entryCount = (block.match(/['"`][^'"`]*(?:§|Art\.)[^'"`]*['"`]/g) ?? []).length
+    const ownLawPresent = citedStateLaws.includes(ownLaw)
+
+    results.push(failures(`thin state ${code}: honest + corpus-populated + no bleed`, [
       {
         ok: /werden in einer späteren\s*\n?\s*Bearbeitungsphase ergänzt|in Vorbereitung/i.test(stubSource),
-        msg: `Stub src/legal/states/${code}.ts must surface a "werden in einer späteren Bearbeitungsphase ergänzt" or "in Vorbereitung" Hinweis so the persona doesn't hallucinate state-specific content.`,
+        msg: `src/legal/states/${code}.ts must surface a "werden in einer späteren Bearbeitungsphase ergänzt" or "in Vorbereitung" Hinweis so the persona frames content as preliminary, not fabricated.`,
       },
       {
-        ok: /allowedCitations:\s*\[\s*\]/.test(stubSource),
-        msg: `Stub src/legal/states/${code}.ts must keep allowedCitations as an empty array — Phase 14 widens it once content lands.`,
+        ok: entryCount >= 5,
+        msg: `src/legal/states/${code}.ts allowedCitations must be corpus-populated (Bucket C Pass A+C) — found only ${entryCount} citation entries (expected ≥ 5). A near-empty list means the content was reverted/wiped.`,
+      },
+      {
+        ok: !!ownLaw && ownLawPresent,
+        msg: `src/legal/states/${code}.ts allowedCitations must cite its OWN state law (${ownLaw ?? 'unknown'}) at least once — the list must be authored for ${code}, not generic.`,
+      },
+      {
+        ok: foreign.length === 0,
+        msg: `src/legal/states/${code}.ts allowedCitations CROSS-STATE BLEED — references another state's building law: ${foreign.map((l) => `${l} (=${lawToBundesland[l]})`).join(', ')}. Only ${ownLaw} (+ federal laws) are valid for ${code}.`,
       },
     ]))
   }
@@ -3348,18 +3424,43 @@ async function runStaticGate() {
       msg: 'resolver must apply the same 20..5000 envelope as detectAreaSqm',
     },
   ]))
-  const costTabSrcForB24 = await readFileText('src/features/result/components/tabs/CostTimelineTab.tsx')
-  const pdfSrcForB24 = await readFileText('src/features/chat/lib/exportPdf.ts')
-  results.push(failures('v1.0.11 Bug 24: both cost callers wire resolveAreaSqmByTemplate before detectAreaSqm', [
+  // ── Sprint 0 (P1-A / RED-3) — ONE cost-area resolver across ALL surfaces ──
+  // Fix 1 unified the four cost surfaces (At-a-Glance, Executive Read, Cost
+  // tab, PDF) onto a single resolveCostAreaSqm(facts, templateId) so they can
+  // never print different headline costs for one project. This guard makes
+  // that un-regressable: every surface must call resolveCostAreaSqm and NONE
+  // may reach for detectAreaSqm / resolveAreaSqmByTemplate directly — calling
+  // those split-paths is exactly how the two surfaces drifted apart before.
+  // (Supersedes the old "both cost callers" check, which pinned the pre-unify
+  //  `resolveAreaSqmByTemplate ?? detectAreaSqm` shape on only 2 of 4 surfaces.)
+  const COST_SURFACES = [
+    ['CostTimelineTab.tsx', 'src/features/result/components/tabs/CostTimelineTab.tsx'],
+    ['exportPdf.ts', 'src/features/chat/lib/exportPdf.ts'],
+    ['AtAGlance.tsx', 'src/features/result/components/Cards/AtAGlance.tsx'],
+    ['composeExecutiveRead.ts', 'src/features/result/lib/composeExecutiveRead.ts'],
+  ]
+  const areaChecks = [
     {
-      ok: /resolveAreaSqmByTemplate\(state\.facts,\s*state\.templateId\)\s*\?\?\s*detectAreaSqm\(corpus\)/.test(costTabSrcForB24),
-      msg: 'CostTimelineTab must call resolveAreaSqmByTemplate first, then fall back to detectAreaSqm',
+      ok: /export\s+function\s+resolveCostAreaSqm/.test(costSrcForB24),
+      msg: 'costNormsMuenchen must export the single resolveCostAreaSqm resolver',
     },
     {
-      ok: /resolveAreaSqmByTemplate\(state\.facts,\s*state\.templateId\)\s*\?\?\s*detectAreaSqm\(corpus\)/.test(pdfSrcForB24),
-      msg: 'exportPdf must call resolveAreaSqmByTemplate first, then fall back to detectAreaSqm',
+      ok: /function\s+resolveCostAreaSqm[\s\S]{0,600}resolveAreaSqmByTemplate[\s\S]{0,600}detectAreaSqm/.test(costSrcForB24),
+      msg: 'resolveCostAreaSqm must try resolveAreaSqmByTemplate first, then detectAreaSqm as the backstop',
     },
-  ]))
+  ]
+  for (const [name, path] of COST_SURFACES) {
+    const src = await readFileText(path)
+    areaChecks.push({
+      ok: /resolveCostAreaSqm\(/.test(src),
+      msg: `${name} must compute its cost area via resolveCostAreaSqm (single source of truth)`,
+    })
+    areaChecks.push({
+      ok: !/\bdetectAreaSqm\(/.test(src) && !/\bresolveAreaSqmByTemplate\(/.test(src),
+      msg: `${name} must NOT call detectAreaSqm/resolveAreaSqmByTemplate directly — that reintroduces the dual-path divergence (P1-A). Use resolveCostAreaSqm.`,
+    })
+  }
+  results.push(failures('Sprint 0 P1-A: all 4 cost surfaces share one area resolver', areaChecks))
 
   // ── v1.0.11 Bug 22 — PDF ligature corruption fix ──────────────────
   // The brand-TTF path previously bypassed sanitization entirely, so
