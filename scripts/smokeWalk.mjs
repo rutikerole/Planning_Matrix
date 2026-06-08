@@ -1802,6 +1802,20 @@ async function runStaticGate() {
     { ok: showsEuro(costModeMirror('T-02', 'neubau_mehrfamilienhaus')), msg: 'new-build MFH (T-02) MUST show its headline band (no regression)' },
   ]))
 
+  // ── T-03 sprint (P3): double-submit idempotency drift guard ──────────────
+  // The duplicate-user-bubble fix lives in two places; pin both so it can't
+  // silently regress. (Functional coverage: scripts/smoke-double-submit.mts.)
+  const useChatTurnSrc = await readFileText('src/features/chat/hooks/useChatTurn.ts')
+  const chatWorkspaceSrc = await readFileText('src/features/chat/pages/ChatWorkspacePage.tsx')
+  results.push(failures('T-03 P3: double-submit guard — one stable clientRequestId per turn', [
+    { ok: /input\.clientRequestId\s*\?\?=/.test(useChatTurnSrc),
+      msg: 'useChatTurn.onMutate must resolve clientRequestId onto the shared input (`input.clientRequestId ??= …`) so mutationFn uses the same id' },
+    { ok: /m\.client_request_id\s*!==\s*clientRequestId/.test(useChatTurnSrc),
+      msg: 'useChatTurn.onMutate must dedupe the optimistic write by client_request_id (no stacked bubbles)' },
+    { ok: /clientRequestId:\s*crypto\.randomUUID\(\)/.test(chatWorkspaceSrc),
+      msg: 'ChatWorkspacePage.handleSubmit must mint a stable clientRequestId per user turn' },
+  ]))
+
   // ── v1.0.4 D2+D3+D6 drift checks (compliance docs + dependabot) ──
   const compliance = await readFileText('docs/COMPLIANCE.md')
   const legalReview = await readFileText('docs/LEGAL_COPY_REVIEW.md')
