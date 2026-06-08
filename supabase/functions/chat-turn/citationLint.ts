@@ -452,9 +452,24 @@ export const FORBIDDEN_PATTERN_COUNT = FORBIDDEN_PATTERNS.length
 import type { RespondToolInput as ResponseToolInputForLayerC } from '../../../src/types/respondTool.ts'
 import { resolveStateDelta as resolveStateDeltaForLayerC } from '../../../src/legal/legalRegistry.ts'
 
+// NOTE — HBauO before HBO, and the LBauO family carries its optional
+// Bundesland suffix (M-V / RLP) so MV + RLP citations parse at all. The
+// LBO/LBauO suffixes are CANONICALISED AWAY in normaliseLaw() below, so a
+// persona emission of "§ 27f LBO BW" produces the same (law, number) key as
+// the allow-list entry "§ 27f LBO" whose corpus law_short omits the suffix.
 const KNOWN_LAW_TOKEN_RE =
-  /\b(BayBO|BauGB|BauNVO|BayDSchG|GEG|StPlS\s*\d+|HBO|HBauO|NBauO|BauO\s*NRW|LBO(?:\s+BW|\s+SH|\s+MV|\s+Saarland)?|S[äa]chsBO|LBauO\s+RLP|BremLBO|BauO\s+LSA|BbgBO|BauO\s+Bln|Th[üu]rBO)\b/i
+  /\b(BayBO|BauGB|BauNVO|BayDSchG|GEG|StPlS\s*\d+|HBauO|HBO|NBauO|BauO\s*NRW|BauO\s*LSA|BauO\s*Bln|LBO(?:\s+BW|\s+SH|\s+MV|\s+Saarland)?|LBauO(?:\s+M-V|\s+RLP)?|S[äa]chsBO|BremLBO|BbgBO|Th[üu]rBO)\b/i
 const ANCHOR_NUMBER_RE = /(?:Art\.|§|Anlage)\s*(\d+[a-z]?)/gi
+
+// Redundant Bundesland suffix on the LBO / LBauO families. The corpus
+// law_short — and therefore every allow-list entry — for Baden-Württemberg is
+// bare "LBO" and for Rheinland-Pfalz bare "LBauO", while the persona naturally
+// writes the suffixed form ("LBO BW", "LBauO RLP"). Collapsing the suffix on
+// BOTH the allow-list parse and the emission extraction is what lets the two
+// sides produce an identical key. allowedCitations are resolved per ACTIVE
+// Bundesland (one state's set at a time), so collapsing "lbo sh"/"lbo mv"/… →
+// "lbo" can never make one state's citation match another's.
+const REDUNDANT_STATE_SUFFIX_RE = /^(lbo|lbauo)\s+(?:bw|sh|mv|m-v|saarland|rlp)$/
 
 interface ParsedCitation {
   law: string
@@ -462,7 +477,8 @@ interface ParsedCitation {
 }
 
 function normaliseLaw(s: string): string {
-  return s.toLowerCase().replace(/\s+/g, ' ').trim()
+  const base = s.toLowerCase().replace(/\s+/g, ' ').trim()
+  return base.replace(REDUNDANT_STATE_SUFFIX_RE, '$1')
 }
 
 /**

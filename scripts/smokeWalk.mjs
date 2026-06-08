@@ -915,11 +915,28 @@ const ALLOW_KEY_SETS = {
     'hbo|68', 'hbo|69', 'hbo|70', 'hbo|71', 'hbo|73', 'hbo|74',
     'baugb|30', 'baugb|34', 'baugb|35', 'baunvo|19', 'geg|8',
   ]),
+  // Baden-Württemberg — corpus law_short is bare 'LBO', so canonical keys carry
+  // NO Bundesland suffix. The persona emits the suffixed 'LBO BW' form; the
+  // suffix-canonicalisation in normaliseLawJS is what makes these match. (T-03
+  // sprint: regression for the 'lbo' vs 'lbo bw' key mismatch.)
+  bw: new Set([
+    'lbo|13', 'lbo|27f', 'lbo|43', 'lbo|52', 'lbo|53', 'lbo|63',
+    'baugb|30', 'baugb|34', 'baugb|35', 'baunvo|19', 'geg|10', 'geg|48',
+  ]),
 }
 
+// Mirror of citationLint.ts: HBauO before HBO; LBauO carries its optional
+// M-V / RLP suffix so those states parse; LBO/LBauO Bundesland suffixes are
+// canonicalised away in normaliseLawJS so "§ 27f LBO BW" keys the same as the
+// allow-list entry "§ 27f LBO".
 const KNOWN_LAW_TOKEN_RE_JS =
-  /\b(BayBO|BauGB|BauNVO|BayDSchG|GEG|StPlS\s*\d+|HBO|HBauO|NBauO|BauO\s*NRW|LBO(?:\s+BW|\s+SH|\s+MV|\s+Saarland)?|S[äa]chsBO|LBauO\s+RLP|BremLBO|BauO\s+LSA|BbgBO|BauO\s+Bln|Th[üu]rBO)\b/i
+  /\b(BayBO|BauGB|BauNVO|BayDSchG|GEG|StPlS\s*\d+|HBauO|HBO|NBauO|BauO\s*NRW|BauO\s*LSA|BauO\s*Bln|LBO(?:\s+BW|\s+SH|\s+MV|\s+Saarland)?|LBauO(?:\s+M-V|\s+RLP)?|S[äa]chsBO|BremLBO|BbgBO|Th[üu]rBO)\b/i
 const ANCHOR_NUMBER_RE_JS = /(?:Art\.|§|Anlage)\s*(\d+[a-z]?)/gi
+const REDUNDANT_STATE_SUFFIX_RE_JS = /^(lbo|lbauo)\s+(?:bw|sh|mv|m-v|saarland|rlp)$/
+
+function normaliseLawJS(s) {
+  return s.toLowerCase().replace(/\s+/g, ' ').trim().replace(REDUNDANT_STATE_SUFFIX_RE_JS, '$1')
+}
 
 function* extractCitationsJS(text) {
   ANCHOR_NUMBER_RE_JS.lastIndex = 0
@@ -931,7 +948,7 @@ function* extractCitationsJS(text) {
     const lawMatch = ctx.match(KNOWN_LAW_TOKEN_RE_JS)
     if (!lawMatch) continue
     yield {
-      law: lawMatch[1].toLowerCase().replace(/\s+/g, ' ').trim(),
+      law: normaliseLawJS(lawMatch[1]),
       number: m[1].toLowerCase(),
       match: m[0],
     }
@@ -1085,6 +1102,47 @@ const ALLOW_LIST_FIXTURES = [
     },
     expectEvents: 0,
     expectQualifier: { itemId: 'rec-stub', source: 'LEGAL', quality: 'CALCULATED' },
+  },
+  // ── T-03 sprint: suffix-canonicalisation regression (the 'lbo' vs 'lbo bw'
+  // key mismatch that made Layer C non-discriminating for BW). ─────────────
+  {
+    label: "T03 BW: '§ 27f LBO BW' (real, suffixed) → passes (was wrongly downgraded before fix)",
+    activeBundesland: 'bw',
+    input: {
+      procedures_delta: [{
+        op: 'upsert', id: 'proc-struct-bw',
+        rationale_de: 'Sobald tragende Bauteile betroffen sind (§ 13 LBO BW, § 27f LBO BW), ist ein Standsicherheitsnachweis erforderlich.',
+        source: 'LEGAL', quality: 'CALCULATED',
+      }],
+    },
+    expectEvents: 0,
+    expectQualifierTopLevel: { itemId: 'proc-struct-bw', source: 'LEGAL', quality: 'CALCULATED' },
+  },
+  {
+    label: "T03 BW: '§ 240 LBO BW' (fabricated, suffixed) → downgraded (fix still catches real fabrications)",
+    activeBundesland: 'bw',
+    input: {
+      procedures_delta: [{
+        op: 'upsert', id: 'proc-fab-bw',
+        rationale_de: 'Verfahren folgt aus § 240 LBO BW.',
+        source: 'LEGAL', quality: 'CALCULATED',
+      }],
+    },
+    expectEvents: 1,
+    expectQualifierTopLevel: { itemId: 'proc-fab-bw', source: 'DESIGNER', quality: 'ASSUMED' },
+  },
+  {
+    label: "T03 BW: '§ 52 LBO' (real, bare — no suffix) → still passes",
+    activeBundesland: 'bw',
+    input: {
+      procedures_delta: [{
+        op: 'upsert', id: 'proc-bare-bw',
+        rationale_de: 'Vereinfachtes Baugenehmigungsverfahren nach § 52 LBO.',
+        source: 'LEGAL', quality: 'CALCULATED',
+      }],
+    },
+    expectEvents: 0,
+    expectQualifierTopLevel: { itemId: 'proc-bare-bw', source: 'LEGAL', quality: 'CALCULATED' },
   },
 ]
 
