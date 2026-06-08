@@ -3,10 +3,10 @@ import type { ProjectRow } from '@/types/db'
 import type { ProjectState } from '@/types/projectState'
 import {
   buildCostBreakdown,
-  detectAreaSqm,
   detectKlasse,
   detectProcedure,
   formatEurRange,
+  resolveCostAreaSqm,
 } from '../../lib/costNormsMuenchen'
 import { useResolvedRoles } from '../../hooks/useResolvedRoles'
 import { useResolvedProcedures } from '../../hooks/useResolvedProcedures'
@@ -82,7 +82,10 @@ export function AtAGlance({ project, state }: Props) {
     .toLowerCase()
   const procedureType = detectProcedure(primaryProcedure?.rationale_de ?? '')
   const klasseDetected = detectKlasse(corpus)
-  const areaSqm = detectAreaSqm(corpus)
+  // Sprint 0 (P1-A) — single shared cost-area resolver (template-aware,
+  // with corpus-regex backstop) so this card cannot diverge from the
+  // Cost tab / PDF / Executive Read for a T-02 MFH.
+  const areaSqm = resolveCostAreaSqm(facts, state.templateId)
   const cost = buildCostBreakdown(procedureType, klasseDetected, {
     areaSqm,
     bundesland: project.bundesland,

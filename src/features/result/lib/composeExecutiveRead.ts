@@ -5,10 +5,10 @@ import { computeOpenItems } from './computeOpenItems'
 import { approximateTotalWeeks } from './composeTimeline'
 import {
   buildCostBreakdown,
-  detectAreaSqm,
   detectKlasse,
   detectProcedure,
   formatEurRange,
+  resolveCostAreaSqm,
 } from './costNormsMuenchen'
 
 interface Args {
@@ -77,7 +77,9 @@ export function composeExecutiveRead({
     .toLowerCase()
   const procedureType = detectProcedure(primary?.rationale_de ?? '')
   const klasse = detectKlasse(corpus)
-  const areaSqm = detectAreaSqm(corpus)
+  // Sprint 0 (P1-A) — single shared cost-area resolver so the executive
+  // read cannot diverge from the Cost tab / PDF / At-a-Glance.
+  const areaSqm = resolveCostAreaSqm(facts, state.templateId)
   const cost = buildCostBreakdown(procedureType, klasse, {
     areaSqm,
     bundesland: project.bundesland,

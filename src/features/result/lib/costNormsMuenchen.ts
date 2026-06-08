@@ -390,6 +390,41 @@ export function resolveAreaSqmByTemplate(
   return undefined
 }
 
+/**
+ * Sprint 0 (P1-A / RED-3) — THE single cost-area resolver. Every cost
+ * surface (At-a-Glance card, Executive Read, Cost tab, exported PDF)
+ * MUST call this and nothing else for its area input, so the four
+ * surfaces cannot print different headline costs for one project — the
+ * RED-3 self-contradiction documented in
+ * docs/ACCURACY_HARDENING_2026-06-08.md §P1-A.
+ *
+ * Resolution order:
+ *   1. `resolveAreaSqmByTemplate` — template-aware; knows the per-template
+ *      cost-basis fact-key AND the T-02 units × perUnit fallback.
+ *   2. `detectAreaSqm` over the fact corpus — the universal regex backstop.
+ *
+ * Returns undefined when neither resolves; callers pass that straight to
+ * `buildCostBreakdown`, which applies the BASE_AREA_SQM (180) default
+ * identically — so a missing area yields the SAME figure on every surface.
+ *
+ * Before this existed, At-a-Glance + Executive Read used `detectAreaSqm`
+ * alone (no template awareness) while the Cost tab + PDF used the template
+ * resolver, so a T-02 MFH (units × perUnit) quoted two different headline
+ * costs on the same deliverable.
+ */
+export function resolveCostAreaSqm(
+  facts: ReadonlyArray<CostBasisFactCandidate> | undefined,
+  templateId: TemplateId | null | undefined,
+): number | undefined {
+  const byTemplate = resolveAreaSqmByTemplate(facts, templateId)
+  if (byTemplate != null) return byTemplate
+  const corpus = (facts ?? [])
+    .map((f) => `${f.key} ${typeof f.value === 'string' ? f.value : ''}`)
+    .join(' ')
+    .toLowerCase()
+  return detectAreaSqm(corpus)
+}
+
 /** Format a EUR range like "€ 8.000 – 14.000" (DE) or "€8,000 – 14,000" (EN). */
 export function formatEurRange(bucket: CostBucket, lang: 'de' | 'en'): string {
   const fmt = new Intl.NumberFormat(lang === 'en' ? 'en-GB' : 'de-DE', {

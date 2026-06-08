@@ -30,11 +30,10 @@ import type { ProjectState } from '@/types/projectState'
 import {
   buildCostBreakdown,
   costBandFor,
-  detectAreaSqm,
   detectKlasse,
   detectProcedure,
   formatEurRange,
-  resolveAreaSqmByTemplate,
+  resolveCostAreaSqm,
 } from '@/features/result/lib/costNormsMuenchen'
 // v1.0.13 → v1.0.14 — PDF Renaissance Part 2 imports. The
 // PDF_CLAY / PDF_MARGIN / PDF_PAPER aliases that v1.0.13 used for
@@ -736,10 +735,13 @@ export async function buildExportPdf({
     .join(' ')
     .toLowerCase()
   const klasse = detectKlasse(corpus)
-  const areaSqm =
-    resolveAreaSqmByTemplate(state.facts, state.templateId) ??
-    detectAreaSqm(corpus) ??
-    0
+  // Sprint 0 (P1-A) — single shared cost-area resolver, identical to the
+  // result-page surfaces. undefined (no area resolvable) flows into
+  // buildCostBreakdown, which applies the BASE_AREA_SQM default — the same
+  // figure the Cost tab produces. The CostsData display field below
+  // coalesces to 0 so the renderer's honest "no-area" phrasing fires
+  // (costs.ts checks `areaSqm > 0`).
+  const areaSqm = resolveCostAreaSqm(state.facts, state.templateId)
   const costOpts = { areaSqm, bundesland: project.bundesland }
   const costBreakdown = buildCostBreakdown(procedure, klasse, costOpts)
   const costItems: CostsItem[] = [
@@ -832,7 +834,7 @@ export async function buildExportPdf({
           }
         : state.templateId === 'T-01'
           ? {
-              areaSqm,
+              areaSqm: areaSqm ?? 0,
               bundeslandCode: bundeslandCodeUpper,
               structuralRef,
               templateLabel,

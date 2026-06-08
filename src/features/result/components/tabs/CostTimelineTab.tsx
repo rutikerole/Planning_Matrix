@@ -5,11 +5,10 @@ import {
   buildCostBreakdown,
   costBandFor,
   describeCostInputs,
-  detectAreaSqm,
   detectKlasse,
   detectProcedure,
   formatEurRange,
-  resolveAreaSqmByTemplate,
+  resolveCostAreaSqm,
   resolveInputs,
   type CostBreakdown,
 } from '../../lib/costNormsMuenchen'
@@ -80,13 +79,10 @@ export function CostTimelineTab({ project, state }: Props) {
     .join(' ')
     .toLowerCase()
   const klasse = detectKlasse(corpus)
-  // v1.0.11 Bug 24 — try the per-template field map first (catches
-  // T-03's fassadenflaeche_m2 numeric value where the corpus regex
-  // misses), then fall back to the corpus regex (Bayern T-01 path
-  // and any template whose persona emits unit-suffixed strings).
-  const areaSqm =
-    resolveAreaSqmByTemplate(state.facts, state.templateId) ??
-    detectAreaSqm(corpus)
+  // Sprint 0 (P1-A) — single shared cost-area resolver (template-aware
+  // first, corpus-regex backstop) used by every cost surface so the
+  // Cost tab can never diverge from the PDF / At-a-Glance / Executive Read.
+  const areaSqm = resolveCostAreaSqm(state.facts, state.templateId)
   const opts = { areaSqm, bundesland: project.bundesland }
   const cost = buildCostBreakdown(procedure, klasse, opts)
   const inputs = resolveInputs(procedure, klasse, opts)
