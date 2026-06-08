@@ -1760,6 +1760,48 @@ async function runStaticGate() {
     results.push(failures(`v1.0.5 B3 fixture: ${f.label}`, conds))
   }
 
+  // ── T-03 sprint (P1): renovation cost-agreement drift guard ──────────────
+  // The bug: At-a-Glance + Executive Read computed a HOAI new-build € range for
+  // a renovation while the Cost tab + PDF showed the honest "no schedule,
+  // request quotes" stub — two sources of truth on one deliverable. Guard: ALL
+  // FOUR cost surfaces must route their stub-vs-figure decision through the
+  // single shared resolveCostDisplayMode, so they cannot diverge again.
+  const costP1AtAGlance = await readFileText('src/features/result/components/Cards/AtAGlance.tsx')
+  const costP1ExecRead = await readFileText('src/features/result/lib/composeExecutiveRead.ts')
+  const costP1CostTab = await readFileText('src/features/result/components/tabs/CostTimelineTab.tsx')
+  const costP1ExportPdf = await readFileText('src/features/chat/lib/exportPdf.ts')
+  results.push(failures('T-03 P1: all 4 cost surfaces route through resolveCostDisplayMode (no renovation €-range divergence)', [
+    { ok: /resolveCostDisplayMode/.test(costP1AtAGlance) && /costModeShowsEuroFigure/.test(costP1AtAGlance),
+      msg: 'AtAGlance must gate its € figure via resolveCostDisplayMode + costModeShowsEuroFigure' },
+    { ok: /resolveCostDisplayMode/.test(costP1ExecRead) && /costModeShowsEuroFigure/.test(costP1ExecRead),
+      msg: 'composeExecutiveRead must gate its € figure via resolveCostDisplayMode + costModeShowsEuroFigure' },
+    { ok: /resolveCostDisplayMode/.test(costP1CostTab),
+      msg: 'CostTimelineTab must derive its stub/band/engine mode from resolveCostDisplayMode' },
+    { ok: /resolveCostDisplayMode/.test(costP1ExportPdf),
+      msg: 'exportPdf must derive its stub/band/engine mode from resolveCostDisplayMode' },
+    // composeP2 must NOT unconditionally interpolate a € figure — the Bestand
+    // branch narrates "no HOAI new-build schedule" instead.
+    { ok: /no HOAI new-build schedule/.test(costP1ExecRead) && /keiner HOAI-Neubautabelle/.test(costP1ExecRead),
+      msg: 'composeExecutiveRead must narrate the honest no-schedule tail (EN+DE) when costRange is null' },
+  ]))
+  // Functional mirror of resolveCostDisplayMode — the three Bestand intents
+  // (and their templates) must NEVER show a € figure; new-build must.
+  const costModeMirror = (templateId, intent) => {
+    if (templateId === 'T-05' || intent === 'abbruch') return 'demolition'
+    if (templateId === 'T-04' || intent === 'umnutzung') return 'useConversion'
+    if (templateId === 'T-03' || intent === 'sanierung') return 'renovation'
+    if (['T-02', 'T-06', 'T-07', 'T-08'].includes(templateId)) return 'headlineBand'
+    return 'engineRange'
+  }
+  const showsEuro = (m) => m === 'headlineBand' || m === 'engineRange'
+  results.push(failures('T-03 P1: cost-mode classification — Bestand intents carry no € figure, new-build does', [
+    { ok: !showsEuro(costModeMirror('T-03', 'sanierung')), msg: 'renovation (T-03/sanierung) must NOT show a € figure' },
+    { ok: !showsEuro(costModeMirror('T-04', 'umnutzung')), msg: 'use-conversion (T-04/umnutzung) must NOT show a € figure' },
+    { ok: !showsEuro(costModeMirror('T-05', 'abbruch')), msg: 'demolition (T-05/abbruch) must NOT show a € figure' },
+    { ok: showsEuro(costModeMirror('T-01', 'neubau_einfamilienhaus')), msg: 'new-build EFH (T-01) MUST show a € figure (no regression)' },
+    { ok: showsEuro(costModeMirror('T-02', 'neubau_mehrfamilienhaus')), msg: 'new-build MFH (T-02) MUST show its headline band (no regression)' },
+  ]))
+
   // ── v1.0.4 D2+D3+D6 drift checks (compliance docs + dependabot) ──
   const compliance = await readFileText('docs/COMPLIANCE.md')
   const legalReview = await readFileText('docs/LEGAL_COPY_REVIEW.md')

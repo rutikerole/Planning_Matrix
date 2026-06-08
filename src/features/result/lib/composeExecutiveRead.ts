@@ -4,9 +4,11 @@ import { computeOpenItems } from './computeOpenItems'
 import { approximateTotalWeeks } from './composeTimeline'
 import {
   buildCostBreakdown,
+  costModeShowsEuroFigure,
   detectKlasse,
   formatEurRange,
   resolveCostAreaSqm,
+  resolveCostDisplayMode,
   resolveHeadlineCostRange,
 } from './costNormsMuenchen'
 import { resolveProcedures, resolveCostProcedureType } from './resolveProcedures'
@@ -126,16 +128,21 @@ export function composeExecutiveRead({
     lang,
   })
 
+  // T-03 sprint (P1) — derive the cost-display mode ONCE (shared with the Cost
+  // tab / PDF / At-a-Glance). The three Bestand modes carry no HOAI new-build
+  // fee schedule → pass costRange=null so composeP2 narrates "request quotes"
+  // instead of a fabricated € range (fixes the Overview €-range vs Cost-tab
+  // stub divergence). Band/engine modes keep the Sprint 1 (Y-1) headline range.
+  const costMode = resolveCostDisplayMode(state.templateId, intent)
+  const costRange = costModeShowsEuroFigure(costMode)
+    ? formatEurRange(resolveHeadlineCostRange(state.templateId, cost.total), lang)
+    : null
+
   const p2 = composeP2({
     primary,
     fallback,
     isBaselineProc,
-    // Sprint 1 (Y-1) — band for T-02/T-06/T-07/T-08, engine total otherwise;
-    // matches At-a-Glance + Cost tab + PDF (one cost range everywhere).
-    costRange: formatEurRange(
-      resolveHeadlineCostRange(state.templateId, cost.total),
-      lang,
-    ),
+    costRange,
     timelineMonths: months,
     intent,
     lang,
@@ -202,7 +209,8 @@ function composeP2({
   primary: { title_de: string; title_en: string } | undefined
   fallback: { title_de: string; title_en: string } | undefined
   isBaselineProc: boolean
-  costRange: string
+  /** Formatted € range, or null for Bestand modes with no HOAI new-build schedule. */
+  costRange: string | null
   timelineMonths: number
   intent: string
   lang: 'de' | 'en'
@@ -226,14 +234,18 @@ function composeP2({
     const fb = fallbackTitle
       ? ` Fallback: ${fallbackTitle} if any condition fails.`
       : ''
-    const tail = ` Estimated total fees: ${costRange}, timeline ~${timelineMonths} months.`
+    const tail = costRange
+      ? ` Estimated total fees: ${costRange}, timeline ~${timelineMonths} months.`
+      : ` Fees follow no HOAI new-build schedule — request fixed quotes; timeline ~${timelineMonths} months.`
     return head + fb + tail
   }
   const head = primaryTitle
     ? `Wahrscheinlicher Verfahrensweg: ${primaryTitle}${isBaselineProc ? ' (vorläufig)' : ''} sofern ${conditions}.`
     : 'Der Verfahrensweg öffnet sich, sobald die Beratung weiter ist.'
   const fb = fallbackTitle ? ` Fallback: ${fallbackTitle} bei Abweichung.` : ''
-  const tail = ` Geschätzte Honorare: ${costRange}, Zeitrahmen ca. ${timelineMonths} Monate.`
+  const tail = costRange
+    ? ` Geschätzte Honorare: ${costRange}, Zeitrahmen ca. ${timelineMonths} Monate.`
+    : ` Honorare folgen keiner HOAI-Neubautabelle — Festangebote einholen; Zeitrahmen ca. ${timelineMonths} Monate.`
   return head + fb + tail
 }
 

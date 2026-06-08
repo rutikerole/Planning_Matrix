@@ -1922,7 +1922,8 @@
         "openQuestions": "Open questions",
         "inProgress": "In progress",
         "tbd": "—",
-        "gkUseConversion": "Not re-classified · use conversion"
+        "gkUseConversion": "Not re-classified · use conversion",
+        "costByQuote": "By quote · no HOAI schedule"
       },
       "actions": {
         "doNextEyebrow": "Do next",

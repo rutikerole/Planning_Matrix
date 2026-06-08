@@ -612,3 +612,45 @@ export function resolveHeadlineCostRange(
   }
   return engineTotal
 }
+
+/**
+ * T-03 sprint (P1) — THE single cost-display-MODE resolver. Before this, the
+ * compact surfaces (At-a-Glance, Executive Read) computed a HOAI new-build €
+ * range for EVERY intent, while the Cost tab + PDF already routed the three
+ * Bestand intents to honest stubs — so a renovation showed "€ 30,900–57,800"
+ * on the Overview AND "no HOAI schedule, request quotes" on the Cost tab on the
+ * same deliverable. Every cost surface now derives its mode from THIS, so they
+ * cannot diverge.
+ *
+ *   demolition / useConversion / renovation → no HOAI new-build schedule
+ *       applies; NO surface shows a € figure (request fixed quotes).
+ *   headlineBand → per-template sourced € band (T-02/T-06/T-07/T-08).
+ *   engineRange → the buildCostBreakdown engine total (T-01 EFH new-build).
+ *
+ * Checked Bestand-first so the intent always wins over the template band.
+ */
+export type CostDisplayMode =
+  | 'demolition'
+  | 'useConversion'
+  | 'renovation'
+  | 'headlineBand'
+  | 'engineRange'
+
+export function resolveCostDisplayMode(
+  templateId: TemplateId | null | undefined,
+  intent: string | null | undefined,
+): CostDisplayMode {
+  if (templateId === 'T-05' || intent === 'abbruch') return 'demolition'
+  if (templateId === 'T-04' || intent === 'umnutzung') return 'useConversion'
+  if (templateId === 'T-03' || intent === 'sanierung') return 'renovation'
+  if (isHeadlineBandTemplate(templateId)) return 'headlineBand'
+  return 'engineRange'
+}
+
+/**
+ * The three Bestand modes follow no HOAI new-build fee schedule, so no surface
+ * shows a € figure for them. Only the band + engine modes carry a cost range.
+ */
+export function costModeShowsEuroFigure(mode: CostDisplayMode): boolean {
+  return mode === 'headlineBand' || mode === 'engineRange'
+}
