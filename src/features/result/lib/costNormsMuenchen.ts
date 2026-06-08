@@ -572,3 +572,43 @@ export const COST_BANDS_BY_TEMPLATE: Record<TemplateId, CostBandPerTemplate> = {
 export function costBandFor(templateId: TemplateId | undefined | null): CostBandPerTemplate {
   return COST_BANDS_BY_TEMPLATE[templateId ?? 'T-01'] ?? COST_BANDS_BY_TEMPLATE['T-01']
 }
+
+/**
+ * Sprint 1 (Y-1) — templates whose headline cost is the per-template BAND
+ * (COST_BANDS_BY_TEMPLATE), NOT the per-category HOAI engine breakdown. The
+ * München-EFH-tuned BASE engine is wrong for these shapes (MFH / Aufstockung /
+ * Anbau / Sonstiges), so the Cost tab + PDF render the sourced band. Kept here
+ * as the single list so every surface agrees on which templates use the band.
+ */
+const HEADLINE_BAND_TEMPLATES: ReadonlySet<TemplateId> = new Set([
+  'T-02',
+  'T-06',
+  'T-07',
+  'T-08',
+])
+
+export function isHeadlineBandTemplate(
+  templateId: TemplateId | undefined | null,
+): boolean {
+  return !!templateId && HEADLINE_BAND_TEMPLATES.has(templateId)
+}
+
+/**
+ * Sprint 1 (Y-1) — THE single headline cost-range resolver. Before this, the
+ * compact surfaces (At-a-Glance, Executive Read) rendered the engine
+ * buildCostBreakdown().total while the Cost tab + PDF rendered the per-template
+ * band for T-02/T-06/T-07/T-08 — so a T-02 MFH showed two different headline
+ * ranges (engine €30,900–57,800 vs band €28,000–55,000) on one deliverable.
+ * Every surface now derives the headline range from THIS: the band for
+ * band-templates, the engine total otherwise.
+ */
+export function resolveHeadlineCostRange(
+  templateId: TemplateId | undefined | null,
+  engineTotal: CostBucket,
+): CostBucket {
+  if (isHeadlineBandTemplate(templateId)) {
+    const band = costBandFor(templateId)
+    return { min: band.lower, max: band.upper }
+  }
+  return engineTotal
+}

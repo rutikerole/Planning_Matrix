@@ -80,6 +80,10 @@ const ALLOWLIST = [
   // qualifier reasons. Same canonical-bilingual pattern.
   'src/features/result/lib/deriveBaselineRoles.ts',
   'src/features/result/lib/deriveBaselineProcedure.ts',
+  // Sprint 1 (RED-1) — resolveProcedures now converts the canonical
+  // ProcedureDecision into a Procedure with a DE qualifier-reason, the same
+  // canonical-bilingual provenance pattern as deriveBaselineProcedure above.
+  'src/features/result/lib/resolveProcedures.ts',
   // Phase 8.1 — open-items composer renders area names in DE/EN
   // inline (canonical Planungsrecht / Bauordnungsrecht / Sonstige).
   'src/features/result/lib/computeOpenItems.ts',

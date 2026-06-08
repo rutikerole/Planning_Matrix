@@ -129,11 +129,10 @@ import {
 import { pickSmartSuggestions } from '@/features/result/lib/smartSuggestionsMatcher'
 import { computeConfidence } from '@/features/result/lib/computeConfidence'
 import {
-  intentFromTemplate,
+  buildProcedureCase,
   procedureLabel,
   procedureStatusLabel,
   resolveProcedure,
-  resolveVerfahrensIndikation,
   type ProcedureCase,
   type ProcedureDecision,
 } from '@/legal/resolveProcedure'
@@ -347,14 +346,6 @@ export async function buildExportPdf({
   // for substantive states (incl. Bayern → "BayBO Art. 57 / Art. 58"),
   // honest generic "Landesbauordnung {Land}" for stubs (no fabricated §).
   const execLoc = getStateLocalization(project.bundesland)
-  const execRefParts = [
-    execLoc.procedure.free?.citation,
-    execLoc.procedure.simplified.citation,
-  ].filter((s): s is string => !!s && s.trim().length > 0)
-  const stateLegalRef =
-    execRefParts.length > 0
-      ? execRefParts.join(' / ')
-      : `Landesbauordnung ${execLoc.labelDe}`
   // v1.0.25 Bug 26 — state-correct structural-cert ref for the cost
   // table's structural basis line (was hardcoded "§ 68 BauO {state}").
   const structuralRef =
@@ -368,55 +359,17 @@ export async function buildExportPdf({
   // render the SAME procedure language; the contradiction that made
   // v1.0.18 unshippable to a NRW Bauamt clerk is structurally
   // impossible going forward.
-  const factsEarly = state.facts ?? []
-  const factBool = (key: string, fallback = false): boolean => {
-    const f = factsEarly.find((x) => x.key === key)
-    if (!f) return fallback
-    return (
-      f.value === true ||
-      f.value === 'true' ||
-      f.value === 'JA' ||
-      f.value === 'ja'
-    )
-  }
-  const factNum = (key: string): number | undefined => {
-    const f = factsEarly.find((x) => x.key === key)
-    if (!f) return undefined
-    if (typeof f.value === 'number') return f.value
-    const n = Number(f.value)
-    return Number.isFinite(n) ? n : undefined
-  }
-  const procedureCase: ProcedureCase = {
-    intent: intentFromTemplate(state.templateId ?? 'T-03'),
-    bundesland: (project.bundesland ?? 'nrw') as BundeslandCode,
-    eingriff_tragende_teile: factBool('eingriff_tragende_teile'),
-    // Sanierung default: assume Außenhülle work unless explicitly
-    // told otherwise — matches Königsallee façade-insulation case.
-    eingriff_aussenhuelle: factBool('eingriff_aussenhuelle', true),
-    denkmalschutz: factBool('denkmalschutz'),
-    ensembleschutz: factBool('ensembleschutz'),
-    aenderung_aeussere_erscheinung: factBool(
-      'aenderung_aeussere_erscheinung',
-    ),
-    grenzstaendig: factBool('grenzstaendig'),
-    in_gestaltungssatzung: factBool('in_gestaltungssatzung'),
-    fassadenflaeche_m2: factNum('fassadenflaeche_m2'),
-    // v1.0.21 Bug E — hard-blocker channels. When set, resolveProcedure
-    // returns 'bauvoranfrage' with explicit blocker reasoning instead
-    // of quietly emitting "vereinfachtes ERFORDERLICH".
-    mk_gebietsart: factBool('mk_gebietsart'),
-    bauvoranfrage_hard_blocker: factBool('bauvoranfrage_hard_blocker'),
-    sonderbau_scope: factBool('sonderbau_scope'),
-    // Sprint 0 (P2-C / RED-1) — persona's procedure-type verdict, via the
-    // shared resolver (canonical keys in priority order, then a free-form
-    // shape-scan for procedure_likely / verfahren / verfahrensart_hypothese …).
-    // Identical to the result page (composeLegalDomains) so the two surfaces
-    // cannot contradict. NOT sourced from state.procedures: the Königsallee
-    // T-03 fixture proved the persona's procedures[0] title can CONTRADICT the
-    // more-correct deterministic verdict (verfahrensfrei § 62 via
-    // resolveNrwSanierung), which must still win when no verdict fact is present.
-    verfahren_indikation: resolveVerfahrensIndikation(factsEarly),
-  }
+  // Sprint 1 (RED-1) — canonical ProcedureCase via the SHARED builder
+  // (buildProcedureCase), the SAME one the result-page resolveProcedures() now
+  // calls. Reads the persona's facts: verfahren_indikation verdict (incl. the
+  // new reguläres direction) + Sonderbau count (anzahl_sonderbau_tatbestaende).
+  // The PDF and every web surface now decide the procedure from identical
+  // inputs, so a GK5 + Sonderbau project resolves to § 65 everywhere instead of
+  // the PDF/web falling through to the template-default § 64.
+  const procedureCase: ProcedureCase = buildProcedureCase(
+    project,
+    state as ProjectState,
+  )
   const procedureDecision: ProcedureDecision = resolveProcedure(procedureCase)
   // v1.0.21 Bug E — derive an explicit BLOCKER summary that the
   // Executive Top-3 + Procedure card surface prominently.
@@ -529,10 +482,30 @@ export async function buildExportPdf({
         sourceLabel: formatQualifier({ source: 'LEGAL', quality: 'CALCULATED' }, pdfStrings),
       }
     })
+    // Sprint 1 (Y-2) — footer citations from the project's COMPUTED §§, not the
+    // generic "§ 30 BauGB · § 62/§ 64 · § 48 GEG" template default: the planning
+    // § scanned from facts (e.g. § 34 BauGB), the canonical procedure decision
+    // (e.g. § 65 BauO NRW), and the intent-correct GEG § (§ 10 new-build /
+    // § 48 renovation — see Y-3).
+    const planningRef = (() => {
+      for (const f of state.facts ?? []) {
+        if (typeof f.value !== 'string') continue
+        const m = f.value.match(/§\s*\d+[a-z]?\s*BauGB/i)
+        if (m) return m[0].replace(/\s+/g, ' ').trim()
+      }
+      return undefined
+    })()
+    const gegRef =
+      procedureCase.intent === 'sanierung' || procedureCase.intent === 'umnutzung'
+        ? '§ 48 GEG'
+        : '§ 10 GEG'
+    const legalRefs = [planningRef, procedureDecision.citation, gegRef]
+      .filter((s): s is string => !!s && s.trim().length > 0)
+      .join(' · ')
     renderExecutiveBody(executivePage, editorialFonts, pdfStrings, {
       templateLabel,
       bundeslandCode: bundeslandCodeUpper,
-      stateLegalRef,
+      stateLegalRef: legalRefs,
       topThree,
     })
   }

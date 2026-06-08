@@ -6,6 +6,7 @@ import {
   detectKlasse,
   formatEurRange,
   resolveCostAreaSqm,
+  resolveHeadlineCostRange,
 } from '../../lib/costNormsMuenchen'
 import { resolveCostProcedureType } from '../../lib/resolveProcedures'
 import { useResolvedRoles } from '../../hooks/useResolvedRoles'
@@ -93,7 +94,11 @@ export function AtAGlance({ project, state }: Props) {
     areaSqm,
     bundesland: project.bundesland,
   })
-  const costLabel = facts.length > 0 ? formatEurRange(cost.total, lang) : t('result.workspace.ataglance.tbd')
+  // Sprint 1 (Y-1) — single headline cost-range resolver: the per-template band
+  // for T-02/T-06/T-07/T-08, the engine total otherwise. Matches the Cost tab +
+  // PDF so the same project shows ONE cost range everywhere.
+  const costRange = resolveHeadlineCostRange(state.templateId, cost.total)
+  const costLabel = facts.length > 0 ? formatEurRange(costRange, lang) : t('result.workspace.ataglance.tbd')
 
   // Timeline — coarse range from procedure type.
   const timelineLabel =
@@ -181,6 +186,18 @@ function resolveBuildingClass(
   )
   if (regexHit && typeof regexHit.value === 'string') {
     return prettyClass(regexHit.value)
+  }
+  // 3. Sprint 1 (Y-6) — VALUE-based scan. The persona emits free-form and
+  // occasionally typo'd keys (the Friedrichstraße walk wrote `gebaeudekalsse`,
+  // "kal" not "kla"), which steps 1-2 miss — so At-a-Glance showed "—" while
+  // Key Data showed GK 5. The VALUE is canonical ("GK 5"); read it regardless
+  // of the key so a key typo can never blank the building class again.
+  for (const f of facts) {
+    if (typeof f.value !== 'string') continue
+    const m =
+      f.value.trim().match(/^(?:geb[äa]udeklasse[\s:·-]*)?GK\s*([1-5])\b/i) ??
+      f.value.trim().match(/^geb[äa]udeklasse[\s:·-]*([1-5])\b/i)
+    if (m) return prettyClass(`GK ${m[1]}`)
   }
   // v1.0.22 Bug C — the geometric fallback (deriveGkFromGeometry)
   // was retired in favour of the unified MBO § 2 Abs. 3 derivation in

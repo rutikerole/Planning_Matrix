@@ -60,14 +60,20 @@ interface GlossaryEntry {
 // every project regardless of bundesland.
 const FEDERAL_ENTRIES: ReadonlyArray<GlossaryEntry> = [
   {
+    // Sprint 1 (Y-5) — neutral across templates: § 30 (within a Bebauungsplan),
+    // § 34 (unplanned inner-area infill), § 35 (outer area). The old "§ 30"-only
+    // framing mismatched § 34 new-build projects.
     term: 'BauGB · Baugesetzbuch',
-    en: 'Federal building code (planning law, e.g. § 30 inner-area development).',
-    de: 'Bundesgesetz für das Bauplanungsrecht (z.B. § 30 Innenbereich).',
+    en: 'Federal building code (planning law — § 30 within a development plan, § 34 unplanned inner-area infill, § 35 outer area).',
+    de: 'Bundesgesetz für das Bauplanungsrecht (§ 30 im Bebauungsplan, § 34 unbeplanter Innenbereich, § 35 Außenbereich).',
   },
   {
+    // Sprint 1 (Y-5) — neutral across templates: § 10 Niedrigstenergiegebäude
+    // (new build), § 48 changes to existing buildings (renovation). The old
+    // "§ 48 renovation"-only framing mismatched new-build projects.
     term: 'GEG · Gebäudeenergiegesetz',
-    en: 'Federal building energy law; § 48 governs renovation energy obligations.',
-    de: 'Bundesgesetz zur Gebäudeenergie; § 48 regelt Modernisierungspflichten.',
+    en: 'Federal building energy law (§ 10 Niedrigstenergiegebäude for new builds; § 48 for changes to existing buildings).',
+    de: 'Bundesgesetz zur Gebäudeenergie (§ 10 Niedrigstenergiegebäude beim Neubau; § 48 bei Änderung bestehender Gebäude).',
   },
   {
     term: 'HOAI · Honorarordnung',
@@ -90,9 +96,11 @@ const FEDERAL_ENTRIES: ReadonlyArray<GlossaryEntry> = [
     de: 'HOAI-Leistungsphase (1–9); LP 1–4 umfasst Vor- bis Genehmigungsplanung.',
   },
   {
+    // Sprint 1 (Y-5) — BEG funds energy-efficient NEW construction
+    // (Klimafreundlicher Neubau) AND renovation, not renovation only.
     term: 'KfW · Kreditanstalt für Wiederaufbau',
-    en: 'Federal development bank; BEG programs fund energy-efficient renovation.',
-    de: 'Bundesförderbank; BEG-Programme finanzieren energieeffiziente Sanierung.',
+    en: 'Federal development bank; BEG programs fund energy-efficient new construction and renovation.',
+    de: 'Bundesförderbank; BEG-Programme finanzieren energieeffizienten Neubau und Sanierung.',
   },
   {
     term: 'Verfahrensfreiheit',

@@ -80,7 +80,7 @@ const EN: PdfStrings = {
   'exec.kicker': 'SECTION 01 · EXECUTIVE',
   'exec.title': 'Top 3 next steps',
   'exec.footer':
-    'Recommendations derived from § 30 BauGB · {stateLegalRef} · § 48 GEG · pending architect verification.',
+    'Recommendations derived from {stateLegalRef} · pending architect verification.',
   'exec.empty': 'No recommendations recorded yet.',
   'prio.high': 'HIGH PRIORITY',
   'prio.beforeAward': 'BEFORE AWARD',
@@ -343,7 +343,7 @@ const DE: PdfStrings = {
   'exec.kicker': 'ABSCHNITT 01 · ZUSAMMENFASSUNG',
   'exec.title': 'Die 3 nächsten Schritte',
   'exec.footer':
-    'Empfehlungen abgeleitet aus § 30 BauGB · {stateLegalRef} · § 48 GEG · Architekt:in-Verifizierung ausstehend.',
+    'Empfehlungen abgeleitet aus {stateLegalRef} · Architekt:in-Verifizierung ausstehend.',
   'exec.empty': 'Noch keine Empfehlungen erfasst.',
   'prio.high': 'HOHE PRIORITÄT',
   'prio.beforeAward': 'VOR VERGABE',

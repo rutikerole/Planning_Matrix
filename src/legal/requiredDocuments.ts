@@ -208,12 +208,19 @@ export function requiredDocumentsForCase(
     })
     out.push({
       key: 'geg_waermeschutznachweis_neubau',
-      name_de: 'GEG-Wärmeschutznachweis (Neubau)',
-      name_en: 'GEG thermal-insulation certificate (new build)',
+      name_de: 'GEG-Wärmeschutznachweis (Neubau, Niedrigstenergiegebäude)',
+      name_en: 'GEG thermal-insulation certificate (new build, NZEB)',
       status: 'required',
+      // Sprint 1 (Y-3) — § 48 GEG governs "Anforderungen an ein bestehendes
+      // Gebäude bei Änderung" (renovation), NOT new construction. A new build's
+      // thermal obligation is the Niedrigstenergiegebäude standard under § 10
+      // GEG (corpus heading: "Grundsatz und Niedrigstenergiegebäude") — the §
+      // the persona correctly used in chat. The geg_trigger doc above keeps
+      // § 48 for the renovation case (it only fires on eingriff_aussenhuelle +
+      // fassadenflaeche, which a new build never sets).
       delivery_de: 'Energieberater:in (dena-Liste)',
       delivery_en: 'Energy consultant (dena registry)',
-      citation: '§ 48 GEG',
+      citation: '§ 10 GEG',
     })
     out.push({
       key: 'schallschutznachweis',
@@ -315,7 +322,12 @@ export function requiredDocumentsForCase(
   }
 
   // ── Recommended: Asbest/PCB-Voruntersuchung ────────────────────
-  if (c.baujahr_pre_1995 !== false) {
+  // Sprint 1 (Y-4) — a NEW BUILD has no pre-1995 building fabric, so the Altbau
+  // pollutant pre-investigation must never surface on neubau (it bled onto the
+  // T-02 Friedrichstraße new-build brief). Applies only to existing-building
+  // intents (sanierung / umnutzung / abbruch / aufstockung / anbau), and there
+  // only unless the year is explicitly ≥ 1995.
+  if (c.intent !== 'neubau' && c.baujahr_pre_1995 !== false) {
     out.push({
       key: 'asbest_voruntersuchung',
       name_de: 'Asbest-/PCB-Voruntersuchung (bei Altbau vor 1995)',

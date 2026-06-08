@@ -24,12 +24,10 @@ import {
   type RequiredDocument,
 } from '@/legal/requiredDocuments'
 import {
+  buildProcedureCase,
   detectHardBlockers,
-  intentFromTemplate,
   resolveProcedure,
-  type ProcedureCase,
 } from '@/legal/resolveProcedure'
-import type { BundeslandCode } from '@/legal/states/_types'
 
 export interface ResolvedDocuments {
   /** Resolver-derived required Anlagen for the project's procedure
@@ -56,44 +54,11 @@ const BLOCKED_LABEL_DE =
 const BLOCKED_LABEL_EN =
   'Document requirements pending Bauvoranfrage resolution.'
 
-function buildProcedureCase(
-  project: ProjectRow,
-  state: Partial<ProjectState>,
-): ProcedureCase {
-  const facts = state.facts ?? []
-  const factBool = (key: string, fallback = false): boolean => {
-    const f = facts.find((x) => x.key === key)
-    if (!f) return fallback
-    return (
-      f.value === true ||
-      f.value === 'true' ||
-      f.value === 'JA' ||
-      f.value === 'ja'
-    )
-  }
-  const factNum = (key: string): number | undefined => {
-    const f = facts.find((x) => x.key === key)
-    if (!f) return undefined
-    if (typeof f.value === 'number') return f.value
-    const n = Number(f.value)
-    return Number.isFinite(n) ? n : undefined
-  }
-  return {
-    intent: intentFromTemplate(state.templateId ?? 'T-03'),
-    bundesland: (project.bundesland ?? 'nrw') as BundeslandCode,
-    eingriff_tragende_teile: factBool('eingriff_tragende_teile'),
-    eingriff_aussenhuelle: factBool('eingriff_aussenhuelle', true),
-    denkmalschutz: factBool('denkmalschutz'),
-    ensembleschutz: factBool('ensembleschutz'),
-    aenderung_aeussere_erscheinung: factBool('aenderung_aeussere_erscheinung'),
-    grenzstaendig: factBool('grenzstaendig'),
-    in_gestaltungssatzung: factBool('in_gestaltungssatzung'),
-    fassadenflaeche_m2: factNum('fassadenflaeche_m2'),
-    mk_gebietsart: factBool('mk_gebietsart'),
-    bauvoranfrage_hard_blocker: factBool('bauvoranfrage_hard_blocker'),
-    sonderbau_scope: factBool('sonderbau_scope'),
-  }
-}
+// Sprint 1 (RED-1) — the local ProcedureCase builder here was a third
+// construction site (alongside exportPdf's inline one and the result tabs that
+// built none). All three drifted. It's now the SHARED buildProcedureCase from
+// @/legal/resolveProcedure, so documents are derived from the same Sonderbau /
+// verdict-aware case as the procedure surfaces.
 
 export function resolveDocuments(
   project: ProjectRow,

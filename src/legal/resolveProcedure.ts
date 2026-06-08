@@ -30,7 +30,8 @@
 // ───────────────────────────────────────────────────────────────────────
 
 import type { BundeslandCode } from './states/_types'
-import type { TemplateId } from '@/types/projectState'
+import type { ProjectState, TemplateId } from '@/types/projectState'
+import type { ProjectRow } from '@/types/db'
 import { getStateLocalization } from './stateLocalization'
 
 export type ProcedureKind =
@@ -114,10 +115,14 @@ export interface ProcedureCase {
    *  reasoning (e.g. by the chat persona) — used as an escape hatch
    *  when the specific blocker isn't enumerated here yet. */
   bauvoranfrage_hard_blocker?: boolean
-  /** Sonderbau scope (e.g. residential ≥ 60 Stellplätze, hotels,
-   *  schools) — § 50 BauO NRW / Art. 2 Abs. 4 BayBO etc.; triggers
-   *  Sonderbauverfahren that this resolver does not yet cover. */
-  sonderbau_scope?: boolean
+  /** Sprint 1 (RED-1) — number of Sonderbau triggers the persona computed
+   *  (e.g. anzahl_sonderbau_tatbestaende = 2 for a Großgarage + KiTa). ≥ 1
+   *  forces the full regular procedure (§ 65 BauO NRW etc.) and removes
+   *  Genehmigungsfreistellung (§ 63) and the simplified procedure (§ 64) from
+   *  eligibility — the German Baurecht rule a GK5 + Sonderbau building must
+   *  follow. Replaces the dead boolean that keyed off a fact the persona never
+   *  wrote (the prior factBool read was always false), so the rule never fired. */
+  sonderbau_count?: number
   /** v1.0.28 Bug 52 — the persona's synthesized procedure conclusion
    *  (e.g. "verfahrensfrei nach § 62 BauO NRW"), read from the
    *  `verfahren_indikation` / `PROCEDURE.TYPE` fact. When it states the
@@ -202,7 +207,7 @@ export function resolveVerfahrensIndikation(
 // v1.0.21 Bug E — describe an active hard blocker for the renderer.
 export interface ProcedureHardBlocker {
   /** Slug for the blocker type. */
-  kind: 'mk_gebietsart' | 'denkmalschutz' | 'bauvoranfrage_hard_blocker' | 'sonderbau_scope'
+  kind: 'mk_gebietsart' | 'denkmalschutz' | 'bauvoranfrage_hard_blocker'
   labelDe: string
   labelEn: string
 }
@@ -223,20 +228,16 @@ export function detectHardBlockers(c: ProcedureCase): ProcedureHardBlocker[] {
       labelEn: 'Denkmalschutz (heritage consent required before permit)',
     })
   }
-  if (c.sonderbau_scope) {
-    out.push({
-      kind: 'sonderbau_scope',
-      labelDe: 'Sonderbau-Tatbestand (eigene Verfahrensregeln)',
-      labelEn: 'Sonderbau scope (separate procedure)',
-    })
-  }
+  // Sprint 1 (RED-1) — Sonderbau is NO LONGER a bauvoranfrage hard blocker.
+  // A Sonderbau-Tatbestand does not defer the procedure to a pre-inquiry; it
+  // forces the FULL regular procedure (§ 65), which IS knowable. That rule is
+  // applied in resolveProcedure() via c.sonderbau_count, before the verdict
+  // branches, so a Sonderbau project resolves to standard (§ 65) — not the
+  // template-default § 64 it silently fell through to before.
   if (
     c.bauvoranfrage_hard_blocker &&
     !out.some(
-      (b) =>
-        b.kind === 'mk_gebietsart' ||
-        b.kind === 'denkmalschutz' ||
-        b.kind === 'sonderbau_scope',
+      (b) => b.kind === 'mk_gebietsart' || b.kind === 'denkmalschutz',
     )
   ) {
     out.push({
@@ -345,6 +346,49 @@ export function resolveProcedure(c: ProcedureCase): ProcedureDecision {
       ],
     }
   }
+  // Sprint 1 (RED-1) — SONDERBAU GATE. ≥ 1 Sonderbau-Tatbestand (Großgarage,
+  // KiTa, Versammlungsstätte, …) forces the FULL regular procedure and removes
+  // Genehmigungsfreistellung (§ 63) + the simplified procedure (§ 64) from
+  // eligibility. This MUST run before the verfahrensfrei/vereinfacht verdict
+  // branches: even if a fact mistakenly said "vereinfacht", a Sonderbau
+  // building legally cannot use it. The Friedrichstraße T-02 walk proved the
+  // gap — GK5 + 2 Sonderbau triggers, persona correctly said § 65, but the
+  // resolver had no Sonderbau rule AND no reguläres branch, so it fell through
+  // to the hardcoded NRW-neubau § 64. An explicit § 65 citation in the verdict
+  // is honored; otherwise the state's regular-permit § is used.
+  const viRaw = c.verfahren_indikation ?? ''
+  if ((c.sonderbau_count ?? 0) >= 1) {
+    const cited = extractProcedureCitation(viRaw)
+    const reg = getStateLocalization(c.bundesland).procedure.regular
+    const regCitation = reg.citation.trim()
+    // The procedure IS the regular one (§ 65), so cite the regular §. The
+    // verdict's own citation is used ONLY as a fallback for stub states with no
+    // localized regular § — never to override it (a contradictory verdict that
+    // said "§ 64 vereinfacht" must NOT make a Sonderbau-forced standard cite the
+    // simplified §).
+    const citation =
+      regCitation ||
+      cited ||
+      'reguläres Baugenehmigungsverfahren — landesrechtliche Detail-Spezifika in Vorbereitung'
+    const citeSuffix = regCitation || cited ? ` (${regCitation || cited})` : ''
+    const n = c.sonderbau_count ?? 0
+    return {
+      kind: 'standard',
+      citation,
+      reasoning_de: `Mindestens ein Sonderbau-Tatbestand liegt vor (${n}) — das Vorhaben unterliegt zwingend dem regulären Baugenehmigungsverfahren${citeSuffix}. Genehmigungsfreistellung und vereinfachtes Verfahren sind ausgeschlossen.`,
+      reasoning_en: `At least one Sonderbau trigger applies (${n}) — the project is subject to the full (regular) building-permit procedure${citeSuffix}. Permit exemption and the simplified procedure are excluded.`,
+      confidence: 'CALCULATED',
+      caveats: [
+        {
+          kind: 'bebauungsplan_specific',
+          message_de:
+            'Sonderbau-Anforderungen (z. B. Brandschutzkonzept, Prüfsachverständige) mit der zuständigen Bauaufsicht abstimmen.',
+          message_en:
+            'Coordinate Sonderbau requirements (e.g. fire-safety concept, approved experts) with the responsible building authority.',
+        },
+      ],
+    }
+  }
   // v1.0.28 Bug 52 — honor the persona's verfahrensfrei conclusion BEFORE
   // the template-blind branches. The persona writes a verfahren_indikation
   // fact after its synthesis (e.g. T-05 Abbruch Bonn: "verfahrensfrei nach
@@ -353,7 +397,7 @@ export function resolveProcedure(c: ProcedureCase): ProcedureDecision {
   // defect. We honor ONLY the permit-free direction (never to downgrade a
   // permit the resolver would require) so this can't weaken a real
   // obligation. Hard blockers above still take precedence.
-  const vi = (c.verfahren_indikation ?? '').toLowerCase()
+  const vi = viRaw.toLowerCase()
   if (/verfahrensfrei|verfahrensfreiheit|permit-free|genehmigungsfrei/.test(vi)) {
     const cited = extractProcedureCitation(c.verfahren_indikation ?? '')
     const freeCitation =
@@ -401,6 +445,36 @@ export function resolveProcedure(c: ProcedureCase): ProcedureDecision {
             'Anwendbarkeit des vereinfachten Verfahrens mit dem lokalen Bauamt bestätigen; bei Sonderbau-Tatbeständen greift das reguläre Verfahren.',
           message_en:
             'Confirm applicability of the simplified procedure with the local building authority; a Sonderbau scope reinstates the regular procedure.',
+        },
+      ],
+    }
+  }
+  // Sprint 1 (RED-1) — honor the persona's REGULAR/standard verdict, the third
+  // verdict direction (alongside verfahrensfrei + vereinfacht above). Before
+  // this branch, a persona conclusion of "§ 65 BauO NRW — reguläres
+  // Baugenehmigungsverfahren" matched NEITHER the verfahrensfrei nor the
+  // vereinfacht regex and fell through to the template-default neubau branch
+  // (§ 64), silently DOWNGRADING a stricter, correctly-computed obligation.
+  // Honoring an upgrade to the full procedure can never weaken a requirement.
+  // Guard against the simplified label, whose name also contains
+  // "Baugenehmigungsverfahren".
+  if (/regul[äa]r|standard/.test(vi) && !/vereinfacht|simplified|frei/.test(vi)) {
+    const cited = extractProcedureCitation(viRaw)
+    const reg = getStateLocalization(c.bundesland).procedure.regular
+    const citation = cited ?? (reg.citation.trim() || viRaw.trim())
+    return {
+      kind: 'standard',
+      citation,
+      reasoning_de: `Reguläres Baugenehmigungsverfahren${citation ? ` (${citation})` : ''} — vollständige bauaufsichtliche Prüfung. Bauantrag mit allen Bauvorlagen erforderlich.`,
+      reasoning_en: `Standard (full) building-permit procedure${citation ? ` (${citation})` : ''} — full building-authority review. A building application with all required documents is needed.`,
+      confidence: 'CALCULATED',
+      caveats: [
+        {
+          kind: 'bebauungsplan_specific',
+          message_de:
+            'Verfahrensart mit dem lokalen Bauamt bestätigen; Prüfumfang und Fachgutachten je nach Gebäudeklasse und Sonderbau-Tatbestand.',
+          message_en:
+            'Confirm the procedure with the local building authority; review scope and specialist reports depend on the building class and any Sonderbau scope.',
         },
       ],
     }
@@ -612,5 +686,123 @@ function resolveNrwSanierung(c: ProcedureCase): ProcedureDecision {
           'Clarify specific scope and Bebauungsplan with the local building authority.',
       },
     ],
+  }
+}
+
+// ───────────────────────────────────────────────────────────────────────
+// Sprint 1 (RED-1) — SHARED ProcedureCase builder.
+//
+// Before this, exportPdf built the ProcedureCase inline and the result tabs
+// (At-a-Glance / Executive Read / Procedure tab) didn't build one at all —
+// they read the template baseline (deriveBaselineProcedure) and ignored the
+// persona's computed verdict + Sonderbau facts entirely. That is why the same
+// project showed "§ 65 reguläres" on Key Data / Legal landscape but
+// "§ 64 simplified · likely" on every narrative surface. One builder, read by
+// the PDF AND the result-page resolver, makes the surfaces converge on ONE
+// decision derived facts-first.
+//
+// Fact reads are shape-tolerant (the persona emits free-form keys). Boolean
+// fields use the STRICT affirmative whitelist (true/'true'/'JA'/'ja') — the
+// original exportPdf semantics, so a descriptive value like
+// "nicht bekannt an der Einheit" reads false, NOT true. The Sonderbau count
+// reads the explicit count fact, with a NEGATION-AWARE trigger fallback so
+// "sonderbau_trigger = nein — Gaststätte < 60 Gäste" is correctly read as
+// "no Sonderbau", not as a trigger.
+// ───────────────────────────────────────────────────────────────────────
+
+interface FactLike {
+  key: string
+  value: unknown
+}
+
+/** Strict affirmative — boolean ProcedureCase fields (matches original exportPdf). */
+function factAffirmative(v: unknown): boolean {
+  return v === true || v === 'true' || v === 'JA' || v === 'ja'
+}
+
+/** A free-form Sonderbau-trigger value is "present" unless empty or it starts
+ *  with a negation (nein/kein/nicht/no/false/keine/entfällt/—). */
+function sonderbauTriggerPresent(v: unknown): boolean {
+  if (v === true) return true
+  if (typeof v === 'number') return v > 0
+  if (typeof v === 'string') {
+    const t = v.trim().toLowerCase()
+    if (t.length === 0) return false
+    return !/^(false|nein|no|0|keine?|kein|none|nicht|n\/a|entf[äa]llt|-|–|—)\b/.test(t)
+  }
+  return false
+}
+
+/**
+ * Count the Sonderbau triggers the persona computed. Shape-tolerant:
+ *   1. an explicit count fact (key contains "sonderbau" AND "anzahl") wins;
+ *   2. otherwise, the number of distinct AFFIRMATIVE Sonderbau-trigger facts
+ *      (key contains "sonderbau", excluding the count key, value not negated).
+ * Returns 0 when no Sonderbau signal is present.
+ */
+export function detectSonderbauCount(
+  facts: ReadonlyArray<FactLike> | undefined,
+): number {
+  if (!facts || facts.length === 0) return 0
+  for (const f of facts) {
+    const k = f.key.toLowerCase().replace(/[._\s-]/g, '')
+    if (k.includes('sonderbau') && k.includes('anzahl')) {
+      const n =
+        typeof f.value === 'number' ? f.value : parseInt(String(f.value), 10)
+      if (Number.isFinite(n)) return n
+    }
+  }
+  let count = 0
+  for (const f of facts) {
+    const k = f.key.toLowerCase().replace(/[._\s-]/g, '')
+    if (
+      k.includes('sonderbau') &&
+      !k.includes('anzahl') &&
+      sonderbauTriggerPresent(f.value)
+    ) {
+      count += 1
+    }
+  }
+  return count
+}
+
+/**
+ * Build the canonical ProcedureCase from a project + its state, reading the
+ * persona's facts. THE single construction site — exportPdf and the result-page
+ * resolveProcedures() both call this so the PDF and the web surfaces decide the
+ * procedure from identical inputs.
+ */
+export function buildProcedureCase(
+  project: Pick<ProjectRow, 'bundesland' | 'intent'>,
+  state: Partial<ProjectState>,
+): ProcedureCase {
+  const facts: FactLike[] = state.facts ?? []
+  const factBool = (key: string, fallback = false): boolean => {
+    const f = facts.find((x) => x.key === key)
+    if (!f) return fallback
+    return factAffirmative(f.value)
+  }
+  const factNum = (key: string): number | undefined => {
+    const f = facts.find((x) => x.key === key)
+    if (!f) return undefined
+    if (typeof f.value === 'number') return f.value
+    const n = Number(f.value)
+    return Number.isFinite(n) ? n : undefined
+  }
+  return {
+    intent: intentFromTemplate((state.templateId ?? 'T-03') as TemplateId),
+    bundesland: (project.bundesland ?? 'nrw') as BundeslandCode,
+    eingriff_tragende_teile: factBool('eingriff_tragende_teile'),
+    eingriff_aussenhuelle: factBool('eingriff_aussenhuelle', true),
+    denkmalschutz: factBool('denkmalschutz'),
+    ensembleschutz: factBool('ensembleschutz'),
+    aenderung_aeussere_erscheinung: factBool('aenderung_aeussere_erscheinung'),
+    grenzstaendig: factBool('grenzstaendig'),
+    in_gestaltungssatzung: factBool('in_gestaltungssatzung'),
+    fassadenflaeche_m2: factNum('fassadenflaeche_m2'),
+    mk_gebietsart: factBool('mk_gebietsart'),
+    bauvoranfrage_hard_blocker: factBool('bauvoranfrage_hard_blocker'),
+    sonderbau_count: detectSonderbauCount(facts),
+    verfahren_indikation: resolveVerfahrensIndikation(facts),
   }
 }
