@@ -31,7 +31,6 @@ import {
   buildCostBreakdown,
   costBandFor,
   detectKlasse,
-  detectProcedure,
   formatEurRange,
   resolveCostAreaSqm,
 } from '@/features/result/lib/costNormsMuenchen'
@@ -674,12 +673,15 @@ export async function buildExportPdf({
   // The numeric engine (buildCostBreakdown + resolveAreaSqmByTemplate)
   // is unchanged — only the surface treatment is new, so the PDF +
   // result-page CostTimelineTab still consume identical data.
-  const procedures = state.procedures ?? []
-  const primaryRationale =
-    procedures.find((p) => p.status === 'erforderlich')?.rationale_de ??
-    procedures[0]?.rationale_de ??
-    ''
-  const procedure = detectProcedure(primaryRationale)
+  // Sprint 0 addendum — shared cost procedure-type resolver, identical to the
+  // result-page surfaces (canonical resolveProcedures → primary →
+  // detectProcedure), so the PDF cost can never diverge from the Cost tab /
+  // At-a-Glance / Executive Read for the same project. Dynamic import mirrors
+  // the resolveProcedures import below — keeps result/lib lazy for this path.
+  const { resolveCostProcedureType } = await import(
+    '@/features/result/lib/resolveProcedures'
+  )
+  const procedure = resolveCostProcedureType(project, state as ProjectState)
   const corpus = (state.facts ?? [])
     .map((f) => `${f.key} ${typeof f.value === 'string' ? f.value : ''}`)
     .join(' ')

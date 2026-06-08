@@ -229,9 +229,20 @@ export function resolveInputs(
 export function describeCostInputs(
   inputs: CostInputs,
   lang: 'de' | 'en',
+  /** Sprint 0 addendum — when the area was NOT resolved from project facts
+   *  (the engine fell back to BASE_AREA_SQM), label it as an assumption so the
+   *  caption is as honest as the PDF's "no-area" phrasing instead of showing a
+   *  default as if it were measured. */
+  areaAssumed = false,
 ): string {
   const parts: string[] = []
-  parts.push(`${inputs.areaSqm} m²`)
+  parts.push(
+    areaAssumed
+      ? lang === 'en'
+        ? `${inputs.areaSqm} m² (assumed)`
+        : `${inputs.areaSqm} m² (Annahme)`
+      : `${inputs.areaSqm} m²`,
+  )
   parts.push(
     lang === 'en'
       ? `HOAI Zone ${inputs.honorarzone}`

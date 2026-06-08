@@ -6,12 +6,12 @@ import {
   costBandFor,
   describeCostInputs,
   detectKlasse,
-  detectProcedure,
   formatEurRange,
   resolveCostAreaSqm,
   resolveInputs,
   type CostBreakdown,
 } from '../../lib/costNormsMuenchen'
+import { resolveCostProcedureType } from '../../lib/resolveProcedures'
 import { PROCEDURE_PHASES, totalPhaseWeight } from '../../lib/composeTimeline'
 import { findCostRationale } from '@/data/costRationales'
 import { findTimelineAnnotation } from '@/data/timelineAnnotations'
@@ -69,11 +69,11 @@ export function CostTimelineTab({ project, state }: Props) {
   const lang = (i18n.resolvedLanguage ?? 'de') as 'de' | 'en'
 
   const procedures = state.procedures ?? []
-  const primaryRationale =
-    procedures.find((p) => p.status === 'erforderlich')?.rationale_de ??
-    procedures[0]?.rationale_de ??
-    ''
-  const procedure = detectProcedure(primaryRationale)
+  // Sprint 0 addendum — shared cost procedure-type resolver (canonical
+  // resolveProcedures → primary → detectProcedure) used by every cost surface
+  // so the procedure multiplier can never diverge from the PDF / At-a-Glance /
+  // Executive Read (mirrors resolveCostAreaSqm for the area axis).
+  const procedure = resolveCostProcedureType(project, state)
   const corpus = (state.facts ?? [])
     .map((f) => `${f.key} ${typeof f.value === 'string' ? f.value : ''}`)
     .join(' ')
@@ -86,7 +86,10 @@ export function CostTimelineTab({ project, state }: Props) {
   const opts = { areaSqm, bundesland: project.bundesland }
   const cost = buildCostBreakdown(procedure, klasse, opts)
   const inputs = resolveInputs(procedure, klasse, opts)
-  const inputsLabel = describeCostInputs(inputs, lang)
+  // Sprint 0 addendum — when no area resolved from facts, the engine uses the
+  // BASE_AREA_SQM default; label it "(Annahme)" so the caption is as honest as
+  // the PDF's no-area phrasing (numbers already agree).
+  const inputsLabel = describeCostInputs(inputs, lang, areaSqm == null)
   // v1.0.28 Bug 53 — T-05 demolition is cost-template-blind (HOAI new-build
   // engine + 180 m² silent default + a GEG energy row). No sourced BKI
   // demolition factors exist (C11_DATA_GAPS GAP-4) → honest stub, not wrong

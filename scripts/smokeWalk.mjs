@@ -3439,6 +3439,12 @@ async function runStaticGate() {
     ['AtAGlance.tsx', 'src/features/result/components/Cards/AtAGlance.tsx'],
     ['composeExecutiveRead.ts', 'src/features/result/lib/composeExecutiveRead.ts'],
   ]
+  // Sprint 0 addendum — the procedure axis is unified too: every cost surface
+  // must resolve the procedure multiplier through resolveCostProcedureType
+  // (resolveProcedures.ts) and NONE may call detectProcedure directly. The four
+  // surfaces previously agreed only because the baseline rationale maps to
+  // 'unknown' — a single rationale edit would have desynced them.
+  const resolveProcsLibSrc = await readFileText("src/features/result/lib/resolveProcedures.ts")
   const areaChecks = [
     {
       ok: /export\s+function\s+resolveCostAreaSqm/.test(costSrcForB24),
@@ -3448,9 +3454,18 @@ async function runStaticGate() {
       ok: /function\s+resolveCostAreaSqm[\s\S]{0,600}resolveAreaSqmByTemplate[\s\S]{0,600}detectAreaSqm/.test(costSrcForB24),
       msg: 'resolveCostAreaSqm must try resolveAreaSqmByTemplate first, then detectAreaSqm as the backstop',
     },
+    {
+      ok: /export\s+function\s+resolveCostProcedureType/.test(resolveProcsLibSrc),
+      msg: 'resolveProcedures must export the single resolveCostProcedureType resolver',
+    },
+    {
+      ok: /resolveCostProcedureType[\s\S]{0,400}resolveProcedures\([\s\S]{0,400}detectProcedure/.test(resolveProcsLibSrc),
+      msg: 'resolveCostProcedureType must go through the canonical resolveProcedures, then detectProcedure',
+    },
   ]
   for (const [name, path] of COST_SURFACES) {
     const src = await readFileText(path)
+    // Area axis
     areaChecks.push({
       ok: /resolveCostAreaSqm\(/.test(src),
       msg: `${name} must compute its cost area via resolveCostAreaSqm (single source of truth)`,
@@ -3459,8 +3474,17 @@ async function runStaticGate() {
       ok: !/\bdetectAreaSqm\(/.test(src) && !/\bresolveAreaSqmByTemplate\(/.test(src),
       msg: `${name} must NOT call detectAreaSqm/resolveAreaSqmByTemplate directly — that reintroduces the dual-path divergence (P1-A). Use resolveCostAreaSqm.`,
     })
+    // Procedure axis
+    areaChecks.push({
+      ok: /resolveCostProcedureType\(/.test(src),
+      msg: `${name} must compute its cost procedure-type via resolveCostProcedureType (single source of truth)`,
+    })
+    areaChecks.push({
+      ok: !/\bdetectProcedure\(/.test(src),
+      msg: `${name} must NOT call detectProcedure directly — that reintroduces the procedure-axis divergence. Use resolveCostProcedureType.`,
+    })
   }
-  results.push(failures('Sprint 0 P1-A: all 4 cost surfaces share one area resolver', areaChecks))
+  results.push(failures('Sprint 0 P1-A + addendum: all 4 cost surfaces share one area AND one procedure resolver', areaChecks))
 
   // ── v1.0.11 Bug 22 — PDF ligature corruption fix ──────────────────
   // The brand-TTF path previously bypassed sanitization entirely, so
