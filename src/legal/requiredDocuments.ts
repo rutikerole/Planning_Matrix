@@ -322,7 +322,12 @@ export function requiredDocumentsForCase(
   }
 
   // ── Recommended: Asbest/PCB-Voruntersuchung ────────────────────
-  if (c.baujahr_pre_1995 !== false) {
+  // Sprint 1 (Y-4) — a NEW BUILD has no pre-1995 building fabric, so the Altbau
+  // pollutant pre-investigation must never surface on neubau (it bled onto the
+  // T-02 Friedrichstraße new-build brief). Applies only to existing-building
+  // intents (sanierung / umnutzung / abbruch / aufstockung / anbau), and there
+  // only unless the year is explicitly ≥ 1995.
+  if (c.intent !== 'neubau' && c.baujahr_pre_1995 !== false) {
     out.push({
       key: 'asbest_voruntersuchung',
       name_de: 'Asbest-/PCB-Voruntersuchung (bei Altbau vor 1995)',
