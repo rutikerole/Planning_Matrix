@@ -2,6 +2,12 @@ import type { ProjectRow } from '@/types/db'
 import type { Procedure, ProjectState } from '@/types/projectState'
 import { deriveBaselineProcedure } from './deriveBaselineProcedure'
 import { detectProcedure, type ProcedureType } from './costNormsMuenchen'
+import {
+  buildProcedureCase,
+  procedureLabel,
+  resolveProcedure,
+  type ProcedureDecision,
+} from '@/legal/resolveProcedure'
 
 export interface ResolvedProcedures {
   procedures: Procedure[]
@@ -9,14 +15,53 @@ export interface ResolvedProcedures {
   isFromState: boolean
 }
 
+const NOW = (): string => new Date().toISOString()
+
+/**
+ * Sprint 1 (RED-1) — convert the canonical ProcedureDecision into a Procedure
+ * the result surfaces render. This is how At-a-Glance / Executive Read /
+ * Procedure tab inherit the verdict-fact-driven decision (e.g. § 65 reguläres
+ * for a Sonderbau project) instead of the template-intent baseline.
+ */
+function procedureFromDecision(decision: ProcedureDecision): Procedure {
+  const suffix = decision.citation ? ` · ${decision.citation}` : ''
+  return {
+    id: 'P-Decision',
+    title_de: `${procedureLabel(decision.kind, 'de')}${suffix}`,
+    title_en: `${procedureLabel(decision.kind, 'en')}${suffix}`,
+    status:
+      decision.kind === 'verfahrensfrei' ? 'nicht_erforderlich' : 'erforderlich',
+    rationale_de: decision.reasoning_de,
+    rationale_en: decision.reasoning_en,
+    qualifier: {
+      source: 'LEGAL',
+      quality: decision.confidence,
+      setAt: NOW(),
+      setBy: 'system',
+      reason:
+        'Verfahren aus den erhobenen Projektfakten abgeleitet — zu bestätigen durch die Architekt:in.',
+    },
+  }
+}
+
 /**
  * Phase 8.5 (A.3) — pure variant of useResolvedProcedures (Phase 8.1).
- * Identical resolution logic, no React hook semantics. Used by the
- * PDF builder + any other non-React caller (e.g., markdown / JSON
- * export pipelines) so React + PDF render the same data.
+ * Used by the PDF builder + any other non-React caller so React + PDF render
+ * the same data.
  *
- * The hook (useResolvedProcedures) keeps its memoised wrapper for
- * use in components.
+ * Sprint 1 (RED-1) — FACTS-FIRST. Resolution order:
+ *   1. persona-emitted state.procedures (structured) — unchanged;
+ *   2. NEW: when the persona computed a procedure verdict (verfahren_indikation
+ *      fact) OR a Sonderbau signal (anzahl_sonderbau_tatbestaende ≥ 1), derive
+ *      the primary procedure from the canonical resolveProcedure() decision, so
+ *      every result surface matches the PDF / Key Data / Legal landscape;
+ *   3. template-intent baseline (deriveBaselineProcedure) — fallback ONLY when
+ *      no computed signal exists (zero behaviour change for those projects).
+ *
+ * Before this, step 2 didn't exist: a project whose persona wrote the verdict as
+ * a FACT (not as a structured state.procedures entry) fell straight to the
+ * template baseline, so a GK5 + Sonderbau MFH showed "§ 64 simplified · likely"
+ * on every narrative surface while Key Data showed the correct § 65.
  */
 export function resolveProcedures(
   project: ProjectRow,
@@ -24,6 +69,15 @@ export function resolveProcedures(
 ): ResolvedProcedures {
   const persona = state.procedures ?? []
   if (persona.length > 0) return { procedures: persona, isFromState: true }
+
+  const pcase = buildProcedureCase(project, state)
+  const hasVerdict = !!pcase.verfahren_indikation?.trim()
+  const hasSonderbau = (pcase.sonderbau_count ?? 0) >= 1
+  if (hasVerdict || hasSonderbau) {
+    const decision = resolveProcedure(pcase)
+    return { procedures: [procedureFromDecision(decision)], isFromState: false }
+  }
+
   return {
     procedures: deriveBaselineProcedure({
       intent: project.intent,
