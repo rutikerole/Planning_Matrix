@@ -1816,6 +1816,29 @@ async function runStaticGate() {
       msg: 'ChatWorkspacePage.handleSubmit must mint a stable clientRequestId per user turn' },
   ]))
 
+  // ── T-03 sprint: pin the wins the walk CONFIRMED (must not regress) ───────
+  const winReqDocs = await readFileText('src/legal/requiredDocuments.ts')
+  const winT05 = await readFileText('src/legal/templates/t05-abbruch.ts')
+  const winAtAGlance = await readFileText('src/features/result/components/Cards/AtAGlance.tsx')
+  const winBleedGuard = await readFileText('src/legal/crossStateBleedGuard.ts')
+  const winT03 = await readFileText('src/legal/templates/t03-sanierung.ts')
+  results.push(failures('T-03 sprint: confirmed wins pinned (renovation GEG · hazmat pre-1995 · GK-unchanged · state isolation)', [
+    // WIN 1 — § 48 GEG is the RENOVATION thermal path (not new-build, which is § 10).
+    { ok: /citation:\s*'§ 48 GEG'/.test(winReqDocs) && /§ 48 GEG governs[\s\S]{0,80}renovation/.test(winReqDocs),
+      msg: '§ 48 GEG must stay the renovation Wärmeschutz citation (new-build uses § 10 GEG)' },
+    { ok: /GEG-Sanierungspflicht/.test(winT03),
+      msg: 'T-03 must keep the GEG-Sanierungspflicht renovation energy path' },
+    // WIN 2 — asbestos/PCB hazardous-materials survey keyed to pre-1995 buildings.
+    { ok: /Asbest, KMF, PCB/.test(winT05) && /vor 1995/.test(winT05),
+      msg: 'pre-1995 asbestos/KMF/PCB Schadstoffkataster must stay (GefStoffV hazmat survey)' },
+    // WIN 3 — a use conversion / Bestand change does NOT re-classify the Gebäudeklasse.
+    { ok: /does not re-classify/.test(winAtAGlance) && /gkUseConversion/.test(winAtAGlance),
+      msg: 'GK-unchanged-from-Bestand framing (T-04 gkUseConversion) must stay — no fabricated re-classification' },
+    // WIN 4 — state isolation: the bleed guard must scrub BW tokens on the wrong state.
+    { ok: /state:\s*'bw',\s*pattern:\s*\/\\bLBO\\s\+BW\\b\//.test(winBleedGuard),
+      msg: 'cross-state bleed guard must keep the BW LBO-token scrubber (no Bayern/NRW bleed into BW)' },
+  ]))
+
   // ── v1.0.4 D2+D3+D6 drift checks (compliance docs + dependabot) ──
   const compliance = await readFileText('docs/COMPLIANCE.md')
   const legalReview = await readFileText('docs/LEGAL_COPY_REVIEW.md')
