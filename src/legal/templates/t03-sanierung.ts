@@ -109,7 +109,7 @@ TYPISCHE FACHPLANER für T-03
 • Brandschutzplaner:in — NUR falls Fluchtwege oder Brandwände
   berührt werden.
 • Denkmalpflege / BLfD — falls Gebäude oder Ensemble unter
-  Denkmalschutz steht (BayDSchG § 1).
+  Denkmalschutz steht (BayDSchG Art. 1).
 
 ──────────────────────────────────────────────────────────────────────────
 TYPISCHE DOKUMENTE für T-03
