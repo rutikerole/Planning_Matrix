@@ -7,6 +7,7 @@ import {
   detectKlasse,
   formatEurRange,
   resolveCostAreaSqm,
+  resolveHeadlineCostRange,
 } from './costNormsMuenchen'
 import { resolveProcedures, resolveCostProcedureType } from './resolveProcedures'
 
@@ -129,7 +130,12 @@ export function composeExecutiveRead({
     primary,
     fallback,
     isBaselineProc,
-    costRange: formatEurRange(cost.total, lang),
+    // Sprint 1 (Y-1) — band for T-02/T-06/T-07/T-08, engine total otherwise;
+    // matches At-a-Glance + Cost tab + PDF (one cost range everywhere).
+    costRange: formatEurRange(
+      resolveHeadlineCostRange(state.templateId, cost.total),
+      lang,
+    ),
     timelineMonths: months,
     intent,
     lang,
