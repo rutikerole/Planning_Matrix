@@ -502,6 +502,48 @@ export function resolveProcedure(c: ProcedureCase): ProcedureDecision {
       ],
     }
   }
+  // T-03 thin-state propagation sprint — SANIERUNG (T-03), all states except
+  // NRW (handled by resolveNrwSanierung above). Before this, resolveProcedure
+  // had a renovation decision tree for NRW ONLY; every other state's sanierung
+  // — all 11 thin states plus BW/Hessen/Niedersachsen whenever the persona
+  // verdict didn't literally contain the keyword "vereinfacht" (e.g. a
+  // citation-only "§ 63 LBauO M-V", or eingriff_tragende_teile=true with no
+  // keyword) — fell through every branch to the generic fallback below, which
+  // emits the REGULAR procedure (§ 64) at ASSUMED confidence. That silently
+  // overwrote the persona's correct simplified verdict (the MV/Rostock walk:
+  // chat said "vereinfachtes § 63 LBauO M-V", result showed "Standard § 64 ·
+  // LEGAL·ASSUMED"). A renovation that cleared the hard-blocker + Sonderbau
+  // gates is a non-Sonderbau permit case → the SIMPLIFIED procedure is the
+  // correct baseline (mirrors the umnutzung branch / deriveBaselineProcedure
+  // sanierung→simplified), and CALCULATED (intent + non-Sonderbau, with the
+  // structural-intervention fact when present). The verfahrensfrei / vereinfacht
+  // / regular keyword branches above still win whenever the persona stated one
+  // explicitly, so an explicit verdict is never downgraded.
+  if (c.intent === 'sanierung') {
+    const loc = getStateLocalization(c.bundesland)
+    const simp = loc.procedure.simplified
+    const simpCitation = simp.citation.trim()
+    const hasCitation = simpCitation.length > 0
+    const structural = c.eingriff_tragende_teile
+    const citeDe = hasCitation ? ` (${simpCitation})` : ' (landesrechtliche Detail-Spezifika in Vorbereitung)'
+    const citeEn = hasCitation ? ` (${simpCitation})` : ' (state-specific details being finalized)'
+    return {
+      kind: 'vereinfachtes',
+      citation: hasCitation ? simpCitation : 'landesrechtliche Detail-Spezifika in Vorbereitung',
+      reasoning_de: `${structural ? 'Eingriff in tragende Bauteile erfasst — ' : ''}Sanierung mit strukturellem oder genehmigungspflichtigem Eingriff; für nicht-Sonderbauten regelmäßig im vereinfachten Verfahren${citeDe}. Geringfügige Maßnahmen können verfahrensfrei sein — Verfahrensart mit dem lokalen Bauamt bestätigen.`,
+      reasoning_en: `${structural ? 'Load-bearing intervention captured — ' : ''}A renovation with a structural or permit-triggering intervention; for non-Sonderbau cases typically via the simplified procedure${citeEn}. Minor measures may be permit-free — confirm the procedure with the local building authority.`,
+      confidence: 'CALCULATED',
+      caveats: [
+        {
+          kind: 'bebauungsplan_specific',
+          message_de:
+            'Anwendbarkeit des vereinfachten Verfahrens mit dem lokalen Bauamt bestätigen; bei Sonderbau-Tatbeständen greift das reguläre Verfahren.',
+          message_en:
+            'Confirm applicability of the simplified procedure with the local building authority; a Sonderbau scope reinstates the regular procedure.',
+        },
+      ],
+    }
+  }
   // v1.0.30 Bug 90 + 91 + 92 — use-conversion (T-04). A use change that
   // cleared the hard-blocker gate above is a NON-Sonderbau permit case: the
   // building-permit obligation is CALCULATED (intent + non-Sonderbau, since a
