@@ -1,5 +1,6 @@
 import type { AreaState, ProjectState } from '@/types/projectState'
 import { getStateCitations } from '@/legal/stateCitations'
+import { getStateLocalization } from '@/legal/stateLocalization'
 import {
   extractProcedureCitation,
   resolveVerfahrensIndikation,
@@ -225,19 +226,32 @@ export function composeLegalDomains(
     // {Land}" stub while the PDF shows the real verdict for the same project.
     const verfahrenStr = resolveVerfahrensIndikation(facts) ?? ''
     const isFree = /verfahrensfrei|permit-free|genehmigungsfrei/i.test(verfahrenStr)
+    // T-03 thin-state sprint (cleanup) — this row is the PROCEDURE anchor, so it
+    // must cite a PROCEDURE § (vereinfachtes / regular), NOT the permit-FORM §.
+    // It previously used permitFormCitation, which for MV/SH/Sachsen/Berlin is
+    // § 68 ("Bauantrag, Bauvorlagen" — the application form) and for RLP § 63
+    // ("Bauantrag") — labelling the form § as "permit procedure". Use the
+    // localization's simplified § (the deriveBaselineProcedure / resolveProcedure
+    // baseline for renovation + most residential intents), so the Legal-landscape
+    // baseline agrees with the Procedure tab; fall back to the regular § then the
+    // honest "Landesbauordnung {Land}" label.
+    const procLoc = getStateLocalization(bundesland).procedure
+    const procCitation =
+      procLoc.simplified.citation.trim() || procLoc.regular.citation.trim()
     let label: string
     let status: string
     if (verfahrenStr) {
       label =
         extractProcedureCitation(verfahrenStr) ??
-        (citations.isSubstantive
-          ? citations.permitFormCitation
-          : `Landesbauordnung ${citations.labelDe}`)
+        (procCitation ||
+          (citations.isSubstantive
+            ? citations.permitFormCitation
+            : `Landesbauordnung ${citations.labelDe}`))
       status = isFree
         ? lang === 'en' ? 'permit-free' : 'verfahrensfrei'
         : lang === 'en' ? 'permit procedure' : 'Genehmigungsverfahren'
     } else if (citations.isSubstantive) {
-      label = citations.permitFormCitation
+      label = procCitation || citations.permitFormCitation
       status = lang === 'en' ? 'permit procedure (baseline)' : 'Genehmigungsverfahren (Basis)'
     } else {
       label = `Landesbauordnung ${citations.labelDe}`

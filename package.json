@@ -38,6 +38,7 @@
     "smoke:architect": "npx tsx scripts/smoke-architect-flow.mts",
     "smoke:chat-ux": "npx tsx scripts/smoke-chat-ux.mts",
     "smoke:double-submit": "npx tsx scripts/smoke-double-submit.mts",
+    "smoke:thin-state": "npx tsx scripts/smoke-thin-state-propagation.mts",
     "smoke:architect-e2e": "node scripts/architect-e2e-smoke.mjs",
     "smoke:matrix": "node scripts/smoke-walk-matrix.mjs",
     "verify:bayern-sha": "node scripts/verify-bayern-sha.mjs",
