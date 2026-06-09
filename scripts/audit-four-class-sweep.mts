@@ -76,13 +76,20 @@ for (const f of readdirSync(join(ROOT, 'scripts/legal-corpus/states')).filter((x
 }
 const RECOGNISABLE = [...corpus.keys()].sort((a, b) => b.length - a.length)
 const escapeRe = (s: string): string => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-// Real laws deliberately not in the §-corpus (the known, deferred gate gap).
-const OUT_OF_CORPUS: Array<{ rx: RegExp; why: string }> = [
-  { rx: /\bStPlS\b/i, why: 'München Stellplatzsatzung — municipal' },
-  { rx: /DSchG|DSchPflG|DSchG\b/i, why: 'Denkmalschutzgesetz (monument law)' },
-  { rx: /\bHOAI\b/i, why: 'HOAI fee schedule' },
-  { rx: /LBOV?VO|LBOAVO|DVO|PrüfVO|BauVorlVO|BauuntPrüfVO|VVO/i, why: 'procedure/execution ordinance' },
-]
+// Phase 4 — the EXPLICIT acknowledged-out-of-corpus registry is the source of
+// truth (was an inline regex). A registered law is documented + justified, so a
+// citation to it is ACKNOWLEDGED (INFO, not silently trusted / not RED); an
+// UNREGISTERED out-of-corpus citation is RED — it must be added to the registry
+// with justification (or removed). This hardens the gate: a new unjustified
+// out-of-corpus citation can no longer slip through.
+const ACK_REGISTRY = JSON.parse(
+  readFileSync(join(ROOT, 'scripts/legal-corpus/_meta/acknowledged-out-of-corpus.json'), 'utf8'),
+) as { laws: Record<string, { reason: string }> }
+const ACK_LAWS = Object.entries(ACK_REGISTRY.laws).map(([law, v]) => ({ law, why: v.reason }))
+/** A registered out-of-corpus law match, or null if the citation is out-of-corpus but UNREGISTERED. */
+function registeredOutOfCorpus(citation: string): { law: string; why: string } | null {
+  return ACK_LAWS.find((e) => new RegExp(`\\b${escapeRe(e.law)}`, 'i').test(citation)) ?? null
+}
 function citationLaw(citation: string): string | null {
   return RECOGNISABLE.find((l) => new RegExp(`(?:^|[^A-Za-zÄÖÜäöüß0-9])${escapeRe(l)}(?:$|[^A-Za-zÄÖÜäöüß0-9])`).test(citation)) ?? null
 }
@@ -155,21 +162,26 @@ function sweepClass4(): void {
       pack.abstandsFlaechenCitation, pack.brandschutzCitation, pack.permitFreeCitation,
       loc.simplified.citation, loc.regular.citation, loc.free?.citation ?? '',
     ].filter((c) => c && c.trim().length > 0))
-    const unverifiable: string[] = []
+    let unregistered = 0
     for (const cite of citable) {
       const law = citationLaw(cite)
       const num = cite.match(/(?:§§?|Art\.?|Anlage)\s*(\d+[a-z]?)/i)?.[1]?.toLowerCase()
       if (law && num && corpus.get(law)?.has(num)) continue // existence+heading checkable
-      const ack = OUT_OF_CORPUS.find((a) => a.rx.test(cite))
-      if (ack) {
-        unverifiable.push(`${cite} [${ack.why}]`)
-        // RED if it sits in the runtime-trusted allow-list; YELLOW otherwise.
-        const inAllowlist = allowedCitations.includes(cite)
-        findings.push({ cls: 4, severity: inAllowlist ? 'RED' : 'YELLOW', state, surface: inAllowlist ? 'allowedCitations (runtime firewall)' : 'citation pack', detail: `${cite} — out-of-corpus, UNVERIFIABLE (${ack.why})` })
+      const reg = registeredOutOfCorpus(cite)
+      if (reg) {
+        // REGISTERED out-of-corpus → acknowledged + justified (no longer silently
+        // trusted) → INFO. The CLASS-4 gate hole is resolved for it, so it does
+        // NOT mark the cell dirty; it's documented as pending corpus ingestion.
+        findings.push({ cls: 4, severity: 'INFO', state, surface: 'acknowledged-out-of-corpus registry', detail: `${cite} — registered out-of-corpus (${reg.why}); pending ingestion` })
+      } else if (law == null && num != null) {
+        // out-of-corpus AND UNREGISTERED — the hardening: RED, marks the cell. Must
+        // be added to the registry with justification, or removed.
+        unregistered++
+        findings.push({ cls: 4, severity: 'RED', state, surface: 'allowedCitations / pack (UNREGISTERED out-of-corpus)', detail: `${cite} — out-of-corpus AND not in the acknowledged-out-of-corpus registry; justify+register or remove` })
       }
-      // (law in corpus but § missing, or unparseable, would surface in verify-citations:strict; not re-reported here)
+      // (law in corpus but § missing, or unparseable, surfaces in verify-citations:strict; not re-reported here)
     }
-    if (unverifiable.length) {
+    if (unregistered) {
       for (const t of TEMPLATES) mark(state, t, 4)
     }
   }

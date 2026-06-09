@@ -64,16 +64,17 @@ for (const f of readdirSync(join(CORPUS, 'states')).filter((x) => x.endsWith('.j
 // wins over "LBO" (catches cross-state bleed instead of mis-resolving to own).
 const RECOGNISABLE = [...corpus.keys()].sort((a, b) => b.length - a.length)
 
-// Real laws deliberately NOT ingested into the §-corpus. Citations to these
-// are UNVERIFIABLE — reported as a corpus gap, never failed. Anything that is
-// out-of-corpus and does NOT match here is treated as an error (typo/invented).
-const ACKNOWLEDGED: Array<{ rx: RegExp; why: string }> = [
-  { rx: /\bStPlS\b/i, why: 'München Stellplatzsatzung (StPlS 926) — municipal, not in the §-corpus' },
-  { rx: /DSchG\b/i, why: 'Denkmalschutzgesetz (monument law) — not in the §-corpus' },
-  { rx: /DSchPflG\b/i, why: 'Denkmalpflegegesetz — not in the §-corpus' },
-  { rx: /\bHOAI\b/i, why: 'HOAI fee schedule — not in the §-corpus' },
-  { rx: /\bLBOV?VO\b|\bLBOAVO\b/i, why: 'BW procedure/execution ordinance — not yet ingested' },
-]
+// Real laws deliberately NOT ingested into the §-corpus. SINGLE SOURCE OF TRUTH:
+// scripts/legal-corpus/_meta/acknowledged-out-of-corpus.json (Phase 4). Citations
+// to a REGISTERED law are UNVERIFIABLE-acknowledged (reported, never failed); an
+// out-of-corpus citation whose law is NOT registered is an error (UNKNOWN_LAW) —
+// it must be added to the registry with justification, or removed.
+const ACK_REGISTRY = JSON.parse(
+  readFileSync(join(ROOT, 'scripts/legal-corpus/_meta/acknowledged-out-of-corpus.json'), 'utf8'),
+) as { laws: Record<string, { reason: string }> }
+const ACKNOWLEDGED: Array<{ rx: RegExp; why: string }> = Object.entries(ACK_REGISTRY.laws).map(
+  ([law, v]) => ({ rx: new RegExp(`\\b${law.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`, 'i'), why: v.reason }),
+)
 
 const escapeRe = (s: string): string => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 const lawPresent = (entry: string, law: string): boolean =>
