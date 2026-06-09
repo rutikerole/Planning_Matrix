@@ -385,8 +385,14 @@ function truncate(s: string | undefined | null, max: number): string {
  * uses that to fall back to the no-statute copy rather than
  * interpolating the user's literal quote.
  */
+// Four-class campaign Phase 2 (CLASS 3) — hardened against two documented
+// breaking inputs: a slash-compound "§ 30/34 BauGB" (previously dropped the /34
+// and captured only § 30, or missed entirely), now captured whole via the
+// optional `/NN` group; and "§34BauGB" with no space before the law, now matched
+// via `\s*` (was `\s+`). Existing single-§ matches are unchanged (the compound
+// group is optional, `\s*` still matches a present space).
 const CITATION_RE =
-  /(§\s*\d+(?:\s*[a-z])?\s+(?:BauGB|BauNVO|GEG))|((?:Art\.?|art\.?)\s*\d+(?:\s*[a-z])?\s*BayBO)|BauNVO|BayDSchG/i
+  /(§\s*\d+(?:\s*[a-z])?(?:\s*\/\s*\d+(?:\s*[a-z])?)?\s*(?:BauGB|BauNVO|GEG))|((?:Art\.?|art\.?)\s*\d+(?:\s*[a-z])?\s*BayBO)|BauNVO|BayDSchG/i
 
 function extractStatuteCite(fact: Fact | undefined): string | null {
   if (!fact) return null

@@ -70,10 +70,17 @@ export function composeLegalDomains(
   const documents = state.documents ?? []
   const areas = state.areas
 
+  // Four-class campaign Phase 2 (CLASS 3) — a NON-string fact value was coerced
+  // to '' and lost from the corpus, so a citation/keyword carried in a numeric or
+  // boolean value was invisible to the has() regexes. Stringify scalar (number/
+  // boolean) values too; objects/arrays stay '' (their stringification is noise
+  // that can't match a law token anyway).
+  const factValueStr = (v: unknown): string =>
+    typeof v === 'string' ? v : typeof v === 'number' || typeof v === 'boolean' ? String(v) : ''
   const corpus = [
     ...facts.map(
       (f) =>
-        `${f.key} ${typeof f.value === 'string' ? f.value : ''} ${f.evidence ?? ''} ${f.qualifier?.reason ?? ''}`,
+        `${f.key} ${factValueStr(f.value)} ${f.evidence ?? ''} ${f.qualifier?.reason ?? ''}`,
     ),
     ...procedures.map(
       (p) =>

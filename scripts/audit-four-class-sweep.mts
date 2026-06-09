@@ -76,13 +76,20 @@ for (const f of readdirSync(join(ROOT, 'scripts/legal-corpus/states')).filter((x
 }
 const RECOGNISABLE = [...corpus.keys()].sort((a, b) => b.length - a.length)
 const escapeRe = (s: string): string => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-// Real laws deliberately not in the §-corpus (the known, deferred gate gap).
-const OUT_OF_CORPUS: Array<{ rx: RegExp; why: string }> = [
-  { rx: /\bStPlS\b/i, why: 'München Stellplatzsatzung — municipal' },
-  { rx: /DSchG|DSchPflG|DSchG\b/i, why: 'Denkmalschutzgesetz (monument law)' },
-  { rx: /\bHOAI\b/i, why: 'HOAI fee schedule' },
-  { rx: /LBOV?VO|LBOAVO|DVO|PrüfVO|BauVorlVO|BauuntPrüfVO|VVO/i, why: 'procedure/execution ordinance' },
-]
+// Phase 4 — the EXPLICIT acknowledged-out-of-corpus registry is the source of
+// truth (was an inline regex). A registered law is documented + justified, so a
+// citation to it is ACKNOWLEDGED (INFO, not silently trusted / not RED); an
+// UNREGISTERED out-of-corpus citation is RED — it must be added to the registry
+// with justification (or removed). This hardens the gate: a new unjustified
+// out-of-corpus citation can no longer slip through.
+const ACK_REGISTRY = JSON.parse(
+  readFileSync(join(ROOT, 'scripts/legal-corpus/_meta/acknowledged-out-of-corpus.json'), 'utf8'),
+) as { laws: Record<string, { reason: string }> }
+const ACK_LAWS = Object.entries(ACK_REGISTRY.laws).map(([law, v]) => ({ law, why: v.reason }))
+/** A registered out-of-corpus law match, or null if the citation is out-of-corpus but UNREGISTERED. */
+function registeredOutOfCorpus(citation: string): { law: string; why: string } | null {
+  return ACK_LAWS.find((e) => new RegExp(`\\b${escapeRe(e.law)}`, 'i').test(citation)) ?? null
+}
 function citationLaw(citation: string): string | null {
   return RECOGNISABLE.find((l) => new RegExp(`(?:^|[^A-Za-zÄÖÜäöüß0-9])${escapeRe(l)}(?:$|[^A-Za-zÄÖÜäöüß0-9])`).test(citation)) ?? null
 }
@@ -155,21 +162,26 @@ function sweepClass4(): void {
       pack.abstandsFlaechenCitation, pack.brandschutzCitation, pack.permitFreeCitation,
       loc.simplified.citation, loc.regular.citation, loc.free?.citation ?? '',
     ].filter((c) => c && c.trim().length > 0))
-    const unverifiable: string[] = []
+    let unregistered = 0
     for (const cite of citable) {
       const law = citationLaw(cite)
       const num = cite.match(/(?:§§?|Art\.?|Anlage)\s*(\d+[a-z]?)/i)?.[1]?.toLowerCase()
       if (law && num && corpus.get(law)?.has(num)) continue // existence+heading checkable
-      const ack = OUT_OF_CORPUS.find((a) => a.rx.test(cite))
-      if (ack) {
-        unverifiable.push(`${cite} [${ack.why}]`)
-        // RED if it sits in the runtime-trusted allow-list; YELLOW otherwise.
-        const inAllowlist = allowedCitations.includes(cite)
-        findings.push({ cls: 4, severity: inAllowlist ? 'RED' : 'YELLOW', state, surface: inAllowlist ? 'allowedCitations (runtime firewall)' : 'citation pack', detail: `${cite} — out-of-corpus, UNVERIFIABLE (${ack.why})` })
+      const reg = registeredOutOfCorpus(cite)
+      if (reg) {
+        // REGISTERED out-of-corpus → acknowledged + justified (no longer silently
+        // trusted) → INFO. The CLASS-4 gate hole is resolved for it, so it does
+        // NOT mark the cell dirty; it's documented as pending corpus ingestion.
+        findings.push({ cls: 4, severity: 'INFO', state, surface: 'acknowledged-out-of-corpus registry', detail: `${cite} — registered out-of-corpus (${reg.why}); pending ingestion` })
+      } else if (law == null && num != null) {
+        // out-of-corpus AND UNREGISTERED — the hardening: RED, marks the cell. Must
+        // be added to the registry with justification, or removed.
+        unregistered++
+        findings.push({ cls: 4, severity: 'RED', state, surface: 'allowedCitations / pack (UNREGISTERED out-of-corpus)', detail: `${cite} — out-of-corpus AND not in the acknowledged-out-of-corpus registry; justify+register or remove` })
       }
-      // (law in corpus but § missing, or unparseable, would surface in verify-citations:strict; not re-reported here)
+      // (law in corpus but § missing, or unparseable, surfaces in verify-citations:strict; not re-reported here)
     }
-    if (unverifiable.length) {
+    if (unregistered) {
       for (const t of TEMPLATES) mark(state, t, 4)
     }
   }
@@ -184,38 +196,56 @@ function sweepClass4(): void {
 // persona CAN emit any key, but an undirected key relies on the model guessing
 // the exact string a reader matches — the capture→read contract gap.
 const READER_EXACT_KEYS: Array<{ key: string; reader: string; relevantIntents: string[]; directed: boolean }> = [
-  { key: 'eingriff_tragende_teile', reader: 'buildProcedureCase / resolveRoles structural-force', relevantIntents: ['sanierung', 'umnutzung', 'aufstockung', 'anbau'], directed: false },
-  { key: 'eingriff_aussenhuelle', reader: 'buildProcedureCase (NRW sanierung)', relevantIntents: ['sanierung'], directed: false },
-  { key: 'denkmalschutz', reader: 'buildProcedureCase hard-blocker / composeRisks', relevantIntents: ['sanierung', 'umnutzung', 'neubau', 'abbruch', 'aufstockung', 'anbau', 'sonstiges'], directed: false },
-  { key: 'ensembleschutz', reader: 'buildProcedureCase', relevantIntents: ['sanierung', 'umnutzung'], directed: false },
-  { key: 'aenderung_aeussere_erscheinung', reader: 'resolveNrwSanierung', relevantIntents: ['sanierung'], directed: false },
-  { key: 'mk_gebietsart', reader: 'buildProcedureCase hard-blocker', relevantIntents: ['neubau', 'umnutzung'], directed: false },
-  { key: 'bauvoranfrage_hard_blocker', reader: 'buildProcedureCase hard-blocker', relevantIntents: ['neubau', 'sanierung', 'umnutzung', 'aufstockung', 'anbau', 'sonstiges'], directed: false },
+  { key: 'eingriff_tragende_teile', reader: 'buildProcedureCase / resolveRoles structural-force', relevantIntents: ['sanierung', 'umnutzung', 'aufstockung', 'anbau'], directed: true },
+  { key: 'eingriff_aussenhuelle', reader: 'buildProcedureCase (NRW sanierung)', relevantIntents: ['sanierung'], directed: true },
+  { key: 'denkmalschutz', reader: 'buildProcedureCase hard-blocker / composeRisks', relevantIntents: ['sanierung', 'umnutzung', 'neubau', 'abbruch', 'aufstockung', 'anbau', 'sonstiges'], directed: true },
+  { key: 'ensembleschutz', reader: 'buildProcedureCase', relevantIntents: ['sanierung', 'umnutzung'], directed: true },
+  { key: 'aenderung_aeussere_erscheinung', reader: 'resolveNrwSanierung', relevantIntents: ['sanierung'], directed: true },
+  { key: 'mk_gebietsart', reader: 'buildProcedureCase hard-blocker', relevantIntents: ['neubau', 'umnutzung'], directed: true },
+  { key: 'bauvoranfrage_hard_blocker', reader: 'buildProcedureCase hard-blocker', relevantIntents: ['neubau', 'sanierung', 'umnutzung', 'aufstockung', 'anbau', 'sonstiges'], directed: true },
   { key: 'gebaeudeklasse', reader: 'AtAGlance explicit-GK / deriveGebaeudeklasse', relevantIntents: ['neubau', 'sanierung', 'umnutzung', 'aufstockung', 'anbau', 'sonstiges'], directed: true },
   { key: 'anzahl_sonderbau_tatbestaende', reader: 'detectSonderbauCount (shape-tolerant)', relevantIntents: ['neubau', 'umnutzung', 'sonstiges'], directed: true },
 ]
 function sweepClass2(): void {
+  let undirected = 0
   for (const r of READER_EXACT_KEYS) {
     if (r.directed) continue // the persona is told to write this exact key — contract met
+    undirected++
     findings.push({ cls: 2, severity: 'YELLOW', surface: r.reader, detail: `reader requires EXACT key '${r.key}' but the persona write-directive does not explicitly name it (free-form emission only) — capture→read gap for intents: ${r.relevantIntents.join('/')}` })
     for (const state of STATES) for (const t of TEMPLATES) {
       if (r.relevantIntents.includes(intentFromTemplate(t))) mark(state, t, 2)
     }
+  }
+  // Phase 3 BLIND-SPOT CAVEAT — directed=true means the persona DIRECTIVE now
+  // names the exact key (personaBehaviour.ts A.5/D.5 STRUKTUR- UND VERFAHRENS-
+  // FAKTEN). It does NOT prove the model EMITS it — this offline sweep cannot
+  // observe live LLM output. CLASS 2 = 0 here means "no orphan reader-key", NOT
+  // "confirmed captured". A LIVE walk (post chat-turn redeploy) is required to
+  // confirm the persona actually persists these keys.
+  if (undirected === 0) {
+    findings.push({ cls: 2, severity: 'INFO', surface: 'persona write-directive (personaBehaviour A.5/D.5)', detail: 'all reader keys are now write-directed — but live emission is UNVERIFIABLE offline; needs a live walk after `supabase functions deploy chat-turn`' })
   }
 }
 
 // ════════════════════════════════════════════════════════════════════════
 // CLASS 3 — keyword / exact-match fragility (curated from verified Inventory C)
 // ════════════════════════════════════════════════════════════════════════
+// Phase 2 update: entries whose documented breaking input has been addressed are
+// removed. The procedure verdict-keyword branches (verfahrensfrei/vereinfacht/
+// regulär) are now FALLBACK to the structural §-comparison (Phase 1 + 1b), which
+// classifies any citation-bearing verdict language-agnostically by its cited §;
+// English keyword variants were also added. composeExecutiveRead's statute regex
+// (slash-compound + no-space) and composeLegalDomains's non-string fact coercion
+// are fixed at the source. What remains: the §-parse no-space edge, the
+// role-title keyword classification (inherent — null falls back to distinct), and
+// detectProcedure (DEFERRED to a dedicated cost-sprint — it shifts the cost engine
+// multiplier and would risk the P1 cost-agreement win + the 386 pdf-text
+// assertions for low actual impact, since with the P1 cost fix detectProcedure
+// only affects the T-01 engine path).
 const FRAGILE_BRANCHES: Array<{ where: string; field: string; condition: string; breaks: string; intents: string[] }> = [
-  { where: 'resolveProcedure.ts:401', field: 'verfahren_indikation', condition: "/verfahrensfrei|permit-free|genehmigungsfrei/", breaks: '"permit free" (two words), English "no permit required"', intents: ['sanierung', 'umnutzung', 'abbruch'] },
-  { where: 'resolveProcedure.ts:432', field: 'verfahren_indikation', condition: "/vereinfacht|simplified/", breaks: 'citation-only verdict "§ 63 LBauO M-V" (no keyword) → falls to generic standard-ASSUMED (CLASS 1)', intents: ['neubau', 'sanierung', 'umnutzung', 'aufstockung', 'anbau', 'sonstiges'] },
-  { where: 'resolveProcedure.ts:461', field: 'verfahren_indikation', condition: "/regul[äa]r|standard/", breaks: 'English "regular process" (no umlaut term)', intents: ['neubau', 'sanierung', 'umnutzung'] },
-  { where: 'resolveProcedure.ts:149 extractProcedureCitation', field: 'verfahren_indikation', condition: "§/Art regex", breaks: '"§62 BauO" (no space), "Art 58" (no period)', intents: ['neubau', 'sanierung', 'umnutzung', 'abbruch'] },
-  { where: 'resolveRoles.ts roleFunction', field: 'role title', condition: 'title keyword regex', breaks: 'a persona role title with no recognised keyword → null function (kept distinct, but cannot dedupe against a synonym)', intents: ['neubau', 'sanierung', 'umnutzung', 'aufstockung', 'anbau', 'abbruch', 'sonstiges'] },
-  { where: 'costNormsMuenchen.ts:448 detectProcedure', field: 'procedure rationale', condition: "/art.?57|58|60|vereinfacht|.../", breaks: 'English "Article 60" / "simplified" (cost multiplier silently defaults to 1.0)', intents: ['neubau', 'sanierung', 'umnutzung', 'aufstockung', 'anbau', 'sonstiges'] },
-  { where: 'composeLegalDomains.ts:106-299 has(/…/)', field: 'corpus text', condition: 'BauGB/GEG/Denkmal/Stellplatz regexes', breaks: 'non-string fact values coerced to "" (lost); English paraphrases', intents: ['neubau', 'sanierung', 'umnutzung', 'abbruch', 'aufstockung', 'anbau', 'sonstiges'] },
-  { where: 'composeExecutiveRead.ts:388 extractStatuteCite', field: 'fact value/evidence', condition: '§/Art citation regex', breaks: '"§ 30/34 BauGB" → only §30 captured; "§34BauGB" (no space) missed', intents: ['neubau', 'sanierung', 'umnutzung', 'abbruch', 'aufstockung', 'anbau', 'sonstiges'] },
+  { where: 'resolveProcedure.ts extractProcedureCitation', field: 'verfahren_indikation §-parse', condition: "§/Art regex", breaks: '"§62BauO" (no space at all), "Art 58" (no period) — rare; the §-comparison handles the common spaced forms', intents: ['neubau', 'sanierung', 'umnutzung', 'abbruch', 'aufstockung', 'anbau', 'sonstiges'] },
+  { where: 'resolveRoles.ts roleFunction', field: 'role title', condition: 'title keyword regex', breaks: 'a persona role title with no recognised keyword → null function (kept DISTINCT — safe — but cannot dedupe against an unrecognised synonym). Inherent to title-based classification.', intents: ['neubau', 'sanierung', 'umnutzung', 'aufstockung', 'anbau', 'abbruch', 'sonstiges'] },
+  { where: 'costNormsMuenchen.ts detectProcedure (DEFERRED — cost-sprint)', field: 'procedure rationale', condition: "/art.?57|60|baugenehmigungsverfahren/", breaks: '"Vereinfachtes Baugenehmigungsverfahren" rationale matches the art60 (1.25) branch; English "Article 60". Affects only the T-01 engine path post-P1. Deferred: shifts the cost engine, risks the P1 cost-agreement win.', intents: ['neubau'] },
 ]
 function sweepClass3(): void {
   for (const b of FRAGILE_BRANCHES) {

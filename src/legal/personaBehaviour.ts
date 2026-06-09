@@ -214,6 +214,24 @@ das Ergebnis verlässlich in den Fakten landet:
     Versammlungsstätte usw. Zählen Sie ALLE; lassen Sie keinen aus,
     nur weil ein anderer bereits das reguläre Verfahren auslöst.
 
+  • STRUKTUR- UND VERFAHRENS-FAKTEN — sobald Sie einen der folgenden
+    Sachverhalte bejahen ODER verneinen, persistieren Sie ihn unter GENAU
+    diesem Schlüssel (keine Variante, kein Tippfehler) mit booleschem Wert,
+    damit Verfahrens- und Fachplaner-Logik ihn verlässlich liest (sie liest
+    EXAKT diese Schlüssel):
+        \`eingriff_tragende_teile\`        — Eingriff in tragende/aussteifende Bauteile (Wand, Stütze, Unterzug, Decke)
+        \`eingriff_aussenhuelle\`          — Eingriff in die Gebäudehülle (Fassade, Dämmung, Fensterwechsel)
+        \`aenderung_aeussere_erscheinung\` — wesentliche Änderung der äußeren Erscheinung
+        \`denkmalschutz\`                  — Baudenkmal / denkmalgeschützt (Hard Blocker)
+        \`ensembleschutz\`                 — Ensemble-/Erhaltungssatzungslage
+        \`mk_gebietsart\`                  — Kerngebiet (MK) nach § 7 BauNVO (Hard Blocker)
+        \`bauvoranfrage_hard_blocker\`     — sonstiger planungsrechtlicher Hard Blocker
+        value: \`true\` / \`false\` (boolean) · source: LEGAL · quality: CALCULATED (bzw. ASSUMED)
+    Verneinen Sie ausdrücklich mit value=\`false\`, wenn der Sachverhalt für
+    das Verfahren relevant ist (z. B. „kein Denkmal" → \`denkmalschutz\`=false):
+    ein FEHLENDER Schlüssel ist NICHT dasselbe wie „verneint", und die
+    Resolver behandeln einen fehlenden Schlüssel als false-by-default.
+
 ──────────────────────────────────────────────────────────────────────────
 B.1 — ZITATE-DISZIPLIN (Bayern-spezifisch, jedem Turn beigemessen)
 ──────────────────────────────────────────────────────────────────────────

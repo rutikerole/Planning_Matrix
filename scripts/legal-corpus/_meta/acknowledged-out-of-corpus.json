@@ -1,0 +1,46 @@
+{
+  "_meta": {
+    "purpose": "Four-class campaign Phase 4 (CLASS 4). EXPLICIT registry of laws cited anywhere in the product that are deliberately NOT in the §-corpus (monument laws, municipal ordinances, procedure/execution ordinances, fee schedules). Each is documented + justified so the gates treat it as KNOWN-unverifiable rather than silently trusting it — and so any UNREGISTERED out-of-corpus citation FAILS the build-time gates (audit:allowlist + audit:four-class). Turns 'accept any out-of-corpus citation' into 'accept only these justified ones'.",
+    "consumed_by": ["scripts/audit-allowlist-existence.mts", "scripts/audit-four-class-sweep.mts"],
+    "note": "These are real provisions accepted at authoring time; they are NOT existence/heading-verifiable until the law is ingested into scripts/legal-corpus (deferred to a dedicated corpus-ingestion sprint). The runtime Layer-C firewall (citationLint) still trusts the allow-list; this registry guarantees that allow-list contains only registered, justified out-of-corpus entries.",
+    "stamp": "2026-06-09"
+  },
+  "laws": {
+    "BayDSchG": {
+      "reason": "Bayerisches Denkmalschutzgesetz — state monument-protection law, not a Bauordnung; not in the §-corpus.",
+      "concept": "denkmalrechtliche Erlaubnis",
+      "seen": ["BayDSchG Art. 1", "BayDSchG Art. 6"],
+      "verification": "authored from primary source (gesetze-bayern.de) in the Bayern legal spine; re-verify on ingestion."
+    },
+    "StPlS": {
+      "reason": "München Stellplatzsatzung 926 — municipal ordinance (Satzung), not a state §-law; deliberately out of the state §-corpus.",
+      "concept": "Stellplatzpflicht / Ablöse (München)",
+      "seen": ["StPlS 926 Anlage 1 Nr. 1.1", "StPlS 926 § 3 Abs. 2", "StPlS 926 § 3 Abs. 4", "StPlS 926 § 4 Abs. 3"],
+      "verification": "authored from the München Stellplatzsatzung in the Bayern/München spine; municipal — not a corpus-ingestion target."
+    },
+    "BauuntPrüfVO": {
+      "reason": "Rheinland-Pfalz Verordnung über bautechnische Prüfungen — procedure/execution ordinance, not the LBauO; not in the §-corpus.",
+      "concept": "bautechnische Nachweise / Standsicherheit (structural cert)",
+      "seen": ["§ 5 BauuntPrüfVO"],
+      "verification": "authored in the phase-c RLP structural-cert fix; re-verify on ingestion."
+    },
+    "DSchG": {
+      "reason": "State Denkmalschutzgesetz family (the 16 states' monument laws: DSchG, DSchG NRW, HDSchG, NDSchG, SächsDSchG, DSchPflG, …) — monument law, not a Bauordnung; out of the §-corpus.",
+      "concept": "denkmalrechtliche Erlaubnis (per state)",
+      "seen": ["DSchG <state> (persona-emittable in prose)"],
+      "verification": "monument-law family; ingestion is its own deferred sprint."
+    },
+    "LBOVVO": {
+      "reason": "Procedure/execution ordinances to the Landesbauordnungen (LBOVVO / LBOAVO etc.) — not the LBO itself; not in the §-corpus.",
+      "concept": "Bauvorlagen / Verfahrensdetails",
+      "seen": ["LBOVVO BW § 3 (persona-emittable in prose)"],
+      "verification": "procedure-ordinance family; deferred to corpus-ingestion sprint."
+    },
+    "HOAI": {
+      "reason": "Honorarordnung für Architekten und Ingenieure — federal fee schedule, not a building-permit law; out of the §-corpus by design.",
+      "concept": "Honorar / fee bands",
+      "seen": ["§ 34 HOAI"],
+      "verification": "fee schedule; not a corpus-ingestion target."
+    }
+  }
+}

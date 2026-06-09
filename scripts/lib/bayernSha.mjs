@@ -93,6 +93,33 @@
 //     were deliberately NOT cited. BAYERN_BLOCK + MUENCHEN_BLOCK byte-unchanged
 //     → Bayern's existing capture behaviour is reinforced, not altered (verify
 //     via a Bayern T-02 re-walk per Sprint 2 sign-off). Length 48475 → 49612.
+//   - 2026-06-09 Four-class campaign Phase 3: ed6f109e…b9d746 → f9743ff3…0d75e —
+//     INTENTIONAL re-baseline, TWO causes, both justified:
+//     (a) BUGFIX to readBlock (below): its LAZY regex `([\s\S]*?)\`` terminated
+//         at the FIRST backtick — which inside these template literals is an
+//         ESCAPED inline-code backtick (\`areas_update\`, \`gebaeudeklasse\`, …).
+//         So the SHA hashed only the prefix of each slice BEFORE its first
+//         escaped backtick: for PERSONA_BEHAVIOURAL_RULES only 5191 of 15382
+//         chars (~34%). Across all slices the hashed prefix was 49612 chars; the
+//         TRUE full prefix is 91295 (~46% was NEVER hashed). The guard was BLIND
+//         to the A.5/D.5 fact-persistence directive, B.1 Zitate-Disziplin, and
+//         the tails of SHARED/BAYERN/MUENCHEN. This is why the Sprint-2 A.5/D.5
+//         addition did NOT actually move the SHA — that +1137 came from the
+//         federal.ts change (in a hashed region); the persona half was silently
+//         invisible. Fixed to scan to the first UNESCAPED backtick → the SHA now
+//         pins the FULL prefix.
+//     (b) Phase 3 (CLASS 2) ADDED a "STRUKTUR- UND VERFAHRENS-FAKTEN" write-
+//         directive to personaBehaviour.ts A.5/D.5 — instructs the persona to
+//         persist the EXACT reader keys the resolvers read (eingriff_tragende_teile,
+//         eingriff_aussenhuelle, denkmalschutz, ensembleschutz,
+//         aenderung_aeussere_erscheinung, mk_gebietsart, bauvoranfrage_hard_blocker),
+//         closing the CLASS-2 capture→read gap. EDGE-FN: needs a manual
+//         `supabase functions deploy chat-turn`, and a LIVE walk to confirm the
+//         persona actually emits the keys (the offline sweep cannot see live
+//         emission).
+//     NB the hash fingerprints raw SOURCE (escape sequences intact), as it
+//     always has — not the evaluated runtime string; hashing the evaluated
+//     constants is a recommended follow-up. Length 49612 → 91295.
 // ───────────────────────────────────────────────────────────────────────
 
 import { readFile } from 'node:fs/promises'
@@ -104,7 +131,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url))
 const REPO_ROOT = join(__dirname, '..', '..')
 
 export const EXPECTED_BAYERN_SHA =
-  'ed6f109e214413cc2d590e6716f00a43c6ca28f865e380d4ede3863424b9d746'
+  'f9743ff3a819d43234da451cc76d30f623113ef5d3859eed19df4b440655d75e'
 
 const SLICE_SEPARATOR = '\n\n---\n\n'
 const TAIL =
@@ -117,10 +144,30 @@ const TAIL =
 
 async function readBlock(relPath, exportName) {
   const content = await readFile(join(REPO_ROOT, relPath), 'utf-8')
-  const re = new RegExp(`export const ${exportName} =\\s*\`([\\s\\S]*?)\``)
-  const m = content.match(re)
-  if (!m) throw new Error(`Could not extract ${exportName} from ${relPath}`)
-  return m[1]
+  // Four-class campaign Phase 3 — BUGFIX. The previous regex
+  //   export const NAME =\s*`([\s\S]*?)`
+  // was LAZY and terminated at the FIRST backtick, which inside these template
+  // literals is an ESCAPED inline-code backtick (\`areas_update\`, \`gebaeudeklasse\`,
+  // …). It therefore extracted only the prefix BEFORE the first \` — for
+  // PERSONA_BEHAVIOURAL_RULES that was 5191 of 15382 chars (~34%), leaving the
+  // A.5/D.5 fact-persistence section, B.1 Zitate-Disziplin, and everything after
+  // INVISIBLE to the Bayern SHA. The guard could not detect changes to ~66% of
+  // the persona block. Fix: scan to the first UNESCAPED backtick (the real
+  // template-literal close), preserving escaped backticks — so the SHA now pins
+  // the FULL slice. (See the re-baseline note below for the resulting SHA move.)
+  const decl = `export const ${exportName} =`
+  const di = content.indexOf(decl)
+  if (di === -1) throw new Error(`Could not find ${exportName} in ${relPath}`)
+  const open = content.indexOf('`', di)
+  if (open === -1) throw new Error(`Could not find opening backtick for ${exportName} in ${relPath}`)
+  let out = ''
+  for (let i = open + 1; i < content.length; i++) {
+    const ch = content[i]
+    if (ch === '\\') { out += ch + (content[i + 1] ?? ''); i++; continue } // keep escape pair
+    if (ch === '`') return out // first UNESCAPED backtick = template close
+    out += ch
+  }
+  throw new Error(`Unterminated template literal for ${exportName} in ${relPath}`)
 }
 
 /**
