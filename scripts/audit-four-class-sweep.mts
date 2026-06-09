@@ -207,15 +207,22 @@ function sweepClass2(): void {
 // ════════════════════════════════════════════════════════════════════════
 // CLASS 3 — keyword / exact-match fragility (curated from verified Inventory C)
 // ════════════════════════════════════════════════════════════════════════
+// Phase 2 update: entries whose documented breaking input has been addressed are
+// removed. The procedure verdict-keyword branches (verfahrensfrei/vereinfacht/
+// regulär) are now FALLBACK to the structural §-comparison (Phase 1 + 1b), which
+// classifies any citation-bearing verdict language-agnostically by its cited §;
+// English keyword variants were also added. composeExecutiveRead's statute regex
+// (slash-compound + no-space) and composeLegalDomains's non-string fact coercion
+// are fixed at the source. What remains: the §-parse no-space edge, the
+// role-title keyword classification (inherent — null falls back to distinct), and
+// detectProcedure (DEFERRED to a dedicated cost-sprint — it shifts the cost engine
+// multiplier and would risk the P1 cost-agreement win + the 386 pdf-text
+// assertions for low actual impact, since with the P1 cost fix detectProcedure
+// only affects the T-01 engine path).
 const FRAGILE_BRANCHES: Array<{ where: string; field: string; condition: string; breaks: string; intents: string[] }> = [
-  { where: 'resolveProcedure.ts:401', field: 'verfahren_indikation', condition: "/verfahrensfrei|permit-free|genehmigungsfrei/", breaks: '"permit free" (two words), English "no permit required"', intents: ['sanierung', 'umnutzung', 'abbruch'] },
-  { where: 'resolveProcedure.ts:432', field: 'verfahren_indikation', condition: "/vereinfacht|simplified/", breaks: 'citation-only verdict "§ 63 LBauO M-V" (no keyword) → falls to generic standard-ASSUMED (CLASS 1)', intents: ['neubau', 'sanierung', 'umnutzung', 'aufstockung', 'anbau', 'sonstiges'] },
-  { where: 'resolveProcedure.ts:461', field: 'verfahren_indikation', condition: "/regul[äa]r|standard/", breaks: 'English "regular process" (no umlaut term)', intents: ['neubau', 'sanierung', 'umnutzung'] },
-  { where: 'resolveProcedure.ts:149 extractProcedureCitation', field: 'verfahren_indikation', condition: "§/Art regex", breaks: '"§62 BauO" (no space), "Art 58" (no period)', intents: ['neubau', 'sanierung', 'umnutzung', 'abbruch'] },
-  { where: 'resolveRoles.ts roleFunction', field: 'role title', condition: 'title keyword regex', breaks: 'a persona role title with no recognised keyword → null function (kept distinct, but cannot dedupe against a synonym)', intents: ['neubau', 'sanierung', 'umnutzung', 'aufstockung', 'anbau', 'abbruch', 'sonstiges'] },
-  { where: 'costNormsMuenchen.ts:448 detectProcedure', field: 'procedure rationale', condition: "/art.?57|58|60|vereinfacht|.../", breaks: 'English "Article 60" / "simplified" (cost multiplier silently defaults to 1.0)', intents: ['neubau', 'sanierung', 'umnutzung', 'aufstockung', 'anbau', 'sonstiges'] },
-  { where: 'composeLegalDomains.ts:106-299 has(/…/)', field: 'corpus text', condition: 'BauGB/GEG/Denkmal/Stellplatz regexes', breaks: 'non-string fact values coerced to "" (lost); English paraphrases', intents: ['neubau', 'sanierung', 'umnutzung', 'abbruch', 'aufstockung', 'anbau', 'sonstiges'] },
-  { where: 'composeExecutiveRead.ts:388 extractStatuteCite', field: 'fact value/evidence', condition: '§/Art citation regex', breaks: '"§ 30/34 BauGB" → only §30 captured; "§34BauGB" (no space) missed', intents: ['neubau', 'sanierung', 'umnutzung', 'abbruch', 'aufstockung', 'anbau', 'sonstiges'] },
+  { where: 'resolveProcedure.ts extractProcedureCitation', field: 'verfahren_indikation §-parse', condition: "§/Art regex", breaks: '"§62BauO" (no space at all), "Art 58" (no period) — rare; the §-comparison handles the common spaced forms', intents: ['neubau', 'sanierung', 'umnutzung', 'abbruch', 'aufstockung', 'anbau', 'sonstiges'] },
+  { where: 'resolveRoles.ts roleFunction', field: 'role title', condition: 'title keyword regex', breaks: 'a persona role title with no recognised keyword → null function (kept DISTINCT — safe — but cannot dedupe against an unrecognised synonym). Inherent to title-based classification.', intents: ['neubau', 'sanierung', 'umnutzung', 'aufstockung', 'anbau', 'abbruch', 'sonstiges'] },
+  { where: 'costNormsMuenchen.ts detectProcedure (DEFERRED — cost-sprint)', field: 'procedure rationale', condition: "/art.?57|60|baugenehmigungsverfahren/", breaks: '"Vereinfachtes Baugenehmigungsverfahren" rationale matches the art60 (1.25) branch; English "Article 60". Affects only the T-01 engine path post-P1. Deferred: shifts the cost engine, risks the P1 cost-agreement win.', intents: ['neubau'] },
 ]
 function sweepClass3(): void {
   for (const b of FRAGILE_BRANCHES) {

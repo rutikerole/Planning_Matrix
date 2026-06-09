@@ -440,7 +440,7 @@ export function resolveProcedure(c: ProcedureCase): ProcedureDecision {
   // permit the resolver would require) so this can't weaken a real
   // obligation. Hard blockers above still take precedence.
   const vi = viRaw.toLowerCase()
-  if (/verfahrensfrei|verfahrensfreiheit|permit-free|genehmigungsfrei/.test(vi)) {
+  if (/verfahrensfrei|verfahrensfreiheit|permit[- ]?free|genehmigungsfrei|no permit (?:required|needed)/.test(vi)) {
     const cited = extractProcedureCitation(c.verfahren_indikation ?? '')
     const freeCitation =
       cited ?? getStateLocalization(c.bundesland).procedure.free?.citation ?? ''
@@ -500,7 +500,7 @@ export function resolveProcedure(c: ProcedureCase): ProcedureDecision {
   // Honoring an upgrade to the full procedure can never weaken a requirement.
   // Guard against the simplified label, whose name also contains
   // "Baugenehmigungsverfahren".
-  if (/regul[äa]r|standard/.test(vi) && !/vereinfacht|simplified|frei/.test(vi)) {
+  if (/regul[äa]r|standard|full[- ]?permit|regular building permit/.test(vi) && !/vereinfacht|simplified|frei/.test(vi)) {
     const cited = extractProcedureCitation(viRaw)
     const reg = getStateLocalization(c.bundesland).procedure.regular
     const citation = cited ?? (reg.citation.trim() || viRaw.trim())
