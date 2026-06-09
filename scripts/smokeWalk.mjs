@@ -3600,7 +3600,11 @@ async function runStaticGate() {
       msg: 'resolveProcedures must export the single resolveCostProcedureType resolver',
     },
     {
-      ok: /resolveCostProcedureType[\s\S]{0,400}resolveProcedures\([\s\S]{0,400}detectProcedure/.test(resolveProcsLibSrc),
+      // Campaign 5a widened the gap window: resolveCostProcedureType now reads the
+      // structured procedure TITLE (with a documenting comment) before calling
+      // detectProcedure — the single-resolver invariant (resolveProcedures →
+      // detectProcedure) is unchanged; only the comment lengthened the span.
+      ok: /resolveCostProcedureType[\s\S]{0,400}resolveProcedures\([\s\S]{0,1000}detectProcedure/.test(resolveProcsLibSrc),
       msg: 'resolveCostProcedureType must go through the canonical resolveProcedures, then detectProcedure',
     },
   ]

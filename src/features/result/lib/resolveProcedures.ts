@@ -112,5 +112,13 @@ export function resolveCostProcedureType(
   const { procedures } = resolveProcedures(project, state)
   const primary =
     procedures.find((p) => p.status === 'erforderlich') ?? procedures[0]
-  return detectProcedure(primary?.rationale_de ?? '')
+  // Campaign Phase 5a — read the STRUCTURED kind from the procedure TITLE (which is
+  // procedureLabel(kind) for the decision path / the localization procedure name
+  // for the baseline), NOT the free rationale prose. The rationale is a fallback
+  // only when the title yields no kind. This stops "Vereinfachtes
+  // Baugenehmigungsverfahren" rationales from being mis-read; the T-01 baseline
+  // keeps a 1.0 multiplier (art58_vereinfacht and unknown are both 1.0) → no cost
+  // shift. (All four cost surfaces still call THIS one resolver → they still agree.)
+  const fromTitle = detectProcedure(primary?.title_de ?? '')
+  return fromTitle !== 'unknown' ? fromTitle : detectProcedure(primary?.rationale_de ?? '')
 }

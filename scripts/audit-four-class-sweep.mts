@@ -245,7 +245,6 @@ function sweepClass2(): void {
 const FRAGILE_BRANCHES: Array<{ where: string; field: string; condition: string; breaks: string; intents: string[] }> = [
   { where: 'resolveProcedure.ts extractProcedureCitation', field: 'verfahren_indikation §-parse', condition: "§/Art regex", breaks: '"§62BauO" (no space at all), "Art 58" (no period) — rare; the §-comparison handles the common spaced forms', intents: ['neubau', 'sanierung', 'umnutzung', 'abbruch', 'aufstockung', 'anbau', 'sonstiges'] },
   { where: 'resolveRoles.ts roleFunction', field: 'role title', condition: 'title keyword regex', breaks: 'a persona role title with no recognised keyword → null function (kept DISTINCT — safe — but cannot dedupe against an unrecognised synonym). Inherent to title-based classification.', intents: ['neubau', 'sanierung', 'umnutzung', 'aufstockung', 'anbau', 'abbruch', 'sonstiges'] },
-  { where: 'costNormsMuenchen.ts detectProcedure (DEFERRED — cost-sprint)', field: 'procedure rationale', condition: "/art.?57|60|baugenehmigungsverfahren/", breaks: '"Vereinfachtes Baugenehmigungsverfahren" rationale matches the art60 (1.25) branch; English "Article 60". Affects only the T-01 engine path post-P1. Deferred: shifts the cost engine, risks the P1 cost-agreement win.', intents: ['neubau'] },
 ]
 function sweepClass3(): void {
   for (const b of FRAGILE_BRANCHES) {
