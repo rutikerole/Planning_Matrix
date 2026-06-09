@@ -1922,7 +1922,8 @@
         "openQuestions": "Offene Fragen",
         "inProgress": "In Klärung",
         "tbd": "—",
-        "gkUseConversion": "Keine Neueinstufung · Nutzungsänderung"
+        "gkUseConversion": "Keine Neueinstufung · Nutzungsänderung",
+        "costByQuote": "Nach Angebot · keine HOAI-Tabelle"
       },
       "actions": {
         "doNextEyebrow": "Nächste Schritte",

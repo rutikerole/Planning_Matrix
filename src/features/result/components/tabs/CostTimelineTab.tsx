@@ -8,6 +8,7 @@ import {
   detectKlasse,
   formatEurRange,
   resolveCostAreaSqm,
+  resolveCostDisplayMode,
   resolveInputs,
   type CostBreakdown,
 } from '../../lib/costNormsMuenchen'
@@ -90,23 +91,19 @@ export function CostTimelineTab({ project, state }: Props) {
   // BASE_AREA_SQM default; label it "(Annahme)" so the caption is as honest as
   // the PDF's no-area phrasing (numbers already agree).
   const inputsLabel = describeCostInputs(inputs, lang, areaSqm == null)
-  // v1.0.28 Bug 53 — T-05 demolition is cost-template-blind (HOAI new-build
-  // engine + 180 m² silent default + a GEG energy row). No sourced BKI
-  // demolition factors exist (C11_DATA_GAPS GAP-4) → honest stub, not wrong
-  // numbers.
-  const isDemolition = state.templateId === 'T-05' || project.intent === 'abbruch'
-  // v1.0.33 C2 — align the web cost surface with the PDF cost model. T-03/T-04
-  // were showing EFH new-build bars here while the PDF already routed them to
-  // honest stubs (the PDF↔web divergence); T-02/T-06/T-07/T-08 were showing EFH
-  // bars where the PDF now shows their own sourced headline band. Same model on
-  // both surfaces: stub / band / bars.
-  const isUseConversion = state.templateId === 'T-04' || project.intent === 'umnutzung'
-  const isRenovation = state.templateId === 'T-03' || project.intent === 'sanierung'
-  const isHeadlineBand =
-    state.templateId === 'T-02' ||
-    state.templateId === 'T-06' ||
-    state.templateId === 'T-07' ||
-    state.templateId === 'T-08'
+  // T-03 sprint (P1) — derive the cost-display mode from the SINGLE shared
+  // resolver (costNormsMuenchen) so the Cost tab, PDF, At-a-Glance and
+  // Executive Read can never disagree on which surface shows a € figure vs an
+  // honest stub. (Was four parallel ad-hoc booleans; the same predicate now
+  // lives in one place.) Demolition: no sourced BKI demolition factors exist
+  // (C11_DATA_GAPS GAP-4) → honest stub. T-03/T-04 (renovation/use-conversion)
+  // likewise carry no HOAI new-build schedule. T-02/T-06/T-07/T-08 → sourced
+  // headline band. T-01 → engine bars.
+  const costMode = resolveCostDisplayMode(state.templateId, project.intent)
+  const isDemolition = costMode === 'demolition'
+  const isUseConversion = costMode === 'useConversion'
+  const isRenovation = costMode === 'renovation'
+  const isHeadlineBand = costMode === 'headlineBand'
   const band = costBandFor(state.templateId)
 
   const totalWeight = totalPhaseWeight()

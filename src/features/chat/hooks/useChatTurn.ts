@@ -241,7 +241,17 @@ export function useChatTurn(projectId: string) {
     },
 
     onMutate: (input) => {
-      const clientRequestId = input.clientRequestId ?? crypto.randomUUID()
+      // T-03 sprint (P3) — resolve the clientRequestId ONCE and write it back
+      // onto the (shared) input object so mutationFn uses the SAME id. Before
+      // this, onMutate and mutationFn each ran `input.clientRequestId ??
+      // randomUUID()` independently, minting TWO different ids when the caller
+      // passed none: the optimistic placeholder + the id the Recovery banner
+      // reads were uuidB while the server persisted uuidA — so a retry
+      // re-submitted uuidB and created a SECOND user row (the duplicate user
+      // bubble seen on the T-03 walk). One id everywhere → the server's
+      // (project_id, client_request_id, role) unique index dedupes the retry.
+      input.clientRequestId ??= crypto.randomUUID()
+      const clientRequestId = input.clientRequestId
 
       const previousMessages =
         queryClient.getQueryData<MessageRow[]>(['messages', projectId]) ?? []
@@ -270,9 +280,17 @@ export function useChatTurn(projectId: string) {
         created_at: new Date().toISOString(),
       }
 
+      // Idempotent optimistic write — never stack two bubbles for one turn.
+      // If a message (pending OR persisted) already carries this
+      // client_request_id (e.g. a retry of a turn whose user row is already in
+      // cache, or a double dispatch), replace it in place instead of appending
+      // a duplicate.
+      const withoutThisTurn = previousMessages.filter(
+        (m) => m.client_request_id !== clientRequestId,
+      )
       queryClient.setQueryData<MessageRow[]>(
         ['messages', projectId],
-        [...previousMessages, placeholder],
+        [...withoutThisTurn, placeholder],
       )
 
       const lastAssistant = mostRecentAssistant(previousMessages)

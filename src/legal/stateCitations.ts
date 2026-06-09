@@ -125,8 +125,15 @@ const BW: StateCitationPack = {
   // ("Bauvorlagen und Bauantrag", dejure.org/gesetze/LBO/53.html). structuralCert
   // was § 73a ("Technische Baubestimmungen" — an admin rule, not a cert); the
   // Standsicherheit § is § 13 LBO BW (dejure.org/gesetze/LBO/13.html).
+  // T-03 sprint (P2) — permitSubmission was § 43 LBO BW = "Entwurfsverfasser"
+  // (design author), NOT the Bauvorlageberechtigung (who may SIGN/SUBMIT permit
+  // documents). LBO BW carries these as TWO distinct §§ (§ 43 Entwurfsverfasser
+  // vs § 63 Bauvorlageberechtigung — dejure.org/gesetze/LBO/63.html). This field
+  // renders as "Bauvorlageberechtigt nach …" so it MUST be § 63 — § 43 was
+  // contradicting the systemBlock prose (bw.ts + stateOverrides) the persona
+  // already cites correctly. Pinned by verify:concept-citations.
   permitFormCitation: '§ 53 LBO BW',
-  permitSubmissionCitation: '§ 43 LBO BW',
+  permitSubmissionCitation: '§ 63 LBO BW',
   structuralCertCitation: '§ 13 LBO BW',
   abstandsFlaechenCitation: '§ 5 LBO BW',
   brandschutzCitation: '§ 15 LBO BW',
@@ -144,7 +151,12 @@ const HESSEN: StateCitationPack = {
   archivCity: 'Wiesbaden',
   bauVorlagenAct: 'BauVorlV Hessen',
   permitFormCitation: '§ 66 HBO',
-  permitSubmissionCitation: '§ 49 HBO',
+  // T-03 sprint (P2) — was § 49 HBO = "Blitzschutzanlagen" (lightning
+  // protection!), a clear mis-map. HBO Bauvorlageberechtigung is § 67. The
+  // corpus pack (STATE_CORPUS_CITATIONS, overlaid below) already shipped § 67
+  // HBO at runtime, but the hand-coded source is corrected so it can never
+  // resurface. Pinned by verify:concept-citations.
+  permitSubmissionCitation: '§ 67 HBO',
   structuralCertCitation: '§ 68 HBO',
   abstandsFlaechenCitation: '§ 6 HBO',
   brandschutzCitation: '§ 14 HBO',

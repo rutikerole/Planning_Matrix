@@ -915,11 +915,28 @@ const ALLOW_KEY_SETS = {
     'hbo|68', 'hbo|69', 'hbo|70', 'hbo|71', 'hbo|73', 'hbo|74',
     'baugb|30', 'baugb|34', 'baugb|35', 'baunvo|19', 'geg|8',
   ]),
+  // Baden-Württemberg — corpus law_short is bare 'LBO', so canonical keys carry
+  // NO Bundesland suffix. The persona emits the suffixed 'LBO BW' form; the
+  // suffix-canonicalisation in normaliseLawJS is what makes these match. (T-03
+  // sprint: regression for the 'lbo' vs 'lbo bw' key mismatch.)
+  bw: new Set([
+    'lbo|13', 'lbo|27f', 'lbo|43', 'lbo|52', 'lbo|53', 'lbo|63',
+    'baugb|30', 'baugb|34', 'baugb|35', 'baunvo|19', 'geg|10', 'geg|48',
+  ]),
 }
 
+// Mirror of citationLint.ts: HBauO before HBO; LBauO carries its optional
+// M-V / RLP suffix so those states parse; LBO/LBauO Bundesland suffixes are
+// canonicalised away in normaliseLawJS so "§ 27f LBO BW" keys the same as the
+// allow-list entry "§ 27f LBO".
 const KNOWN_LAW_TOKEN_RE_JS =
-  /\b(BayBO|BauGB|BauNVO|BayDSchG|GEG|StPlS\s*\d+|HBO|HBauO|NBauO|BauO\s*NRW|LBO(?:\s+BW|\s+SH|\s+MV|\s+Saarland)?|S[äa]chsBO|LBauO\s+RLP|BremLBO|BauO\s+LSA|BbgBO|BauO\s+Bln|Th[üu]rBO)\b/i
+  /\b(BayBO|BauGB|BauNVO|BayDSchG|GEG|StPlS\s*\d+|HBauO|HBO|NBauO|BauO\s*NRW|BauO\s*LSA|BauO\s*Bln|LBO(?:\s+BW|\s+SH|\s+MV|\s+Saarland)?|LBauO(?:\s+M-V|\s+RLP)?|S[äa]chsBO|BremLBO|BbgBO|Th[üu]rBO)\b/i
 const ANCHOR_NUMBER_RE_JS = /(?:Art\.|§|Anlage)\s*(\d+[a-z]?)/gi
+const REDUNDANT_STATE_SUFFIX_RE_JS = /^(lbo|lbauo)\s+(?:bw|sh|mv|m-v|saarland|rlp)$/
+
+function normaliseLawJS(s) {
+  return s.toLowerCase().replace(/\s+/g, ' ').trim().replace(REDUNDANT_STATE_SUFFIX_RE_JS, '$1')
+}
 
 function* extractCitationsJS(text) {
   ANCHOR_NUMBER_RE_JS.lastIndex = 0
@@ -931,7 +948,7 @@ function* extractCitationsJS(text) {
     const lawMatch = ctx.match(KNOWN_LAW_TOKEN_RE_JS)
     if (!lawMatch) continue
     yield {
-      law: lawMatch[1].toLowerCase().replace(/\s+/g, ' ').trim(),
+      law: normaliseLawJS(lawMatch[1]),
       number: m[1].toLowerCase(),
       match: m[0],
     }
@@ -1085,6 +1102,47 @@ const ALLOW_LIST_FIXTURES = [
     },
     expectEvents: 0,
     expectQualifier: { itemId: 'rec-stub', source: 'LEGAL', quality: 'CALCULATED' },
+  },
+  // ── T-03 sprint: suffix-canonicalisation regression (the 'lbo' vs 'lbo bw'
+  // key mismatch that made Layer C non-discriminating for BW). ─────────────
+  {
+    label: "T03 BW: '§ 27f LBO BW' (real, suffixed) → passes (was wrongly downgraded before fix)",
+    activeBundesland: 'bw',
+    input: {
+      procedures_delta: [{
+        op: 'upsert', id: 'proc-struct-bw',
+        rationale_de: 'Sobald tragende Bauteile betroffen sind (§ 13 LBO BW, § 27f LBO BW), ist ein Standsicherheitsnachweis erforderlich.',
+        source: 'LEGAL', quality: 'CALCULATED',
+      }],
+    },
+    expectEvents: 0,
+    expectQualifierTopLevel: { itemId: 'proc-struct-bw', source: 'LEGAL', quality: 'CALCULATED' },
+  },
+  {
+    label: "T03 BW: '§ 240 LBO BW' (fabricated, suffixed) → downgraded (fix still catches real fabrications)",
+    activeBundesland: 'bw',
+    input: {
+      procedures_delta: [{
+        op: 'upsert', id: 'proc-fab-bw',
+        rationale_de: 'Verfahren folgt aus § 240 LBO BW.',
+        source: 'LEGAL', quality: 'CALCULATED',
+      }],
+    },
+    expectEvents: 1,
+    expectQualifierTopLevel: { itemId: 'proc-fab-bw', source: 'DESIGNER', quality: 'ASSUMED' },
+  },
+  {
+    label: "T03 BW: '§ 52 LBO' (real, bare — no suffix) → still passes",
+    activeBundesland: 'bw',
+    input: {
+      procedures_delta: [{
+        op: 'upsert', id: 'proc-bare-bw',
+        rationale_de: 'Vereinfachtes Baugenehmigungsverfahren nach § 52 LBO.',
+        source: 'LEGAL', quality: 'CALCULATED',
+      }],
+    },
+    expectEvents: 0,
+    expectQualifierTopLevel: { itemId: 'proc-bare-bw', source: 'LEGAL', quality: 'CALCULATED' },
   },
 ]
 
@@ -1701,6 +1759,85 @@ async function runStaticGate() {
     }
     results.push(failures(`v1.0.5 B3 fixture: ${f.label}`, conds))
   }
+
+  // ── T-03 sprint (P1): renovation cost-agreement drift guard ──────────────
+  // The bug: At-a-Glance + Executive Read computed a HOAI new-build € range for
+  // a renovation while the Cost tab + PDF showed the honest "no schedule,
+  // request quotes" stub — two sources of truth on one deliverable. Guard: ALL
+  // FOUR cost surfaces must route their stub-vs-figure decision through the
+  // single shared resolveCostDisplayMode, so they cannot diverge again.
+  const costP1AtAGlance = await readFileText('src/features/result/components/Cards/AtAGlance.tsx')
+  const costP1ExecRead = await readFileText('src/features/result/lib/composeExecutiveRead.ts')
+  const costP1CostTab = await readFileText('src/features/result/components/tabs/CostTimelineTab.tsx')
+  const costP1ExportPdf = await readFileText('src/features/chat/lib/exportPdf.ts')
+  results.push(failures('T-03 P1: all 4 cost surfaces route through resolveCostDisplayMode (no renovation €-range divergence)', [
+    { ok: /resolveCostDisplayMode/.test(costP1AtAGlance) && /costModeShowsEuroFigure/.test(costP1AtAGlance),
+      msg: 'AtAGlance must gate its € figure via resolveCostDisplayMode + costModeShowsEuroFigure' },
+    { ok: /resolveCostDisplayMode/.test(costP1ExecRead) && /costModeShowsEuroFigure/.test(costP1ExecRead),
+      msg: 'composeExecutiveRead must gate its € figure via resolveCostDisplayMode + costModeShowsEuroFigure' },
+    { ok: /resolveCostDisplayMode/.test(costP1CostTab),
+      msg: 'CostTimelineTab must derive its stub/band/engine mode from resolveCostDisplayMode' },
+    { ok: /resolveCostDisplayMode/.test(costP1ExportPdf),
+      msg: 'exportPdf must derive its stub/band/engine mode from resolveCostDisplayMode' },
+    // composeP2 must NOT unconditionally interpolate a € figure — the Bestand
+    // branch narrates "no HOAI new-build schedule" instead.
+    { ok: /no HOAI new-build schedule/.test(costP1ExecRead) && /keiner HOAI-Neubautabelle/.test(costP1ExecRead),
+      msg: 'composeExecutiveRead must narrate the honest no-schedule tail (EN+DE) when costRange is null' },
+  ]))
+  // Functional mirror of resolveCostDisplayMode — the three Bestand intents
+  // (and their templates) must NEVER show a € figure; new-build must.
+  const costModeMirror = (templateId, intent) => {
+    if (templateId === 'T-05' || intent === 'abbruch') return 'demolition'
+    if (templateId === 'T-04' || intent === 'umnutzung') return 'useConversion'
+    if (templateId === 'T-03' || intent === 'sanierung') return 'renovation'
+    if (['T-02', 'T-06', 'T-07', 'T-08'].includes(templateId)) return 'headlineBand'
+    return 'engineRange'
+  }
+  const showsEuro = (m) => m === 'headlineBand' || m === 'engineRange'
+  results.push(failures('T-03 P1: cost-mode classification — Bestand intents carry no € figure, new-build does', [
+    { ok: !showsEuro(costModeMirror('T-03', 'sanierung')), msg: 'renovation (T-03/sanierung) must NOT show a € figure' },
+    { ok: !showsEuro(costModeMirror('T-04', 'umnutzung')), msg: 'use-conversion (T-04/umnutzung) must NOT show a € figure' },
+    { ok: !showsEuro(costModeMirror('T-05', 'abbruch')), msg: 'demolition (T-05/abbruch) must NOT show a € figure' },
+    { ok: showsEuro(costModeMirror('T-01', 'neubau_einfamilienhaus')), msg: 'new-build EFH (T-01) MUST show a € figure (no regression)' },
+    { ok: showsEuro(costModeMirror('T-02', 'neubau_mehrfamilienhaus')), msg: 'new-build MFH (T-02) MUST show its headline band (no regression)' },
+  ]))
+
+  // ── T-03 sprint (P3): double-submit idempotency drift guard ──────────────
+  // The duplicate-user-bubble fix lives in two places; pin both so it can't
+  // silently regress. (Functional coverage: scripts/smoke-double-submit.mts.)
+  const useChatTurnSrc = await readFileText('src/features/chat/hooks/useChatTurn.ts')
+  const chatWorkspaceSrc = await readFileText('src/features/chat/pages/ChatWorkspacePage.tsx')
+  results.push(failures('T-03 P3: double-submit guard — one stable clientRequestId per turn', [
+    { ok: /input\.clientRequestId\s*\?\?=/.test(useChatTurnSrc),
+      msg: 'useChatTurn.onMutate must resolve clientRequestId onto the shared input (`input.clientRequestId ??= …`) so mutationFn uses the same id' },
+    { ok: /m\.client_request_id\s*!==\s*clientRequestId/.test(useChatTurnSrc),
+      msg: 'useChatTurn.onMutate must dedupe the optimistic write by client_request_id (no stacked bubbles)' },
+    { ok: /clientRequestId:\s*crypto\.randomUUID\(\)/.test(chatWorkspaceSrc),
+      msg: 'ChatWorkspacePage.handleSubmit must mint a stable clientRequestId per user turn' },
+  ]))
+
+  // ── T-03 sprint: pin the wins the walk CONFIRMED (must not regress) ───────
+  const winReqDocs = await readFileText('src/legal/requiredDocuments.ts')
+  const winT05 = await readFileText('src/legal/templates/t05-abbruch.ts')
+  const winAtAGlance = await readFileText('src/features/result/components/Cards/AtAGlance.tsx')
+  const winBleedGuard = await readFileText('src/legal/crossStateBleedGuard.ts')
+  const winT03 = await readFileText('src/legal/templates/t03-sanierung.ts')
+  results.push(failures('T-03 sprint: confirmed wins pinned (renovation GEG · hazmat pre-1995 · GK-unchanged · state isolation)', [
+    // WIN 1 — § 48 GEG is the RENOVATION thermal path (not new-build, which is § 10).
+    { ok: /citation:\s*'§ 48 GEG'/.test(winReqDocs) && /§ 48 GEG governs[\s\S]{0,80}renovation/.test(winReqDocs),
+      msg: '§ 48 GEG must stay the renovation Wärmeschutz citation (new-build uses § 10 GEG)' },
+    { ok: /GEG-Sanierungspflicht/.test(winT03),
+      msg: 'T-03 must keep the GEG-Sanierungspflicht renovation energy path' },
+    // WIN 2 — asbestos/PCB hazardous-materials survey keyed to pre-1995 buildings.
+    { ok: /Asbest, KMF, PCB/.test(winT05) && /vor 1995/.test(winT05),
+      msg: 'pre-1995 asbestos/KMF/PCB Schadstoffkataster must stay (GefStoffV hazmat survey)' },
+    // WIN 3 — a use conversion / Bestand change does NOT re-classify the Gebäudeklasse.
+    { ok: /does not re-classify/.test(winAtAGlance) && /gkUseConversion/.test(winAtAGlance),
+      msg: 'GK-unchanged-from-Bestand framing (T-04 gkUseConversion) must stay — no fabricated re-classification' },
+    // WIN 4 — state isolation: the bleed guard must scrub BW tokens on the wrong state.
+    { ok: /state:\s*'bw',\s*pattern:\s*\/\\bLBO\\s\+BW\\b\//.test(winBleedGuard),
+      msg: 'cross-state bleed guard must keep the BW LBO-token scrubber (no Bayern/NRW bleed into BW)' },
+  ]))
 
   // ── v1.0.4 D2+D3+D6 drift checks (compliance docs + dependabot) ──
   const compliance = await readFileText('docs/COMPLIANCE.md')

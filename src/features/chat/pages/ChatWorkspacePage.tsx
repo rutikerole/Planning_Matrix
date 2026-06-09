@@ -156,6 +156,11 @@ export function ChatWorkspacePage() {
           payload.userMessageEn ?? buildUserMessageTextEn(payload.userAnswer),
         userAnswer: payload.userAnswer,
         attachmentIds: payload.attachmentIds,
+        // T-03 sprint (P3) — mint ONE stable clientRequestId per user turn so
+        // the optimistic placeholder, the server insert, and any Recovery-banner
+        // retry all share the same id. Without this the retry path created a
+        // duplicate user bubble (see useChatTurn.onMutate).
+        clientRequestId: crypto.randomUUID(),
       })
     },
     [chatTurn],

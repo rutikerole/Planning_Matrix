@@ -3,9 +3,11 @@ import type { ProjectRow } from '@/types/db'
 import type { ProjectState } from '@/types/projectState'
 import {
   buildCostBreakdown,
+  costModeShowsEuroFigure,
   detectKlasse,
   formatEurRange,
   resolveCostAreaSqm,
+  resolveCostDisplayMode,
   resolveHeadlineCostRange,
 } from '../../lib/costNormsMuenchen'
 import { resolveCostProcedureType } from '../../lib/resolveProcedures'
@@ -94,11 +96,20 @@ export function AtAGlance({ project, state }: Props) {
     areaSqm,
     bundesland: project.bundesland,
   })
-  // Sprint 1 (Y-1) — single headline cost-range resolver: the per-template band
-  // for T-02/T-06/T-07/T-08, the engine total otherwise. Matches the Cost tab +
-  // PDF so the same project shows ONE cost range everywhere.
-  const costRange = resolveHeadlineCostRange(state.templateId, cost.total)
-  const costLabel = facts.length > 0 ? formatEurRange(costRange, lang) : t('result.workspace.ataglance.tbd')
+  // T-03 sprint (P1) — route the headline cost through the SINGLE cost-display
+  // mode resolver shared with the Cost tab / PDF / Executive Read. The three
+  // Bestand modes (renovation/use-conversion/demolition) follow no HOAI
+  // new-build schedule, so this card shows the honest "by quote" value instead
+  // of a fabricated € range — fixing the Overview €30,900–57,800 vs Cost-tab
+  // "request quotes" divergence. Sprint 1 (Y-1) headline band/engine resolver
+  // still drives the € figure for the new-build/band modes.
+  const costMode = resolveCostDisplayMode(state.templateId, project.intent)
+  const costLabel =
+    facts.length === 0
+      ? t('result.workspace.ataglance.tbd')
+      : costModeShowsEuroFigure(costMode)
+        ? formatEurRange(resolveHeadlineCostRange(state.templateId, cost.total), lang)
+        : t('result.workspace.ataglance.costByQuote')
 
   // Timeline — coarse range from procedure type.
   const timelineLabel =

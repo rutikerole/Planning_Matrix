@@ -33,6 +33,7 @@ import {
   detectKlasse,
   formatEurRange,
   resolveCostAreaSqm,
+  resolveCostDisplayMode,
 } from '@/features/result/lib/costNormsMuenchen'
 // v1.0.13 → v1.0.14 — PDF Renaissance Part 2 imports. The
 // PDF_CLAY / PDF_MARGIN / PDF_PAPER aliases that v1.0.13 used for
@@ -702,7 +703,11 @@ export async function buildExportPdf({
   // 180 m² default the user never gave. NO sourced BKI demolition factors
   // exist (C11_DATA_GAPS GAP-4), so route to an honest stub rather than
   // ship wrong numbers — no fabrication.
-  const isDemolition = procedureCase.intent === 'abbruch'
+  // T-03 sprint (P1) — single shared cost-display mode resolver (same predicate
+  // the Cost tab / At-a-Glance / Executive Read now use) so all FOUR surfaces
+  // agree on stub vs band vs engine. The per-mode comments below are retained.
+  const costMode = resolveCostDisplayMode(state.templateId, procedureCase.intent)
+  const isDemolition = costMode === 'demolition'
   // v1.0.30 Bug 88 — T-04 use-conversion is cost-template-blind the same
   // way T-05 demolition was (Bug 53). The HOAI new-build engine emits
   // Architect LP1-4 / Structural / Surveying / Energy (GEG thermal cert)
@@ -710,7 +715,7 @@ export async function buildExportPdf({
   // LP1-4, no envelope GEG trigger, no new official site plan). No sourced
   // use-conversion BKI exists, so route to an honest stub (request
   // Fachplaner quotes) rather than ship new-build numbers. No fabrication.
-  const isUseConversion = procedureCase.intent === 'umnutzung'
+  const isUseConversion = costMode === 'useConversion'
   // v1.0.31 C3 — T-03 renovation is cost-template-blind the same way T-05
   // demolition (Bug 53) and T-04 use-conversion (Bug 88) were: the HOAI
   // new-build engine assumes full new-build LP1-4, a new official site plan and
@@ -718,7 +723,7 @@ export async function buildExportPdf({
   // by scope (cosmetic vs. load-bearing vs. energetic). No sourced renovation
   // BKI exists, so route to an honest stub (request Fachplaner quotes) rather
   // than ship new-build numbers. No fabrication.
-  const isRenovation = procedureCase.intent === 'sanierung'
+  const isRenovation = costMode === 'renovation'
   // v1.0.33 C2 — per-template sourced headline band (COST_BANDS_BY_TEMPLATE,
   // cross-referenced to each template's TYPISCHE KOSTENRAHMEN). Used only for
   // the templates that previously fell through to the EFH new-build table
@@ -757,7 +762,7 @@ export async function buildExportPdf({
             subtitle: pdfStrings['costs.renovation.subtitle'],
             emptyMessage: pdfStrings['costs.renovation.empty'],
           }
-        : state.templateId === 'T-01'
+        : costMode === 'engineRange'
           ? {
               areaSqm: areaSqm ?? 0,
               bundeslandCode: bundeslandCodeUpper,
