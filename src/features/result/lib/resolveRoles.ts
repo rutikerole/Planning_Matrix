@@ -1,6 +1,7 @@
 import type { ProjectRow } from '@/types/db'
 import type { ProjectState, Role } from '@/types/projectState'
 import { deriveBaselineRoles } from './deriveBaselineRoles'
+import { buildProcedureCase } from '@/legal/resolveProcedure'
 import { stripVersionTokens } from '@/lib/stripVersionTokens'
 
 export interface ResolvedRoles {
@@ -9,6 +10,39 @@ export interface ResolvedRoles {
 }
 
 const normTitle = (s: string): string => s.toLowerCase().replace(/[^a-zäöüß]/g, '')
+
+/** The structural-engineer (Tragwerksplaner) role, by canonical id or title. */
+const isStructuralRole = (r: Role): boolean =>
+  r.id === 'R-Tragwerksplaner' ||
+  /tragwerk|structural/.test(normTitle(r.title_de ?? '') + normTitle(r.title_en ?? ''))
+
+/**
+ * T-03 thin-state propagation sprint (P2) — the structural engineer MUST render
+ * NEEDED whenever the consultation captured a load-bearing intervention
+ * (eingriff_tragende_teile=true), for ALL states. resolveRoles never read facts,
+ * so a thin-state persona role emitted with needed:false ("Required only if
+ * load-bearing elements are affected") silently overrode the captured fact — the
+ * MV/Rostock walk captured the Unterzug removal yet the Team tab + PDF said
+ * "Structural engineer — NOT NEEDED". When the fact is set we restore the
+ * baseline structural role (needed:true, intervention-correct rationale),
+ * replacing a contradicting needed:false role or appending it if absent.
+ */
+function forceStructuralWhenCaptured(
+  roles: Role[],
+  baseline: Role[],
+  captured: boolean,
+): Role[] {
+  if (!captured) return roles
+  const baselineStructural = baseline.find(isStructuralRole)
+  const idx = roles.findIndex(isStructuralRole)
+  if (idx >= 0) {
+    if (roles[idx].needed) return roles
+    return roles.map((r, i) =>
+      i === idx ? (baselineStructural ?? { ...r, needed: true }) : r,
+    )
+  }
+  return baselineStructural ? [...roles, baselineStructural] : roles
+}
 
 /**
  * v1.0.30 Bug 97 — stub-state citation packs fill permitSubmissionCitation with
@@ -61,7 +95,17 @@ export function resolveRoles(
     bundesland: project.bundesland,
   }).map(sanitizeRole)
 
-  if (persona.length === 0) return { roles: baseline, isFromState: false }
+  // T-03 thin-state sprint (P2) — read the SAME canonical structural-intervention
+  // fact the procedure resolver uses (buildProcedureCase), so the specialist
+  // determination and the procedure verdict can never disagree on it.
+  const structuralCaptured = buildProcedureCase(project, state).eingriff_tragende_teile
+
+  if (persona.length === 0) {
+    return {
+      roles: forceStructuralWhenCaptured(baseline, baseline, structuralCaptured),
+      isFromState: false,
+    }
+  }
 
   // v1.0.29 Bug 67 — union floor. A thin persona emission (the Hamburg T-02
   // walk emitted ONE role yet the persona had named five) must not suppress
@@ -73,5 +117,8 @@ export function resolveRoles(
   const missing = baseline.filter(
     (b) => !have.has(normTitle(b.title_de)) && !have.has(normTitle(b.title_en)),
   )
-  return { roles: [...persona, ...missing], isFromState: true }
+  return {
+    roles: forceStructuralWhenCaptured([...persona, ...missing], baseline, structuralCaptured),
+    isFromState: true,
+  }
 }
