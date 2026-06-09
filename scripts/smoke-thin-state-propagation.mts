@@ -18,7 +18,7 @@
 // ───────────────────────────────────────────────────────────────────────
 
 import { resolveProcedure } from '../src/legal/resolveProcedure.ts'
-import { resolveRoles } from '../src/features/result/lib/resolveRoles.ts'
+import { resolveRoles, roleFunction } from '../src/features/result/lib/resolveRoles.ts'
 import { composeLegalDomains } from '../src/features/result/lib/composeLegalDomains.ts'
 import { getStateLocalization } from '../src/legal/stateLocalization.ts'
 
@@ -85,6 +85,30 @@ for (const bundesland of ['mv', 'sh', 'sachsen', 'berlin'] as const) {
   const form = getStateLocalization(bundesland) // §68 form is permitForm; assert the row is NOT §68
   ok(!!proc && !/§\s*68\b/.test(proc.label), `${bundesland}: permit-procedure row cites a procedure § (not the §68 form): got ${proc?.label}`)
   void form
+}
+
+console.log('\n[smoke-thin-state] P1 cleanup — specialist deduplication by role-function (no duplicate cards)…')
+// Persona emits RICHER titles than the baseline ("…architect (Saxony)" vs
+// "Architect"; "Energy consultant (GEG)" vs "Energy consultant") — the prior
+// exact-title union rendered BOTH. Assert: after resolveRoles, no two cards share
+// a role-function, the count reflects DISTINCT roles, and a genuinely distinct
+// (null-function) role survives. Swept across state × template.
+const dupPersona = [
+  { id: 'p-arch', title_de: 'Bauvorlageberechtigte:r Architekt:in', title_en: 'Building-permit-authorised architect', needed: true, rationale_de: '§', rationale_en: '§', qualifier: { source: 'LEGAL', quality: 'CALCULATED' } },
+  { id: 'p-energy', title_de: 'Energieberater:in (GEG)', title_en: 'Energy consultant (GEG)', needed: true, rationale_de: 'GEG', rationale_en: 'GEG', qualifier: { source: 'LEGAL', quality: 'CALCULATED' } },
+  { id: 'p-haz', title_de: 'Schadstoffgutachter:in', title_en: 'Hazardous-materials assessor', needed: true, rationale_de: 'x', rationale_en: 'x', qualifier: { source: 'LEGAL', quality: 'CALCULATED' } },
+]
+for (const bundesland of ['sachsen', 'mv', 'berlin', 'bw'] as const) {
+  for (const intent of ['sanierung', 'neubau_einfamilienhaus'] as const) {
+    const { roles } = resolveRoles({ bundesland, intent } as never, { facts: [{ key: 'eingriff_tragende_teile', value: true }], roles: dupPersona } as never)
+    const fns = roles.map(roleFunction).filter((f): f is string => f != null)
+    const uniqueFns = new Set(fns)
+    ok(fns.length === uniqueFns.size, `${bundesland}×${intent}: no two specialist cards share a role-function (${roles.length} cards, ${uniqueFns.size} distinct functions)`)
+    const architects = roles.filter((r) => roleFunction(r) === 'architect').length
+    const energy = roles.filter((r) => roleFunction(r) === 'energy').length
+    ok(architects <= 1 && energy <= 1, `${bundesland}×${intent}: architect + energy each render at most once (was 2× each)`)
+    ok(roles.some((r) => roleFunction(r) == null && /hazardous/i.test(r.title_en ?? '')), `${bundesland}×${intent}: a genuinely distinct (null-function) specialist is NOT dropped`)
+  }
 }
 
 console.log(`\n[smoke-thin-state] ${passed} passed · ${failed} failed`)

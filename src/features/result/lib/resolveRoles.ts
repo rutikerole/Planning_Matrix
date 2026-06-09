@@ -17,6 +17,59 @@ const isStructuralRole = (r: Role): boolean =>
   /tragwerk|structural/.test(normTitle(r.title_de ?? '') + normTitle(r.title_en ?? ''))
 
 /**
+ * T-03 cleanup sprint (P1) — classify a role by its FUNCTION so duplicates can be
+ * collapsed. The persona emits richer titles than the baseline ("Building-permit-
+ * authorised architect (Saxony)" vs "Architect"; "Energy consultant (GEG)" vs
+ * "Energy consultant"), so the prior exact-title union let BOTH render — two cards
+ * per function and an inflated "Specialists needed" count (Sachsen PDF p8:
+ * architect ×2, energy consultant ×2 → 6 instead of ~4). Baseline roles classify
+ * by their canonical id; persona roles by title keywords. Returns null for
+ * unrecognised roles so they are kept DISTINCT (never wrongly merged/dropped).
+ * Specific functions are tested before the generic "architect" catch.
+ */
+const ROLE_FUNCTION_BY_ID: Record<string, string> = {
+  'R-Architekt': 'architect',
+  'R-Tragwerksplaner': 'structural',
+  'R-Energieberater': 'energy',
+  'R-Bauamt': 'authority',
+  'R-Vermesser': 'surveyor',
+  'R-Brandschutzplaner': 'fire',
+  'R-Schallschutzgutachter': 'acoustics',
+}
+export function roleFunction(r: Role): string | null {
+  if (r.id && ROLE_FUNCTION_BY_ID[r.id]) return ROLE_FUNCTION_BY_ID[r.id]
+  const t = `${r.title_de ?? ''} ${r.title_en ?? ''}`.toLowerCase()
+  if (/tragwerk|structural|statik/.test(t)) return 'structural'
+  if (/brandschutz|fire[- ]?(protection|safety)/.test(t)) return 'fire'
+  if (/schallschutz|acoustic|sound[- ]?(insulation|protection)/.test(t)) return 'acoustics'
+  if (/energ|geg-?nachweis/.test(t)) return 'energy'
+  if (/vermess|surveyor|öbvi|öbv\b/.test(t)) return 'surveyor'
+  if (/bauamt|bauaufsicht|building authority|permitting|genehmigungsbeh/.test(t)) return 'authority'
+  if (/architekt|architect/.test(t)) return 'architect'
+  return null
+}
+
+/**
+ * Collapse roles sharing a FUNCTION into one card — persona-first wins on content
+ * AND its needed flag (the established "persona wins, baseline fills gaps" rule,
+ * re-keyed from exact title to function). Order-preserving; unrecognised
+ * (null-function) roles are kept distinct so a genuinely separate specialist
+ * (Schadstoffgutachter, Denkmalpflege, …) is never dropped.
+ */
+function dedupeByFunction(roles: Role[]): Role[] {
+  const slotForFunction = new Set<string>()
+  const out: Role[] = []
+  for (const r of roles) {
+    const fn = roleFunction(r)
+    if (fn == null) { out.push(r); continue }
+    if (slotForFunction.has(fn)) continue // a same-function role is already kept
+    slotForFunction.add(fn)
+    out.push(r)
+  }
+  return out
+}
+
+/**
  * T-03 thin-state propagation sprint (P2) — the structural engineer MUST render
  * NEEDED whenever the consultation captured a load-bearing intervention
  * (eingriff_tragende_teile=true), for ALL states. resolveRoles never read facts,
@@ -100,25 +153,16 @@ export function resolveRoles(
   // determination and the procedure verdict can never disagree on it.
   const structuralCaptured = buildProcedureCase(project, state).eingriff_tragende_teile
 
-  if (persona.length === 0) {
-    return {
-      roles: forceStructuralWhenCaptured(baseline, baseline, structuralCaptured),
-      isFromState: false,
-    }
-  }
-
-  // v1.0.29 Bug 67 — union floor. A thin persona emission (the Hamburg T-02
-  // walk emitted ONE role yet the persona had named five) must not suppress
-  // the deterministic baseline. Persona roles win on content; baseline roles
-  // the persona didn't cover are appended, matched by normalized title.
-  const have = new Set(
-    persona.flatMap((r) => [normTitle(r.title_de), normTitle(r.title_en)]),
-  )
-  const missing = baseline.filter(
-    (b) => !have.has(normTitle(b.title_de)) && !have.has(normTitle(b.title_en)),
-  )
+  // v1.0.29 Bug 67 — union floor: a thin persona emission (the Hamburg T-02 walk
+  // emitted ONE role yet the persona had named five) must not suppress the
+  // deterministic baseline. T-03 cleanup (P1) — the floor is now deduped by role
+  // FUNCTION (persona-first wins) instead of exact title, so a richer persona
+  // title and the baseline for the SAME function collapse to one card and the
+  // specialist count reflects DISTINCT roles (Sachsen PDF p8: architect ×2 +
+  // energy ×2 → one each). persona.length===0 → just the deduped baseline.
+  const merged = dedupeByFunction([...persona, ...baseline])
   return {
-    roles: forceStructuralWhenCaptured([...persona, ...missing], baseline, structuralCaptured),
-    isFromState: true,
+    roles: forceStructuralWhenCaptured(merged, baseline, structuralCaptured),
+    isFromState: persona.length > 0,
   }
 }
