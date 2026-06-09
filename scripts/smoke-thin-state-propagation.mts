@@ -111,6 +111,39 @@ for (const bundesland of ['sachsen', 'mv', 'berlin', 'bw'] as const) {
   }
 }
 
+// ── Four-class campaign Phase 1 — structural verdict honoring ─────────────
+// GUARDRAILS (must pass BEFORE and AFTER the §-comparison change): the cases
+// where the current dispatch is correct must stay correct. THE hunted regression
+// is a §-comparison that flips a correct standard verdict to simplified.
+console.log('\n[smoke-thin-state] Phase 1 guardrails — legitimate-standard / blocker / free cases must survive…')
+const baseC = (over: Record<string, unknown>) => ({ eingriff_aussenhuelle: false, denkmalschutz: false, ensembleschutz: false, ...over })
+for (const bundesland of ['mv', 'sachsen', 'bw', 'bayern'] as const) {
+  const reg = getStateLocalization(bundesland).procedure.regular.citation.trim()
+  // Sonderbau gate → standard (must override any verdict).
+  ok(resolveProcedure(baseC({ intent: 'neubau', bundesland, sonderbau_count: 1, verfahren_indikation: getStateLocalization(bundesland).procedure.simplified.citation }) as never).kind === 'standard', `${bundesland}: Sonderbau forces standard (overrides a simplified verdict)`)
+  // Hard blockers → bauvoranfrage.
+  ok(resolveProcedure(baseC({ intent: 'sanierung', bundesland, denkmalschutz: true }) as never).kind === 'bauvoranfrage', `${bundesland}: denkmalschutz hard-blocker → bauvoranfrage`)
+  ok(resolveProcedure(baseC({ intent: 'neubau', bundesland, mk_gebietsart: true }) as never).kind === 'bauvoranfrage', `${bundesland}: mk_gebietsart hard-blocker → bauvoranfrage`)
+  // verfahrensfrei verdict → verfahrensfrei.
+  ok(resolveProcedure(baseC({ intent: 'sanierung', bundesland, verfahren_indikation: 'verfahrensfrei' }) as never).kind === 'verfahrensfrei', `${bundesland}: verfahrensfrei verdict honored`)
+  // THE REGRESSION GUARD: a citation-only REGULAR-§ verdict must map to standard,
+  // NEVER flipped to simplified. (pre-fix: generic standard-ASSUMED kind=standard;
+  // post-fix: §-comparison standard-CALCULATED kind=standard — standard both ways.)
+  if (reg) ok(resolveProcedure(baseC({ intent: 'neubau', bundesland, verfahren_indikation: reg }) as never).kind === 'standard', `${bundesland}: citation-only REGULAR § verdict → standard (NOT flipped to simplified)`)
+}
+
+// FIX-PROOF (FAILS before the change, PASSES after): a citation-only SIMPLIFIED-§
+// verdict for neubau/aufstockung/anbau/sonstiges must resolve to vereinfachtes,
+// not the generic standard-§-ASSUMED that currently masks it (CLASS 1, 78 cells).
+console.log('\n[smoke-thin-state] Phase 1 fix-proof — citation-only simplified verdict must propagate (was masked)…')
+for (const bundesland of ['mv', 'sachsen', 'bw', 'bayern', 'sh', 'thueringen'] as const) {
+  const simp = getStateLocalization(bundesland).procedure.simplified.citation.trim()
+  for (const intent of ['neubau', 'aufstockung', 'anbau', 'sonstiges'] as const) {
+    const d = resolveProcedure(baseC({ intent, bundesland, verfahren_indikation: simp }) as never)
+    ok(d.kind === 'vereinfachtes' && d.confidence === 'CALCULATED', `${bundesland}/${intent}: citation-only "${simp}" → vereinfachtes·CALCULATED (was standard·ASSUMED): got ${d.kind}·${d.confidence}`)
+  }
+}
+
 console.log(`\n[smoke-thin-state] ${passed} passed · ${failed} failed`)
 if (failed > 0) { console.error('[smoke-thin-state] FAIL'); process.exit(1) }
 console.log('[smoke-thin-state] OK')
