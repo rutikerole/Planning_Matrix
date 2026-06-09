@@ -144,6 +144,25 @@ for (const bundesland of ['mv', 'sachsen', 'bw', 'bayern', 'sh', 'thueringen'] a
   }
 }
 
+// ── Phase 1b — defaulting branches must honor a CONTRADICTING verdict § ──────
+// The NRW-neubau / sanierung / umnutzung branches default to 'simplified'. If the
+// persona's verdict cites the state's FREE or REGULAR § (contradicting that
+// default), the branch must honor the verdict, not force simplified. This is the
+// sweep blind spot (its fixtures inject only simplified verdicts). FAILS before
+// the Phase-1b fix, PASSES after. (Simplified-§ verdict + no verdict stay
+// simplified — pinned above — so the common path doesn't drift.)
+console.log('\n[smoke-thin-state] Phase 1b — defaulting branches honor a contradicting (regular/free) verdict §…')
+for (const [bundesland, intent] of [['mv', 'sanierung'], ['sachsen', 'sanierung'], ['bw', 'umnutzung'], ['sachsen', 'umnutzung'], ['nrw', 'neubau']] as const) {
+  const p = getStateLocalization(bundesland).procedure
+  const reg = p.regular.citation.trim()
+  const free = p.free?.citation?.trim() ?? ''
+  if (reg) { const d = resolveProcedure(baseC({ intent, bundesland, verfahren_indikation: reg }) as never); ok(d.kind === 'standard', `${bundesland}/${intent}: REGULAR-§ verdict "${reg}" → standard (was forced simplified): got ${d.kind}`) }
+  if (free) { const d = resolveProcedure(baseC({ intent, bundesland, verfahren_indikation: free }) as never); ok(d.kind === 'verfahrensfrei', `${bundesland}/${intent}: FREE-§ verdict "${free}" → verfahrensfrei (was forced simplified): got ${d.kind}`) }
+  // And the common path must NOT drift: a simplified-§ verdict still → vereinfachtes.
+  const simp = p.simplified.citation.trim()
+  if (simp) { const d = resolveProcedure(baseC({ intent, bundesland, verfahren_indikation: simp }) as never); ok(d.kind === 'vereinfachtes', `${bundesland}/${intent}: simplified-§ verdict still → vereinfachtes (no drift): got ${d.kind}`) }
+}
+
 console.log(`\n[smoke-thin-state] ${passed} passed · ${failed} failed`)
 if (failed > 0) { console.error('[smoke-thin-state] FAIL'); process.exit(1) }
 console.log('[smoke-thin-state] OK')

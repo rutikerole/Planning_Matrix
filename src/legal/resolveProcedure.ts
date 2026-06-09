@@ -317,6 +317,48 @@ export function procedureStatusLabel(
  * caveat so the brief is honest about the resolver not yet covering
  * the case.
  */
+/**
+ * Four-class campaign Phase 1b — honor a verdict whose cited § CONTRADICTS the
+ * 'simplified' default of the NRW-neubau / sanierung / umnutzung branches. Those
+ * branches return vereinfachtes regardless of the verdict (same default-masks-
+ * verdict root as Phase 1, in a sweep blind spot — its fixtures only inject
+ * simplified verdicts). If the persona's verdict cites the state's FREE or
+ * REGULAR § (so it contradicts the simplified default), return THAT decision;
+ * null otherwise — a simplified-§ verdict or no verdict keeps the branch's
+ * existing simplified output, so the common path does NOT drift. Symmetric §-read.
+ */
+function honorContradictingVerdict(
+  viRaw: string,
+  bundesland: BundeslandCode,
+): ProcedureDecision | null {
+  const cite = extractProcedureCitation(viRaw)
+  if (!cite) return null
+  const loc = getStateLocalization(bundesland).procedure
+  const n = (s: string): string => s.replace(/\s+/g, ' ').trim().toLowerCase()
+  const vc = n(cite)
+  if (loc.free?.citation?.trim() && n(loc.free.citation) === vc) {
+    return {
+      kind: 'verfahrensfrei',
+      citation: cite,
+      reasoning_de: `Verfahrensfrei nach ${cite} — kein Bauantrag und keine förmliche Anzeige erforderlich; Verfahrensfreiheit mit der unteren Bauaufsichtsbehörde bestätigen.`,
+      reasoning_en: `Permit-free under ${cite} — no building application and no formal notification required; confirm the permit-free status with the lower building authority.`,
+      confidence: 'CALCULATED',
+      caveats: [{ kind: 'bebauungsplan_specific', message_de: 'Verfahrensfreiheit vor Arbeitsbeginn mit der unteren Bauaufsichtsbehörde bestätigen.', message_en: 'Confirm permit-free status with the lower building authority before work begins.' }],
+    }
+  }
+  if (loc.regular.citation.trim() && n(loc.regular.citation) === vc) {
+    return {
+      kind: 'standard',
+      citation: cite,
+      reasoning_de: `Reguläres Baugenehmigungsverfahren (${cite}) — vollständige bauaufsichtliche Prüfung. Bauantrag mit allen Bauvorlagen erforderlich.`,
+      reasoning_en: `Standard (full) building-permit procedure (${cite}) — full building-authority review. A building application with all required documents is needed.`,
+      confidence: 'CALCULATED',
+      caveats: [{ kind: 'bebauungsplan_specific', message_de: 'Verfahrensart mit dem lokalen Bauamt bestätigen; Prüfumfang je nach Gebäudeklasse und Sonderbau-Tatbestand.', message_en: 'Confirm the procedure with the local building authority; review scope depends on the building class and any Sonderbau scope.' }],
+    }
+  }
+  return null
+}
+
 export function resolveProcedure(c: ProcedureCase): ProcedureDecision {
   // v1.0.21 Bug E — hard blockers first; no procedure can be decided
   // until they are cleared.
@@ -483,6 +525,8 @@ export function resolveProcedure(c: ProcedureCase): ProcedureDecision {
     return resolveNrwSanierung(c)
   }
   if (c.bundesland === 'nrw' && c.intent === 'neubau') {
+    const honored = honorContradictingVerdict(viRaw, c.bundesland)
+    if (honored) return honored
     return {
       kind: 'vereinfachtes',
       citation: '§ 64 BauO NRW',
@@ -520,6 +564,8 @@ export function resolveProcedure(c: ProcedureCase): ProcedureDecision {
   // / regular keyword branches above still win whenever the persona stated one
   // explicitly, so an explicit verdict is never downgraded.
   if (c.intent === 'sanierung') {
+    const honored = honorContradictingVerdict(viRaw, c.bundesland)
+    if (honored) return honored
     const loc = getStateLocalization(c.bundesland)
     const simp = loc.procedure.simplified
     const simpCitation = simp.citation.trim()
@@ -556,6 +602,8 @@ export function resolveProcedure(c: ProcedureCase): ProcedureDecision {
   // — Bug 92. The verfahrensfrei/vereinfacht keyword branches above still take
   // precedence whenever the persona stated one explicitly.
   if (c.intent === 'umnutzung') {
+    const honored = honorContradictingVerdict(viRaw, c.bundesland)
+    if (honored) return honored
     const loc = getStateLocalization(c.bundesland)
     const simp = loc.procedure.simplified
     const simpCitation = simp.citation.trim()
