@@ -80,6 +80,26 @@ export function totalPhaseWeight(): number {
  * Returns approximate total weeks across all duration-bearing phases
  * (excluding milestones). Used by the calendar-math row in C.3.
  */
+/**
+ * Campaign Phase 5b — THE single procedure-aware timeline figure (months), the
+ * one source every surface renders. Before this, the timeline diverged three
+ * ways for the SAME ~17–27-week phase model: At-a-Glance showed procedure-aware
+ * ranges, Executive Read rounded to a flat midpoint ("~6 months"), and the PDF
+ * carried a static "~4–6 months" string. This unifies on At-a-Glance's
+ * (correct) procedure-aware shape: a Freistellung/Anzeige is faster (no full
+ * review); a full permit is slower; everything else follows the Gantt phase-sum
+ * (approximateTotalWeeks ≈ 17–27 weeks ≈ 4–6 months). Keeps the procedure
+ * differentiation a naive unify-to-Gantt would have wrongly flattened.
+ */
+export function approximateTimelineMonths(
+  procedureType: import('./costNormsMuenchen').ProcedureType,
+): { min: number; max: number } {
+  if (procedureType === 'art57_freistellung') return { min: 2, max: 3 }
+  if (procedureType === 'art60_baugenehmigung') return { min: 6, max: 9 }
+  const w = approximateTotalWeeks()
+  return { min: Math.round(w.min / 4.345), max: Math.round(w.max / 4.345) } // 17→4, 27→6
+}
+
 export function approximateTotalWeeks(): { min: number; max: number } {
   // Min = lower bounds of each range; max = upper bounds. Pulled from
   // the labelled ranges for transparency.

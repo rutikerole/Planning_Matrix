@@ -11,6 +11,7 @@ import {
   resolveHeadlineCostRange,
 } from '../../lib/costNormsMuenchen'
 import { resolveCostProcedureType } from '../../lib/resolveProcedures'
+import { approximateTimelineMonths } from '../../lib/composeTimeline'
 import { useResolvedRoles } from '../../hooks/useResolvedRoles'
 import { useResolvedProcedures } from '../../hooks/useResolvedProcedures'
 import { computeOpenItems } from '../../lib/computeOpenItems'
@@ -111,13 +112,12 @@ export function AtAGlance({ project, state }: Props) {
         ? formatEurRange(resolveHeadlineCostRange(state.templateId, cost.total), lang)
         : t('result.workspace.ataglance.costByQuote')
 
-  // Timeline — coarse range from procedure type.
+  // Timeline — campaign 5b: the SINGLE procedure-aware timeline source shared with
+  // Executive Read (and the PDF), so the figure can't diverge. Output is identical
+  // to the prior inline ranges (freistellung 2–3 · full 6–9 · else 4–6).
+  const tl = approximateTimelineMonths(procedureType)
   const timelineLabel =
-    procedureType === 'art57_freistellung'
-      ? lang === 'en' ? '~ 2–3 months' : '~ 2–3 Monate'
-      : procedureType === 'art60_baugenehmigung'
-        ? lang === 'en' ? '~ 6–9 months' : '~ 6–9 Monate'
-        : lang === 'en' ? '~ 4–6 months' : '~ 4–6 Monate'
+    lang === 'en' ? `~ ${tl.min}–${tl.max} months` : `~ ${tl.min}–${tl.max} Monate`
 
   const specialistsCount = resolved.roles.filter((r) => r.needed).length
   const openQuestions = open.count
