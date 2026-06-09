@@ -1834,6 +1834,11 @@ async function runStaticGate() {
     // WIN 3 — a use conversion / Bestand change does NOT re-classify the Gebäudeklasse.
     { ok: /does not re-classify/.test(winAtAGlance) && /gkUseConversion/.test(winAtAGlance),
       msg: 'GK-unchanged-from-Bestand framing (T-04 gkUseConversion) must stay — no fabricated re-classification' },
+    // WIN 3b — campaign 5c (MV walk): the null-GK case must route through the SAME
+    // formatGebaeudeklasseValue the PDF Key Data renders (one honest-deferral string),
+    // NOT diverge to a bare "—" tbd. Guards the At-a-Glance↔PDF building-class agreement.
+    { ok: /gkUseConversion'\)\s*:\s*formatGebaeudeklasseValue\(derivedKlasse, lang\)/.test(winAtAGlance),
+      msg: 'At-a-Glance GK null case must use formatGebaeudeklasseValue (PDF-consistent honest deferral), not a bare tbd' },
     // WIN 4 — state isolation: the bleed guard must scrub BW tokens on the wrong state.
     { ok: /state:\s*'bw',\s*pattern:\s*\/\\bLBO\\s\+BW\\b\//.test(winBleedGuard),
       msg: 'cross-state bleed guard must keep the BW LBO-token scrubber (no Bayern/NRW bleed into BW)' },

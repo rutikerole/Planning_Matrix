@@ -17,10 +17,19 @@
 //             existence/heading-verify (out-of-corpus laws).
 //
 // Output: docs/FOUR_CLASS_SWEEP_<date>.md (matrix + findings + blind spots +
-// fix-order) and a console summary. Exits 0 (report-only; NOT a CI gate yet).
+// fix-order) and a console summary.
 //
-// Run: npx tsx scripts/audit-four-class-sweep.mts            (npm run audit:four-class)
+// Run: npx tsx scripts/audit-four-class-sweep.mts            (npm run audit:four-class — report-only, exit 0)
 //      npx tsx scripts/audit-four-class-sweep.mts --write    (also (re)write the doc)
+//      npx tsx scripts/audit-four-class-sweep.mts --gate     (npm run audit:four-class:gate — STANDING GATE,
+//                                                             exit 1 on RED / new YELLOW; wired into prebuild)
+//
+// Gate semantics (6a): RED always blocks; YELLOW blocks unless its `${cls}::${surface}`
+// is in GATE_ALLOWLIST (the 2 accepted CLASS-3 inherent edges); INFO is advisory and
+// never blocks. The CLASS-2 live-emission gap is INFO BY DESIGN — the offline sweep
+// cannot observe what the persona emits in a live turn, so this gate guards resolver
+// ROBUSTNESS (every reader key has a safe default → honest deferral, never silent-wrong),
+// NOT live capture. Live capture is confirmed only by a human walk.
 // ───────────────────────────────────────────────────────────────────────
 
 import { readFileSync, readdirSync, writeFileSync } from 'node:fs'
@@ -35,6 +44,20 @@ import { resolveCostDisplayMode, costModeShowsEuroFigure } from '../src/features
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..')
 const WRITE = process.argv.includes('--write') || true // default: always write the doc
+// Campaign 6a — standing-gate mode. `--gate` (npm run audit:four-class:gate, wired
+// into prebuild) makes the sweep FAIL the build on any RED or any YELLOW not in
+// GATE_ALLOWLIST. A NEW finding fails; a known-accepted one does not. INFO never
+// blocks (it is advisory — e.g. the CLASS-2 live-emission caveat that only a walk
+// can clear). Plain `npm run audit:four-class` stays exit-0 for interactive use.
+const GATE = process.argv.includes('--gate')
+// Known-accepted findings, keyed `${cls}::${surface}`. These are the 2 residual
+// CLASS-3 YELLOW that are INHERENT to title/keyword classification and explicitly
+// accepted in the final report — not bugs. Anything NOT listed here (a new RED, a
+// new YELLOW, a YELLOW on a different surface, or a regressed CLASS-1) blocks.
+const GATE_ALLOWLIST = new Set<string>([
+  '3::resolveProcedure.ts extractProcedureCitation', // §-parse no-space edge ("§62BauO") — rare; spaced forms handled
+  '3::resolveRoles.ts roleFunction',                 // role-title keyword fallback → null = DISTINCT (safe)
+])
 const STAMP = '2026-06-09'
 
 const TEMPLATES = ['T-01', 'T-02', 'T-03', 'T-04', 'T-05', 'T-06', 'T-07', 'T-08'] as const
@@ -335,5 +358,38 @@ console.log(`[four-class-sweep] ${STATES.length}×${TEMPLATES.length} cells swep
 console.log(`[four-class-sweep] ${red.length} RED · ${yellow.length} YELLOW · class 1:${byClass(1).length} 2:${byClass(2).length} 3:${byClass(3).length} 4:${byClass(4).length}`)
 console.log('\n' + header + '\n' + sep + '\n' + rows.join('\n'))
 console.log(`\n[four-class-sweep] report → docs/FOUR_CLASS_SWEEP_${STAMP}.md`)
-console.log('[four-class-sweep] OK (detection-only; exits 0)')
-process.exit(0)
+
+const info = findings.filter((f) => f.severity === 'INFO')
+
+if (!GATE) {
+  console.log('[four-class-sweep] OK (detection-only; exits 0 — pass --gate to enforce)')
+  process.exit(0)
+}
+
+// ── Standing-gate enforcement (6a) ──────────────────────────────────────────
+// Surface the advisory INFO (does not block) so the operator sees the open
+// live-emission gap on every gated build, then enforce on RED + new YELLOW.
+for (const f of info) {
+  console.log(`[four-class-sweep] INFO (advisory, non-blocking) · ${f.surface} — ${f.detail}`)
+}
+const blockingRed = red
+const blockingYellow = yellow.filter((f) => !GATE_ALLOWLIST.has(`${f.cls}::${f.surface}`))
+const acceptedYellow = yellow.filter((f) => GATE_ALLOWLIST.has(`${f.cls}::${f.surface}`))
+for (const f of acceptedYellow) {
+  console.log(`[four-class-sweep] YELLOW (allow-listed, accepted) · CLASS ${f.cls} · ${f.surface}`)
+}
+if (blockingRed.length === 0 && blockingYellow.length === 0) {
+  console.log('[four-class-sweep] GATE PASS — 0 RED · 0 new YELLOW (accepted: ' +
+    `${acceptedYellow.length}, advisory INFO: ${info.length}).`)
+  process.exit(0)
+}
+console.error('\n[four-class-sweep] GATE FAIL — new findings not in GATE_ALLOWLIST:')
+for (const f of blockingRed) {
+  console.error(`  RED    · CLASS ${f.cls} · ${f.surface}${f.state ? ` · ${f.state}${f.template ? '/' + f.template : ''}` : ''} — ${f.detail}`)
+}
+for (const f of blockingYellow) {
+  console.error(`  YELLOW · CLASS ${f.cls} · ${f.surface} — ${f.detail}`)
+}
+console.error('\nFix the finding, or — if it is genuinely accepted — add its ' +
+  '`${cls}::${surface}` key to GATE_ALLOWLIST in scripts/audit-four-class-sweep.mts with a justification.')
+process.exit(1)

@@ -70,13 +70,18 @@ export function AtAGlance({ project, state }: Props) {
   )
   // v1.0.30 Bug 93 — a use conversion (T-04) does not re-classify the building's
   // Gebäudeklasse; show that honestly instead of the bare "—" tbd placeholder.
+  // Campaign 5c (MV walk) — when no geometry signal exists, route the null case
+  // through the SAME formatGebaeudeklasseValue the PDF Key Data renders, so both
+  // surfaces show one honest-deferral string ("Building class — eaves height not
+  // recorded; architect to confirm.") instead of this card diverging to a bare
+  // "—". The walk showed At-a-Glance "—" vs PDF honest sentence for the identical
+  // derivedKlasse — a two-sources-of-truth split (CLASS 1). The narrow row
+  // truncates the sentence and the full text is in the row `title` hover.
   const klasseValue = explicitKlasse
     ? explicitKlasse
     : state.templateId === 'T-04'
       ? t('result.workspace.ataglance.gkUseConversion')
-      : derivedKlasse.klasse != null
-        ? formatGebaeudeklasseValue(derivedKlasse, lang)
-        : t('result.workspace.ataglance.tbd')
+      : formatGebaeudeklasseValue(derivedKlasse, lang)
 
   // Cost — reuse the München heuristic engine, now with area + zone +
   // region inputs flowing through (A.4).
