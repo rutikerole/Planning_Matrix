@@ -19,6 +19,7 @@
     "verify:citations:strict": "node scripts/verify-citations.mjs --strict",
     "audit:allowlist": "npx tsx scripts/audit-allowlist-existence.mts",
     "verify:concept-citations": "npx tsx scripts/verify-concept-citations.mts",
+    "audit:four-class": "npx tsx scripts/audit-four-class-sweep.mts",
     "gen:corpus-pack": "node scripts/gen-corpus-pack.mjs",
     "verify:corpus-pack": "node scripts/gen-corpus-pack.mjs --check",
     "prebuild": "npm run verify:locales && npm run verify:hardcoded-de && npm run verify:legal-config && npm run verify:pdfstrings && npm run verify:citation-drift && npm run verify:factlabels-leak && npm run verify:template-tail-noop && npm run verify:template-tail-citations && npm run verify:forbidden-paragraphs && npm run verify:corpus-pack && npm run verify:citations:strict && npm run audit:allowlist && npm run verify:concept-citations",
