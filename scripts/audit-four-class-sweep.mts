@@ -196,23 +196,34 @@ function sweepClass4(): void {
 // persona CAN emit any key, but an undirected key relies on the model guessing
 // the exact string a reader matches — the capture→read contract gap.
 const READER_EXACT_KEYS: Array<{ key: string; reader: string; relevantIntents: string[]; directed: boolean }> = [
-  { key: 'eingriff_tragende_teile', reader: 'buildProcedureCase / resolveRoles structural-force', relevantIntents: ['sanierung', 'umnutzung', 'aufstockung', 'anbau'], directed: false },
-  { key: 'eingriff_aussenhuelle', reader: 'buildProcedureCase (NRW sanierung)', relevantIntents: ['sanierung'], directed: false },
-  { key: 'denkmalschutz', reader: 'buildProcedureCase hard-blocker / composeRisks', relevantIntents: ['sanierung', 'umnutzung', 'neubau', 'abbruch', 'aufstockung', 'anbau', 'sonstiges'], directed: false },
-  { key: 'ensembleschutz', reader: 'buildProcedureCase', relevantIntents: ['sanierung', 'umnutzung'], directed: false },
-  { key: 'aenderung_aeussere_erscheinung', reader: 'resolveNrwSanierung', relevantIntents: ['sanierung'], directed: false },
-  { key: 'mk_gebietsart', reader: 'buildProcedureCase hard-blocker', relevantIntents: ['neubau', 'umnutzung'], directed: false },
-  { key: 'bauvoranfrage_hard_blocker', reader: 'buildProcedureCase hard-blocker', relevantIntents: ['neubau', 'sanierung', 'umnutzung', 'aufstockung', 'anbau', 'sonstiges'], directed: false },
+  { key: 'eingriff_tragende_teile', reader: 'buildProcedureCase / resolveRoles structural-force', relevantIntents: ['sanierung', 'umnutzung', 'aufstockung', 'anbau'], directed: true },
+  { key: 'eingriff_aussenhuelle', reader: 'buildProcedureCase (NRW sanierung)', relevantIntents: ['sanierung'], directed: true },
+  { key: 'denkmalschutz', reader: 'buildProcedureCase hard-blocker / composeRisks', relevantIntents: ['sanierung', 'umnutzung', 'neubau', 'abbruch', 'aufstockung', 'anbau', 'sonstiges'], directed: true },
+  { key: 'ensembleschutz', reader: 'buildProcedureCase', relevantIntents: ['sanierung', 'umnutzung'], directed: true },
+  { key: 'aenderung_aeussere_erscheinung', reader: 'resolveNrwSanierung', relevantIntents: ['sanierung'], directed: true },
+  { key: 'mk_gebietsart', reader: 'buildProcedureCase hard-blocker', relevantIntents: ['neubau', 'umnutzung'], directed: true },
+  { key: 'bauvoranfrage_hard_blocker', reader: 'buildProcedureCase hard-blocker', relevantIntents: ['neubau', 'sanierung', 'umnutzung', 'aufstockung', 'anbau', 'sonstiges'], directed: true },
   { key: 'gebaeudeklasse', reader: 'AtAGlance explicit-GK / deriveGebaeudeklasse', relevantIntents: ['neubau', 'sanierung', 'umnutzung', 'aufstockung', 'anbau', 'sonstiges'], directed: true },
   { key: 'anzahl_sonderbau_tatbestaende', reader: 'detectSonderbauCount (shape-tolerant)', relevantIntents: ['neubau', 'umnutzung', 'sonstiges'], directed: true },
 ]
 function sweepClass2(): void {
+  let undirected = 0
   for (const r of READER_EXACT_KEYS) {
     if (r.directed) continue // the persona is told to write this exact key — contract met
+    undirected++
     findings.push({ cls: 2, severity: 'YELLOW', surface: r.reader, detail: `reader requires EXACT key '${r.key}' but the persona write-directive does not explicitly name it (free-form emission only) — capture→read gap for intents: ${r.relevantIntents.join('/')}` })
     for (const state of STATES) for (const t of TEMPLATES) {
       if (r.relevantIntents.includes(intentFromTemplate(t))) mark(state, t, 2)
     }
+  }
+  // Phase 3 BLIND-SPOT CAVEAT — directed=true means the persona DIRECTIVE now
+  // names the exact key (personaBehaviour.ts A.5/D.5 STRUKTUR- UND VERFAHRENS-
+  // FAKTEN). It does NOT prove the model EMITS it — this offline sweep cannot
+  // observe live LLM output. CLASS 2 = 0 here means "no orphan reader-key", NOT
+  // "confirmed captured". A LIVE walk (post chat-turn redeploy) is required to
+  // confirm the persona actually persists these keys.
+  if (undirected === 0) {
+    findings.push({ cls: 2, severity: 'INFO', surface: 'persona write-directive (personaBehaviour A.5/D.5)', detail: 'all reader keys are now write-directed — but live emission is UNVERIFIABLE offline; needs a live walk after `supabase functions deploy chat-turn`' })
   }
 }
 
