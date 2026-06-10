@@ -1,6 +1,7 @@
 import type { ProjectState } from '@/types/projectState'
 import { computeSectionCompleteness } from './computeSectionCompleteness'
 import { aggregateQualifiers } from './qualifierAggregate'
+import { computeOpenItems } from './computeOpenItems'
 
 // v1.0.21 Bug M — multiplicative penalty per active hard blocker.
 // 0.70 reflects the design decision documented in docs/confidence-
@@ -19,6 +20,17 @@ const CONFIDENCE_FLOOR = 25
 // Lighter than a hard blocker (which means "may be inadmissible"); a PENDING
 // domain is merely "not yet assessed".
 const PENDING_DOMAIN_PENALTY = 0.85
+// T-04 walk YELLOW-1 — open questions must pull the headline DOWN. The brief
+// showed 94% while flagging "1 flag needs professional eyes" because the open-
+// items count (computeOpenItems) was architecturally severed from this formula:
+// an ASSUMED fact diluted the mix only ~0.4 (invisible at a 4% assumed share)
+// and never triggered a penalty. Now every open ASSUMED fact applies a
+// multiplicative knockdown so a single flag pulls a low-90s mix below 90; a
+// structural-domain assumption (gates procedure/cost/roles) knocks harder, like
+// a soft blocker. PENDING areas are NOT counted here — pendingPenalty already
+// owns them (no double-count). Composes with the blocker/pending penalties.
+const ASSUMED_FACT_PENALTY = 0.95 // per non-structural ASSUMED fact (open question)
+const STRUCTURAL_ASSUMED_PENALTY = 0.88 // per structural-domain ASSUMED fact (soft blocker)
 
 /** Count legal domains (Areas A/B/C) still in the PENDING state. */
 function countPendingDomains(state: Partial<ProjectState>): number {
@@ -143,7 +155,21 @@ export function computeConfidenceBreakdown(
   const pendingDomains = countPendingDomains(state)
   const pendingPenalty =
     pendingDomains >= 2 ? Math.pow(PENDING_DOMAIN_PENALTY, pendingDomains - 1) : 1
-  const hasPenalty = blockerCount > 0 || pendingPenalty < 1
+  // YELLOW-1 — open-question knockdown. Reuse computeOpenItems (the SAME source
+  // the "N flags need professional eyes" surface uses) so the header and the
+  // flag count can never contradict. Count ASSUMED facts only (PENDING areas
+  // are pendingPenalty's job); priority ≥3 = structural-domain assumption.
+  const openItems = computeOpenItems(state)
+  const structuralAssumed = openItems.all.filter(
+    (i) => i.kind === 'assumed_fact' && i.priority >= 3,
+  ).length
+  const otherAssumed = openItems.all.filter(
+    (i) => i.kind === 'assumed_fact' && i.priority < 3,
+  ).length
+  const openPenalty =
+    Math.pow(STRUCTURAL_ASSUMED_PENALTY, structuralAssumed) *
+    Math.pow(ASSUMED_FACT_PENALTY, otherAssumed)
+  const hasPenalty = blockerCount > 0 || pendingPenalty < 1 || openPenalty < 1
   const total =
     rawTotal > 0 && hasPenalty
       ? Math.max(
@@ -151,7 +177,8 @@ export function computeConfidenceBreakdown(
           Math.round(
             rawTotal *
               Math.pow(HARD_BLOCKER_PENALTY, blockerCount) *
-              pendingPenalty,
+              pendingPenalty *
+              openPenalty,
           ),
         )
       : rawTotal

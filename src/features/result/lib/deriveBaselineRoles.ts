@@ -2,6 +2,28 @@ import type { Role } from '@/types/projectState'
 import { getStateCitations, type StateCitationPack } from '@/legal/stateCitations'
 
 /**
+ * A conditional-requirement gate declared by the CATALOG (only roles whose
+ * baseline rationale is conditional — "bei strukturellen Eingriffen", "bei
+ * wesentlichen Sanierungen" — carry one). resolveRoles reads `fact` as a
+ * tri-state and resolves the role:
+ *   fact true     → needed
+ *   fact false    → `onFalse`  ('drop' = not-needed | 'conditional' = deferred)
+ *   fact unknown  → 'conditional' (honest deferral; never a confident drop)
+ * New-build roles (Standsicherheit always required) carry NO gate, so they
+ * are never downgraded by this mechanism.
+ */
+export interface RoleGate {
+  fact: string
+  onFalse: 'drop' | 'conditional'
+  /** Rationale shown when the role is rendered as conditional/deferred. */
+  conditionalDe: string
+  conditionalEn: string
+}
+
+/** Baseline role + its optional catalog-declared gate (stripped before persist). */
+export type BaselineRole = Role & { gate?: RoleGate }
+
+/**
  * Phase 8.1 (A.1) — baseline `Role[]` inferred from project intent +
  * Bundesland when persona hasn't yet emitted any roles.
  *
@@ -43,7 +65,8 @@ const baselineRole = (
   rationale_de: string,
   rationale_en: string,
   bundeslandLabelDe: string,
-): Role => ({
+  gate?: RoleGate,
+): BaselineRole => ({
   id,
   title_de,
   title_en,
@@ -57,9 +80,10 @@ const baselineRole = (
     setBy: 'system',
     reason: `Baseline für ${bundeslandLabelDe} abgeleitet — wird durch konkrete Berater:innen-Empfehlungen überschrieben.`,
   },
+  ...(gate ? { gate } : {}),
 })
 
-const NEW_BUILD_ROLES = (citations: StateCitationPack): Role[] => [
+const NEW_BUILD_ROLES = (citations: StateCitationPack): BaselineRole[] => [
   baselineRole(
     'R-Architekt',
     'Architekt:in',
@@ -107,7 +131,7 @@ const NEW_BUILD_ROLES = (citations: StateCitationPack): Role[] => [
 // and a Schallschutzgutachter:in (DIN 4109 between dwelling units). The
 // Hamburg T-02 walk's persona named all of these, but emitted only one role
 // into state.roles — the union floor in resolveRoles re-adds the rest.
-const MFH_NEW_BUILD_ROLES = (citations: StateCitationPack): Role[] => [
+const MFH_NEW_BUILD_ROLES = (citations: StateCitationPack): BaselineRole[] => [
   baselineRole(
     'R-Architekt',
     'Architekt:in',
@@ -166,7 +190,7 @@ const MFH_NEW_BUILD_ROLES = (citations: StateCitationPack): Role[] => [
   ),
 ]
 
-const RENOVATION_ROLES = (citations: StateCitationPack): Role[] => [
+const RENOVATION_ROLES = (citations: StateCitationPack): BaselineRole[] => [
   baselineRole(
     'R-Architekt',
     'Architekt:in',
@@ -175,6 +199,9 @@ const RENOVATION_ROLES = (citations: StateCitationPack): Role[] => [
     `Existing-condition survey + permit submission; licensed under ${citations.permitSubmissionCitation}.`,
     citations.labelDe,
   ),
+  // RED-1 gate: on a renovation/use-change the structural engineer is needed
+  // ONLY when a load-bearing intervention is captured. Captured-false ⇒ drop
+  // (clean: § 68 not triggered); unknown ⇒ conditional (honest deferral).
   baselineRole(
     'R-Tragwerksplaner',
     'Tragwerksplaner:in',
@@ -182,7 +209,19 @@ const RENOVATION_ROLES = (citations: StateCitationPack): Role[] => [
     'Bei strukturellen Eingriffen Pflicht — Standsicherheitsnachweis.',
     'Required for any structural intervention — load-path certification.',
     citations.labelDe,
+    {
+      fact: 'eingriff_tragende_teile',
+      onFalse: 'drop',
+      conditionalDe:
+        'Bei Eingriffen in tragende Bauteile Pflicht — ob solche anfallen, mit Architekt:in klären.',
+      conditionalEn:
+        'Required if load-bearing elements are affected — confirm scope with the architect.',
+    },
   ),
+  // RED-1 gate: GEG liability is only HEURISTICALLY signalled by envelope work,
+  // not 1:1. Under-flagging a possible GEG obligation is worse than over-
+  // flagging on an architect-facing brief — so envelope-false (or unknown) ⇒
+  // CONDITIONAL deferral, never a confident drop to not-needed.
   baselineRole(
     'R-Energieberater',
     'Energieberater:in',
@@ -190,6 +229,14 @@ const RENOVATION_ROLES = (citations: StateCitationPack): Role[] => [
     'Bei wesentlichen Sanierungen GEG-Nachweis erforderlich.',
     'GEG certificate required for major renovations.',
     citations.labelDe,
+    {
+      fact: 'eingriff_aussenhuelle',
+      onFalse: 'conditional',
+      conditionalDe:
+        'Bei Eingriffen in die Gebäudehülle oder energetisch relevanten Arbeiten wahrscheinlich GEG-pflichtig — mit Architekt:in klären.',
+      conditionalEn:
+        'Likely required if envelope or energy-relevant work is involved (GEG) — confirm with the architect.',
+    },
   ),
   baselineRole(
     'R-Bauamt',
@@ -201,7 +248,7 @@ const RENOVATION_ROLES = (citations: StateCitationPack): Role[] => [
   ),
 ]
 
-const DEMOLITION_ROLES = (citations: StateCitationPack): Role[] => [
+const DEMOLITION_ROLES = (citations: StateCitationPack): BaselineRole[] => [
   baselineRole(
     'R-Architekt',
     'Architekt:in',
@@ -228,7 +275,7 @@ const DEMOLITION_ROLES = (citations: StateCitationPack): Role[] => [
   ),
 ]
 
-export function deriveBaselineRoles({ intent, bundesland }: Args): Role[] {
+export function deriveBaselineRoles({ intent, bundesland }: Args): BaselineRole[] {
   const citations = getStateCitations(bundesland)
   switch (intent) {
     case 'neubau_mehrfamilienhaus':

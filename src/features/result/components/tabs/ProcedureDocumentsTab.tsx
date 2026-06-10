@@ -10,6 +10,7 @@ import type {
 } from '@/types/projectState'
 import { PROCEDURE_PHASES, totalPhaseWeight } from '../../lib/composeTimeline'
 import { useResolvedProcedures } from '../../hooks/useResolvedProcedures'
+import { selectProcedures } from '../../lib/resolveProcedures'
 import { resolveDocuments } from '../../lib/resolveDocuments'
 import {
   VorlaeufigFooter,
@@ -51,10 +52,11 @@ export function ProcedureDocumentsTab({ project, state }: Props) {
     [project, state],
   )
   const documents = useMemo(() => state.documents ?? [], [state.documents])
-  const primary =
-    resolved.procedures.find((p) => p.status === 'erforderlich') ??
-    resolved.procedures[0]
-  const fallback = resolved.procedures.find((p) => p.id !== primary?.id)
+  // YELLOW-2 — shared canonical selection (also used by the markdown export):
+  // ONE primary + a fallback ONLY when it's a genuinely different verdict, so
+  // persona over-emission of two identical §-verdicts no longer surfaces a
+  // redundant "Fallback: §64" line here either.
+  const { primary, fallback } = selectProcedures(resolved.procedures)
 
   const filtered = useMemo(() => {
     if (filter === 'all') return documents

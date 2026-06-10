@@ -10,6 +10,10 @@ import type { ProjectState, AreaState } from '@/types/projectState'
 import { factLabel, factValueWithUnit } from '@/lib/factLabel'
 import { resolveRoles } from '@/features/result/lib/resolveRoles'
 import {
+  resolveProcedures,
+  selectProcedures,
+} from '@/features/result/lib/resolveProcedures'
+import {
   MEANINGFUL_EVENT_TYPES,
   summarizeEvent,
 } from '@/features/dashboard/lib/recentActivity'
@@ -104,18 +108,27 @@ export function buildExportMarkdown({ project, events, lang }: BuildArgs): strin
   }
 
   // ── Verfahren ───────────────────────────────────────────────────
-  const procs = state.procedures ?? []
-  if (procs.length > 0) {
+  // YELLOW-2 — route through the SAME canonical selection as the Procedure tab
+  // (selectProcedures), NOT raw state.procedures. The persona can over-emit two
+  // identical §-verdicts (different rationale strings: "warehouse → office" /
+  // "Lager → Büro"); PDF/tab show ONE, so the .md must too. Dedup is on the
+  // structured verdict key, never the free-text rationale.
+  const { primary: proc, fallback: procFallback } = selectProcedures(
+    resolveProcedures(project, state).procedures,
+  )
+  if (proc) {
     lines.push('')
     lines.push(`## ${t('Verfahren', 'Procedures')}`)
     lines.push('')
-    procs.forEach((p) => {
-      const title = lang === 'en' ? p.title_en : p.title_de
-      const status = STATUS_LABEL_DE[p.status] ?? p.status
-      lines.push(`- [ ] ${title} — *${status}*`)
-      const rationale = lang === 'en' ? p.rationale_en : p.rationale_de
-      if (rationale) lines.push(`  ${rationale}`)
-    })
+    const title = lang === 'en' ? proc.title_en : proc.title_de
+    const status = STATUS_LABEL_DE[proc.status] ?? proc.status
+    lines.push(`- [ ] ${title} — *${status}*`)
+    const rationale = lang === 'en' ? proc.rationale_en : proc.rationale_de
+    if (rationale) lines.push(`  ${rationale}`)
+    if (procFallback) {
+      const ftitle = lang === 'en' ? procFallback.title_en : procFallback.title_de
+      lines.push(`  ${t('Fallback', 'Fallback')}: ${ftitle}`)
+    }
     lines.push('')
     lines.push('---')
   }
@@ -150,15 +163,23 @@ export function buildExportMarkdown({ project, events, lang }: BuildArgs): strin
     lines.push('')
     lines.push(`## ${t('Fachplaner', 'Specialists Needed')}`)
     lines.push('')
+    // RED-1 — three states: needed → conditional ("likely if …") → not-needed.
+    const roleRank = (r: (typeof roles)[number]): number =>
+      r.needed ? 0 : r.conditional ? 1 : 2
     roles
       .slice()
-      .sort((a, b) => (a.needed === b.needed ? 0 : a.needed ? -1 : 1))
+      .sort((a, b) => roleRank(a) - roleRank(b))
       .forEach((r) => {
         const title = lang === 'en' ? r.title_en : r.title_de
         const tag = r.needed
           ? t('erforderlich', 'needed')
-          : t('nicht erforderlich', 'not needed')
-        lines.push(`- [${r.needed ? ' ' : 'x'}] ${title} — *${tag}*`)
+          : r.conditional
+            ? t('bedingt', 'conditional')
+            : t('nicht erforderlich', 'not needed')
+        // Open checkbox for needed AND conditional (both stay on the radar);
+        // checked only when genuinely not needed.
+        const box = r.needed || r.conditional ? ' ' : 'x'
+        lines.push(`- [${box}] ${title} — *${tag}*`)
         if (r.rationale_de) lines.push(`  ${r.rationale_de}`)
       })
     lines.push('')

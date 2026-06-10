@@ -895,6 +895,25 @@ function factAffirmative(v: unknown): boolean {
   return v === true || v === 'true' || v === 'JA' || v === 'ja'
 }
 
+/**
+ * Tri-state read of a captured boolean fact, using the SAME affirmative parse
+ * as buildProcedureCase's factBool — the single source of truth so the role
+ * resolver and the procedure verdict can never disagree on a fact.
+ *   absent            → undefined  (UNKNOWN — not captured either way)
+ *   present & affirm. → true
+ *   present & not     → false
+ * resolveRoles needs the UNKNOWN case (factBool coerces it away), so it reads
+ * here directly rather than through buildProcedureCase.
+ */
+export function readFactTriState(
+  facts: ReadonlyArray<FactLike>,
+  key: string,
+): boolean | undefined {
+  const f = facts.find((x) => x.key === key)
+  if (!f) return undefined
+  return factAffirmative(f.value)
+}
+
 /** A free-form Sonderbau-trigger value is "present" unless empty or it starts
  *  with a negation (nein/kein/nicht/no/false/keine/entfällt/—). */
 function sonderbauTriggerPresent(v: unknown): boolean {
@@ -952,11 +971,8 @@ export function buildProcedureCase(
   state: Partial<ProjectState>,
 ): ProcedureCase {
   const facts: FactLike[] = state.facts ?? []
-  const factBool = (key: string, fallback = false): boolean => {
-    const f = facts.find((x) => x.key === key)
-    if (!f) return fallback
-    return factAffirmative(f.value)
-  }
+  const factBool = (key: string, fallback = false): boolean =>
+    readFactTriState(facts, key) ?? fallback
   const factNum = (key: string): number | undefined => {
     const f = facts.find((x) => x.key === key)
     if (!f) return undefined

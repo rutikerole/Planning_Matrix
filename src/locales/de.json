@@ -2010,7 +2010,8 @@
         "stakeholdersEyebrow": "Projektbeteiligte",
         "effortLabel": "Aufwand",
         "baselineNote": "Vorgeschlagener Standard für Vorhaben dieser Art — wird durch konkrete Berater:innen-Empfehlungen überschrieben.",
-        "likelyBadge": "wahrscheinlich"
+        "likelyBadge": "wahrscheinlich",
+        "conditionalBadge": "bedingt — mit Architekt:in klären"
       },
       "cost": {
         "costEyebrow": "Planungs- & Beratungskosten",

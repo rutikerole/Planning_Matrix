@@ -1,20 +1,13 @@
 import type { ProjectRow } from '@/types/db'
 import type { ProjectState, Role } from '@/types/projectState'
-import { deriveBaselineRoles } from './deriveBaselineRoles'
-import { buildProcedureCase } from '@/legal/resolveProcedure'
+import { deriveBaselineRoles, type RoleGate } from './deriveBaselineRoles'
+import { readFactTriState } from '@/legal/resolveProcedure'
 import { stripVersionTokens } from '@/lib/stripVersionTokens'
 
 export interface ResolvedRoles {
   roles: Role[]
   isFromState: boolean
 }
-
-const normTitle = (s: string): string => s.toLowerCase().replace(/[^a-zäöüß]/g, '')
-
-/** The structural-engineer (Tragwerksplaner) role, by canonical id or title. */
-const isStructuralRole = (r: Role): boolean =>
-  r.id === 'R-Tragwerksplaner' ||
-  /tragwerk|structural/.test(normTitle(r.title_de ?? '') + normTitle(r.title_en ?? ''))
 
 /**
  * T-03 cleanup sprint (P1) — classify a role by its FUNCTION so duplicates can be
@@ -70,31 +63,36 @@ function dedupeByFunction(roles: Role[]): Role[] {
 }
 
 /**
- * T-03 thin-state propagation sprint (P2) — the structural engineer MUST render
- * NEEDED whenever the consultation captured a load-bearing intervention
- * (eingriff_tragende_teile=true), for ALL states. resolveRoles never read facts,
- * so a thin-state persona role emitted with needed:false ("Required only if
- * load-bearing elements are affected") silently overrode the captured fact — the
- * MV/Rostock walk captured the Unterzug removal yet the Team tab + PDF said
- * "Structural engineer — NOT NEEDED". When the fact is set we restore the
- * baseline structural role (needed:true, intervention-correct rationale),
- * replacing a contradicting needed:false role or appending it if absent.
+ * RED-1 (T-04 walk) — class-level fact gate, generalising the old
+ * forceStructuralWhenCaptured. A specialist whose baseline rationale is
+ * CONDITIONAL ("bei strukturellen Eingriffen", "bei wesentlichen Sanierungen")
+ * carries a catalog-declared gate (deriveBaselineRoles); this applies it to the
+ * role holding that FUNCTION (persona-emitted OR baseline), reading the
+ * conditioning fact as a tri-state via the SAME parse the procedure verdict
+ * uses, so role and verdict can never disagree:
+ *   fact true     → needed
+ *   fact false    → gate.onFalse  ('drop' → not-needed | 'conditional' → deferred)
+ *   fact unknown  → conditional   (honest deferral; never a confident drop)
+ * Always strips the transient `gate` field so it never reaches state/render.
  */
-function forceStructuralWhenCaptured(
-  roles: Role[],
-  baseline: Role[],
-  captured: boolean,
-): Role[] {
-  if (!captured) return roles
-  const baselineStructural = baseline.find(isStructuralRole)
-  const idx = roles.findIndex(isStructuralRole)
-  if (idx >= 0) {
-    if (roles[idx].needed) return roles
-    return roles.map((r, i) =>
-      i === idx ? (baselineStructural ?? { ...r, needed: true }) : r,
-    )
+function applyGate(
+  role: Role,
+  gate: RoleGate,
+  facts: ReadonlyArray<{ key: string; value: unknown }>,
+): Role {
+  const base: Role = { ...role }
+  delete (base as { gate?: unknown }).gate
+  const v = readFactTriState(facts, gate.fact)
+  if (v === true) return { ...base, needed: true, conditional: false }
+  const mode = v === false ? gate.onFalse : 'conditional'
+  if (mode === 'drop') return { ...base, needed: false, conditional: false }
+  return {
+    ...base,
+    needed: false,
+    conditional: true,
+    rationale_de: gate.conditionalDe,
+    rationale_en: gate.conditionalEn,
   }
-  return baselineStructural ? [...roles, baselineStructural] : roles
 }
 
 /**
@@ -143,15 +141,21 @@ export function resolveRoles(
   state: Partial<ProjectState>,
 ): ResolvedRoles {
   const persona = (state.roles ?? []).map(sanitizeRole)
-  const baseline = deriveBaselineRoles({
+  const baselineRaw = deriveBaselineRoles({
     intent: project.intent,
     bundesland: project.bundesland,
-  }).map(sanitizeRole)
+  })
 
-  // T-03 thin-state sprint (P2) — read the SAME canonical structural-intervention
-  // fact the procedure resolver uses (buildProcedureCase), so the specialist
-  // determination and the procedure verdict can never disagree on it.
-  const structuralCaptured = buildProcedureCase(project, state).eingriff_tragende_teile
+  // RED-1 — capture catalog-declared conditional gates by role FUNCTION, so the
+  // gate applies to whichever role holds that function after the merge (the
+  // persona's emission, if any, OR the baseline). Built from the raw baseline
+  // before sanitize; gate copy is clean authored text needing no scrub.
+  const gateByFunction = new Map<string, RoleGate>()
+  for (const r of baselineRaw) {
+    const fn = roleFunction(r)
+    if (fn && r.gate) gateByFunction.set(fn, r.gate)
+  }
+  const baseline = baselineRaw.map(sanitizeRole)
 
   // v1.0.29 Bug 67 — union floor: a thin persona emission (the Hamburg T-02 walk
   // emitted ONE role yet the persona had named five) must not suppress the
@@ -161,8 +165,35 @@ export function resolveRoles(
   // specialist count reflects DISTINCT roles (Sachsen PDF p8: architect ×2 +
   // energy ×2 → one each). persona.length===0 → just the deduped baseline.
   const merged = dedupeByFunction([...persona, ...baseline])
-  return {
-    roles: forceStructuralWhenCaptured(merged, baseline, structuralCaptured),
-    isFromState: persona.length > 0,
-  }
+
+  // RED-1 — apply the fact gates to the merged roles. Generalises the old
+  // captured-TRUE-only forceStructuralWhenCaptured to the full tri-state
+  // (true → needed, false → drop/conditional per gate, unknown → conditional),
+  // and adds the energy/GEG gate. Ungated functions (incl. all new-build roles)
+  // pass through unchanged, so new-build structural stays unconditionally needed.
+  const facts = state.facts ?? []
+  const gated = merged.map((r) => {
+    const fn = roleFunction(r)
+    const gate = fn ? gateByFunction.get(fn) : undefined
+    return gate ? applyGate(r, gate, facts) : r
+  })
+
+  // Thin-state P2 + four-class CLASS-1 contract — a captured load-bearing
+  // intervention forces the structural engineer NEEDED for ANY template,
+  // overriding a contradicting persona needed:false. For renovation the gate
+  // above already yields needed on true; this ALSO covers new-build / demolition
+  // / addition templates whose structural role carries no gate (so removing the
+  // old forceStructuralWhenCaptured doesn't drop that contract). Only forces ON
+  // (true); false/unknown are handled by the renovation gate, never here.
+  const structuralIntervention =
+    readFactTriState(facts, 'eingriff_tragende_teile') === true
+  const finalRoles = structuralIntervention
+    ? gated.map((r) =>
+        roleFunction(r) === 'structural' && !r.needed
+          ? { ...r, needed: true, conditional: false }
+          : r,
+      )
+    : gated
+
+  return { roles: finalRoles, isFromState: persona.length > 0 }
 }
