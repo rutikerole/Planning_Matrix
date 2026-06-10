@@ -206,11 +206,25 @@ test.describe('UI layout guards', () => {
     // first content block.
     const banner = page.locator('[data-prelim-banner="expanded"]')
     await expect(banner).toBeVisible({ timeout: 10_000 })
-    const bannerBox = (await banner.boundingBox())!
     const firstCard = page.getByText('EXECUTIVE READ').first()
     await expect(firstCard).toBeVisible()
+    // Poll to the settled state: boundingBox() includes the load
+    // orchestration's transient translateY transforms (banner entry +
+    // main rise), which overlap the boxes by ~1-2px for a few frames.
+    // The in-flow invariant is the at-rest truth.
+    await expect
+      .poll(
+        async () => {
+          const b = await banner.boundingBox()
+          const c = await firstCard.boundingBox()
+          if (!b || !c) return 999
+          return b.y + b.height - c.y
+        },
+        { timeout: 5_000 },
+      )
+      .toBeLessThanOrEqual(1)
+    const bannerBox = (await banner.boundingBox())!
     const cardBox = (await firstCard.boundingBox())!
-    expect(bannerBox.y + bannerBox.height).toBeLessThanOrEqual(cardBox.y + 1)
 
     // Rail/content disjointness (the D-03 class, new layout): on rail
     // viewports the content column starts right of the rail's edge; the
@@ -251,14 +265,27 @@ test.describe('UI layout guards', () => {
     await expect(page.locator('[data-prelim-banner="expanded"]')).toHaveCount(0)
 
     // D-06 — at max scroll the tab panel's last block clears the sticky
-    // bottom action bar.
+    // bottom action bar. Poll the SETTLED state: the section-reveal
+    // transition (motion pass C) can still be translating blocks 12px
+    // when a one-shot sample fires under parallel-worker load — same
+    // lesson as the D-11 polling fix.
     await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight))
-    await page.waitForTimeout(300)
+    await expect
+      .poll(() => page.locator('.spine-reveal-pending').count(), { timeout: 5_000 })
+      .toBe(0)
     const footer = page.locator('footer', { hasText: /Take it home/i }).first()
-    const fBox = (await footer.boundingBox())!
     const lastContent = page.locator('main [role="tabpanel"] > *:last-child').first()
-    const lBox = (await lastContent.boundingBox())!
-    expect(lBox.y + lBox.height).toBeLessThanOrEqual(fBox.y + 1)
+    await expect
+      .poll(
+        async () => {
+          const fBox = await footer.boundingBox()
+          const lBox = await lastContent.boundingBox()
+          if (!fBox || !lBox) return 999
+          return lBox.y + lBox.height - fBox.y
+        },
+        { timeout: 5_000 },
+      )
+      .toBeLessThanOrEqual(1)
   })
 
   test('result motion: reduced-motion renders final states instantly', async ({
