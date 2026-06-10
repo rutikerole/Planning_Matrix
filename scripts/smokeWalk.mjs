@@ -4245,13 +4245,13 @@ async function runStaticGate() {
     {
       file: 'src/legal/states/niedersachsen.ts',
       label: 'Niedersachsen',
-      expectedCount: 25, // phase-c/item-3: +§ 14 NBauO (persona-allowlist gap close)
+      expectedCount: 26, // ITEM D: +§ 33 NBauO (Rettungswege) — escape-route § omission close
       mustContain: ['§ 60 NBauO', '§ 62 NBauO', '§ 63 NBauO', '§ 65 NBauO'],
     },
     {
       file: 'src/legal/states/hessen.ts',
       label: 'Hessen',
-      expectedCount: 26,
+      expectedCount: 27, // ITEM D: +§ 36 HBO (Erster und zweiter Rettungsweg, NOT § 33 = Brandwände)
       mustContain: ['§ 63 HBO', '§ 64 HBO', '§ 65 HBO', '§ 66 HBO', '§ 67 HBO'],
     },
   ]

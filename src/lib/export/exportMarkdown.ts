@@ -247,15 +247,21 @@ export function buildExportMarkdown({ project, events, lang }: BuildArgs): strin
 function formatDate(iso: string, lang: 'de' | 'en', withTime = false): string {
   const d = new Date(iso)
   if (Number.isNaN(d.getTime())) return ''
+  // ITEM E — UTC basis (timeZone:'UTC') so the displayed Created date matches
+  // the DOC NO, which is derived from created_at via getUTCDate (cover.ts
+  // deriveDocNo). Without this they disagreed by one day across the UTC
+  // midnight boundary (docno 0610 on a local-"11 June" header).
   const date = d.toLocaleDateString(lang === 'en' ? 'en-GB' : 'de-DE', {
     day: '2-digit',
     month: 'long',
     year: 'numeric',
+    timeZone: 'UTC',
   })
   if (!withTime) return date
   const time = d.toLocaleTimeString(lang === 'en' ? 'en-GB' : 'de-DE', {
     hour: '2-digit',
     minute: '2-digit',
+    timeZone: 'UTC',
   })
   return `${date}, ${time}`
 }

@@ -61,6 +61,7 @@ const ALLOWED_CITATIONS: readonly string[] = [
   '§ 12 BauO Bln',    // Standsicherheit
   '§ 14 BauO Bln',    // Brandschutz
   '§ 26 BauO Bln',    // Allg. Anforderungen Brandverhalten Baustoffe/Bauteile
+  '§ 33 BauO Bln',    // Erster und zweiter Rettungsweg (escape routes — ITEM D)
   '§ 49 BauO Bln',    // Stellplätze, Abstellplätze für Fahrräder
   '§ 51 BauO Bln',    // Sonderbauten und Garagen
   '§ 61 BauO Bln',    // Verfahrensfreie Bauvorhaben, Beseitigung von Anlagen

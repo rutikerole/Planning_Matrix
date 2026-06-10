@@ -98,6 +98,7 @@ gemäß § 67 HBO.
 
   ✓ "§ 6 HBO"              — Abstandsflächen und Abstände
   ✓ "§ 8 HBO"              — Grundstücksfreiflächen, Kinderspielplätze
+  ✓ "§ 36 HBO"             — Erster und zweiter Rettungsweg
   ✓ "§ 52 HBO"             — Garagen, Stellplätze, Abstellplätze
                               für Fahrräder
   ✓ "§ 53 HBO"             — Sonderbauten (Kategorie/Definition)
@@ -420,6 +421,7 @@ const ALLOWED_CITATIONS: readonly string[] = [
   // HBO core (post Phase-12 corrections)
   '§ 6 HBO',
   '§ 8 HBO',
+  '§ 36 HBO', // Erster und zweiter Rettungsweg (escape routes; NOT § 33 = Brandwände — ITEM D)
   '§ 52 HBO',
   '§ 53 HBO',
   '§ 56 HBO',
