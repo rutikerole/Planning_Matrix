@@ -3715,6 +3715,20 @@ async function runStaticGate() {
       ok: /MUSS-PERSISTENZ/.test(personaSrcS2),
       msg: 'personaBehaviour.ts must keep the A.5/D.5 MUSS-PERSISTENZ fact-capture directive',
     },
+    // class2-capture: the HARDENED emission contract + over-emission safety valve.
+    {
+      ok: /EMISSIONS-VERTRAG/.test(personaSrcS2) &&
+          /NEGATIVE BRAUCHEN DIESELBE GRUNDLAGE/.test(personaSrcS2) &&
+          /Erfinden Sie NIEMALS einen Fakt/.test(personaSrcS2),
+      msg: 'A.5/D.5 must keep the hardened emission contract + grounding safety valve (no inventing facts; negatives need grounding)',
+    },
+    // Guard against RE-INTRODUCING the over-emission pressure the MV walk exposed:
+    // the old "Verneinen Sie ausdrücklich mit value=false …" instruction pushed
+    // ungrounded denkmalschutz=false, which suppresses the conservative Heritage flag.
+    {
+      ok: !/Verneinen Sie ausdrücklich/.test(personaSrcS2),
+      msg: 'the old over-emission instruction ("Verneinen Sie ausdrücklich mit false …") must stay removed',
+    },
     // GK contract: directive writes `gebaeudeklasse` ↔ result layer reads it
     {
       ok: /`gebaeudeklasse`|gebaeudeklasse/.test(personaSrcS2),

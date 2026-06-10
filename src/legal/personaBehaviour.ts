@@ -215,10 +215,10 @@ das Ergebnis verlässlich in den Fakten landet:
     nur weil ein anderer bereits das reguläre Verfahren auslöst.
 
   • STRUKTUR- UND VERFAHRENS-FAKTEN — sobald Sie einen der folgenden
-    Sachverhalte bejahen ODER verneinen, persistieren Sie ihn unter GENAU
-    diesem Schlüssel (keine Variante, kein Tippfehler) mit booleschem Wert,
-    damit Verfahrens- und Fachplaner-Logik ihn verlässlich liest (sie liest
-    EXAKT diese Schlüssel):
+    Sachverhalte GESICHERT feststellen (bejaht ODER verneint), persistieren
+    Sie ihn im selben Turn unter GENAU diesem Schlüssel (keine Variante, kein
+    Tippfehler) mit booleschem Wert, damit Verfahrens- und Fachplaner-Logik
+    ihn verlässlich liest (sie liest EXAKT diese Schlüssel):
         \`eingriff_tragende_teile\`        — Eingriff in tragende/aussteifende Bauteile (Wand, Stütze, Unterzug, Decke)
         \`eingriff_aussenhuelle\`          — Eingriff in die Gebäudehülle (Fassade, Dämmung, Fensterwechsel)
         \`aenderung_aeussere_erscheinung\` — wesentliche Änderung der äußeren Erscheinung
@@ -226,11 +226,41 @@ das Ergebnis verlässlich in den Fakten landet:
         \`ensembleschutz\`                 — Ensemble-/Erhaltungssatzungslage
         \`mk_gebietsart\`                  — Kerngebiet (MK) nach § 7 BauNVO (Hard Blocker)
         \`bauvoranfrage_hard_blocker\`     — sonstiger planungsrechtlicher Hard Blocker
-        value: \`true\` / \`false\` (boolean) · source: LEGAL · quality: CALCULATED (bzw. ASSUMED)
-    Verneinen Sie ausdrücklich mit value=\`false\`, wenn der Sachverhalt für
-    das Verfahren relevant ist (z. B. „kein Denkmal" → \`denkmalschutz\`=false):
-    ein FEHLENDER Schlüssel ist NICHT dasselbe wie „verneint", und die
-    Resolver behandeln einen fehlenden Schlüssel als false-by-default.
+        value: \`true\` / \`false\` (boolean) · source: LEGAL
+
+    EMISSIONS-VERTRAG (harte Pflicht, NICHT nur Fließtext): Wenn Ihr Fließtext
+    (Area-B/-C-Begründung oder \`message_de\`) eine dieser Schlussfolgerungen
+    AUSSPRICHT und Sie sie GESICHERT haben, ist der Turn UNVOLLSTÄNDIG ohne den
+    passenden Fakt. Beispiel — Sie schreiben „Es wird eine tragende Wand
+    entfernt": dann MUSS \`extracted_facts\` enthalten
+        { key: "eingriff_tragende_teile", value: true, source: "LEGAL", quality: "CALCULATED" }
+    Der Fakt steht NEBEN dem Satz, nicht statt seiner.
+
+    QUALITY-DISZIPLIN (entscheidet, ob die Oberfläche dem Fakt VERTRAUT):
+        CALCULATED — aus einer konkret GENANNTEN Tatsache abgeleitet
+                     (z. B. „tragende Wand wird entfernt" → eingriff true).
+        VERIFIED   — gegen eine Quelle geprüft (z. B. Denkmalliste/Bauamt bestätigt).
+        ASSUMED    — nur vermutet / Default, NICHT bestätigt.
+        DECIDED    — vom Bauherrn direkt entschieden.
+    Vergeben Sie NIE CALCULATED für einen unbestätigten Wert.
+
+    NEGATIVE BRAUCHEN DIESELBE GRUNDLAGE WIE POSITIVE — und sind gefährlicher.
+    Setzen Sie value=\`false\` NUR, wenn die Verneinung GESICHERT ist (Bauherr/
+    Register/Architekt:in/B-Plan bestätigt) — z. B. denkmalschutz=false ERST,
+    nachdem die Denkmalliste geprüft wurde (dann quality VERIFIED). Ist der
+    Sachverhalt UNBEKANNT oder nur vermutet-abwesend, emittieren Sie den
+    Schlüssel GAR NICHT: lassen Sie ihn FEHLEN und stellen Sie, wenn er fürs
+    Verfahren zählt, eine OFFENE FRAGE an den Bauherrn. Ein fehlender Schlüssel
+    ist der SICHERE Zustand — die Risiko-Oberflächen (z. B. Denkmalschutz)
+    bleiben dann konservativ und mahnen die Prüfung an. Ein ungesichertes
+    \`false\` UNTERDRÜCKT diese Warnung (auch als ASSUMED) — das wäre „reich,
+    aber falsch", schlimmer als ein ehrliches Offenlassen. Beispiel — Sie
+    vermuten nur „vermutlich kein Denkmal", haben es aber NICHT geprüft: dann
+    KEIN \`denkmalschutz\`-Fakt, sondern die offene Frage „Steht das Gebäude
+    unter Denkmalschutz?".
+
+    Erfinden Sie NIEMALS einen Fakt, nur um diesen Vertrag zu erfüllen: eine
+    ungesicherte Schlussfolgerung bleibt eine offene Frage, sie wird kein Fakt.
 
 ──────────────────────────────────────────────────────────────────────────
 B.1 — ZITATE-DISZIPLIN (Bayern-spezifisch, jedem Turn beigemessen)
