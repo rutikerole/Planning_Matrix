@@ -1198,7 +1198,10 @@
       "rateLimit": "You have sent a lot of messages this hour ({{count}} of {{max}}). Please wait until {{time}}.",
       "rateLimitDismiss": "Dismiss",
       "errorDismiss": "Close",
-      "preliminaryState": "State-specific details for {{bundesland}} are preliminary — not reliable without local verification. Substantive data currently exists for Bayern, NRW, Baden-Württemberg, Hessen and Niedersachsen."
+      "preliminaryState": "State-specific details for {{bundesland}} are preliminary — not reliable without local verification. Substantive data currently exists for Bayern, NRW, Baden-Württemberg, Hessen and Niedersachsen.",
+      "preliminaryStateShort": "Preliminary state data for {{bundesland}}",
+      "preliminaryStateExpand": "Show the full preliminary-data notice",
+      "preliminaryStateCollapse": "Collapse this notice"
     },
     "errors": {
       "streaming_failed": {

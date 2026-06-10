@@ -103,13 +103,20 @@ export function ResultWorkspace({ project, messages, events, source }: Props) {
     >
       <BlueprintSubstrate lensRadius={260} breathing={false} driftPx={0} />
 
+      {/* UI-sweep D-02/D-03/D-04 — the sticky slot carries ONLY chrome
+        * (header + tab strip, both with opaque backgrounds). The
+        * preliminary-state banner lives in <main>'s document flow below:
+        * it pushes content down instead of painting over it, and sits at
+        * the same stable position on every tab. */}
       <div className={'sticky z-[var(--z-sticky)] ' + (appHeaderOffset ? 'top-12' : 'top-0')}>
         <ResultHeader project={project} source={source} events={events} />
-        <PreliminaryStateBanner bundesland={project.bundesland} />
         <ResultTabs active={active} onChange={setActive} expert={expert} />
       </div>
 
       <main className="flex-1 px-6 sm:px-8 lg:px-10 py-7 sm:py-9 max-w-[1200px] mx-auto w-full">
+        {/* Outside the tab-keyed AnimatePresence so tab switches never
+          * remount (and never replay) the banner. */}
+        <PreliminaryStateBanner bundesland={project.bundesland} />
         <AnimatePresence mode="wait" initial={false}>
           <m.div
             key={active}
