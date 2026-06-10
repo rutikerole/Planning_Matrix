@@ -2,13 +2,13 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useReducedMotion } from 'framer-motion'
-import { ArrowLeft } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import type { ProjectRow } from '@/types/db'
+import type { MessageRow, ProjectRow } from '@/types/db'
 import type { ProjectState } from '@/types/projectState'
 import { Wordmark } from '@/components/shared/Wordmark'
 import { LanguageSwitcher } from '@/components/shared/LanguageSwitcher'
 import { UserMenu } from '@/components/shared/AppHeader'
+import { ResultActions } from './ResultActions'
 import { buildDocumentNumber } from '../lib/documentNumber'
 import { computeConfidenceBreakdown } from '../lib/computeConfidence'
 import { composeLastViewedDiff } from '../lib/composeLastViewedDiff'
@@ -29,6 +29,7 @@ interface Props {
   project: ProjectRow
   source: ResultSource
   events: ProjectEventRow[]
+  messages: MessageRow[]
 }
 
 /**
@@ -55,7 +56,7 @@ interface Props {
  * Kept as <header data-print-target="result-header"> so the @media
  * print rules in globals.css hide it unchanged.
  */
-export function ResultRail({ project, source, events }: Props) {
+export function ResultRail({ project, source, events, messages }: Props) {
   const { t, i18n } = useTranslation()
   const lang = (i18n.resolvedLanguage ?? 'de') as 'de' | 'en'
   const isShared = source.kind === 'shared'
@@ -234,23 +235,19 @@ export function ResultRail({ project, source, events }: Props) {
         <VerificationProgress state={state} variant="rail" />
       </div>
 
-      {/* 7 — rail footer (owner mode): back pill + DE/EN + avatar.
-        * mt-auto pushes it to the rail bottom; in the <900px band it
-        * simply wraps inline. Hidden entirely in shared mode (the old
-        * layout had no back pill / auth chrome there either). */}
+      {/* 7 — rail footer (owner mode): desktop action stack (Export / Invite
+        * / Send / Logs / Back, via ResultActions) + DE/EN + avatar. mt-auto
+        * pins it to the rail bottom. On mobile the action stack self-hides
+        * (the sticky bottom bar carries those actions); only DE/EN + avatar
+        * wrap inline in the <900px identity band. Hidden in shared mode. */}
       {!isShared && (
         <div className="flex items-center gap-3 spine:mt-auto spine:flex-col spine:items-stretch spine:gap-2.5 spine:pt-5">
-          <Link
-            to={`/projects/${project.id}`}
-            data-no-print="true"
-            className="group inline-flex items-center justify-center gap-1.5 h-9 px-3 bg-paper border border-ink/15 rounded-full text-[12px] text-ink/75 hover:text-ink hover:border-clay/55 hover:bg-[hsl(var(--clay)/0.05)] transition-colors duration-[var(--motion-fast)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/35 focus-visible:ring-offset-2 focus-visible:ring-offset-paper-card"
-          >
-            {/* D — arrow nudges -2px on hover (transform on the icon span only). */}
-            <span className="inline-flex transition-transform duration-[var(--motion-fast)] ease-[var(--ease-exit)] motion-safe:group-hover:-translate-x-0.5">
-              <ArrowLeft aria-hidden="true" className="size-3" />
-            </span>
-            <span>{t('result.workspace.header.backToConsultation')}</span>
-          </Link>
+          <ResultActions
+            project={project}
+            messages={messages}
+            events={events}
+            variant="rail"
+          />
           <div className="flex items-center gap-3 spine:justify-between spine:px-0.5">
             <LanguageSwitcher />
             <UserMenu />
