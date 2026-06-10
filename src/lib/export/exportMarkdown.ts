@@ -8,6 +8,7 @@
 import type { ProjectRow } from '@/types/db'
 import type { ProjectState, AreaState } from '@/types/projectState'
 import { factLabel, factValueWithUnit } from '@/lib/factLabel'
+import { resolveRoles } from '@/features/result/lib/resolveRoles'
 import {
   MEANINGFUL_EVENT_TYPES,
   summarizeEvent,
@@ -138,7 +139,13 @@ export function buildExportMarkdown({ project, events, lang }: BuildArgs): strin
   }
 
   // ── Fachplaner ──────────────────────────────────────────────────
-  const roles = state.roles ?? []
+  // pre-test #1 (MV walk) — route through the SAME resolveRoles the PDF Team
+  // section (exportPdf) and the Team tab use, NOT raw state.roles. resolveRoles
+  // applies forceStructuralWhenCaptured: when eingriff_tragende_teile=true the
+  // structural engineer is forced NEEDED. Reading raw state.roles made the .md
+  // contradict the PDF ("not needed" vs "NEEDED") for the identical project —
+  // the exact surface-bypasses-canonical-resolver class the campaign kills.
+  const roles = resolveRoles(project, state).roles
   if (roles.length > 0) {
     lines.push('')
     lines.push(`## ${t('Fachplaner', 'Specialists Needed')}`)
