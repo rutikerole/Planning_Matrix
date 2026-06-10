@@ -1800,6 +1800,7 @@
       },
       "verification": {
         "progress": "{{verified}} von {{total}} Punkten durch Architekt:in verifiziert",
+        "railCaption": "Punkte durch Architekt:in verifiziert",
         "allVerified": "Alle Punkte durch Architekt:in verifiziert · {{date}}"
       },
       "tabs": {

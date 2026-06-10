@@ -14,14 +14,43 @@ import { computeVerificationRollup } from '../lib/verificationRollup'
  */
 export function VerificationProgress({
   state,
+  variant = 'pill',
 }: {
   state: Partial<ProjectState>
+  /** feat/result-spine-layout — 'rail' renders the document-spine
+   *  split layout (large "n / m" + mono caption). The original
+   *  full-sentence `progress` key is NOT orphaned: it becomes the rail
+   *  block's accessible name (aria-label + title). */
+  variant?: 'pill' | 'rail'
 }) {
   const { t, i18n } = useTranslation()
   const lang = (i18n.resolvedLanguage ?? 'de') as 'de' | 'en'
   const rollup = computeVerificationRollup(state)
 
   if (rollup.total === 0) return null
+
+  if (variant === 'rail' && !rollup.allVerified) {
+    const sentence = t('result.workspace.verification.progress', {
+      verified: rollup.verified,
+      total: rollup.total,
+    })
+    return (
+      <div aria-label={sentence} title={sentence} className="flex items-baseline gap-2 spine:block">
+        <p
+          aria-hidden="true"
+          className="font-serif italic text-[16px] spine:text-[26px] text-ink leading-none tabular-nums"
+        >
+          {rollup.verified} / {rollup.total}
+        </p>
+        <p
+          aria-hidden="true"
+          className="font-mono text-[10px] uppercase tracking-[0.18em] text-clay leading-snug spine:mt-1.5"
+        >
+          {t('result.workspace.verification.railCaption')}
+        </p>
+      </div>
+    )
+  }
 
   if (rollup.allVerified) {
     const date = rollup.lastVerifiedAt

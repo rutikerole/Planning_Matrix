@@ -17,6 +17,11 @@ export default {
       },
     },
     extend: {
+      screens: {
+        // feat/result-spine-layout — document-spine rail breakpoint.
+        // >=900px: fixed 248px identity rail; below: horizontal band.
+        spine: '900px',
+      },
       fontFamily: {
         sans: [
           'Inter',

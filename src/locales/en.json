@@ -1800,6 +1800,7 @@
       },
       "verification": {
         "progress": "{{verified}} of {{total}} items verified by an architect",
+        "railCaption": "items verified by an architect",
         "allVerified": "All items architect-verified · {{date}}"
       },
       "tabs": {
