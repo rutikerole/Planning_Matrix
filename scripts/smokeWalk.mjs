@@ -4233,7 +4233,7 @@ async function runStaticGate() {
     {
       file: 'src/legal/states/nrw.ts',
       label: 'NRW',
-      expectedCount: 27,
+      expectedCount: 28, // fix/nrw-allowlist-rettungsweg: +§ 33 BauO NRW (Erster und zweiter Rettungsweg) — escape-route § omission close
       mustContain: ['§ 62 BauO NRW', '§ 63 BauO NRW', '§ 64 BauO NRW', '§ 65 BauO NRW', '§ 67 BauO NRW'],
     },
     {

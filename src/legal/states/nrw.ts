@@ -96,6 +96,7 @@ Stand. BauO NRW 2018 (Landesbauordnung 2018), Ausfertigung
   ✓ "§ 6 BauO NRW"         — Abstandsflächen
   ✓ "§ 8 BauO NRW"         — Nicht überbaute Flächen, Kinder-
                               spielplätze
+  ✓ "§ 33 BauO NRW"        — Erster und zweiter Rettungsweg
   ✓ "§ 48 BauO NRW"        — Stellplätze, Garagen und Fahrrad-
                               abstellplätze
   ✓ "§ 49 BauO NRW"        — Barrierefreies Bauen
@@ -337,6 +338,9 @@ const ALLOWED_CITATIONS: readonly string[] = [
   '§ 5 BauO NRW',
   '§ 6 BauO NRW',
   '§ 8 BauO NRW',
+  '§ 33 BauO NRW', // Erster und zweiter Rettungsweg (escape routes — a use-change
+  //                 fire-safety check; corpus primary-source. Was omitted while
+  //                 7 other states allowlist their § 33. T-04 walk surfaced it.)
   '§ 48 BauO NRW',
   '§ 49 BauO NRW',
   '§ 50 BauO NRW',
