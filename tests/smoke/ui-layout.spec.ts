@@ -8,9 +8,12 @@
 //   D-02/03/04 — the preliminary-state banner renders IN DOCUMENT FLOW
 //                (never overlapping content cards) and collapses to a
 //                persistent chip that survives tab switches.
-//   D-01       — the result hero header shrinks to a compact band on
-//                scroll (sticky-shrink), so chrome stops eating the
-//                viewport.
+//   spine      — feat/result-spine-layout replaced the sticky-shrink
+//                hero (old D-01 system) with a fixed identity rail:
+//                rail and content columns stay disjoint, the rail is
+//                pinned at every scroll depth, the tab band sticks to
+//                the main-column top, and the rail footer controls fit
+//                a 900px-tall viewport without scrolling.
 //   D-06       — at max scroll, tab content clears the sticky bottom
 //                action bar (nothing hidden behind it).
 //   D-07/08    — chat: the just-sent turn is not greyed to "disabled"
@@ -198,11 +201,17 @@ test.describe('UI layout guards', () => {
     await seedAuth(page)
   })
 
-  test('result: banner in flow + chip persistence + header shrink + footer clearance', async ({
+  test('result: spine rail + sticky tabs + banner flow + footer clearance', async ({
     page,
   }) => {
     await page.goto(`/projects/${PROJECT_ID}/result`)
     await dismissCookies(page)
+
+    // feat/result-spine-layout — the identity rail replaces the old
+    // sticky-shrink hero (D-01 system removed with it). New invariants:
+    const rail = page.locator('[data-result-rail]')
+    await expect(rail).toBeVisible({ timeout: 10_000 })
+    const isRailViewport = page.viewportSize()!.width >= 900
 
     // D-02 — banner expanded and IN FLOW: no vertical overlap with the
     // first content block.
@@ -214,20 +223,39 @@ test.describe('UI layout guards', () => {
     const cardBox = (await firstCard.boundingBox())!
     expect(bannerBox.y + bannerBox.height).toBeLessThanOrEqual(cardBox.y + 1)
 
+    // Rail/content disjointness (the D-03 class, new layout): on rail
+    // viewports the content column starts right of the rail's edge; the
+    // banner must not slide under it either.
+    if (isRailViewport) {
+      const railBox = (await rail.boundingBox())!
+      expect(railBox.width).toBeGreaterThan(200) // not vacuous: real rail
+      expect(cardBox.x).toBeGreaterThanOrEqual(railBox.x + railBox.width - 1)
+      expect(bannerBox.x).toBeGreaterThanOrEqual(railBox.x + railBox.width - 1)
+
+      // Relocated identity is IN the rail: confidence + verify rollup.
+      await expect(rail.getByText(/^Confidence$/i)).toBeVisible()
+      await expect(
+        rail.getByText(/items verified by an architect/i),
+      ).toBeVisible()
+    }
+
     // D-02 (decided behavior) — auto-collapse to a persistent chip.
     const chip = page.locator('[data-prelim-banner="collapsed"]')
     await expect(chip).toBeVisible({ timeout: 8_000 })
 
-    // D-01 — sticky-shrink: compact header is meaningfully shorter.
-    const header = page.locator('[data-print-target="result-header"]')
-    const expandedH = (await header.boundingBox())!.height
-    // window.scrollTo, not mouse.wheel — the latter is unsupported on
-    // mobile WebKit and this guard runs on all four browser projects.
-    await page.evaluate(() => window.scrollTo(0, 600))
-    await expect(header).toHaveAttribute('data-header-state', 'compact')
-    await page.waitForTimeout(400)
-    const compactH = (await header.boundingBox())!.height
-    expect(compactH).toBeLessThan(expandedH * 0.6)
+    // Rail + tab band stay pinned at depth. window.scrollTo, not
+    // mouse.wheel — the latter is unsupported on mobile WebKit and this
+    // guard runs on all four browser projects.
+    const railTopBefore = (await rail.boundingBox())!.y
+    await page.evaluate(() => window.scrollTo(0, 800))
+    await page.waitForTimeout(300)
+    const tablist = page.getByRole('tablist')
+    const tBox = (await tablist.boundingBox())!
+    expect(tBox.y).toBeLessThanOrEqual(1) // sticky at main-column top
+    if (isRailViewport) {
+      const railTopAfter = (await rail.boundingBox())!.y
+      expect(Math.abs(railTopAfter - railTopBefore)).toBeLessThanOrEqual(1)
+    }
 
     // D-03 — tab switch must NOT replay the full banner.
     await page.getByRole('tab', { name: /Procedure & documents/i }).click()
@@ -242,6 +270,21 @@ test.describe('UI layout guards', () => {
     const lastContent = page.locator('main [role="tabpanel"] > *:last-child').first()
     const lBox = (await lastContent.boundingBox())!
     expect(lBox.y + lBox.height).toBeLessThanOrEqual(fBox.y + 1)
+  })
+
+  test('result: rail footer controls reachable on a 900px-tall viewport', async ({
+    page,
+  }) => {
+    const vp = page.viewportSize()!
+    test.skip(vp.width < 900, 'rail renders as a band below 900px')
+    await page.setViewportSize({ width: vp.width, height: 900 })
+    await page.goto(`/projects/${PROJECT_ID}/result`)
+    await dismissCookies(page)
+    const rail = page.locator('[data-result-rail]')
+    const back = rail.getByRole('link', { name: /Back to consultation|Zurück zur Beratung/i })
+    await expect(back).toBeVisible({ timeout: 10_000 })
+    const bBox = (await back.boundingBox())!
+    expect(bBox.y + bBox.height).toBeLessThanOrEqual(900)
   })
 
   test('chat: distance-1 turn not greyed + jump pill in chrome band + send states', async ({
