@@ -26,7 +26,34 @@ interface SeedOpts {
   lang?: 'de' | 'en'
 }
 
+/**
+ * Pre-seed cookie consent (key + shape from
+ * src/features/cookies/useCookieConsent.ts, schema version 1) so the
+ * fixed-bottom DSGVO banner never mounts during specs. On mobile
+ * viewports under CI's ubuntu font metrics the banner overlays
+ * bottom-of-page buttons and intercepts clicks (run #212: architect
+ * Bug-112 + both auth.spec tests failed ONLY on chromium/webkit-mobile
+ * with click timeouts). Specs must not depend on banner geometry.
+ * Called automatically by seedV2Session; anonymous specs call it
+ * directly.
+ */
+export async function seedCookieConsent(page: Page) {
+  await page.addInitScript(() => {
+    window.localStorage.setItem(
+      'pm.cookieConsent',
+      JSON.stringify({
+        essential: true,
+        analytics: false,
+        functional: false,
+        version: 1,
+        timestamp: '2026-01-01T00:00:00.000Z',
+      }),
+    )
+  })
+}
+
 export async function seedV2Session(page: Page, opts: SeedOpts = {}) {
+  await seedCookieConsent(page)
   await page.addInitScript(
     ([userId, email, lang]) => {
       window.localStorage.setItem(
