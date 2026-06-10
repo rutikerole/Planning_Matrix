@@ -47,8 +47,27 @@ jobs:
           # tests stub the actual network calls so production keys are
           # never sent. Configure real values via repository secrets if
           # the build ever needs to call a live API at compile time.
-          VITE_SUPABASE_URL: 'https://stub.supabase.co'
+          #
+          # fix/ci-build (2026-06-10) — TWO load-bearing values here:
+          #
+          # 1. VITE_SUPABASE_URL MUST be a localhost URL: supabase-js v2
+          #    derives its storage key from the URL's first hostname
+          #    label (sb-<ref>-auth-token), and every smoke spec seeds
+          #    'sb-localhost-auth-token' (tests/smoke/helpers/auth.ts).
+          #    The previous 'https://stub.supabase.co' produced
+          #    sb-stub-auth-token → every seeded spec ran logged-out.
+          #
+          # 2. SKIP_LEGAL_CONFIG_CHECK=1 — verify:legal-config (prebuild,
+          #    added 549b48b on 2026-05-08) requires 8 VITE_LEGAL_* vars
+          #    that exist only in Vercel/.env.local. This is a non-deploy
+          #    metadata build, which is exactly the script's documented
+          #    bypass case. THIS missing line is what kept CI red at the
+          #    Build step from 2026-05-08 to 2026-06-10 (runs #51-#210).
+          #
+          # Guarded by scripts/verify-ci-env.mjs (prebuild audit:ci-env).
+          VITE_SUPABASE_URL: 'http://localhost:54321'
           VITE_SUPABASE_ANON_KEY: 'stub-anon-key'
+          SKIP_LEGAL_CONFIG_CHECK: '1'
 
       # v1.0.25 — PDF render gate (Band 11's missing "5th gate").
       # Renders the fixture PDFs through buildExportPdf and asserts no
