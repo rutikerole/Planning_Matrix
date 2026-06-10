@@ -215,18 +215,27 @@ export function gateQualifiersByRole(
 }
 
 /**
- * Phase 13 Week 2 — gate is now in REJECTION MODE. When
- * `gateQualifiersByRole` returns ≥1 event, the Edge Function MUST
- * throw `QualifierRoleViolationError` BEFORE
- * `applyToolInputToState` runs, so the offending qualifier never
- * reaches `projects.state`. The Week 1 in-place mutation is now a
- * defensive secondary guard in case a future caller skips the
- * throw — defense in depth.
+ * DOWNGRADE-AND-CONTINUE mode (reverted from Week-2 rejection).
  *
- * The 7-day observability window committed in Week 1 ran clean
- * (zero false-positives) — see PHASE_13_REVIEW.md once Week 4 lands.
+ * `gateQualifiersByRole` ALWAYS mutates `toolInput` in-place — an
+ * architect-reserved qualifier (DESIGNER/CLIENT × VERIFIED) is downgraded to
+ * ASSUMED/DECIDED before `applyToolInputToState` runs, so the offending
+ * qualifier never reaches `projects.state` regardless of this flag. When this
+ * flag is FALSE the Edge Function does NOT additionally reject the turn — it
+ * lets the turn complete with the honestly-downgraded qualifier.
+ *
+ * Why reverted (T-04 Saarland thin walk): the Week-2 rejection mode failed the
+ * WHOLE turn on any persona VERIFIED write ("Planungsteam hat nicht
+ * geantwortet", ~33% error rate after the Denkmal answer). The model
+ * occasionally tags a user-confirmed fact VERIFIED; rejecting the turn over a
+ * qualifier the gate already safely downgraded is worse UX than continuing.
+ * Honest deferral (downgrade + flag) > turn failure. The downgrade is logged
+ * to event_log (name='qualifier.downgraded') for observability.
+ *
+ * Pinned FALSE by scripts/smokeWalk.mjs + qualifierGate.test.ts so a future
+ * re-flip to rejection is a caught, deliberate decision.
  */
-export const QUALIFIER_GATE_REJECTS = true as boolean
+export const QUALIFIER_GATE_REJECTS = false as boolean
 
 /**
  * Phase 13 Week 2 — error class thrown by the Edge Function when

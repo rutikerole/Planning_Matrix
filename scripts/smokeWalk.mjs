@@ -1486,14 +1486,14 @@ async function runStaticGate() {
   // Then run the JS-port gate over each fixture and assert the event
   // count + post-mutation qualifier matches the expectation.
   const helpersSource = await readFileText('src/lib/projectStateHelpers.ts')
-  results.push(failures('phase-13: gate function + rejection flag', [
+  results.push(failures('phase-13: gate function + downgrade-and-continue flag', [
     {
       ok: /export function gateQualifiersByRole\b/.test(helpersSource),
       msg: 'projectStateHelpers.ts missing gateQualifiersByRole export',
     },
     {
-      ok: /export const QUALIFIER_GATE_REJECTS\s*=\s*true\b/.test(helpersSource),
-      msg: 'Week 2 invariant: QUALIFIER_GATE_REJECTS must be `true` (rejection mode)',
+      ok: /export const QUALIFIER_GATE_REJECTS\s*=\s*false\b/.test(helpersSource),
+      msg: 'downgrade-and-continue (T-04 Saarland fix): QUALIFIER_GATE_REJECTS must be `false` — the gate downgrades in-place; it must NOT fail the whole turn',
     },
     {
       ok: /export class QualifierRoleViolationError\b/.test(helpersSource),

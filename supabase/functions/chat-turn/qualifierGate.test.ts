@@ -24,13 +24,12 @@ import {
 } from '../../../src/lib/projectStateHelpers.ts'
 import type { RespondToolInput } from '../../../src/types/respondTool.ts'
 
-// Phase 13 Week 2 — invariant pinning. The constant + the error class
-// MUST stay in their post-flip shape for the rejection wiring in
-// chat-turn/index.ts and streaming.ts to fire. The smokeWalk static
-// gate also asserts these via source-text regex; the duplication is
-// deliberate (test file = unit guard, smokeWalk = pre-build guard).
-Deno.test('Week 2 invariant: QUALIFIER_GATE_REJECTS = true', () => {
-  assertEquals(QUALIFIER_GATE_REJECTS, true)
+// T-04 Saarland walk — reverted to DOWNGRADE-AND-CONTINUE. The gate still
+// mutates the offending qualifier in-place (see the downgrade tests below);
+// it just no longer fails the whole turn. Pinned FALSE here + in the smokeWalk
+// static gate so a re-flip to rejection mode is a deliberate, caught decision.
+Deno.test('downgrade-and-continue invariant: QUALIFIER_GATE_REJECTS = false', () => {
+  assertEquals(QUALIFIER_GATE_REJECTS, false)
 })
 
 Deno.test('Week 2 invariant: QualifierRoleViolationError carries events + code', () => {
