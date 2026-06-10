@@ -892,6 +892,14 @@
     background: white !important;
   }
 
+  /* feat/result-spine-layout — the workspace root is a [248px|1fr]
+   * grid on spine viewports; the rail <header> below is display:none
+   * in print, which would otherwise leave a blank 248px first column
+   * on every printed page. Collapse the grid to block flow. */
+  [data-print-target="result-workspace"] {
+    display: block !important;
+  }
+
   /* Phase 8 — sticky header + tabs + footer should not paint when
    * printing the workspace. The PDF export covers the "all six tabs
    * as one linear document" case; the printable surface is just the
