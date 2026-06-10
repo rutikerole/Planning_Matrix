@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { ArrowLeft } from 'lucide-react'
+import { cn } from '@/lib/utils'
 import type { ProjectRow } from '@/types/db'
 import type { ProjectState } from '@/types/projectState'
 import { buildDocumentNumber } from '../lib/documentNumber'
@@ -22,6 +23,10 @@ interface Props {
   project: ProjectRow
   source: ResultSource
   events: ProjectEventRow[]
+  /** UI-sweep D-01 — sticky-shrink: true once the page is scrolled.
+   *  Collapses breadcrumb + plot line and shrinks title/confidence so
+   *  the sticky chrome stops eating the viewport. */
+  compact?: boolean
 }
 
 /**
@@ -35,7 +40,7 @@ interface Props {
  * The header sits above the tab bar in the workspace stack; both are
  * sticky. Padding matches the brief: 22px top / 16px bottom.
  */
-export function ResultHeader({ project, source, events }: Props) {
+export function ResultHeader({ project, source, events, compact = false }: Props) {
   const { t, i18n } = useTranslation()
   const lang = (i18n.resolvedLanguage ?? 'de') as 'de' | 'en'
   const isShared = source.kind === 'shared'
@@ -68,11 +73,28 @@ export function ResultHeader({ project, source, events }: Props) {
 
   return (
     <header
-      className="bg-paper/95 backdrop-blur-[8px] border-b border-ink/15 px-4 sm:px-6 lg:px-8 pt-5 pb-4"
+      className={cn(
+        'bg-paper/95 backdrop-blur-[8px] border-b border-ink/15 px-4 sm:px-6 lg:px-8',
+        'transition-[padding] duration-300',
+        compact ? 'pt-2 pb-2' : 'pt-5 pb-4',
+      )}
       data-print-target="result-header"
+      data-header-state={compact ? 'compact' : 'expanded'}
     >
-      {/* Breadcrumb + back-pill row */}
-      <div className="flex items-center justify-between gap-3 mb-2 min-h-[20px]">
+      {/* Breadcrumb + back-pill row — collapses away in compact mode. */}
+      <div
+        className={cn(
+          'flex items-center justify-between gap-3 overflow-hidden',
+          'transition-[max-height,opacity,margin] duration-300',
+          // `invisible` (not just opacity-0): the row holds focusable
+          // links — visibility:hidden drops them from the tab order so
+          // keyboard users can't land on invisible targets in compact.
+          compact
+            ? 'max-h-0 mb-0 opacity-0 pointer-events-none invisible'
+            : 'max-h-10 mb-2 opacity-100 min-h-[20px]',
+        )}
+        aria-hidden={compact}
+      >
         {!isShared ? (
           <nav
             aria-label="Breadcrumb"
@@ -108,37 +130,73 @@ export function ResultHeader({ project, source, events }: Props) {
         </div>
       </div>
 
-      {/* Title + confidence row */}
-      <div className="flex items-end justify-between gap-6">
-        <div className="flex flex-col gap-1 min-w-0">
-          <p className="text-[10px] font-medium uppercase tracking-[0.22em] text-clay leading-none">
+      {/* Title + confidence row — shrinks in compact mode. */}
+      <div className={cn('flex justify-between gap-6', compact ? 'items-center' : 'items-end')}>
+        <div className={cn('flex flex-col min-w-0', compact ? 'gap-0' : 'gap-1')}>
+          <p
+            className={cn(
+              'text-[10px] font-medium uppercase tracking-[0.22em] text-clay leading-none overflow-hidden',
+              'transition-[max-height,opacity] duration-300',
+              compact ? 'max-h-0 opacity-0' : 'max-h-4 opacity-100',
+            )}
+            aria-hidden={compact}
+          >
             {t('result.workspace.header.eyebrow', { shortId: docNo })}
           </p>
           <h1
-            className="font-serif italic text-[26px] sm:text-[28px] text-ink leading-[1.1] -tracking-[0.01em] truncate"
+            className={cn(
+              'font-serif italic text-ink leading-[1.1] -tracking-[0.01em] truncate',
+              'transition-[font-size] duration-300',
+              compact ? 'text-[17px]' : 'text-[26px] sm:text-[28px]',
+            )}
             title={project.name}
           >
             {project.name}
           </h1>
           {plotLine && (
-            <p className="font-serif italic text-[12px] text-clay leading-snug truncate">
+            <p
+              className={cn(
+                'font-serif italic text-[12px] text-clay leading-snug truncate overflow-hidden',
+                'transition-[max-height,opacity] duration-300',
+                compact ? 'max-h-0 opacity-0' : 'max-h-5 opacity-100',
+              )}
+              aria-hidden={compact}
+            >
               {plotLine}
             </p>
           )}
         </div>
 
         <div
-          className="flex flex-col items-end gap-0.5 shrink-0"
+          className={cn(
+            'shrink-0',
+            compact
+              ? 'flex items-baseline gap-1.5'
+              : 'flex flex-col items-end gap-0.5',
+          )}
           title={confTooltip}
           aria-label={confTooltip}
         >
           <p className="text-[10px] font-medium uppercase tracking-[0.22em] text-clay leading-none">
             {t('result.workspace.header.confidence')}
           </p>
-          <p className="font-serif italic text-[24px] text-ink leading-none tabular-nums cursor-help">
+          <p
+            className={cn(
+              'font-serif italic text-ink leading-none tabular-nums cursor-help',
+              'transition-[font-size] duration-300',
+              compact ? 'text-[15px]' : 'text-[24px]',
+            )}
+          >
             {conf.total > 0 ? `${conf.total}%` : '—'}
           </p>
-          <p className="font-serif italic text-[10px] text-clay leading-snug whitespace-nowrap">
+          <p
+            className={cn(
+              'font-serif italic text-[10px] text-clay leading-snug whitespace-nowrap overflow-hidden',
+              'transition-[max-height,opacity] duration-300',
+              compact ? 'max-h-0 opacity-0' : 'max-h-4 opacity-100',
+            )}
+            aria-hidden={compact}
+          >
             {t('result.workspace.header.preliminary')}
           </p>
         </div>

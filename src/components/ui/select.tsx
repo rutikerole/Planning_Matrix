@@ -37,7 +37,7 @@ const SelectContent = forwardRef<
       ref={ref}
       position={position}
       className={cn(
-        'relative z-50 min-w-[8rem] overflow-hidden border border-pm-hair bg-pm-paper shadow-[0_18px_36px_-22px_rgba(22,19,16,0.22)]',
+        'relative z-[var(--z-overlay)] min-w-[8rem] overflow-hidden border border-pm-hair bg-pm-paper shadow-[0_18px_36px_-22px_rgba(22,19,16,0.22)]',
         'data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95',
         'data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95',
         position === 'popper' && 'data-[side=bottom]:translate-y-1',

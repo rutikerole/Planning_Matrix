@@ -38,7 +38,7 @@ export function AppHeader({ className }: Props) {
         // Phase 7.7 §1.2 — fixed (not sticky) so it never consumes
         // layout space. Eliminates the ChamberLayout's appHeaderHeight
         // arithmetic and the visible gap above the Spine.
-        'fixed top-0 left-0 right-0 z-50 w-full',
+        'fixed top-0 left-0 right-0 z-[var(--z-overlay)] w-full',
         'h-12',
         // Seamless on-page navbar: fully-opaque paper, no hairline,
         // no backdrop-blur. Matches the wizard shell's bare header so
@@ -122,7 +122,7 @@ export function UserMenu() {
       {open && (
         <div
           role="menu"
-          className="absolute right-0 top-full mt-2 w-[240px] bg-paper border border-[var(--hairline-strong,rgba(26,22,18,0.18))] rounded-md shadow-[0_10px_36px_-8px_rgba(26,22,18,0.18)] py-1.5 z-50"
+          className="absolute right-0 top-full mt-2 w-[240px] bg-paper border border-[var(--hairline-strong,rgba(26,22,18,0.18))] rounded-md shadow-[0_10px_36px_-8px_rgba(26,22,18,0.18)] py-1.5 z-[var(--z-overlay)]"
         >
           {user?.email && (
             <p className="px-3 py-1.5 text-[11px] text-ink/55 truncate" title={user.email}>

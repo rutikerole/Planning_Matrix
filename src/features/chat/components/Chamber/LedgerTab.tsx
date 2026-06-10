@@ -45,7 +45,7 @@ export function LedgerTab({ projectId, projectName, summary, pulseKey = 0 }: Pro
         <Drawer.Trigger
           aria-label={t('chat.chamber.ledgerTabLabel') + ` · ${count}`}
           className={cn(
-            'fixed right-0 top-1/2 -translate-y-1/2 z-[15]',
+            'fixed right-0 top-1/2 -translate-y-1/2 z-[var(--z-edge)]',
             'flex flex-col items-center gap-2 px-1.5 py-3',
             'bg-paper-card border border-r-0 border-[var(--hairline-strong)] rounded-l-md',
             'text-clay text-[11px] tracking-[0.20em] uppercase font-medium',
@@ -61,10 +61,10 @@ export function LedgerTab({ projectId, projectName, summary, pulseKey = 0 }: Pro
           </span>
         </Drawer.Trigger>
         <Drawer.Portal>
-          <Drawer.Overlay className="fixed inset-0 bg-ink/40 backdrop-blur-[2px] z-40" />
+          <Drawer.Overlay className="fixed inset-0 bg-ink/40 backdrop-blur-[2px] z-[var(--z-floating)]" />
           <Drawer.Content
             aria-label={t('chat.chamber.ledgerTabLabel')}
-            className="fixed top-0 right-0 bottom-0 w-[88%] max-w-[360px] z-50 bg-paper border-l border-[var(--hairline-strong)] outline-none overflow-y-auto p-4 pt-safe pb-safe"
+            className="fixed top-0 right-0 bottom-0 w-[88%] max-w-[360px] z-[var(--z-overlay)] bg-paper border-l border-[var(--hairline-strong)] outline-none overflow-y-auto p-4 pt-safe pb-safe"
           >
             <Drawer.Title className="sr-only">
               {t('chat.chamber.ledgerTabLabel')}
@@ -90,7 +90,7 @@ export function LedgerTab({ projectId, projectName, summary, pulseKey = 0 }: Pro
   // tab handle drives the wrapper's natural size.
   return (
     <div
-      className="fixed right-0 top-1/2 -translate-y-1/2 z-[15]"
+      className="fixed right-0 top-1/2 -translate-y-1/2 z-[var(--z-edge)]"
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       onFocus={() => setHovered(true)}

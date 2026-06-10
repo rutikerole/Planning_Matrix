@@ -40,7 +40,7 @@ export function ConversationStrip({
   return (
     <div
       className={cn(
-        'sticky top-0 z-20 flex items-center justify-end gap-3',
+        'sticky top-0 z-[var(--z-band)] flex items-center justify-end gap-3',
         'px-4 md:px-8 py-[14px]',
         className,
       )}

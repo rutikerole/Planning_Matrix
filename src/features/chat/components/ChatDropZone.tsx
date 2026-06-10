@@ -109,7 +109,7 @@ export function ChatDropZone({ children, disabled }: Props) {
         <div
           aria-hidden="true"
           className={cn(
-            'pointer-events-none absolute inset-2 z-30 flex items-center justify-center',
+            'pointer-events-none absolute inset-2 z-[var(--z-sticky)] flex items-center justify-center',
             'rounded-[var(--pm-radius-card)] border-2 border-dashed border-drafting-blue/60 bg-drafting-blue/[0.04]',
           )}
         >

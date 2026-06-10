@@ -1198,7 +1198,11 @@
       "rateLimit": "Sie haben in dieser Stunde sehr viele Nachrichten gesendet ({{count}} von {{max}}). Bitte warten Sie bis {{time}}.",
       "rateLimitDismiss": "Hinweis ausblenden",
       "errorDismiss": "Schließen",
-      "preliminaryState": "Landesspezifische Angaben für {{bundesland}} sind vorläufig — ohne lokale Verifikation nicht belastbar. Substanzielle Daten liegen derzeit für Bayern, NRW, Baden-Württemberg, Hessen und Niedersachsen vor."
+      "preliminaryState": "Landesspezifische Angaben für {{bundesland}} sind vorläufig — ohne lokale Verifikation nicht belastbar. Substanzielle Daten liegen derzeit für Bayern, NRW, Baden-Württemberg, Hessen und Niedersachsen vor.",
+      "preliminaryStateShort": "Vorläufige Landesdaten für {{bundesland}}",
+      "preliminaryStateChipHint": "Details",
+      "preliminaryStateExpand": "Vollständigen Vorläufigkeits-Hinweis anzeigen",
+      "preliminaryStateCollapse": "Hinweis einklappen"
     },
     "errors": {
       "streaming_failed": {

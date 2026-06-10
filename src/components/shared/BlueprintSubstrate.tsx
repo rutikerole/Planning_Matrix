@@ -93,7 +93,7 @@ export function BlueprintSubstrate({
     <div
       ref={driftRef}
       aria-hidden="true"
-      className="fixed inset-0 -z-10 pointer-events-none"
+      className="fixed inset-0 z-[var(--z-behind)] pointer-events-none"
       style={{ willChange: reduced || driftPx === 0 ? 'auto' : 'transform' }}
     >
       {/* Ink grid — always visible at base opacity. */}

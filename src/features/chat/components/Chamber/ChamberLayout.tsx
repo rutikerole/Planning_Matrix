@@ -137,7 +137,7 @@ export function ChamberLayout({
         {/* Conversation surface — shifted right of the Spine on lg+.
           * IMPORTANT: this wrapper owns the scroll context. The page
           * body itself never scrolls. */}
-        <div className="relative z-10 lg:pl-spine h-full">
+        <div className="relative z-[var(--z-raised)] lg:pl-spine h-full">
           <main
             ref={mainRef}
             data-chamber-main="true"
@@ -165,7 +165,7 @@ export function ChamberLayout({
               * Always visible regardless of scroll position. */}
             <div
               ref={inputZoneRef}
-              className="sticky bottom-0 z-30"
+              className="sticky bottom-0 z-[var(--z-sticky)]"
               style={{
                 // v1.0.29.2 Bug 85 — negative margin = measured zone height
                 // (lockstep with the thread's bottom padding above).
@@ -173,12 +173,18 @@ export function ChamberLayout({
                 paddingBottom: 'env(safe-area-inset-bottom, 0px)',
               }}
             >
+              {/* UI-sweep N-03 — scroll-edge scrim. 64px was shorter than
+                * the zone JumpToLatest straddles; 80px + a steeper ramp
+                * keeps the band behind the pill mostly paper so passing
+                * message text never ghosts around it. The mask only ever
+                * affects this scroll edge — live content above it stays
+                * untouched (D-07). */}
               <div
                 aria-hidden="true"
-                className="absolute -top-16 left-0 right-0 h-16 pointer-events-none"
+                className="absolute -top-20 left-0 right-0 h-20 pointer-events-none"
                 style={{
                   backgroundImage:
-                    'linear-gradient(180deg, hsl(var(--paper) / 0) 0%, hsl(var(--paper) / 0.92) 100%)',
+                    'linear-gradient(180deg, hsl(var(--paper) / 0) 0%, hsl(var(--paper) / 0.55) 55%, hsl(var(--paper) / 0.95) 100%)',
                 }}
               />
               {/* Phase 7.10 — solid paper bg + no border-top + no
@@ -195,7 +201,7 @@ export function ChamberLayout({
                 * viewport right so it doesn't overlap the LedgerTab
                 * (vertically centered, not at the bottom). */}
               {bottomRightSlot && (
-                <div className="absolute right-6 bottom-3 z-10 pointer-events-auto">
+                <div className="absolute right-6 bottom-3 z-[var(--z-raised)] pointer-events-auto">
                   {bottomRightSlot}
                 </div>
               )}

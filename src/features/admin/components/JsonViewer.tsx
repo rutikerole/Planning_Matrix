@@ -58,7 +58,7 @@ export function JsonViewer({ value, maxBytes = DEFAULT_MAX_BYTES, compact }: Pro
         <button
           type="button"
           onClick={copy}
-          className="absolute right-2 top-2 z-10 rounded bg-[hsl(var(--ink))]/[0.07] px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.18em] text-[hsl(var(--ink))]/65 hover:bg-[hsl(var(--ink))]/[0.12]"
+          className="absolute right-2 top-2 z-[var(--z-raised)] rounded bg-[hsl(var(--ink))]/[0.07] px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.18em] text-[hsl(var(--ink))]/65 hover:bg-[hsl(var(--ink))]/[0.12]"
         >
           {copied ? 'copied' : 'copy'}
         </button>

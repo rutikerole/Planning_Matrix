@@ -60,7 +60,7 @@
   text-decoration: none;
   transform: translateY(-200%);
   transition: transform 0.18s ease;
-  z-index: 100;
+  z-index: var(--z-skiplink);
 }
 .pm-skip-link:focus {
   transform: translateY(0);
@@ -251,6 +251,24 @@
     --spine-stage-halo:           rgba(123, 92, 63, 0.22);
     --spine-stage-halo-soft:      rgba(123, 92, 63, 0.08);
 
+    /* ── D-13 central z-index scale ───────────────────────────────────
+     * All page-level stacking (z ≥ 10) routes through these tokens via
+     * z-[var(--z-…)]. Component-local micro-stacking (z-0/z-[1]/z-[2])
+     * stays free. Values preserve the pre-token ladder exactly.
+     * Guarded by scripts/audit-z-index.mjs (prebuild audit:zindex). */
+    --z-behind:       -10; /* fixed background substrates */
+    --z-raised:        10; /* raised layers inside a surface (scroll wrapper, gutter slots) */
+    --z-edge:          15; /* right-edge ledger pull */
+    --z-band:          20; /* sticky strips + sticky bottom bands */
+    --z-spine-trigger: 24; /* mobile spine trigger strip (< 1024px) */
+    --z-spine:         25; /* fixed left spine (≥ 1024px) */
+    --z-sticky:        30; /* sticky header stacks, input zone, anchored popovers */
+    --z-floating:      40; /* fixed banners, toasts, drawer/dialog scrims */
+    --z-overlay:       50; /* drawer/dialog content, app header */
+    --z-debug:         60; /* debug panels */
+    --z-grain:         60; /* paper-grain texture — above ALL chrome incl. modals (pointer-events:none) */
+    --z-skiplink:     100; /* a11y skip links — must beat everything */
+
     /* Motion. --ease matches the existing transition-calm curve;
      * --ease-soft is the new fast-but-soft curve used for pulses
      * and the sticky-context slide. */
@@ -425,7 +443,7 @@
     position: fixed;
     inset: 0;
     pointer-events: none;
-    z-index: 60;
+    z-index: var(--z-grain);
     opacity: 0.035;
     mix-blend-mode: multiply;
     background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.6 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
@@ -455,7 +473,7 @@
     position: fixed;
     inset: 0;
     pointer-events: none;
-    z-index: 60;
+    z-index: var(--z-grain);
     opacity: 0.04;
     mix-blend-mode: multiply;
     background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='256' height='256'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.6 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
@@ -531,14 +549,16 @@
    * Single observer drives `data-focus="true"` on the message nearest
    * the viewport center; CSS does the rest.
    *
-   * Phase 7.9 §2.6 — past turns settle at a flat 0.5 opacity (was a
-   * distance-driven curve floored at 0.32). The latest turn (distance
-   * 0) renders at full opacity; everything older snaps to 0.5.
-   * Hover or magnetic-focus still re-illuminates to 1.
+   * Phase 7.9 §2.6 set past turns to a FLAT 0.5 — UI-sweep D-07 found
+   * that makes the just-sent turn (distance 1) read as broken/disabled,
+   * especially where it meets the input-zone scrim. Restored a gentle
+   * distance curve: d1 = 0.85, d2 = 0.70, d3+ floors at 0.55. The
+   * latest turn (distance 0) stays at full opacity; hover or
+   * magnetic-focus still re-illuminates to 1.
    * ────────────────────────────────────────────────────────────────── */
   [data-chamber-message] {
     --chamber-distance: 0;
-    opacity: 0.5;
+    opacity: clamp(0.55, 1 - var(--chamber-distance) * 0.15, 1);
     transition:
       opacity 320ms var(--chamber-ease, cubic-bezier(0.16,1,0.3,1));
   }
@@ -565,10 +585,13 @@
   @media (prefers-reduced-motion: reduce) { .chamber-breath { animation: none; } }
 
   /* Briefing CTA halo — only visible when the CTA is in its hero state.
-   * Soft clay glow that breathes over 4.8s. */
+   * Soft clay glow that breathes over 4.8s.
+   * UI-sweep D-10: the previous 0-blur 14px SPREAD painted a sharp-edged
+   * enlarged copy of the button shape mid-pulse — it read as a doubled/
+   * ghosted duplicate behind 'Open briefing'. Blur makes it a glow. */
   @keyframes ctaHalo {
     0%, 100% { box-shadow: 0 0 0 0 rgba(123,92,63,0); }
-    50%      { box-shadow: 0 0 0 14px rgba(123,92,63,0.18); }
+    50%      { box-shadow: 0 0 18px 6px rgba(123,92,63,0.20); }
   }
   .chamber-cta-halo { animation: ctaHalo 4.8s ease-in-out infinite; }
   @media (prefers-reduced-motion: reduce) { .chamber-cta-halo { animation: none; box-shadow: none; } }

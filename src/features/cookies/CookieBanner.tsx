@@ -58,7 +58,7 @@ export function CookieBanner({ forceOpen = false, onClose }: Props) {
       role="dialog"
       aria-labelledby="cookie-banner-title"
       aria-describedby="cookie-banner-body"
-      className="fixed bottom-0 left-0 right-0 z-50 border-t border-border bg-paper shadow-[0_-2px_12px_-4px_hsl(0_0%_0%/0.08)]"
+      className="fixed bottom-0 left-0 right-0 z-[var(--z-overlay)] border-t border-border bg-paper shadow-[0_-2px_12px_-4px_hsl(0_0%_0%/0.08)]"
     >
       <div className="mx-auto max-w-3xl px-6 py-5">
         {!showCustomise ? (

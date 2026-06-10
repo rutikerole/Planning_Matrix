@@ -18,7 +18,7 @@ export function SkipLink() {
   return (
     <a
       href="#root"
-      className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 focus:bg-ink focus:text-paper focus:px-4 focus:py-2 focus:rounded-sm focus:outline-none focus:ring-2 focus:ring-ink focus:ring-offset-2 focus:ring-offset-paper focus:text-[14px] focus:font-medium"
+      className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[var(--z-overlay)] focus:bg-ink focus:text-paper focus:px-4 focus:py-2 focus:rounded-sm focus:outline-none focus:ring-2 focus:ring-ink focus:ring-offset-2 focus:ring-offset-paper focus:text-[14px] focus:font-medium"
     >
       {t('a11y.skipToMain', { defaultValue: 'Zum Hauptinhalt springen' })}
     </a>

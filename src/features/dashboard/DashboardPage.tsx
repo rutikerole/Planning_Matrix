@@ -162,7 +162,7 @@ export function DashboardPage() {
     <div className="relative isolate flex min-h-dvh flex-col bg-pm-paper">
       <BlueprintSubstrate />
 
-      <header className="relative z-10 pt-safe">
+      <header className="relative z-[var(--z-raised)] pt-safe">
         <div className="mx-auto flex h-16 max-w-[1320px] items-center justify-between px-8 md:h-[72px]">
           <Wordmark tone="drafting-blue" to="/dashboard" />
           <div className="flex items-center gap-5">
@@ -191,11 +191,11 @@ export function DashboardPage() {
         // First-run stage: a single centred composition that fills the
         // space between header and footer, so the welcome + CTA land in
         // one viewport with no scroll (footer is pinned below).
-        <main className="relative z-10 flex flex-1 flex-col items-center justify-center px-6 py-8">
+        <main className="relative z-[var(--z-raised)] flex flex-1 flex-col items-center justify-center px-6 py-8">
           <EmptyState firstName={firstName} />
         </main>
       ) : (
-        <main className="relative z-10 flex-1">
+        <main className="relative z-[var(--z-raised)] flex-1">
           <div className="mx-auto flex max-w-[1320px] flex-col gap-12 px-8 py-12">
               <WelcomeBand firstName={firstName} counts={counts} />
 

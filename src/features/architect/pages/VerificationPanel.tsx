@@ -268,7 +268,7 @@ export function VerificationPanel() {
       {/* v1.0.32 Bug 112 — one-time self-attested identity prompt. German-only,
           matching the architect surface. Honest: self-attested, not audited. */}
       {identityModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[hsl(var(--ink))]/40 px-4">
+        <div className="fixed inset-0 z-[var(--z-overlay)] flex items-center justify-center bg-[hsl(var(--ink))]/40 px-4">
           <div className="w-full max-w-md border border-[hsl(var(--ink))]/20 bg-[hsl(var(--paper))] p-6">
             <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-[hsl(var(--ink))]/45">
               Bestätigungsdokument

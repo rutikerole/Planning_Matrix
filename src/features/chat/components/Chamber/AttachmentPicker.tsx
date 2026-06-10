@@ -32,13 +32,13 @@ export function AttachmentPicker({ open, onOpenChange }: Props) {
     <>
       <div
         aria-hidden="true"
-        className="fixed inset-0 z-40"
+        className="fixed inset-0 z-[var(--z-floating)]"
         onClick={() => onOpenChange(false)}
       />
       <div
         role="dialog"
         aria-label={t('chat.input.attachment.title', { defaultValue: 'Datei anhängen' })}
-        className="absolute left-0 bottom-full mb-3 z-50 w-[280px] bg-paper border border-[var(--hairline-strong)] rounded-md p-3"
+        className="absolute left-0 bottom-full mb-3 z-[var(--z-overlay)] w-[280px] bg-paper border border-[var(--hairline-strong)] rounded-md p-3"
       >
         <p className="font-serif italic text-[14px] text-ink mb-2 px-1">
           {t('chat.input.attachment.title', { defaultValue: 'Datei anhängen' })}

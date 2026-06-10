@@ -73,7 +73,7 @@ export function ResultFooter({ project, messages, events, source }: Props) {
         <div
           role="status"
           aria-live="polite"
-          className="fixed top-4 right-4 z-40 inline-flex items-center gap-2 px-4 py-2 bg-ink text-paper text-[12.5px] rounded-full shadow-[0_18px_36px_-22px_rgba(22,19,16,0.32)]"
+          className="fixed top-4 right-4 z-[var(--z-floating)] inline-flex items-center gap-2 px-4 py-2 bg-ink text-paper text-[12.5px] rounded-full shadow-[0_18px_36px_-22px_rgba(22,19,16,0.32)]"
           data-no-print="true"
         >
           {toast}
@@ -81,7 +81,7 @@ export function ResultFooter({ project, messages, events, source }: Props) {
       )}
       <footer
         className={cn(
-          'sticky bottom-0 z-20 bg-paper-card/95 backdrop-blur-[6px] border-t border-ink/15',
+          'sticky bottom-0 z-[var(--z-band)] bg-paper-card/95 backdrop-blur-[6px] border-t border-ink/15',
           'px-4 sm:px-6 lg:px-8 py-3',
         )}
         data-no-print="true"

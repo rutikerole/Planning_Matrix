@@ -85,8 +85,33 @@ export function ResultWorkspace({ project, messages, events, source }: Props) {
     }
   }, [active, resultEmit])
 
+  // UI-sweep D-01 — sticky-shrink. The hero header eats ~35-40% of the
+  // viewport if it stays full-size while scrolled; collapse it to a
+  // compact band (title + confidence) once the reader is in the page.
+  // Hysteresis (collapse > 72px, expand < 16px) so the threshold never
+  // flaps; rAF-throttled; transitions live in ResultHeader's CSS and are
+  // disabled globally under prefers-reduced-motion.
+  const [compact, setCompact] = useState(false)
+  useEffect(() => {
+    let raf = 0
+    const measure = () => {
+      raf = 0
+      const y = window.scrollY
+      setCompact((c) => (c ? y > 16 : y > 72))
+    }
+    const onScroll = () => {
+      if (!raf) raf = requestAnimationFrame(measure)
+    }
+    measure()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+      if (raf) cancelAnimationFrame(raf)
+    }
+  }, [])
+
   // Owner mode mounts the global <AppHeader/> (fixed, h-12 = 48px,
-  // z-50). It is fixed-not-sticky by design and "never consumes layout
+  // z-[var(--z-overlay)]). It is fixed-not-sticky by design and "never consumes layout
   // space" (Phase 7.7 §1.2) — so the page below must reserve those 48px
   // itself; otherwise the breadcrumb + back-pill row paints UNDER the
   // AppHeader at scroll=0, and the sticky tab band slides back under it
@@ -103,13 +128,24 @@ export function ResultWorkspace({ project, messages, events, source }: Props) {
     >
       <BlueprintSubstrate lensRadius={260} breathing={false} driftPx={0} />
 
-      <div className={'sticky z-30 ' + (appHeaderOffset ? 'top-12' : 'top-0')}>
-        <ResultHeader project={project} source={source} events={events} />
-        <PreliminaryStateBanner bundesland={project.bundesland} />
+      {/* UI-sweep D-02/D-03/D-04 — the sticky slot carries ONLY chrome
+        * (header + tab strip, both with opaque backgrounds). The
+        * preliminary-state banner lives in <main>'s document flow below:
+        * it pushes content down instead of painting over it, and sits at
+        * the same stable position on every tab. */}
+      <div className={'sticky z-[var(--z-sticky)] ' + (appHeaderOffset ? 'top-12' : 'top-0')}>
+        <ResultHeader project={project} source={source} events={events} compact={compact} />
         <ResultTabs active={active} onChange={setActive} expert={expert} />
       </div>
 
-      <main className="flex-1 px-6 sm:px-8 lg:px-10 py-7 sm:py-9 max-w-[1200px] mx-auto w-full">
+      {/* UI-sweep D-06 — pb breathing room above the sticky bottom action
+        * bar. The bar reserves its own flow slot (sticky, not fixed), but
+        * without this padding the tab's last line sits flush against the
+        * bar edge at max scroll and reads as cut off behind it. */}
+      <main className="flex-1 px-6 sm:px-8 lg:px-10 pt-7 sm:pt-9 pb-16 sm:pb-20 max-w-[1200px] mx-auto w-full">
+        {/* Outside the tab-keyed AnimatePresence so tab switches never
+          * remount (and never replay) the banner. */}
+        <PreliminaryStateBanner bundesland={project.bundesland} />
         <AnimatePresence mode="wait" initial={false}>
           <m.div
             key={active}

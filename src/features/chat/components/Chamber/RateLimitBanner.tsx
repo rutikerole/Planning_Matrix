@@ -26,7 +26,7 @@ export function RateLimitBanner() {
           exit={reduced ? { opacity: 0 } : { opacity: 0, y: -4 }}
           transition={{ duration: reduced ? 0 : 0.2, ease: [0.16, 1, 0.3, 1] }}
           role="status"
-          className="fixed top-0 left-0 right-0 z-40 bg-paper-card border-b border-[var(--hairline-strong)]"
+          className="fixed top-0 left-0 right-0 z-[var(--z-floating)] bg-paper-card border-b border-[var(--hairline-strong)]"
         >
           <div className="mx-auto max-w-[1280px] px-4 md:px-6 py-2 flex items-center gap-3">
             <p className="flex-1 text-[12.5px] text-clay/85 italic">

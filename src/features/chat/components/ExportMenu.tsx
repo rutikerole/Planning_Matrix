@@ -201,8 +201,8 @@ export function ExportMenu({
                   // the viewport (FooterLeftColumn). `left-0` opens the
                   // popover to the right of the trigger; `right-0` would
                   // push it off-screen to the left.
-                  'absolute left-0 bottom-full mb-2 w-[320px] z-30 bg-paper border border-ink/15 rounded-[2px] shadow-[0_-8px_32px_-12px_hsl(220_15%_11%/0.22)] p-5 flex flex-col gap-4'
-                : 'absolute right-0 top-full mt-2 w-[320px] z-30 bg-paper border border-ink/15 rounded-[2px] shadow-[0_8px_32px_-12px_hsl(220_15%_11%/0.22)] p-5 flex flex-col gap-4'
+                  'absolute left-0 bottom-full mb-2 w-[320px] z-[var(--z-sticky)] bg-paper border border-ink/15 rounded-[2px] shadow-[0_-8px_32px_-12px_hsl(220_15%_11%/0.22)] p-5 flex flex-col gap-4'
+                : 'absolute right-0 top-full mt-2 w-[320px] z-[var(--z-sticky)] bg-paper border border-ink/15 rounded-[2px] shadow-[0_8px_32px_-12px_hsl(220_15%_11%/0.22)] p-5 flex flex-col gap-4'
             }
           >
             <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-clay/85">
@@ -236,10 +236,10 @@ export function ExportMenu({
       />
       <Drawer.Root open={open} onOpenChange={setOpen} direction="bottom">
         <Drawer.Portal>
-          <Drawer.Overlay className="fixed inset-0 bg-ink/40 backdrop-blur-[2px] z-40" />
+          <Drawer.Overlay className="fixed inset-0 bg-ink/40 backdrop-blur-[2px] z-[var(--z-floating)]" />
           <Drawer.Content
             aria-label={t('chat.export.menuLabel', { defaultValue: 'Exportieren' })}
-            className="fixed inset-x-0 bottom-0 z-50 bg-paper border-t border-ink/15 outline-none p-6 pb-10 rounded-t-[2px]"
+            className="fixed inset-x-0 bottom-0 z-[var(--z-overlay)] bg-paper border-t border-ink/15 outline-none p-6 pb-10 rounded-t-[2px]"
           >
             <Drawer.Title className="sr-only">
               {t('chat.export.menuLabel', { defaultValue: 'Exportieren' })}

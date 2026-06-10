@@ -86,7 +86,10 @@ function DomainBand({
           <span className="font-serif italic text-[18px] text-clay-deep leading-none tabular-nums">
             {domain.key}
           </span>
-          <span className="font-serif italic text-[15px] text-ink leading-snug truncate">
+          <span
+            className="font-serif italic text-[15px] text-ink leading-snug truncate"
+            title={domain.title}
+          >
             {domain.title}
           </span>
         </div>

@@ -81,7 +81,9 @@ export function BriefingCTA({ projectId, gate, signal, variant = 'inline' }: Pro
             'hover:bg-[hsl(var(--clay)/0.10)] hover:border-clay',
             'motion-safe:active:scale-[0.98]',
             'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/55 focus-visible:ring-offset-2 focus-visible:ring-offset-paper-card',
-            isReady && 'border-clay shadow-[0_0_0_4px_var(--spine-stage-halo)]',
+            // UI-sweep D-10 — blurred glow, not a 0-blur 4px spread (the
+            // sharp ring read as a doubled button edge).
+            isReady && 'border-clay shadow-[0_0_10px_2px_var(--spine-stage-halo)]',
           )}
         >
           <span>{t('chat.spine.footer.openBriefing')}</span>
