@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next'
-import { useRef, type KeyboardEvent } from 'react'
+import { useEffect, useRef, useState, type KeyboardEvent } from 'react'
 import { cn } from '@/lib/utils'
 import type { WorkspaceTabId } from '../hooks/useTabState'
 import { TabIcon } from './TabIcon'
@@ -27,6 +27,28 @@ interface Props {
 export function ResultTabs({ active, onChange, expert, badges = {} }: Props) {
   const { t } = useTranslation()
   const refs = useRef<Map<WorkspaceTabId, HTMLButtonElement | null>>(new Map())
+
+  // Motion pass B — sliding ink underline. One absolutely-positioned
+  // bar inside the (scrollable) strip, moved between tabs with
+  // translateX + scaleX only (100px reference width, left origin) so
+  // the move is compositor-driven. Re-measured on tab change, resize,
+  // and webfont arrival (widths shift when Inter lands).
+  const stripRef = useRef<HTMLDivElement | null>(null)
+  const [ink, setInk] = useState<{ x: number; w: number } | null>(null)
+  useEffect(() => {
+    const update = () => {
+      const btn = refs.current.get(active)
+      const strip = stripRef.current
+      if (!btn || !strip) return
+      const b = btn.getBoundingClientRect()
+      const l = strip.getBoundingClientRect()
+      setInk({ x: b.left - l.left + 8, w: Math.max(0, b.width - 16) })
+    }
+    update()
+    window.addEventListener('resize', update)
+    document.fonts?.ready.then(update).catch(() => {})
+    return () => window.removeEventListener('resize', update)
+  }, [active])
 
   const tabs: TabDef[] = [
     { id: 'overview', labelKey: 'result.workspace.tabs.overview' },
@@ -68,7 +90,16 @@ export function ResultTabs({ active, onChange, expert, badges = {} }: Props) {
       className="bg-paper-card/95 backdrop-blur-[6px] border-b border-ink/15 px-4 sm:px-6 lg:px-8 overflow-x-auto"
       data-no-print="true"
     >
-      <div className="flex items-stretch gap-0 min-w-max">
+      <div ref={stripRef} className="relative flex items-stretch gap-0 min-w-max">
+        {/* Sliding ink bar (active-tab underline). Mounts directly at
+          * the active tab's position — transitions only BETWEEN tabs. */}
+        {ink && (
+          <span
+            aria-hidden="true"
+            className="absolute bottom-0 left-0 h-[1.5px] w-[100px] origin-left bg-ink transition-transform duration-[var(--motion-soft)] ease-[var(--ease-exit)]"
+            style={{ transform: `translateX(${ink.x}px) scaleX(${ink.w / 100})` }}
+          />
+        )}
         {tabs.map((tab) => {
           const isActive = tab.id === active
           const label = t(tab.labelKey)
@@ -107,11 +138,13 @@ export function ResultTabs({ active, onChange, expert, badges = {} }: Props) {
                   {tab.badgeCount}
                 </span>
               )}
+              {/* Hover ghost — 40% underline preview on non-active tabs;
+                * the full active underline is the sliding ink bar above. */}
               <span
                 aria-hidden="true"
                 className={cn(
-                  'absolute left-2 right-2 -bottom-px h-[1.5px] transition-opacity duration-soft',
-                  isActive ? 'bg-ink opacity-100' : 'bg-ink/0 opacity-0',
+                  'absolute left-2 right-2 bottom-0 h-[1.5px] bg-ink transition-opacity duration-[var(--motion-fast)]',
+                  isActive ? 'opacity-0' : 'opacity-0 group-hover:opacity-40',
                 )}
               />
             </button>

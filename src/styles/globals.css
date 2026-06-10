@@ -146,8 +146,14 @@
     *::before,
     *::after {
       animation-duration: 0.001ms !important;
+      /* Delays must collapse too — a delayed fill-backwards keyframe
+       * (e.g. the result-rail cascade) otherwise HOLDS its from-state
+       * (opacity 0) for the delay span under reduced motion. Caught by
+       * the ui-layout.spec reduced-motion guard on webkit-mobile. */
+      animation-delay: 0ms !important;
       animation-iteration-count: 1 !important;
       transition-duration: 0.001ms !important;
+      transition-delay: 0ms !important;
       scroll-behavior: auto !important;
     }
   }
@@ -274,6 +280,14 @@
      * and the sticky-context slide. */
     --ease:         cubic-bezier(0.16, 1, 0.3, 1);
     --ease-soft:    cubic-bezier(0.32, 0.72, 0, 1);
+
+    /* result-spine motion pass — duration tokens (route ALL new
+     * transitions through these, like the --z scale) + the spec's
+     * physics curve. Nothing bounces, nothing loops. */
+    --motion-fast:  150ms;
+    --motion-soft:  220ms;
+    --motion-slow:  320ms;
+    --ease-exit:    cubic-bezier(0.22, 1, 0.36, 1);
 
     /* Layout vars (legacy Phase 7 vocabulary; the Chamber rebuild
      * drops the rails entirely — kept only for any non-chat surface
@@ -786,6 +800,72 @@
  * the [data-print-target="result-page"] attribute so the rest of
  * the product doesn't accidentally print "atelier" register.
  * ────────────────────────────────────────────────────────────────── */
+
+/* ─────────────────────────────────────────────────────────────────────
+ * result-spine motion pass — "dossier opens" page-load orchestration.
+ *
+ * Transform + opacity ONLY (compositor-friendly); all durations route
+ * through the --motion-* tokens; total sequence ≤ 700ms. The animated
+ * nodes (rail, tab band, main column) never remount on tab switch, so
+ * the sequence runs exactly once per navigation. Under
+ * prefers-reduced-motion the global override above collapses every
+ * animation to 0.001ms — final states render instantly.
+ * ──────────────────────────────────────────────────────────────────── */
+@keyframes spineRailIn {
+  from { opacity: 0; transform: translateX(-14px); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes spineRise {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes spineMainIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: none; }
+}
+[data-result-rail] {
+  animation: spineRailIn var(--motion-slow) var(--ease-exit) both;
+}
+[data-result-rail] [data-rail-seq] {
+  animation: spineRise var(--motion-soft) var(--ease-exit) both;
+}
+[data-result-rail] [data-rail-seq='1'] { animation-delay: 90ms; }
+[data-result-rail] [data-rail-seq='2'] { animation-delay: 135ms; }
+[data-result-rail] [data-rail-seq='3'] { animation-delay: 180ms; }
+[data-result-rail] [data-rail-seq='4'] { animation-delay: 225ms; }
+[data-result-rail] [data-rail-seq='5'] { animation-delay: 270ms; }
+[data-spine-tabs] {
+  animation: spineRise var(--motion-soft) var(--ease-exit) both;
+  animation-delay: 80ms;
+}
+[data-spine-main] {
+  animation: spineMainIn var(--motion-slow) var(--ease-exit) both;
+  animation-delay: 140ms;
+}
+
+/* Sticky tab band: hairline always; soft shadow only once scrolled. */
+[data-spine-tabs] > [role='tablist'] {
+  transition: box-shadow var(--motion-soft) var(--ease-exit);
+}
+[data-spine-tabs][data-scrolled='true'] > [role='tablist'] {
+  box-shadow: 0 6px 16px -12px rgba(26, 22, 18, 0.35);
+}
+
+/* Section reveal — below-the-fold cards rise on first viewport entry.
+ * Classes applied by ResultWorkspace's IntersectionObserver; the
+ * observer is never armed under prefers-reduced-motion. */
+.spine-reveal-pending {
+  opacity: 0;
+  transform: translateY(12px);
+}
+.spine-reveal-in {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity var(--motion-slow) var(--ease-exit),
+    transform var(--motion-slow) var(--ease-exit);
+}
+
 @media print {
   /* Reset page chrome: hide global navigation + every interactive
    * affordance the result page itself flagged with data-no-print. */
