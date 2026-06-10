@@ -522,6 +522,18 @@ export function resolveProcedure(c: ProcedureCase): ProcedureDecision {
     }
   }
   if (c.bundesland === 'nrw' && c.intent === 'sanierung') {
+    // pre-test audit #3 — close the honor-contradicting-verdict HOLE for NRW
+    // renovation. resolveNrwSanierung intercepts here, BEFORE the general-sanierung
+    // honorContradictingVerdict (~l.567) can run, and it decides purely from FACTS
+    // (eingriff_tragende_teile → vereinfachtes § 64) — never from the persona's
+    // cited §. So an NRW renovation that cleared the hard-blocker + Sonderbau gates
+    // but whose verdict cites the REGULAR § 65 / FREE § 62 BauO NRW was silently
+    // shown as vereinfachtes § 64 (the exact CLASS-1 default-masks-verdict the
+    // Phase-1b fix closed for every OTHER state's sanierung). Honor it here too.
+    // Symmetric: a simplified-§ verdict or none → null → resolveNrwSanierung's
+    // existing fact-driven output is unchanged (zero drift on the common path).
+    const honored = honorContradictingVerdict(viRaw, c.bundesland)
+    if (honored) return honored
     return resolveNrwSanierung(c)
   }
   if (c.bundesland === 'nrw' && c.intent === 'neubau') {

@@ -163,6 +163,26 @@ for (const [bundesland, intent] of [['mv', 'sanierung'], ['sachsen', 'sanierung'
   if (simp) { const d = resolveProcedure(baseC({ intent, bundesland, verfahren_indikation: simp }) as never); ok(d.kind === 'vereinfachtes', `${bundesland}/${intent}: simplified-§ verdict still → vereinfachtes (no drift): got ${d.kind}`) }
 }
 
+// pre-test audit #3 — NRW-SANIERUNG was the HOLE in the Phase-1b loop above (it
+// omits ['nrw','sanierung']). resolveNrwSanierung intercepts the nrw/sanierung
+// branch BEFORE the general honorContradictingVerdict can run, and decides from
+// FACTS only — with eingriff_tragende_teile=true it returns vereinfachtes § 64.
+// A persona verdict citing the REGULAR § 65 / FREE § 62 BauO NRW must now OVERRIDE
+// that fact-default (the same CLASS-1 default-masks-verdict closed elsewhere).
+console.log('\n[smoke-thin-state] pre-test #3 — NRW-sanierung honors a contradicting verdict over resolveNrwSanierung…')
+{
+  const nrwP = getStateLocalization('nrw').procedure
+  const reg65 = nrwP.regular.citation.trim()
+  const free62 = nrwP.free?.citation?.trim() ?? ''
+  const simp64 = nrwP.simplified.citation.trim()
+  const reg = resolveProcedure(baseC({ intent: 'sanierung', bundesland: 'nrw', eingriff_tragende_teile: true, verfahren_indikation: reg65 }) as never)
+  ok(reg.kind === 'standard', `nrw/sanierung: REGULAR "${reg65}" verdict overrides resolveNrwSanierung vereinfachtes (eingriff=true): got ${reg.kind}·${reg.confidence}`)
+  if (free62) { const free = resolveProcedure(baseC({ intent: 'sanierung', bundesland: 'nrw', eingriff_tragende_teile: true, verfahren_indikation: free62 }) as never); ok(free.kind === 'verfahrensfrei', `nrw/sanierung: FREE "${free62}" verdict overrides resolveNrwSanierung vereinfachtes: got ${free.kind}`) }
+  // No drift: a simplified-§ verdict keeps resolveNrwSanierung's fact-driven output.
+  const simp = resolveProcedure(baseC({ intent: 'sanierung', bundesland: 'nrw', eingriff_tragende_teile: true, verfahren_indikation: simp64 }) as never)
+  ok(simp.kind === 'vereinfachtes', `nrw/sanierung: simplified "${simp64}" verdict + eingriff → vereinfachtes unchanged (no drift): got ${simp.kind}`)
+}
+
 console.log(`\n[smoke-thin-state] ${passed} passed · ${failed} failed`)
 if (failed > 0) { console.error('[smoke-thin-state] FAIL'); process.exit(1) }
 console.log('[smoke-thin-state] OK')
