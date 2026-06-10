@@ -8,7 +8,7 @@ import type { MessageRow, ProjectRow } from '@/types/db'
 import type { ProjectState } from '@/types/projectState'
 import { useTabState, type WorkspaceTabId } from '../hooks/useTabState'
 import { ResultFooter } from './ResultFooter'
-import { ResultHeader } from './ResultHeader'
+import { ResultRail } from './ResultRail'
 import { ResultTabs } from './ResultTabs'
 import { InspectDataFlowModal } from './InspectDataFlowModal'
 import { LegalLandscapeTab } from './tabs/LegalLandscapeTab'
@@ -85,64 +85,42 @@ export function ResultWorkspace({ project, messages, events, source }: Props) {
     }
   }, [active, resultEmit])
 
-  // UI-sweep D-01 — sticky-shrink. The hero header eats ~35-40% of the
-  // viewport if it stays full-size while scrolled; collapse it to a
-  // compact band (title + confidence) once the reader is in the page.
-  // Hysteresis (collapse > 72px, expand < 16px) so the threshold never
-  // flaps; rAF-throttled; transitions live in ResultHeader's CSS and are
-  // disabled globally under prefers-reduced-motion.
-  const [compact, setCompact] = useState(false)
-  useEffect(() => {
-    let raf = 0
-    const measure = () => {
-      raf = 0
-      const y = window.scrollY
-      setCompact((c) => (c ? y > 16 : y > 72))
-    }
-    const onScroll = () => {
-      if (!raf) raf = requestAnimationFrame(measure)
-    }
-    measure()
-    window.addEventListener('scroll', onScroll, { passive: true })
-    return () => {
-      window.removeEventListener('scroll', onScroll)
-      if (raf) cancelAnimationFrame(raf)
-    }
-  }, [])
-
-  // Owner mode mounts the global <AppHeader/> (fixed, h-12 = 48px,
-  // z-[var(--z-overlay)]). It is fixed-not-sticky by design and "never consumes layout
-  // space" (Phase 7.7 §1.2) — so the page below must reserve those 48px
-  // itself; otherwise the breadcrumb + back-pill row paints UNDER the
-  // AppHeader at scroll=0, and the sticky tab band slides back under it
-  // mid-scroll. Shared-link mode renders no AppHeader → no offset.
-  const appHeaderOffset = ownerMode
+  // feat/result-spine-layout (Option B — "Document spine").
+  //
+  // The old full-width hero (+ its D-01 sticky-shrink scroll listener,
+  // which only ever lived in THIS file — f0f1b46) is gone: identity
+  // moved into the fixed left rail (ResultRail), so nothing needs to
+  // shrink. The AppHeader is hidden on this route (router.tsx passes
+  // hideAppHeader) because the rail footer carries the same
+  // LanguageSwitcher + UserMenu — hence no pt-12 reservation either.
+  //
+  // Layout primitive: ≥900px (`spine:`) a CSS grid [248px | 1fr];
+  // below, normal block flow (identity band, then the main column).
+  // The main column owns the sticky tab band (top), the in-flow
+  // preliminary chip, the tab panels, and the sticky bottom action bar
+  // — all scoped to the column, never under the rail.
   return (
     <div
-      className={
-        'min-h-dvh bg-paper relative isolate flex flex-col' +
-        (appHeaderOffset ? ' pt-12' : '')
-      }
+      className="min-h-dvh bg-paper relative isolate spine:grid spine:grid-cols-[248px_minmax(0,1fr)]"
       data-print-target="result-workspace"
       data-document-no={project.id}
     >
       <BlueprintSubstrate lensRadius={260} breathing={false} driftPx={0} />
 
-      {/* UI-sweep D-02/D-03/D-04 — the sticky slot carries ONLY chrome
-        * (header + tab strip, both with opaque backgrounds). The
-        * preliminary-state banner lives in <main>'s document flow below:
-        * it pushes content down instead of painting over it, and sits at
-        * the same stable position on every tab. */}
-      <div className={'sticky z-[var(--z-sticky)] ' + (appHeaderOffset ? 'top-12' : 'top-0')}>
-        <ResultHeader project={project} source={source} events={events} compact={compact} />
-        <ResultTabs active={active} onChange={setActive} expert={expert} />
-      </div>
+      <ResultRail project={project} source={source} events={events} />
 
-      {/* UI-sweep D-06 — pb breathing room above the sticky bottom action
-        * bar. The bar reserves its own flow slot (sticky, not fixed), but
-        * without this padding the tab's last line sits flush against the
-        * bar edge at max scroll and reads as cut off behind it. */}
-      <main className="flex-1 px-6 sm:px-8 lg:px-10 pt-7 sm:pt-9 pb-16 sm:pb-20 max-w-[1200px] mx-auto w-full">
+      <div className="flex flex-col min-w-0 min-h-dvh">
+        {/* Slim sticky tab band — chrome only (UI-sweep D-02/03/04: the
+          * preliminary banner stays in <main>'s flow below). */}
+        <div className="sticky top-0 z-[var(--z-sticky)]">
+          <ResultTabs active={active} onChange={setActive} expert={expert} />
+        </div>
+
+        {/* UI-sweep D-06 — pb breathing room above the sticky bottom action
+          * bar. The bar reserves its own flow slot (sticky, not fixed), but
+          * without this padding the tab's last line sits flush against the
+          * bar edge at max scroll and reads as cut off behind it. */}
+        <main className="flex-1 px-6 sm:px-8 lg:px-10 pt-5 sm:pt-6 pb-16 sm:pb-20 max-w-[1200px] mx-auto w-full">
         {/* Outside the tab-keyed AnimatePresence so tab switches never
           * remount (and never replay) the banner. */}
         <PreliminaryStateBanner bundesland={project.bundesland} />
@@ -201,24 +179,27 @@ export function ResultWorkspace({ project, messages, events, source }: Props) {
             </TabPanel>
           </m.div>
         </AnimatePresence>
-      </main>
+        </main>
 
-      <InspectDataFlowModal
-        project={project}
-        state={state}
-        events={events}
-        messages={messages}
-        tabId={active}
-        open={inspectOpen}
-        onOpenChange={setInspectOpen}
-      />
+        <InspectDataFlowModal
+          project={project}
+          state={state}
+          events={events}
+          messages={messages}
+          tabId={active}
+          open={inspectOpen}
+          onOpenChange={setInspectOpen}
+        />
 
-      <ResultFooter
-        project={project}
-        messages={messages}
-        events={events}
-        source={source}
-      />
+        {/* Sticky bottom action bar — lives inside the main column, so
+          * it spans the content width, never the rail. */}
+        <ResultFooter
+          project={project}
+          messages={messages}
+          events={events}
+          source={source}
+        />
+      </div>
     </div>
   )
 }

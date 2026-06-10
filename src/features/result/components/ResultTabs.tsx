@@ -87,7 +87,7 @@ export function ResultTabs({ active, onChange, expert, badges = {} }: Props) {
               onClick={() => onChange(tab.id)}
               onKeyDown={onKey}
               className={cn(
-                'group relative inline-flex items-center gap-2 px-4 sm:px-[18px] py-3.5',
+                'group relative inline-flex items-center gap-2 px-4 sm:px-[18px] py-2.5',
                 'text-[13px] leading-none transition-colors duration-soft whitespace-nowrap',
                 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/35 focus-visible:ring-offset-2 focus-visible:ring-offset-paper-card rounded-sm',
                 isActive
