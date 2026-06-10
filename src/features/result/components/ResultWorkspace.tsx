@@ -86,7 +86,7 @@ export function ResultWorkspace({ project, messages, events, source }: Props) {
   }, [active, resultEmit])
 
   // Owner mode mounts the global <AppHeader/> (fixed, h-12 = 48px,
-  // z-50). It is fixed-not-sticky by design and "never consumes layout
+  // z-[var(--z-overlay)]). It is fixed-not-sticky by design and "never consumes layout
   // space" (Phase 7.7 §1.2) — so the page below must reserve those 48px
   // itself; otherwise the breadcrumb + back-pill row paints UNDER the
   // AppHeader at scroll=0, and the sticky tab band slides back under it
@@ -103,7 +103,7 @@ export function ResultWorkspace({ project, messages, events, source }: Props) {
     >
       <BlueprintSubstrate lensRadius={260} breathing={false} driftPx={0} />
 
-      <div className={'sticky z-30 ' + (appHeaderOffset ? 'top-12' : 'top-0')}>
+      <div className={'sticky z-[var(--z-sticky)] ' + (appHeaderOffset ? 'top-12' : 'top-0')}>
         <ResultHeader project={project} source={source} events={events} />
         <PreliminaryStateBanner bundesland={project.bundesland} />
         <ResultTabs active={active} onChange={setActive} expert={expert} />

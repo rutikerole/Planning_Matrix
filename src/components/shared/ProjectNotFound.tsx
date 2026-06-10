@@ -28,7 +28,7 @@ export function ProjectNotFound() {
       transition={{ duration: reduced ? 0 : 0.3, ease: [0.16, 1, 0.3, 1] }}
       className="min-h-dvh bg-paper relative isolate flex flex-col"
     >
-      <header className="relative z-10 px-6 sm:px-10 lg:px-14 xl:px-20">
+      <header className="relative z-[var(--z-raised)] px-6 sm:px-10 lg:px-14 xl:px-20">
         <div className="flex h-16 md:h-[72px] items-center justify-between">
           <Wordmark to="/dashboard" />
           <LanguageSwitcher />

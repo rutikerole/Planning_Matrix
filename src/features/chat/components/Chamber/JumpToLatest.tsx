@@ -104,7 +104,7 @@ export function JumpToLatest({ latestAssistantId }: Props) {
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={reduced ? { opacity: 0 } : { opacity: 0, y: 4, scale: 0.92 }}
           transition={{ duration: reduced ? 0 : 0.2, ease: [0.16, 1, 0.3, 1] }}
-          className="pointer-events-none absolute -top-12 left-1/2 -translate-x-1/2 z-10"
+          className="pointer-events-none absolute -top-12 left-1/2 -translate-x-1/2 z-[var(--z-raised)]"
         >
           {/* Phase 7.7 §1.8 — pill, not a circle. The previous round
             * gray button read as a loading spinner.

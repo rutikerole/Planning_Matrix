@@ -14,7 +14,7 @@ const DialogOverlay = forwardRef<
   <DialogPrimitive.Overlay
     ref={ref}
     className={cn(
-      'fixed inset-0 z-50 bg-pm-ink/30 backdrop-blur-[2px]',
+      'fixed inset-0 z-[var(--z-overlay)] bg-pm-ink/30 backdrop-blur-[2px]',
       'data-[state=open]:animate-in data-[state=open]:fade-in-0',
       'data-[state=closed]:animate-out data-[state=closed]:fade-out-0',
       className,
@@ -39,7 +39,7 @@ const DialogContent = forwardRef<
         onOpenAutoFocus?.(e)
       }}
       className={cn(
-        'fixed left-1/2 top-1/2 z-50 grid w-full max-w-lg -translate-x-1/2 -translate-y-1/2 gap-4',
+        'fixed left-1/2 top-1/2 z-[var(--z-overlay)] grid w-full max-w-lg -translate-x-1/2 -translate-y-1/2 gap-4',
         'border border-pm-hair bg-pm-paper p-8 shadow-[0_24px_48px_-24px_rgba(22,19,16,0.18)]',
         'data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95',
         'data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95',

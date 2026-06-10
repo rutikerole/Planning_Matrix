@@ -137,7 +137,7 @@ export function ChamberLayout({
         {/* Conversation surface — shifted right of the Spine on lg+.
           * IMPORTANT: this wrapper owns the scroll context. The page
           * body itself never scrolls. */}
-        <div className="relative z-10 lg:pl-spine h-full">
+        <div className="relative z-[var(--z-raised)] lg:pl-spine h-full">
           <main
             ref={mainRef}
             data-chamber-main="true"
@@ -165,7 +165,7 @@ export function ChamberLayout({
               * Always visible regardless of scroll position. */}
             <div
               ref={inputZoneRef}
-              className="sticky bottom-0 z-30"
+              className="sticky bottom-0 z-[var(--z-sticky)]"
               style={{
                 // v1.0.29.2 Bug 85 — negative margin = measured zone height
                 // (lockstep with the thread's bottom padding above).
@@ -195,7 +195,7 @@ export function ChamberLayout({
                 * viewport right so it doesn't overlap the LedgerTab
                 * (vertically centered, not at the bottom). */}
               {bottomRightSlot && (
-                <div className="absolute right-6 bottom-3 z-10 pointer-events-auto">
+                <div className="absolute right-6 bottom-3 z-[var(--z-raised)] pointer-events-auto">
                   {bottomRightSlot}
                 </div>
               )}

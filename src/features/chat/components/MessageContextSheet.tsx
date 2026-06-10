@@ -51,10 +51,10 @@ export function MessageContextSheet({ open, onOpenChange, fromLabel, text }: Pro
   return (
     <Drawer.Root open={open} onOpenChange={onOpenChange}>
       <Drawer.Portal>
-        <Drawer.Overlay className="fixed inset-0 z-40 bg-ink/40" />
+        <Drawer.Overlay className="fixed inset-0 z-[var(--z-floating)] bg-ink/40" />
         <Drawer.Content
           className={cn(
-            'fixed inset-x-0 bottom-0 z-50 flex flex-col bg-paper rounded-t-[12px] border-t border-ink/15 pb-safe',
+            'fixed inset-x-0 bottom-0 z-[var(--z-overlay)] flex flex-col bg-paper rounded-t-[12px] border-t border-ink/15 pb-safe',
             'shadow-[0_-12px_32px_-12px_hsl(220_15%_11%/0.18)]',
           )}
         >

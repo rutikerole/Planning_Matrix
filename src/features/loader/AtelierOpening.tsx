@@ -265,7 +265,7 @@ export function AtelierOpening({
           Phase 8.7.2 hotfix — pulled the page top padding down to
           14vh and the gap to the SVG to clamp(80, 12vh, 120)px so
           the table center sits at ~58 % of viewport (was ~75 %). */}
-      <div className="relative z-10 flex w-full max-w-[680px] flex-col items-center gap-3 text-center">
+      <div className="relative z-[var(--z-raised)] flex w-full max-w-[680px] flex-col items-center gap-3 text-center">
         <m.p
           initial={reduced ? false : { opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -294,7 +294,7 @@ export function AtelierOpening({
 
       {/* Middle zone — SVG roundtable */}
       <div
-        className="relative z-10 flex w-full max-w-[640px] items-center justify-center"
+        className="relative z-[var(--z-raised)] flex w-full max-w-[640px] items-center justify-center"
         style={{ marginTop: 'clamp(60px, 11vh, 120px)' }}
       >
         <svg
@@ -381,7 +381,7 @@ export function AtelierOpening({
           mt-auto pushes this to the bottom of the lane now that
           the outer flex no longer uses justify-between (Phase 8.7.2
           hotfix vertical-rhythm rewrite). */}
-      <div className="relative z-10 mt-auto flex w-full max-w-[680px] flex-col items-center gap-3">
+      <div className="relative z-[var(--z-raised)] mt-auto flex w-full max-w-[680px] flex-col items-center gap-3">
         <div className="relative h-5 w-full text-center">
           <AnimatePresence mode="wait" initial={false}>
             <m.p
@@ -525,7 +525,7 @@ function FailState({
     >
       <BlueprintSubstrate lensRadius={220} breathing={false} driftPx={0} />
 
-      <div className="relative z-10 flex w-full max-w-[34rem] flex-col items-center gap-6 text-center">
+      <div className="relative z-[var(--z-raised)] flex w-full max-w-[34rem] flex-col items-center gap-6 text-center">
         <h1 className="font-serif text-[clamp(2rem,4vw,3rem)] leading-tight text-pm-ink">
           {t('wizard.atelier.fail.h')}
         </h1>

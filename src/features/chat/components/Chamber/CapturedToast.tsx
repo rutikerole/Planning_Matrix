@@ -68,7 +68,7 @@ export function CapturedToast({ facts, lang }: Props) {
     <div
       role="status"
       aria-live="polite"
-      className="fixed top-[64px] right-4 z-40 flex flex-col gap-2 pointer-events-none"
+      className="fixed top-[64px] right-4 z-[var(--z-floating)] flex flex-col gap-2 pointer-events-none"
     >
       <AnimatePresence>
         {stack.map((entry) => (

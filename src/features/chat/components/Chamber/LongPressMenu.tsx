@@ -56,10 +56,10 @@ export function LongPressMenu({ open, onOpenChange, onChoose }: Props) {
     return (
       <Drawer.Root open={open} onOpenChange={onOpenChange} direction="bottom">
         <Drawer.Portal>
-          <Drawer.Overlay className="fixed inset-0 bg-ink/40 backdrop-blur-[2px] z-40" />
+          <Drawer.Overlay className="fixed inset-0 bg-ink/40 backdrop-blur-[2px] z-[var(--z-floating)]" />
           <Drawer.Content
             aria-label={t('chat.chamber.longPressTitle')}
-            className="fixed inset-x-0 bottom-0 z-50 bg-paper border-t border-[var(--hairline-strong)] outline-none px-4 pt-5 pb-8 rounded-t-[1rem]"
+            className="fixed inset-x-0 bottom-0 z-[var(--z-overlay)] bg-paper border-t border-[var(--hairline-strong)] outline-none px-4 pt-5 pb-8 rounded-t-[1rem]"
           >
             <Drawer.Title className="font-serif italic text-[18px] text-ink mb-3">
               {t('chat.chamber.longPressTitle')}
@@ -84,13 +84,13 @@ export function LongPressMenu({ open, onOpenChange, onChoose }: Props) {
     <>
       <div
         aria-hidden="true"
-        className="fixed inset-0 z-40"
+        className="fixed inset-0 z-[var(--z-floating)]"
         onClick={() => onOpenChange(false)}
       />
       <div
         role="dialog"
         aria-label={t('chat.chamber.longPressTitle')}
-        className="absolute right-0 bottom-full mb-3 z-50 w-[320px] bg-paper border border-[var(--hairline-strong)] rounded-md p-3"
+        className="absolute right-0 bottom-full mb-3 z-[var(--z-overlay)] w-[320px] bg-paper border border-[var(--hairline-strong)] rounded-md p-3"
       >
         <p className="font-serif italic text-[15px] text-ink mb-2 px-1">
           {t('chat.chamber.longPressTitle')}

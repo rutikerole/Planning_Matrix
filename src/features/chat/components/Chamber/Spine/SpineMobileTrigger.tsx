@@ -45,7 +45,7 @@ export function SpineMobileTrigger({ stages, percent, drawerContent }: Props) {
           'lg:hidden',
           // Phase 7.9 — AppHeader removed from chat; mobile trigger
           // sticks to top:0 of viewport instead of below the band.
-          'sticky top-0 z-[24] w-full',
+          'sticky top-0 z-[var(--z-spine-trigger)] w-full',
           'flex items-center gap-3 h-9 px-4',
           'bg-paper-card border-b border-[var(--hairline,rgba(26,22,18,0.10))]',
           'text-[12px] text-ink/85',
@@ -74,11 +74,11 @@ export function SpineMobileTrigger({ stages, percent, drawerContent }: Props) {
         />
       </Drawer.Trigger>
       <Drawer.Portal>
-        <Drawer.Overlay className="fixed inset-0 bg-ink/40 backdrop-blur-[2px] z-40" />
+        <Drawer.Overlay className="fixed inset-0 bg-ink/40 backdrop-blur-[2px] z-[var(--z-floating)]" />
         <Drawer.Content
           aria-label={t('chat.spine.mobile.drawerTitle')}
           className={cn(
-            'fixed top-0 bottom-0 left-0 z-50 outline-none',
+            'fixed top-0 bottom-0 left-0 z-[var(--z-overlay)] outline-none',
             'w-[88%] max-w-[320px]',
             'bg-paper-card border-r border-[var(--hairline-strong,rgba(26,22,18,0.18))]',
             'flex flex-col pt-safe pb-safe',

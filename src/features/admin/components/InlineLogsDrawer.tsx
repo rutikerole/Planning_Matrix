@@ -61,9 +61,9 @@ export default function InlineLogsDrawer({
       direction="right"
     >
       <Drawer.Portal>
-        <Drawer.Overlay className="fixed inset-0 z-40 bg-[hsl(var(--ink))]/30" />
+        <Drawer.Overlay className="fixed inset-0 z-[var(--z-floating)] bg-[hsl(var(--ink))]/30" />
         <Drawer.Content
-          className="fixed inset-y-0 right-0 z-50 flex w-full flex-col bg-[hsl(var(--paper))] outline-none md:w-[480px] md:border-l md:border-[hsl(var(--ink))]/15"
+          className="fixed inset-y-0 right-0 z-[var(--z-overlay)] flex w-full flex-col bg-[hsl(var(--paper))] outline-none md:w-[480px] md:border-l md:border-[hsl(var(--ink))]/15"
         >
           {/* Header */}
           <header className="flex items-start justify-between gap-3 border-b border-[hsl(var(--ink))]/10 px-4 py-3 md:px-5 md:py-4">
