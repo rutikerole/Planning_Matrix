@@ -20,6 +20,7 @@
 // ───────────────────────────────────────────────────────────────────────
 
 import { test, expect, type Route } from '@playwright/test'
+import { seedV2Session } from './helpers/auth'
 
 const ARCHITECT_USER_ID = 'arch-user-id-aaaa-bbbb-cccc-dddd-eeee'
 const PROJECT_ID = '11111111-2222-3333-4444-555555555555'
@@ -122,19 +123,11 @@ async function stubArchitectBackend(
 test.describe('Architect surface', () => {
   test('architect dashboard renders membership row + Prüfen link', async ({ page }) => {
     await stubArchitectBackend(page, { memberships: 1 })
-    await page.addInitScript(() => {
-      // Inject a fake auth session into localStorage so useAuthStore
-      // resolves immediately. Key matches Supabase's storage convention.
-      const session = {
-        currentSession: {
-          access_token: 'fake-jwt',
-          refresh_token: 'fake-refresh',
-          user: { id: 'arch-user-id-aaaa-bbbb-cccc-dddd-eeee' },
-        },
-        expiresAt: 9999999999,
-      }
-      window.localStorage.setItem('sb-localhost-auth-token', JSON.stringify(session))
-    })
+    // fix/ci-build — was the supabase-js v1 session shape
+    // ({ currentSession, expiresAt }), which v2's getSession() ignores:
+    // the spec ran unauthenticated and redirected to /sign-in. Seed the
+    // canonical v2 shape via the shared helper instead.
+    await seedV2Session(page, { userId: ARCHITECT_USER_ID, email: 'architect@example.com' })
 
     await page.goto('/architect')
     // The page renders an austere mono-leaning H1 in German.
@@ -152,19 +145,7 @@ test.describe('Architect surface', () => {
 
   test('verification panel shows Bestätigen CTA for ASSUMED qualifier', async ({ page }) => {
     await stubArchitectBackend(page, { memberships: 1, verifiedQualifier: false })
-    await page.addInitScript(() => {
-      window.localStorage.setItem(
-        'sb-localhost-auth-token',
-        JSON.stringify({
-          currentSession: {
-            access_token: 'fake-jwt',
-            refresh_token: 'fake-refresh',
-            user: { id: 'arch-user-id-aaaa-bbbb-cccc-dddd-eeee' },
-          },
-          expiresAt: 9999999999,
-        }),
-      )
-    })
+    await seedV2Session(page, { userId: ARCHITECT_USER_ID, email: 'architect@example.com' })
 
     await page.goto(`/architect/projects/${PROJECT_ID}/verify`)
     await expect(page.getByRole('heading', { level: 1 })).toContainText(
@@ -179,19 +160,7 @@ test.describe('Architect surface', () => {
     page,
   }) => {
     await stubArchitectBackend(page, { memberships: 1, verifiedQualifier: false })
-    await page.addInitScript(() => {
-      window.localStorage.setItem(
-        'sb-localhost-auth-token',
-        JSON.stringify({
-          currentSession: {
-            access_token: 'fake-jwt',
-            refresh_token: 'fake-refresh',
-            user: { id: 'arch-user-id-aaaa-bbbb-cccc-dddd-eeee' },
-          },
-          expiresAt: 9999999999,
-        }),
-      )
-    })
+    await seedV2Session(page, { userId: ARCHITECT_USER_ID, email: 'architect@example.com' })
     await page.goto(`/architect/projects/${PROJECT_ID}/verify`)
     const cta = page.getByRole('button', { name: /^best[äa]tigen$/i }).first()
     await expect(cta).toBeVisible()

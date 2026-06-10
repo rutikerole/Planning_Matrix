@@ -28,6 +28,7 @@
 // ───────────────────────────────────────────────────────────────────────
 
 import { test, expect, type Page, type Route } from '@playwright/test'
+import { seedV2Session } from './helpers/auth'
 
 const PROJECT_ID = 'a2d52ec1-6955-4443-95eb-cc2a2a759b14'
 const NOW = '2026-06-10T09:00:00Z'
@@ -169,19 +170,7 @@ async function stubBackend(page: Page) {
 }
 
 async function seedAuth(page: Page) {
-  await page.addInitScript(() => {
-    window.localStorage.setItem(
-      'sb-localhost-auth-token',
-      JSON.stringify({
-        access_token: 'fake-jwt',
-        token_type: 'bearer',
-        expires_at: 9999999999,
-        refresh_token: 'fake-refresh',
-        user: { id: 'user-1', aud: 'authenticated', role: 'authenticated', email: 'owner@example.com' },
-      }),
-    )
-    window.localStorage.setItem('i18nextLng', 'en')
-  })
+  await seedV2Session(page, { userId: 'user-1', email: 'owner@example.com', lang: 'en' })
 }
 
 async function dismissCookies(page: Page) {
