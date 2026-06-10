@@ -272,6 +272,56 @@ test.describe('UI layout guards', () => {
     expect(lBox.y + lBox.height).toBeLessThanOrEqual(fBox.y + 1)
   })
 
+  test('result motion: reduced-motion renders final states instantly', async ({
+    page,
+  }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' })
+    await page.goto(`/projects/${PROJECT_ID}/result`)
+    const rail = page.locator('[data-result-rail]')
+    await expect(rail).toBeVisible({ timeout: 10_000 })
+    // Confidence shows its FINAL value immediately — no count-up frames.
+    const conf = rail.locator('[data-conf-final]')
+    const final = await conf.getAttribute('data-conf-final')
+    await expect(conf).toHaveText(`${final}%`)
+    // Cascade elements at rest (opacity 1), no running animations.
+    const title = rail.locator('[data-rail-seq="2"]')
+    expect(await title.evaluate((el) => getComputedStyle(el).opacity)).toBe('1')
+    const running = await rail.evaluate(
+      (el) =>
+        el
+          .getAnimations({ subtree: true })
+          .filter((a) => a.playState === 'running').length,
+    )
+    expect(running).toBe(0)
+  })
+
+  test('result motion: load sequence does not replay on tab switch', async ({
+    page,
+  }) => {
+    await page.goto(`/projects/${PROJECT_ID}/result`)
+    const rail = page.locator('[data-result-rail]')
+    await expect(rail).toBeVisible({ timeout: 10_000 })
+    // Let the orchestration (≤700ms) + count-up (600ms) settle.
+    await page.waitForTimeout(1100)
+    const conf = rail.locator('[data-conf-final]')
+    const settled = await conf.textContent()
+    await page.getByRole('tab', { name: /Legal landscape/i }).click()
+    await page.waitForTimeout(60)
+    // The rail must NOT re-animate: value unchanged (a replayed count-up
+    // would show a low intermediate), title at full opacity, zero
+    // running animations in the rail subtree.
+    await expect(conf).toHaveText(settled ?? '')
+    const title = rail.locator('[data-rail-seq="2"]')
+    expect(await title.evaluate((el) => getComputedStyle(el).opacity)).toBe('1')
+    const running = await rail.evaluate(
+      (el) =>
+        el
+          .getAnimations({ subtree: true })
+          .filter((a) => a.playState === 'running').length,
+    )
+    expect(running).toBe(0)
+  })
+
   test('result: rail footer controls reachable on a 900px-tall viewport', async ({
     page,
   }) => {
