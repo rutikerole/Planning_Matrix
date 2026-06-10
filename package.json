@@ -48,6 +48,7 @@
     "smoke:class2-capture": "npx tsx scripts/smoke-class2-capture.mts",
     "smoke:role-gating": "npx tsx scripts/smoke-role-gating.mts",
     "smoke:qualifier-gate": "npx tsx scripts/smoke-qualifier-gate.mts",
+    "smoke:citation-heading-gate": "npx tsx scripts/smoke-citation-heading-gate.mts",
     "smoke:confidence": "npx tsx scripts/smoke-confidence.mts",
     "smoke:t04-composer": "npx tsx scripts/smoke-t04-composer.mts",
     "smoke:export-parity": "npx tsx scripts/smoke-export-parity.mts",
