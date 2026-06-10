@@ -1,14 +1,7 @@
-import { useEffect, useState } from 'react'
-import { Link, useSearchParams } from 'react-router-dom'
-import { useTranslation } from 'react-i18next'
-import { ArrowLeft, Check } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type { MessageRow, ProjectRow } from '@/types/db'
-import { ExportMenu } from './ExportMenu'
-import { SendToArchitectModal } from './SendToArchitectModal'
-import { InviteArchitectModal } from './InviteArchitectModal'
+import { ResultActions } from './ResultActions'
 import type { ResultSource } from './ResultWorkspace'
-import { InlineLogsButton } from '@/features/admin/components/InlineLogsButton'
 
 interface ProjectEventRow {
   id: string
@@ -28,127 +21,37 @@ interface Props {
 /**
  * Phase 8 — sticky bottom action bar of the Result Workspace.
  *
- * Owned mode: back-to-consultation pill + dotted "Send to architect"
- * stub on the left; "Take it home" overflow menu on the right (PDF /
- * Markdown / JSON / Share-link / Email-stub / Inspect-data-flow).
+ * feat/result-actions-to-rail: this bar is now the MOBILE surface only
+ * (`spine:hidden`). At ≥900px the same actions live in the identity rail
+ * (`ResultRail` → `ResultActions variant="rail"`), so the desktop result page
+ * loses its bottom chrome entirely. The action set itself is shared via
+ * `ResultActions` — this component is just the mobile sticky shell.
  *
- * Shared mode: hidden — recipients shouldn't generate further share
- * links or write actions. The workspace skips this footer entirely
- * when source.kind === 'shared'.
- *
- * Toast: when a share link is created the URL is already on the
- * clipboard (the menu writes it as soon as the token is minted). The
- * toast surfaces the success + 30-day expiry.
+ * Shared mode: hidden — recipients shouldn't generate further share links or
+ * write actions. The workspace skips this footer entirely when
+ * source.kind === 'shared'.
  */
 export function ResultFooter({ project, messages, events, source }: Props) {
-  const { t } = useTranslation()
-  const [params, setParams] = useSearchParams()
-  const [toast, setToast] = useState<string | null>(null)
-  const [sendOpen, setSendOpen] = useState(false)
-  const [inviteOpen, setInviteOpen] = useState(false)
-
-  useEffect(() => {
-    if (!toast) return
-    const id = window.setTimeout(() => setToast(null), 3200)
-    return () => window.clearTimeout(id)
-  }, [toast])
-
   if (source.kind === 'shared') return null
 
-  const onShareCreated = () => {
-    setToast(t('result.workspace.share.linkCopied'))
-  }
-
-  const onInspectDataFlow = () => {
-    const next = new URLSearchParams(params)
-    next.set('expert', 'true')
-    next.set('tab', 'expert')
-    setParams(next, { replace: false })
-    window.scrollTo({ top: 0, behavior: 'auto' })
-  }
-
   return (
-    <>
-      {toast && (
-        <div
-          role="status"
-          aria-live="polite"
-          className="fixed top-4 right-4 z-[var(--z-floating)] inline-flex items-center gap-2 px-4 py-2 bg-ink text-paper text-[12.5px] rounded-full shadow-[0_18px_36px_-22px_rgba(22,19,16,0.32)]"
-          data-no-print="true"
-        >
-          {toast}
-        </div>
+    <footer
+      className={cn(
+        'sticky bottom-0 z-[var(--z-band)] bg-paper-card/95 backdrop-blur-[6px] border-t border-ink/15',
+        'px-4 sm:px-6 lg:px-8 py-3',
+        // Desktop carries these actions in the rail; hide the bottom bar.
+        'spine:hidden',
       )}
-      <footer
-        className={cn(
-          'sticky bottom-0 z-[var(--z-band)] bg-paper-card/95 backdrop-blur-[6px] border-t border-ink/15',
-          'px-4 sm:px-6 lg:px-8 py-3',
-        )}
-        data-no-print="true"
-      >
-        <div className="flex items-center justify-between gap-3 max-w-[1200px] mx-auto">
-          <div className="flex items-center gap-3 min-w-0">
-            <Link
-              to={`/projects/${project.id}`}
-              className="inline-flex items-center gap-1.5 h-9 px-3 bg-paper border border-ink/15 rounded-full text-[12px] text-ink/75 hover:text-ink hover:border-clay/55 hover:bg-[hsl(var(--clay)/0.05)] motion-safe:active:translate-y-px transition-[color,border-color,background-color,transform] duration-[var(--motion-fast)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/35 focus-visible:ring-offset-2 focus-visible:ring-offset-paper-card"
-            >
-              <ArrowLeft aria-hidden="true" className="size-3" />
-              <span className="hidden sm:inline">
-                {t('result.workspace.footer.back')}
-              </span>
-            </Link>
-            {/* C7 (Bug 29) — the legal-shield entry point. Emerald/solid
-             *  to distinguish the WRITE-access verification invite from
-             *  the read-only briefing send below. */}
-            <button
-              type="button"
-              onClick={() => setInviteOpen(true)}
-              // Motion pass D — primary CTA: 1px lift + deepening shadow
-              // on hover, returns to 0 with a tightened shadow on press.
-              className="hidden sm:inline-flex items-center gap-1.5 h-9 px-3 bg-emerald-700 text-paper rounded-full text-[12px] shadow-[0_2px_6px_-3px_rgba(6,78,59,0.4)] hover:bg-emerald-800 motion-safe:hover:-translate-y-px hover:shadow-[0_8px_18px_-8px_rgba(6,78,59,0.55)] motion-safe:active:translate-y-0 active:shadow-[0_2px_4px_-3px_rgba(6,78,59,0.5)] transition-[background-color,transform,box-shadow] duration-[var(--motion-fast)] ease-[var(--ease-exit)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-700 focus-visible:ring-offset-2 focus-visible:ring-offset-paper-card"
-            >
-              <Check aria-hidden="true" className="size-3" />
-              {t('result.workspace.footer.inviteArchitect')}
-            </button>
-            <button
-              type="button"
-              onClick={() => setSendOpen(true)}
-              className="hidden sm:inline-flex items-center gap-1.5 h-9 px-3 bg-paper border border-dashed border-clay/55 rounded-full text-[12px] italic font-serif text-clay hover:text-ink hover:border-clay hover:bg-[hsl(var(--clay)/0.05)] motion-safe:active:translate-y-px transition-[color,border-color,background-color,transform] duration-[var(--motion-fast)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/35 focus-visible:ring-offset-2 focus-visible:ring-offset-paper-card"
-            >
-              {t('result.workspace.footer.sendToArchitect')}
-            </button>
-            {/* Phase 9.1 — admin-only Logs button. Renders nothing
-             *  for non-admins, so the action bar rhythm is unchanged
-             *  for the typical Bauherren user. */}
-            <InlineLogsButton
-              projectId={project.id}
-              projectName={project.name}
-              variant="pill"
-              className="hidden sm:inline-flex"
-            />
-          </div>
-
-          <div className="flex items-center gap-3">
-            <ExportMenu
-              project={project}
-              messages={messages}
-              events={events}
-              onShareCreated={onShareCreated}
-              onInspectDataFlow={onInspectDataFlow}
-            />
-          </div>
-        </div>
-      </footer>
-      <SendToArchitectModal
-        project={project}
-        open={sendOpen}
-        onOpenChange={setSendOpen}
-      />
-      <InviteArchitectModal
-        project={project}
-        open={inviteOpen}
-        onOpenChange={setInviteOpen}
-      />
-    </>
+      data-no-print="true"
+    >
+      <div className="max-w-[1200px] mx-auto">
+        <ResultActions
+          project={project}
+          messages={messages}
+          events={events}
+          variant="bar"
+        />
+      </div>
+    </footer>
   )
 }

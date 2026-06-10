@@ -178,7 +178,12 @@ export function ResultWorkspace({ project, messages, events, source }: Props) {
     >
       <BlueprintSubstrate lensRadius={260} breathing={false} driftPx={0} />
 
-      <ResultRail project={project} source={source} events={events} />
+      <ResultRail
+        project={project}
+        source={source}
+        events={events}
+        messages={messages}
+      />
 
       <div className="flex flex-col min-w-0 min-h-dvh">
         {/* Scroll sentinel for the tab-band shadow (motion pass C). */}

@@ -265,27 +265,36 @@ test.describe('UI layout guards', () => {
     await expect(page.locator('[data-prelim-banner="expanded"]')).toHaveCount(0)
 
     // D-06 — at max scroll the tab panel's last block clears the sticky
-    // bottom action bar. Poll the SETTLED state: the section-reveal
-    // transition (motion pass C) can still be translating blocks 12px
-    // when a one-shot sample fires under parallel-worker load — same
-    // lesson as the D-11 polling fix.
+    // bottom action bar. feat/result-actions-to-rail: that bar exists ONLY
+    // below the spine breakpoint; at ≥900px the actions moved into the rail
+    // and there is no bottom chrome to clear. So assert clearance on mobile,
+    // and on desktop assert the export action is reachable in the rail.
+    // Poll the SETTLED state: the section-reveal transition (motion pass C)
+    // can still be translating blocks 12px when a one-shot sample fires under
+    // parallel-worker load — same lesson as the D-11 polling fix.
     await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight))
     await expect
       .poll(() => page.locator('.spine-reveal-pending').count(), { timeout: 5_000 })
       .toBe(0)
-    const footer = page.locator('footer', { hasText: /Take it home/i }).first()
-    const lastContent = page.locator('main [role="tabpanel"] > *:last-child').first()
-    await expect
-      .poll(
-        async () => {
-          const fBox = await footer.boundingBox()
-          const lBox = await lastContent.boundingBox()
-          if (!fBox || !lBox) return 999
-          return lBox.y + lBox.height - fBox.y
-        },
-        { timeout: 5_000 },
-      )
-      .toBeLessThanOrEqual(1)
+    if (isRailViewport) {
+      await expect(
+        rail.getByRole('button', { name: /Take it home|Mitnehmen/i }),
+      ).toBeVisible()
+    } else {
+      const footer = page.locator('footer', { hasText: /Take it home/i }).first()
+      const lastContent = page.locator('main [role="tabpanel"] > *:last-child').first()
+      await expect
+        .poll(
+          async () => {
+            const fBox = await footer.boundingBox()
+            const lBox = await lastContent.boundingBox()
+            if (!fBox || !lBox) return 999
+            return lBox.y + lBox.height - fBox.y
+          },
+          { timeout: 5_000 },
+        )
+        .toBeLessThanOrEqual(1)
+    }
   })
 
   test('result motion: reduced-motion renders final states instantly', async ({

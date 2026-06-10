@@ -32,6 +32,11 @@ interface Props {
   events: ProjectEventRow[]
   onShareCreated: (url: string, expiresAt: string) => void
   onInspectDataFlow: () => void
+  /** Extra trigger classes — the rail variant passes `w-full justify-center`
+   *  so the pill stretches in the vertical action stack. Omit for the bar. */
+  triggerClassName?: string
+  /** Menu open side. Bar (bottom) opens up; the rail stack passes `'top'`
+   *  too since the trigger sits near the rail bottom. Default `'top'`. */
 }
 
 type Action = 'pdf-en' | 'pdf-de' | 'md' | 'json' | 'share'
@@ -52,6 +57,7 @@ export function ExportMenu({
   events,
   onShareCreated,
   onInspectDataFlow,
+  triggerClassName,
 }: Props) {
   const { t, i18n } = useTranslation()
   const lang = (i18n.resolvedLanguage ?? 'de') as 'de' | 'en'
@@ -184,6 +190,7 @@ export function ExportMenu({
           'transition-[background-position] duration-[var(--motion-slow)] ease-[var(--ease-exit)]',
           'disabled:opacity-60',
           'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink focus-visible:ring-offset-2 focus-visible:ring-offset-paper',
+          triggerClassName,
         )}
         disabled={busy !== null}
       >
