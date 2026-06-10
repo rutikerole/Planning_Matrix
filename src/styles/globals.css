@@ -549,14 +549,16 @@
    * Single observer drives `data-focus="true"` on the message nearest
    * the viewport center; CSS does the rest.
    *
-   * Phase 7.9 §2.6 — past turns settle at a flat 0.5 opacity (was a
-   * distance-driven curve floored at 0.32). The latest turn (distance
-   * 0) renders at full opacity; everything older snaps to 0.5.
-   * Hover or magnetic-focus still re-illuminates to 1.
+   * Phase 7.9 §2.6 set past turns to a FLAT 0.5 — UI-sweep D-07 found
+   * that makes the just-sent turn (distance 1) read as broken/disabled,
+   * especially where it meets the input-zone scrim. Restored a gentle
+   * distance curve: d1 = 0.85, d2 = 0.70, d3+ floors at 0.55. The
+   * latest turn (distance 0) stays at full opacity; hover or
+   * magnetic-focus still re-illuminates to 1.
    * ────────────────────────────────────────────────────────────────── */
   [data-chamber-message] {
     --chamber-distance: 0;
-    opacity: 0.5;
+    opacity: clamp(0.55, 1 - var(--chamber-distance) * 0.15, 1);
     transition:
       opacity 320ms var(--chamber-ease, cubic-bezier(0.16,1,0.3,1));
   }
@@ -583,10 +585,13 @@
   @media (prefers-reduced-motion: reduce) { .chamber-breath { animation: none; } }
 
   /* Briefing CTA halo — only visible when the CTA is in its hero state.
-   * Soft clay glow that breathes over 4.8s. */
+   * Soft clay glow that breathes over 4.8s.
+   * UI-sweep D-10: the previous 0-blur 14px SPREAD painted a sharp-edged
+   * enlarged copy of the button shape mid-pulse — it read as a doubled/
+   * ghosted duplicate behind 'Open briefing'. Blur makes it a glow. */
   @keyframes ctaHalo {
     0%, 100% { box-shadow: 0 0 0 0 rgba(123,92,63,0); }
-    50%      { box-shadow: 0 0 0 14px rgba(123,92,63,0.18); }
+    50%      { box-shadow: 0 0 18px 6px rgba(123,92,63,0.20); }
   }
   .chamber-cta-halo { animation: ctaHalo 4.8s ease-in-out infinite; }
   @media (prefers-reduced-motion: reduce) { .chamber-cta-halo { animation: none; box-shadow: none; } }

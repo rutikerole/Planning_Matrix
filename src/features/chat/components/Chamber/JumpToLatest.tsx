@@ -104,13 +104,18 @@ export function JumpToLatest({ latestAssistantId }: Props) {
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={reduced ? { opacity: 0 } : { opacity: 0, y: 4, scale: 0.92 }}
           transition={{ duration: reduced ? 0 : 0.2, ease: [0.16, 1, 0.3, 1] }}
-          className="pointer-events-none absolute -top-12 left-1/2 -translate-x-1/2 z-[var(--z-raised)]"
+          className="pointer-events-none absolute -top-6 left-1/2 -translate-x-1/2 z-[var(--z-raised)]"
         >
           {/* Phase 7.7 §1.8 — pill, not a circle. The previous round
             * gray button read as a loading spinner.
             * Phase 7.10 — bigger pill: h-7 → h-9, text 11.5 → 13 px,
-            * px-3.5 → px-5, icon 12 → 14 px. Sits 48 px above the
-            * input pill (was 36 px) for breathing room. */}
+            * px-3.5 → px-5, icon 12 → 14 px.
+            * UI-sweep D-08/D-09 — was -top-12 (48px above the zone),
+            * floating in thread-content territory and covering the last
+            * bubble / inline CTA. Now straddles the input zone's top
+            * edge: half over the scrim, half over the zone's own paper
+            * floor — a chrome affordance in the chrome band, clearly
+            * separated from the reply chips inside the zone. */}
           <button
             type="button"
             onClick={onJump}

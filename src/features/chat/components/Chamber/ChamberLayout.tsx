@@ -173,12 +173,18 @@ export function ChamberLayout({
                 paddingBottom: 'env(safe-area-inset-bottom, 0px)',
               }}
             >
+              {/* UI-sweep N-03 — scroll-edge scrim. 64px was shorter than
+                * the zone JumpToLatest straddles; 80px + a steeper ramp
+                * keeps the band behind the pill mostly paper so passing
+                * message text never ghosts around it. The mask only ever
+                * affects this scroll edge — live content above it stays
+                * untouched (D-07). */}
               <div
                 aria-hidden="true"
-                className="absolute -top-16 left-0 right-0 h-16 pointer-events-none"
+                className="absolute -top-20 left-0 right-0 h-20 pointer-events-none"
                 style={{
                   backgroundImage:
-                    'linear-gradient(180deg, hsl(var(--paper) / 0) 0%, hsl(var(--paper) / 0.92) 100%)',
+                    'linear-gradient(180deg, hsl(var(--paper) / 0) 0%, hsl(var(--paper) / 0.55) 55%, hsl(var(--paper) / 0.95) 100%)',
                 }}
               />
               {/* Phase 7.10 — solid paper bg + no border-top + no
