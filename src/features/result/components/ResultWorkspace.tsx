@@ -138,7 +138,11 @@ export function ResultWorkspace({ project, messages, events, source }: Props) {
         <ResultTabs active={active} onChange={setActive} expert={expert} />
       </div>
 
-      <main className="flex-1 px-6 sm:px-8 lg:px-10 py-7 sm:py-9 max-w-[1200px] mx-auto w-full">
+      {/* UI-sweep D-06 — pb breathing room above the sticky bottom action
+        * bar. The bar reserves its own flow slot (sticky, not fixed), but
+        * without this padding the tab's last line sits flush against the
+        * bar edge at max scroll and reads as cut off behind it. */}
+      <main className="flex-1 px-6 sm:px-8 lg:px-10 pt-7 sm:pt-9 pb-16 sm:pb-20 max-w-[1200px] mx-auto w-full">
         {/* Outside the tab-keyed AnimatePresence so tab switches never
           * remount (and never replay) the banner. */}
         <PreliminaryStateBanner bundesland={project.bundesland} />
