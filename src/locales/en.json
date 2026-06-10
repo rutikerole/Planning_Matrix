@@ -1200,6 +1200,7 @@
       "errorDismiss": "Close",
       "preliminaryState": "State-specific details for {{bundesland}} are preliminary — not reliable without local verification. Substantive data currently exists for Bayern, NRW, Baden-Württemberg, Hessen and Niedersachsen.",
       "preliminaryStateShort": "Preliminary state data for {{bundesland}}",
+      "preliminaryStateChipHint": "details",
       "preliminaryStateExpand": "Show the full preliminary-data notice",
       "preliminaryStateCollapse": "Collapse this notice"
     },

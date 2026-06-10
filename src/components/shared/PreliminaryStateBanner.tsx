@@ -132,16 +132,24 @@ export function PreliminaryStateBanner({ bundesland }: Props) {
               title={fullText}
               aria-label={`${fullText} — ${t('chat.banner.preliminaryStateExpand')}`}
               aria-expanded={false}
+              // V-03 (pre-merge audit) — the chip carries a LEGAL caveat:
+              // it must read as a notice with a visible expand affordance,
+              // not a decorative label. Full clay text, firmer border, and
+              // an explicit dotted-underline "details" hint.
               className={cn(
                 'inline-flex items-center gap-1.5 px-3 py-1 rounded-full',
-                'bg-paper-card border border-clay/35',
-                'text-[11px] italic font-serif text-clay/85',
-                'hover:text-ink hover:border-clay/60 transition-colors duration-soft',
+                'bg-paper-card border border-clay/55',
+                'text-[12px] italic font-serif text-clay',
+                'hover:text-ink hover:border-clay transition-colors duration-soft',
                 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay/55 focus-visible:ring-offset-2 focus-visible:ring-offset-paper',
               )}
             >
-              <Info aria-hidden="true" className="size-3 text-clay shrink-0" />
+              <Info aria-hidden="true" className="size-3.5 text-clay shrink-0" />
               <span>{shortText}</span>
+              <span aria-hidden="true" className="text-clay/60">·</span>
+              <span className="not-italic font-sans text-[11px] underline decoration-dotted underline-offset-2">
+                {t('chat.banner.preliminaryStateChipHint')}
+              </span>
             </button>
           </m.div>
         )}
