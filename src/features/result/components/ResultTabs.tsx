@@ -87,7 +87,14 @@ export function ResultTabs({ active, onChange, expert, badges = {} }: Props) {
     <div
       role="tablist"
       aria-label={t('result.workspace.tabs.aria')}
-      className="bg-paper-card/95 backdrop-blur-[6px] border-b border-ink/15 px-4 sm:px-6 lg:px-8 overflow-x-auto"
+      // pt-5 INSIDE the band (which is opaque), not margin above it —
+      // a margin outside a sticky element would leave a see-through gap
+      // when the band sticks at the viewport top. The strip read as
+      // glued to the top edge at rest (AppHeader is hidden on this
+      // route, so the band sits flush under the browser chrome); the
+      // extra top padding gives the tab row breathing room without
+      // touching the band's sticky top-0 or the body spacing below it.
+      className="bg-paper-card/95 backdrop-blur-[6px] border-b border-ink/15 px-4 sm:px-6 lg:px-8 pt-5 overflow-x-auto"
       data-no-print="true"
     >
       <div ref={stripRef} className="relative flex items-stretch gap-0 min-w-max">
