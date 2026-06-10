@@ -448,9 +448,15 @@ export function formatEurRange(bucket: CostBucket, lang: 'de' | 'en'): string {
 export function detectProcedure(rationale: string | undefined): ProcedureType {
   if (!rationale) return 'unknown'
   const t = rationale.toLowerCase()
-  if (/art\.?\s*60|baugenehmigungsverfahren\b/.test(t)) return 'art60_baugenehmigung'
-  if (/art\.?\s*57|genehmigungsfreistellung/.test(t)) return 'art57_freistellung'
-  if (/art\.?\s*58|vereinfacht/.test(t)) return 'art58_vereinfacht'
+  // Campaign Phase 5a — PRECEDENCE FIX. The SPECIFIC kinds (vereinfacht /
+  // freistellung) are now matched BEFORE the generic "Baugenehmigungsverfahren",
+  // so "Vereinfachtes Baugenehmigungsverfahren" maps to art58 (1.0), not the
+  // art60 (1.25) branch it used to fall into. English kind-labels are covered too
+  // (resolveCostProcedureType now reads the structured procedureLabel TITLE, which
+  // may be EN). verfahrensfrei intentionally stays 'unknown' (1.0) — conservative.
+  if (/vereinfacht|simplified|art\.?\s*58/.test(t)) return 'art58_vereinfacht'
+  if (/genehmigungsfreistellung|freistellung|notification-only|art\.?\s*57/.test(t)) return 'art57_freistellung'
+  if (/regul[äa]r|standard building permit|full permit|art\.?\s*60|baugenehmigungsverfahren\b/.test(t)) return 'art60_baugenehmigung'
   return 'unknown'
 }
 

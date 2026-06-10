@@ -1,7 +1,7 @@
 import type { ProjectRow } from '@/types/db'
 import type { Fact, ProjectState } from '@/types/projectState'
 import { computeOpenItems } from './computeOpenItems'
-import { approximateTotalWeeks } from './composeTimeline'
+import { approximateTimelineMonths } from './composeTimeline'
 import {
   buildCostBreakdown,
   costModeShowsEuroFigure,
@@ -89,8 +89,10 @@ export function composeExecutiveRead({
     areaSqm,
     bundesland: project.bundesland,
   })
-  const weeks = approximateTotalWeeks()
-  const months = Math.round((weeks.min + weeks.max) / 2 / 4)
+  // Campaign 5b — the SINGLE procedure-aware timeline source (shared with
+  // At-a-Glance). Was a flat midpoint ("~6 months"); now the same range every
+  // surface shows (e.g. ~4–6 months for the common case, ~2–3 for a Freistellung).
+  const timeline = approximateTimelineMonths(procedureType)
 
   // Open-items summary
   const open = computeOpenItems(state, lang, 4, project.bundesland)
@@ -143,7 +145,7 @@ export function composeExecutiveRead({
     fallback,
     isBaselineProc,
     costRange,
-    timelineMonths: months,
+    timelineMonths: timeline,
     intent,
     lang,
   })
@@ -211,7 +213,7 @@ function composeP2({
   isBaselineProc: boolean
   /** Formatted € range, or null for Bestand modes with no HOAI new-build schedule. */
   costRange: string | null
-  timelineMonths: number
+  timelineMonths: { min: number; max: number }
   intent: string
   lang: 'de' | 'en'
 }): string {
@@ -235,8 +237,8 @@ function composeP2({
       ? ` Fallback: ${fallbackTitle} if any condition fails.`
       : ''
     const tail = costRange
-      ? ` Estimated total fees: ${costRange}, timeline ~${timelineMonths} months.`
-      : ` Fees follow no HOAI new-build schedule — request fixed quotes; timeline ~${timelineMonths} months.`
+      ? ` Estimated total fees: ${costRange}, timeline ~${timelineMonths.min}–${timelineMonths.max} months.`
+      : ` Fees follow no HOAI new-build schedule — request fixed quotes; timeline ~${timelineMonths.min}–${timelineMonths.max} months.`
     return head + fb + tail
   }
   const head = primaryTitle
@@ -244,8 +246,8 @@ function composeP2({
     : 'Der Verfahrensweg öffnet sich, sobald die Beratung weiter ist.'
   const fb = fallbackTitle ? ` Fallback: ${fallbackTitle} bei Abweichung.` : ''
   const tail = costRange
-    ? ` Geschätzte Honorare: ${costRange}, Zeitrahmen ca. ${timelineMonths} Monate.`
-    : ` Honorare folgen keiner HOAI-Neubautabelle — Festangebote einholen; Zeitrahmen ca. ${timelineMonths} Monate.`
+    ? ` Geschätzte Honorare: ${costRange}, Zeitrahmen ca. ${timelineMonths.min}–${timelineMonths.max} Monate.`
+    : ` Honorare folgen keiner HOAI-Neubautabelle — Festangebote einholen; Zeitrahmen ca. ${timelineMonths.min}–${timelineMonths.max} Monate.`
   return head + fb + tail
 }
 

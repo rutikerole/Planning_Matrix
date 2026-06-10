@@ -11,6 +11,7 @@ import {
   resolveHeadlineCostRange,
 } from '../../lib/costNormsMuenchen'
 import { resolveCostProcedureType } from '../../lib/resolveProcedures'
+import { approximateTimelineMonths } from '../../lib/composeTimeline'
 import { useResolvedRoles } from '../../hooks/useResolvedRoles'
 import { useResolvedProcedures } from '../../hooks/useResolvedProcedures'
 import { computeOpenItems } from '../../lib/computeOpenItems'
@@ -69,13 +70,18 @@ export function AtAGlance({ project, state }: Props) {
   )
   // v1.0.30 Bug 93 — a use conversion (T-04) does not re-classify the building's
   // Gebäudeklasse; show that honestly instead of the bare "—" tbd placeholder.
+  // Campaign 5c (MV walk) — when no geometry signal exists, route the null case
+  // through the SAME formatGebaeudeklasseValue the PDF Key Data renders, so both
+  // surfaces show one honest-deferral string ("Building class — eaves height not
+  // recorded; architect to confirm.") instead of this card diverging to a bare
+  // "—". The walk showed At-a-Glance "—" vs PDF honest sentence for the identical
+  // derivedKlasse — a two-sources-of-truth split (CLASS 1). The narrow row
+  // truncates the sentence and the full text is in the row `title` hover.
   const klasseValue = explicitKlasse
     ? explicitKlasse
     : state.templateId === 'T-04'
       ? t('result.workspace.ataglance.gkUseConversion')
-      : derivedKlasse.klasse != null
-        ? formatGebaeudeklasseValue(derivedKlasse, lang)
-        : t('result.workspace.ataglance.tbd')
+      : formatGebaeudeklasseValue(derivedKlasse, lang)
 
   // Cost — reuse the München heuristic engine, now with area + zone +
   // region inputs flowing through (A.4).
@@ -111,13 +117,12 @@ export function AtAGlance({ project, state }: Props) {
         ? formatEurRange(resolveHeadlineCostRange(state.templateId, cost.total), lang)
         : t('result.workspace.ataglance.costByQuote')
 
-  // Timeline — coarse range from procedure type.
+  // Timeline — campaign 5b: the SINGLE procedure-aware timeline source shared with
+  // Executive Read (and the PDF), so the figure can't diverge. Output is identical
+  // to the prior inline ranges (freistellung 2–3 · full 6–9 · else 4–6).
+  const tl = approximateTimelineMonths(procedureType)
   const timelineLabel =
-    procedureType === 'art57_freistellung'
-      ? lang === 'en' ? '~ 2–3 months' : '~ 2–3 Monate'
-      : procedureType === 'art60_baugenehmigung'
-        ? lang === 'en' ? '~ 6–9 months' : '~ 6–9 Monate'
-        : lang === 'en' ? '~ 4–6 months' : '~ 4–6 Monate'
+    lang === 'en' ? `~ ${tl.min}–${tl.max} months` : `~ ${tl.min}–${tl.max} Monate`
 
   const specialistsCount = resolved.roles.filter((r) => r.needed).length
   const openQuestions = open.count
