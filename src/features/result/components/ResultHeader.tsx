@@ -86,8 +86,11 @@ export function ResultHeader({ project, source, events, compact = false }: Props
         className={cn(
           'flex items-center justify-between gap-3 overflow-hidden',
           'transition-[max-height,opacity,margin] duration-300',
+          // `invisible` (not just opacity-0): the row holds focusable
+          // links — visibility:hidden drops them from the tab order so
+          // keyboard users can't land on invisible targets in compact.
           compact
-            ? 'max-h-0 mb-0 opacity-0 pointer-events-none'
+            ? 'max-h-0 mb-0 opacity-0 pointer-events-none invisible'
             : 'max-h-10 mb-2 opacity-100 min-h-[20px]',
         )}
         aria-hidden={compact}
