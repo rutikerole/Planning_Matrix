@@ -30,6 +30,10 @@ interface Props {
   source: ResultSource
   events: ProjectEventRow[]
   messages: MessageRow[]
+  /** ≥900px only — mount the rail action stack (ResultActions variant="rail").
+   *  Below that the workspace mounts the sticky bottom bar instead, so exactly
+   *  one ResultActions (and one modal/toast set) is ever live. */
+  showActions: boolean
 }
 
 /**
@@ -56,7 +60,7 @@ interface Props {
  * Kept as <header data-print-target="result-header"> so the @media
  * print rules in globals.css hide it unchanged.
  */
-export function ResultRail({ project, source, events, messages }: Props) {
+export function ResultRail({ project, source, events, messages, showActions }: Props) {
   const { t, i18n } = useTranslation()
   const lang = (i18n.resolvedLanguage ?? 'de') as 'de' | 'en'
   const isShared = source.kind === 'shared'
@@ -235,19 +239,22 @@ export function ResultRail({ project, source, events, messages }: Props) {
         <VerificationProgress state={state} variant="rail" />
       </div>
 
-      {/* 7 — rail footer (owner mode): desktop action stack (Export / Invite
-        * / Send / Logs / Back, via ResultActions) + DE/EN + avatar. mt-auto
-        * pins it to the rail bottom. On mobile the action stack self-hides
-        * (the sticky bottom bar carries those actions); only DE/EN + avatar
-        * wrap inline in the <900px identity band. Hidden in shared mode. */}
+      {/* 7 — rail footer (owner mode): desktop action stack (Invite / Send /
+        * Take-it-home / Logs / divider / Back, via ResultActions) + DE/EN +
+        * avatar. mt-auto pins it to the rail bottom. The action stack is
+        * MOUNTED only ≥900px (showActions); below that the sticky bottom bar
+        * carries those actions and only DE/EN + avatar wrap inline in the
+        * identity band. Hidden in shared mode. */}
       {!isShared && (
         <div className="flex items-center gap-3 spine:mt-auto spine:flex-col spine:items-stretch spine:gap-2.5 spine:pt-5">
-          <ResultActions
-            project={project}
-            messages={messages}
-            events={events}
-            variant="rail"
-          />
+          {showActions && (
+            <ResultActions
+              project={project}
+              messages={messages}
+              events={events}
+              variant="rail"
+            />
+          )}
           <div className="flex items-center gap-3 spine:justify-between spine:px-0.5">
             <LanguageSwitcher />
             <UserMenu />

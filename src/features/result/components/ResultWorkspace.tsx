@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { AnimatePresence, m, useReducedMotion } from 'framer-motion'
 import { useEventEmitter } from '@/hooks/useEventEmitter'
+import { useViewport } from '@/lib/useViewport'
 import { BlueprintSubstrate } from '@/components/shared/BlueprintSubstrate'
 import { PreliminaryStateBanner } from '@/components/shared/PreliminaryStateBanner'
 import type { MessageRow, ProjectRow } from '@/types/db'
@@ -53,6 +54,11 @@ export function ResultWorkspace({ project, messages, events, source }: Props) {
   const state = (project.state ?? {}) as Partial<ProjectState>
   const reduced = useReducedMotion()
   const { t } = useTranslation()
+  // feat/result-actions-to-rail #2 — single-mount the action cluster. ≥900px
+  // (the Tailwind `spine` breakpoint) the rail owns the actions; below it the
+  // sticky bottom bar does. Gating the MOUNT (not display:none) means exactly
+  // one ResultActions — and one set of modals/toast/subscriptions — is live.
+  const isSpine = useViewport().width >= 900
   const [inspectOpen, setInspectOpen] = useState(false)
   const resultEmit = useEventEmitter('result')
 
@@ -183,6 +189,7 @@ export function ResultWorkspace({ project, messages, events, source }: Props) {
         source={source}
         events={events}
         messages={messages}
+        showActions={isSpine}
       />
 
       <div className="flex flex-col min-w-0 min-h-dvh">
@@ -274,14 +281,18 @@ export function ResultWorkspace({ project, messages, events, source }: Props) {
           onOpenChange={setInspectOpen}
         />
 
-        {/* Sticky bottom action bar — lives inside the main column, so
-          * it spans the content width, never the rail. */}
-        <ResultFooter
-          project={project}
-          messages={messages}
-          events={events}
-          source={source}
-        />
+        {/* Sticky bottom action bar — lives inside the main column, so it
+          * spans the content width, never the rail. Mounted ONLY below the
+          * spine breakpoint; ≥900px the rail owns the actions (single-mount,
+          * #2) so the bottom bar is genuinely absent, not display:none. */}
+        {!isSpine && (
+          <ResultFooter
+            project={project}
+            messages={messages}
+            events={events}
+            source={source}
+          />
+        )}
       </div>
     </div>
   )

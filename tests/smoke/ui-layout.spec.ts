@@ -277,9 +277,16 @@ test.describe('UI layout guards', () => {
       .poll(() => page.locator('.spine-reveal-pending').count(), { timeout: 5_000 })
       .toBe(0)
     if (isRailViewport) {
+      // The export action lives in the rail…
       await expect(
         rail.getByRole('button', { name: /Take it home|Mitnehmen/i }),
       ).toBeVisible()
+      // …and the sticky bottom action bar is GONE on desktop. Negative
+      // assertion: single-mount (#2) means it isn't in the DOM at all, so a
+      // <footer> carrying the export action must not exist at this width.
+      await expect(
+        page.locator('footer', { hasText: /Take it home|Mitnehmen/i }),
+      ).toHaveCount(0)
     } else {
       const footer = page.locator('footer', { hasText: /Take it home/i }).first()
       const lastContent = page.locator('main [role="tabpanel"] > *:last-child').first()
