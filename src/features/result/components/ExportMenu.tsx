@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { ChevronUp, FileText, Download, Braces, Link2, Mail } from 'lucide-react'
+import { Check, ChevronUp, FileText, Download, Braces, Link2, Mail } from 'lucide-react'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -60,6 +60,10 @@ export function ExportMenu({
   // preparation" state. The renderer is untouched; only this UI entry gates.
   const pdfReady = isPdfDemoReady(project.template_id, project.bundesland)
   const [busy, setBusy] = useState<Action | null>(null)
+  // Motion pass D — brief success acknowledgment on the trigger after a
+  // download-class action completes (no spinners for instant actions;
+  // the menu closes on select, so the check morphs on the pill itself).
+  const [acked, setAcked] = useState(false)
   const resultEmit = useEventEmitter('result')
   // v1.0.14 Bug 29 — resolve owner display name from auth profile
   // for the PDF cover Bauherr footer. Fallback chain:
@@ -152,6 +156,9 @@ export function ExportMenu({
         onShareCreated(result.url, result.expiresAt)
         resultEmit('share_link_created', { latency_ms: Date.now() - startedAt })
       }
+      // Success — brief check morph on the trigger (motion pass D).
+      setAcked(true)
+      window.setTimeout(() => setAcked(false), 900)
     } catch (err) {
       resultEmit('export_failed', {
         action,
@@ -168,14 +175,24 @@ export function ExportMenu({
       <DropdownMenuTrigger
         className={cn(
           'inline-flex items-center gap-2 h-9 px-4 rounded-full',
-          'bg-ink text-paper text-[12.5px] font-medium',
-          'transition-colors duration-soft hover:bg-ink/92 disabled:opacity-60',
+          'text-paper text-[12.5px] font-medium',
+          // Motion pass D — soft sheen: an ink gradient whose highlight
+          // shifts a few % on hover via background-position (no animated
+          // pseudo-element, nothing loops).
+          'bg-[linear-gradient(105deg,hsl(var(--ink))_0%,hsl(var(--ink))_42%,hsl(220_16%_20%)_50%,hsl(var(--ink))_58%,hsl(var(--ink))_100%)]',
+          'bg-[length:240%_100%] bg-[position:0%_0%] hover:bg-[position:55%_0%]',
+          'transition-[background-position] duration-[var(--motion-slow)] ease-[var(--ease-exit)]',
+          'disabled:opacity-60',
           'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink focus-visible:ring-offset-2 focus-visible:ring-offset-paper',
         )}
         disabled={busy !== null}
       >
         <span>{t('result.workspace.footer.takeItHome')}</span>
-        <ChevronUp aria-hidden="true" className="size-3.5" />
+        {acked ? (
+          <Check aria-hidden="true" className="size-3.5 text-emerald-300" />
+        ) : (
+          <ChevronUp aria-hidden="true" className="size-3.5" />
+        )}
       </DropdownMenuTrigger>
       <DropdownMenuContent
         align="end"
