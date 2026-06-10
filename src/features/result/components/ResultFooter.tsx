@@ -90,7 +90,7 @@ export function ResultFooter({ project, messages, events, source }: Props) {
           <div className="flex items-center gap-3 min-w-0">
             <Link
               to={`/projects/${project.id}`}
-              className="inline-flex items-center gap-1.5 h-9 px-3 bg-paper border border-ink/15 rounded-full text-[12px] text-ink/75 hover:text-ink hover:border-ink/30 transition-colors duration-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/35 focus-visible:ring-offset-2 focus-visible:ring-offset-paper-card"
+              className="inline-flex items-center gap-1.5 h-9 px-3 bg-paper border border-ink/15 rounded-full text-[12px] text-ink/75 hover:text-ink hover:border-clay/55 hover:bg-[hsl(var(--clay)/0.05)] motion-safe:active:translate-y-px transition-[color,border-color,background-color,transform] duration-[var(--motion-fast)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/35 focus-visible:ring-offset-2 focus-visible:ring-offset-paper-card"
             >
               <ArrowLeft aria-hidden="true" className="size-3" />
               <span className="hidden sm:inline">
@@ -103,7 +103,9 @@ export function ResultFooter({ project, messages, events, source }: Props) {
             <button
               type="button"
               onClick={() => setInviteOpen(true)}
-              className="hidden sm:inline-flex items-center gap-1.5 h-9 px-3 bg-emerald-700 text-paper rounded-full text-[12px] hover:bg-emerald-800 transition-colors duration-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-700 focus-visible:ring-offset-2 focus-visible:ring-offset-paper-card"
+              // Motion pass D — primary CTA: 1px lift + deepening shadow
+              // on hover, returns to 0 with a tightened shadow on press.
+              className="hidden sm:inline-flex items-center gap-1.5 h-9 px-3 bg-emerald-700 text-paper rounded-full text-[12px] shadow-[0_2px_6px_-3px_rgba(6,78,59,0.4)] hover:bg-emerald-800 motion-safe:hover:-translate-y-px hover:shadow-[0_8px_18px_-8px_rgba(6,78,59,0.55)] motion-safe:active:translate-y-0 active:shadow-[0_2px_4px_-3px_rgba(6,78,59,0.5)] transition-[background-color,transform,box-shadow] duration-[var(--motion-fast)] ease-[var(--ease-exit)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-700 focus-visible:ring-offset-2 focus-visible:ring-offset-paper-card"
             >
               <Check aria-hidden="true" className="size-3" />
               {t('result.workspace.footer.inviteArchitect')}
@@ -111,7 +113,7 @@ export function ResultFooter({ project, messages, events, source }: Props) {
             <button
               type="button"
               onClick={() => setSendOpen(true)}
-              className="hidden sm:inline-flex items-center gap-1.5 h-9 px-3 bg-paper border border-dashed border-clay/55 rounded-full text-[12px] italic font-serif text-clay hover:text-ink hover:border-clay transition-colors duration-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/35 focus-visible:ring-offset-2 focus-visible:ring-offset-paper-card"
+              className="hidden sm:inline-flex items-center gap-1.5 h-9 px-3 bg-paper border border-dashed border-clay/55 rounded-full text-[12px] italic font-serif text-clay hover:text-ink hover:border-clay hover:bg-[hsl(var(--clay)/0.05)] motion-safe:active:translate-y-px transition-[color,border-color,background-color,transform] duration-[var(--motion-fast)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/35 focus-visible:ring-offset-2 focus-visible:ring-offset-paper-card"
             >
               {t('result.workspace.footer.sendToArchitect')}
             </button>

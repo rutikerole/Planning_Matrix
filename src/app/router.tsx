@@ -145,7 +145,10 @@ export function AppRouter() {
         <Route
           path="/projects/:id/result"
           element={
-            <ProtectedRoute>
+            /* feat/result-spine-layout — the rail footer carries the same
+             * LanguageSwitcher + UserMenu the AppHeader did, so the fixed
+             * header is dropped here (same pattern as the chat routes). */
+            <ProtectedRoute hideAppHeader>
               <ProjectGuard>
                 <ResultPage />
               </ProjectGuard>
