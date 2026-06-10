@@ -4,8 +4,15 @@
 // an inline error when the auth backend returns invalid_credentials.
 
 import { test, expect, type Route } from '@playwright/test'
+import { seedCookieConsent } from './helpers/auth'
 
 test.describe('Sign-in', () => {
+  // fix/ci-build — pre-seed consent so the fixed-bottom cookie banner
+  // can't intercept the submit button on mobile viewports (run #212).
+  test.beforeEach(async ({ page }) => {
+    await seedCookieConsent(page)
+  })
+
   test('renders the sign-in form with email + password fields', async ({ page }) => {
     await page.goto('/sign-in')
     // Title set by the route's <SEO /> wrapper (Phase 4.1 #124).

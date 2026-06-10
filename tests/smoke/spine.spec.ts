@@ -11,12 +11,15 @@
 //      links to /projects/:id/result.
 
 import { expect, test } from '@playwright/test'
+import { seedV2Session } from './helpers/auth'
 
 const PROJECT_ID = '22222222-2222-2222-2222-222222222222'
 
 test.describe('Spine sidebar', () => {
   test.beforeEach(async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 900 })
+    // fix/ci-build — was unauthenticated (ProtectedRoute redirect).
+    await seedV2Session(page, { email: 'rutik@example.com' })
     await page.route('**/auth/v1/**', async (route) =>
       route.fulfill({
         status: 200,

@@ -6,11 +6,16 @@
 // real backend.
 
 import { expect, test } from '@playwright/test'
+import { seedV2Session } from './helpers/auth'
 
 const PROJECT_ID = '11111111-1111-1111-1111-111111111111'
 
 test.describe('Chamber — chat workspace shell', () => {
   test.beforeEach(async ({ page }) => {
+    // fix/ci-build — the spec stubbed the network but never seeded a
+    // session: ProtectedRoute redirected to /sign-in and the Chamber
+    // assertions ran against the wrong page.
+    await seedV2Session(page, { email: 'rutik@example.com' })
     // Stub auth: pretend Supabase has a session.
     await page.route('**/auth/v1/**', async (route) => {
       const body = JSON.stringify({
