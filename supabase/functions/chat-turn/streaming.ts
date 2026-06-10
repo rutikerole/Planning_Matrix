@@ -36,6 +36,7 @@ import { MODEL, respondToolDefinition, respondToolChoice } from './toolSchema.ts
 import { estimateCostUsd, UpstreamError, type AnthropicUsage } from './anthropic.ts'
 import { commitChatTurnAtomic } from './persistence.ts'
 import { validateFactPlausibility } from './factPlausibility.ts'
+import { enforceCitationHeadingMatch } from './citationHeadingGate.ts'
 import {
   enforceCitationAllowList,
   lintCitations,
@@ -308,6 +309,47 @@ export function runStreamingTurn(args: StreamingTurnArgs): Response {
               `[chat-turn] [${args.requestId}] citation-allow-list insert threw:`,
               insErr,
             )
+          }
+        }
+
+        // ── ITEM C — runtime citation HEADING gate (downgrade-and-flag) ──
+        const headingMismatches = enforceCitationHeadingMatch(toolInput, args.bundesland)
+        if (headingMismatches.length > 0) {
+          console.log(
+            `[chat-turn] [${args.requestId}] citation-heading-gate (streaming): ${headingMismatches.length} downgrade(s)`,
+          )
+          try {
+            const hmTraceId =
+              tracer.trace_id && tracer.trace_id !== '00000000-0000-0000-0000-000000000000'
+                ? tracer.trace_id
+                : null
+            const hmNow = new Date().toISOString()
+            const hmRows = headingMismatches.map((e) => ({
+              session_id: args.requestId,
+              user_id: args.userId,
+              project_id: args.projectId,
+              source: 'system' as const,
+              name: 'citation.heading_mismatch',
+              attributes: {
+                field: e.field,
+                concept: e.concept,
+                item_id: e.item_id,
+                cited: e.cited,
+                expected: e.expected,
+                reason: e.reason,
+                active_bundesland: args.bundesland,
+              },
+              client_ts: hmNow,
+              trace_id: hmTraceId,
+            }))
+            const { error: hmErr } = await args.supabase.from('event_log').insert(hmRows)
+            if (hmErr) {
+              console.warn(
+                `[chat-turn] [${args.requestId}] citation-heading-gate event_log insert failed: ${hmErr.message}`,
+              )
+            }
+          } catch (insErr) {
+            console.warn(`[chat-turn] [${args.requestId}] citation-heading-gate insert threw:`, insErr)
           }
         }
 

@@ -350,10 +350,12 @@ export function deriveDocNo(
 export function formatCoverDate(iso: string, lang: 'en' | 'de'): string {
   const d = new Date(iso)
   if (Number.isNaN(d.getTime())) return ''
+  // ITEM E — UTC basis to match deriveDocNo (getUTCDate); see exportMarkdown.
   return d.toLocaleDateString(lang === 'en' ? 'en-GB' : 'de-DE', {
     day: lang === 'de' ? 'numeric' : '2-digit',
     month: 'long',
     year: 'numeric',
+    timeZone: 'UTC',
   })
 }
 

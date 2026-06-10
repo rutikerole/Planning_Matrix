@@ -44,6 +44,11 @@ const FIELDS = {
   // Anchored at start so "Brandschutztechnische…"/"Brandschutznachweis" (no
   // word boundary) cannot match; only "Brandschutz" / "Brandschutz, …" hits.
   brandschutzCitation: /^Brandschutz\b/i,
+  // Sonderbau § (MBO § 50/51/53/54 by state; Bayern defines it in Art. 2 → no
+  // dedicated heading → omitted; RLP absent). Used by the runtime citation
+  // heading-gate (ITEM C) to catch a § cited for "Sonderbau" whose corpus
+  // heading is NOT Sonderbauten.
+  sonderbauCitation: /^Sonderbau/i,
 }
 
 // stateLocalization.ts procedure §§ → ANCHORED regex on the official heading.
@@ -130,6 +135,7 @@ export interface CorpusCitationFields {
   structuralCertCitation?: string
   permitFormCitation?: string
   brandschutzCitation?: string
+  sonderbauCitation?: string
 }
 
 export interface CorpusProcedureFields {

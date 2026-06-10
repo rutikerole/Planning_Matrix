@@ -42,6 +42,7 @@ import {
 } from './persistence.ts'
 import { validateFactPlausibility } from './factPlausibility.ts'
 import { enforceCitationAllowList, lintCitations, logCitationViolations } from './citationLint.ts'
+import { enforceCitationHeadingMatch } from './citationHeadingGate.ts'
 import { runStreamingTurn, acceptsStream } from './streaming.ts'
 import {
   hydrateProjectState,
@@ -492,6 +493,46 @@ Deno.serve(async (req: Request) => {
       console.warn(
         `[chat-turn] [${requestId}] citation-allow-list event_log insert failed: ${alErr.message}`,
       )
+    }
+  }
+
+  // ── ITEM C — runtime citation HEADING gate (downgrade-and-flag) ───
+  // Catches an own-state § cited for the WRONG concept (heading mismatch vs
+  // the corpus-canonical § for that concept in this state) — the gap the
+  // allow-list enforcer's (law,number) check cannot see. Mutates toolInput
+  // in-place (quality→ASSUMED) BEFORE applyToolInputToState; flags for
+  // architect verification via event_log name='citation.heading_mismatch'.
+  // Never blocks: a false positive is an over-cautious downgrade (safe).
+  const headingMismatches = enforceCitationHeadingMatch(toolInput, project.bundesland)
+  if (headingMismatches.length > 0) {
+    console.log(
+      `[chat-turn] [${requestId}] citation-heading-gate: ${headingMismatches.length} downgrade(s)`,
+      headingMismatches.map((e) => ({ field: e.field, concept: e.concept, item_id: e.item_id, cited: e.cited, expected: e.expected })),
+    )
+    const hmTraceId =
+      tracer.trace_id && tracer.trace_id !== '00000000-0000-0000-0000-000000000000' ? tracer.trace_id : null
+    const hmNow = new Date().toISOString()
+    const hmRows = headingMismatches.map((e) => ({
+      session_id: requestId,
+      user_id: userData.user.id,
+      project_id: projectId,
+      source: 'system' as const,
+      name: 'citation.heading_mismatch',
+      attributes: {
+        field: e.field,
+        concept: e.concept,
+        item_id: e.item_id,
+        cited: e.cited,
+        expected: e.expected,
+        reason: e.reason,
+        active_bundesland: project.bundesland,
+      },
+      client_ts: hmNow,
+      trace_id: hmTraceId,
+    }))
+    const { error: hmErr } = await supabase.from('event_log').insert(hmRows)
+    if (hmErr) {
+      console.warn(`[chat-turn] [${requestId}] citation-heading-gate event_log insert failed: ${hmErr.message}`)
     }
   }
 

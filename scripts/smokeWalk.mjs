@@ -1486,14 +1486,14 @@ async function runStaticGate() {
   // Then run the JS-port gate over each fixture and assert the event
   // count + post-mutation qualifier matches the expectation.
   const helpersSource = await readFileText('src/lib/projectStateHelpers.ts')
-  results.push(failures('phase-13: gate function + rejection flag', [
+  results.push(failures('phase-13: gate function + downgrade-and-continue flag', [
     {
       ok: /export function gateQualifiersByRole\b/.test(helpersSource),
       msg: 'projectStateHelpers.ts missing gateQualifiersByRole export',
     },
     {
-      ok: /export const QUALIFIER_GATE_REJECTS\s*=\s*true\b/.test(helpersSource),
-      msg: 'Week 2 invariant: QUALIFIER_GATE_REJECTS must be `true` (rejection mode)',
+      ok: /export const QUALIFIER_GATE_REJECTS\s*=\s*false\b/.test(helpersSource),
+      msg: 'downgrade-and-continue (T-04 Saarland fix): QUALIFIER_GATE_REJECTS must be `false` — the gate downgrades in-place; it must NOT fail the whole turn',
     },
     {
       ok: /export class QualifierRoleViolationError\b/.test(helpersSource),
@@ -4245,13 +4245,13 @@ async function runStaticGate() {
     {
       file: 'src/legal/states/niedersachsen.ts',
       label: 'Niedersachsen',
-      expectedCount: 25, // phase-c/item-3: +§ 14 NBauO (persona-allowlist gap close)
+      expectedCount: 26, // ITEM D: +§ 33 NBauO (Rettungswege) — escape-route § omission close
       mustContain: ['§ 60 NBauO', '§ 62 NBauO', '§ 63 NBauO', '§ 65 NBauO'],
     },
     {
       file: 'src/legal/states/hessen.ts',
       label: 'Hessen',
-      expectedCount: 26,
+      expectedCount: 27, // ITEM D: +§ 36 HBO (Erster und zweiter Rettungsweg, NOT § 33 = Brandwände)
       mustContain: ['§ 63 HBO', '§ 64 HBO', '§ 65 HBO', '§ 66 HBO', '§ 67 HBO'],
     },
   ]
