@@ -265,8 +265,16 @@ test.describe('UI layout guards', () => {
     const send = page.getByRole('button', { name: /^(Send|Senden)$/i })
     const bgEmpty = await send.evaluate((el) => getComputedStyle(el).backgroundColor)
     await textarea.fill('Test message')
-    await page.waitForTimeout(200)
-    const bgTyped = await send.evaluate((el) => getComputedStyle(el).backgroundColor)
-    expect(bgTyped).not.toBe(bgEmpty)
+    // Polling matchers, not a one-shot sample after a fixed wait — CI
+    // WebKit (ubuntu/GTK) under load needs longer than 200ms for the
+    // state flip + 150ms background transition (run #213: webkit-only
+    // failures here while 85 others passed).
+    await expect(send).toBeEnabled()
+    await expect
+      .poll(
+        () => send.evaluate((el) => getComputedStyle(el).backgroundColor),
+        { timeout: 5_000 },
+      )
+      .not.toBe(bgEmpty)
   })
 })
