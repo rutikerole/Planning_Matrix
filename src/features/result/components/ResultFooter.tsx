@@ -21,11 +21,12 @@ interface Props {
 /**
  * Phase 8 — sticky bottom action bar of the Result Workspace.
  *
- * feat/result-actions-to-rail: this bar is now the MOBILE surface only
- * (`spine:hidden`). At ≥900px the same actions live in the identity rail
- * (`ResultRail` → `ResultActions variant="rail"`), so the desktop result page
- * loses its bottom chrome entirely. The action set itself is shared via
- * `ResultActions` — this component is just the mobile sticky shell.
+ * feat/result-actions-to-rail: this bar is the MOBILE surface only. The
+ * workspace MOUNTS it only below 900px (useViewport) and mounts the rail
+ * variant above — so exactly one ResultActions (and one set of modals/toast)
+ * is ever live. No `display:none` on this modal-owning tree. At ≥900px the
+ * same actions live in the identity rail (`ResultRail` → `ResultActions
+ * variant="rail"`); the desktop result page loses its bottom chrome entirely.
  *
  * Shared mode: hidden — recipients shouldn't generate further share links or
  * write actions. The workspace skips this footer entirely when
@@ -39,8 +40,6 @@ export function ResultFooter({ project, messages, events, source }: Props) {
       className={cn(
         'sticky bottom-0 z-[var(--z-band)] bg-paper-card/95 backdrop-blur-[6px] border-t border-ink/15',
         'px-4 sm:px-6 lg:px-8 py-3',
-        // Desktop carries these actions in the rail; hide the bottom bar.
-        'spine:hidden',
       )}
       data-no-print="true"
     >

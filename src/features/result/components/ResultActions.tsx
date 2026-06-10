@@ -164,18 +164,26 @@ export function ResultActions({ project, messages, events, variant }: Props) {
       )}
 
       {isRail ? (
-        // Desktop rail: vertical stack, Export first (primary output), Back
-        // last. Self-hides below the spine breakpoint — the bar takes over.
-        <div className="hidden spine:flex spine:flex-col spine:items-stretch spine:gap-2.5">
-          {exportMenu}
+        // Desktop rail: vertical stack. Conversion-first order — Invite
+        // (emerald) dominant on top, then Send / Take-it-home / Logs, a
+        // hairline divider, then Back (DE/EN + avatar follow in ResultRail).
+        // Mounted ONLY ≥900px (ResultWorkspace gates it via useViewport), so
+        // no CSS hiding and no display:none on this modal-owning tree.
+        <div className="flex flex-col items-stretch gap-2.5">
           {invite}
           {send}
+          {exportMenu}
           {logs}
+          <div
+            role="separator"
+            aria-orientation="horizontal"
+            className="border-t border-ink/10 my-1"
+          />
           {back}
         </div>
       ) : (
         // Mobile bar: Back + secondary cluster on the left, Export on the
-        // right. (The parent <footer> is itself spine:hidden.)
+        // right. Mounted ONLY <900px (the bottom bar is gone on desktop).
         <div className="flex items-center justify-between gap-3 w-full">
           <div className="flex items-center gap-3 min-w-0">
             {back}
