@@ -87,6 +87,38 @@ export function resolveProcedures(
   }
 }
 
+export interface SelectedProcedures {
+  primary: Procedure | undefined
+  fallback: Procedure | undefined
+}
+
+/** Structured verdict identity: status + normalised title (§-verdict), NOT
+ *  free-text rationale. Two §64-erforderlich entries with different rationale
+ *  strings share a key and collapse to one. */
+const verdictKey = (p: Procedure): string =>
+  `${p.status}::${(p.title_de ?? '').toLowerCase().replace(/\s+/g, ' ').trim()}`
+
+/**
+ * YELLOW-2 (T-04 walk) — THE single canonical procedure SELECTION shared by the
+ * Procedure tab and the markdown export: ONE primary card (the required
+ * verdict, else the first) + an optional fallback one-liner shown ONLY when it
+ * is a genuinely DIFFERENT verdict. The markdown previously listed every raw
+ * state.procedures row, so persona over-emission of two identical §-verdicts
+ * (same verdict, two rationale strings: "warehouse → office" / "Lager → Büro")
+ * rendered as two cards while the PDF/tab showed one. Dedup is on the
+ * structured verdict key, never the rationale text.
+ */
+export function selectProcedures(procedures: Procedure[]): SelectedProcedures {
+  const primary =
+    procedures.find((p) => p.status === 'erforderlich') ?? procedures[0]
+  const fallback = primary
+    ? procedures.find(
+        (p) => p.id !== primary.id && verdictKey(p) !== verdictKey(primary),
+      )
+    : undefined
+  return { primary, fallback }
+}
+
 /**
  * Sprint 0 addendum (P1-A sibling) — THE single cost procedure-type resolver.
  *

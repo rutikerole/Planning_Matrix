@@ -196,6 +196,10 @@ export const RISK_CATALOG: RiskCatalogEntry[] = [
     evidencePattern: /altlast|brownfield|gewerbe.*bestand/i,
     bumpedLikelihood: 2,
     bundeslaender: ['bayern'],
+    // T-04 walk YELLOW-4 — "soil pre-investigation before excavation" is an
+    // earthworks risk; a use-change (Lager→Büro fit-out) does no excavation.
+    // Its /gewerbe.*bestand/ pattern would otherwise BUMP it on a GE use-change.
+    excludeIntents: ['umnutzung'],
     unriskDe:
       'Boden-Vorerkundung vor Aushub; Altlastenkataster der LHM einsehen.',
     unriskEn:
@@ -211,6 +215,8 @@ export const RISK_CATALOG: RiskCatalogEntry[] = [
     evidencePattern: /altlast|brownfield|gewerbe.*bestand/i,
     bumpedLikelihood: 2,
     bundeslaender: ['nrw', 'berlin', 'hamburg', 'bremen', 'hessen', 'niedersachsen', 'bw', 'brandenburg', 'mv', 'rlp', 'saarland', 'sachsen', 'sachsen-anhalt', 'sh', 'thueringen'],
+    // T-04 walk YELLOW-4 — excavation/earthworks risk; not a use-change concern.
+    excludeIntents: ['umnutzung'],
     unriskDe:
       'Boden-Vorerkundung vor Aushub; kommunales Altlastenkataster einsehen.',
     unriskEn:

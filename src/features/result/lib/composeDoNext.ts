@@ -122,7 +122,12 @@ interface BaselineStep {
 function baselineFor(project: ProjectRow, lang: 'de' | 'en'): BaselineStep[] {
   const intent = project.intent
   const isNewBuild = intent.startsWith('neubau_') || intent === 'aufstockung' || intent === 'anbau'
-  const isReno = intent === 'sanierung' || intent === 'umnutzung'
+  // T-04 walk YELLOW-4 — umnutzung is NOT a renovation. The reno baseline below
+  // emits "Commission an existing-condition survey · Renovation scope follows
+  // the existing structure", which bled onto a Lager→Büro use-change. A
+  // use-change turns on use-class admissibility + the new use's obligations
+  // (Stellplatz / Brandschutz / escape routes), not on surveying the structure.
+  const isReno = intent === 'sanierung'
   // v1.0.21 Bug 23 — permit-submission § + DSchG short name resolve
   // from the project's Bundesland instead of hard-coded Bayern.
   const c = getStateCitations(project.bundesland)
@@ -161,6 +166,45 @@ function baselineFor(project: ProjectRow, lang: 'de' | 'en'): BaselineStep[] {
             id: 'energy',
             title: 'Energieberater:in frühzeitig einbinden',
             detail: 'GEG-Nachweis 2024 gehört zum Antrag — möglichst vor LP 4 anstoßen.',
+          },
+        ]
+  }
+
+  // T-04 walk YELLOW-4 — use-change baseline (split out of the reno bucket).
+  if (intent === 'umnutzung') {
+    return lang === 'en'
+      ? [
+          {
+            id: 'usecheck',
+            title: 'Confirm the new use is admissible',
+            detail: 'A use change is only permissible if the new use is allowed in the area (§§ 1–11 BauNVO / § 34 BauGB) — clarify with the Bauamt first.',
+          },
+          {
+            id: 'arch',
+            title: 'Engage an architect for the change-of-use permit',
+            detail: `Bauvorlageberechtigt is required by ${c.permitSubmissionCitation}; they scope the (usually simplified) procedure.`,
+          },
+          {
+            id: 'brandschutz',
+            title: 'Check fire-protection + escape routes for the new use',
+            detail: 'A changed use can trigger a second escape route and an updated fire-protection concept — have a planner check early.',
+          },
+        ]
+      : [
+          {
+            id: 'usecheck',
+            title: 'Zulässigkeit der neuen Nutzung klären',
+            detail: 'Eine Nutzungsänderung ist nur zulässig, wenn die neue Nutzung im Gebiet erlaubt ist (§§ 1–11 BauNVO / § 34 BauGB) — zuerst mit dem Bauamt klären.',
+          },
+          {
+            id: 'arch',
+            title: 'Architekt:in für den Nutzungsänderungsantrag binden',
+            detail: `Bauvorlageberechtigt nach ${c.permitSubmissionCitation} zwingend; sie wählen das (i.d.R. vereinfachte) Verfahren.`,
+          },
+          {
+            id: 'brandschutz',
+            title: 'Brandschutz + Rettungswege für die neue Nutzung prüfen',
+            detail: 'Eine geänderte Nutzung kann einen zweiten Rettungsweg und ein angepasstes Brandschutzkonzept auslösen — frühzeitig prüfen lassen.',
           },
         ]
   }
