@@ -113,6 +113,14 @@ export interface Role {
   title_de: string
   title_en: string
   needed: boolean
+  /**
+   * Tri-state middle ground set by the role resolver (never by the model):
+   * `needed:false` + `conditional:true` means the specialist is a deferred
+   * "likely if …" recommendation — present but NOT counted as hard-needed.
+   * Set when a captured fact leaves a conditional requirement unresolved
+   * (e.g. envelope/GEG liability on a use-change). See resolveRoles fact gates.
+   */
+  conditional?: boolean
   rationale_de: string
   rationale_en?: string
   qualifier: Qualifier

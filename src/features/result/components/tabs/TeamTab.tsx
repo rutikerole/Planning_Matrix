@@ -28,7 +28,12 @@ export function TeamTab({ project, state }: Props) {
   const { t, i18n } = useTranslation()
   const lang = (i18n.resolvedLanguage ?? 'de') as 'de' | 'en'
   const resolved = useResolvedRoles(project, state)
-  const roles = resolved.roles.filter((r) => r.needed)
+  // RED-1 — hard-needed specialists, then conditional ("likely if …") ones.
+  // The count reflects HARD-needed only; conditional roles are shown but not
+  // counted as needed (honest deferral — present, not a confident claim).
+  const neededRoles = resolved.roles.filter((r) => r.needed)
+  const conditionalRoles = resolved.roles.filter((r) => !r.needed && r.conditional)
+  const shown = [...neededRoles, ...conditionalRoles]
 
   return (
     <div className="flex flex-col gap-10 max-w-[1100px]">
@@ -42,26 +47,27 @@ export function TeamTab({ project, state }: Props) {
             {t('result.workspace.team.eyebrow')}
           </p>
           <span className="font-serif italic text-[11px] text-clay/85">
-            {t('result.workspace.team.count', { count: roles.length })}
+            {t('result.workspace.team.count', { count: neededRoles.length })}
           </span>
         </header>
-        {!resolved.isFromState && roles.length > 0 && (
+        {!resolved.isFromState && shown.length > 0 && (
           <p className="text-[11px] italic text-clay/85 leading-snug">
             {t('result.workspace.team.baselineNote')}
           </p>
         )}
-        {roles.length === 0 ? (
+        {shown.length === 0 ? (
           <p className="text-[12.5px] italic text-clay/85 leading-relaxed">
             {t('result.workspace.empty.tab')}
           </p>
         ) : (
           <ul className="grid grid-cols-1 lg:grid-cols-2 gap-3">
-            {roles.map((role) => (
+            {shown.map((role) => (
               <RoleCard
                 key={role.id}
                 role={role}
                 lang={lang}
                 isBaseline={!resolved.isFromState}
+                conditional={!role.needed && !!role.conditional}
                 bundesland={project.bundesland}
               />
             ))}
@@ -71,7 +77,7 @@ export function TeamTab({ project, state }: Props) {
 
       {/* v1.0.3 — tab-level aggregate. Renders if any role on this
         * tab is not yet DESIGNER+VERIFIED. */}
-      {roles.some((r) => isPending(r.qualifier?.source, r.qualifier?.quality)) && (
+      {shown.some((r) => isPending(r.qualifier?.source, r.qualifier?.quality)) && (
         <VorlaeufigFooter source={null} quality={null} />
       )}
     </div>
@@ -82,11 +88,13 @@ function RoleCard({
   role,
   lang,
   isBaseline,
+  conditional,
   bundesland,
 }: {
   role: Role
   lang: 'de' | 'en'
   isBaseline: boolean
+  conditional: boolean
   bundesland: string
 }) {
   const { t } = useTranslation()
@@ -114,11 +122,15 @@ function RoleCard({
         <span className="text-[11.5px] font-medium uppercase tracking-[0.18em] text-clay leading-none">
           {title}
         </span>
-        {isBaseline && (
+        {conditional ? (
+          <span className="text-[10px] italic font-serif text-clay/72 leading-none">
+            · {t('result.workspace.team.conditionalBadge')}
+          </span>
+        ) : isBaseline ? (
           <span className="text-[10px] italic font-serif text-clay/72 leading-none">
             · {t('result.workspace.team.likelyBadge')}
           </span>
-        )}
+        ) : null}
       </div>
       {qualification && (
         <p className="font-serif italic text-[12.5px] text-clay/85 leading-snug">

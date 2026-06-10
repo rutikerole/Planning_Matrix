@@ -150,15 +150,23 @@ export function buildExportMarkdown({ project, events, lang }: BuildArgs): strin
     lines.push('')
     lines.push(`## ${t('Fachplaner', 'Specialists Needed')}`)
     lines.push('')
+    // RED-1 — three states: needed → conditional ("likely if …") → not-needed.
+    const roleRank = (r: (typeof roles)[number]): number =>
+      r.needed ? 0 : r.conditional ? 1 : 2
     roles
       .slice()
-      .sort((a, b) => (a.needed === b.needed ? 0 : a.needed ? -1 : 1))
+      .sort((a, b) => roleRank(a) - roleRank(b))
       .forEach((r) => {
         const title = lang === 'en' ? r.title_en : r.title_de
         const tag = r.needed
           ? t('erforderlich', 'needed')
-          : t('nicht erforderlich', 'not needed')
-        lines.push(`- [${r.needed ? ' ' : 'x'}] ${title} — *${tag}*`)
+          : r.conditional
+            ? t('bedingt', 'conditional')
+            : t('nicht erforderlich', 'not needed')
+        // Open checkbox for needed AND conditional (both stay on the radar);
+        // checked only when genuinely not needed.
+        const box = r.needed || r.conditional ? ' ' : 'x'
+        lines.push(`- [${box}] ${title} — *${tag}*`)
         if (r.rationale_de) lines.push(`  ${r.rationale_de}`)
       })
     lines.push('')

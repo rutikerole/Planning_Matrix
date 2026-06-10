@@ -2010,7 +2010,8 @@
         "stakeholdersEyebrow": "Project stakeholders",
         "effortLabel": "Effort",
         "baselineNote": "Suggested standard for projects of this type — overwritten by concrete consultant recommendations.",
-        "likelyBadge": "likely"
+        "likelyBadge": "likely",
+        "conditionalBadge": "conditional — confirm with architect"
       },
       "cost": {
         "costEyebrow": "Consultation cost",

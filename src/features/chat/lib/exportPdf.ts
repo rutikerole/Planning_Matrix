@@ -997,9 +997,12 @@ export async function buildExportPdf({
   // v1.0.18 Bug 36 — render ALL specialists with needed/not-needed
   // badge + rationale. v1.0.17 filtered to r.needed only which
   // dropped not-needed specialists entirely.
+  // RED-1 — three states: needed → conditional ("likely if …") → not-needed.
+  const roleRank = (r: (typeof roles)[number]): number =>
+    r.needed ? 0 : r.conditional ? 1 : 2
   const specialistRows: SpecialistRow[] = roles
     .slice()
-    .sort((a, b) => (a.needed === b.needed ? 0 : a.needed ? -1 : 1))
+    .sort((a, b) => roleRank(a) - roleRank(b))
     .map((r) => ({
       title: (lang === 'en' ? r.title_en : r.title_de) ?? '',
       needed: r.needed,
@@ -1007,7 +1010,9 @@ export async function buildExportPdf({
         ((lang === 'en' ? r.rationale_en : r.rationale_de) ?? r.rationale_de ?? ''),
       badgeLabel: r.needed
         ? lang === 'en' ? 'NEEDED' : 'ERFORDERLICH'
-        : lang === 'en' ? 'NOT NEEDED' : 'NICHT ERFORDERLICH',
+        : r.conditional
+          ? lang === 'en' ? 'CONDITIONAL' : 'BEDINGT'
+          : lang === 'en' ? 'NOT NEEDED' : 'NICHT ERFORDERLICH',
     }))
   renderTeamBody(teamPage, editorialFonts, pdfStrings, {
     specialists: specialistRows,

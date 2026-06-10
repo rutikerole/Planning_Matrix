@@ -45,6 +45,7 @@
     "smoke:thin-state": "npx tsx scripts/smoke-thin-state-propagation.mts",
     "smoke:cost-procedure": "npx tsx scripts/smoke-cost-procedure.mts",
     "smoke:class2-capture": "npx tsx scripts/smoke-class2-capture.mts",
+    "smoke:role-gating": "npx tsx scripts/smoke-role-gating.mts",
     "smoke:export-parity": "npx tsx scripts/smoke-export-parity.mts",
     "smoke:architect-e2e": "node scripts/architect-e2e-smoke.mjs",
     "smoke:matrix": "node scripts/smoke-walk-matrix.mjs",
