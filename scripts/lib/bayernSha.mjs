@@ -120,6 +120,26 @@
 //     NB the hash fingerprints raw SOURCE (escape sequences intact), as it
 //     always has — not the evaluated runtime string; hashing the evaluated
 //     constants is a recommended follow-up. Length 49612 → 91295.
+//   - 2026-06-10 CLASS-2 capture fix (fix/class2-capture): f9743ff3…0d75e →
+//     45aea17a…209231 — INTENTIONAL re-baseline. The MV live walk PROVED the
+//     Phase-3 soft directive was insufficient (the persona wrote conclusions in
+//     prose but emitted NONE of the 7 reader keys; layer diagnosis confirmed the
+//     pipeline/composer pass an emitted key through, so the gap is purely model
+//     emission). The STRUKTUR- UND VERFAHRENS-FAKTEN block in
+//     personaBehaviour.ts A.5/D.5 was HARDENED into an explicit emission
+//     CONTRACT, WITH an over-emission safety valve: emit a fact ONLY when the
+//     conclusion is GROUNDED (correct quality tag — CALCULATED only when computed
+//     from a stated fact, never for an unconfirmed value); a NEGATIVE (e.g.
+//     denkmalschutz=false) needs the SAME grounding as a positive — if unknown,
+//     emit NO key and raise an open question, because an ungrounded `false`
+//     suppresses the conservative risk flag (composeRisks Bug 57/96: value===false
+//     OR ASSUMED-negative both suppress Heritage) → "rich but wrong". The old
+//     directive's "kein Denkmal → denkmalschutz=false" example was REMOVED (it was
+//     the over-emission pressure). Length 91295 → 93181 (+1886). EDGE-FN: needs a
+//     manual `supabase functions deploy chat-turn` + a fresh MV walk verifying
+//     TWO things — keys now appear in PDF Key Data AND are correctly valued/
+//     qualified (denkmalschutz not asserted false without grounding; procedure
+//     still §63 CALCULATED, no CLASS-1 regression).
 // ───────────────────────────────────────────────────────────────────────
 
 import { readFile } from 'node:fs/promises'
@@ -131,7 +151,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url))
 const REPO_ROOT = join(__dirname, '..', '..')
 
 export const EXPECTED_BAYERN_SHA =
-  'f9743ff3a819d43234da451cc76d30f623113ef5d3859eed19df4b440655d75e'
+  '45aea17a352aa1249acb7ffaa4a52b1e46ed1d4843d9bd43193d23299e209231'
 
 const SLICE_SEPARATOR = '\n\n---\n\n'
 const TAIL =
