@@ -877,6 +877,79 @@ function decideProcedure(c: ProcedureCase): ProcedureDecision {
       ],
     }
   }
+  // ── Four-class campaign Phase 1 — STRUCTURAL verdict honoring (root fix for
+  // CLASS 1 + the CLASS-3 procedure-keyword fragility). A citation-only verdict
+  // ("§ 63 LBauO M-V", no German keyword) reached here for neubau/aufstockung/
+  // anbau/sonstiges and fell to the generic standard-§-ASSUMED below, masking the
+  // persona's computed § on 78 cells. Classify it by COMPARING its cited § to the
+  // state's free/simplified/regular §§ (all 16 states' §§ are DISTINCT, verified).
+  // The read is SYMMETRIC — a regular § maps to standard, a simplified § to
+  // vereinfachtes — so it can NEVER flip a correct standard verdict into a wrong
+  // simplified one (the hunted regression). Placed AFTER hard-blocker + Sonderbau
+  // + every keyword + NRW + sanierung + umnutzung branch (all unchanged) and
+  // BEFORE the generic fallback, so its ONLY effect is to upgrade the masked
+  // citation-only cases — zero output drift on existing branches. CALCULATED (the
+  // persona cited a specific §). Falls through to generic only when the § matches
+  // none of the state's procedure §§ (honest: a verdict we cannot classify).
+  const verdictCite = extractProcedureCitation(viRaw)
+  if (verdictCite) {
+    const procLoc = getStateLocalization(c.bundesland).procedure
+    const normCite = (s: string): string => s.replace(/\s+/g, ' ').trim().toLowerCase()
+    const vc = normCite(verdictCite)
+    const freeC = procLoc.free?.citation?.trim() ?? ''
+    const simpC = procLoc.simplified.citation.trim()
+    const regC = procLoc.regular.citation.trim()
+    if (freeC && normCite(freeC) === vc) {
+      return {
+        kind: 'verfahrensfrei',
+        citation: verdictCite,
+        reasoning_de: `Verfahrensfrei nach ${verdictCite} — kein Bauantrag und keine förmliche Anzeige erforderlich; Verfahrensfreiheit mit der unteren Bauaufsichtsbehörde bestätigen.`,
+        reasoning_en: `Permit-free under ${verdictCite} — no building application and no formal notification required; confirm the permit-free status with the lower building authority.`,
+        confidence: 'CALCULATED',
+        caveats: [
+          {
+            kind: 'bebauungsplan_specific',
+            message_de: 'Verfahrensfreiheit vor Arbeitsbeginn mit der unteren Bauaufsichtsbehörde bestätigen — bei Sonderbau-Tatbeständen oder höherer Gebäudeklasse kann eine Genehmigungspflicht greifen.',
+            message_en: 'Confirm permit-free status with the lower building authority before work begins — a Sonderbau scope or higher building class can reinstate a permit requirement.',
+          },
+        ],
+      }
+    }
+    if (simpC && normCite(simpC) === vc) {
+      return {
+        kind: 'vereinfachtes',
+        citation: verdictCite,
+        reasoning_de: `Vereinfachtes Baugenehmigungsverfahren nach ${verdictCite} — Bauantrag erforderlich; das Bauamt prüft Planungsrecht und örtliche Bauvorschriften, die bauvorlageberechtigte Person haftet für die übrige Materie.`,
+        reasoning_en: `Simplified building permit under ${verdictCite} — a building application is required; the authority reviews planning law and local building rules, the submission-authorized planner is liable for the remaining substance.`,
+        confidence: 'CALCULATED',
+        caveats: [
+          {
+            kind: 'bebauungsplan_specific',
+            message_de: 'Anwendbarkeit des vereinfachten Verfahrens mit dem lokalen Bauamt bestätigen; bei Sonderbau-Tatbeständen greift das reguläre Verfahren.',
+            message_en: 'Confirm applicability of the simplified procedure with the local building authority; a Sonderbau scope reinstates the regular procedure.',
+          },
+        ],
+      }
+    }
+    if (regC && normCite(regC) === vc) {
+      return {
+        kind: 'standard',
+        citation: verdictCite,
+        reasoning_de: `Reguläres Baugenehmigungsverfahren (${verdictCite}) — vollständige bauaufsichtliche Prüfung. Bauantrag mit allen Bauvorlagen erforderlich.`,
+        reasoning_en: `Standard (full) building-permit procedure (${verdictCite}) — full building-authority review. A building application with all required documents is needed.`,
+        confidence: 'CALCULATED',
+        caveats: [
+          {
+            kind: 'bebauungsplan_specific',
+            message_de: 'Verfahrensart mit dem lokalen Bauamt bestätigen; Prüfumfang und Fachgutachten je nach Gebäudeklasse und Sonderbau-Tatbestand.',
+            message_en: 'Confirm the procedure with the local building authority; review scope and specialist reports depend on the building class and any Sonderbau scope.',
+          },
+        ],
+      }
+    }
+    // § matches none of the state's procedure §§ → fall through to the generic
+    // standard-ASSUMED below (honest: a verdict we have, but cannot classify).
+  }
   // ── T-05 sprint — ABBRUCH (demolition), the missing intent branch. Before
   // this, a demolition with no readable verdict fell through every branch to
   // the generic fallback below, which emitted "Standard building permit
@@ -884,6 +957,12 @@ function decideProcedure(c: ProcedureCase): ProcedureDecision {
   // The demolition verdict family is verfahrensfrei / anzeige /
   // genehmigungspflichtig-only-where-law-says (MBO family: small freestanding
   // buildings free, larger or attached ones notification + statutory wait).
+  // ORDERING CONTRACT: this branch runs AFTER the Phase-1 citation-only
+  // §-classifier — a citation-only verdict citing the state's free/
+  // simplified/regular § resolves by its CLASS up there (the four-class
+  // sweep caught this branch consuming a simplified-§ citation as the
+  // demolition citation when it ran first). Only unclassifiable verdicts
+  // (§ 63a-class beseitigung §§, prose) and no-verdict cases reach here.
   // The NO-INFORMATION baseline is the state's owner-side Beseitigung-§ with
   // honest verify framing at the CONSERVATIVE tier (anzeige) — NEVER the
   // regular building permit. Citation source: corpus abbruch_beseitigung pick
@@ -967,79 +1046,6 @@ function decideProcedure(c: ProcedureCase): ProcedureDecision {
       confidence: 'ASSUMED',
       caveats: [verifyCaveat],
     }
-  }
-  // ── Four-class campaign Phase 1 — STRUCTURAL verdict honoring (root fix for
-  // CLASS 1 + the CLASS-3 procedure-keyword fragility). A citation-only verdict
-  // ("§ 63 LBauO M-V", no German keyword) reached here for neubau/aufstockung/
-  // anbau/sonstiges and fell to the generic standard-§-ASSUMED below, masking the
-  // persona's computed § on 78 cells. Classify it by COMPARING its cited § to the
-  // state's free/simplified/regular §§ (all 16 states' §§ are DISTINCT, verified).
-  // The read is SYMMETRIC — a regular § maps to standard, a simplified § to
-  // vereinfachtes — so it can NEVER flip a correct standard verdict into a wrong
-  // simplified one (the hunted regression). Placed AFTER hard-blocker + Sonderbau
-  // + every keyword + NRW + sanierung + umnutzung branch (all unchanged) and
-  // BEFORE the generic fallback, so its ONLY effect is to upgrade the masked
-  // citation-only cases — zero output drift on existing branches. CALCULATED (the
-  // persona cited a specific §). Falls through to generic only when the § matches
-  // none of the state's procedure §§ (honest: a verdict we cannot classify).
-  const verdictCite = extractProcedureCitation(viRaw)
-  if (verdictCite) {
-    const procLoc = getStateLocalization(c.bundesland).procedure
-    const normCite = (s: string): string => s.replace(/\s+/g, ' ').trim().toLowerCase()
-    const vc = normCite(verdictCite)
-    const freeC = procLoc.free?.citation?.trim() ?? ''
-    const simpC = procLoc.simplified.citation.trim()
-    const regC = procLoc.regular.citation.trim()
-    if (freeC && normCite(freeC) === vc) {
-      return {
-        kind: 'verfahrensfrei',
-        citation: verdictCite,
-        reasoning_de: `Verfahrensfrei nach ${verdictCite} — kein Bauantrag und keine förmliche Anzeige erforderlich; Verfahrensfreiheit mit der unteren Bauaufsichtsbehörde bestätigen.`,
-        reasoning_en: `Permit-free under ${verdictCite} — no building application and no formal notification required; confirm the permit-free status with the lower building authority.`,
-        confidence: 'CALCULATED',
-        caveats: [
-          {
-            kind: 'bebauungsplan_specific',
-            message_de: 'Verfahrensfreiheit vor Arbeitsbeginn mit der unteren Bauaufsichtsbehörde bestätigen — bei Sonderbau-Tatbeständen oder höherer Gebäudeklasse kann eine Genehmigungspflicht greifen.',
-            message_en: 'Confirm permit-free status with the lower building authority before work begins — a Sonderbau scope or higher building class can reinstate a permit requirement.',
-          },
-        ],
-      }
-    }
-    if (simpC && normCite(simpC) === vc) {
-      return {
-        kind: 'vereinfachtes',
-        citation: verdictCite,
-        reasoning_de: `Vereinfachtes Baugenehmigungsverfahren nach ${verdictCite} — Bauantrag erforderlich; das Bauamt prüft Planungsrecht und örtliche Bauvorschriften, die bauvorlageberechtigte Person haftet für die übrige Materie.`,
-        reasoning_en: `Simplified building permit under ${verdictCite} — a building application is required; the authority reviews planning law and local building rules, the submission-authorized planner is liable for the remaining substance.`,
-        confidence: 'CALCULATED',
-        caveats: [
-          {
-            kind: 'bebauungsplan_specific',
-            message_de: 'Anwendbarkeit des vereinfachten Verfahrens mit dem lokalen Bauamt bestätigen; bei Sonderbau-Tatbeständen greift das reguläre Verfahren.',
-            message_en: 'Confirm applicability of the simplified procedure with the local building authority; a Sonderbau scope reinstates the regular procedure.',
-          },
-        ],
-      }
-    }
-    if (regC && normCite(regC) === vc) {
-      return {
-        kind: 'standard',
-        citation: verdictCite,
-        reasoning_de: `Reguläres Baugenehmigungsverfahren (${verdictCite}) — vollständige bauaufsichtliche Prüfung. Bauantrag mit allen Bauvorlagen erforderlich.`,
-        reasoning_en: `Standard (full) building-permit procedure (${verdictCite}) — full building-authority review. A building application with all required documents is needed.`,
-        confidence: 'CALCULATED',
-        caveats: [
-          {
-            kind: 'bebauungsplan_specific',
-            message_de: 'Verfahrensart mit dem lokalen Bauamt bestätigen; Prüfumfang und Fachgutachten je nach Gebäudeklasse und Sonderbau-Tatbestand.',
-            message_en: 'Confirm the procedure with the local building authority; review scope and specialist reports depend on the building class and any Sonderbau scope.',
-          },
-        ],
-      }
-    }
-    // § matches none of the state's procedure §§ → fall through to the generic
-    // standard-ASSUMED below (honest: a verdict we have, but cannot classify).
   }
   // Generic branch for unmigrated states/intents.
   //
