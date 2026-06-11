@@ -648,7 +648,10 @@ function decideProcedure(c: ProcedureCase): ProcedureDecision {
   // permit the resolver would require) so this can't weaken a real
   // obligation. Hard blockers above still take precedence.
   const vi = viRaw.toLowerCase()
-  if (/verfahrensfrei|verfahrensfreiheit|permit[- ]?free|genehmigungsfrei|no permit (?:required|needed)/.test(vi)) {
+  // T-05 sprint 2.5-B (caught by smoke-t01-composer): "genehmigungsfrei" must
+  // NOT match Genehmigungsfreistellung/-freigestellt — Freistellung is a
+  // notification+wait regime, not freedom; it has its own branch below.
+  if (/verfahrensfrei|verfahrensfreiheit|permit[- ]?free|genehmigungsfrei(?!gestellt|stellung)|no permit (?:required|needed)/.test(vi)) {
     const cited = extractProcedureCitation(c.verfahren_indikation ?? '')
     const freeCitation =
       cited ?? getStateLocalization(c.bundesland).procedure.free?.citation ?? ''
@@ -665,6 +668,31 @@ function decideProcedure(c: ProcedureCase): ProcedureDecision {
             'Verfahrensfreiheit vor Arbeitsbeginn mit der unteren Bauaufsichtsbehörde bestätigen — bei Sonderbau-Tatbeständen oder höherer Gebäudeklasse kann eine Genehmigungspflicht greifen.',
           message_en:
             'Confirm permit-free status with the lower building authority before work begins — a Sonderbau scope or higher building class can reinstate a permit requirement.',
+        },
+      ],
+    }
+  }
+  // T-05 sprint 2.5-B — honor an explicit GENEHMIGUNGSFREISTELLUNG verdict.
+  // Before this there was NO Freistellung branch: the free-branch regex
+  // swallowed it as verfahrensfrei (lookahead bug above) and after that fix it
+  // would have fallen to the intent baseline — masking the verdict either way.
+  if (/genehmigungsfreistellung|genehmigungsfreigestellt|freistellungsverfahren|\bfreistellung\b/.test(vi)) {
+    const cited = extractProcedureCitation(viRaw)
+    const fsCitation =
+      cited ?? STATE_CORPUS_PROCEDURE[c.bundesland]?.freistellung ?? ''
+    return {
+      kind: 'genehmigungsfreigestellt',
+      citation: fsCitation || viRaw.trim(),
+      reasoning_de: `Genehmigungsfreistellung${fsCitation ? ` nach ${fsCitation}` : ''} — kein Bauantrag, aber Vorlage bei der Gemeinde mit Wartefrist vor Baubeginn; Voraussetzungen (qualifizierter Bebauungsplan, keine Sonderbauten) müssen vollständig vorliegen.`,
+      reasoning_en: `Permit exemption (Freistellung)${fsCitation ? ` under ${fsCitation}` : ''} — no building application, but submission to the municipality with a waiting period before construction; the preconditions (qualified Bebauungsplan, no Sonderbau scope) must be fully met.`,
+      confidence: 'CALCULATED',
+      caveats: [
+        {
+          kind: 'bebauungsplan_specific',
+          message_de:
+            'Freistellungs-Voraussetzungen (qualifizierter B-Plan, Erschließung, kein Sonderbau) mit der Gemeinde bestätigen — fehlt eine, greift das Genehmigungsverfahren.',
+          message_en:
+            'Confirm the exemption preconditions (qualified B-Plan, infrastructure, no Sonderbau) with the municipality — if any is missing, the permit procedure applies.',
         },
       ],
     }
@@ -877,6 +905,52 @@ function decideProcedure(c: ProcedureCase): ProcedureDecision {
       ],
     }
   }
+  // ── T-05 sprint Phase 2.5-A — NEUBAU / AUFSTOCKUNG / ANBAU intent branch.
+  // The intent-branch audit proved these intents hit the generic standard-§-
+  // ASSUMED fallback on every state without a dedicated branch (NRW neubau
+  // excepted): a zero-verdict T-01/T-02/T-06/T-07 PDF said "Standard building
+  // permit … as the starting point · ASSUMED" while the web baseline said
+  // simplified — the same masking default + surface split the abbruch branch
+  // closed for T-05. Doctrine (sweep + deriveBaselineProcedure + the sanierung/
+  // umnutzung siblings): a residential project that cleared the hard-blocker +
+  // Sonderbau gates is a non-Sonderbau permit case → SIMPLIFIED baseline,
+  // CALCULATED (intent + non-Sonderbau). Explicit verdicts still win above;
+  // honorContradictingVerdict covers free/regular contradictions.
+  if (
+    c.intent === 'neubau' ||
+    c.intent === 'aufstockung' ||
+    c.intent === 'anbau'
+  ) {
+    const honored = honorContradictingVerdict(viRaw, c.bundesland)
+    if (honored) return honored
+    const loc = getStateLocalization(c.bundesland)
+    const simp = loc.procedure.simplified
+    const simpCitation = simp.citation.trim()
+    const hasCitation = simpCitation.length > 0
+    const citeDe = hasCitation ? ` (${simpCitation})` : ' (landesrechtliche Detail-Spezifika in Vorbereitung)'
+    const citeEn = hasCitation ? ` (${simpCitation})` : ' (state-specific details being finalized)'
+    const isNeubau = c.intent === 'neubau'
+    return {
+      kind: 'vereinfachtes',
+      citation: hasCitation ? simpCitation : 'landesrechtliche Detail-Spezifika in Vorbereitung',
+      reasoning_de: isNeubau
+        ? `Neubau ohne Sonderbau-Tatbestand — regelmäßig im vereinfachten Verfahren${citeDe}. Bei qualifiziertem Bebauungsplan kann die Genehmigungsfreistellung in Betracht kommen; Verfahrensart mit dem lokalen Bauamt bestätigen.`
+        : `${c.intent === 'aufstockung' ? 'Aufstockung' : 'Anbau'} ist regelmäßig genehmigungspflichtig; für nicht-Sonderbauten typischerweise im vereinfachten Verfahren${citeDe}. Geringfügige Maßnahmen können verfahrensfrei sein — Verfahrensart mit dem lokalen Bauamt bestätigen.`,
+      reasoning_en: isNeubau
+        ? `New construction without a Sonderbau scope — typically via the simplified procedure${citeEn}. With a qualified Bebauungsplan the permit-exemption (Freistellung) route may be available; confirm the procedure with the local building authority.`
+        : `${c.intent === 'aufstockung' ? 'A storey addition' : 'An extension'} typically requires a building permit; for non-Sonderbau cases via the simplified procedure${citeEn}. Minor measures may be permit-free — confirm the procedure with the local building authority.`,
+      confidence: 'CALCULATED',
+      caveats: [
+        {
+          kind: 'bebauungsplan_specific',
+          message_de:
+            'Anwendbarkeit des vereinfachten Verfahrens mit dem lokalen Bauamt bestätigen; bei Sonderbau-Tatbeständen greift das reguläre Verfahren.',
+          message_en:
+            'Confirm applicability of the simplified procedure with the local building authority; a Sonderbau scope reinstates the regular procedure.',
+        },
+      ],
+    }
+  }
   // ── Four-class campaign Phase 1 — STRUCTURAL verdict honoring (root fix for
   // CLASS 1 + the CLASS-3 procedure-keyword fragility). A citation-only verdict
   // ("§ 63 LBauO M-V", no German keyword) reached here for neubau/aufstockung/
@@ -899,6 +973,26 @@ function decideProcedure(c: ProcedureCase): ProcedureDecision {
     const freeC = procLoc.free?.citation?.trim() ?? ''
     const simpC = procLoc.simplified.citation.trim()
     const regC = procLoc.regular.citation.trim()
+    // T-05 sprint 2.5-B — the Freistellung § (corpus pack; stateLocalization
+    // has no freistellung field) so a citation-only Freistellung-§ verdict
+    // classifies instead of falling to the intent baseline.
+    const fsC = STATE_CORPUS_PROCEDURE[c.bundesland]?.freistellung?.trim() ?? ''
+    if (fsC && normCite(fsC) === vc) {
+      return {
+        kind: 'genehmigungsfreigestellt',
+        citation: verdictCite,
+        reasoning_de: `Genehmigungsfreistellung nach ${verdictCite} — kein Bauantrag, aber Vorlage bei der Gemeinde mit Wartefrist vor Baubeginn; Voraussetzungen mit der Gemeinde bestätigen.`,
+        reasoning_en: `Permit exemption (Freistellung) under ${verdictCite} — no building application, but submission to the municipality with a waiting period; confirm the preconditions with the municipality.`,
+        confidence: 'CALCULATED',
+        caveats: [
+          {
+            kind: 'bebauungsplan_specific',
+            message_de: 'Freistellungs-Voraussetzungen (qualifizierter B-Plan, kein Sonderbau) mit der Gemeinde bestätigen.',
+            message_en: 'Confirm the exemption preconditions (qualified B-Plan, no Sonderbau) with the municipality.',
+          },
+        ],
+      }
+    }
     if (freeC && normCite(freeC) === vc) {
       return {
         kind: 'verfahrensfrei',

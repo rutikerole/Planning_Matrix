@@ -1,6 +1,5 @@
 import type { ProjectRow } from '@/types/db'
 import type { Procedure, ProjectState } from '@/types/projectState'
-import { deriveBaselineProcedure } from './deriveBaselineProcedure'
 import { detectProcedure, type ProcedureType } from './costNormsMuenchen'
 import {
   buildProcedureCase,
@@ -100,23 +99,18 @@ export function resolveProcedures(
 
   const pcase = buildProcedureCase(project, state)
   const hasVerdict = !!pcase.verfahren_indikation?.trim()
-  const hasSonderbau = (pcase.sonderbau_count ?? 0) >= 1
-  if (hasVerdict || hasSonderbau || personaHadVerdict || pcase.intent === 'abbruch') {
-    const decision = resolveProcedure(pcase)
-    return {
-      procedures: [procedureFromDecision(decision), ...overlays],
-      // persona-grounded when the verdict came from persona facts/procedures —
-      // the "likely" badge belongs to resolver-only/baseline paths.
-      isFromState: hasVerdict || personaHadVerdict,
-    }
-  }
-
+  // T-05 sprint Phase 2.5-A — ALWAYS decision-first. The deriveBaselineProcedure
+  // bypass was the last surface that could disagree with the PDF (the intent-
+  // branch audit showed zero-verdict NRW T-03 rendering § 64-simplified on the
+  // web vs the facts-tree § 62-verfahrensfrei on the PDF; T-08 simplified vs
+  // standard). Every intent now has a resolver branch with an honest baseline,
+  // so the decision IS the baseline — one source, no split possible.
+  const decision = resolveProcedure(pcase)
   return {
-    procedures: deriveBaselineProcedure({
-      intent: project.intent,
-      bundesland: project.bundesland,
-    }),
-    isFromState: false,
+    procedures: [procedureFromDecision(decision), ...overlays],
+    // persona-grounded when the verdict came from persona facts/procedures —
+    // the "likely" badge belongs to resolver-only/baseline paths.
+    isFromState: hasVerdict || personaHadVerdict,
   }
 }
 
