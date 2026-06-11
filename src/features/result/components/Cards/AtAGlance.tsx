@@ -20,6 +20,7 @@ import {
   deriveGkInputFromFacts,
   formatGebaeudeklasseValue,
   gkDerivationCarveOut,
+  isExplicitKlasseFactKey,
 } from '@/legal/deriveGebaeudeklasse'
 
 interface Props {
@@ -205,10 +206,11 @@ function resolveBuildingClass(
     if (typeof f.value === 'number') return `GK ${f.value}`
   }
 
-  // 2. Generic regex fallback for any key containing "klasse".
-  const regexHit = facts.find((f) =>
-    /gebaeudeklasse|geb_klasse|gk_/i.test(f.key),
-  )
+  // 2. Generic fallback for class-bearing keys — fix/t06-walk1: predicate
+  // single-sourced with the PDF Key-Data row (deriveGebaeudeklasse). The old
+  // substring match's bare `gk_` branch let the free-form TRANSITION fact
+  // `gk_sprung` ("GK 2/3 auf GK 4", BW T-06 walk 1) render AS the class.
+  const regexHit = facts.find((f) => isExplicitKlasseFactKey(f.key))
   if (regexHit && typeof regexHit.value === 'string') {
     return prettyClass(regexHit.value)
   }

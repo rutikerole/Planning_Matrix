@@ -89,7 +89,16 @@ const baselineRole = (
   ...(gate ? { gate } : {}),
 })
 
-const NEW_BUILD_ROLES = (citations: StateCitationPack): BaselineRole[] => [
+// fix/t06-walk1 — `vermesserContext`: NEW_BUILD_ROLES is shared by
+// neubau_einfamilienhaus, aufstockung and anbau, but its Vermesser rationale
+// claimed "bei Neubauten … Pflicht" / "mandatory for new builds" — which the
+// BW T-06 walk 1 rendered verbatim on a storey addition (Team card + .md).
+// The Bestand intents get a Bauantrag-framed rationale at the factory layer
+// (covers T-07 Anbau too); neubau keeps the original text byte-identical.
+const NEW_BUILD_ROLES = (
+  citations: StateCitationPack,
+  vermesserContext: 'neubau' | 'bestand' = 'neubau',
+): BaselineRole[] => [
   baselineRole(
     'R-Architekt',
     'Architekt:in',
@@ -118,8 +127,12 @@ const NEW_BUILD_ROLES = (citations: StateCitationPack): BaselineRole[] => [
     'R-Vermesser',
     'Vermesser:in',
     'Surveyor',
-    `Amtlicher Lageplan; bei Neubauten in ${citations.labelDe} Pflicht.`,
-    `Official site plan; mandatory for new builds in ${citations.labelEn}.`,
+    vermesserContext === 'bestand'
+      ? `Amtlicher Lageplan als Bauvorlage zum Bauantrag in ${citations.labelDe}.`
+      : `Amtlicher Lageplan; bei Neubauten in ${citations.labelDe} Pflicht.`,
+    vermesserContext === 'bestand'
+      ? `Official site plan as part of the permit application in ${citations.labelEn}.`
+      : `Official site plan; mandatory for new builds in ${citations.labelEn}.`,
     citations.labelDe,
   ),
   baselineRole(
@@ -367,9 +380,10 @@ export function deriveBaselineRoles({ intent, bundesland, procedureKind }: Args)
     case 'neubau_mehrfamilienhaus':
       return MFH_NEW_BUILD_ROLES(citations)
     case 'neubau_einfamilienhaus':
+      return NEW_BUILD_ROLES(citations)
     case 'aufstockung':
     case 'anbau':
-      return NEW_BUILD_ROLES(citations)
+      return NEW_BUILD_ROLES(citations, 'bestand')
     case 'sanierung':
     case 'umnutzung':
       return RENOVATION_ROLES(citations)

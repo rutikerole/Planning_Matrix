@@ -3723,6 +3723,7 @@ async function runStaticGate() {
   const ataGlanceSrcS2 = await readFileText('src/features/result/components/Cards/AtAGlance.tsx')
   const resolveProcSrcS2 = await readFileText('src/legal/resolveProcedure.ts')
   const exportPdfSrcS2 = await readFileText('src/features/chat/lib/exportPdf.ts')
+  const deriveGkSrcS2 = await readFileText('src/legal/deriveGebaeudeklasse.ts')
   results.push(failures('Sprint 2: fact-capture directive present + keys match result layer', [
     // Directive present in the shared (Bayern-SHA-covered) persona block
     {
@@ -3753,8 +3754,16 @@ async function runStaticGate() {
       msg: 'AtAGlance resolveBuildingClass must read the gebaeudeklasse key the directive writes',
     },
     {
-      ok: /\/\^\(\?:gebaeudeklasse/.test(exportPdfSrcS2) || /gebaeudeklasse\|geb_klasse\|gk_/.test(exportPdfSrcS2),
-      msg: 'PDF explicit-klasse detection must read the gebaeudeklasse key the directive writes',
+      // fix/t06-walk1 — the inline regex moved to the single-sourced
+      // isExplicitKlasseFactKey predicate (deriveGebaeudeklasse.ts), shared
+      // with At-a-Glance; the old bare `gk_` prefix let the free-form
+      // transition fact gk_sprung suppress the derived row. Behaviour (incl.
+      // gebaeudeklasse matching + gk_sprung exclusion) is pinned functionally
+      // in smoke-t06-composer.
+      ok: /isExplicitKlasseFactKey\(/.test(exportPdfSrcS2) &&
+          /export function isExplicitKlasseFactKey/.test(deriveGkSrcS2) &&
+          /gebaeudeklasse/.test(deriveGkSrcS2),
+      msg: 'PDF explicit-klasse detection must run on the single-sourced isExplicitKlasseFactKey predicate (reads the directive-written gebaeudeklasse key)',
     },
     // Sonderbau contract: directive writes count + trigger keys ↔ detectSonderbauCount reads them
     {

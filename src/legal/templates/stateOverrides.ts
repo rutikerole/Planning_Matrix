@@ -4137,6 +4137,15 @@ NICHT IM LBO-Saarland-Korpus (NICHT erfinden):
     // B2 batch 3 — BW × T-06 authored 2026-05-28. LBO BW §§ corpus-verified.
     // § 27f LBO BW's heading explicitly names "Dachgeschossausbauten oder
     // Aufstockungen zu Wohnzwecken" — strong match for T-06.
+    // fix/t06-walk1 (2026-06-11) — ROUTING + GK/ABSTANDSFLÄCHEN + STELLPLÄTZE
+    // re-authored against the INGESTED provision bodies (AKBW Merkblatt 610
+    // Volltext Stand 16.03.2026; corpus §§ 2/5/27f/37/56 body_de_official):
+    // walk 1 proved the heading-deep cell let the persona conclude
+    // "Ablösung erforderlich" against § 37's baseline while § 37 Abs. 3 S. 2
+    // exempts Wohnraum-Aufstockungen from new Stellplätze entirely and
+    // Abs. 7 S. 1 excludes dwellings from the Ablöse route. Edit is
+    // BLOCKED-ON-LAWYER-CONFIRM — see docs/LEGAL_REVIEW_LEDGER.md LRL-1
+    // (open: municipal Stellplatzsatzung vs. Landesprivileg).
     bw: `══════════════════════════════════════════════════════════════════════════
 LANDESSPEZIFISCHER ZUSATZ — BW × T-06 (Aufstockung / Dachgeschossausbau)
 ══════════════════════════════════════════════════════════════════════════
@@ -4146,28 +4155,48 @@ LBO ersetzen sämtliche oben genannten Bayern-Verweise. Quelle:
 baunormenlexikon.de und dejure.org (mirror-tier).
 
 ROUTING:
-Aufstockungen und DG-Ausbauten zu Wohnzwecken sind in BW substantiell
-durch § 27f LBO BW geregelt (Nutzungsänderungen und bauliche Änderungen im
-Bestand bei tragenden, aussteifenden und raumabschließenden Bauteilen
-sowie Dachgeschossausbauten oder Aufstockungen zu Wohnzwecken). Bei
-Eingriffen in Rettungswege gilt § 28d LBO BW. Verfahrensseitig regelmäßig
-das vereinfachte Verfahren nach § 52 LBO BW.
+Aufstockungen und DG-Ausbauten zu Wohnzwecken treffen in BW auf eine
+PRIVILEGIEN-FAMILIE für die Wohnraum-Nachverdichtung (KlimaG BW 2023 +
+LBO-Novelle 2025; Volltexte corpus-ingestiert, Stand 16.03.2026): den
+Brandschutz beim GK-Sprung entschärft § 27f LBO BW, die Wandhöhen-
+Anrechnung bei Abstandsflächen entfällt nach § 5 LBO BW (Abs. 5 Satz 2
+Nr. 1), die Stellplatzpflicht entfällt nach § 37 LBO BW (Abs. 3 Satz 2),
+zwingende Abweichungen gewährt § 56 LBO BW (Abs. 2 Nr. 1). Bei Eingriffen in Rettungswege gilt § 28d LBO BW.
+Verfahrensseitig regelmäßig das vereinfachte Verfahren nach § 52 LBO BW.
 
 VERFAHREN:
 • Vereinfachtes Baugenehmigungsverfahren — § 52 LBO BW.
 
 SUBSTANTIVE ANKER FÜR AUFSTOCKUNG / DG-AUSBAU:
-• Tragende / aussteifende / raumabschließende Bauteile bei Umbau,
-  DG-Ausbau oder Aufstockung zu Wohnzwecken — § 27f LBO BW.
+• Bauliche Änderungen im Bestand (Aufstockung zu Wohnzwecken) — § 27f LBO BW:
+  KEINE höheren Brandschutzanforderungen an tragende/aussteifende/
+  raumabschließende Bauteile des Bestands (Abs. 1; außer Sonderbauten,
+  § 38 LBO BW). GK-SPRUNG-ENTSCHÄRFUNG (Abs. 2): Fällt das Gebäude durch
+  die Wohnzwecke-Aufstockung in GK 4, genügt beim BESTAND der
+  Feuerwiderstand der GK 3 — Voraussetzungen u. a. Rettungswege nach
+  § 15 LBO BW, Treppenraum-Entrauchung, feuerhemmende/rauchdichte/
+  selbstschließende Türen. Bei Aufstockung um EIN Geschoss genügt GK 3
+  auch für das NEUE Geschoss (Abs. 2, Satz 2); GK-5-Sprung analog Abs. 3
+  (max. 2 Geschosse, 13 m/18 m-Grenzen). KEINE pauschale Brandschutz-
+  Nachertüchtigung des Bestands fordern.
 • Eingriffe in Bauteile in Rettungswegen — § 28d LBO BW.
 
 GEBÄUDEKLASSE & ABSTANDSFLÄCHEN (kritisch bei Aufstockung):
-• Gebäudeklasse — § 2 LBO BW. Höhen-/Stockwerksgrenzen entscheiden, ob die
-  Aufstockung die GK anhebt. Ein GK-Sprung kann strengeren Brandschutz
-  auslösen.
-• Abstandsflächen — § 5 LBO BW. An der neuen, höheren Wand neu zu
-  bemessen. Sonderfälle — § 6 LBO BW. Übernahme auf Nachbargrundstücke
-  — § 7 LBO BW.
+• Gebäudeklasse — § 2 LBO BW. GK-Höhenmaß = Fußbodenoberkante des
+  höchstgelegenen Geschosses mit möglichem Aufenthaltsraum über Gelände
+  im Mittel (§ 2 Abs. 4 LBO BW, Satz 2) — NIE Trauf- oder Firsthöhe
+  ansetzen. Ob die Aufstockung die GK anhebt, an DIESEM Maß prüfen; ein
+  GK-Sprung löst nur die nach § 27f LBO BW verbleibenden Anforderungen
+  aus.
+• Abstandsflächen — § 5 LBO BW. PRIVILEG (§ 5 Abs. 5 LBO BW, Satz 2
+  Nr. 1): die Aufstockung rechtmäßig bestehender Gebäude um bis zu ZWEI
+  Geschosse wird auf die Wandhöhe NICHT angerechnet, wenn sie der
+  Schaffung oder Erweiterung von Wohnraum dient, in den durch die
+  Außenwände vorgegebenen Grenzen erfolgt und Baugenehmigung/
+  Kenntnisgabe des Gebäudes mindestens fünf Jahre zurückliegt — dann
+  regelmäßig KEINE neue Abstandsflächen-Auslösung. Außerhalb des
+  Privilegs: an der neuen, höheren Wand neu bemessen. Sonderfälle
+  — § 6 LBO BW. Übernahme auf Nachbargrundstücke — § 7 LBO BW.
 
 TECHNISCHE NACHWEISE (BESTANDSSTATIK):
 • Standsicherheit der Bestandskonstruktion und neuer Aufbauten —
@@ -4175,7 +4204,21 @@ TECHNISCHE NACHWEISE (BESTANDSSTATIK):
 • Brandschutz nach ggf. höherer GK — § 15 LBO BW, § 26 LBO BW, § 27c LBO BW.
 
 STELLPLÄTZE (bei neuen Wohneinheiten):
-• Stellplätze für Kraftfahrzeuge und Fahrräder — § 37 LBO BW.
+• Stellplätze — § 37 LBO BW. PRIVILEG (§ 37 Abs. 3 LBO BW, Satz 2):
+  KEINE zusätzlichen Stellplätze bei Schaffung von zusätzlichem Wohnraum
+  durch Ausbau, Anbau, Nutzungsänderung, Aufstockung oder Änderung des
+  Daches, wenn Baugenehmigung/Kenntnisgabe des Gebäudes mindestens fünf
+  Jahre zurückliegt. ABLÖSE-AUSSCHLUSS: § 37 Abs. 7 LBO BW, Satz 1 nimmt
+  Wohnungen von der Ablöse-Regelung (Abs. 6) aus — eine Ablösung NIEMALS
+  als Pflicht-Kostenposten für Wohnungs-Stellplätze ansetzen; bei
+  Unmöglichkeit/Unzumutbarkeit ist stattdessen eine Abweichung
+  ZUZULASSEN (§ 37 Abs. 7 LBO BW, Satz 2). Kommunale Stellplatzsatzung
+  ergänzend ansprechen; ihr Verhältnis zum Landesprivileg ist eine
+  OFFENE RECHTSFRAGE — als offene Frage führen, nicht entscheiden.
+• Abweichungen für Wohnraum-Vorhaben (§ 56 Abs. 2 Nr. 1 LBO BW): von
+  den §§ 4 bis 37 SIND Abweichungen zuzulassen für die Schaffung von
+  Wohnraum durch Aufstockung (Gebäude mindestens fünf Jahre alt), soweit
+  mit öffentlichen Belangen vereinbar.
 
 ENERGIE (Bundesrecht):
 • Bestandsänderung — § 48 GEG. Niedrigstenergie-Grundsatz allgemein —

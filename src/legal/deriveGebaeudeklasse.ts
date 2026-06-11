@@ -144,6 +144,23 @@ export function gkCarveOutValue(
 }
 
 /**
+ * fix/t06-walk1 — single-source predicate for "this fact key carries an
+ * explicit Gebäudeklasse VALUE". Consumers: exportPdf's Key-Data derived-row
+ * suppression and At-a-Glance's generic key fallback. Both previously inlined
+ * regexes with a bare `gk_` substring/prefix branch, so the free-form
+ * TRANSITION fact `gk_sprung` ("GK 2/3 auf GK 4", BW T-06 walk 1) suppressed
+ * the PDF derived row without any class fact present — and on the card could
+ * render AS the class itself. A transition is not a class: only class-bearing
+ * keys qualify. (The typo'd-key/value-scan fallbacks downstream are
+ * intentionally untouched.)
+ */
+export function isExplicitKlasseFactKey(key: string): boolean {
+  const k = key.trim().toLowerCase()
+  if (k === 'klasse' || k === 'gk' || k === 'gk_geplant') return true
+  return /^(?:gebaeudeklasse|geb_klasse)(?:_|$)/.test(k)
+}
+
+/**
  * Resolve the input's effective Höhe and whether the value is
  * calculated (explicit hoeheM) or approximated (derived from
  * Geschosse).

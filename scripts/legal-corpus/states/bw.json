@@ -11,109 +11,915 @@
     "sources": [
       "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b",
       "https://dejure.org/gesetze/LBO/13.html",
-      "https://dejure.org/gesetze/LBO/53.html"
+      "https://dejure.org/gesetze/LBO/53.html",
+      "https://www.akbw.de/fileadmin/download/dokumenten_datenbank/AKBW_Merkblaetter/Baurecht_Planungsrecht/Merkblatt610_LBO2026.pdf"
     ],
-    "official_portal_attempted": "https://www.landesrecht-bw.de/bsbw/document/jlr-BauOBW2010V31IVZ — returned JS shell (NO_TEXT), one attempt per recipe",
-    "verification_summary": { "primary-source": 0, "secondary-mirror": 97, "unverified": 0 },
-    "phase_c_legal_correctness_note": "BW is hand-coded in src/legal/stateCitations.ts (not in the corpus pack). phase-c/legal-correctness fixed two mis-maps the audit flagged: structuralCert § 73a→§ 13 (§ 13 = 'Standsicherheit', dejure.org/gesetze/LBO/13.html; § 73a = 'Technische Baubestimmungen', an admin rule), and permitForm § 58→§ 53 (§ 53 = 'Bauvorlagen und Bauantrag', dejure.org/gesetze/LBO/53.html; § 58 = 'Baugenehmigung', the permit decision). Both confirmed against dejure (current LBO) + the corpus's own verbatim headings."
+    "official_portal_attempted": "https://www.landesrecht-bw.de/bsbw/document/jlr-BauOBW2010V31IVZ — returned JS shell (NO_TEXT), one attempt per recipe · re-attempted 2026-06-11 (jlr-BauOBW2010V36P27f via WebFetch): JS shell, NO_TEXT again",
+    "verification_summary": {
+      "primary-source": 0,
+      "secondary-mirror": 97,
+      "unverified": 0
+    },
+    "phase_c_legal_correctness_note": "BW is hand-coded in src/legal/stateCitations.ts (not in the corpus pack). phase-c/legal-correctness fixed two mis-maps the audit flagged: structuralCert § 73a→§ 13 (§ 13 = 'Standsicherheit', dejure.org/gesetze/LBO/13.html; § 73a = 'Technische Baubestimmungen', an admin rule), and permitForm § 58→§ 53 (§ 53 = 'Bauvorlagen und Bauantrag', dejure.org/gesetze/LBO/53.html; § 58 = 'Baugenehmigung', the permit decision). Both confirmed against dejure (current LBO) + the corpus's own verbatim headings.",
+    "body_ingestion_note": "fix/t06-walk1 (2026-06-11): provision BODIES ingested for §§ 2, 5, 27f, 37, 56 (the BW×T-06 operative-effect set, gate: verify-template-tail-citations Tier-3) from the AKBW Merkblatt 610 consolidated full text, Stand 16.03.2026 — the dry-run-proven primary path (docs/PHASE_12_BW_FETCH_DRYRUN.md). § 37 load-bearing sentences cross-checked verbatim against dejure.org. Headings remain secondary-mirror as fetched 2026-05-27."
   },
   "paragraphs": {
-    "1": { "marker": "§ 1", "heading_de_official": "Anwendungsbereich", "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b", "heading_fetched_at": "2026-05-27", "verification_tier": "secondary-mirror", "archetypes": [] },
-    "2": { "marker": "§ 2", "heading_de_official": "Begriffe", "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b", "heading_fetched_at": "2026-05-27", "verification_tier": "secondary-mirror", "archetypes": ["gebaeudeklasse"], "scope_summary_de": "Begriffsbestimmungen einschließlich der Gebäudeklassen.", "scope_summary_en": "Definitions including the building classes (Gebäudeklassen)." },
-    "3": { "marker": "§ 3", "heading_de_official": "Allgemeine Anforderungen", "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b", "heading_fetched_at": "2026-05-27", "verification_tier": "secondary-mirror", "archetypes": [] },
-    "4": { "marker": "§ 4", "heading_de_official": "Bebauung der Grundstücke", "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b", "heading_fetched_at": "2026-05-27", "verification_tier": "secondary-mirror", "archetypes": [] },
-    "5": { "marker": "§ 5", "heading_de_official": "Abstandsflächen", "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b", "heading_fetched_at": "2026-05-27", "verification_tier": "secondary-mirror", "archetypes": ["abstandsflaechen"], "scope_summary_de": "Tiefe und Lage der einzuhaltenden Abstandsflächen vor Außenwänden.", "scope_summary_en": "Depth and position of the setback areas required in front of exterior walls.", "procedure_relevance": "applies-to: T-01,T-02,T-03,T-04,T-05,T-06,T-07,T-08" },
-    "6": { "marker": "§ 6", "heading_de_official": "Abstandsflächen in Sonderfällen", "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b", "heading_fetched_at": "2026-05-27", "verification_tier": "secondary-mirror", "archetypes": ["abstandsflaechen"], "scope_summary_de": "Sonderregelungen zu Abstandsflächen, etwa für untergeordnete Bauteile und Grenzgebäude.", "scope_summary_en": "Special-case rules on setback areas, e.g. for subordinate structures and boundary buildings." },
-    "7": { "marker": "§ 7", "heading_de_official": "Übernahme von Abständen und Abstandsflächen auf Nachbargrundstücke", "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b", "heading_fetched_at": "2026-05-27", "verification_tier": "secondary-mirror", "archetypes": ["abstandsflaechen"], "scope_summary_de": "Übernahme von Abständen und Abstandsflächen auf benachbarte Grundstücke per Baulast.", "scope_summary_en": "Transfer of distances and setback areas onto neighbouring plots by building charge." },
-    "8": { "marker": "§ 8", "heading_de_official": "Teilung von Grundstücken", "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b", "heading_fetched_at": "2026-05-27", "verification_tier": "secondary-mirror", "archetypes": [] },
-    "9": { "marker": "§ 9", "heading_de_official": "Nichtüberbaute Flächen der bebauten Grundstücke, Kinderspielplätze", "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b", "heading_fetched_at": "2026-05-27", "verification_tier": "secondary-mirror", "archetypes": [] },
-    "10": { "marker": "§ 10", "heading_de_official": "Höhenlage des Grundstücks", "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b", "heading_fetched_at": "2026-05-27", "verification_tier": "secondary-mirror", "archetypes": [] },
-    "11": { "marker": "§ 11", "heading_de_official": "Gestaltung", "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b", "heading_fetched_at": "2026-05-27", "verification_tier": "secondary-mirror", "archetypes": [] },
-    "12": { "marker": "§ 12", "heading_de_official": "Baustelle", "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b", "heading_fetched_at": "2026-05-27", "verification_tier": "secondary-mirror", "archetypes": [] },
-    "13": { "marker": "§ 13", "heading_de_official": "Standsicherheit", "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b", "heading_fetched_at": "2026-05-27", "verification_tier": "secondary-mirror", "archetypes": ["bautechnische_nachweise"], "scope_summary_de": "Anforderung der Standsicherheit baulicher Anlagen.", "scope_summary_en": "Structural stability requirement for built structures." },
-    "14": { "marker": "§ 14", "heading_de_official": "Schutz baulicher Anlagen", "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b", "heading_fetched_at": "2026-05-27", "verification_tier": "secondary-mirror", "archetypes": [] },
-    "15": { "marker": "§ 15", "heading_de_official": "Brandschutz", "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b", "heading_fetched_at": "2026-05-27", "verification_tier": "secondary-mirror", "archetypes": ["brandschutz"], "scope_summary_de": "Allgemeine Brandschutzanforderungen an bauliche Anlagen.", "scope_summary_en": "General fire-safety requirements for built structures." },
-    "16": { "marker": "§ 16", "heading_de_official": "Verkehrssicherheit", "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b", "heading_fetched_at": "2026-05-27", "verification_tier": "secondary-mirror", "archetypes": [] },
-    "16a": { "marker": "§ 16a", "heading_de_official": "Bauarten", "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b", "heading_fetched_at": "2026-05-27", "verification_tier": "secondary-mirror", "archetypes": [] },
-    "16b": { "marker": "§ 16b", "heading_de_official": "Allgemeine Anforderungen für die Verwendung von Bauprodukten", "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b", "heading_fetched_at": "2026-05-27", "verification_tier": "secondary-mirror", "archetypes": [] },
-    "16c": { "marker": "§ 16c", "heading_de_official": "Anforderungen für die Verwendung von CE-gekennzeichneten Bauprodukten", "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b", "heading_fetched_at": "2026-05-27", "verification_tier": "secondary-mirror", "archetypes": [] },
-    "17": { "marker": "§ 17", "heading_de_official": "Verwendbarkeitsnachweise", "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b", "heading_fetched_at": "2026-05-27", "verification_tier": "secondary-mirror", "archetypes": [] },
-    "18": { "marker": "§ 18", "heading_de_official": "Allgemeine bauaufsichtliche Zulassung", "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b", "heading_fetched_at": "2026-05-27", "verification_tier": "secondary-mirror", "archetypes": [] },
-    "19": { "marker": "§ 19", "heading_de_official": "Allgemeines bauaufsichtliches Prüfzeugnis", "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b", "heading_fetched_at": "2026-05-27", "verification_tier": "secondary-mirror", "archetypes": [] },
-    "20": { "marker": "§ 20", "heading_de_official": "Nachweis der Verwendbarkeit von Bauprodukten im Einzelfall", "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b", "heading_fetched_at": "2026-05-27", "verification_tier": "secondary-mirror", "archetypes": [] },
-    "21": { "marker": "§ 21", "heading_de_official": "Übereinstimmungsbestätigung", "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b", "heading_fetched_at": "2026-05-27", "verification_tier": "secondary-mirror", "archetypes": [] },
-    "22": { "marker": "§ 22", "heading_de_official": "Übereinstimmungserklärung des Herstellers", "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b", "heading_fetched_at": "2026-05-27", "verification_tier": "secondary-mirror", "archetypes": [] },
-    "23": { "marker": "§ 23", "heading_de_official": "Zertifizierung", "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b", "heading_fetched_at": "2026-05-27", "verification_tier": "secondary-mirror", "archetypes": [] },
-    "24": { "marker": "§ 24", "heading_de_official": "Prüf-, Zertifizierungs-, Überwachungsstellen", "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b", "heading_fetched_at": "2026-05-27", "verification_tier": "secondary-mirror", "archetypes": [] },
-    "25": { "marker": "§ 25", "heading_de_official": "Besondere Sachkunde- und Sorgfaltsanforderungen", "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b", "heading_fetched_at": "2026-05-27", "verification_tier": "secondary-mirror", "archetypes": [] },
-    "26": { "marker": "§ 26", "heading_de_official": "Allgemeine Anforderungen an das Brandverhalten von Baustoffen und Bauteilen", "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b", "heading_fetched_at": "2026-05-27", "verification_tier": "secondary-mirror", "archetypes": ["brandschutz"] },
-    "27": { "marker": "§ 27", "heading_de_official": "Tragende Wände und Stützen", "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b", "heading_fetched_at": "2026-05-27", "verification_tier": "secondary-mirror", "archetypes": [] },
-    "27a": { "marker": "§ 27a", "heading_de_official": "Außenwände", "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b", "heading_fetched_at": "2026-05-27", "verification_tier": "secondary-mirror", "archetypes": [] },
-    "27b": { "marker": "§ 27b", "heading_de_official": "Trennwände", "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b", "heading_fetched_at": "2026-05-27", "verification_tier": "secondary-mirror", "archetypes": [] },
-    "27c": { "marker": "§ 27c", "heading_de_official": "Brandwände", "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b", "heading_fetched_at": "2026-05-27", "verification_tier": "secondary-mirror", "archetypes": ["brandschutz"] },
-    "27d": { "marker": "§ 27d", "heading_de_official": "Decken", "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b", "heading_fetched_at": "2026-05-27", "verification_tier": "secondary-mirror", "archetypes": [] },
-    "27e": { "marker": "§ 27e", "heading_de_official": "Dächer", "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b", "heading_fetched_at": "2026-05-27", "verification_tier": "secondary-mirror", "archetypes": [] },
-    "27f": { "marker": "§ 27f", "heading_de_official": "Nutzungsänderungen und bauliche Änderungen im Bestand bei tragenden, aussteifenden und raumabschließenden Bauteilen und Dachgeschossausbauten oder Aufstockungen zu Wohnzwecken", "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b", "heading_fetched_at": "2026-05-27", "verification_tier": "secondary-mirror", "archetypes": ["nutzungsaenderung"] },
-    "28": { "marker": "§ 28", "heading_de_official": "Treppen", "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b", "heading_fetched_at": "2026-05-27", "verification_tier": "secondary-mirror", "archetypes": [] },
-    "28a": { "marker": "§ 28a", "heading_de_official": "Notwendige Treppenräume, Ausgänge", "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b", "heading_fetched_at": "2026-05-27", "verification_tier": "secondary-mirror", "archetypes": [] },
-    "28b": { "marker": "§ 28b", "heading_de_official": "Notwendige Flure, offene Gänge", "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b", "heading_fetched_at": "2026-05-27", "verification_tier": "secondary-mirror", "archetypes": [] },
-    "28c": { "marker": "§ 28c", "heading_de_official": "Fenster, sonstige Öffnungen", "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b", "heading_fetched_at": "2026-05-27", "verification_tier": "secondary-mirror", "archetypes": [] },
-    "28d": { "marker": "§ 28d", "heading_de_official": "Nutzungsänderungen und bauliche Änderungen im Bestand bei Bauteilen in Rettungswegen", "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b", "heading_fetched_at": "2026-05-27", "verification_tier": "secondary-mirror", "archetypes": ["nutzungsaenderung"] },
-    "29": { "marker": "§ 29", "heading_de_official": "Aufzugsanlagen", "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b", "heading_fetched_at": "2026-05-27", "verification_tier": "secondary-mirror", "archetypes": [] },
-    "30": { "marker": "§ 30", "heading_de_official": "Lüftungsanlagen", "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b", "heading_fetched_at": "2026-05-27", "verification_tier": "secondary-mirror", "archetypes": [] },
-    "31": { "marker": "§ 31", "heading_de_official": "Leitungsanlagen", "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b", "heading_fetched_at": "2026-05-27", "verification_tier": "secondary-mirror", "archetypes": [] },
-    "32": { "marker": "§ 32", "heading_de_official": "Feuerungsanlagen, sonstige Anlagen zur Wärmeerzeugung und Energiebereitstellung", "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b", "heading_fetched_at": "2026-05-27", "verification_tier": "secondary-mirror", "archetypes": [] },
-    "33": { "marker": "§ 33", "heading_de_official": "Wasserversorgungs- und Wasserentsorgungsanlagen, Anlagen für Abfallstoffe und Reststoffe", "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b", "heading_fetched_at": "2026-05-27", "verification_tier": "secondary-mirror", "archetypes": [] },
-    "34": { "marker": "§ 34", "heading_de_official": "Aufenthaltsräume", "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b", "heading_fetched_at": "2026-05-27", "verification_tier": "secondary-mirror", "archetypes": [] },
-    "35": { "marker": "§ 35", "heading_de_official": "Wohnungen", "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b", "heading_fetched_at": "2026-05-27", "verification_tier": "secondary-mirror", "archetypes": [] },
-    "36": { "marker": "§ 36", "heading_de_official": "Toilettenräume und Bäder", "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b", "heading_fetched_at": "2026-05-27", "verification_tier": "secondary-mirror", "archetypes": [] },
-    "37": { "marker": "§ 37", "heading_de_official": "Stellplätze für Kraftfahrzeuge und Fahrräder, Garagen", "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b", "heading_fetched_at": "2026-05-27", "verification_tier": "secondary-mirror", "archetypes": ["stellplaetze"], "scope_summary_de": "Pflicht zu Stellplätzen für Kraftfahrzeuge und Fahrräder sowie zu Garagen.", "scope_summary_en": "Obligation to provide parking for motor vehicles and bicycles as well as garages." },
-    "38": { "marker": "§ 38", "heading_de_official": "Sonderbauten", "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b", "heading_fetched_at": "2026-05-27", "verification_tier": "secondary-mirror", "archetypes": ["sonderbauten"], "scope_summary_de": "Besondere Anforderungen an Sonderbauten.", "scope_summary_en": "Special requirements for special buildings (Sonderbauten)." },
-    "39": { "marker": "§ 39", "heading_de_official": "Barrierefreie Anlagen", "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b", "heading_fetched_at": "2026-05-27", "verification_tier": "secondary-mirror", "archetypes": [] },
-    "40": { "marker": "§ 40", "heading_de_official": "Gemeinschaftsanlagen", "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b", "heading_fetched_at": "2026-05-27", "verification_tier": "secondary-mirror", "archetypes": [] },
-    "41": { "marker": "§ 41", "heading_de_official": "Grundsatz", "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b", "heading_fetched_at": "2026-05-27", "verification_tier": "secondary-mirror", "archetypes": [] },
-    "42": { "marker": "§ 42", "heading_de_official": "Bauherr", "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b", "heading_fetched_at": "2026-05-27", "verification_tier": "secondary-mirror", "archetypes": [] },
-    "43": { "marker": "§ 43", "heading_de_official": "Entwurfsverfasser", "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b", "heading_fetched_at": "2026-05-27", "verification_tier": "secondary-mirror", "archetypes": ["bauvorlageberechtigung"], "scope_summary_de": "Pflichten und Eignung des Entwurfsverfassers, der den Bauantrag fachlich verantwortet.", "scope_summary_en": "Duties and qualification of the design author who is technically responsible for the application.", "procedure_relevance": "applies-to: T-01,T-02,T-03,T-04,T-05,T-06,T-07,T-08" },
-    "44": { "marker": "§ 44", "heading_de_official": "Unternehmer", "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b", "heading_fetched_at": "2026-05-27", "verification_tier": "secondary-mirror", "archetypes": [] },
-    "45": { "marker": "§ 45", "heading_de_official": "Bauleiter", "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b", "heading_fetched_at": "2026-05-27", "verification_tier": "secondary-mirror", "archetypes": [] },
-    "46": { "marker": "§ 46", "heading_de_official": "Aufbau und Besetzung der Baurechtsbehörden", "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b", "heading_fetched_at": "2026-05-27", "verification_tier": "secondary-mirror", "archetypes": [] },
-    "47": { "marker": "§ 47", "heading_de_official": "Aufgaben und Befugnisse der Baurechtsbehörden", "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b", "heading_fetched_at": "2026-05-27", "verification_tier": "secondary-mirror", "archetypes": [] },
-    "48": { "marker": "§ 48", "heading_de_official": "Sachliche Zuständigkeit", "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b", "heading_fetched_at": "2026-05-27", "verification_tier": "secondary-mirror", "archetypes": [] },
-    "49": { "marker": "§ 49", "heading_de_official": "Genehmigungspflichtige Vorhaben", "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b", "heading_fetched_at": "2026-05-27", "verification_tier": "secondary-mirror", "archetypes": [] },
-    "50": { "marker": "§ 50", "heading_de_official": "Verfahrensfreie Vorhaben", "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b", "heading_fetched_at": "2026-05-27", "verification_tier": "secondary-mirror", "archetypes": ["verfahrensfrei"], "scope_summary_de": "Vorhaben, die ohne Baugenehmigung und ohne Verfahren errichtet werden dürfen (Anhang 1).", "scope_summary_en": "Projects that may be built without any permit or procedure (Annex 1).", "procedure_relevance": "applies-to: T-01,T-02,T-03,T-04,T-05,T-06,T-07,T-08" },
-    "51": { "marker": "§ 51", "heading_de_official": "Kenntnisgabeverfahren", "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b", "heading_fetched_at": "2026-05-27", "verification_tier": "secondary-mirror", "archetypes": ["verfahren_freistellung"], "scope_summary_de": "BW-spezifisches Verfahren ohne Baugenehmigung: Vorhaben wird der Gemeinde nur zur Kenntnis gegeben.", "scope_summary_en": "BW-specific notification procedure replacing a permit: the project is merely notified to the municipality.", "procedure_relevance": "applies-to: T-01,T-02,T-03,T-04,T-05,T-06,T-07,T-08" },
-    "52": { "marker": "§ 52", "heading_de_official": "Vereinfachtes Baugenehmigungsverfahren", "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b", "heading_fetched_at": "2026-05-27", "verification_tier": "secondary-mirror", "archetypes": ["verfahren_vereinfacht"], "scope_summary_de": "Vereinfachtes Genehmigungsverfahren mit reduziertem Prüfumfang für nicht-Sonderbauten.", "scope_summary_en": "Simplified permit procedure with a reduced scope of review for non-special buildings.", "procedure_relevance": "applies-to: T-01,T-02,T-03,T-04,T-05,T-06,T-07,T-08" },
-    "53": { "marker": "§ 53", "heading_de_official": "Bauvorlagen und Bauantrag", "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b", "heading_fetched_at": "2026-05-27", "verification_tier": "secondary-mirror", "archetypes": ["bauantrag_bauvorlagen"], "scope_summary_de": "Erforderliche Bauvorlagen und Form des Bauantrags.", "scope_summary_en": "Required submission documents and form of the building application." },
-    "54": { "marker": "§ 54", "heading_de_official": "Fristen im Genehmigungsverfahren, gemeindliches Einvernehmen", "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b", "heading_fetched_at": "2026-05-27", "verification_tier": "secondary-mirror", "archetypes": [] },
-    "55": { "marker": "§ 55", "heading_de_official": "Benachrichtigung der Nachbarn und Beteiligung der Öffentlichkeit", "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b", "heading_fetched_at": "2026-05-27", "verification_tier": "secondary-mirror", "archetypes": [] },
-    "56": { "marker": "§ 56", "heading_de_official": "Abweichungen, Ausnahmen und Befreiungen", "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b", "heading_fetched_at": "2026-05-27", "verification_tier": "secondary-mirror", "archetypes": [] },
-    "57": { "marker": "§ 57", "heading_de_official": "Bauvorbescheid", "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b", "heading_fetched_at": "2026-05-27", "verification_tier": "secondary-mirror", "archetypes": [] },
-    "58": { "marker": "§ 58", "heading_de_official": "Baugenehmigung", "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b", "heading_fetched_at": "2026-05-27", "verification_tier": "secondary-mirror", "archetypes": ["verfahren_regulaer"], "scope_summary_de": "Erteilung der Baugenehmigung und ihre Rechtswirkungen.", "scope_summary_en": "Issuance of the building permit and its legal effects.", "procedure_relevance": "applies-to: T-01,T-02,T-03,T-04,T-05,T-06,T-07,T-08" },
-    "59": { "marker": "§ 59", "heading_de_official": "Baubeginn", "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b", "heading_fetched_at": "2026-05-27", "verification_tier": "secondary-mirror", "archetypes": [] },
-    "60": { "marker": "§ 60", "heading_de_official": "Sicherheitsleistung", "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b", "heading_fetched_at": "2026-05-27", "verification_tier": "secondary-mirror", "archetypes": [] },
-    "61": { "marker": "§ 61", "heading_de_official": "Teilbaugenehmigung", "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b", "heading_fetched_at": "2026-05-27", "verification_tier": "secondary-mirror", "archetypes": [] },
-    "62": { "marker": "§ 62", "heading_de_official": "Geltungsdauer der Baugenehmigung", "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b", "heading_fetched_at": "2026-05-27", "verification_tier": "secondary-mirror", "archetypes": [] },
-    "63": { "marker": "§ 63", "heading_de_official": "Bauvorlageberechtigung", "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b", "heading_fetched_at": "2026-05-27", "verification_tier": "secondary-mirror", "archetypes": ["bauvorlageberechtigung"], "scope_summary_de": "Wer berechtigt ist, Bauvorlagen zu erstellen und einzureichen (Vorlageberechtigung).", "scope_summary_en": "Who is entitled to prepare and submit building documents (submission entitlement).", "procedure_relevance": "applies-to: T-01,T-02,T-03,T-04,T-05,T-06,T-07,T-08" },
-    "63a": { "marker": "§ 63a", "heading_de_official": "Voraussetzung für die Eintragung in die Liste nach § 63 Absatz 2 Nummer 2", "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b", "heading_fetched_at": "2026-05-27", "verification_tier": "secondary-mirror", "archetypes": ["bauvorlageberechtigung"] },
-    "63b": { "marker": "§ 63b", "heading_de_official": "Eintragungsverfahren für Antragstellende nach § 63a Absatz 3", "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b", "heading_fetched_at": "2026-05-27", "verification_tier": "secondary-mirror", "archetypes": ["bauvorlageberechtigung"] },
-    "63c": { "marker": "§ 63c", "heading_de_official": "Ausgleichsmaßnahmen", "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b", "heading_fetched_at": "2026-05-27", "verification_tier": "secondary-mirror", "archetypes": [] },
-    "63d": { "marker": "§ 63d", "heading_de_official": "Vorübergehende und gelegentliche Dienstleistungserbringung von bauvorlageberechtigten Ingenieuren, Anzeigeverfahren", "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b", "heading_fetched_at": "2026-05-27", "verification_tier": "secondary-mirror", "archetypes": ["bauvorlageberechtigung"] },
-    "64": { "marker": "§ 64", "heading_de_official": "Einstellung von Arbeiten", "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b", "heading_fetched_at": "2026-05-27", "verification_tier": "secondary-mirror", "archetypes": [] },
-    "65": { "marker": "§ 65", "heading_de_official": "Abbruchsanordnung und Nutzungsuntersagung", "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b", "heading_fetched_at": "2026-05-27", "verification_tier": "secondary-mirror", "archetypes": ["abbruch_beseitigung", "nutzungsaenderung"], "scope_summary_de": "Anordnung des Abbruchs und Untersagung der Nutzung baulicher Anlagen.", "scope_summary_en": "Order to demolish and prohibition of use of built structures." },
-    "66": { "marker": "§ 66", "heading_de_official": "Bauüberwachung", "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b", "heading_fetched_at": "2026-05-27", "verification_tier": "secondary-mirror", "archetypes": [] },
-    "67": { "marker": "§ 67", "heading_de_official": "Bauabnahmen, Inbetriebnahme der Feuerungsanlagen", "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b", "heading_fetched_at": "2026-05-27", "verification_tier": "secondary-mirror", "archetypes": [] },
-    "68": { "marker": "§ 68", "heading_de_official": "Typengenehmigung, Typenprüfung", "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b", "heading_fetched_at": "2026-05-27", "verification_tier": "secondary-mirror", "archetypes": [] },
-    "69": { "marker": "§ 69", "heading_de_official": "Fliegende Bauten", "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b", "heading_fetched_at": "2026-05-27", "verification_tier": "secondary-mirror", "archetypes": [] },
-    "70": { "marker": "§ 70", "heading_de_official": "Zustimmungsverfahren, Vorhaben der Landesverteidigung", "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b", "heading_fetched_at": "2026-05-27", "verification_tier": "secondary-mirror", "archetypes": [] },
-    "71": { "marker": "§ 71", "heading_de_official": "Übernahme von Baulasten", "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b", "heading_fetched_at": "2026-05-27", "verification_tier": "secondary-mirror", "archetypes": [] },
-    "72": { "marker": "§ 72", "heading_de_official": "Baulastenverzeichnis", "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b", "heading_fetched_at": "2026-05-27", "verification_tier": "secondary-mirror", "archetypes": [] },
-    "73": { "marker": "§ 73", "heading_de_official": "Rechtsverordnungen", "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b", "heading_fetched_at": "2026-05-27", "verification_tier": "secondary-mirror", "archetypes": [] },
-    "73a": { "marker": "§ 73a", "heading_de_official": "Technische Baubestimmungen", "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b", "heading_fetched_at": "2026-05-27", "verification_tier": "secondary-mirror", "archetypes": ["bautechnische_nachweise"], "scope_summary_de": "Einführung und Bekanntmachung der Technischen Baubestimmungen.", "scope_summary_en": "Introduction and publication of the Technical Building Provisions.", "procedure_relevance": "applies-to: T-01,T-02,T-03,T-04,T-05,T-06,T-07,T-08" },
-    "74": { "marker": "§ 74", "heading_de_official": "Örtliche Bauvorschriften", "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b", "heading_fetched_at": "2026-05-27", "verification_tier": "secondary-mirror", "archetypes": [] },
-    "75": { "marker": "§ 75", "heading_de_official": "Ordnungswidrigkeiten", "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b", "heading_fetched_at": "2026-05-27", "verification_tier": "secondary-mirror", "archetypes": [] },
-    "76": { "marker": "§ 76", "heading_de_official": "Bestehende bauliche Anlagen", "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b", "heading_fetched_at": "2026-05-27", "verification_tier": "secondary-mirror", "archetypes": [] },
-    "77": { "marker": "§ 77", "heading_de_official": "Übergangsvorschriften", "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b", "heading_fetched_at": "2026-05-27", "verification_tier": "secondary-mirror", "archetypes": [] },
-    "78": { "marker": "§ 78", "heading_de_official": "Außerkrafttreten bisherigen Rechts", "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b", "heading_fetched_at": "2026-05-27", "verification_tier": "secondary-mirror", "archetypes": [] },
-    "79": { "marker": "§ 79", "heading_de_official": "Inkrafttreten", "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b", "heading_fetched_at": "2026-05-27", "verification_tier": "secondary-mirror", "archetypes": [] }
+    "1": {
+      "marker": "§ 1",
+      "heading_de_official": "Anwendungsbereich",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "2": {
+      "marker": "§ 2",
+      "heading_de_official": "Begriffe",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": [
+        "gebaeudeklasse"
+      ],
+      "scope_summary_de": "Begriffsbestimmungen einschließlich der Gebäudeklassen.",
+      "scope_summary_en": "Definitions including the building classes (Gebäudeklassen).",
+      "body_de_official": "(4) Gebäude werden in folgende Gebäudeklassen eingeteilt:\n1. Gebäudeklasse 1: freistehende Gebäude mit einer Höhe bis zu 7 m und nicht mehr als zwei Nutzungseinheiten von insgesamt nicht mehr als 400 m² und freistehende land- oder forstwirtschaftlich genutzte Gebäude,\n2. Gebäudeklasse 2: Gebäude mit einer Höhe bis zu 7 m und nicht mehr als zwei Nutzungseinheiten von insgesamt nicht mehr als 400 m²,\n3. Gebäudeklasse 3: sonstige Gebäude mit einer Höhe bis zu 7 m,\n4. Gebäudeklasse 4: Gebäude mit einer Höhe bis zu 13 m und Nutzungseinheiten mit jeweils nicht mehr als 400 m²,\n5. Gebäudeklasse 5: sonstige Gebäude einschließlich unterirdischer Gebäude.\nHöhe im Sinne des Satzes 1 ist das Maß der Fußbodenoberkante des höchstgelegenen Geschosses, in dem ein Aufenthaltsraum möglich ist, über der Geländeoberfläche im Mittel. Geländeoberfläche ist die Fläche, die von der Baurechtsbehörde aufgrund von § 10 festgelegt ist, sich aus einer örtlichen Bauvorschrift ergibt oder im Übrigen die tatsächliche Geländeoberfläche nach Ausführung des Bauvorhabens, soweit sie nicht zur Erreichung einer niedrigeren Gebäudeklasse nach Satz 1 angelegt wird oder wurde. Grundflächen von Nutzungseinheiten im Sinne dieses Gesetzes sind die Brutto-Grundflächen; bei der Berechnung der Brutto-Grundflächen nach Satz 1 bleiben Flächen in Kellergeschossen außer Betracht. Nutzungseinheit im Sinne dieses Gesetzes ist ein Gebäude oder ein abgeschlossener Teil eines Gebäudes, dem eine bestimmte Nutzung zugeordnet ist. Freistehend im Sinne des Satzes 1 Nummer 1 ist ein Gebäude, das an benachbarte Gebäude nicht unmittelbar angebaut ist; dabei bleiben bauliche Anlagen und Gebäude im Sinne des § 6 Absatz 1 unberücksichtigt.",
+      "body_scope_note": "Absatz 4 vollständig (Gebäudeklassen 1-5 + Höhenmaß/Geländeoberfläche/Brutto-Grundfläche/Nutzungseinheit/freistehend-Definitionen). Übrige Absätze nicht ingestiert.",
+      "body_source_url": "https://www.akbw.de/fileadmin/download/dokumenten_datenbank/AKBW_Merkblaetter/Baurecht_Planungsrecht/Merkblatt610_LBO2026.pdf",
+      "body_source_note": "AKBW Merkblatt 610 — konsolidierter LBO-Volltext der Architektenkammer Baden-Württemberg (Körperschaft des öffentlichen Rechts), Stand 16.03.2026, extrahiert via pdftotext (fetch recipe: docs/PHASE_12_BW_FETCH_DRYRUN.md). Official portal landesrecht-bw.de re-attempted 2026-06-11 (jlr-BauOBW2010V36P27f): JS shell, NO_TEXT. Höhenmaß-Regel (FOK oberstes Aufenthaltsraum-Geschoss, Abs. 4 Satz 2) ist die GK-Sprung-Bezugsgröße für § 27f.",
+      "body_fetched_at": "2026-06-11",
+      "body_verification_tier": "primary-source"
+    },
+    "3": {
+      "marker": "§ 3",
+      "heading_de_official": "Allgemeine Anforderungen",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "4": {
+      "marker": "§ 4",
+      "heading_de_official": "Bebauung der Grundstücke",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "5": {
+      "marker": "§ 5",
+      "heading_de_official": "Abstandsflächen",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": [
+        "abstandsflaechen"
+      ],
+      "scope_summary_de": "Tiefe und Lage der einzuhaltenden Abstandsflächen vor Außenwänden.",
+      "scope_summary_en": "Depth and position of the setback areas required in front of exterior walls.",
+      "procedure_relevance": "applies-to: T-01,T-02,T-03,T-04,T-05,T-06,T-07,T-08",
+      "body_de_official": "(5) Auf die Wandhöhe werden angerechnet\n1. die Höhe von Dächern oder Dachaufbauten mit einer Neigung von mehr als 70° voll und von mehr als 45° zu einem Viertel,\n2. die Höhe einer Giebelfläche zu einem Viertel; die Giebelfläche beginnt an der Horizontalen durch den untersten Schnittpunkt der Wand mit der Dachhaut,\n3. bei Windenergieanlagen nur die Höhe bis zur Rotorachse, wobei die Tiefe der Abstandsfläche mindestens der Länge des Rotorradius entsprechen muss.\nAuf die Wandhöhe werden nicht angerechnet\n1. die Aufstockung rechtmäßig bestehender Gebäude um bis zu zwei Geschosse sowie die Errichtung von Dachgauben und Zwerchgiebeln, wenn sie der Schaffung oder Erweiterung von Wohnraum dienen, in den durch die Außenwände vorgegebenen Grenzen erfolgen und die Baugenehmigung oder die Kenntnisgabe für die Errichtung des Gebäudes mindestens fünf Jahre zurückliegt,\n2. das Anbringen oder Aufstellen von Anlagen zur photovoltaischen oder thermischen Solarnutzung auf Dächern bis zu einer Anlagenhöhe von 1,5 m,\n3. die nachträgliche Dämmung des Daches bis zu einer Dicke von 0,3 m.",
+      "body_scope_note": "Absatz 5 vollständig (Wandhöhen-Anrechnung Satz 1 + Nicht-Anrechnung Satz 2, inkl. Nr. 1 Aufstockungs-Privileg). Übrige Absätze nicht ingestiert.",
+      "body_source_url": "https://www.akbw.de/fileadmin/download/dokumenten_datenbank/AKBW_Merkblaetter/Baurecht_Planungsrecht/Merkblatt610_LBO2026.pdf",
+      "body_source_note": "AKBW Merkblatt 610 — konsolidierter LBO-Volltext der Architektenkammer Baden-Württemberg (Körperschaft des öffentlichen Rechts), Stand 16.03.2026, extrahiert via pdftotext (fetch recipe: docs/PHASE_12_BW_FETCH_DRYRUN.md). Official portal landesrecht-bw.de re-attempted 2026-06-11 (jlr-BauOBW2010V36P27f): JS shell, NO_TEXT. Abs. 5 Satz 2 Nr. 1 = Abstandsflächen-Privileg für Wohnraum-Aufstockungen (KlimaG BW 2023, erweitert LBO-Novelle 2025).",
+      "body_fetched_at": "2026-06-11",
+      "body_verification_tier": "primary-source"
+    },
+    "6": {
+      "marker": "§ 6",
+      "heading_de_official": "Abstandsflächen in Sonderfällen",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": [
+        "abstandsflaechen"
+      ],
+      "scope_summary_de": "Sonderregelungen zu Abstandsflächen, etwa für untergeordnete Bauteile und Grenzgebäude.",
+      "scope_summary_en": "Special-case rules on setback areas, e.g. for subordinate structures and boundary buildings."
+    },
+    "7": {
+      "marker": "§ 7",
+      "heading_de_official": "Übernahme von Abständen und Abstandsflächen auf Nachbargrundstücke",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": [
+        "abstandsflaechen"
+      ],
+      "scope_summary_de": "Übernahme von Abständen und Abstandsflächen auf benachbarte Grundstücke per Baulast.",
+      "scope_summary_en": "Transfer of distances and setback areas onto neighbouring plots by building charge."
+    },
+    "8": {
+      "marker": "§ 8",
+      "heading_de_official": "Teilung von Grundstücken",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "9": {
+      "marker": "§ 9",
+      "heading_de_official": "Nichtüberbaute Flächen der bebauten Grundstücke, Kinderspielplätze",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "10": {
+      "marker": "§ 10",
+      "heading_de_official": "Höhenlage des Grundstücks",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "11": {
+      "marker": "§ 11",
+      "heading_de_official": "Gestaltung",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "12": {
+      "marker": "§ 12",
+      "heading_de_official": "Baustelle",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "13": {
+      "marker": "§ 13",
+      "heading_de_official": "Standsicherheit",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": [
+        "bautechnische_nachweise"
+      ],
+      "scope_summary_de": "Anforderung der Standsicherheit baulicher Anlagen.",
+      "scope_summary_en": "Structural stability requirement for built structures."
+    },
+    "14": {
+      "marker": "§ 14",
+      "heading_de_official": "Schutz baulicher Anlagen",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "15": {
+      "marker": "§ 15",
+      "heading_de_official": "Brandschutz",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": [
+        "brandschutz"
+      ],
+      "scope_summary_de": "Allgemeine Brandschutzanforderungen an bauliche Anlagen.",
+      "scope_summary_en": "General fire-safety requirements for built structures."
+    },
+    "16": {
+      "marker": "§ 16",
+      "heading_de_official": "Verkehrssicherheit",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "16a": {
+      "marker": "§ 16a",
+      "heading_de_official": "Bauarten",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "16b": {
+      "marker": "§ 16b",
+      "heading_de_official": "Allgemeine Anforderungen für die Verwendung von Bauprodukten",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "16c": {
+      "marker": "§ 16c",
+      "heading_de_official": "Anforderungen für die Verwendung von CE-gekennzeichneten Bauprodukten",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "17": {
+      "marker": "§ 17",
+      "heading_de_official": "Verwendbarkeitsnachweise",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "18": {
+      "marker": "§ 18",
+      "heading_de_official": "Allgemeine bauaufsichtliche Zulassung",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "19": {
+      "marker": "§ 19",
+      "heading_de_official": "Allgemeines bauaufsichtliches Prüfzeugnis",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "20": {
+      "marker": "§ 20",
+      "heading_de_official": "Nachweis der Verwendbarkeit von Bauprodukten im Einzelfall",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "21": {
+      "marker": "§ 21",
+      "heading_de_official": "Übereinstimmungsbestätigung",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "22": {
+      "marker": "§ 22",
+      "heading_de_official": "Übereinstimmungserklärung des Herstellers",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "23": {
+      "marker": "§ 23",
+      "heading_de_official": "Zertifizierung",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "24": {
+      "marker": "§ 24",
+      "heading_de_official": "Prüf-, Zertifizierungs-, Überwachungsstellen",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "25": {
+      "marker": "§ 25",
+      "heading_de_official": "Besondere Sachkunde- und Sorgfaltsanforderungen",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "26": {
+      "marker": "§ 26",
+      "heading_de_official": "Allgemeine Anforderungen an das Brandverhalten von Baustoffen und Bauteilen",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": [
+        "brandschutz"
+      ]
+    },
+    "27": {
+      "marker": "§ 27",
+      "heading_de_official": "Tragende Wände und Stützen",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "27a": {
+      "marker": "§ 27a",
+      "heading_de_official": "Außenwände",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "27b": {
+      "marker": "§ 27b",
+      "heading_de_official": "Trennwände",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "27c": {
+      "marker": "§ 27c",
+      "heading_de_official": "Brandwände",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": [
+        "brandschutz"
+      ]
+    },
+    "27d": {
+      "marker": "§ 27d",
+      "heading_de_official": "Decken",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "27e": {
+      "marker": "§ 27e",
+      "heading_de_official": "Dächer",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "27f": {
+      "marker": "§ 27f",
+      "heading_de_official": "Nutzungsänderungen und bauliche Änderungen im Bestand bei tragenden, aussteifenden und raumabschließenden Bauteilen und Dachgeschossausbauten oder Aufstockungen zu Wohnzwecken",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": [
+        "nutzungsaenderung"
+      ],
+      "body_de_official": "(1) Nutzungsänderungen von rechtmäßig bestehenden Gebäuden oder Nutzungseinheiten sowie bauliche Änderungen innerhalb dieser Gebäude führen nicht zu höheren brandschutzbezogenen Anforderungen an tragende, aussteifende und raumabschließende Bauteile, soweit für die neue Nutzung oder bauliche Änderung nicht § 38 gilt und die Anforderungen nach § 3 Absatz 1 Satz 1 eingehalten werden; dies ist insbesondere dann der Fall, wenn die bauzeitlich erforderlichen Brandschutzanforderungen an Gebäude mit Wohnnutzung gewahrt werden und Belange der Standsicherheit ausreichend berücksichtigt werden. § 58 Absatz 6 und § 76 Absatz 2 bleiben unberührt.\n(2) Fallen rechtmäßig bestehende Gebäude aufgrund eines Dachgeschossausbaus oder einer Aufstockung zu Wohnzwecken nach § 2 Absatz 4 Satz 1 in die Gebäudeklasse 4, so sind die Anforderungen an den Feuerwiderstand der tragenden und aussteifenden sowie raumabschließenden Bauteile der Gebäudeklasse 3 bei der bestehenden Gebäudekonstruktion ausreichend, wenn\n1. Nutzungseinheiten, die nicht zu ebener Erde liegen, Rettungswege nach § 15 Absatz 4 und 5 haben,\n2. die Türen vom notwendigen Treppenraum zu Kellergeschossen mindestens feuerhemmend, rauchdicht und selbstschließend sind,\n3. der notwendige Treppenraum nach § 28a Absatz 8 entraucht werden kann,\n4. Wohnungseingangstüren der neu geschaffenen Wohnungen mindestens feuerhemmend, rauchdicht und selbstschließend sind, sofern im notwendigen Treppenraum die notwendige Treppe oder Wand- und Deckenbekleidungen aus brennbaren Baustoffen bestehen oder die übrigen Türen des notwendigen Treppenraums nicht mindestens dicht- und selbstschließend sind.\nBeträgt die Aufstockung nicht mehr als ein Geschoss, so sind für dieses Geschoss die Anforderungen an den Feuerwiderstand der tragenden und aussteifenden sowie raumabschließenden Bauteile der Gebäudeklasse 3 ausreichend.\n(3) Fallen rechtmäßig bestehende Gebäude aufgrund eines Dachgeschossausbaus oder einer Aufstockung um höchstens 2 Geschosse zu Wohnzwecken nach § 2 Absatz 4 Satz 1 in die Gebäudeklasse 5, gilt Absatz 2 entsprechend, wenn\n1. die Höhe von 13 m nach § 2 Absatz 4 Satz 2 nicht überschritten wird und die Bauteile nach Absatz 2 Satz 1 und 2 die Anforderungen an die tragenden und aussteifenden sowie raumabschließenden Bauteile der Gebäudeklasse 3 erfüllen oder\n2. die Höhe von 18 m nach § 2 Absatz 4 Satz 2 nicht überschritten wird und die Bauteile nach Absatz 2 Satz 1 und 2 die Anforderung an tragende und aussteifende sowie raumabschließende Bauteile der Gebäudeklasse 4 erfüllen. Weitergehend können bestehende Türen unabhängig von den Anforderungen an die neuen Türen selbstschließend gefordert werden, sofern dies aus Brandschutzgründen erforderlich ist.",
+      "body_scope_note": "Vollständig (Absätze 1-3).",
+      "body_source_url": "https://www.akbw.de/fileadmin/download/dokumenten_datenbank/AKBW_Merkblaetter/Baurecht_Planungsrecht/Merkblatt610_LBO2026.pdf",
+      "body_source_note": "AKBW Merkblatt 610 — konsolidierter LBO-Volltext der Architektenkammer Baden-Württemberg (Körperschaft des öffentlichen Rechts), Stand 16.03.2026, extrahiert via pdftotext (fetch recipe: docs/PHASE_12_BW_FETCH_DRYRUN.md). Official portal landesrecht-bw.de re-attempted 2026-06-11 (jlr-BauOBW2010V36P27f): JS shell, NO_TEXT. Reiner Brandschutz-/Bestandsschutz-Paragraf (GK-Sprung-Entschärfung): enthält KEINE Stellplatz- und KEINE Abstandsflächen-Regelung (Walk-1-Befund F2: Stellplatz-Relief liegt in § 37 Abs. 3 S. 2, Abstandsflächen-Relief in § 5 Abs. 5 S. 2 Nr. 1).",
+      "body_fetched_at": "2026-06-11",
+      "body_verification_tier": "primary-source"
+    },
+    "28": {
+      "marker": "§ 28",
+      "heading_de_official": "Treppen",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "28a": {
+      "marker": "§ 28a",
+      "heading_de_official": "Notwendige Treppenräume, Ausgänge",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "28b": {
+      "marker": "§ 28b",
+      "heading_de_official": "Notwendige Flure, offene Gänge",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "28c": {
+      "marker": "§ 28c",
+      "heading_de_official": "Fenster, sonstige Öffnungen",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "28d": {
+      "marker": "§ 28d",
+      "heading_de_official": "Nutzungsänderungen und bauliche Änderungen im Bestand bei Bauteilen in Rettungswegen",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": [
+        "nutzungsaenderung"
+      ]
+    },
+    "29": {
+      "marker": "§ 29",
+      "heading_de_official": "Aufzugsanlagen",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "30": {
+      "marker": "§ 30",
+      "heading_de_official": "Lüftungsanlagen",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "31": {
+      "marker": "§ 31",
+      "heading_de_official": "Leitungsanlagen",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "32": {
+      "marker": "§ 32",
+      "heading_de_official": "Feuerungsanlagen, sonstige Anlagen zur Wärmeerzeugung und Energiebereitstellung",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "33": {
+      "marker": "§ 33",
+      "heading_de_official": "Wasserversorgungs- und Wasserentsorgungsanlagen, Anlagen für Abfallstoffe und Reststoffe",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "34": {
+      "marker": "§ 34",
+      "heading_de_official": "Aufenthaltsräume",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "35": {
+      "marker": "§ 35",
+      "heading_de_official": "Wohnungen",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "36": {
+      "marker": "§ 36",
+      "heading_de_official": "Toilettenräume und Bäder",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "37": {
+      "marker": "§ 37",
+      "heading_de_official": "Stellplätze für Kraftfahrzeuge und Fahrräder, Garagen",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": [
+        "stellplaetze"
+      ],
+      "scope_summary_de": "Pflicht zu Stellplätzen für Kraftfahrzeuge und Fahrräder sowie zu Garagen.",
+      "scope_summary_en": "Obligation to provide parking for motor vehicles and bicycles as well as garages.",
+      "body_de_official": "(1) Bei der Errichtung von Gebäuden mit Wohnungen ist für jede Wohnung ein geeigneter Stellplatz für Kraftfahrzeuge herzustellen (notwendiger Kfz-Stellplatz). […]\n(3) Bei Änderungen oder Nutzungsänderungen von Anlagen sind Stellplätze oder Garagen in solcher Zahl herzustellen, dass die infolge der Änderung zusätzlich zu erwartenden Kraftfahrzeuge und Fahrräder aufgenommen werden können. Satz 1 gilt nicht bei der Teilung von Wohnungen sowie bei Vorhaben zur Schaffung von zusätzlichem Wohnraum durch Ausbau, Anbau, Nutzungsänderung, Aufstockung oder Änderung des Daches, wenn die Baugenehmigung oder Kenntnisgabe für das Gebäude mindestens fünf Jahre zurückliegen.\n[…]\n(6) Lassen sich notwendige Kfz-Stellplätze oder Garagen nach Absatz 5 nicht oder nur unter großen Schwierigkeiten herstellen, so kann die Baurechtsbehörde mit Zustimmung der Gemeinde zur Erfüllung der Stellplatzverpflichtung zulassen, dass der Bauherr einen Geldbetrag an die Gemeinde zahlt. […]\n(7) Absatz 6 gilt nicht für notwendige Kfz-Stellplätze oder Garagen von Wohnungen. Eine Abweichung von der Verpflichtung nach Absatz 1 Satz 1 ist zuzulassen, soweit die Herstellung\n1. bei Ausschöpfung aller Möglichkeiten, auch unter Berücksichtigung platzsparender Bauarten der Kfz-Stellplätze oder Garagen, unmöglich oder unzumutbar ist oder\n2. auf dem Baugrundstück aufgrund öffentlich-rechtlicher Vorschriften ausgeschlossen ist.",
+      "body_scope_note": "Absatz 1 Satz 1, Absatz 3 vollständig, Absatz 6 Satz 1, Absatz 7 vollständig. Übrige Absätze/Sätze als […] elidiert.",
+      "body_source_url": "https://www.akbw.de/fileadmin/download/dokumenten_datenbank/AKBW_Merkblaetter/Baurecht_Planungsrecht/Merkblatt610_LBO2026.pdf",
+      "body_source_note": "AKBW Merkblatt 610 — konsolidierter LBO-Volltext der Architektenkammer Baden-Württemberg (Körperschaft des öffentlichen Rechts), Stand 16.03.2026, extrahiert via pdftotext (fetch recipe: docs/PHASE_12_BW_FETCH_DRYRUN.md). Official portal landesrecht-bw.de re-attempted 2026-06-11 (jlr-BauOBW2010V36P27f): JS shell, NO_TEXT. Abs. 3 Satz 2 + Abs. 7 Satz 1 wortlautgleich gegen dejure.org/gesetze/LBO/37.html quergeprüft (2026-06-11); Verbvarianz Abs. 3 S. 2: AKBW-Konsolidierung „zurückliegen\", dejure (Fassung 2019) „zurückliegt\" — inhaltsgleich, AKBW-Wortlaut ingestiert.",
+      "body_fetched_at": "2026-06-11",
+      "body_verification_tier": "primary-source"
+    },
+    "38": {
+      "marker": "§ 38",
+      "heading_de_official": "Sonderbauten",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": [
+        "sonderbauten"
+      ],
+      "scope_summary_de": "Besondere Anforderungen an Sonderbauten.",
+      "scope_summary_en": "Special requirements for special buildings (Sonderbauten)."
+    },
+    "39": {
+      "marker": "§ 39",
+      "heading_de_official": "Barrierefreie Anlagen",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "40": {
+      "marker": "§ 40",
+      "heading_de_official": "Gemeinschaftsanlagen",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "41": {
+      "marker": "§ 41",
+      "heading_de_official": "Grundsatz",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "42": {
+      "marker": "§ 42",
+      "heading_de_official": "Bauherr",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "43": {
+      "marker": "§ 43",
+      "heading_de_official": "Entwurfsverfasser",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": [
+        "bauvorlageberechtigung"
+      ],
+      "scope_summary_de": "Pflichten und Eignung des Entwurfsverfassers, der den Bauantrag fachlich verantwortet.",
+      "scope_summary_en": "Duties and qualification of the design author who is technically responsible for the application.",
+      "procedure_relevance": "applies-to: T-01,T-02,T-03,T-04,T-05,T-06,T-07,T-08"
+    },
+    "44": {
+      "marker": "§ 44",
+      "heading_de_official": "Unternehmer",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "45": {
+      "marker": "§ 45",
+      "heading_de_official": "Bauleiter",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "46": {
+      "marker": "§ 46",
+      "heading_de_official": "Aufbau und Besetzung der Baurechtsbehörden",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "47": {
+      "marker": "§ 47",
+      "heading_de_official": "Aufgaben und Befugnisse der Baurechtsbehörden",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "48": {
+      "marker": "§ 48",
+      "heading_de_official": "Sachliche Zuständigkeit",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "49": {
+      "marker": "§ 49",
+      "heading_de_official": "Genehmigungspflichtige Vorhaben",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "50": {
+      "marker": "§ 50",
+      "heading_de_official": "Verfahrensfreie Vorhaben",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": [
+        "verfahrensfrei"
+      ],
+      "scope_summary_de": "Vorhaben, die ohne Baugenehmigung und ohne Verfahren errichtet werden dürfen (Anhang 1).",
+      "scope_summary_en": "Projects that may be built without any permit or procedure (Annex 1).",
+      "procedure_relevance": "applies-to: T-01,T-02,T-03,T-04,T-05,T-06,T-07,T-08"
+    },
+    "51": {
+      "marker": "§ 51",
+      "heading_de_official": "Kenntnisgabeverfahren",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": [
+        "verfahren_freistellung"
+      ],
+      "scope_summary_de": "BW-spezifisches Verfahren ohne Baugenehmigung: Vorhaben wird der Gemeinde nur zur Kenntnis gegeben.",
+      "scope_summary_en": "BW-specific notification procedure replacing a permit: the project is merely notified to the municipality.",
+      "procedure_relevance": "applies-to: T-01,T-02,T-03,T-04,T-05,T-06,T-07,T-08"
+    },
+    "52": {
+      "marker": "§ 52",
+      "heading_de_official": "Vereinfachtes Baugenehmigungsverfahren",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": [
+        "verfahren_vereinfacht"
+      ],
+      "scope_summary_de": "Vereinfachtes Genehmigungsverfahren mit reduziertem Prüfumfang für nicht-Sonderbauten.",
+      "scope_summary_en": "Simplified permit procedure with a reduced scope of review for non-special buildings.",
+      "procedure_relevance": "applies-to: T-01,T-02,T-03,T-04,T-05,T-06,T-07,T-08"
+    },
+    "53": {
+      "marker": "§ 53",
+      "heading_de_official": "Bauvorlagen und Bauantrag",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": [
+        "bauantrag_bauvorlagen"
+      ],
+      "scope_summary_de": "Erforderliche Bauvorlagen und Form des Bauantrags.",
+      "scope_summary_en": "Required submission documents and form of the building application."
+    },
+    "54": {
+      "marker": "§ 54",
+      "heading_de_official": "Fristen im Genehmigungsverfahren, gemeindliches Einvernehmen",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "55": {
+      "marker": "§ 55",
+      "heading_de_official": "Benachrichtigung der Nachbarn und Beteiligung der Öffentlichkeit",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "56": {
+      "marker": "§ 56",
+      "heading_de_official": "Abweichungen, Ausnahmen und Befreiungen",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": [],
+      "body_de_official": "(2) Ferner sind Abweichungen von den Vorschriften in den §§ 4 bis 37 dieses Gesetzes oder aufgrund dieses Gesetzes zuzulassen\n1. zur Modernisierung von Wohnungen und Wohngebäuden, Teilung von Wohnungen oder Schaffung von Wohnraum durch Ausbau, Anbau, Nutzungsänderung, Aufstockung oder Änderung des Daches, wenn die Baugenehmigung oder die Kenntnisgabe für die Errichtung des Gebäudes mindestens fünf Jahre zurückliegt,\n2. zur Erhaltung und weiteren Nutzung von Kulturdenkmalen,\n3. zur Verwirklichung von Vorhaben zur Energieeinsparung und zur Nutzung erneuerbarer Energie,\n4. zur praktischen Erprobung neuer Bau- und Wohnformen im Wohnungsbau,\n5. zur Ersetzung eines rechtmäßig errichteten Gebäudes an gleicher Stelle durch ein Gebäude höchstens gleicher Abmessung in Bezug auf Abweichungen von den Anforderungen des § 5\nwenn die Abweichungen mit den öffentlichen Belangen vereinbar sind.",
+      "body_scope_note": "Absatz 2 vollständig. Übrige Absätze nicht ingestiert.",
+      "body_source_url": "https://www.akbw.de/fileadmin/download/dokumenten_datenbank/AKBW_Merkblaetter/Baurecht_Planungsrecht/Merkblatt610_LBO2026.pdf",
+      "body_source_note": "AKBW Merkblatt 610 — konsolidierter LBO-Volltext der Architektenkammer Baden-Württemberg (Körperschaft des öffentlichen Rechts), Stand 16.03.2026, extrahiert via pdftotext (fetch recipe: docs/PHASE_12_BW_FETCH_DRYRUN.md). Official portal landesrecht-bw.de re-attempted 2026-06-11 (jlr-BauOBW2010V36P27f): JS shell, NO_TEXT. Abs. 2 Nr. 1 = zwingende Abweichung („sind zuzulassen\") von §§ 4-37 für Wohnraum-Schaffung durch Aufstockung (Gebäude ≥ 5 Jahre), Vereinbarkeit mit öffentlichen Belangen vorausgesetzt.",
+      "body_fetched_at": "2026-06-11",
+      "body_verification_tier": "primary-source"
+    },
+    "57": {
+      "marker": "§ 57",
+      "heading_de_official": "Bauvorbescheid",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "58": {
+      "marker": "§ 58",
+      "heading_de_official": "Baugenehmigung",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": [
+        "verfahren_regulaer"
+      ],
+      "scope_summary_de": "Erteilung der Baugenehmigung und ihre Rechtswirkungen.",
+      "scope_summary_en": "Issuance of the building permit and its legal effects.",
+      "procedure_relevance": "applies-to: T-01,T-02,T-03,T-04,T-05,T-06,T-07,T-08"
+    },
+    "59": {
+      "marker": "§ 59",
+      "heading_de_official": "Baubeginn",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "60": {
+      "marker": "§ 60",
+      "heading_de_official": "Sicherheitsleistung",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "61": {
+      "marker": "§ 61",
+      "heading_de_official": "Teilbaugenehmigung",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "62": {
+      "marker": "§ 62",
+      "heading_de_official": "Geltungsdauer der Baugenehmigung",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "63": {
+      "marker": "§ 63",
+      "heading_de_official": "Bauvorlageberechtigung",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": [
+        "bauvorlageberechtigung"
+      ],
+      "scope_summary_de": "Wer berechtigt ist, Bauvorlagen zu erstellen und einzureichen (Vorlageberechtigung).",
+      "scope_summary_en": "Who is entitled to prepare and submit building documents (submission entitlement).",
+      "procedure_relevance": "applies-to: T-01,T-02,T-03,T-04,T-05,T-06,T-07,T-08"
+    },
+    "63a": {
+      "marker": "§ 63a",
+      "heading_de_official": "Voraussetzung für die Eintragung in die Liste nach § 63 Absatz 2 Nummer 2",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": [
+        "bauvorlageberechtigung"
+      ]
+    },
+    "63b": {
+      "marker": "§ 63b",
+      "heading_de_official": "Eintragungsverfahren für Antragstellende nach § 63a Absatz 3",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": [
+        "bauvorlageberechtigung"
+      ]
+    },
+    "63c": {
+      "marker": "§ 63c",
+      "heading_de_official": "Ausgleichsmaßnahmen",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "63d": {
+      "marker": "§ 63d",
+      "heading_de_official": "Vorübergehende und gelegentliche Dienstleistungserbringung von bauvorlageberechtigten Ingenieuren, Anzeigeverfahren",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": [
+        "bauvorlageberechtigung"
+      ]
+    },
+    "64": {
+      "marker": "§ 64",
+      "heading_de_official": "Einstellung von Arbeiten",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "65": {
+      "marker": "§ 65",
+      "heading_de_official": "Abbruchsanordnung und Nutzungsuntersagung",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": [
+        "abbruch_beseitigung",
+        "nutzungsaenderung"
+      ],
+      "scope_summary_de": "Anordnung des Abbruchs und Untersagung der Nutzung baulicher Anlagen.",
+      "scope_summary_en": "Order to demolish and prohibition of use of built structures."
+    },
+    "66": {
+      "marker": "§ 66",
+      "heading_de_official": "Bauüberwachung",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "67": {
+      "marker": "§ 67",
+      "heading_de_official": "Bauabnahmen, Inbetriebnahme der Feuerungsanlagen",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "68": {
+      "marker": "§ 68",
+      "heading_de_official": "Typengenehmigung, Typenprüfung",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "69": {
+      "marker": "§ 69",
+      "heading_de_official": "Fliegende Bauten",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "70": {
+      "marker": "§ 70",
+      "heading_de_official": "Zustimmungsverfahren, Vorhaben der Landesverteidigung",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "71": {
+      "marker": "§ 71",
+      "heading_de_official": "Übernahme von Baulasten",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "72": {
+      "marker": "§ 72",
+      "heading_de_official": "Baulastenverzeichnis",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "73": {
+      "marker": "§ 73",
+      "heading_de_official": "Rechtsverordnungen",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "73a": {
+      "marker": "§ 73a",
+      "heading_de_official": "Technische Baubestimmungen",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": [
+        "bautechnische_nachweise"
+      ],
+      "scope_summary_de": "Einführung und Bekanntmachung der Technischen Baubestimmungen.",
+      "scope_summary_en": "Introduction and publication of the Technical Building Provisions.",
+      "procedure_relevance": "applies-to: T-01,T-02,T-03,T-04,T-05,T-06,T-07,T-08"
+    },
+    "74": {
+      "marker": "§ 74",
+      "heading_de_official": "Örtliche Bauvorschriften",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "75": {
+      "marker": "§ 75",
+      "heading_de_official": "Ordnungswidrigkeiten",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "76": {
+      "marker": "§ 76",
+      "heading_de_official": "Bestehende bauliche Anlagen",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "77": {
+      "marker": "§ 77",
+      "heading_de_official": "Übergangsvorschriften",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "78": {
+      "marker": "§ 78",
+      "heading_de_official": "Außerkrafttreten bisherigen Rechts",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    },
+    "79": {
+      "marker": "§ 79",
+      "heading_de_official": "Inkrafttreten",
+      "heading_source_url": "https://www.baunormenlexikon.de/norm/lbo-bw/0d429672-ff02-4cdd-82af-7d03c2ff522b",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "secondary-mirror",
+      "archetypes": []
+    }
   }
 }
