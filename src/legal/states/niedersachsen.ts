@@ -90,6 +90,7 @@ verifizieren; einige Permalinks dort führen noch auf ältere Fassungen
                               mindestens 3 m)
   ✓ "§ 7 NBauO"            — Abstände auf demselben Baugrundstück
   ✓ "§ 33 NBauO"           — Rettungswege
+  ✓ "§ 51 NBauO"           — Sonderbauten
   ✓ "§ 52 NBauO"           — Bauherrin und Bauherr
   ✓ "§ 53 NBauO"           — Entwurfsverfasserin und Entwurfsverfasser
                               (nur bauvorlageberechtigte Personen)
@@ -316,6 +317,7 @@ const ALLOWED_CITATIONS: readonly string[] = [
   // edge-function redeploy to take effect.)
   '§ 14 NBauO',
   '§ 33 NBauO', // Rettungswege (escape routes — corpus secondary-mirror; ITEM D)
+  '§ 51 NBauO', // Sonderbauten (corpus secondary-mirror; NI×T-04 override cites it for Sonderbau-Tatbestand der neuen Nutzung)
   '§ 52 NBauO',
   '§ 53 NBauO',
   '§ 60 NBauO',

@@ -452,6 +452,16 @@ const BUNDESLAND_SWITCH_FIXTURES = [
     text: 'Sofern keine Sonderbauten vorliegen, läuft das Vorhaben über § 63 NBauO.',
     expectFlag: false,
   },
+  // fix/ni-s51-allowlist — T-04 NI walks flagged § 51 on every run although the
+  // NI×T-04 stateOverride itself instructs the citation (Sonderbau-Tatbestand
+  // der neuen Nutzung). Corpus-confirmed "Sonderbauten"; drift-guard so the
+  // allowlist can never silently lose it again.
+  {
+    label: 'active=niedersachsen, "§ 51 NBauO" Sonderbauten — must NOT flag',
+    activeBundesland: 'niedersachsen',
+    text: 'Begründet die neue Nutzung einen Sonderbau-Tatbestand nach § 51 NBauO, läuft das Vorhaben über § 64 NBauO.',
+    expectFlag: false,
+  },
   {
     label: 'active=niedersachsen, "§ 64 NBauO" reguläres Verfahren — must NOT flag',
     activeBundesland: 'niedersachsen',
@@ -4245,7 +4255,7 @@ async function runStaticGate() {
     {
       file: 'src/legal/states/niedersachsen.ts',
       label: 'Niedersachsen',
-      expectedCount: 26, // ITEM D: +§ 33 NBauO (Rettungswege) — escape-route § omission close
+      expectedCount: 27, // fix/ni-s51-allowlist: +§ 51 NBauO (Sonderbauten) — T-04 instructed-but-not-allowlisted close
       mustContain: ['§ 60 NBauO', '§ 62 NBauO', '§ 63 NBauO', '§ 65 NBauO'],
     },
     {
