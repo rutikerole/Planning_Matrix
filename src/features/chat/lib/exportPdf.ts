@@ -134,6 +134,7 @@ import {
   formatGebaeudeklasseValue,
   gkCarveOutValue,
   gkDerivationCarveOut,
+  isExplicitKlasseFactKey,
 } from '@/legal/deriveGebaeudeklasse'
 import { pickSmartSuggestions } from '@/features/result/lib/smartSuggestionsMatcher'
 import { computeConfidence } from '@/features/result/lib/computeConfidence'
@@ -1183,9 +1184,11 @@ export async function buildExportPdf({
   // reasoning inline and tags the qualifier CALCULATED or ASSUMED per
   // derivation discipline. Honest deferral phrase when Höhe AND
   // Geschosse are both missing — never a fabricated GK number.
-  const hasExplicitKlasse = facts.some((f) =>
-    /^(?:gebaeudeklasse|geb_klasse|gk_|klasse$)/i.test(f.key),
-  )
+  // fix/t06-walk1 — predicate single-sourced in deriveGebaeudeklasse. The old
+  // inline regex's bare `gk_` prefix matched the free-form TRANSITION fact
+  // `gk_sprung` (BW T-06 walk 1), suppressing this derived row with no class
+  // fact present.
+  const hasExplicitKlasse = facts.some((f) => isExplicitKlasseFactKey(f.key))
   if (!hasExplicitKlasse) {
     const derived = deriveGebaeudeklasse(
       deriveGkInputFromFacts(

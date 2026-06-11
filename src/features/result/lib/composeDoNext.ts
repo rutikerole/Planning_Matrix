@@ -43,11 +43,16 @@ export function composeDoNext({
 }: Args): DoNextItem[] {
   const out: DoNextItem[] = []
 
-  // 1. Persona recommendations — rank ascending, top 3 score 9 / 8 / 7.
-  const recs = (state.recommendations ?? [])
-    .slice()
-    .sort((a, b) => a.rank - b.rank)
-    .slice(0, 3)
+  // 1. Persona recommendations — rank ascending, semantic dedup, top 3
+  // score 9 / 8 / 7. fix/t06-walk1 — the id-only `seen` Set below dedupes
+  // exact ids only, so the persona re-minting the same action under a fresh
+  // id across rounds shipped twice (BW T-06 walk 1: "Commission a structural
+  // engineer for the Bestandsstatik" + "… for the existing building survey"
+  // burned top-3 slots 1+2). Dedup by action signature BEFORE the top-3
+  // slice so a distinct rec can backfill the freed slot.
+  const recs = dedupRecommendations(
+    (state.recommendations ?? []).slice().sort((a, b) => a.rank - b.rank),
+  ).slice(0, 3)
   recs.forEach((rec, idx) => {
     out.push({
       id: `rec-${rec.id}`,
@@ -104,6 +109,69 @@ function truncate(s: string | undefined | null, max: number): string {
   if (!s) return ''
   if (s.length <= max) return s
   return `${s.slice(0, max - 1).trimEnd()}…`
+}
+
+// ── fix/t06-walk1 — semantic dedup for persona recommendations ─────────
+// Lexicon-based on purpose: deterministic, language-bridging (DE + EN titles
+// are matched together) and conservative — BOTH an action stem AND an actor
+// must resolve before two recs can collide; a rec without a recognised
+// signature is never deduped, so non-duplicates are never dropped. Extend the
+// lexica when walks surface new duplicate shapes.
+const ACTION_STEMS: ReadonlyArray<readonly [RegExp, string]> = [
+  [/beauftrag|commission|engage\b|hire\b|einschalt|einbind/i, 'commission'],
+  [/anfrag|erfrag|nachfrag|anforder|einhol|enquir|inquir|request/i, 'enquire'],
+  [/einreich|submit/i, 'submit'],
+  [/kläre|klaer|prüf|pruef|clarif|verif|check|confirm/i, 'verify'],
+]
+const ACTORS: ReadonlyArray<readonly [RegExp, string]> = [
+  [/tragwerksplan|statiker|statikbüro|statikbuero|structural engineer/i, 'tragwerksplaner'],
+  [/architekt|architect/i, 'architekt'],
+  [/energieberat|energy consultant/i, 'energieberater'],
+  [/vermesser|surveyor/i, 'vermesser'],
+  [/brandschutz(?:planer|gutachter|sachverständig|sachverstaendig)|fire.protection (?:planner|expert)/i, 'brandschutzplaner'],
+  [/bauamt|baurechtsamt|bauaufsicht|bauordnungsamt|stadtplanungsamt|building authority|planning (?:office|department)/i, 'behoerde'],
+]
+
+type RecLike = {
+  rank: number
+  title_de: string
+  title_en: string
+  detail_de: string
+  detail_en: string
+}
+
+function recActionSignature(rec: RecLike): string | null {
+  const text = `${rec.title_de} ${rec.title_en}`
+  const stem = ACTION_STEMS.find(([rx]) => rx.test(text))?.[1] ?? null
+  const actor = ACTORS.find(([rx]) => rx.test(text))?.[1] ?? null
+  return stem && actor ? `${stem}|${actor}` : null
+}
+
+/** Same action signature → one survivor: the richer-rationale member, kept
+ *  in the duplicate group's best (earliest-rank) slot. Input must already be
+ *  rank-sorted; output order is preserved. */
+function dedupRecommendations<T extends RecLike>(sorted: T[]): T[] {
+  const out: T[] = []
+  const slotBySig = new Map<string, number>()
+  for (const rec of sorted) {
+    const sig = recActionSignature(rec)
+    if (sig === null) {
+      out.push(rec)
+      continue
+    }
+    const slot = slotBySig.get(sig)
+    if (slot === undefined) {
+      slotBySig.set(sig, out.length)
+      out.push(rec)
+      continue
+    }
+    const incumbent = out[slot]
+    const richer =
+      (rec.detail_de + rec.detail_en).length >
+      (incumbent.detail_de + incumbent.detail_en).length
+    if (richer) out[slot] = rec
+  }
+  return out
 }
 
 interface BaselineStep {
