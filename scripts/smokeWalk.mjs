@@ -1847,8 +1847,12 @@ async function runStaticGate() {
     // WIN 3b — campaign 5c (MV walk): the null-GK case must route through the SAME
     // formatGebaeudeklasseValue the PDF Key Data renders (one honest-deferral string),
     // NOT diverge to a bare "—" tbd. Guards the At-a-Glance↔PDF building-class agreement.
-    { ok: /gkUseConversion'\)\s*:\s*formatGebaeudeklasseValue\(derivedKlasse, lang\)/.test(winAtAGlance),
-      msg: 'At-a-Glance GK null case must use formatGebaeudeklasseValue (PDF-consistent honest deferral), not a bare tbd' },
+    // Meta-sweep item 3a — the carve-outs are now single-sourced in
+    // gkDerivationCarveOut (T-04 use-conversion + T-06 storey-addition); the
+    // final fallback is STILL formatGebaeudeklasseValue.
+    { ok: /gkAufstockung'\)\s*:\s*formatGebaeudeklasseValue\(derivedKlasse, lang\)/.test(winAtAGlance)
+        && /gkDerivationCarveOut\(state\.templateId\)/.test(winAtAGlance),
+      msg: 'At-a-Glance GK value: carve-outs via gkDerivationCarveOut, null case via formatGebaeudeklasseValue (PDF-consistent honest deferral)' },
     // WIN 4 — state isolation: the bleed guard must scrub BW tokens on the wrong state.
     { ok: /state:\s*'bw',\s*pattern:\s*\/\\bLBO\\s\+BW\\b\//.test(winBleedGuard),
       msg: 'cross-state bleed guard must keep the BW LBO-token scrubber (no Bayern/NRW bleed into BW)' },
