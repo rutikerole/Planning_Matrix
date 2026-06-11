@@ -390,6 +390,42 @@ chunk. Run it as its own sprint with the full gate suite — NOT as a hasty
 trim under deploy pressure. When it lands, ratchet the ceiling back DOWN
 (320 → ~260–270) and log the new baseline in the ledger.
 
+### Persona directive bundle — WAIT for the next intentional SHA move
+
+Logged 2026-06-11 (fix/output-budget diagnosis). Two small persona-prompt
+changes that each move the Bayern SHA, so they ride the NEXT planned
+re-baseline rather than forcing one:
+1. **Emission-order rule** — instruct the model to emit `extracted_facts`
+   BEFORE the bilingual prose fields, so facts survive any future
+   output-cap truncation (defense-in-depth behind the MAX_TOKENS raise;
+   evidence: Thüringen b1416734 dense turns where the cap ate the tail).
+2. **§3 clarifying example** (grounded-emission valve) — one line stating
+   that an inferred-likely POSITIVE as `true·ASSUMED` + open question is
+   the intended pattern (the `in_gestaltungssatzung` Erfurt case); the
+   ungrounded-value ban stays asymmetric (negatives only).
+
+### Confidence recalibration — TICKET, needs design before touching weights
+
+Logged 2026-06-11. Two structural issues in `computeConfidence`, evidenced
+by the walk data points 46/31/59:
+- **Perverse honest-capture gradient**: every persisted ASSUMED fact is a
+  multiplicative knockdown (0.95/0.88) and ≥2 PENDING domains another, so
+  the Sachsen walk that captured MORE uncertainty (22 facts, 8 ASSUMED,
+  3 PENDING domains) scores 31% while the Thüringen walk that captured
+  LESS (12 facts, 5 ASSUMED, 0 PENDING) scores 59%. The formula rewards
+  not persisting what you don't know — the same gradient as capture loss.
+- **Tri-state blocker invisible**: `countHardBlockers`' `factBool` only
+  matches `true/'true'/'JA'/'ja'`, so `ensembleschutz="ungeklärt"` (the
+  tri-state open blocker the UI shows) counts ZERO blockers in the math.
+
+### Prose→key reconciliation — future LOG-ONLY audit idea
+
+Logged 2026-06-11. A synthesis-time edge-fn sweep that diffs the persona's
+prose conclusions against the persisted typed keys and LOGS the gap (never
+writes facts). Would have flagged the Thüringen dense turns ("not
+freestanding… anzeigepflichtig § 63 ThürBO" in prose, zero keys) in real
+time. Strictly observability; revisit after the MAX_TOKENS gauge has data.
+
 ---
 
 ## Maintenance

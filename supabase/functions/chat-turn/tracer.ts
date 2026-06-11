@@ -120,6 +120,13 @@ export interface Tracer {
   readonly enabled: boolean
   startSpan(name: string, parent_span_id?: string | null): Span
   setError(error_class: string, error_message: string): void
+  /** fix/output-budget — turn-level WARNING channel. Writes into the
+   *  trace row's error_class/error_message WITHOUT the trace being an
+   *  error: status stays 'ok', so error-rate metrics (all keyed on
+   *  status) are untouched, while TraceCard renders the class inline.
+   *  A real setError always wins: setWarning never overwrites an
+   *  existing class, and a later setError overwrites the warning. */
+  setWarning(warning_class: string, warning_message: string): void
   setTokens(usage: AnthropicUsage): void
   setResponseSize(bytes: number): void
   capturePersonaSnapshot(input: PersonaSnapshotInput): void
@@ -237,6 +244,17 @@ export function createTracer(opts: CreateTracerOpts): Tracer {
       try {
         error_class = cls
         error_message = msg
+      } catch { /* */ }
+    },
+
+    setWarning(cls, msg) {
+      try {
+        // Error wins: never clobber an already-set class (setError or an
+        // earlier warning); a later setError overwrites this freely.
+        if (error_class === null) {
+          error_class = cls
+          error_message = msg
+        }
       } catch { /* */ }
     },
 
@@ -430,6 +448,7 @@ export function noopTracer(): Tracer {
     enabled: false,
     startSpan() { return noopSpan() },
     setError() {},
+    setWarning() {},
     setTokens() {},
     setResponseSize() {},
     capturePersonaSnapshot() {},
