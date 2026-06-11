@@ -1928,6 +1928,7 @@
         "inProgress": "In progress",
         "tbd": "—",
         "gkUseConversion": "Not re-classified · use conversion",
+        "gkAufstockung": "Not auto-derived · storey addition can change class",
         "costByQuote": "By quote · no HOAI schedule"
       },
       "actions": {

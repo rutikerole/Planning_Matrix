@@ -9,6 +9,7 @@ import type { ProjectRow } from '@/types/db'
 import type { ProjectState, AreaState } from '@/types/projectState'
 import { factLabel, factValueWithUnit } from '@/lib/factLabel'
 import { resolveRoles } from '@/features/result/lib/resolveRoles'
+import { resolveDocuments } from '@/features/result/lib/resolveDocuments'
 import {
   resolveProcedures,
   selectProcedures,
@@ -143,19 +144,57 @@ export function buildExportMarkdown({ project, events, lang }: BuildArgs): strin
   }
 
   // ── Dokumente ───────────────────────────────────────────────────
-  const docs = state.documents ?? []
-  if (docs.length > 0) {
+  // Meta-sweep item 5 — route through the SAME resolveDocuments the web tab
+  // and the PDF page 7 use (the v1.0.22 Bug F resolver), NOT raw
+  // state.documents. The raw read re-created the exact Bug-F drift on the
+  // .md: zero/thin persona docs rendered an empty section while the PDF
+  // listed the mandatory Anlagen for the identical project, and the
+  // hard-blocker suppression never reached the .md. On-file (uploaded)
+  // documents still list, after the resolver-derived required set.
+  const resolvedDocs = resolveDocuments(project, state)
+  const docStatusLabels: Record<string, { de: string; en: string }> = {
+    required: { de: 'erforderlich', en: 'required' },
+    conditional: { de: 'bedingt', en: 'conditional' },
+    recommended: { de: 'empfohlen', en: 'recommended' },
+  }
+  if (resolvedDocs.blockedByVoranfrage) {
     lines.push('')
     lines.push(`## ${t('Dokumente', 'Documents Required')}`)
     lines.push('')
-    docs.forEach((d) => {
-      const title = lang === 'en' ? d.title_en : d.title_de
-      const status = STATUS_LABEL_DE[d.status] ?? d.status
-      lines.push(`- [ ] ${title} — *${status}*`)
-      if (d.required_for.length > 0) {
-        lines.push(`  ${t('Erforderlich für', 'Required for')}: ${d.required_for.join(', ')}`)
+    lines.push(
+      `- ${lang === 'en' ? resolvedDocs.blockedLabelEn : resolvedDocs.blockedLabelDe}`,
+    )
+    lines.push('')
+    lines.push('---')
+  } else if (resolvedDocs.required.length > 0 || resolvedDocs.onFile.length > 0) {
+    lines.push('')
+    lines.push(`## ${t('Dokumente', 'Documents Required')}`)
+    lines.push('')
+    resolvedDocs.required.forEach((r) => {
+      const name = lang === 'en' ? r.name_en : r.name_de
+      const tag = docStatusLabels[r.status]?.[lang] ?? r.status
+      // v1.0.30 Bug 98 (same as the PDF): suppress the per-row stub-state
+      // deferral citation; substantive § citations still show.
+      const cleanCitation =
+        r.citation && !/noch nicht hinterlegt/i.test(r.citation) ? r.citation : ''
+      lines.push(`- [ ] ${name} — *${tag}*${cleanCitation ? ` (${cleanCitation})` : ''}`)
+      if (r.status === 'conditional') {
+        const note = lang === 'en' ? r.condition_note_en : r.condition_note_de
+        if (note) lines.push(`  ${note}`)
       }
     })
+    if (resolvedDocs.onFile.length > 0) {
+      lines.push('')
+      lines.push(`**${t('Vorliegend', 'On file')}:**`)
+      resolvedDocs.onFile.forEach((d) => {
+        const title = lang === 'en' ? d.title_en : d.title_de
+        const status = STATUS_LABEL_DE[d.status] ?? d.status
+        lines.push(`- [ ] ${title} — *${status}*`)
+        if (d.required_for.length > 0) {
+          lines.push(`  ${t('Erforderlich für', 'Required for')}: ${d.required_for.join(', ')}`)
+        }
+      })
+    }
     lines.push('')
     lines.push('---')
   }
@@ -189,7 +228,10 @@ export function buildExportMarkdown({ project, events, lang }: BuildArgs): strin
         // checked only when genuinely not needed.
         const box = r.needed || r.conditional ? ' ' : 'x'
         lines.push(`- [${box}] ${title} — *${tag}*`)
-        if (r.rationale_de) lines.push(`  ${r.rationale_de}`)
+        // Meta-sweep item 5 — lang-aware rationale (was hardcoded rationale_de,
+        // so the EN export carried German rationales under English titles).
+        const rationale = lang === 'en' ? r.rationale_en : r.rationale_de
+        if (rationale) lines.push(`  ${rationale}`)
       })
     lines.push('')
     lines.push('---')

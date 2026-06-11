@@ -101,6 +101,15 @@ jobs:
       - name: Architect-flow smoke
         run: npm run smoke:architect
 
+      # fix/meta-sweep-pre-t06 item 6 — the under-wired guard deficit. These
+      # ten gates existed but ran on per-commit convention only; the repo's
+      # own history shows exactly what happens to unwired guards (the Sachsen
+      # architect assertion and the smokeWalk thin-state net both sat silently
+      # red until someone looked). ~9 s total; deliberately CI-only, NOT
+      # prebuild (kept fast pending the orchestrator consolidation).
+      - name: Guard smokes (previously manual-only)
+        run: npm run smoke:guards
+
       - name: Run Playwright
         run: npx playwright test
         env:

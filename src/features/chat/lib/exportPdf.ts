@@ -30,7 +30,7 @@ import type { ProjectState } from '@/types/projectState'
 import {
   buildCostBreakdown,
   costBandFor,
-  detectKlasse,
+  resolveCostKlasse,
   formatEurRange,
   resolveCostAreaSqm,
   resolveCostDisplayMode,
@@ -132,6 +132,8 @@ import {
   deriveGebaeudeklasse,
   deriveGkInputFromFacts,
   formatGebaeudeklasseValue,
+  gkCarveOutValue,
+  gkDerivationCarveOut,
 } from '@/legal/deriveGebaeudeklasse'
 import { pickSmartSuggestions } from '@/features/result/lib/smartSuggestionsMatcher'
 import { computeConfidence } from '@/features/result/lib/computeConfidence'
@@ -680,7 +682,7 @@ export async function buildExportPdf({
     .map((f) => `${f.key} ${typeof f.value === 'string' ? f.value : ''}`)
     .join(' ')
     .toLowerCase()
-  const klasse = detectKlasse(corpus)
+  const klasse = resolveCostKlasse(state.facts, corpus)
   // Sprint 0 (P1-A) — single shared cost-area resolver, identical to the
   // result-page surfaces. undefined (no area resolvable) flows into
   // buildCostBreakdown, which applies the BASE_AREA_SQM default — the same
@@ -1196,22 +1198,26 @@ export async function buildExportPdf({
       derived.klasse != null
         ? ' · ' + (lang === 'en' ? derived.reasoningEn : derived.reasoningDe)
         : ''
-    // v1.0.30 Bug 93 — a use conversion (T-04) does not re-classify the
-    // building's Gebäudeklasse; deriving a new-build GK from eaves height is
-    // not meaningful, and the bare deferral read as "—" on the web AT A GLANCE.
-    // State it honestly. (An explicit gebaeudeklasse fact, if present, still
-    // renders above via hasExplicitKlasse.)
-    const isUseConv = state.templateId === 'T-04'
+    // v1.0.30 Bug 93 + meta-sweep item 3a — carve-outs where a freshly-derived
+    // GK row is dishonest, single-sourced in gkDerivationCarveOut: T-04 (a use
+    // conversion does not re-classify) and T-06 (a storey addition can CHANGE
+    // the GK; a derived post-addition number would contradict the persona's
+    // GK-retention statement on the template's central legal claim). An
+    // explicit gebaeudeklasse fact, if present, still renders above via
+    // hasExplicitKlasse. T-04 states a definite rule → CALCULATED; T-06 defers
+    // an open assessment → ASSUMED.
+    const carveOut = gkDerivationCarveOut(state.templateId)
     keyDataRows.push({
       field: lang === 'en' ? 'Building class' : 'Gebäudeklasse',
-      value: isUseConv
-        ? lang === 'en'
-          ? 'Not re-classified — use conversion (existing building unchanged)'
-          : 'Keine Neueinstufung — Nutzungsänderung (Bestand unverändert)'
-        : gkValue + reasoningSuffix,
+      value: carveOut ? gkCarveOutValue(carveOut, lang) : gkValue + reasoningSuffix,
       qualifier: {
         source: 'LEGAL',
-        quality: isUseConv ? 'CALCULATED' : derived.qualifier,
+        quality:
+          carveOut === 'use-conversion'
+            ? 'CALCULATED'
+            : carveOut === 'storey-addition'
+              ? 'ASSUMED'
+              : derived.qualifier,
       },
     })
   }

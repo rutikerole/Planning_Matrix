@@ -27,9 +27,11 @@
     "audit:four-class:gate": "npx tsx scripts/audit-four-class-sweep.mts --gate",
     "gen:corpus-pack": "node scripts/gen-corpus-pack.mjs",
     "verify:corpus-pack": "node scripts/gen-corpus-pack.mjs --check",
-    "prebuild": "npm run verify:locales && npm run verify:hardcoded-de && npm run verify:legal-config && npm run verify:pdfstrings && npm run verify:citation-drift && npm run verify:factlabels-leak && npm run verify:template-tail-noop && npm run verify:template-tail-citations && npm run verify:forbidden-paragraphs && npm run verify:corpus-pack && npm run verify:citations:strict && npm run audit:allowlist && npm run audit:instructed && npm run verify:allowlist-headings && npm run verify:concept-citations && npm run audit:four-class:gate && npm run audit:zindex && npm run audit:ci-env && npm run smoke:t05-composer && npm run smoke:composer-parity",
+    "prebuild": "npm run verify:locales && npm run verify:hardcoded-de && npm run verify:legal-config && npm run verify:pdfstrings && npm run verify:citation-drift && npm run verify:factlabels-leak && npm run verify:template-tail-noop && npm run verify:template-tail-citations && npm run verify:forbidden-paragraphs && npm run verify:corpus-pack && npm run verify:citations:strict && npm run audit:allowlist && npm run audit:instructed && npm run verify:allowlist-headings && npm run verify:concept-citations && npm run audit:four-class:gate && npm run audit:zindex && npm run audit:ci-env && npm run verify:edge-fingerprint && npm run smoke:t05-composer && npm run smoke:composer-parity",
     "build": "tsc -b && vite build && npm run verify:bundle && node scripts/emit-version.mjs",
     "verify:deploy": "node scripts/verify-deploy.mjs",
+    "gen:edge-fingerprint": "node scripts/gen-edge-fingerprint.mjs",
+    "verify:edge-fingerprint": "node scripts/gen-edge-fingerprint.mjs --check",
     "lint": "eslint .",
     "preview": "vite preview",
     "test:e2e": "playwright test",
@@ -67,7 +69,8 @@
     "verify:bayern-sha": "node scripts/verify-bayern-sha.mjs",
     "eval:run": "node scripts/eval-harness/run.mjs",
     "eval:dry-run": "node scripts/eval-harness/run.mjs --dry-run",
-    "smoke:composer-parity": "npm run smoke:t01-composer && npm run smoke:t02-composer && npm run smoke:t03-composer && npm run smoke:t06-composer && npm run smoke:t07-composer && npm run smoke:t08-composer"
+    "smoke:composer-parity": "npm run smoke:t01-composer && npm run smoke:t02-composer && npm run smoke:t03-composer && npm run smoke:t04-composer && npm run smoke:t06-composer && npm run smoke:t07-composer && npm run smoke:t08-composer",
+    "smoke:guards": "npm run smoke:thin-state && npm run smoke:role-gating && npm run smoke:confidence && npm run smoke:qualifier-gate && npm run smoke:citation-heading-gate && npm run smoke:docno-date && npm run smoke:class2-capture && npm run smoke:export-parity && npm run smoke:double-submit && npm run smoke:cost-procedure"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

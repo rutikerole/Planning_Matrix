@@ -5,7 +5,7 @@ import { approximateTimelineMonths } from './composeTimeline'
 import {
   buildCostBreakdown,
   costModeShowsEuroFigure,
-  detectKlasse,
+  resolveCostKlasse,
   formatEurRange,
   resolveCostAreaSqm,
   resolveCostDisplayMode,
@@ -81,7 +81,7 @@ export function composeExecutiveRead({
   // read's cost can't diverge from the Cost tab / PDF / At-a-Glance. Resolves
   // the same primary (persona or labelled baseline) this read already narrates.
   const procedureType = resolveCostProcedureType(project, state)
-  const klasse = detectKlasse(corpus)
+  const klasse = resolveCostKlasse(facts, corpus)
   // Sprint 0 (P1-A) — single shared cost-area resolver so the executive
   // read cannot diverge from the Cost tab / PDF / At-a-Glance.
   const areaSqm = resolveCostAreaSqm(facts, state.templateId)

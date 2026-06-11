@@ -17,12 +17,17 @@ import {
   buildProcedureCase,
   procedureLabel,
   resolveProcedure,
+  type ProcedureDecision,
   type ProcedureKind,
 } from '../../src/legal/resolveProcedure.ts'
 import {
   resolveProcedures,
   selectProcedures,
 } from '../../src/features/result/lib/resolveProcedures.ts'
+import {
+  composeLegalDomains,
+  procedureAnchorStatus,
+} from '../../src/features/result/lib/composeLegalDomains.ts'
 import { buildExportMarkdown } from '../../src/lib/export/exportMarkdown.ts'
 
 export interface Tally {
@@ -79,6 +84,45 @@ export function mkState(
   } as never
 }
 
+/**
+ * Meta-sweep item 1 — the legal-landscape PROCEDURE ANCHOR row must agree with
+ * the canonical decision on BOTH languages. Pre-fix the composer re-classified
+ * the verdict with its own substring regex: a "Genehmigungsfreistellung …"
+ * verdict rendered status "permit-free"/"verfahrensfrei" on this tab while the
+ * procedure card said notification-only (proven failing before the fix on the
+ * T-01 § 62 SächsBO Freistellung flip below).
+ */
+function assertLegalLandscape(
+  ok: (c: boolean, m: string) => void,
+  p: ParityProject,
+  state: never,
+  d: ProcedureDecision,
+  tag: string,
+): void {
+  for (const lang of ['en', 'de'] as const) {
+    const anchor = composeLegalDomains(state, lang, p.bundesland, d).find(
+      (x) => x.key === 'R',
+    )?.rows[0]
+    const want = procedureAnchorStatus(d, lang)
+    ok(
+      anchor?.status === want,
+      `${p.templateId} ${tag} ${lang}: legal-landscape anchor status == decision kind ("${want}"; got "${anchor?.status}")`,
+    )
+    ok(
+      !d.citation.trim() || (anchor?.label ?? '').includes(d.citation),
+      `${p.templateId} ${tag} ${lang}: legal-landscape anchor cites the decision § (got "${anchor?.label}")`,
+    )
+    // The substring trap, pinned structurally: a Freistellung decision must
+    // never read as permit-free on this row.
+    if (d.kind === 'genehmigungsfreigestellt') {
+      ok(
+        !/verfahrensfrei|permit-free/i.test(anchor?.status ?? ''),
+        `${p.templateId} ${tag} ${lang}: Freistellung anchor does NOT read permit-free (got "${anchor?.status}")`,
+      )
+    }
+  }
+}
+
 /** Pin 1 — the zero-verdict intent baseline. */
 export function assertBaseline(
   ok: (c: boolean, m: string) => void,
@@ -94,6 +138,7 @@ export function assertBaseline(
   // web == decision (decision-first, no baseline bypass)
   const sel = selectProcedures(resolveProcedures(mkProject(p, state), state).procedures)
   ok(sel.primary?.id === 'P-Decision' && (sel.primary?.title_de ?? '').includes(d.citation), `${p.templateId} web primary IS the decision (no baseline bypass)`)
+  assertLegalLandscape(ok, p, state, d, 'baseline')
 }
 
 /** Pin 2+3 — verdict-fact flip across the four surfaces. */
@@ -119,6 +164,7 @@ export function assertFlip(
       mdProc.includes(d.citation),
     `${p.templateId} cross-surface: web card == Key Data == .md all carry "${d.citation}"`,
   )
+  assertLegalLandscape(ok, p, state, d, `flip:${expect.kind}`)
 }
 
 export function finish(name: string, t: Tally): void {

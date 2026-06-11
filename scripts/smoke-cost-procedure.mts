@@ -16,7 +16,7 @@
 // Run: npx tsx scripts/smoke-cost-procedure.mts   (npm run smoke:cost-procedure)
 // ───────────────────────────────────────────────────────────────────────
 
-import { detectProcedure } from '../src/features/result/lib/costNormsMuenchen.ts'
+import { buildCostBreakdown, detectKlasse, detectProcedure, resolveCostKlasse } from '../src/features/result/lib/costNormsMuenchen.ts'
 import { resolveCostProcedureType } from '../src/features/result/lib/resolveProcedures.ts'
 
 let passed = 0
@@ -48,6 +48,30 @@ for (const bundesland of ['bw', 'bayern', 'sachsen', 'nrw'] as const) {
   const t = resolveCostProcedureType({ bundesland, intent: 'neubau_einfamilienhaus' } as never, { templateId: 'T-01', facts: [] } as never)
   ok(MULT_1_0.has(t), `${bundesland} T-01 neubau baseline → 1.0-multiplier type (${t}); cost magnitude unchanged`)
 }
+
+console.log('\n[smoke-cost-procedure] Meta-sweep item 2 — GK reads the directive\'s own mandated format…')
+// The persona directive (personaBehaviour.ts GEBÄUDEKLASSE bullet) pins key
+// `gebaeudeklasse`, value "GK <N>". Cost corpora are `${key} ${value}`
+// lowercased → "gebaeudeklasse gk 5". PRE-FIX this returned 'unknown' → the
+// GK5 1.85 multiplier silently became 1.0 on all four cost surfaces.
+ok(detectKlasse('gebaeudeklasse gk 5') === '5',
+  `detectKlasse on the directive shape "gebaeudeklasse gk 5" → 5 (was unknown pre-fix): got ${detectKlasse('gebaeudeklasse gk 5')}`)
+ok(detectKlasse('gebäudeklasse 5') === '5', 'legacy prose shape "gebäudeklasse 5" still reads (no regression)')
+ok(detectKlasse('gk 3') === '3', 'bare "GK 3" shape reads')
+ok(detectKlasse('keine klasse hier') === 'unknown', 'no GK token → unknown (no false positive)')
+
+console.log('\n[smoke-cost-procedure] Meta-sweep item 2 — typed fact outranks corpus prose…')
+const FACTS_GK5 = [{ key: 'gebaeudeklasse', value: 'GK 5' }]
+ok(resolveCostKlasse(FACTS_GK5, 'irgendeine prose mit gebäudeklasse 2 erwähnung') === '5',
+  'typed gebaeudeklasse fact ("GK 5") outranks a contradicting prose mention (GK 2)')
+ok(resolveCostKlasse([], 'gebäudeklasse 4 laut planung') === '4', 'no typed fact → corpus heuristic backstop (GK 4)')
+ok(resolveCostKlasse([{ key: 'building_class', value: 'GK 3' }], '') === '3', 'key-normalised buildingclass alias reads')
+
+console.log('\n[smoke-cost-procedure] Meta-sweep item 2 — GK5 fixture moves the multiplier (1.85, not 1.0)…')
+const gk5 = buildCostBreakdown('art58_vereinfacht', resolveCostKlasse(FACTS_GK5, 'gebaeudeklasse gk 5'))
+const gk1 = buildCostBreakdown('art58_vereinfacht', '1')
+ok(Math.abs(gk5.total.min / gk1.total.min - 1.85) < 0.01,
+  `GK5 fixture costs at KLASSE_MULT 1.85× the GK1 baseline (got ${(gk5.total.min / gk1.total.min).toFixed(2)}×)`)
 
 console.log(`\n[smoke-cost-procedure] ${passed} passed · ${failed} failed`)
 if (failed > 0) { console.error('[smoke-cost-procedure] FAIL'); process.exit(1) }

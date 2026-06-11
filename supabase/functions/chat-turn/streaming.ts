@@ -44,6 +44,7 @@ import {
   UpstreamError,
   type AnthropicUsage,
 } from './anthropic.ts'
+import { attemptAbortMs } from './wallBudget.ts'
 import { commitChatTurnAtomic } from './persistence.ts'
 import { validateFactPlausibility } from './factPlausibility.ts'
 import { enforceCitationHeadingMatch } from './citationHeadingGate.ts'
@@ -90,6 +91,10 @@ interface StreamingTurnArgs {
   /** Phase 8.6 (B.3) — propagated to commit_chat_turn for replay
    *  detection. */
   clientRequestId: string
+  /** Meta-sweep item 4b — absolute wall deadline (requestStart +
+   *  WALL_CLOCK_BUDGET_MS); caps the single streaming attempt's abort
+   *  timer to the remaining budget (see wallBudget.ts). */
+  deadlineAtMs?: number
   /** Phase 9 — tracer handed off from index.ts. The streaming pipeline
    *  takes ownership and finalizes when the stream closes (success or
    *  error). The rootSpan is the parent for every span emitted here. */
@@ -115,9 +120,17 @@ export function runStreamingTurn(args: StreamingTurnArgs): Response {
         controller.enqueue(encoder.encode(`data: ${JSON.stringify(event)}\n\n`))
       }
       const abort = new AbortController()
+      // Meta-sweep item 4b — cap the streaming attempt's abort timer to the
+      // remaining wall budget (the prep work before this point eats into
+      // it); a 0-floor immediate abort still flows through the existing
+      // typed upstream_timeout path with the tracer finalizing normally.
+      const streamAbortMs =
+        args.deadlineAtMs != null
+          ? attemptAbortMs(args.deadlineAtMs, Date.now(), ABORT_TIMEOUT_MS) ?? 0
+          : ABORT_TIMEOUT_MS
       const timeoutId = setTimeout(
         () => abort.abort(new Error('upstream_timeout')),
-        ABORT_TIMEOUT_MS,
+        streamAbortMs,
       )
 
       const callSpan = tracer.startSpan('anthropic.stream', rootSpan.span_id)

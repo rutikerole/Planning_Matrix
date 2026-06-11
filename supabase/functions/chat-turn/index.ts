@@ -60,8 +60,14 @@ import {
 import type { ProjectState, Specialist, TemplateId } from '../../../src/types/projectState.ts'
 import { createTracer } from './tracer.ts'
 import type { TraceStatus } from '../../../src/types/observability.ts'
+import { EDGE_FINGERPRINT, EDGE_FINGERPRINT_FILES } from './deployFingerprint.ts'
+import { WALL_CLOCK_BUDGET_MS } from './wallBudget.ts'
 
 Deno.serve(async (req: Request) => {
+  // Meta-sweep item 4b — anchor the wall-clock budget at request start so
+  // the Anthropic retry loop can never outrun the ~150 s platform kill
+  // (which would erase the trace itself; see wallBudget.ts).
+  const requestStartMs = Date.now()
   const requestId = crypto.randomUUID()
   const origin = req.headers.get('Origin')
   const corsHeaders = buildCorsHeaders(origin)
@@ -72,6 +78,25 @@ Deno.serve(async (req: Request) => {
   // ── CORS preflight ────────────────────────────────────────────────
   if (req.method === 'OPTIONS') {
     return new Response(null, { status: 204, headers: corsHeaders })
+  }
+  // ── Deploy-identity probe (meta-sweep item 4) ─────────────────────
+  // GET → the deployed bundle's fingerprint (see deployFingerprint.ts).
+  // This is the edge-function rail's version.json: `npm run verify:deploy`
+  // recomputes the fingerprint from the local tree and compares, closing
+  // the "every gate verifies the repo copy while prod serves an older
+  // chat-turn" class. Reaching here still requires a platform-verified
+  // JWT (verify_jwt = true), same as every other request.
+  if (req.method === 'GET') {
+    return jsonResponse(
+      {
+        function: 'chat-turn',
+        fingerprint: EDGE_FINGERPRINT,
+        fingerprint_files: EDGE_FINGERPRINT_FILES,
+        function_version: Deno.env.get('FUNCTION_VERSION') ?? null,
+      },
+      200,
+      corsHeaders,
+    )
   }
   if (req.method !== 'POST') {
     return respond({ code: 'validation', message: 'POST required' }, 405)
@@ -367,6 +392,7 @@ Deno.serve(async (req: Request) => {
       corsHeaders,
       requestId,
       clientRequestId,
+      deadlineAtMs: requestStartMs + WALL_CLOCK_BUDGET_MS,
       tracer,
       rootSpan,
     })
@@ -382,6 +408,9 @@ Deno.serve(async (req: Request) => {
       messages: anthropicMessages,
       tracer,
       parentSpan: callSpan,
+      // Meta-sweep item 4b — retry attempts are capped to the remaining
+      // wall budget so a platform kill can never outrun the tracer.
+      deadlineAtMs: requestStartMs + WALL_CLOCK_BUDGET_MS,
     })
     callSpan.end()
   } catch (err) {

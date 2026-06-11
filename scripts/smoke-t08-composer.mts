@@ -17,4 +17,10 @@ assertBaseline(ok, P, { kind: 'standard', citation: /§ 64 SächsBO/, confidence
 const d0 = resolveProcedure(buildProcedureCase(mkProject(P, mkState(P, [])), mkState(P, [])))
 ok(/bestätigen|confirm/.test(d0.reasoning_de + d0.reasoning_en), 'deferral framing asks for authority confirmation')
 assertFlip(ok, P, 'vereinfachtes Verfahren nach § 63 SächsBO', { kind: 'vereinfachtes', citation: /§ 63 SächsBO/ })
+// Meta-sweep item 3c — Bayern fixture + the verfahrensfrei DIRECTION (the most
+// common real T-08 outcome: garage/Dach-PV) which no T-08 flip ever tested.
+console.log('T-08 — Bayern fixture (deferral baseline + verfahrensfrei flip):')
+const PB = { templateId: 'T-08', intent: 'sonstige', bundesland: 'bayern' }
+assertBaseline(ok, PB, { kind: 'standard', citation: /BayBO Art\. 60/, confidence: 'ASSUMED' })
+assertFlip(ok, PB, 'verfahrensfrei nach BayBO Art. 57', { kind: 'verfahrensfrei', citation: /BayBO Art\. 57/ })
 finish('smoke-t08-composer', t)
