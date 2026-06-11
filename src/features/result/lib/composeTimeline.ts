@@ -72,8 +72,234 @@ export const PROCEDURE_PHASES: ProcedurePhase[] = [
   },
 ]
 
-export function totalPhaseWeight(): number {
-  return PROCEDURE_PHASES.reduce((sum, p) => sum + p.weight, 0)
+export function totalPhaseWeight(phases?: ReadonlyArray<ProcedurePhase>): number {
+  return (phases ?? PROCEDURE_PHASES).reduce((sum, p) => sum + p.weight, 0)
+}
+
+// ───────────────────────────────────────────────────────────────────────
+// Stale-deploy sprint (closes the 224e80c deferral) — procedure-aware
+// timeline, ONE selector for BOTH surfaces.
+//
+// The canonical week-resolution phase data (previously defined inside
+// pdfSections/timeline.ts) lives HERE because this module is the declared
+// single source of truth for procedure-phase data and is render-free:
+// pdfSections/timeline.ts imports pdfPrimitives → pdf-lib, so hosting the
+// constants there would have dragged pdf-lib into the eager index chunk
+// the moment the web tab consumed them. pdfSections/timeline.ts
+// re-exports everything below, so exportPdf + existing imports are
+// untouched.
+//
+// selectTimelineVariant is the ONLY gating function — exportPdf and
+// CostTimelineTab both call it, so a web/PDF timeline split is
+// structurally impossible (same pattern as the procedure card).
+// Smoke-pinned in scripts/smoke-t05-composer.mts (F10).
+// ───────────────────────────────────────────────────────────────────────
+
+export interface TimelinePhase {
+  /** pdfStrings key (e.g. 'timeline.phase.prep'). */
+  labelKey: string
+  /** pdfStrings key for the duration (e.g. 'timeline.phase.prep.duration'). */
+  durationKey: string
+  startWeek: number
+  endWeek: number
+  kind: 'work' | 'wait'
+}
+
+// v1.0.28 Bug 58 — verfahrensfrei Abbruch (demolition) phase set. NO Bauamt
+// submission/review/corrections cycle — the work is survey → procurement →
+// demolition.
+export const VERFAHRENSFREI_DEMOLITION_PHASES: ReadonlyArray<TimelinePhase> = [
+  {
+    labelKey: 'timeline.demo.survey',
+    durationKey: 'timeline.demo.survey.duration',
+    startWeek: 0,
+    endWeek: 4,
+    kind: 'work',
+  },
+  {
+    labelKey: 'timeline.demo.procure',
+    durationKey: 'timeline.demo.procure.duration',
+    startWeek: 2,
+    endWeek: 6,
+    kind: 'work',
+  },
+  {
+    labelKey: 'timeline.demo.demolish',
+    durationKey: 'timeline.demo.demolish.duration',
+    startWeek: 6,
+    endWeek: 9,
+    kind: 'work',
+  },
+]
+export const DEMOLITION_TOTAL_WEEKS = 10
+export const DEMOLITION_MILESTONE_WEEK = 9
+
+// T-05 sprint — ANZEIGE demolition phase set: survey → notification submission
+// → STATUTORY WAIT (landesrechtlich, often 1 month — rendered as a wait lane,
+// the critical-path element the v1.0.28 set had no model for) → procurement
+// (parallel to the wait) → demolition. NO Bauamt review cycle and NO
+// "Baugenehmigung issued" milestone — the milestone is the end of the
+// notification period (work may begin).
+export const ANZEIGE_DEMOLITION_PHASES: ReadonlyArray<TimelinePhase> = [
+  {
+    labelKey: 'timeline.demo.survey',
+    durationKey: 'timeline.demo.survey.duration',
+    startWeek: 0,
+    endWeek: 4,
+    kind: 'work',
+  },
+  {
+    labelKey: 'timeline.demo.anzeige',
+    durationKey: 'timeline.demo.anzeige.duration',
+    startWeek: 4,
+    endWeek: 5,
+    kind: 'work',
+  },
+  {
+    labelKey: 'timeline.demo.wait',
+    durationKey: 'timeline.demo.wait.duration',
+    startWeek: 5,
+    endWeek: 9,
+    kind: 'wait',
+  },
+  {
+    labelKey: 'timeline.demo.procure',
+    durationKey: 'timeline.demo.procure.duration',
+    startWeek: 5,
+    endWeek: 9,
+    kind: 'work',
+  },
+  {
+    labelKey: 'timeline.demo.demolish',
+    durationKey: 'timeline.demo.demolish.duration',
+    startWeek: 9,
+    endWeek: 12,
+    kind: 'work',
+  },
+]
+export const ANZEIGE_DEMOLITION_TOTAL_WEEKS = 12
+export const ANZEIGE_DEMOLITION_MILESTONE_WEEK = 9
+
+export type TimelineVariant =
+  | 'bauantrag'
+  | 'verfahrensfrei_demolition'
+  | 'anzeige_demolition'
+
+/**
+ * THE single gating function for the procedure-duration surface. Mirrors
+ * resolveRoles' precedent: the decision kind is consulted for abbruch only —
+ * every other intent's timeline is byte-identical to before. A genuinely
+ * permit-required demolition (standard / vereinfachtes / bauvoranfrage kinds)
+ * keeps the Bauamt cycle.
+ */
+export function selectTimelineVariant(
+  intent: string | null | undefined,
+  kind: string | undefined,
+): TimelineVariant {
+  if (intent !== 'abbruch') return 'bauantrag'
+  if (kind === 'verfahrensfrei') return 'verfahrensfrei_demolition'
+  if (kind === 'anzeige') return 'anzeige_demolition'
+  return 'bauantrag'
+}
+
+/**
+ * Web lane strings for the demolition variants, keyed by the canonical
+ * labelKey/durationKey. Values MUST mirror PDF_STRINGS en/de byte-for-byte —
+ * smoke-t05-composer F10 pins the equality, so drift cannot merge. (The
+ * strings are duplicated rather than imported because pdfStrings.ts ships in
+ * the lazy exportPdf chunk; importing it here would add it to the eager
+ * index chunk for label text alone.)
+ */
+export const WEB_TIMELINE_STRINGS: Record<string, { de: string; en: string }> = {
+  'timeline.demo.survey': { de: 'Schadstoffgutachten', en: 'Hazardous-materials survey' },
+  'timeline.demo.survey.duration': { de: '2–4 Wochen', en: '2–4 weeks' },
+  'timeline.demo.procure': { de: 'Beauftragung Abbruchunternehmen', en: 'Contractor procurement' },
+  'timeline.demo.procure.duration': { de: '2–4 Wochen', en: '2–4 weeks' },
+  'timeline.demo.demolish': { de: 'Abbruch + Entsorgung', en: 'Demolition + disposal' },
+  'timeline.demo.demolish.duration': { de: '1–2 Wochen', en: '1–2 weeks' },
+  'timeline.demo.milestone': { de: 'Abschluss-Meilenstein', en: 'Completion milestone' },
+  'timeline.demo.anzeige': { de: 'Abbruchanzeige einreichen', en: 'Submit demolition notification' },
+  'timeline.demo.anzeige.duration': { de: '1 Woche', en: '1 week' },
+  'timeline.demo.wait': { de: 'Gesetzliche Anzeigefrist', en: 'Statutory notification period' },
+  'timeline.demo.wait.duration': { de: '~4 Wochen · landesrechtlich', en: '~4 weeks · state law' },
+  'timeline.demo.anzeige.milestone': { de: 'Anzeigefrist läuft ab', en: 'Notification period ends' },
+}
+
+export interface TimelineVariantView {
+  variant: TimelineVariant
+  phases: ProcedurePhase[]
+  /** null → the default locale strings render (bauantrag path unchanged). */
+  totalDe: string | null
+  totalEn: string | null
+  caveatDe: string | null
+  caveatEn: string | null
+  /** The submit-by → expected-approval calendar narrator only makes sense
+   *  where a Bauamt approval exists. */
+  showCalendar: boolean
+}
+
+function webPhasesFrom(
+  canonical: ReadonlyArray<TimelinePhase>,
+  milestoneLabelKey: string,
+): ProcedurePhase[] {
+  const s = (key: string): { de: string; en: string } =>
+    WEB_TIMELINE_STRINGS[key] ?? { de: key, en: key }
+  const lanes: ProcedurePhase[] = canonical.map((p) => ({
+    key: p.labelKey,
+    labelDe: s(p.labelKey).de,
+    labelEn: s(p.labelKey).en,
+    weight: Math.max(1, p.endWeek - p.startWeek),
+    rangeDe: s(p.durationKey).de,
+    rangeEn: s(p.durationKey).en,
+  }))
+  lanes.push({
+    key: milestoneLabelKey,
+    labelDe: s(milestoneLabelKey).de,
+    labelEn: s(milestoneLabelKey).en,
+    weight: 1,
+    rangeDe: 'Stichtag',
+    rangeEn: 'milestone',
+    milestone: true,
+  })
+  return lanes
+}
+
+export function timelineVariantView(variant: TimelineVariant): TimelineVariantView {
+  if (variant === 'verfahrensfrei_demolition') {
+    return {
+      variant,
+      phases: webPhasesFrom(VERFAHRENSFREI_DEMOLITION_PHASES, 'timeline.demo.milestone'),
+      totalDe: '~ 5–10 Wochen',
+      totalEn: '~ 5–10 weeks',
+      caveatDe:
+        'verfahrensfrei — keine Bauamt-Prüfung; Dauer abhängig von Schadstoffgutachten und Verfügbarkeit des Abbruchunternehmens',
+      caveatEn:
+        'permit-free — no Bauamt review cycle; schedule depends on the hazardous-materials survey and contractor availability',
+      showCalendar: false,
+    }
+  }
+  if (variant === 'anzeige_demolition') {
+    return {
+      variant,
+      phases: webPhasesFrom(ANZEIGE_DEMOLITION_PHASES, 'timeline.demo.anzeige.milestone'),
+      totalDe: '~ 9–12 Wochen',
+      totalEn: '~ 9–12 weeks',
+      caveatDe:
+        'Anzeigeverfahren — gesetzliche Anzeigefrist (landesrechtlich, oft 1 Monat) vor Beginn der Arbeiten; keine Bauamt-Prüfung',
+      caveatEn:
+        'notification procedure — statutory notification period (state law, often 1 month) before work may begin; no Bauamt review cycle',
+      showCalendar: false,
+    }
+  }
+  return {
+    variant: 'bauantrag',
+    phases: [...PROCEDURE_PHASES],
+    totalDe: null,
+    totalEn: null,
+    caveatDe: null,
+    caveatEn: null,
+    showCalendar: true,
+  }
 }
 
 /**

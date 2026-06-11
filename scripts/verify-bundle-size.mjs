@@ -13,13 +13,24 @@
 //
 // To raise the ceiling intentionally: edit MAX_GZIP_KB below + commit
 // with rationale in the commit message.
+//
+// CEILING LEDGER (intentional re-baselines only):
+//   2026-06-11  300 → 320 KB  (fix/deploy-verify-and-gantt)
+//     Cause: T-05 sprint (508d543) landed the index chunk at 299.4 KB gz
+//     locally — 0.6 KB under the wall. Vercel inlines its own VITE_* env
+//     values (analytics keys/DSNs absent from local .env.local), so the
+//     prod build crossed the ceiling and FAILED SILENTLY: prod kept
+//     serving the pre-sprint deployment (the 2026-06-11 stale-deploy
+//     incident, project d255b219). 320 restores ~20 KB of headroom; the
+//     real reduction is the registry-lite trim (SPRINT_PLAN follow-up,
+//     ~50-70 KB) — no hasty trims under incident pressure.
 // ───────────────────────────────────────────────────────────────────────
 
 import fs from 'node:fs'
 import path from 'node:path'
 import { gzipSync } from 'node:zlib'
 
-const MAX_GZIP_KB = 300 // ceiling against bundle bloat regressions
+const MAX_GZIP_KB = 320 // ceiling — intentional re-baselines logged in CEILING LEDGER above
 const ASSETS_DIR = 'dist/assets'
 
 if (!fs.existsSync(ASSETS_DIR)) {

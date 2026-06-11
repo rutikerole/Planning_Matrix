@@ -37,16 +37,21 @@ import {
   type EditorialFonts,
 } from '../pdfPrimitives'
 import { pdfStr, type PdfStrings } from '../pdfStrings'
+// Stale-deploy sprint — the canonical phase data moved to the render-free
+// composeTimeline module (single source for web + PDF; this module imports
+// pdf-lib via pdfPrimitives and would have dragged it into the index chunk).
+// Re-exported here so exportPdf + existing imports keep working unchanged.
+import { type TimelinePhase } from '@/features/result/lib/composeTimeline'
 
-export interface TimelinePhase {
-  /** pdfStrings key (e.g. 'timeline.phase.prep'). */
-  labelKey: string
-  /** pdfStrings key for the duration (e.g. 'timeline.phase.prep.duration'). */
-  durationKey: string
-  startWeek: number
-  endWeek: number
-  kind: 'work' | 'wait'
-}
+export {
+  ANZEIGE_DEMOLITION_MILESTONE_WEEK,
+  ANZEIGE_DEMOLITION_PHASES,
+  ANZEIGE_DEMOLITION_TOTAL_WEEKS,
+  DEMOLITION_MILESTONE_WEEK,
+  DEMOLITION_TOTAL_WEEKS,
+  VERFAHRENSFREI_DEMOLITION_PHASES,
+} from '@/features/result/lib/composeTimeline'
+export type { TimelinePhase } from '@/features/result/lib/composeTimeline'
 
 export interface TimelineData {
   templateLabel: string
@@ -106,82 +111,6 @@ export const DEFAULT_TIMELINE_PHASES: ReadonlyArray<TimelinePhase> = [
     kind: 'work',
   },
 ]
-
-// v1.0.28 Bug 58 — verfahrensfrei Abbruch (demolition) phase set. NO Bauamt
-// submission/review/corrections cycle — the work is survey → procurement →
-// demolition. Used when procedureDecision.kind === 'verfahrensfrei' for an
-// abbruch project (exportPdf gates it).
-export const VERFAHRENSFREI_DEMOLITION_PHASES: ReadonlyArray<TimelinePhase> = [
-  {
-    labelKey: 'timeline.demo.survey',
-    durationKey: 'timeline.demo.survey.duration',
-    startWeek: 0,
-    endWeek: 4,
-    kind: 'work',
-  },
-  {
-    labelKey: 'timeline.demo.procure',
-    durationKey: 'timeline.demo.procure.duration',
-    startWeek: 2,
-    endWeek: 6,
-    kind: 'work',
-  },
-  {
-    labelKey: 'timeline.demo.demolish',
-    durationKey: 'timeline.demo.demolish.duration',
-    startWeek: 6,
-    endWeek: 9,
-    kind: 'work',
-  },
-]
-export const DEMOLITION_TOTAL_WEEKS = 10
-export const DEMOLITION_MILESTONE_WEEK = 9
-
-// T-05 sprint — ANZEIGE demolition phase set: survey → notification submission
-// → STATUTORY WAIT (landesrechtlich, often 1 month — rendered as a wait lane,
-// the critical-path element the v1.0.28 set had no model for) → procurement
-// (parallel to the wait) → demolition. NO Bauamt review cycle and NO
-// "Baugenehmigung issued" milestone — the milestone is the end of the
-// notification period (work may begin).
-export const ANZEIGE_DEMOLITION_PHASES: ReadonlyArray<TimelinePhase> = [
-  {
-    labelKey: 'timeline.demo.survey',
-    durationKey: 'timeline.demo.survey.duration',
-    startWeek: 0,
-    endWeek: 4,
-    kind: 'work',
-  },
-  {
-    labelKey: 'timeline.demo.anzeige',
-    durationKey: 'timeline.demo.anzeige.duration',
-    startWeek: 4,
-    endWeek: 5,
-    kind: 'work',
-  },
-  {
-    labelKey: 'timeline.demo.wait',
-    durationKey: 'timeline.demo.wait.duration',
-    startWeek: 5,
-    endWeek: 9,
-    kind: 'wait',
-  },
-  {
-    labelKey: 'timeline.demo.procure',
-    durationKey: 'timeline.demo.procure.duration',
-    startWeek: 5,
-    endWeek: 9,
-    kind: 'work',
-  },
-  {
-    labelKey: 'timeline.demo.demolish',
-    durationKey: 'timeline.demo.demolish.duration',
-    startWeek: 9,
-    endWeek: 12,
-    kind: 'work',
-  },
-]
-export const ANZEIGE_DEMOLITION_TOTAL_WEEKS = 12
-export const ANZEIGE_DEMOLITION_MILESTONE_WEEK = 9
 
 export const DEFAULT_TIMELINE_TOTAL_WEEKS = 24
 export const DEFAULT_TIMELINE_MILESTONE_WEEK = 22

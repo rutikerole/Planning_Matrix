@@ -85,6 +85,8 @@ import {
   renderTimelineBody,
   renderTimelineFooter,
 } from './pdfSections/timeline'
+// Stale-deploy sprint — shared web/PDF timeline gating (closes 224e80c).
+import { selectTimelineVariant } from '@/features/result/lib/composeTimeline'
 import {
   renderProceduresBody,
   renderProceduresFooter,
@@ -823,17 +825,18 @@ export async function buildExportPdf({
   // v1.0.28 Bug 58 — a verfahrensfrei Abbruch has NO Bauamt submission/
   // review/corrections cycle; the Bauantrag Gantt (+ "Baugenehmigung issued"
   // milestone) is wrong for it. Render the demolition phase set
-  // (survey → procurement → demolition, ~5-10 wks) instead.
-  const isVerfahrensfreiDemolition =
-    isDemolition && procedureDecision.kind === 'verfahrensfrei'
-  // T-05 sprint — the anzeige tier gets its own lane set (notification +
-  // statutory wait). Only a GENUINELY permit-required demolition (standard /
-  // bauvoranfrage kinds) falls back to the Bauantrag Gantt with the
-  // "Baugenehmigung issued" milestone.
-  const isAnzeigeDemolition =
-    isDemolition && procedureDecision.kind === 'anzeige'
+  // (survey → procurement → demolition, ~5-10 wks) instead. The anzeige tier
+  // gets its own lane set (notification + statutory wait); only a GENUINELY
+  // permit-required demolition falls back to the Bauantrag Gantt.
+  // Stale-deploy sprint — the variant comes from the SAME selector the web
+  // Cost & timeline tab calls (selectTimelineVariant, composeTimeline.ts), so
+  // the two surfaces cannot diverge (closes the 224e80c deferral).
+  const timelineVariant = selectTimelineVariant(
+    project.intent,
+    procedureDecision.kind,
+  )
   renderTimelineBody(timelinePage, editorialFonts, pdfStrings,
-    isVerfahrensfreiDemolition
+    timelineVariant === 'verfahrensfrei_demolition'
       ? {
           templateLabel,
           bundeslandCode: bundeslandCodeUpper,
@@ -844,7 +847,7 @@ export async function buildExportPdf({
           milestoneLabelKey: 'timeline.demo.milestone',
           milestoneDetailKey: 'timeline.demo.milestone.detail',
         }
-      : isAnzeigeDemolition
+      : timelineVariant === 'anzeige_demolition'
         ? {
             templateLabel,
             bundeslandCode: bundeslandCodeUpper,

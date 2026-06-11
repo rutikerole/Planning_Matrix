@@ -371,6 +371,27 @@ leakage). Not blocking; address in a template-hygiene pass.
 
 ---
 
+## Scheduled follow-ups
+
+### Registry-lite bundle trim (Phase-3 candidate #1) — SCHEDULED, not started
+
+Logged 2026-06-11 during the stale-deploy incident (fix/deploy-verify-and-gantt).
+The index chunk reached 299.4 KB gz after the T-05 sprint and the
+`verify:bundle` ceiling was intentionally re-baselined 300 → 320 KB
+(ledger in `scripts/verify-bundle-size.mjs`) to unblock the Vercel deploy —
+Vercel-inlined `VITE_*` env values pushed the prod build over the old wall
+and the build failed silently, leaving prod on the pre-sprint deployment.
+
+The re-baseline buys headroom; it does not address growth. The real fix is
+the registry-lite trim: split the state/template registry data
+(`stateOverrides`, template tails, citation tables) out of the eager index
+chunk into lazy per-state chunks. Estimated −50–70 KB gz off the index
+chunk. Run it as its own sprint with the full gate suite — NOT as a hasty
+trim under deploy pressure. When it lands, ratchet the ceiling back DOWN
+(320 → ~260–270) and log the new baseline in the ledger.
+
+---
+
 ## Maintenance
 
 - **Edit this doc at every checkpoint.** Update the Status column. Add
