@@ -56,7 +56,9 @@ export function ProcedureDocumentsTab({ project, state }: Props) {
   // ONE primary + a fallback ONLY when it's a genuinely different verdict, so
   // persona over-emission of two identical §-verdicts no longer surfaces a
   // redundant "Fallback: §64" line here either.
-  const { primary, fallback } = selectProcedures(resolved.procedures)
+  // T-05 sprint — `supplementary` carries ADDITIONAL REGIMES (DSchG-Erlaubnis,
+  // water law, …) rendered under the decision card; never collapsed/dropped.
+  const { primary, fallback, supplementary } = selectProcedures(resolved.procedures)
 
   const filtered = useMemo(() => {
     if (filter === 'all') return documents
@@ -104,6 +106,24 @@ export function ProcedureDocumentsTab({ project, state }: Props) {
                   title: lang === 'en' ? fallback.title_en : fallback.title_de,
                 })}
               </p>
+            )}
+            {supplementary.length > 0 && (
+              <div className="border-t border-ink/12 pt-3 mt-1 flex flex-col gap-1.5">
+                <p className="text-[10px] font-medium uppercase tracking-[0.18em] text-clay leading-none">
+                  {t('result.workspace.procedure.supplementaryEyebrow')}
+                </p>
+                {supplementary.map((s) => (
+                  <p
+                    key={s.id}
+                    className="text-[12px] italic text-clay/85 leading-snug"
+                  >
+                    {lang === 'en' ? s.title_en : s.title_de}
+                    {(lang === 'en' ? s.rationale_en : s.rationale_de)
+                      ? ` — ${lang === 'en' ? s.rationale_en : s.rationale_de}`
+                      : ''}
+                  </p>
+                ))}
+              </div>
             )}
             {/* v1.0.3 — Phase 13 §6.B.01 legal shield. Per-card footer
               * renders unless this procedure's qualifier is

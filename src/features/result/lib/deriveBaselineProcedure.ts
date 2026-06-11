@@ -1,5 +1,7 @@
 import type { Procedure } from '@/types/projectState'
 import { getStateLocalization } from '@/legal/stateLocalization'
+import { beseitigungCitationFor } from '@/legal/resolveProcedure'
+import type { BundeslandCode } from '@/legal/states/_types'
 
 /**
  * Phase 8.1 (A.3) — baseline `Procedure[]` inferred from intent +
@@ -57,7 +59,6 @@ export function deriveBaselineProcedure({
   const loc = getStateLocalization(bundesland)
   const simp = loc.procedure.simplified
   const free = loc.procedure.free
-  const reg = loc.procedure.regular
   // Compose "title · citation" string when a citation is available
   // (substantive states); fall back to bare procedure name for stubs.
   const compose = (
@@ -105,18 +106,33 @@ export function deriveBaselineProcedure({
           `Required for structural or use-change interventions. Minor measures may be permit-free under the ${loc.labelEn} LBO.`,
         ),
       ]
-    case 'abbruch':
+    case 'abbruch': {
+      // T-05 sprint — the old pack showed the REGULAR BUILDING PERMIT
+      // ("Abbruch typically follows the state's regular procedure path"),
+      // which is legally backwards: the MBO-family demolition default is
+      // verfahrensfrei (small freestanding) or Anzeige (larger/attached) —
+      // a Baugenehmigung is the exception, not the baseline. Cite the
+      // owner-side Beseitigung-§ (corpus pick, free-§ fallback). NOTE: with
+      // resolveProcedures decision-first, abbruch always resolves via the
+      // canonical resolver; this pack is the honest fallback for any other
+      // caller.
+      const beseitigungCit = beseitigungCitationFor(
+        bundesland as BundeslandCode,
+      )
       return [
         baselineProcedure(
           'P-Abbruch',
-          // Abbruch typically follows the state's regular procedure
-          // path; show the regular permit pack here.
-          reg.citation ? `${reg.nameDe} · ${reg.citation}` : reg.nameDe,
-          reg.citation ? `${reg.nameEn} · ${reg.citation}` : reg.nameEn,
-          `Abbruch-Anzeige bzw. Baugenehmigung nach ${loc.labelDe}-LBO; Schwelle und Form variieren je Land.`,
-          `Demolition notification or building permit per the ${loc.labelEn} LBO; threshold and form vary by state.`,
+          beseitigungCit
+            ? `Beseitigung (Abbruch) · ${beseitigungCit}`
+            : 'Beseitigung (Abbruch)',
+          beseitigungCit
+            ? `Demolition (Beseitigung) · ${beseitigungCit}`
+            : 'Demolition (Beseitigung)',
+          `Je nach Gebäudegröße, -klasse und Lage verfahrensfrei oder anzeigepflichtig${beseitigungCit ? ` (${beseitigungCit})` : ''}; eine Baugenehmigung ist nur ausnahmsweise erforderlich. Schwelle und Anzeigefrist mit der unteren Bauaufsichtsbehörde klären.`,
+          `Procedure-free or notification-required${beseitigungCit ? ` (${beseitigungCit})` : ''} depending on building size, class and situation; a building permit is required only exceptionally. Clarify the threshold and notification period with the lower building authority.`,
         ),
       ]
+    }
     default:
       return [
         baselineProcedure(

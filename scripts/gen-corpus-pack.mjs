@@ -60,6 +60,37 @@ const PROC = {
   regular: /^Baugenehmigungsverfahren$/,
 }
 
+// T-05 sprint — the OWNER-SIDE demolition § (Beseitigung/Abbruch). The
+// `abbruch_beseitigung` archetype is OVERLOADED in the corpus: it tags BOTH
+// the owner-side demolition § (Hessen § 63a "Abbruch, Beseitigung"; the
+// combined "Verfahrensfreie …, Beseitigung von Anlagen" catalogue §§) AND the
+// AUTHORITY enforcement § (Beseitigungsanordnung/Nutzungsuntersagung — § 80
+// SächsBO, § 82 HBO, BW § 65 class). So selection is heading-semantic with an
+// explicit enforcement EXCLUSION; a state whose only match is the enforcement
+// § (BW) emits NOTHING and the consumer falls back to its hand-coded/free §.
+const BESEITIGUNG_RE = /(Beseitigung|Abbruch)/i
+// "verfallend" excludes RLP § 82 "Abbruch verfallender baulicher Anlagen" —
+// the authority's derelict-buildings order, not the owner-side procedure.
+const BESEITIGUNG_EXCLUDE = /(untersagung|anordnung|verbot|widrig|verfallend)/i
+
+function pickBeseitigung(paragraphs) {
+  const hits = Object.entries(paragraphs).filter(
+    ([, p]) =>
+      p.heading_de_official &&
+      BESEITIGUNG_RE.test(p.heading_de_official) &&
+      !BESEITIGUNG_EXCLUDE.test(p.heading_de_official),
+  )
+  if (!hits.length) return null
+  // Prefer a DEDICATED demolition § (heading STARTS with Abbruch/Beseitigung,
+  // e.g. Hessen § 63a) over the combined verfahrensfrei catalogue §.
+  const dedicated = hits.filter(([, p]) =>
+    /^(Abbruch|Beseitigung)/.test(p.heading_de_official),
+  )
+  const pool = dedicated.length ? dedicated : hits
+  pool.sort((a, b) => parseInt(a[0]) - parseInt(b[0]) || a[0].localeCompare(b[0]))
+  return pool[0][0]
+}
+
 function pick(paragraphs, re) {
   const hits = Object.entries(paragraphs).filter(
     ([, p]) => p.heading_de_official && re.test(p.heading_de_official),
@@ -94,6 +125,8 @@ for (const f of (await readdir(STATES_DIR)).filter((x) => x.endsWith('.json')).s
     const num = pick(j.paragraphs, re)
     if (num) pEntry[field] = citationString(law_short, marker, num)
   }
+  const beseitigungNum = pickBeseitigung(j.paragraphs)
+  if (beseitigungNum) pEntry.beseitigung = citationString(law_short, marker, beseitigungNum)
   if (Object.keys(pEntry).length) proc[bundesland] = pEntry
 }
 
@@ -104,8 +137,8 @@ const MUST_CIT = {
   nrw: { abstandsFlaechenCitation: '§ 6 BauO NRW', permitSubmissionCitation: '§ 67 BauO NRW', structuralCertCitation: '§ 68 BauO NRW', permitFormCitation: '§ 70 BauO NRW', brandschutzCitation: '§ 14 BauO NRW' },
 }
 const MUST_PROC = {
-  bayern: { free: 'BayBO Art. 57', simplified: 'BayBO Art. 59', regular: 'BayBO Art. 60' },
-  nrw: { free: '§ 62 BauO NRW', simplified: '§ 64 BauO NRW', regular: '§ 65 BauO NRW' },
+  bayern: { free: 'BayBO Art. 57', simplified: 'BayBO Art. 59', regular: 'BayBO Art. 60', beseitigung: 'BayBO Art. 57' },
+  nrw: { free: '§ 62 BauO NRW', simplified: '§ 64 BauO NRW', regular: '§ 65 BauO NRW', beseitigung: '§ 62 BauO NRW' },
 }
 for (const [code, fields] of Object.entries(MUST_CIT))
   for (const [k, v] of Object.entries(fields))
@@ -143,6 +176,8 @@ export interface CorpusProcedureFields {
   freistellung?: string
   simplified?: string
   regular?: string
+  /** T-05 — owner-side Beseitigung/Abbruch § (enforcement §§ excluded). */
+  beseitigung?: string
 }
 
 export const STATE_CORPUS_CITATIONS: Partial<Record<BundeslandCode, CorpusCitationFields>> = ${JSON.stringify(cit, null, 2)} as const

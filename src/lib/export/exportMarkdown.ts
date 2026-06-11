@@ -113,9 +113,11 @@ export function buildExportMarkdown({ project, events, lang }: BuildArgs): strin
   // identical §-verdicts (different rationale strings: "warehouse → office" /
   // "Lager → Büro"); PDF/tab show ONE, so the .md must too. Dedup is on the
   // structured verdict key, never the free-text rationale.
-  const { primary: proc, fallback: procFallback } = selectProcedures(
-    resolveProcedures(project, state).procedures,
-  )
+  // T-05 sprint — `supplementary` carries ADDITIONAL REGIMES (DSchG-Erlaubnis
+  // etc.). They list under the decision as their own bullets — never collapsed
+  // into the decision, never dropped, and never mislabeled as a "Fallback".
+  const { primary: proc, fallback: procFallback, supplementary: procSupplementary } =
+    selectProcedures(resolveProcedures(project, state).procedures)
   if (proc) {
     lines.push('')
     lines.push(`## ${t('Verfahren', 'Procedures')}`)
@@ -128,6 +130,13 @@ export function buildExportMarkdown({ project, events, lang }: BuildArgs): strin
     if (procFallback) {
       const ftitle = lang === 'en' ? procFallback.title_en : procFallback.title_de
       lines.push(`  ${t('Fallback', 'Fallback')}: ${ftitle}`)
+    }
+    for (const s of procSupplementary) {
+      const stitle = lang === 'en' ? s.title_en : s.title_de
+      const sstatus = STATUS_LABEL_DE[s.status] ?? s.status
+      lines.push(`- [ ] ${stitle} — *${sstatus}* (${t('weiteres Verfahren', 'additional procedure')})`)
+      const srat = lang === 'en' ? s.rationale_en : s.rationale_de
+      if (srat) lines.push(`  ${srat}`)
     }
     lines.push('')
     lines.push('---')

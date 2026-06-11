@@ -353,9 +353,14 @@ function conditionsFor(intent: string, lang: 'de' | 'en'): string {
       : 'die Tragstruktur weitgehend erhalten bleibt und kein Denkmalschutz greift'
   }
   if (intent === 'abbruch') {
+    // T-05 sprint (item i) — the old clause applied the 300 m³ cap to every
+    // demolition. That cap is the SONSTIGE-ANLAGEN clause of the MBO-family
+    // catalogue; the test for a BUILDING is freestanding + building class
+    // (e.g. § 61 SächsBO: freestanding GK 1–3 → verfahrensfrei). State the
+    // right test, with the state-variance hedge.
     return lang === 'en'
-      ? 'the enclosed volume stays under 300 m³'
-      : 'der umbaute Raum unter 300 m³ bleibt'
+      ? 'the building is freestanding and within building classes 1–3 (state thresholds vary)'
+      : 'das Gebäude freistehend ist und in Gebäudeklasse 1–3 fällt (Landesschwellen abweichend)'
   }
   return lang === 'en' ? 'standard conditions apply' : 'Standardbedingungen gelten'
 }

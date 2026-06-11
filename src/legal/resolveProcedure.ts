@@ -33,10 +33,26 @@ import type { BundeslandCode } from './states/_types'
 import type { ProjectState, TemplateId } from '@/types/projectState'
 import type { ProjectRow } from '@/types/db'
 import { getStateLocalization } from './stateLocalization'
+import { STATE_CORPUS_PROCEDURE } from './corpusCitations.generated'
+
+/**
+ * T-05 sprint — the state's OWNER-SIDE Beseitigung/Abbruch §. Corpus pick
+ * (abbruch_beseitigung heading, enforcement §§ excluded by the generator)
+ * first; states without a clean corpus pick (BW/NI/BB/RLP) fall back to the
+ * hand-coded free § — never a fabricated §, possibly '' for stubs.
+ */
+export function beseitigungCitationFor(bundesland: BundeslandCode): string {
+  return (
+    STATE_CORPUS_PROCEDURE[bundesland]?.beseitigung ??
+    getStateLocalization(bundesland).procedure.free?.citation ??
+    ''
+  )
+}
 
 export type ProcedureKind =
   | 'verfahrensfrei' // § 62/61 BauO — no permit needed
   | 'genehmigungsfreigestellt' // § 63 — notification, 1-month wait
+  | 'anzeige' // T-05 — Beseitigungs-/Abbruchanzeige: notification + statutory wait, NOT a permit and NOT Freistellung
   | 'vereinfachtes' // § 64 — simplified permit
   | 'standard' // § 65 — full permit
   | 'bauvoranfrage' // § 71 — precursor query
@@ -83,6 +99,7 @@ export interface ProcedureCaveat {
     | 'denkmalschutz_check'
     | 'abstand_pruefung'
     | 'nachbarbeteiligung'
+    | 'verdikt_konflikt' // T-05 — grounded verdict signals disagree; architect must resolve
   message_de: string
   message_en: string
 }
@@ -130,6 +147,19 @@ export interface ProcedureCase {
    *  template-blind generic branch (which would emit the regular permit
    *  for an Abbruch and contradict the state-correct persona fact). */
   verfahren_indikation?: string
+  /** T-05 sprint — pinned verdict-conflict channel. Set by buildProcedureCase
+   *  when the canonical/bespoke FACT verdict and the persona's STRUCTURED
+   *  procedures verdict classify to different directions. The conservative
+   *  verdict is already in verfahren_indikation; the resolver downgrades the
+   *  decision to ASSUMED and flags it for architect verification — never a
+   *  silent tie-break. */
+  verfahren_konflikt?: { fact: string; persona: string }
+  /** T-05 sprint — tri-state freestanding fact (gebaeude_freistehend).
+   *  undefined = not captured either way. */
+  gebaeude_freistehend?: boolean
+  /** T-05 sprint — Gebäudeklasse number parsed from the canonical
+   *  `gebaeudeklasse` fact ("GK 3" → 3); undefined when not captured. */
+  gebaeudeklasse_num?: number
 }
 
 /**
@@ -183,6 +213,25 @@ const EXPLICIT_VERDICT_KEYS = [
   'verfahren_typ',
 ] as const
 
+/**
+ * T-05 sprint — tolerant BESPOKE verdict-key fallback. The Sachsen/Leipzig
+ * walk proved the persona persists its procedure verdict under descriptive
+ * keys the anchored shape-scan can never match (`abbruch_verfahrensfrei_
+ * sachsbo` = "verfahrensfrei nach § 61 SächsBO (vorläufig)") — so the verdict
+ * was invisible and the generic §-64 fallback contradicted the consultation.
+ * Match is deliberately CONSERVATIVE, two-factor:
+ *   1. the normalized KEY must contain a verdict token (verfahrensfrei /
+ *      anzeigepflicht / verfahrensart / verfahrensweg) and must NOT contain a
+ *      non-verdict marker (frage/hinweis/ausschluss/ausgeschlossen/excluded —
+ *      e.g. `procedure_freistellung_excluded`, `verfahrensfrei_hinweis`);
+ *   2. the VALUE must itself classify to a procedure direction
+ *      (classifyVerdictDirection !== null) — a key match alone never fires.
+ */
+const BESPOKE_VERDICT_KEY_TOKEN =
+  /(verfahrensfrei|anzeigepflicht|verfahrensart|verfahrensweg)/
+const BESPOKE_VERDICT_KEY_BLOCK =
+  /(frage|hinweis|ausschluss|ausgeschlossen|excluded|begruendung)/
+
 export function resolveVerfahrensIndikation(
   facts: ReadonlyArray<{ key: string; value: unknown }> | undefined,
 ): string | undefined {
@@ -201,7 +250,94 @@ export function resolveVerfahrensIndikation(
       PROCEDURE_VERDICT_KEY.test(f.key.toLowerCase().replace(/[._]/g, '')) &&
       asStr(f.value) !== undefined,
   )
-  return asStr(scan?.value)
+  if (asStr(scan?.value)) return asStr(scan?.value)
+  // 3. T-05 sprint — bespoke verdict-shaped keys (two-factor, see above).
+  const bespoke = facts.find((f) => {
+    const k = f.key.toLowerCase().replace(/[._\s-]/g, '')
+    if (!BESPOKE_VERDICT_KEY_TOKEN.test(k)) return false
+    if (BESPOKE_VERDICT_KEY_BLOCK.test(k)) return false
+    const v = asStr(f.value)
+    return v !== undefined && classifyVerdictDirection(v) !== null
+  })
+  return asStr(bespoke?.value)
+}
+
+// ───────────────────────────────────────────────────────────────────────
+// T-05 sprint — verdict DIRECTION classification + the pinned verdict
+// hierarchy (canonical fact > persona structured procedures > resolver-from-
+// facts > intent baseline) with conservative conflict resolution.
+// ───────────────────────────────────────────────────────────────────────
+
+export type VerdictDirection = 'free' | 'anzeige' | 'simplified' | 'regular'
+
+/** Higher = more procedural duty. Conflicts resolve to the HIGHER rank. */
+const DIRECTION_RANK: Record<VerdictDirection, number> = {
+  free: 0,
+  anzeige: 1,
+  simplified: 2,
+  regular: 3,
+}
+
+/**
+ * Classify a free-form verdict string to a procedure direction, or null when
+ * it does not read like a verdict. Negation-aware for the free direction
+ * ("nicht verfahrensfrei" must not classify as free); checked free-first so
+ * "verfahrensfrei — keine förmliche Anzeige" is free, not anzeige.
+ */
+export function classifyVerdictDirection(s: string): VerdictDirection | null {
+  const t = s.toLowerCase()
+  const freeNegated =
+    /(nicht|kein[e]?|not)\s+(verfahrensfrei|genehmigungsfrei|permit[- ]?free|procedure[- ]?free)/.test(t)
+  if (
+    !freeNegated &&
+    /verfahrensfrei|verfahrensfreiheit|genehmigungsfrei(?!gestellt|stellung)|permit[- ]?free|procedure[- ]?free|no permit (?:required|needed)/.test(t)
+  ) {
+    return 'free'
+  }
+  if (/anzeigepflichtig|anzeigeverfahren|abbruchanzeige|beseitigungsanzeige|notification (?:required|procedure|requirement)/.test(t)) {
+    return 'anzeige'
+  }
+  if (/vereinfacht|simplified/.test(t)) return 'simplified'
+  if (/regul[äa]r|standard|full[- ]?permit|regular building permit|baugenehmigungsverfahren/.test(t)) {
+    return 'regular'
+  }
+  return null
+}
+
+/**
+ * Extract an LBO procedure verdict from the persona's STRUCTURED
+ * state.procedures entries (rank 2 of the pinned hierarchy). Direction is read
+ * from the TITLE first (the structured verdict), falling back to the rationale.
+ * When entries disagree among themselves, the MOST CONSERVATIVE direction wins
+ * (never silently the friendliest). Returns the §-bearing text of the chosen
+ * entry so extractProcedureCitation can pull the citation. Overlay regimes
+ * (DSchG-Erlaubnis, water law, tree protection — no LBO direction) return
+ * nothing here and stay supplementary procedures; they are never consumed.
+ */
+export function extractPersonaProcedureVerdict(
+  procedures:
+    | ReadonlyArray<{
+        title_de?: string
+        title_en?: string
+        rationale_de?: string
+        rationale_en?: string
+      }>
+    | undefined,
+): string | undefined {
+  if (!procedures || procedures.length === 0) return undefined
+  let best: { dir: VerdictDirection; text: string } | undefined
+  for (const p of procedures) {
+    const title = `${p.title_de ?? ''} ${p.title_en ?? ''}`.trim()
+    const rationale = `${p.rationale_de ?? ''} ${p.rationale_en ?? ''}`.trim()
+    const dir =
+      classifyVerdictDirection(title) ?? classifyVerdictDirection(rationale)
+    if (!dir) continue
+    const text = `${title} ${rationale}`.trim()
+    if (!best || DIRECTION_RANK[dir] > DIRECTION_RANK[best.dir]) {
+      best = { dir, text }
+    }
+  }
+  return best?.text
 }
 
 // v1.0.21 Bug E — describe an active hard blocker for the renderer.
@@ -268,12 +404,18 @@ export function procedureLabel(
 ): string {
   const labels: Record<ProcedureKind, { de: string; en: string }> = {
     verfahrensfrei: {
-      de: 'Verfahrensfrei (Anzeige)',
-      en: 'Permit-free (notification)',
+      // T-05 sprint — dropped the "(Anzeige)" parenthetical: verfahrensfrei
+      // means NO notification; the notification duty is its own kind now.
+      de: 'Verfahrensfrei',
+      en: 'Permit-free',
     },
     genehmigungsfreigestellt: {
       de: 'Genehmigungsfreigestellt',
       en: 'Notification-only',
+    },
+    anzeige: {
+      de: 'Anzeigeverfahren (Abbruchanzeige)',
+      en: 'Notification procedure (demolition notice)',
     },
     vereinfachtes: {
       de: 'Vereinfachtes Baugenehmigungsverfahren',
@@ -295,6 +437,11 @@ export function procedureStatusLabel(
 ): string {
   if (kind === 'verfahrensfrei' || kind === 'genehmigungsfreigestellt') {
     return lang === 'de' ? 'VERFAHRENSFREI' : 'PERMIT-FREE'
+  }
+  // T-05 — an Anzeige is a duty but not a permit; "REQUIRED" on the card
+  // must not read as "Baugenehmigung required".
+  if (kind === 'anzeige') {
+    return lang === 'de' ? 'ANZEIGEPFLICHTIG' : 'NOTIFICATION REQUIRED'
   }
   return lang === 'de' ? 'ERFORDERLICH' : 'REQUIRED'
 }
@@ -360,9 +507,64 @@ function honorContradictingVerdict(
 }
 
 export function resolveProcedure(c: ProcedureCase): ProcedureDecision {
+  let d = decideProcedure(c)
+  // ── T-05 sprint — abbruch × Denkmal: DSchG-Erlaubnis OVERLAY, not a hard
+  // blocker. Demolition of a listed building needs heritage consent under the
+  // state DSchG IN ADDITION to (and independent of) the LBO tier — routing it
+  // to bauvoranfrage (the generic hard-blocker path) was legally imprecise,
+  // and a bare "verfahrensfrei" without the DSchG qualifier would be the
+  // worst silent-wrong this template can produce. The decision keeps its LBO
+  // kind; the reasoning LEADS with the DSchG duty so no surface can render
+  // "verfahrensfrei" unqualified. detectHardBlockers stays unchanged for
+  // every other intent (denkmal carve-out is abbruch-only, see decideProcedure).
+  if (c.intent === 'abbruch' && c.denkmalschutz) {
+    d = {
+      ...d,
+      reasoning_de: `Denkmalschutz erfasst — die Beseitigung erfordert VOR Beginn eine denkmalrechtliche Erlaubnis nach dem Landes-Denkmalschutzgesetz; die LBO-Einstufung ersetzt diese Erlaubnis nicht. ${d.reasoning_de}`,
+      reasoning_en: `Heritage protection applies — demolition requires heritage consent under the state DSchG BEFORE any work begins; the LBO classification does not replace that consent. ${d.reasoning_en}`,
+      caveats: [
+        {
+          kind: 'denkmalschutz_check',
+          message_de:
+            'Denkmalrechtliche Erlaubnis bei der unteren Denkmalschutzbehörde beantragen — eigenständige Voraussetzung neben der LBO-Einstufung.',
+          message_en:
+            'Apply for heritage consent at the lower heritage authority — an independent precondition alongside the LBO classification.',
+        },
+        ...d.caveats,
+      ],
+    }
+  }
+  // ── T-05 sprint — pinned verdict-conflict rule: when grounded signals
+  // disagreed (buildProcedureCase set verfahren_konflikt), the conservative
+  // path is already decided above; here the qualifier is DOWNGRADED and the
+  // conflict is flagged for architect verification — never a silent tie-break.
+  if (c.verfahren_konflikt) {
+    const trunc = (s: string): string => (s.length > 90 ? `${s.slice(0, 89)}…` : s)
+    d = {
+      ...d,
+      confidence: 'ASSUMED',
+      caveats: [
+        {
+          kind: 'verdikt_konflikt',
+          message_de: `Widersprüchliche Verfahrenssignale erkannt (Faktenlage: „${trunc(c.verfahren_konflikt.fact)}" vs. Beratungsverlauf: „${trunc(c.verfahren_konflikt.persona)}") — konservativer Pfad angesetzt; verbindliche Einstufung durch Architekt:in bzw. Bauaufsicht erforderlich.`,
+          message_en: `Conflicting procedure signals detected (facts: "${trunc(c.verfahren_konflikt.fact)}" vs. consultation: "${trunc(c.verfahren_konflikt.persona)}") — the more conservative path is shown; a binding classification by the architect or building authority is required.`,
+        },
+        ...d.caveats,
+      ],
+    }
+  }
+  return d
+}
+
+function decideProcedure(c: ProcedureCase): ProcedureDecision {
   // v1.0.21 Bug E — hard blockers first; no procedure can be decided
-  // until they are cleared.
-  const blockers = detectHardBlockers(c)
+  // until they are cleared. T-05 sprint: for ABBRUCH the denkmalschutz
+  // blocker is carved out — Denkmal demolition is handled as a DSchG
+  // overlay on the LBO decision (see resolveProcedure wrapper), not as a
+  // bauvoranfrage deferral. All other intents and blocker kinds unchanged.
+  const blockers = detectHardBlockers(c).filter(
+    (b) => !(c.intent === 'abbruch' && b.kind === 'denkmalschutz'),
+  )
   if (blockers.length > 0) {
     const blockerListDe = blockers.map((b) => b.labelDe).join(' · ')
     const blockerListEn = blockers.map((b) => b.labelEn).join(' · ')
@@ -399,7 +601,13 @@ export function resolveProcedure(c: ProcedureCase): ProcedureDecision {
   // to the hardcoded NRW-neubau § 64. An explicit § 65 citation in the verdict
   // is honored; otherwise the state's regular-permit § is used.
   const viRaw = c.verfahren_indikation ?? ''
-  if ((c.sonderbau_count ?? 0) >= 1) {
+  // T-05 sprint — the Sonderbau gate forces the REGULAR BUILDING PERMIT,
+  // which is a building-permit rule, not a demolition rule: demolishing a
+  // building that WAS a Sonderbau does not per se trigger a Bauantrag. For
+  // abbruch, a Sonderbau signal is handled conservatively inside the abbruch
+  // branch (anzeige + verify caveat), never as "reguläres
+  // Baugenehmigungsverfahren erforderlich". All other intents unchanged.
+  if ((c.sonderbau_count ?? 0) >= 1 && c.intent !== 'abbruch') {
     const cited = extractProcedureCitation(viRaw)
     const reg = getStateLocalization(c.bundesland).procedure.regular
     const regCitation = reg.citation.trim()
@@ -457,6 +665,32 @@ export function resolveProcedure(c: ProcedureCase): ProcedureDecision {
             'Verfahrensfreiheit vor Arbeitsbeginn mit der unteren Bauaufsichtsbehörde bestätigen — bei Sonderbau-Tatbeständen oder höherer Gebäudeklasse kann eine Genehmigungspflicht greifen.',
           message_en:
             'Confirm permit-free status with the lower building authority before work begins — a Sonderbau scope or higher building class can reinstate a permit requirement.',
+        },
+      ],
+    }
+  }
+  // T-05 sprint — honor an explicit ANZEIGE verdict (anzeigepflichtig /
+  // Abbruchanzeige / Beseitigungsanzeige). Checked AFTER verfahrensfrei (so
+  // "verfahrensfrei — keine förmliche Anzeige" stays free) and BEFORE the
+  // simplified/regular branches. A notification duty is its own kind — it is
+  // neither a permit nor Freistellung, and shoehorning it into 'standard'
+  // re-creates the §-64-on-a-demolition silent-wrong this sprint closes.
+  if (/anzeigepflichtig|anzeigeverfahren|abbruchanzeige|beseitigungsanzeige|notification (?:required|procedure|requirement)/.test(vi)) {
+    const cited = extractProcedureCitation(viRaw)
+    const anzCitation = cited ?? beseitigungCitationFor(c.bundesland)
+    return {
+      kind: 'anzeige',
+      citation: anzCitation || viRaw.trim(),
+      reasoning_de: `Anzeigepflichtige Beseitigung${anzCitation ? ` nach ${anzCitation}` : ''} — Anzeige bei der unteren Bauaufsichtsbehörde mit landesrechtlicher Wartefrist (häufig 1 Monat) vor Beginn; kein Bauantrag erforderlich. Standsicherheit angrenzender Gebäude und Nebenpflichten (Schadstoffe, Entsorgung) bleiben unberührt.`,
+      reasoning_en: `Notification-required demolition${anzCitation ? ` under ${anzCitation}` : ''} — notify the lower building authority and observe the statutory waiting period (often one month) before work begins; no building application is required. Stability of adjoining buildings and ancillary duties (pollutants, disposal) remain unaffected.`,
+      confidence: 'CALCULATED',
+      caveats: [
+        {
+          kind: 'bebauungsplan_specific',
+          message_de:
+            'Anzeigeform und Wartefrist sind landesrechtlich — Frist und Unterlagen mit der unteren Bauaufsichtsbehörde bestätigen.',
+          message_en:
+            'Notification form and waiting period are state law — confirm the period and required documents with the lower building authority.',
         },
       ],
     }
@@ -641,6 +875,97 @@ export function resolveProcedure(c: ProcedureCase): ProcedureDecision {
             'Confirm applicability of the simplified procedure with the local building authority; a Sonderbau scope reinstates the regular procedure.',
         },
       ],
+    }
+  }
+  // ── T-05 sprint — ABBRUCH (demolition), the missing intent branch. Before
+  // this, a demolition with no readable verdict fell through every branch to
+  // the generic fallback below, which emitted "Standard building permit
+  // (§ 64 …) as the starting point" — the Sachsen/Leipzig walk's silent-wrong.
+  // The demolition verdict family is verfahrensfrei / anzeige /
+  // genehmigungspflichtig-only-where-law-says (MBO family: small freestanding
+  // buildings free, larger or attached ones notification + statutory wait).
+  // The NO-INFORMATION baseline is the state's owner-side Beseitigung-§ with
+  // honest verify framing at the CONSERVATIVE tier (anzeige) — NEVER the
+  // regular building permit. Citation source: corpus abbruch_beseitigung pick
+  // (corpusCitations.generated beseitigung), falling back to the state's free §.
+  if (c.intent === 'abbruch') {
+    const cited = extractProcedureCitation(viRaw)
+    const beseitigungCit = cited ?? beseitigungCitationFor(c.bundesland)
+    const citDeSuffix = beseitigungCit ? ` (${beseitigungCit})` : ''
+    const verifyCaveat: ProcedureCaveat = {
+      kind: 'bebauungsplan_specific',
+      message_de:
+        'Landesrechtliche Schwellen (Gebäudeklasse, Höhe, umbauter Raum) und die Anzeigefrist mit der unteren Bauaufsichtsbehörde bestätigen.',
+      message_en:
+        'Confirm the state thresholds (building class, height, enclosed volume) and the notification period with the lower building authority.',
+    }
+    const attached =
+      c.gebaeude_freistehend === false || c.grenzstaendig === true
+    const gk = c.gebaeudeklasse_num
+    // Sonderbau signal on the EXISTING building → conservative anzeige with an
+    // explicit may-trigger-permit caveat (never silently "reguläres Verfahren").
+    if ((c.sonderbau_count ?? 0) >= 1) {
+      return {
+        kind: 'anzeige',
+        citation: beseitigungCit,
+        reasoning_de: `Beseitigung eines Gebäudes mit Sonderbau-Merkmalen — konservativ als anzeigepflichtig${citDeSuffix} eingestuft. Je nach Landesrecht kann für Sonderbauten eine Genehmigungspflicht greifen.`,
+        reasoning_en: `Demolition of a building with Sonderbau characteristics — conservatively classified as notification-required${beseitigungCit ? ` (${beseitigungCit})` : ''}. Depending on state law, a permit requirement can apply to Sonderbau structures.`,
+        confidence: 'ASSUMED',
+        caveats: [
+          {
+            kind: 'bebauungsplan_specific',
+            message_de:
+              'Sonderbau-Merkmale können eine Genehmigungspflicht für die Beseitigung auslösen — Einstufung mit der unteren Bauaufsichtsbehörde klären.',
+            message_en:
+              'Sonderbau characteristics can trigger a permit requirement for the demolition — clarify the classification with the lower building authority.',
+          },
+          verifyCaveat,
+        ],
+      }
+    }
+    // Freestanding + GK 1–3 captured → the MBO-family verfahrensfrei tier.
+    if (c.gebaeude_freistehend === true && gk !== undefined && gk <= 3) {
+      return {
+        kind: 'verfahrensfrei',
+        citation: beseitigungCit,
+        reasoning_de: `Vollständige Beseitigung eines freistehenden Gebäudes der Gebäudeklasse ${gk} — nach${citDeSuffix || ' Landesrecht'} regelmäßig verfahrensfrei. Pflichten aus dem Nebenrecht (Standsicherheit angrenzender Bebauung, Schadstoffe, Entsorgung) bleiben bestehen.`,
+        reasoning_en: `Complete demolition of a freestanding building class ${gk} building — typically procedure-free${beseitigungCit ? ` under ${beseitigungCit}` : ''}. Ancillary duties (stability of adjoining structures, pollutants, disposal) remain in force.`,
+        confidence: 'CALCULATED',
+        caveats: [verifyCaveat],
+      }
+    }
+    // Attached/grenzständig OR GK > 3 → notification tier (statutory wait +
+    // neighbour-stability duty for attached buildings).
+    if (attached || (gk !== undefined && gk > 3)) {
+      const nachbarCaveats: ProcedureCaveat[] = attached
+        ? [
+            {
+              kind: 'nachbarbeteiligung',
+              message_de:
+                'Angebaute/grenzständige Lage — die Standsicherheit der Nachbarbebauung ist während und nach dem Abbruch durch qualifizierte Tragwerksplanung zu sichern (Bescheinigung regelmäßig Pflicht).',
+              message_en:
+                'Attached/parcel-edge situation — the stability of neighbouring buildings during and after demolition must be secured by qualified structural engineering (an attestation is typically mandatory).',
+            },
+          ]
+        : []
+      return {
+        kind: 'anzeige',
+        citation: beseitigungCit,
+        reasoning_de: `Beseitigung ${attached ? 'eines angebauten bzw. grenzständigen Gebäudes' : `eines Gebäudes der Gebäudeklasse ${gk}`} — regelmäßig anzeigepflichtig${citDeSuffix}; Anzeige mit landesrechtlicher Wartefrist (häufig 1 Monat) vor Beginn. Kein Bauantrag erforderlich.`,
+        reasoning_en: `Demolition of ${attached ? 'an attached or parcel-edge building' : `a building class ${gk} building`} — typically notification-required${beseitigungCit ? ` (${beseitigungCit})` : ''}; notify with the statutory waiting period (often one month) before work begins. No building application is required.`,
+        confidence: 'CALCULATED',
+        caveats: [...nachbarCaveats, verifyCaveat],
+      }
+    }
+    // Facts unknown → CONSERVATIVE no-information baseline: treat as
+    // notification-required until clarified; honest ASSUMED framing.
+    return {
+      kind: 'anzeige',
+      citation: beseitigungCit,
+      reasoning_de: `Beseitigung — je nach Gebäudegröße, -klasse und Lage verfahrensfrei oder anzeigepflichtig${citDeSuffix}. Bis zur Klärung konservativ als anzeigepflichtig behandelt; kein Bauantrag erforderlich.`,
+      reasoning_en: `Demolition — procedure-free or notification-required${beseitigungCit ? ` (${beseitigungCit})` : ''} depending on building size, class and situation. Treated conservatively as notification-required until clarified; no building application is required.`,
+      confidence: 'ASSUMED',
+      caveats: [verifyCaveat],
     }
   }
   // ── Four-class campaign Phase 1 — STRUCTURAL verdict honoring (root fix for
@@ -980,6 +1305,48 @@ export function buildProcedureCase(
     const n = Number(f.value)
     return Number.isFinite(n) ? n : undefined
   }
+  // ── T-05 sprint — PINNED VERDICT HIERARCHY: canonical/bespoke FACT verdict
+  // (rank 1, resolveVerfahrensIndikation incl. the bespoke-key fallback)
+  // > persona STRUCTURED procedures verdict (rank 2) > resolver-from-facts
+  // (the intent branches) > intent baseline. A genuine direction conflict
+  // between rank 1 and rank 2 resolves to the MORE CONSERVATIVE signal and is
+  // flagged via verfahren_konflikt (resolveProcedure downgrades + flags) —
+  // never a silent tie-break.
+  const factVerdict = resolveVerfahrensIndikation(facts)
+  const personaVerdict = extractPersonaProcedureVerdict(state.procedures)
+  let verdict = factVerdict ?? personaVerdict
+  let verfahren_konflikt: ProcedureCase['verfahren_konflikt']
+  if (factVerdict && personaVerdict) {
+    const df = classifyVerdictDirection(factVerdict)
+    const dp = classifyVerdictDirection(personaVerdict)
+    if (df && dp && df !== dp) {
+      verdict =
+        DIRECTION_RANK[df] >= DIRECTION_RANK[dp] ? factVerdict : personaVerdict
+      verfahren_konflikt = { fact: factVerdict, persona: personaVerdict }
+    }
+  }
+  // T-05 sprint — freestanding tri-state. Exact canonical key first, then a
+  // normalized-key scan. Deliberately EXACT-normalized ("gebaeudefreistehend")
+  // so `nachbargebaeude_freistehend` (the NEIGHBOUR's situation) never matches.
+  const gebaeude_freistehend = ((): boolean | undefined => {
+    const direct = readFactTriState(facts, 'gebaeude_freistehend')
+    if (direct !== undefined) return direct
+    const f = facts.find((x) => {
+      const k = x.key.toLowerCase().replace(/[._\s-]/g, '')
+      return k === 'gebaeudefreistehend' || k === 'buildingfreestanding'
+    })
+    return f ? factAffirmative(f.value) : undefined
+  })()
+  // T-05 sprint — GK number from the canonical `gebaeudeklasse` fact ("GK 3").
+  const gebaeudeklasse_num = ((): number | undefined => {
+    const f = facts.find((x) => {
+      const k = x.key.toLowerCase().replace(/[._\s-]/g, '')
+      return k === 'gebaeudeklasse' || k === 'buildingclass'
+    })
+    if (!f) return undefined
+    const m = String(f.value).match(/(\d)/)
+    return m ? Number(m[1]) : undefined
+  })()
   return {
     intent: intentFromTemplate((state.templateId ?? 'T-03') as TemplateId),
     bundesland: (project.bundesland ?? 'nrw') as BundeslandCode,
@@ -994,6 +1361,9 @@ export function buildProcedureCase(
     mk_gebietsart: factBool('mk_gebietsart'),
     bauvoranfrage_hard_blocker: factBool('bauvoranfrage_hard_blocker'),
     sonderbau_count: detectSonderbauCount(facts),
-    verfahren_indikation: resolveVerfahrensIndikation(facts),
+    verfahren_indikation: verdict,
+    verfahren_konflikt,
+    gebaeude_freistehend,
+    gebaeudeklasse_num,
   }
 }

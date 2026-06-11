@@ -4,6 +4,7 @@ import { deriveBaselineProcedure } from './deriveBaselineProcedure'
 import { detectProcedure, type ProcedureType } from './costNormsMuenchen'
 import {
   buildProcedureCase,
+  classifyVerdictDirection,
   procedureLabel,
   resolveProcedure,
   type ProcedureDecision,
@@ -62,20 +63,52 @@ function procedureFromDecision(decision: ProcedureDecision): Procedure {
  * a FACT (not as a structured state.procedures entry) fell straight to the
  * template baseline, so a GK5 + Sonderbau MFH showed "§ 64 simplified · likely"
  * on every narrative surface while Key Data showed the correct § 65.
+ *
+ * T-05 sprint (pinned design, Phase-0.3 fix) — DECISION-FIRST on every
+ * surface. The old order let a non-empty persona state.procedures list BYPASS
+ * the canonical resolveProcedure entirely (web tab showed the persona's § 61
+ * card while the PDF resolver said § 64 — the Sachsen split). Now:
+ *   1. persona structured LBO-verdict entries are a VERDICT INPUT to
+ *      buildProcedureCase (rank 2 of the pinned hierarchy) — absorbed by the
+ *      decision card, never rendered as a competing verdict;
+ *   2. persona entries that are ADDITIONAL REGIMES (DSchG-Erlaubnis, water
+ *      law, tree protection) render as supplementary procedures UNDER the
+ *      decision — never collapsed, never dropped;
+ *   3. the intent baseline fires ONLY when no signal of any kind exists
+ *      (abbruch always resolves — its branch has an honest no-information
+ *      baseline, so the regular-§ template pack can never leak onto T-05).
+ * No surface bypasses the decision: tab, markdown export (shares this path
+ * per YELLOW-2) and the PDF all derive from the SAME ProcedureDecision.
  */
+export function isLboVerdictProcedure(p: Procedure): boolean {
+  const title = `${p.title_de ?? ''} ${p.title_en ?? ''}`
+  const rationale = `${p.rationale_de ?? ''} ${p.rationale_en ?? ''}`
+  return (
+    classifyVerdictDirection(title) !== null ||
+    classifyVerdictDirection(rationale) !== null ||
+    /bauvoranfrage|vorbescheid|baugenehmigungsverfahren|building[- ]?permit procedure/i.test(title)
+  )
+}
+
 export function resolveProcedures(
   project: ProjectRow,
   state: Partial<ProjectState>,
 ): ResolvedProcedures {
   const persona = state.procedures ?? []
-  if (persona.length > 0) return { procedures: persona, isFromState: true }
+  const overlays = persona.filter((p) => !isLboVerdictProcedure(p))
+  const personaHadVerdict = overlays.length < persona.length
 
   const pcase = buildProcedureCase(project, state)
   const hasVerdict = !!pcase.verfahren_indikation?.trim()
   const hasSonderbau = (pcase.sonderbau_count ?? 0) >= 1
-  if (hasVerdict || hasSonderbau) {
+  if (hasVerdict || hasSonderbau || personaHadVerdict || pcase.intent === 'abbruch') {
     const decision = resolveProcedure(pcase)
-    return { procedures: [procedureFromDecision(decision)], isFromState: false }
+    return {
+      procedures: [procedureFromDecision(decision), ...overlays],
+      // persona-grounded when the verdict came from persona facts/procedures —
+      // the "likely" badge belongs to resolver-only/baseline paths.
+      isFromState: hasVerdict || personaHadVerdict,
+    }
   }
 
   return {
@@ -90,6 +123,9 @@ export function resolveProcedures(
 export interface SelectedProcedures {
   primary: Procedure | undefined
   fallback: Procedure | undefined
+  /** T-05 sprint — additional regimes (DSchG-Erlaubnis etc.) rendered UNDER
+   *  the decision card; never collapsed into it, never dropped. */
+  supplementary: Procedure[]
 }
 
 /** Structured verdict identity: status + normalised title (§-verdict), NOT
@@ -109,14 +145,27 @@ const verdictKey = (p: Procedure): string =>
  * structured verdict key, never the rationale text.
  */
 export function selectProcedures(procedures: Procedure[]): SelectedProcedures {
+  // T-05 sprint (Phase-0.3) — DECISION-FIRST primary: when the canonical
+  // decision card is present it IS the primary, unconditionally. The old
+  // erforderlich-promotion sort could promote a mislabeled persona entry
+  // (the Sachsen walk's "erforderlich"-tagged § 61 card) over the decision;
+  // with the decision pinned first that sort applies only to legacy persona-
+  // only lists (none produced by resolveProcedures anymore).
+  const decision = procedures.find((p) => p.id === 'P-Decision')
   const primary =
-    procedures.find((p) => p.status === 'erforderlich') ?? procedures[0]
-  const fallback = primary
-    ? procedures.find(
-        (p) => p.id !== primary.id && verdictKey(p) !== verdictKey(primary),
-      )
-    : undefined
-  return { primary, fallback }
+    decision ??
+    procedures.find((p) => p.status === 'erforderlich') ??
+    procedures[0]
+  const fallback =
+    primary && !decision
+      ? procedures.find(
+          (p) => p.id !== primary.id && verdictKey(p) !== verdictKey(primary),
+        )
+      : undefined
+  const supplementary = primary
+    ? procedures.filter((p) => p.id !== primary.id && p.id !== fallback?.id)
+    : []
+  return { primary, fallback, supplementary }
 }
 
 /**
