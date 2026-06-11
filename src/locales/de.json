@@ -2031,6 +2031,7 @@
       "procedure": {
         "pickEyebrow": "Verfahrenswahl",
         "fallback": "Fallback: {{title}}.",
+        "supplementaryEyebrow": "Weitere Verfahren / Genehmigungen",
         "noRationale": "Begründung folgt sobald die Beratung weiter fortgeschritten ist.",
         "docsEyebrow": "Unterlagen",
         "docsCount_one": "{{count}} Dokument",

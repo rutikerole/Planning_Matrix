@@ -14,6 +14,10 @@ import { getStateCitations, type StateCitationPack } from '@/legal/stateCitation
  */
 export interface RoleGate {
   fact: string
+  /** T-05 sprint — invert the fact read (gate fires on fact===false). Used by
+   *  the demolition Tragwerksplaner gate: gebaeude_freistehend false (attached)
+   *  → needed; true (freestanding) → onFalse; unknown → conditional. */
+  invert?: boolean
   onFalse: 'drop' | 'conditional'
   /** Rationale shown when the role is rendered as conditional/deferred. */
   conditionalDe: string
@@ -54,6 +58,8 @@ export type BaselineRole = Role & { gate?: RoleGate }
 interface Args {
   intent: string
   bundesland: string
+  /** T-05 sprint — the canonical decision kind; only abbruch consumes it. */
+  procedureKind?: string
 }
 
 const NOW = (): string => new Date().toISOString()
@@ -248,34 +254,114 @@ const RENOVATION_ROLES = (citations: StateCitationPack): BaselineRole[] => [
   ),
 ]
 
-const DEMOLITION_ROLES = (citations: StateCitationPack): BaselineRole[] => [
-  baselineRole(
-    'R-Architekt',
-    'Architekt:in',
-    'Architect',
-    'Antragstellung Abbruch + Entsorgungskonzept.',
-    'Demolition application + waste-management concept.',
+// T-05 sprint (item g) — DEMOLITION roles consume the ProcedureDecision kind
+// + the freestanding fact instead of a static "Architect NEEDED ·
+// Antragstellung" set (the Sachsen walk flagged an architect-filed
+// application on a verfahrensfrei demolition with no application to file).
+//  verfahrensfrei → contractor-led: Abbruchunternehmen needed; architect
+//    OPTIONAL (no Antragstellung exists); Bauamt optional (confirm freedom).
+//  anzeige        → Bauamt needed (notification); architect conditional
+//    (owner may file; architect recommended for the annexes).
+//  permit kinds   → the previous application-led framing (correct there).
+//  Tragwerksplaner is GATED on attached-ness (inverted gebaeude_freistehend):
+//    attached → needed (neighbour-stability attestation — the safety case);
+//    freestanding → conditional; unknown → conditional (honest deferral).
+const DEMOLITION_ROLES = (
+  citations: StateCitationPack,
+  procedureKind?: string,
+): BaselineRole[] => {
+  const free = procedureKind === 'verfahrensfrei'
+  const anzeige = procedureKind === 'anzeige'
+  const tragwerk: BaselineRole = {
+    ...baselineRole(
+      'R-Tragwerksplaner',
+      'Tragwerksplaner:in',
+      'Structural engineer',
+      'Standsicherheit der Nachbarbebauung während und nach dem Abbruch (Bescheinigung bei angebauter/grenzständiger Lage Pflicht).',
+      'Stability of neighbouring buildings during and after demolition (attestation mandatory for attached/parcel-edge buildings).',
+      citations.labelDe,
+      {
+        fact: 'gebaeude_freistehend',
+        invert: true,
+        onFalse: 'conditional',
+        conditionalDe:
+          'Bei angebauter oder grenzständiger Lage Pflicht (Standsicherheit Nachbarbebauung); bei freistehenden Gebäuden in der Regel nicht erforderlich.',
+        conditionalEn:
+          'Mandatory for attached or parcel-edge buildings (neighbour stability); typically not required for freestanding buildings.',
+      },
+    ),
+  }
+  const architekt: BaselineRole = free
+    ? {
+        ...baselineRole(
+          'R-Architekt',
+          'Architekt:in',
+          'Architect',
+          'Optional — keine Antragstellung erforderlich (verfahrensfrei). Koordination von Schadstoffkataster und Entsorgungskonzept kann sinnvoll sein.',
+          'Optional — no application to file (procedure-free). Coordinating the pollutant survey and disposal concept can be useful.',
+          citations.labelDe,
+        ),
+        needed: false,
+        conditional: true,
+      }
+    : anzeige
+      ? {
+          ...baselineRole(
+            'R-Architekt',
+            'Architekt:in',
+            'Architect',
+            'Anzeige kann durch die Bauherr:in erfolgen; Architekt:in für Anzeige-Beilagen und Koordination empfohlen.',
+            'The owner may file the notification; an architect is recommended for the annexes and coordination.',
+            citations.labelDe,
+          ),
+          needed: false,
+          conditional: true,
+        }
+      : baselineRole(
+          'R-Architekt',
+          'Architekt:in',
+          'Architect',
+          'Antragstellung Abbruch + Entsorgungskonzept.',
+          'Demolition application + waste-management concept.',
+          citations.labelDe,
+        )
+  const bauamt: BaselineRole = free
+    ? {
+        ...baselineRole(
+          'R-Bauamt',
+          'Bauamt',
+          'Building authority',
+          'Keine Anzeige erforderlich (verfahrensfrei) — Bestätigung der Verfahrensfreiheit vor Beginn empfohlen.',
+          'No notification required (procedure-free) — confirming the permit-free status before work begins is recommended.',
+          citations.labelDe,
+        ),
+        needed: false,
+        conditional: true,
+      }
+    : baselineRole(
+        'R-Bauamt',
+        'Bauamt',
+        'Building authority',
+        anzeige
+          ? 'Empfänger der Abbruchanzeige; Wartefrist vor Beginn beachten.'
+          : 'Abbruchanzeige bzw. Genehmigung je nach Größe.',
+        anzeige
+          ? 'Receives the demolition notification; observe the waiting period before work begins.'
+          : 'Demolition notification or permit depending on size.',
+        citations.labelDe,
+      )
+  const abbruchunternehmen = baselineRole(
+    'R-Abbruchunternehmen',
+    'Abbruchunternehmen',
+    'Demolition contractor',
+    'Ausführung des Abbruchs; Entsorgungs-/Verwertungsnachweise (KrWG) und Baustellensicherung.',
+    'Carries out the demolition; disposal/recovery records (KrWG) and site safety.',
     citations.labelDe,
-  ),
-  baselineRole(
-    'R-Tragwerksplaner',
-    'Tragwerksplaner:in',
-    'Structural engineer',
-    'Beurteilung der Standsicherheit während des Abbruchs.',
-    'Structural assessment of stability during demolition.',
-    citations.labelDe,
-  ),
-  baselineRole(
-    'R-Bauamt',
-    'Bauamt',
-    'Building authority',
-    'Abbruchanzeige bzw. Genehmigung je nach Größe.',
-    'Demolition notification or permit depending on size.',
-    citations.labelDe,
-  ),
-]
+  )
+  return [abbruchunternehmen, tragwerk, architekt, bauamt]
+}
 
-export function deriveBaselineRoles({ intent, bundesland }: Args): BaselineRole[] {
+export function deriveBaselineRoles({ intent, bundesland, procedureKind }: Args): BaselineRole[] {
   const citations = getStateCitations(bundesland)
   switch (intent) {
     case 'neubau_mehrfamilienhaus':
@@ -288,7 +374,7 @@ export function deriveBaselineRoles({ intent, bundesland }: Args): BaselineRole[
     case 'umnutzung':
       return RENOVATION_ROLES(citations)
     case 'abbruch':
-      return DEMOLITION_ROLES(citations)
+      return DEMOLITION_ROLES(citations, procedureKind)
     default:
       return NEW_BUILD_ROLES(citations)
   }

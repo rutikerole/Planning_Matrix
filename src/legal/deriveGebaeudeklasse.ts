@@ -81,7 +81,13 @@ export interface DerivedGebaeudeklasse {
 
 const TEMPLATE_FREISTEHEND_DEFAULT: Record<string, boolean> = {
   'T-01': true,  // Neubau EFH
-  'T-05': true,  // Abbruch — typically freistehende objects
+  // T-05 sprint (item g) — was `true` ("typically freistehende objects"), a
+  // safety-critical assumption: an ATTACHED demolition mis-defaulted to
+  // freistehend reads a LOWER GK and silently drops the neighbour-stability
+  // duty. Conservative default is NOT freestanding; the captured
+  // gebaeude_freistehend fact (now consumed via deriveGkInputFromFacts)
+  // overrides in either direction.
+  'T-05': false, // Abbruch — conservative: attached unless captured otherwise
   'T-06': true,  // Aufstockung
   'T-02': false, // Neubau MFH — often integrated
   'T-03': false, // Sanierung — typically in Mischbebauung
@@ -247,10 +253,14 @@ export function deriveGkInputFromFacts(
       num(/^height_m$/i),
     geschosse:
       num(/^vollgeschosse_oberirdisch$/i) ??
+      num(/^geschosse_oberirdisch$/i) ??
       num(/^geschosse$/i) ??
       num(/^geschosszahl$/i) ??
       num(/^storeys$/i),
-    freistehend: bool(/^freistehend$/i),
+    // T-05 sprint (item g) — accept the canonical `gebaeude_freistehend`
+    // capture key (the Sachsen walk's actual key). Anchored so the NEIGHBOUR's
+    // `nachbargebaeude_freistehend` can never match.
+    freistehend: bool(/^(gebaeude_)?freistehend$/i),
     nutzungseinheitenAnzahl:
       num(/^nutzungseinheiten_anzahl$/i) ?? num(/^ne_anzahl$/i),
     nutzungseinheitenGroesseMaxM2:

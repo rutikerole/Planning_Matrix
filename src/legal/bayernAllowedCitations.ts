@@ -28,7 +28,10 @@ export const BAYERN_ALLOWED_CITATIONS: readonly string[] = [
   'Art. 2 Abs. 3 BayBO',
   'Art. 2 Abs. 4 BayBO',
   'Art. 6 BayBO',
+  'Art. 7 BayBO', // Begrünung — instructed in template BLOCK T-02 (audit:instructed-citations)
+  'Art. 8 BayBO', // Baugestaltung — instructed in template BLOCK T-02
   'Art. 12 BayBO',
+  'Art. 31 BayBO', // Rettungswege — instructed in template BLOCK T-06
   'Art. 44a BayBO',
   'Art. 46 Abs. 6 BayBO',
   'Art. 47 BayBO',
@@ -46,6 +49,8 @@ export const BAYERN_ALLOWED_CITATIONS: readonly string[] = [
   'Art. 60 BayBO',
   'Art. 61 BayBO',
   'Art. 62 BayBO',
+  'Art. 62a BayBO', // Standsicherheitsnachweis — instructed in template BLOCK T-02
+  'Art. 62b BayBO', // Brandschutznachweis — instructed in template BLOCK T-02
   'Art. 64 BayBO',
   'Art. 65 BayBO',
   'Art. 66 BayBO',

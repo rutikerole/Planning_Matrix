@@ -23,6 +23,9 @@ export interface RiskCatalogEntry {
   /** Impact 1–3 — fixed; impact is intrinsic to the risk type. */
   impact: 1 | 2 | 3
   /** Optional regex; when it hits, likelihood is bumped to bumpedLikelihood. */
+  /** T-05 sprint 2.75 — canonical fact key whose affirmative presence bumps
+   *  likelihood (PRIMARY); evidencePattern is the free-text FALLBACK. */
+  evidenceFactKey?: string
   evidencePattern?: RegExp
   bumpedLikelihood?: 1 | 2 | 3
   /** Optional intent filter (most renovations carry statics-surprise risk; demos don't). */
@@ -385,6 +388,9 @@ export const RISK_CATALOG: RiskCatalogEntry[] = [
     baseLikelihood: 2,
     impact: 3,
     intents: ['abbruch'],
+    // T-05 sprint 2.75 — the canonical schadstoffverdacht key is the PRIMARY
+    // bump signal; the free-text pattern is fallback only.
+    evidenceFactKey: 'schadstoffverdacht',
     evidencePattern: /asbest|kmf|pcb|schadstoff|baujahr\s*19[0-8]/i,
     bumpedLikelihood: 3,
     unriskDe:

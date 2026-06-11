@@ -78,6 +78,9 @@ import {
   DEFAULT_TIMELINE_TOTAL_WEEKS,
   DEMOLITION_MILESTONE_WEEK,
   DEMOLITION_TOTAL_WEEKS,
+  ANZEIGE_DEMOLITION_MILESTONE_WEEK,
+  ANZEIGE_DEMOLITION_PHASES,
+  ANZEIGE_DEMOLITION_TOTAL_WEEKS,
   VERFAHRENSFREI_DEMOLITION_PHASES,
   renderTimelineBody,
   renderTimelineFooter,
@@ -139,7 +142,9 @@ import {
   type ProcedureDecision,
 } from '@/legal/resolveProcedure'
 import {
+  baujahrPre1995FromFacts,
   requiredDocumentsForCase,
+  schadstoffverdachtFromFacts,
   type DocumentCase,
   type RequiredDocument,
 } from '@/legal/requiredDocuments'
@@ -490,6 +495,18 @@ export async function buildExportPdf({
     // (e.g. § 65 BauO NRW), and the intent-correct GEG § (§ 10 new-build /
     // § 48 renovation — see Y-3).
     const planningRef = (() => {
+      // T-05 sprint 2.75 — the canonical `planungsrecht_paragraph` fact is
+      // the PRIMARY source (pinned vocabulary § 30/§ 34/§ 35 BauGB); the
+      // free-text any-fact §-scan stays as FALLBACK only.
+      const canonical = (state.facts ?? []).find(
+        (f) =>
+          f.key.toLowerCase().replace(/[._\s-]/g, '') ===
+          'planungsrechtparagraph',
+      )
+      if (canonical && typeof canonical.value === 'string') {
+        const m = canonical.value.match(/§\s*3[045]\s*BauGB/i)
+        if (m) return m[0].replace(/\s+/g, ' ').trim()
+      }
       for (const f of state.facts ?? []) {
         if (typeof f.value !== 'string') continue
         const m = f.value.match(/§\s*\d+[a-z]?\s*BauGB/i)
@@ -497,10 +514,15 @@ export async function buildExportPdf({
       }
       return undefined
     })()
+    // T-05 sprint (item c) — a demolition has NO GEG obligation (the building
+    // is removed, nothing is built or thermally altered); § 10 GEG was leaking
+    // onto every T-05 derivation line. abbruch cites no GEG anywhere.
     const gegRef =
-      procedureCase.intent === 'sanierung' || procedureCase.intent === 'umnutzung'
-        ? '§ 48 GEG'
-        : '§ 10 GEG'
+      procedureCase.intent === 'abbruch'
+        ? undefined
+        : procedureCase.intent === 'sanierung' || procedureCase.intent === 'umnutzung'
+          ? '§ 48 GEG'
+          : '§ 10 GEG'
     const legalRefs = [planningRef, procedureDecision.citation, gegRef]
       .filter((s): s is string => !!s && s.trim().length > 0)
       .join(' · ')
@@ -804,6 +826,12 @@ export async function buildExportPdf({
   // (survey → procurement → demolition, ~5-10 wks) instead.
   const isVerfahrensfreiDemolition =
     isDemolition && procedureDecision.kind === 'verfahrensfrei'
+  // T-05 sprint — the anzeige tier gets its own lane set (notification +
+  // statutory wait). Only a GENUINELY permit-required demolition (standard /
+  // bauvoranfrage kinds) falls back to the Bauantrag Gantt with the
+  // "Baugenehmigung issued" milestone.
+  const isAnzeigeDemolition =
+    isDemolition && procedureDecision.kind === 'anzeige'
   renderTimelineBody(timelinePage, editorialFonts, pdfStrings,
     isVerfahrensfreiDemolition
       ? {
@@ -816,13 +844,24 @@ export async function buildExportPdf({
           milestoneLabelKey: 'timeline.demo.milestone',
           milestoneDetailKey: 'timeline.demo.milestone.detail',
         }
-      : {
-          templateLabel,
-          bundeslandCode: bundeslandCodeUpper,
-          phases: DEFAULT_TIMELINE_PHASES,
-          totalWeeks: DEFAULT_TIMELINE_TOTAL_WEEKS,
-          milestoneWeek: DEFAULT_TIMELINE_MILESTONE_WEEK,
-        },
+      : isAnzeigeDemolition
+        ? {
+            templateLabel,
+            bundeslandCode: bundeslandCodeUpper,
+            phases: ANZEIGE_DEMOLITION_PHASES,
+            totalWeeks: ANZEIGE_DEMOLITION_TOTAL_WEEKS,
+            milestoneWeek: ANZEIGE_DEMOLITION_MILESTONE_WEEK,
+            subKey: 'timeline.demo.anzeige.sub',
+            milestoneLabelKey: 'timeline.demo.anzeige.milestone',
+            milestoneDetailKey: 'timeline.demo.anzeige.milestone.detail',
+          }
+        : {
+            templateLabel,
+            bundeslandCode: bundeslandCodeUpper,
+            phases: DEFAULT_TIMELINE_PHASES,
+            totalWeeks: DEFAULT_TIMELINE_TOTAL_WEEKS,
+            milestoneWeek: DEFAULT_TIMELINE_MILESTONE_WEEK,
+          },
   )
 
   // ── Schedule sections ──────────────────────────────────────────
@@ -913,6 +952,11 @@ export async function buildExportPdf({
     eingriff_aussenhuelle: procedureCase.eingriff_aussenhuelle,
     denkmalschutz: procedureCase.denkmalschutz,
     grenzstaendig: procedureCase.grenzstaendig,
+    gebaeude_freistehend: procedureCase.gebaeude_freistehend,
+    // T-05 sprint 2.75 — the baujahr_pre_1995 reader existed since v1.0.19
+    // but was never populated; schadstoffverdacht promotes the pollutant doc.
+    baujahr_pre_1995: baujahrPre1995FromFacts(state.facts),
+    schadstoffverdacht: schadstoffverdachtFromFacts(state.facts),
     geg_trigger:
       procedureCase.eingriff_aussenhuelle &&
       (procedureCase.fassadenflaeche_m2 ?? 0) > 0,
@@ -1114,7 +1158,13 @@ export async function buildExportPdf({
     // v1.0.30 Bug 101 — was `${label.toLowerCase()} nach ${citation}`, a broken
     // EN/DE concatenation ("standard building permit nach Baugenehmigungsverfahren
     // (regulär)"). Single localized label + middot + citation, no hardcoded " nach ".
-    value: `${procedureLabel(procedureDecision.kind, lang)} · ${procedureDecision.citation}`,
+    // T-05 sprint — CITATION-FIRST: the value column ellipsizes long values,
+    // and the DE label "Vereinfachtes Baugenehmigungsverfahren · § 64 …" lost
+    // its § to truncation (no § in Key Data → no URI link annotation). The §
+    // leads so it always survives; the label truncates harmlessly.
+    value: procedureDecision.citation
+      ? `${procedureDecision.citation} · ${procedureLabel(procedureDecision.kind, lang)}`
+      : procedureLabel(procedureDecision.kind, lang),
     qualifier: {
       source: 'LEGAL',
       quality: procedureDecision.confidence,
@@ -1232,6 +1282,8 @@ export async function buildExportPdf({
     // v1.0.23 Bug O — pass the lowercase code so the glossary can
     // select state-aware entries via getStateCitations.
     bundeslandLower: (project.bundesland ?? '').toLowerCase(),
+    // T-05 sprint (item c) — abbruch cites no GEG anywhere.
+    omitGeg: procedureCase.intent === 'abbruch',
   })
 
   // v1.0.17 — Audit log REMOVED from PDF. Per the user's intent

@@ -66,13 +66,14 @@ const TEMPLATE_INTENT: Record<TemplateId, string> = {
   'T-01': 'neubau_einfamilienhaus', 'T-02': 'neubau_mehrfamilienhaus', 'T-03': 'sanierung',
   'T-04': 'umnutzung', 'T-05': 'abbruch', 'T-06': 'aufstockung', 'T-07': 'anbau', 'T-08': 'sonstige',
 }
-// The intent-appropriate procedure baseline (deriveBaselineProcedure): every
-// residential/Bestand intent defaults to the SIMPLIFIED procedure; demolition
-// follows the regular path. A resolver that returns generic standard-§-ASSUMED
-// for a non-abbruch intent is masking the computed verdict (CLASS 1).
+// The sweep injects the state's SIMPLIFIED § as a citation-only verdict, so
+// the §-classifier must resolve it to vereinfachtes for EVERY intent —
+// including abbruch (T-05 sprint: the abbruch branch runs AFTER the
+// classifier; the old 'demolition follows the regular path' expectation was
+// the §-64-on-a-demolition silent-wrong this sweep now guards against).
 const EXPECTED_PROC_KIND: Record<string, 'vereinfachtes' | 'standard'> = {
   neubau: 'vereinfachtes', sanierung: 'vereinfachtes', umnutzung: 'vereinfachtes',
-  aufstockung: 'vereinfachtes', anbau: 'vereinfachtes', sonstiges: 'vereinfachtes', abbruch: 'standard',
+  aufstockung: 'vereinfachtes', anbau: 'vereinfachtes', sonstiges: 'vereinfachtes', abbruch: 'vereinfachtes',
 }
 const STATES = listRegisteredStates()
 

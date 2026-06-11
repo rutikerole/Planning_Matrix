@@ -62,8 +62,21 @@ export function composeRisks({ project, state, limit = 3 }: Args): {
       continue
 
     let likelihood: 1 | 2 | 3 = entry.baseLikelihood
-    if (entry.evidencePattern && entry.bumpedLikelihood) {
-      if (entry.evidencePattern.test(corpus)) {
+    if (entry.bumpedLikelihood) {
+      // T-05 sprint 2.75 — canonical fact key first (affirmative/non-negated
+      // presence), free-text evidencePattern as fallback only.
+      const keyFact = entry.evidenceFactKey
+        ? (state.facts ?? []).find(
+            (f) =>
+              f.key.toLowerCase().replace(/[._\s-]/g, '') ===
+              entry.evidenceFactKey!.toLowerCase().replace(/[._\s-]/g, ''),
+          )
+        : undefined
+      const keyHit =
+        keyFact !== undefined &&
+        keyFact.value !== false &&
+        !/^(false|nein|no|0|keine?|kein|none|nicht)\b/i.test(String(keyFact.value).trim())
+      if (keyHit || (entry.evidencePattern && entry.evidencePattern.test(corpus))) {
         likelihood = entry.bumpedLikelihood
       }
     }

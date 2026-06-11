@@ -27,6 +27,8 @@ export interface CorpusProcedureFields {
   freistellung?: string
   simplified?: string
   regular?: string
+  /** T-05 — owner-side Beseitigung/Abbruch § (enforcement §§ excluded). */
+  beseitigung?: string
 }
 
 export const STATE_CORPUS_CITATIONS: Partial<Record<BundeslandCode, CorpusCitationFields>> = {
@@ -146,13 +148,15 @@ export const STATE_CORPUS_PROCEDURE: Partial<Record<BundeslandCode, CorpusProced
     "free": "BayBO Art. 57",
     "freistellung": "BayBO Art. 58",
     "simplified": "BayBO Art. 59",
-    "regular": "BayBO Art. 60"
+    "regular": "BayBO Art. 60",
+    "beseitigung": "BayBO Art. 57"
   },
   "berlin": {
     "free": "§ 61 BauO Bln",
     "freistellung": "§ 62 BauO Bln",
     "simplified": "§ 63 BauO Bln",
-    "regular": "§ 64 BauO Bln"
+    "regular": "§ 64 BauO Bln",
+    "beseitigung": "§ 61 BauO Bln"
   },
   "brandenburg": {
     "free": "§ 61 BbgBO",
@@ -163,64 +167,75 @@ export const STATE_CORPUS_PROCEDURE: Partial<Record<BundeslandCode, CorpusProced
     "free": "§ 61 BremLBO",
     "freistellung": "§ 62 BremLBO",
     "simplified": "§ 63 BremLBO",
-    "regular": "§ 64 BremLBO"
+    "regular": "§ 64 BremLBO",
+    "beseitigung": "§ 61 BremLBO"
   },
   "hamburg": {
     "free": "§ 61 HBauO",
     "freistellung": "§ 62 HBauO",
     "simplified": "§ 63 HBauO",
-    "regular": "§ 64 HBauO"
+    "regular": "§ 64 HBauO",
+    "beseitigung": "§ 61 HBauO"
   },
   "hessen": {
     "free": "§ 63 HBO",
     "freistellung": "§ 64 HBO",
     "simplified": "§ 65 HBO",
-    "regular": "§ 66 HBO"
+    "regular": "§ 66 HBO",
+    "beseitigung": "§ 63a HBO"
   },
   "mv": {
     "free": "§ 61 LBauO M-V",
     "freistellung": "§ 62 LBauO M-V",
     "simplified": "§ 63 LBauO M-V",
-    "regular": "§ 64 LBauO M-V"
+    "regular": "§ 64 LBauO M-V",
+    "beseitigung": "§ 61 LBauO M-V"
   },
   "nrw": {
     "free": "§ 62 BauO NRW",
     "freistellung": "§ 63 BauO NRW",
     "simplified": "§ 64 BauO NRW",
-    "regular": "§ 65 BauO NRW"
+    "regular": "§ 65 BauO NRW",
+    "beseitigung": "§ 62 BauO NRW"
   },
   "rlp": {
     "free": "§ 62 LBauO",
-    "simplified": "§ 66 LBauO"
+    "simplified": "§ 66 LBauO",
+    "beseitigung": "§ 41 LBauO"
   },
   "saarland": {
     "free": "§ 61 LBO Saarland",
     "freistellung": "§ 63 LBO Saarland",
     "simplified": "§ 64 LBO Saarland",
-    "regular": "§ 65 LBO Saarland"
+    "regular": "§ 65 LBO Saarland",
+    "beseitigung": "§ 61 LBO Saarland"
   },
   "sachsen-anhalt": {
     "free": "§ 60 BauO LSA",
     "freistellung": "§ 61 BauO LSA",
     "simplified": "§ 62 BauO LSA",
-    "regular": "§ 63 BauO LSA"
+    "regular": "§ 63 BauO LSA",
+    "beseitigung": "§ 60 BauO LSA"
   },
   "sachsen": {
     "free": "§ 61 SächsBO",
     "freistellung": "§ 62 SächsBO",
     "simplified": "§ 63 SächsBO",
-    "regular": "§ 64 SächsBO"
+    "regular": "§ 64 SächsBO",
+    "beseitigung": "§ 61 SächsBO"
   },
   "sh": {
     "free": "§ 61 LBO SH",
     "freistellung": "§ 62 LBO SH",
     "simplified": "§ 63 LBO SH",
-    "regular": "§ 64 LBO SH"
+    "regular": "§ 64 LBO SH",
+    "beseitigung": "§ 61 LBO SH"
   },
   "thueringen": {
     "free": "§ 63 ThürBO",
     "freistellung": "§ 64 ThürBO",
     "simplified": "§ 65 ThürBO",
-    "regular": "§ 66 ThürBO"
+    "regular": "§ 66 ThürBO",
+    "beseitigung": "§ 63 ThürBO"
   }
 } as const

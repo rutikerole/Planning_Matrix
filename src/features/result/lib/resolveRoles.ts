@@ -1,7 +1,11 @@
 import type { ProjectRow } from '@/types/db'
 import type { ProjectState, Role } from '@/types/projectState'
 import { deriveBaselineRoles, type RoleGate } from './deriveBaselineRoles'
-import { readFactTriState } from '@/legal/resolveProcedure'
+import {
+  buildProcedureCase,
+  readFactTriState,
+  resolveProcedure,
+} from '@/legal/resolveProcedure'
 import { stripVersionTokens } from '@/lib/stripVersionTokens'
 
 export interface ResolvedRoles {
@@ -82,7 +86,10 @@ function applyGate(
 ): Role {
   const base: Role = { ...role }
   delete (base as { gate?: unknown }).gate
-  const v = readFactTriState(facts, gate.fact)
+  const raw = readFactTriState(facts, gate.fact)
+  // T-05 sprint — inverted gates fire on fact===false (attached buildings);
+  // unknown stays unknown (honest deferral) in both directions.
+  const v = gate.invert && raw !== undefined ? !raw : raw
   if (v === true) return { ...base, needed: true, conditional: false }
   const mode = v === false ? gate.onFalse : 'conditional'
   if (mode === 'drop') return { ...base, needed: false, conditional: false }
@@ -141,9 +148,18 @@ export function resolveRoles(
   state: Partial<ProjectState>,
 ): ResolvedRoles {
   const persona = (state.roles ?? []).map(sanitizeRole)
+  // T-05 sprint (item g) — the demolition role set consumes the canonical
+  // ProcedureDecision kind (verfahrensfrei → contractor-led; anzeige →
+  // notification-led; permit kinds → application-led). Computed for abbruch
+  // only — every other intent's baseline is byte-identical to before.
+  const procedureKind =
+    project.intent === 'abbruch'
+      ? resolveProcedure(buildProcedureCase(project, state)).kind
+      : undefined
   const baselineRaw = deriveBaselineRoles({
     intent: project.intent,
     bundesland: project.bundesland,
+    procedureKind,
   })
 
   // RED-1 — capture catalog-declared conditional gates by role FUNCTION, so the

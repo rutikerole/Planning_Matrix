@@ -452,6 +452,16 @@ const BUNDESLAND_SWITCH_FIXTURES = [
     text: 'Sofern keine Sonderbauten vorliegen, läuft das Vorhaben über § 63 NBauO.',
     expectFlag: false,
   },
+  // fix/ni-s51-allowlist — T-04 NI walks flagged § 51 on every run although the
+  // NI×T-04 stateOverride itself instructs the citation (Sonderbau-Tatbestand
+  // der neuen Nutzung). Corpus-confirmed "Sonderbauten"; drift-guard so the
+  // allowlist can never silently lose it again.
+  {
+    label: 'active=niedersachsen, "§ 51 NBauO" Sonderbauten — must NOT flag',
+    activeBundesland: 'niedersachsen',
+    text: 'Begründet die neue Nutzung einen Sonderbau-Tatbestand nach § 51 NBauO, läuft das Vorhaben über § 64 NBauO.',
+    expectFlag: false,
+  },
   {
     label: 'active=niedersachsen, "§ 64 NBauO" reguläres Verfahren — must NOT flag',
     activeBundesland: 'niedersachsen',
@@ -4233,25 +4243,25 @@ async function runStaticGate() {
     {
       file: 'src/legal/states/nrw.ts',
       label: 'NRW',
-      expectedCount: 28, // fix/nrw-allowlist-rettungsweg: +§ 33 BauO NRW (Erster und zweiter Rettungsweg) — escape-route § omission close
+      expectedCount: 33, // T-05 sprint Phase 2 (audit:instructed-citations): +§§ 2/12/14/26/30 BauO NRW — instructed-but-not-allowlisted close
       mustContain: ['§ 62 BauO NRW', '§ 63 BauO NRW', '§ 64 BauO NRW', '§ 65 BauO NRW', '§ 67 BauO NRW'],
     },
     {
       file: 'src/legal/states/bw.ts',
       label: 'BW',
-      expectedCount: 32, // phase-c/item-3: +§ 13 LBO, +§ 15 LBO (persona-allowlist gap close)
+      expectedCount: 36, // T-05 sprint Phase 2 (audit:instructed-citations): +§§ 7/26/27c/28d LBO — instructed-but-not-allowlisted close
       mustContain: ['§ 50 LBO', '§ 51 LBO', '§ 52 LBO', '§ 58 LBO'],
     },
     {
       file: 'src/legal/states/niedersachsen.ts',
       label: 'Niedersachsen',
-      expectedCount: 26, // ITEM D: +§ 33 NBauO (Rettungswege) — escape-route § omission close
+      expectedCount: 34, // T-05 sprint Phase 2 (audit:instructed-citations): +§§ 12/26/30/46/47/48/85a NBauO (after +§ 51 ni-s51 branch)
       mustContain: ['§ 60 NBauO', '§ 62 NBauO', '§ 63 NBauO', '§ 65 NBauO'],
     },
     {
       file: 'src/legal/states/hessen.ts',
       label: 'Hessen',
-      expectedCount: 27, // ITEM D: +§ 36 HBO (Erster und zweiter Rettungsweg, NOT § 33 = Brandwände)
+      expectedCount: 33, // T-05 sprint Phase 2 (audit:instructed-citations): +§§ 3/12/14/64a/92 HBO (after +§ 63a)
       mustContain: ['§ 63 HBO', '§ 64 HBO', '§ 65 HBO', '§ 66 HBO', '§ 67 HBO'],
     },
   ]

@@ -226,7 +226,45 @@ das Ergebnis verlässlich in den Fakten landet:
         \`ensembleschutz\`                 — Ensemble-/Erhaltungssatzungslage
         \`mk_gebietsart\`                  — Kerngebiet (MK) nach § 7 BauNVO (Hard Blocker)
         \`bauvoranfrage_hard_blocker\`     — sonstiger planungsrechtlicher Hard Blocker
+        \`gebaeude_freistehend\`           — Gebäude freistehend (true) oder angebaut/grenzständig (false)
+        \`grenzstaendig\`                  — Gebäude an der Grundstücksgrenze
+        \`in_gestaltungssatzung\`          — Lage im Geltungsbereich einer Gestaltungs-/Erhaltungssatzung
+        \`schadstoffverdacht\`             — Verdacht auf Schadstoffe im Bestand (Asbest, KMF, PCB, PAK)
         value: \`true\` / \`false\` (boolean) · source: LEGAL
+
+  • VERFAHRENS-VERDIKT — sobald Sie die Verfahrensart für das Vorhaben
+    ableiten oder bestätigen (auch vorläufig), persistieren Sie sie im
+    selben Turn ZUSÄTZLICH unter GENAU diesem Schlüssel — NIEMALS nur
+    unter einem beschreibenden Eigenbau-Schlüssel (z. B.
+    „abbruch_verfahrensfrei_<land>"); ein solcher Schlüssel wird von den
+    Verfahrens-, Zeitplan-, Unterlagen- und Fachplaner-Oberflächen NICHT
+    als Verdikt erkannt:
+        key:   \`verfahren_indikation\`   (GENAU dieser Schlüssel)
+        value: GENAU EINE dieser Formen, mit dem konkreten §:
+               „verfahrensfrei nach <§ + Gesetz>"
+               „anzeigepflichtig nach <§ + Gesetz>"
+               „Genehmigungsfreistellung nach <§ + Gesetz>"
+               „vereinfachtes Verfahren nach <§ + Gesetz>"
+               „reguläres Verfahren nach <§ + Gesetz>"
+               „Bauvoranfrage empfohlen"
+        source: LEGAL · quality: CALCULATED (bzw. ASSUMED, wenn vorläufig)
+    Ändert sich Ihr Verdikt im Beratungsverlauf, aktualisieren Sie DENSELBEN
+    Schlüssel (kein zweiter Verdikt-Fakt daneben).
+
+  • TYPISIERTE PROJEKT-FAKTEN — sobald GESICHERT festgestellt, persistieren
+    Sie sie unter GENAU diesen Schlüsseln mit GENAU diesem Wertformat
+    (Verfahrens-, Unterlagen- und Risiko-Logik liest exakt diese Schlüssel;
+    beschreibende Eigenbau-Schlüssel werden NICHT erkannt):
+        \`fassadenflaeche_m2\`       — Zahl (m² betroffene Fassadenfläche)
+        \`baujahr\`                  — Zahl (vierstelliges Baujahr, z. B. 1960;
+                                      bei Schätzung quality ASSUMED)
+        \`abbruch_typ\`              — GENAU \`vollabbruch\` oder \`teilabbruch\`
+                                      (T-05; entscheidet Beseitigungs- vs.
+                                      Änderungs-Pfad)
+        \`planungsrecht_paragraph\`  — GENAU \`§ 30 BauGB\`, \`§ 34 BauGB\` oder
+                                      \`§ 35 BauGB\` (die Einordnung, nicht
+                                      der Begründungstext)
+    Aktualisieren Sie bei neuer Erkenntnis DENSELBEN Schlüssel.
 
     EMISSIONS-VERTRAG (harte Pflicht, NICHT nur Fließtext): Wenn Ihr Fließtext
     (Area-B/-C-Begründung oder \`message_de\`) eine dieser Schlussfolgerungen

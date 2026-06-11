@@ -260,21 +260,29 @@ async function runLocale(lang: 'en' | 'de'): Promise<{ passed: number; failed: n
     // v1.0.19 Bug 40 — procedure consistency: ALL three renderers
     // (Areas B, Procedures card, Key Data row) display the SAME
     // procedure language. Locale-specific keywords below.
+    // T-05 sprint — EXPECTATION UPDATED with the pinned verdict hierarchy
+    // (canonical fact > persona STRUCTURED verdict > resolver-from-facts):
+    // this fixture's persona emitted "Vereinfachtes Bauantragsverfahren ·
+    // § 64 BauO NRW (GK 3)" as a structured procedures entry. main rendered a
+    // SPLIT PDF (§ 64 persona card in Section V vs § 62 facts-decision on
+    // Areas B / Procedure card / Key Data) and this smoke pinned the split.
+    // Decision-first resolves the persona verdict (rank 2) over the
+    // facts-derived § 62 (rank 3) — also the CONSERVATIVE direction — so the
+    // whole brief now consistently shows § 64 vereinfacht and § 62 nowhere.
     {
       pass:
         lang === 'en'
-          ? (text.match(/permit-free|Permit-free|PERMIT-FREE/g) ?? []).length >= 3
-          : (text.match(/verfahrensfrei|VERFAHRENSFREI/g) ?? []).length >= 3,
+          ? (text.match(/simplified|Simplified|SIMPLIFIED/g) ?? []).length >= 3
+          : (text.match(/vereinfacht|Vereinfacht|VEREINFACHT/gi) ?? []).length >= 3,
       msg: 'procedure language consistent across Areas / Procedures / Key Data (≥3 occurrences)',
     },
     {
-      pass: (text.match(/§\s*62\s+BauO\s+NRW/g) ?? []).length >= 3,
-      msg: '§ 62 BauO NRW cited on Areas B + Procedure card + Key Data row',
+      pass: (text.match(/§\s*64\s+BauO\s+NRW/g) ?? []).length >= 3,
+      msg: '§ 64 BauO NRW (persona-honored verdict) cited on Areas B + Procedure card + Key Data row',
     },
     {
-      pass: !/§\s*64\s+BauO\s+NRW\s+ERFORDERLICH/u.test(text) &&
-            !/§\s*64\s+BauO\s+NRW\s+REQUIRED/u.test(text),
-      msg: 'no contradictory § 64 + ERFORDERLICH/REQUIRED for verfahrensfrei case (Bug 40 guard)',
+      pass: !/§\s*62\s+BauO\s+NRW/u.test(text),
+      msg: 'no contradictory § 62 verfahrensfrei remnant anywhere (Bug 40 class guard, hierarchy-updated)',
     },
     // v1.0.19 Bug 41+42 — Documents auto-populated
     {

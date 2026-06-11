@@ -20,9 +20,10 @@
 // ───────────────────────────────────────────────────────────────────────
 
 import type { BundeslandCode } from './states/_types'
-import type {
-  ProcedureIntent,
-  ProcedureKind,
+import {
+  beseitigungCitationFor,
+  type ProcedureIntent,
+  type ProcedureKind,
 } from './resolveProcedure'
 import { getStateCitations } from './stateCitations'
 
@@ -53,6 +54,9 @@ export interface DocumentCase {
   eingriff_aussenhuelle: boolean
   denkmalschutz: boolean
   grenzstaendig?: boolean
+  /** T-05 sprint — tri-state freestanding fact; false = attached (the
+   *  neighbour-stability attestation becomes required). */
+  gebaeude_freistehend?: boolean
   /** GEG triggered when external-shell work crosses the threshold
    *  (10% Fassadenfläche) OR complete window replacement. The
    *  caller computes this; default true when eingriff_aussenhuelle
@@ -63,6 +67,54 @@ export interface DocumentCase {
   /** Pre-1995 Altbau → Asbest/PCB recommendation surfaces. Defaults
    *  to true for inner-city Düsseldorf addresses when unknown. */
   baujahr_pre_1995?: boolean
+  /** T-05 sprint 2.75 — confirmed pollutant suspicion (canonical
+   *  `schadstoffverdacht` fact). Promotes the pre-investigation
+   *  recommended → REQUIRED. */
+  schadstoffverdacht?: boolean
+}
+
+/**
+ * T-05 sprint 2.75 — derive baujahr_pre_1995 from the captured build-year
+ * facts. The reader field existed since v1.0.19 but NEITHER DocumentCase
+ * builder ever populated it, so the Asbest/PCB doc was never suppressed for
+ * confirmed ≥ 1995 buildings. Accepts the canonical `baujahr` plus the
+ * ad-hoc keys live walks have produced (baujahr_ca, bestandsgebaeude_baujahr,
+ * baujahr_geschaetzt, BUILDING.YEAR_BUILT); a free-text value like
+ * "ca. 1960" parses via the first plausible year. Absent/unparseable →
+ * undefined (conservative: the doc fires).
+ */
+export function baujahrPre1995FromFacts(
+  facts: ReadonlyArray<{ key: string; value: unknown }> | undefined,
+): boolean | undefined {
+  if (!facts) return undefined
+  const f = facts.find((x) => {
+    const k = x.key.toLowerCase().replace(/[._\s-]/g, '')
+    return k.includes('baujahr') || k === 'buildingyearbuilt'
+  })
+  if (!f) return undefined
+  const m = String(f.value).match(/(1[89]\d{2}|20\d{2})/)
+  if (!m) return undefined
+  return Number(m[1]) < 1995
+}
+
+/**
+ * T-05 sprint 2.75 — read the canonical `schadstoffverdacht` fact. A
+ * non-negated non-empty string ("Asbest, KMF, PCB möglich") or true reads as
+ * suspicion; explicit negation/false reads false; absent → undefined.
+ */
+export function schadstoffverdachtFromFacts(
+  facts: ReadonlyArray<{ key: string; value: unknown }> | undefined,
+): boolean | undefined {
+  if (!facts) return undefined
+  const f = facts.find(
+    (x) => x.key.toLowerCase().replace(/[._\s-]/g, '') === 'schadstoffverdacht',
+  )
+  if (!f) return undefined
+  if (f.value === true) return true
+  if (f.value === false) return false
+  const t = String(f.value).trim().toLowerCase()
+  if (t.length === 0) return undefined
+  return !/^(false|nein|no|0|keine?|kein|none|nicht|n\/a|entf[äa]llt|-|–|—)/.test(t)
 }
 
 /**
@@ -74,6 +126,19 @@ export interface DocumentCase {
 export function requiredDocumentsForCase(
   c: DocumentCase,
 ): RequiredDocument[] {
+  // ── T-05 sprint — DEMOLITION document set, gated on the DECISION. A
+  // verfahrensfrei/anzeige demolition has NO Bauantragsformular, NO § 68-class
+  // permit form and NO new-build trio (site plan / drawings existing+proposed
+  // / project description) — exactly the set the Sachsen walk wrongly rendered.
+  // Only documents with a real legal basis are emitted (honest minimal set —
+  // nothing fabricated); a genuinely permit-required demolition (standard /
+  // bauvoranfrage kinds) keeps the generic permit path below.
+  if (
+    c.intent === 'abbruch' &&
+    (c.procedureKind === 'verfahrensfrei' || c.procedureKind === 'anzeige')
+  ) {
+    return demolitionDocuments(c)
+  }
   const out: RequiredDocument[] = []
   // v1.0.21 Bug 23b — every § citation now resolves from the project's
   // Bundesland. v1.0.19/v1.0.20 hard-coded NRW citations
@@ -327,17 +392,107 @@ export function requiredDocumentsForCase(
   // T-02 Friedrichstraße new-build brief). Applies only to existing-building
   // intents (sanierung / umnutzung / abbruch / aufstockung / anbau), and there
   // only unless the year is explicitly ≥ 1995.
-  if (c.intent !== 'neubau' && c.baujahr_pre_1995 !== false) {
-    out.push({
-      key: 'asbest_voruntersuchung',
-      name_de: 'Asbest-/PCB-Voruntersuchung (bei Altbau vor 1995)',
-      name_en: 'Asbestos/PCB pre-investigation (Altbau before 1995)',
-      status: 'recommended',
-      delivery_de: 'Schadstoffsachverständige:r',
-      delivery_en: 'Pollutant-survey specialist',
-      citation: 'TRGS 519',
-    })
+  if (c.intent !== 'neubau' && (c.baujahr_pre_1995 !== false || c.schadstoffverdacht === true)) {
+    out.push(pollutantPreInvestigation(c.schadstoffverdacht === true))
   }
 
+  return out
+}
+
+/** Shared Asbest/PCB pre-investigation entry (TRGS 519). T-05 sprint 2.75 —
+ *  REQUIRED when a pollutant suspicion is captured (schadstoffverdacht),
+ *  recommended otherwise. */
+function pollutantPreInvestigation(suspected?: boolean): RequiredDocument {
+  return {
+    key: 'asbest_voruntersuchung',
+    name_de: suspected
+      ? 'Asbest-/PCB-Voruntersuchung (Schadstoffverdacht erfasst)'
+      : 'Asbest-/PCB-Voruntersuchung (bei Altbau vor 1995)',
+    name_en: suspected
+      ? 'Asbestos/PCB pre-investigation (pollutant suspicion captured)'
+      : 'Asbestos/PCB pre-investigation (Altbau before 1995)',
+    status: suspected ? 'required' : 'recommended',
+    delivery_de: 'Schadstoffsachverständige:r',
+    delivery_en: 'Pollutant-survey specialist',
+    citation: 'TRGS 519',
+  }
+}
+
+/**
+ * T-05 sprint — the verfahrensfrei/anzeige demolition set. Anzeige form only
+ * on the anzeige kind (verfahrensfrei means NO notification); the
+ * neighbour-stability attestation is REQUIRED when attached/grenzständig and
+ * conditional otherwise; pollutant pre-investigation + disposal records carry
+ * the established citations (TRGS 519; KrWG act-name-only, the F3 pattern for
+ * out-of-corpus acts); DSchG consent appended on denkmalschutz.
+ */
+function demolitionDocuments(c: DocumentCase): RequiredDocument[] {
+  const out: RequiredDocument[] = []
+  const beseitigungCit = beseitigungCitationFor(c.bundesland)
+  if (c.procedureKind === 'anzeige') {
+    out.push({
+      key: 'beseitigungsanzeige',
+      name_de: 'Beseitigungs-/Abbruchanzeige (Wartefrist vor Beginn beachten)',
+      name_en: 'Demolition notification (observe the statutory pre-work period)',
+      status: 'required',
+      delivery_de: 'Bauherr:in oder Architekt:in',
+      delivery_en: 'Owner or architect',
+      ...(beseitigungCit ? { citation: beseitigungCit } : {}),
+    })
+    out.push({
+      key: 'lageplan_abbruch',
+      name_de: 'Lageplan (Beilage zur Anzeige)',
+      name_en: 'Site plan (notification annex)',
+      status: 'conditional',
+      delivery_de: 'Architekt:in oder ÖbVI',
+      delivery_en: 'Architect or licensed surveyor',
+      condition_note_de:
+        'Umfang der Anzeige-Unterlagen ist landesrechtlich — mit der unteren Bauaufsichtsbehörde klären.',
+      condition_note_en:
+        'The notification annexes are state law — clarify the scope with the lower building authority.',
+    })
+  }
+  const attached =
+    c.gebaeude_freistehend === false || c.grenzstaendig === true
+  out.push({
+    key: 'standsicherheit_nachbar',
+    name_de: 'Standsicherheitsbescheinigung Nachbarbebauung',
+    name_en: 'Stability attestation for neighbouring buildings',
+    status: attached ? 'required' : 'conditional',
+    delivery_de: 'Tragwerksplaner:in',
+    delivery_en: 'Structural engineer',
+    ...(attached
+      ? {}
+      : {
+          condition_note_de:
+            'Erforderlich bei angebauter oder grenzständiger Lage.',
+          condition_note_en:
+            'Required for attached or parcel-edge buildings.',
+        }),
+  })
+  if (c.baujahr_pre_1995 !== false || c.schadstoffverdacht === true) {
+    out.push(pollutantPreInvestigation(c.schadstoffverdacht === true))
+  }
+  out.push({
+    key: 'entsorgungsnachweise',
+    name_de: 'Entsorgungs-/Verwertungsnachweise (Bauabfälle)',
+    name_en: 'Disposal/recovery records (construction waste)',
+    status: 'recommended',
+    delivery_de: 'Abbruchunternehmen / Entsorgungsfachbetrieb',
+    delivery_en: 'Demolition contractor / certified disposal firm',
+    citation: 'KrWG',
+  })
+  if (c.denkmalschutz) {
+    out.push({
+      key: 'denkmalschutz_erlaubnis',
+      name_de: 'Erlaubnis der Denkmalschutzbehörde',
+      name_en: 'Heritage authority consent',
+      status: 'required',
+      delivery_de:
+        'Untere Denkmalschutzbehörde (Gemeinde bzw. Landkreis des Bauvorhabens)',
+      delivery_en: 'Local heritage authority',
+      citation: getStateCitations(c.bundesland).denkmalSchutzAct,
+    })
+  }
   return out
 }

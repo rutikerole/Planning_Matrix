@@ -649,12 +649,17 @@ function runProcedure(): Tally {
   ok(t, /§\s*61\s+HBauO/.test(simp.citation), `Hamburg T-02: cites § 61 HBauO (got '${simp.citation}')`)
   ok(t, simp.confidence === 'CALCULATED', `Hamburg T-02: confidence CALCULATED (got '${simp.confidence}')`)
 
-  // Regression — no indikation → honest generic stub (standard + ASSUMED).
-  // (base.intent === 'neubau' — proves the umnutzung branch below does NOT
-  //  bleed into other intents.)
+  // T-05 sprint Phase 2.5-A — EXPECTATION UPDATED: neubau now has its own
+  // intent branch (zero-verdict → simplified · CALCULATED, the doctrine
+  // baseline shared with sanierung/umnutzung and the web baseline). The old
+  // "standard + ASSUMED" pin froze the masking generic default this sprint
+  // removed. The no-bleed proof is sharper: the reasoning must be the NEUBAU
+  // framing, never the umnutzung ("Nutzungsänderung") text.
   const generic = resolveProcedure(base)
-  ok(t, generic.kind === 'standard' && generic.confidence === 'ASSUMED',
-    `stub w/o indikation → standard + ASSUMED (got '${generic.kind}'/'${generic.confidence}')`)
+  ok(t, generic.kind === 'vereinfachtes' && generic.confidence === 'CALCULATED',
+    `neubau w/o indikation → simplified + CALCULATED intent baseline (got '${generic.kind}'/'${generic.confidence}')`)
+  ok(t, /Neubau/.test(generic.reasoning_de) && !/Nutzungsänderung/.test(generic.reasoning_de),
+    'neubau baseline uses the neubau framing — umnutzung branch does not bleed')
 
   // v1.0.30 Bug 90/91/92 — T-04 use-conversion (Sachsen stub) is a non-Sonderbau
   // permit case: CALCULATED simplified procedure (converges with the web

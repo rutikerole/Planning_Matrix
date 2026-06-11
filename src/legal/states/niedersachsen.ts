@@ -90,6 +90,7 @@ verifizieren; einige Permalinks dort führen noch auf ältere Fassungen
                               mindestens 3 m)
   ✓ "§ 7 NBauO"            — Abstände auf demselben Baugrundstück
   ✓ "§ 33 NBauO"           — Rettungswege
+  ✓ "§ 51 NBauO"           — Sonderbauten
   ✓ "§ 52 NBauO"           — Bauherrin und Bauherr
   ✓ "§ 53 NBauO"           — Entwurfsverfasserin und Entwurfsverfasser
                               (nur bauvorlageberechtigte Personen)
@@ -310,12 +311,19 @@ Anhangtext und die Novelle 2025 zu verifizieren.
 const ALLOWED_CITATIONS: readonly string[] = [
   '§ 5 NBauO',
   '§ 7 NBauO',
+  '§ 12 NBauO', // Standsicherheit — instructed in stateOverrides T-02..T-08 (audit:instructed-citations)
   // phase-c/item-3 — § 14 (Brandschutz, brandschutzCitation) is used in the
   // deterministic citations but was absent from this persona allowlist, so
   // citationLint would flag the persona for citing it. (Needs a chat-turn
   // edge-function redeploy to take effect.)
   '§ 14 NBauO',
+  '§ 26 NBauO', // Allg. Anforderungen Brandverhalten — instructed in stateOverrides T-02..T-06
+  '§ 30 NBauO', // Brandwände — instructed in stateOverrides T-02..T-07
   '§ 33 NBauO', // Rettungswege (escape routes — corpus secondary-mirror; ITEM D)
+  '§ 46 NBauO', // Bauliche Anlagen für Kraftfahrzeuge — instructed in stateOverrides T-02..T-07
+  '§ 47 NBauO', // Notwendige Einstellplätze — instructed in stateOverrides T-02..T-07
+  '§ 48 NBauO', // Fahrradabstellanlagen — instructed in stateOverrides T-02..T-07
+  '§ 51 NBauO', // Sonderbauten (corpus secondary-mirror; NI×T-04 override cites it for Sonderbau-Tatbestand der neuen Nutzung)
   '§ 52 NBauO',
   '§ 53 NBauO',
   '§ 60 NBauO',
@@ -331,6 +339,7 @@ const ALLOWED_CITATIONS: readonly string[] = [
   '§ 71 NBauO',
   '§ 73 NBauO',
   '§ 74 NBauO',
+  '§ 85a NBauO', // Umbaumaßnahmen und Nutzungsänderungen — instructed in stateOverrides T-03/T-04/T-06
   '§ 2 Abs. 5 NBauO',
   'Anhang NBauO',
   'BauGB § 30',

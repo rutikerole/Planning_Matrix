@@ -140,6 +140,38 @@
 //     TWO things — keys now appear in PDF Key Data AND are correctly valued/
 //     qualified (denkmalschutz not asserted false without grounding; procedure
 //     still §63 CALCULATED, no CLASS-1 regression).
+//   - 2026-06-11 T-05 sprint C5 (fix/t05-procedure-class): 45aea17a…209231 →
+//     1ed863c6…105c86 — INTENTIONAL re-baseline, additive-only. The Sachsen/
+//     Leipzig T-05 walk proved the persona persists its PROCEDURE VERDICT
+//     under bespoke descriptive keys (abbruch_verfahrensfrei_sachsbo) the
+//     resolver's key-scan can never read — the unwritten half of the capture
+//     contract. A.5/D.5 gains the VERFAHRENS-VERDIKT bullet: persist the
+//     verdict under the canonical `verfahren_indikation` key with a PINNED
+//     value vocabulary („verfahrensfrei nach <§>" / „anzeigepflichtig nach
+//     <§>" / „Genehmigungsfreistellung nach <§>" / „vereinfachtes Verfahren
+//     nach <§>" / „reguläres Verfahren nach <§>" / „Bauvoranfrage empfohlen"),
+//     LEGAL · CALCULATED-or-ASSUMED, update-in-place on verdict change. No
+//     existing line altered; the frontend additionally gained a tolerant
+//     bespoke-key fallback (resolveVerfahrensIndikation step 3) so live walks
+//     are belt-and-braces. Length 93181 → 94271 (+1090). EDGE-FN: needs a
+//     manual `supabase functions deploy chat-turn` + a T-05 walk verifying the
+//     canonical key lands.
+//   - 2026-06-11 T-05 sprint Phase 2.75 (fix/t05-procedure-class):
+//     1ed863c6…105c86 → 41b37961…72fb8 — INTENTIONAL re-baseline, additive-
+//     only (capture-contract close, operator checkpoint decision). A.5/D.5
+//     gains: (1) four boolean STRUKTUR-FAKTEN keys (gebaeude_freistehend,
+//     grenzstaendig, in_gestaltungssatzung, schadstoffverdacht) — readers
+//     existed (T-05 tier/GK/roles/docs/risks) but no emission directive (the
+//     Sachsen-walk failure mode, generalized); sonderbau_scope was RETIRED
+//     (consumer folded into the canonical Sonderbau contract) instead of
+//     directived. (2) NEW TYPISIERTE PROJEKT-FAKTEN bullet with pinned value
+//     formats: fassadenflaeche_m2 (number), baujahr (4-digit year),
+//     abbruch_typ (vollabbruch|teilabbruch — drives the Beseitigung-vs-
+//     Änderung routing), planungsrecht_paragraph (§ 30|§ 34|§ 35 BauGB —
+//     primary source for the derivation line, free-text scan now fallback).
+//     Grounded-emission valve governs all of them. Length 94271 → 95665
+//     (+1394). EDGE-FN: needs `supabase functions deploy chat-turn` + the
+//     T-05 deep/thin walks verifying the new keys land.
 // ───────────────────────────────────────────────────────────────────────
 
 import { readFile } from 'node:fs/promises'
@@ -151,7 +183,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url))
 const REPO_ROOT = join(__dirname, '..', '..')
 
 export const EXPECTED_BAYERN_SHA =
-  '45aea17a352aa1249acb7ffaa4a52b1e46ed1d4843d9bd43193d23299e209231'
+  '41b37961e1cc8f5e166247ef8f8fed816ddaac4861ecf1638a337b9e80472fb8'
 
 const SLICE_SEPARATOR = '\n\n---\n\n'
 const TAIL =

@@ -38,6 +38,7 @@ export type HeadingConcept =
   | 'structural'
   | 'permitForm'
   | 'sonderbau'
+  | 'beseitigung' // T-05 sprint — owner-side demolition § (Beseitigung/Abbruch)
 
 export interface HeadingMismatchEvent {
   field: 'procedure' | 'role' | 'document'
@@ -101,11 +102,22 @@ export function enforceCitationHeadingMatch(
       : new RegExp(`§\\s*(\\d+[a-z]?)\\s*${escapeRe(lawToken)}`, 'gi')
 
   const canonical: Record<HeadingConcept, string[]> = {
-    procedure: [numOf(proc?.free), numOf(proc?.freistellung), numOf(proc?.simplified), numOf(proc?.regular)].filter(Boolean) as string[],
+    // T-05 sprint — the beseitigung § is INCLUDED in the procedure set: a
+    // demolition verdict title ("Beseitigung nach § 63a HBO — anzeigepflichtig")
+    // anchors the generic procedure check, and before this the dedicated
+    // demolition § (§ 63a HBO class — not the state's free/simplified/regular
+    // §) was OVER-DOWNGRADED as a wrong-topic citation. A Beseitigung-§ IS a
+    // legitimate procedure §.
+    procedure: [numOf(proc?.free), numOf(proc?.freistellung), numOf(proc?.simplified), numOf(proc?.regular), numOf(proc?.beseitigung)].filter(Boolean) as string[],
     bauvorlage: [numOf(cit?.permitSubmissionCitation)].filter(Boolean) as string[],
     structural: [numOf(cit?.structuralCertCitation)].filter(Boolean) as string[],
     permitForm: [numOf(cit?.permitFormCitation)].filter(Boolean) as string[],
     sonderbau: [numOf(cit?.sonderbauCitation)].filter(Boolean) as string[],
+    // The demolition concept: a SUPERSET of the procedure §§ (a permit-
+    // required demolition may legitimately cite the regular/simplified §) —
+    // never narrower than the generic procedure set, so routing demolition
+    // titles here can only ADD acceptance (the § 63a class), never remove it.
+    beseitigung: [numOf(proc?.beseitigung), numOf(proc?.free), numOf(proc?.freistellung), numOf(proc?.simplified), numOf(proc?.regular)].filter(Boolean) as string[],
   }
 
   const extractOwn = (text: string): string[] => {
@@ -142,9 +154,19 @@ export function enforceCitationHeadingMatch(
   type AnyUpsert = { op?: string; id?: string; quality?: string; title_de?: string; title_en?: string; rationale_de?: string; rationale_en?: string }
 
   // procedure — the procedure verdict §, anchored on the procedure TITLE.
+  // T-05 sprint — a DEMOLITION-titled procedure (Beseitigung/Abbruch/
+  // demolition) anchors the beseitigung concept instead: its canonical set is
+  // the owner-side demolition § + the free §, so a correct § 63a-class
+  // citation passes AND a wrong-topic § on a demolition title is still
+  // caught. Non-demolition titles keep the generic procedure concept
+  // (whose set now also includes the beseitigung §, see `canonical`).
   for (const p of (toolInput.procedures_delta ?? []) as AnyUpsert[]) {
     if (p.op !== 'upsert') continue
-    check('procedure', extractOwn(`${p.title_de ?? ''} ${p.title_en ?? ''}`), 'procedure', p.id ?? '', () => { p.quality = 'ASSUMED' })
+    const titleText = `${p.title_de ?? ''} ${p.title_en ?? ''}`
+    const isDemolitionTitle = /beseitigung|abbruch|demolition/i.test(titleText)
+    const concept: HeadingConcept =
+      isDemolitionTitle && canonical.beseitigung.length ? 'beseitigung' : 'procedure'
+    check(concept, extractOwn(titleText), 'procedure', p.id ?? '', () => { p.quality = 'ASSUMED' })
     // Sonderbau — only when a § sits within ~40 chars of "Sonderbau" (tight
     // proximity avoids flagging "kein Sonderbau … § 64 vereinfachtes").
     const r = `${p.rationale_de ?? ''} ${p.rationale_en ?? ''}`
