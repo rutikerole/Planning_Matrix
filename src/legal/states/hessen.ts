@@ -420,8 +420,11 @@ verifizieren.
 
 const ALLOWED_CITATIONS: readonly string[] = [
   // HBO core (post Phase-12 corrections)
+  '§ 3 HBO', // Allgemeine Anforderungen — instructed in stateOverrides (audit:instructed-citations)
   '§ 6 HBO',
   '§ 8 HBO',
+  '§ 12 HBO', // Standsicherheit — instructed in stateOverrides
+  '§ 14 HBO', // Brandschutz — instructed in stateOverrides
   '§ 36 HBO', // Erster und zweiter Rettungsweg (escape routes; NOT § 33 = Brandwände — ITEM D)
   '§ 52 HBO',
   '§ 53 HBO',
@@ -430,6 +433,7 @@ const ALLOWED_CITATIONS: readonly string[] = [
   '§ 63 HBO',
   '§ 63a HBO', // Abbruch, Beseitigung (owner-side demolition § — T-05 sprint; corpus secondary-mirror)
   '§ 64 HBO',
+  '§ 64a HBO', // Erweiterte Genehmigungsfreistellung Wohngebäude — instructed in stateOverrides T-07/T-08
   '§ 65 HBO',
   '§ 66 HBO',
   '§ 67 HBO',
@@ -441,6 +445,7 @@ const ALLOWED_CITATIONS: readonly string[] = [
   '§ 73 HBO',
   '§ 74 HBO',
   '§ 74 Abs. 7 HBO',
+  '§ 92 HBO', // Frist zur Umnutzung ehem. land-/forstwirtschaftlicher Gebäude — instructed in stateOverrides T-03/T-04
   // HBO referenced via § 2 (Begriffe — Gebäudeklassen, Sonderbauten)
   '§ 2 HBO',
   '§ 2 Abs. 9 HBO',

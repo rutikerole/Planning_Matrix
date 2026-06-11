@@ -73,8 +73,10 @@ const ALLOWED_CITATIONS: readonly string[] = [
   '§ 63 BbgBO',     // Vereinfachtes Baugenehmigungsverfahren
   '§ 64 BbgBO',     // Baugenehmigungsverfahren (regulär)
   '§ 65 BbgBO',     // Bauvorlageberechtigung
-  '§ 70 BbgBO',     // Bautechnische Nachweise
-  '§ 72 BbgBO',     // Bauantrag, Bauvorlagen
+  '§ 66 BbgBO',     // Bautechnische Nachweise — instructed in stateOverrides (audit:instructed-citations)
+  '§ 68 BbgBO',     // Bauantrag, Bauvorlagen — instructed in stateOverrides
+  '§ 70 BbgBO',     // Beteiligung der Nachbarn und der Öffentlichkeit (comment was stale: Bautechnische Nachweise = § 66)
+  '§ 72 BbgBO',     // Baugenehmigung, Baubeginn (comment was stale: Bauantrag/Bauvorlagen = § 68)
   // Federal (per scripts/legal-corpus/federal.json)
   '§ 30 BauGB',
   '§ 31 BauGB',

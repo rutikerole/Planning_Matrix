@@ -371,6 +371,7 @@ const ALLOWED_CITATIONS: readonly string[] = [
   '§ 2 Abs. 4 LBO',
   '§ 5 LBO',
   '§ 6 LBO',
+  '§ 7 LBO', // Übernahme von Abständen/Abstandsflächen auf Nachbargrundstücke — instructed in stateOverrides T-02 (audit:instructed-citations)
   '§ 9 LBO',
   // phase-c/item-3 — close the persona-allowlist gap vs the deterministic
   // citations: § 13 (Standsicherheit, the Sprint-2 structuralCert fix) + § 15
@@ -379,7 +380,10 @@ const ALLOWED_CITATIONS: readonly string[] = [
   // for citing them. (Needs a chat-turn edge-function redeploy to take effect.)
   '§ 13 LBO',
   '§ 15 LBO',
+  '§ 26 LBO', // Allg. Anforderungen Brandverhalten — instructed in stateOverrides T-02/T-03/T-04
+  '§ 27c LBO', // Brandwände — instructed in stateOverrides T-02/T-03
   '§ 27f LBO',
+  '§ 28d LBO', // Nutzungsänderungen/bauliche Änderungen im Bestand (Rettungswege-Bauteile) — instructed in stateOverrides T-03/T-04
   '§ 37 LBO',
   '§ 38 LBO',
   '§ 39 LBO',

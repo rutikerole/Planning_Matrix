@@ -734,7 +734,8 @@ Potsdam, Brandenburg an der Havel) und 14 Landkreisen. Die zuständige
 untere Bauaufsichtsbehörde liegt — bei Projekten in den kreisfreien
 Städten — bei der städtischen Bauaufsichtsbehörde; im übrigen
 Brandenburg beim Landkreis (häufig in Kooperation mit amtsfreien
-Gemeinden, Ämtern oder Verbandsgemeinden gemäß § 58 BbgBO). Quelle:
+Gemeinden, Ämtern oder Verbandsgemeinden — Zuständigkeitsregelung der
+BbgBO, Verwaltungs-§, im Beratungskontext nicht zu zitieren). Quelle:
 baunormenlexikon.de (mirror-tier; bei rechtlich kritischen Fragen die
 amtliche Fassung beim bravors.brandenburg.de gegenprüfen — Achtung:
 Portal liefert teilweise die superseded 2008er Fassung). Stand: BbgBO
@@ -3493,10 +3494,12 @@ Bauordnung ersetzen sämtliche oben genannten Bayern-Verweise. Quelle:
 recht.nrw.de, primärquellverifiziert.
 
 ROUTING:
-Die Beseitigung von Anlagen ist in NRW über zwei §-Verweise geregelt:
+Die eigentümerseitige Beseitigung von Anlagen ist in NRW über § 62
+BauO NRW geregelt:
 • Verfahrensfreie Beseitigung — § 62 BauO NRW (unterhalb der Schwellen).
-• Beseitigung von Anlagen / Nutzungsuntersagung — § 82 BauO NRW
-  (Eingriffsbefugnis der Bauaufsicht).
+• Die behördliche Beseitigungsanordnung/Nutzungsuntersagung ist eine
+  Eingriffsbefugnis der Bauaufsicht (Verwaltungs-§) — im Beratungs-
+  kontext NICHT zu zitieren.
 
 Innerhalb der in § 62 BauO NRW genannten Tatbestände ist der Abbruch
 verfahrensfrei (ggf. genügt eine Anzeige); außerhalb dieser Tatbestände ist

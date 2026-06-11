@@ -335,9 +335,14 @@ Anlagen; konkrete Schwellen sind gegen den Wortlaut zu verifizieren.
 `
 
 const ALLOWED_CITATIONS: readonly string[] = [
+  '§ 2 BauO NRW', // Begriffe (GK) — instructed in stateOverrides T-02/T-06 (audit:instructed-citations)
   '§ 5 BauO NRW',
   '§ 6 BauO NRW',
   '§ 8 BauO NRW',
+  '§ 12 BauO NRW', // Standsicherheit — instructed in stateOverrides T-02..T-08
+  '§ 14 BauO NRW', // Brandschutz — instructed in stateOverrides T-02..T-07
+  '§ 26 BauO NRW', // Allg. Anforderungen Brandverhalten — instructed in stateOverrides T-02..T-06
+  '§ 30 BauO NRW', // Brandwände — instructed in stateOverrides T-02..T-07
   '§ 33 BauO NRW', // Erster und zweiter Rettungsweg (escape routes — a use-change
   //                 fire-safety check; corpus primary-source. Was omitted while
   //                 7 other states allowlist their § 33. T-04 walk surfaced it.)
