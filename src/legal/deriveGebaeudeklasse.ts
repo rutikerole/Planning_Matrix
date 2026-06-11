@@ -88,7 +88,11 @@ const TEMPLATE_FREISTEHEND_DEFAULT: Record<string, boolean> = {
   // gebaeude_freistehend fact (now consumed via deriveGkInputFromFacts)
   // overrides in either direction.
   'T-05': false, // Abbruch — conservative: attached unless captured otherwise
-  'T-06': true,  // Aufstockung
+  // Meta-sweep item 3b — was `true`, the same optimistic trap fixed for T-05:
+  // the common URBAN Aufstockung sits on an attached row-house/MFH, and a
+  // freistehend mis-default reads a LOWER GK. Conservative default is NOT
+  // freestanding; the captured gebaeude_freistehend fact overrides either way.
+  'T-06': false, // Aufstockung — conservative: attached unless captured otherwise
   'T-02': false, // Neubau MFH — often integrated
   'T-03': false, // Sanierung — typically in Mischbebauung
   'T-04': false, // Umnutzung
@@ -99,6 +103,45 @@ const HONEST_DEFER_DE =
   'Gebäudeklasse — Traufhöhe nicht erfasst, Architekt:in bestätigt.'
 const HONEST_DEFER_EN =
   'Building class — eaves height not recorded; architect to confirm.'
+
+/**
+ * Meta-sweep item 3a — templates whose intent makes a freshly-DERIVED GK row
+ * dishonest when no explicit `gebaeudeklasse` fact exists. THE single source
+ * for the PDF Key Data row AND the web At-a-Glance card (the carve-out was
+ * previously a T-04-only inline ternary on each surface):
+ *  - T-04 'use-conversion' (Bug 93): a Nutzungsänderung does not re-classify
+ *    the building — deriving a new-build GK from eaves height is meaningless;
+ *  - T-06 'storey-addition' (meta-sweep): adding a storey can CHANGE the GK,
+ *    and the derivation is static math on current facts with no before/after
+ *    model — on a Bayern walk it would print a fresh post-addition GK that
+ *    CONTRADICTS the persona's (prose) GK-retention statement, on the
+ *    template's central legal claim. Honest deferral instead; an explicit
+ *    gebaeudeklasse fact, when captured, still renders normally.
+ */
+export type GkDerivationCarveOut = 'use-conversion' | 'storey-addition' | null
+
+export function gkDerivationCarveOut(
+  templateId: string | null | undefined,
+): GkDerivationCarveOut {
+  if (templateId === 'T-04') return 'use-conversion'
+  if (templateId === 'T-06') return 'storey-addition'
+  return null
+}
+
+/** Localised honest text for a carve-out Key-Data/At-a-Glance GK value. */
+export function gkCarveOutValue(
+  carveOut: Exclude<GkDerivationCarveOut, null>,
+  lang: 'de' | 'en',
+): string {
+  if (carveOut === 'use-conversion') {
+    return lang === 'en'
+      ? 'Not re-classified — use conversion (existing building unchanged)'
+      : 'Keine Neueinstufung — Nutzungsänderung (Bestand unverändert)'
+  }
+  return lang === 'en'
+    ? 'Not auto-derived — adding a storey can change the building class (architect to assess)'
+    : 'Keine automatische Einstufung — Aufstockung kann die Gebäudeklasse ändern (Prüfung durch Architekt:in)'
+}
 
 /**
  * Resolve the input's effective Höhe and whether the value is

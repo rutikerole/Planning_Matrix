@@ -1928,6 +1928,7 @@
         "inProgress": "In Klärung",
         "tbd": "—",
         "gkUseConversion": "Keine Neueinstufung · Nutzungsänderung",
+        "gkAufstockung": "Keine automatische Einstufung · Aufstockung kann GK ändern",
         "costByQuote": "Nach Angebot · keine HOAI-Tabelle"
       },
       "actions": {

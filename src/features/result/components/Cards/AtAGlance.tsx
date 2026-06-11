@@ -19,6 +19,7 @@ import {
   deriveGebaeudeklasse,
   deriveGkInputFromFacts,
   formatGebaeudeklasseValue,
+  gkDerivationCarveOut,
 } from '@/legal/deriveGebaeudeklasse'
 
 interface Props {
@@ -77,11 +78,19 @@ export function AtAGlance({ project, state }: Props) {
   // "—". The walk showed At-a-Glance "—" vs PDF honest sentence for the identical
   // derivedKlasse — a two-sources-of-truth split (CLASS 1). The narrow row
   // truncates the sentence and the full text is in the row `title` hover.
+  // Meta-sweep item 3a — carve-outs single-sourced in gkDerivationCarveOut
+  // (shared with the PDF Key Data row): T-04 use conversion AND T-06 storey
+  // addition (a derived post-addition GK would contradict the persona's
+  // GK-retention statement). Short i18n variants here (narrow row); the PDF
+  // renders the full sentence via gkCarveOutValue.
+  const gkCarveOut = gkDerivationCarveOut(state.templateId)
   const klasseValue = explicitKlasse
     ? explicitKlasse
-    : state.templateId === 'T-04'
+    : gkCarveOut === 'use-conversion'
       ? t('result.workspace.ataglance.gkUseConversion')
-      : formatGebaeudeklasseValue(derivedKlasse, lang)
+      : gkCarveOut === 'storey-addition'
+        ? t('result.workspace.ataglance.gkAufstockung')
+        : formatGebaeudeklasseValue(derivedKlasse, lang)
 
   // Cost — reuse the München heuristic engine, now with area + zone +
   // region inputs flowing through (A.4).
