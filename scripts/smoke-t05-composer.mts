@@ -49,6 +49,11 @@ import {
   ANZEIGE_DEMOLITION_PHASES,
   VERFAHRENSFREI_DEMOLITION_PHASES,
 } from '../src/features/chat/lib/pdfSections/timeline.ts'
+import {
+  WEB_TIMELINE_STRINGS,
+  selectTimelineVariant,
+  timelineVariantView,
+} from '../src/features/result/lib/composeTimeline.ts'
 import { PDF_STRINGS } from '../src/features/chat/lib/pdfStrings.ts'
 import { buildExportMarkdown } from '../src/lib/export/exportMarkdown.ts'
 import {
@@ -262,6 +267,37 @@ ok(gk([{ key: 'gebaeude_freistehend', value: true }, { key: 'traufhoehe_m', valu
 ok(gk([{ key: 'gebaeude_freistehend', value: false }, { key: 'traufhoehe_m', value: 6 }]) === 2, 'attached captured → GK 2 (neighbour-stability duties stay on)')
 ok(gk([{ key: 'traufhoehe_m', value: 6 }]) === 2, 'absent → conservative GK 2 (T-05 no longer hardcoded freistehend)')
 ok(gk([{ key: 'nachbargebaeude_freistehend', value: true }, { key: 'traufhoehe_m', value: 6 }]) === 2, "neighbour's freestanding fact never leaks into the building's GK")
+
+// ── F10: web Gantt == PDF timeline (stale-deploy sprint, closes 224e80c) ──
+// ONE selector (selectTimelineVariant) gates BOTH surfaces; the web lanes are
+// BUILT from the same canonical week-data; the web label/duration strings are
+// pinned byte-equal to PDF_STRINGS. A web/PDF timeline split cannot merge.
+console.log('F10 — web Gantt == PDF timeline:')
+ok(selectTimelineVariant('abbruch', 'verfahrensfrei') === 'verfahrensfrei_demolition', 'abbruch + verfahrensfrei → demolition lanes')
+ok(selectTimelineVariant('abbruch', 'anzeige') === 'anzeige_demolition', 'abbruch + anzeige → statutory-wait lane set')
+ok(selectTimelineVariant('abbruch', 'standard') === 'bauantrag', 'permit-required demolition keeps the Bauamt cycle')
+ok(selectTimelineVariant('neubau', 'verfahrensfrei') === 'bauantrag', 'non-demolition intents byte-identical to before')
+ok(selectTimelineVariant('abbruch', undefined) === 'bauantrag', 'no decision kind → conservative Bauamt cycle (never a silent demolition set)')
+const vfView = timelineVariantView('verfahrensfrei_demolition')
+const azView = timelineVariantView('anzeige_demolition')
+const vfLanes = vfView.phases.filter((p) => !p.milestone)
+const azLanes = azView.phases.filter((p) => !p.milestone)
+ok(vfLanes.length === VERFAHRENSFREI_DEMOLITION_PHASES.length, `web verfahrensfrei lane count == PDF (${vfLanes.length})`)
+ok(azLanes.length === ANZEIGE_DEMOLITION_PHASES.length, `web anzeige lane count == PDF (${azLanes.length})`)
+ok(vfLanes.every((p, i) => p.key === VERFAHRENSFREI_DEMOLITION_PHASES[i].labelKey), 'web verfahrensfrei lanes are BUILT from the canonical PDF phase keys, in order')
+ok(azLanes.every((p, i) => p.key === ANZEIGE_DEMOLITION_PHASES[i].labelKey), 'web anzeige lanes are BUILT from the canonical PDF phase keys, in order')
+ok(azView.phases.some((p) => p.key === 'timeline.demo.wait'), 'web anzeige set carries the statutory-wait lane')
+const webPdfDrift = Object.entries(WEB_TIMELINE_STRINGS).filter(
+  ([key, v]) => PDF_STRINGS.en[key] !== v.en || PDF_STRINGS.de[key] !== v.de,
+)
+ok(webPdfDrift.length === 0, `web lane strings byte-equal PDF_STRINGS EN+DE (drift: ${webPdfDrift.map(([k]) => k).join(', ') || 'none'})`)
+ok(vfView.phases.find((p) => p.milestone)?.labelEn === PDF_STRINGS.en['timeline.demo.milestone'], 'verfahrensfrei milestone label == PDF (completion, not Baugenehmigung)')
+ok(azView.phases.find((p) => p.milestone)?.labelEn === PDF_STRINGS.en['timeline.demo.anzeige.milestone'], 'anzeige milestone label == PDF (notification period ends)')
+ok(!vfView.showCalendar && !azView.showCalendar, 'submit-by → expected-approval calendar narrator suppressed on both demolition variants')
+ok(timelineVariantView('bauantrag').showCalendar && timelineVariantView('bauantrag').phases.length === 5, 'bauantrag variant unchanged (5 phases + calendar narrator)')
+const tabSrc = readFileSync('src/features/result/components/tabs/CostTimelineTab.tsx', 'utf-8')
+ok(/selectTimelineVariant\(/.test(tabSrc) && !/PROCEDURE_PHASES/.test(tabSrc), 'CostTimelineTab uses the shared selector; static PROCEDURE_PHASES mapping is gone (source pin)')
+ok(/selectTimelineVariant\(/.test(pdfSrc), 'exportPdf timeline gating goes through the SAME shared selector (source pin)')
 
 console.log(`\n${pass} passed · ${fail} failed`)
 if (fail > 0) {

@@ -13,7 +13,17 @@ import {
   type CostBreakdown,
 } from '../../lib/costNormsMuenchen'
 import { resolveCostProcedureType } from '../../lib/resolveProcedures'
-import { PROCEDURE_PHASES, totalPhaseWeight } from '../../lib/composeTimeline'
+// Stale-deploy sprint (closes the 224e80c deferral) — the phase set comes
+// from the SAME selector exportPdf calls, fed by the SAME ProcedureDecision:
+// verfahrensfrei → demolition lanes, anzeige → statutory-wait lane, permit
+// kinds → Bauamt cycle. The static Bauantrag-only phase mapping is gone
+// (smoke-t05-composer F10 source-pins this file against re-introducing it).
+import {
+  selectTimelineVariant,
+  timelineVariantView,
+  totalPhaseWeight,
+} from '../../lib/composeTimeline'
+import { buildProcedureCase, resolveProcedure } from '@/legal/resolveProcedure'
 import { findCostRationale } from '@/data/costRationales'
 import { findTimelineAnnotation } from '@/data/timelineAnnotations'
 import { composeCalendar, formatCalendarDate } from '../../lib/composeCalendar'
@@ -106,7 +116,17 @@ export function CostTimelineTab({ project, state }: Props) {
   const isHeadlineBand = costMode === 'headlineBand'
   const band = costBandFor(state.templateId)
 
-  const totalWeight = totalPhaseWeight()
+  // Decision kind consulted for abbruch only (resolveRoles precedent) —
+  // every other intent's timeline render is byte-identical to before.
+  const decisionKind =
+    project.intent === 'abbruch'
+      ? resolveProcedure(buildProcedureCase(project, state as ProjectState)).kind
+      : undefined
+  const timeline = timelineVariantView(
+    selectTimelineVariant(project.intent, decisionKind),
+  )
+  const isBauantragTimeline = timeline.variant === 'bauantrag'
+  const totalWeight = totalPhaseWeight(timeline.phases)
 
   return (
     <div className="flex flex-col gap-10 max-w-[1100px]">
@@ -216,16 +236,20 @@ export function CostTimelineTab({ project, state }: Props) {
           {t('result.workspace.cost.timelineEyebrow')}
         </p>
         <div className="border border-ink/12 rounded-[10px] bg-paper-card p-4 sm:p-5 flex flex-col gap-3">
-          {PROCEDURE_PHASES.map((phase, idx) => {
+          {timeline.phases.map((phase, idx) => {
             const widthPct = Math.round((phase.weight / totalWeight) * 100)
-            const note = findTimelineAnnotation(
-              phase.key as
-                | 'preparation'
-                | 'submission'
-                | 'review'
-                | 'corrections'
-                | 'approval',
-            )
+            // Annotations exist for the Bauantrag phase keys only; the
+            // demolition lanes carry their meaning in the label + range.
+            const note = isBauantragTimeline
+              ? findTimelineAnnotation(
+                  phase.key as
+                    | 'preparation'
+                    | 'submission'
+                    | 'review'
+                    | 'corrections'
+                    | 'approval',
+                )
+              : undefined
             return (
               <div
                 key={phase.key}
@@ -263,16 +287,23 @@ export function CostTimelineTab({ project, state }: Props) {
               {t('result.workspace.cost.totalDuration')}
             </span>
             <span className="font-serif italic text-clay-deep tabular-nums">
-              {t('result.workspace.cost.totalDurationValue')}
+              {(lang === 'en' ? timeline.totalEn : timeline.totalDe) ??
+                t('result.workspace.cost.totalDurationValue')}
             </span>
           </div>
           <p className="text-[11px] italic text-clay/85 leading-relaxed">
-            {t('result.workspace.cost.subjectToWorkload')}
+            {(lang === 'en' ? timeline.caveatEn : timeline.caveatDe) ??
+              t('result.workspace.cost.subjectToWorkload')}
           </p>
         </div>
 
-        {/* C.3 calendar narrator note. */}
-        <CalendarNarrator lang={lang} bundesland={project.bundesland} />
+        {/* C.3 calendar narrator note — the submit-by → expected-approval
+          * framing only exists where a Bauamt approval exists; suppressed on
+          * the demolition variants (verfahrensfrei has no submission at all,
+          * anzeige has no approval). */}
+        {timeline.showCalendar && (
+          <CalendarNarrator lang={lang} bundesland={project.bundesland} />
+        )}
       </section>
 
       {/* v1.0.3 — tab-level aggregate. Cost lines themselves have no
