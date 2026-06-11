@@ -561,9 +561,57 @@ if (archetypeViolations.length > 0) {
   process.exit(1)
 }
 
+// ── Tier-3 (fix/t06-walk1): body-text presence for operative-effect §§ ──
+// The BW T-06 walk 1 proved the failure class: a cell ROUTED to § 27f LBO BW
+// ("substantiell geregelt") while the corpus carried only the HEADING — the
+// persona named the § in turn 1, had no normative content to apply, and
+// resolved the parking question against the § 37 baseline, missing the
+// § 37 Abs. 3 S. 2 exemption (wrong-direction € conclusion). Rule: any § a
+// cell assigns OPERATIVE EFFECT to (the cell tells the persona what the §
+// DOES, beyond a heading paraphrase) must have its provision text ingested —
+// `body_de_official` + `body_source_url` + `body_fetched_at` on the corpus
+// entry. Registry is per cell; extend it whenever an author writes new
+// operative-effect lines.
+const OPERATIVE_BODY_REQUIRED: Record<string, string[]> = {
+  // T-06|bw — the Wohnraum-Aufstockung privilege family (re-author 2026-06-11,
+  // see docs/LEGAL_REVIEW_LEDGER.md LRL-1): GK height measure (§ 2 Abs. 4),
+  // Abstandsflächen-Anrechnungsprivileg (§ 5 Abs. 5 S. 2 Nr. 1), Brandschutz-
+  // Entschärfung beim GK-Sprung (§ 27f Abs. 2/3), Stellplatz-Ausnahme +
+  // Ablöse-Ausschluss für Wohnungen (§ 37 Abs. 3 S. 2, Abs. 7), zwingende
+  // Abweichung für Wohnraum-Vorhaben (§ 56 Abs. 2 Nr. 1).
+  'T-06|bw': ['2', '5', '27f', '37', '56'],
+}
+const bodyViolations: Array<{ cell: string; num: string; missing: string[] }> = []
+for (const [cell, nums] of Object.entries(OPERATIVE_BODY_REQUIRED)) {
+  const [, code] = cell.split('|')
+  const corpus = stateCorpus[code]
+  for (const num of nums) {
+    const entry = (corpus?.paragraphs?.[num] ?? null) as Record<string, unknown> | null
+    const missing: string[] = []
+    for (const field of ['body_de_official', 'body_source_url', 'body_fetched_at']) {
+      const v = entry?.[field]
+      if (typeof v !== 'string' || v.trim().length === 0) missing.push(field)
+    }
+    if (missing.length > 0) bodyViolations.push({ cell, num, missing })
+  }
+}
+if (bodyViolations.length > 0) {
+  console.error('[verify:template-tail-citations] FAIL — Tier-3 operative-effect § without ingested body text:')
+  console.error('')
+  for (const v of bodyViolations) {
+    console.error(`  ${v.cell} · § ${v.num} — missing: ${v.missing.join(', ')}`)
+  }
+  console.error('')
+  console.error('Fix: ingest the provision text (body_de_official + body_source_url +')
+  console.error('body_fetched_at) into the state corpus from a verified source, or stop')
+  console.error('assigning the § operative effect in the cell prose.')
+  process.exit(1)
+}
+
 console.log(
   `[verify:template-tail-citations] OK — ${cellsScanned} authored cell(s) scanned, ` +
-    `${citationsScanned} citation(s) verified · 0 archetype mismatches.`,
+    `${citationsScanned} citation(s) verified · 0 archetype mismatches · ` +
+    `${Object.values(OPERATIVE_BODY_REQUIRED).flat().length} operative-effect §§ body-verified.`,
 )
 if (cellsScanned === 0) {
   console.log(`  Registry is currently all-null (B0). Gate is armed; activates on first authored override.`)
