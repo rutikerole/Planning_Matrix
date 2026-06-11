@@ -140,6 +140,22 @@
 //     TWO things — keys now appear in PDF Key Data AND are correctly valued/
 //     qualified (denkmalschutz not asserted false without grounding; procedure
 //     still §63 CALCULATED, no CLASS-1 regression).
+//   - 2026-06-11 T-05 sprint C5 (fix/t05-procedure-class): 45aea17a…209231 →
+//     1ed863c6…105c86 — INTENTIONAL re-baseline, additive-only. The Sachsen/
+//     Leipzig T-05 walk proved the persona persists its PROCEDURE VERDICT
+//     under bespoke descriptive keys (abbruch_verfahrensfrei_sachsbo) the
+//     resolver's key-scan can never read — the unwritten half of the capture
+//     contract. A.5/D.5 gains the VERFAHRENS-VERDIKT bullet: persist the
+//     verdict under the canonical `verfahren_indikation` key with a PINNED
+//     value vocabulary („verfahrensfrei nach <§>" / „anzeigepflichtig nach
+//     <§>" / „Genehmigungsfreistellung nach <§>" / „vereinfachtes Verfahren
+//     nach <§>" / „reguläres Verfahren nach <§>" / „Bauvoranfrage empfohlen"),
+//     LEGAL · CALCULATED-or-ASSUMED, update-in-place on verdict change. No
+//     existing line altered; the frontend additionally gained a tolerant
+//     bespoke-key fallback (resolveVerfahrensIndikation step 3) so live walks
+//     are belt-and-braces. Length 93181 → 94271 (+1090). EDGE-FN: needs a
+//     manual `supabase functions deploy chat-turn` + a T-05 walk verifying the
+//     canonical key lands.
 // ───────────────────────────────────────────────────────────────────────
 
 import { readFile } from 'node:fs/promises'
@@ -151,7 +167,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url))
 const REPO_ROOT = join(__dirname, '..', '..')
 
 export const EXPECTED_BAYERN_SHA =
-  '45aea17a352aa1249acb7ffaa4a52b1e46ed1d4843d9bd43193d23299e209231'
+  '1ed863c63f66508048281ea40b2c2d7c3bcac00f179cc8aa3d37555427105c86'
 
 const SLICE_SEPARATOR = '\n\n---\n\n'
 const TAIL =

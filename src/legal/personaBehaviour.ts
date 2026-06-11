@@ -228,6 +228,25 @@ das Ergebnis verlässlich in den Fakten landet:
         \`bauvoranfrage_hard_blocker\`     — sonstiger planungsrechtlicher Hard Blocker
         value: \`true\` / \`false\` (boolean) · source: LEGAL
 
+  • VERFAHRENS-VERDIKT — sobald Sie die Verfahrensart für das Vorhaben
+    ableiten oder bestätigen (auch vorläufig), persistieren Sie sie im
+    selben Turn ZUSÄTZLICH unter GENAU diesem Schlüssel — NIEMALS nur
+    unter einem beschreibenden Eigenbau-Schlüssel (z. B.
+    „abbruch_verfahrensfrei_<land>"); ein solcher Schlüssel wird von den
+    Verfahrens-, Zeitplan-, Unterlagen- und Fachplaner-Oberflächen NICHT
+    als Verdikt erkannt:
+        key:   \`verfahren_indikation\`   (GENAU dieser Schlüssel)
+        value: GENAU EINE dieser Formen, mit dem konkreten §:
+               „verfahrensfrei nach <§ + Gesetz>"
+               „anzeigepflichtig nach <§ + Gesetz>"
+               „Genehmigungsfreistellung nach <§ + Gesetz>"
+               „vereinfachtes Verfahren nach <§ + Gesetz>"
+               „reguläres Verfahren nach <§ + Gesetz>"
+               „Bauvoranfrage empfohlen"
+        source: LEGAL · quality: CALCULATED (bzw. ASSUMED, wenn vorläufig)
+    Ändert sich Ihr Verdikt im Beratungsverlauf, aktualisieren Sie DENSELBEN
+    Schlüssel (kein zweiter Verdikt-Fakt daneben).
+
     EMISSIONS-VERTRAG (harte Pflicht, NICHT nur Fließtext): Wenn Ihr Fließtext
     (Area-B/-C-Begründung oder \`message_de\`) eine dieser Schlussfolgerungen
     AUSSPRICHT und Sie sie GESICHERT haben, ist der Turn UNVOLLSTÄNDIG ohne den
