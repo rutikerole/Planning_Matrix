@@ -105,6 +105,7 @@ gemäß § 67 HBO.
   ✓ "§ 56 HBO"             — Bauherrschaft
   ✓ "§ 57 HBO"             — Entwurfsverfasserin, Entwurfsverfasser
   ✓ "§ 63 HBO"             — Baugenehmigungsfreie Bauvorhaben
+  ✓ "§ 63a HBO"            — Abbruch, Beseitigung
   ✓ "§ 64 HBO"             — Genehmigungsfreistellung (Wohnungsbau
                               im qualifizierten B-Plan)
   ✓ "§ 65 HBO"             — Vereinfachtes Baugenehmigungsverfahren
@@ -427,6 +428,7 @@ const ALLOWED_CITATIONS: readonly string[] = [
   '§ 56 HBO',
   '§ 57 HBO',
   '§ 63 HBO',
+  '§ 63a HBO', // Abbruch, Beseitigung (owner-side demolition § — T-05 sprint; corpus secondary-mirror)
   '§ 64 HBO',
   '§ 65 HBO',
   '§ 66 HBO',

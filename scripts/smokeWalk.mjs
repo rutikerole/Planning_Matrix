@@ -4251,7 +4251,7 @@ async function runStaticGate() {
     {
       file: 'src/legal/states/hessen.ts',
       label: 'Hessen',
-      expectedCount: 27, // ITEM D: +§ 36 HBO (Erster und zweiter Rettungsweg, NOT § 33 = Brandwände)
+      expectedCount: 28, // T-05 sprint: +§ 63a HBO (Abbruch, Beseitigung) — owner-side demolition § close
       mustContain: ['§ 63 HBO', '§ 64 HBO', '§ 65 HBO', '§ 66 HBO', '§ 67 HBO'],
     },
   ]
