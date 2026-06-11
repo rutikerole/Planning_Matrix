@@ -13,6 +13,7 @@ import {
 } from '../../lib/composeLegalDomains'
 import { findRuleSnippet } from '@/data/legalRuleSnippets'
 import { resolveAreas } from '../../lib/resolveAreas'
+import { buildProcedureCase, resolveProcedure } from '@/legal/resolveProcedure'
 
 interface Props {
   project: ProjectRow
@@ -35,10 +36,15 @@ export function LegalLandscapeTab({ project, state }: Props) {
   // composer so domain-band relevance reflects the consultation, not
   // just the persona's areas_update emit completeness.
   const resolvedAreas = resolveAreas(state)
+  // Meta-sweep item 1 — ONE canonical decision feeds the procedure anchor row,
+  // identical to the procedure card / Gantt / PDF (exportPdf computes the same
+  // resolveProcedure(buildProcedureCase(...)) once and threads it).
+  const decision = resolveProcedure(buildProcedureCase(project, state))
   const domains = composeLegalDomains(
     { ...state, areas: resolvedAreas.areas },
     lang,
     project.bundesland,
+    decision,
   )
 
   return (

@@ -1,10 +1,7 @@
 import type { AreaState, ProjectState } from '@/types/projectState'
 import { getStateCitations } from '@/legal/stateCitations'
 import { getStateLocalization } from '@/legal/stateLocalization'
-import {
-  extractProcedureCitation,
-  resolveVerfahrensIndikation,
-} from '@/legal/resolveProcedure'
+import type { ProcedureDecision, ProcedureKind } from '@/legal/resolveProcedure'
 
 export type LegalRelevance = 'HIGH' | 'PARTIAL' | 'NONE'
 
@@ -25,6 +22,34 @@ export interface LegalDomain {
   title: string
   relevance: LegalRelevance
   rows: LegalDomainRow[]
+}
+
+/**
+ * Meta-sweep item 1 — status text for the PROCEDURE ANCHOR row, derived from
+ * the canonical ProcedureDecision kind (never from re-classifying the verdict
+ * string: the old local `/verfahrensfrei|permit-free|genehmigungsfrei/i` regex
+ * substring-matched "Genehmigungsfreistellung" and rendered a Freistellung
+ * verdict as "verfahrensfrei" while the procedure card said notification-only).
+ * ASSUMED decisions (intent baselines, hard blockers, verdict conflicts) carry
+ * the "(Basis)" suffix so a downgrade is visible on this row too.
+ */
+export function procedureAnchorStatus(
+  decision: Pick<ProcedureDecision, 'kind' | 'confidence'>,
+  lang: 'de' | 'en',
+): string {
+  const byKind: Record<ProcedureKind, { de: string; en: string }> = {
+    verfahrensfrei: { de: 'verfahrensfrei', en: 'permit-free' },
+    genehmigungsfreigestellt: { de: 'Genehmigungsfreistellung', en: 'notification-only' },
+    anzeige: { de: 'anzeigepflichtig', en: 'notification required' },
+    vereinfachtes: { de: 'Genehmigungsverfahren', en: 'permit procedure' },
+    standard: { de: 'Genehmigungsverfahren', en: 'permit procedure' },
+    bauvoranfrage: { de: 'Bauvoranfrage erforderlich', en: 'pre-decision required' },
+  }
+  const base = byKind[decision.kind][lang]
+  if (decision.confidence === 'ASSUMED') {
+    return lang === 'en' ? `${base} (baseline)` : `${base} (Basis)`
+  }
+  return base
 }
 
 /**
@@ -52,7 +77,14 @@ export interface LegalDomain {
 export function composeLegalDomains(
   state: Partial<ProjectState>,
   lang: 'de' | 'en',
-  bundesland?: string | null,
+  bundesland: string | null | undefined,
+  // Meta-sweep item 1 — the canonical ProcedureDecision is a REQUIRED input
+  // (same source as the procedure card / Gantt / PDF: resolveProcedure over
+  // buildProcedureCase). This composer previously re-derived the verdict with
+  // its own resolveVerfahrensIndikation + substring regex — a partial second
+  // composer that was blind to hard blockers, the Sonderbau gate, and
+  // verdict-conflict downgrades, and misread Freistellung as verfahrensfrei.
+  decision: ProcedureDecision,
 ): LegalDomain[] {
   // v1.0.21 Bug 23d — bundesland is now an explicit input. The
   // Denkmalschutz row in Domain C cites the state-specific
@@ -171,6 +203,36 @@ export function composeLegalDomains(
   // is state, not municipal, law — Bug 23d keeps the citation
   // state-specific). The LBO/procedure row leads the band.
   const rRows: LegalDomainRow[] = []
+  // ── The PROCEDURE ANCHOR row (every state, Bayern included) ────────
+  // Meta-sweep item 1 — decision-first, identical to the procedure card /
+  // timeline / PDF. Label = the decision's citation; status = the decision's
+  // kind (see procedureAnchorStatus). The previous non-Bayern-only block
+  // re-classified resolveVerfahrensIndikation() output with a local
+  // substring regex, so a "Genehmigungsfreistellung …" verdict rendered
+  // status "verfahrensfrei" here while the procedure card said
+  // notification-only, and Sonderbau/hard-blocker/konflikt decisions were
+  // invisible to this row. Bayern previously had NO anchor row at all —
+  // the verdict was simply absent from the München-gated product's
+  // legal-landscape tab.
+  // T-03 thin-state sprint (cleanup, preserved): the citation fallback when
+  // the decision carries no § is the localization's PROCEDURE § (simplified,
+  // then regular), never the permit-FORM § (§ 68 "Bauantrag, Bauvorlagen").
+  {
+    const procLoc = getStateLocalization(bundesland).procedure
+    const procCitation =
+      procLoc.simplified.citation.trim() || procLoc.regular.citation.trim()
+    const label =
+      decision.citation.trim() ||
+      procCitation ||
+      (citations.isSubstantive
+        ? citations.permitFormCitation
+        : `Landesbauordnung ${citations.labelDe}`)
+    rRows.push({
+      label,
+      relevance: 'HIGH',
+      status: procedureAnchorStatus(decision, lang),
+    })
+  }
   if (isBayern) {
     // v1.0.21 Bug 23d — BayBO matchers gated to bayern. Non-Bayern
     // projects never surface a BayBO row even if a stray BayBO citation
@@ -217,54 +279,6 @@ export function composeLegalDomains(
         status: lang === 'en' ? 'setbacks' : 'Abstandsflächen',
       })
     }
-  } else {
-    // v1.0.28 Bug 54 — surface the state's procedure for every non-Bayern
-    // state so the band is never empty. No fabrication: substantive states
-    // carry a real permitFormCitation; stub states render the honest
-    // "Landesbauordnung {Land}" label with an "in Vorbereitung" status.
-    // v1.0.29.1 Bug 83 — read the persona's explicit procedure-type fact
-    // across every key convention (e.g. T-02 Hamburg's dotted `verfahren.typ`).
-    // NOT sourced from state.procedures (procedures[0] can be less precise
-    // than the deterministic verdict).
-    // Sprint 0 (P2-C / RED-1) — shared verdict resolver, identical to the PDF
-    // (exportPdf). Covers the canonical keys AND the free-form keys the persona
-    // emits (procedure_likely / verfahren / verfahrensart_hypothese …) so this
-    // domain row can no longer fall through to the generic "Landesbauordnung
-    // {Land}" stub while the PDF shows the real verdict for the same project.
-    const verfahrenStr = resolveVerfahrensIndikation(facts) ?? ''
-    const isFree = /verfahrensfrei|permit-free|genehmigungsfrei/i.test(verfahrenStr)
-    // T-03 thin-state sprint (cleanup) — this row is the PROCEDURE anchor, so it
-    // must cite a PROCEDURE § (vereinfachtes / regular), NOT the permit-FORM §.
-    // It previously used permitFormCitation, which for MV/SH/Sachsen/Berlin is
-    // § 68 ("Bauantrag, Bauvorlagen" — the application form) and for RLP § 63
-    // ("Bauantrag") — labelling the form § as "permit procedure". Use the
-    // localization's simplified § (the deriveBaselineProcedure / resolveProcedure
-    // baseline for renovation + most residential intents), so the Legal-landscape
-    // baseline agrees with the Procedure tab; fall back to the regular § then the
-    // honest "Landesbauordnung {Land}" label.
-    const procLoc = getStateLocalization(bundesland).procedure
-    const procCitation =
-      procLoc.simplified.citation.trim() || procLoc.regular.citation.trim()
-    let label: string
-    let status: string
-    if (verfahrenStr) {
-      label =
-        extractProcedureCitation(verfahrenStr) ??
-        (procCitation ||
-          (citations.isSubstantive
-            ? citations.permitFormCitation
-            : `Landesbauordnung ${citations.labelDe}`))
-      status = isFree
-        ? lang === 'en' ? 'permit-free' : 'verfahrensfrei'
-        : lang === 'en' ? 'permit procedure' : 'Genehmigungsverfahren'
-    } else if (citations.isSubstantive) {
-      label = procCitation || citations.permitFormCitation
-      status = lang === 'en' ? 'permit procedure (baseline)' : 'Genehmigungsverfahren (Basis)'
-    } else {
-      label = `Landesbauordnung ${citations.labelDe}`
-      status = lang === 'en' ? 'details in preparation' : 'Detail-Spezifika in Vorbereitung'
-    }
-    rRows.push({ label, relevance: 'HIGH', status })
   }
   if (has(/brandschutz/)) {
     rRows.push({

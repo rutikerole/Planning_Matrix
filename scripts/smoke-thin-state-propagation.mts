@@ -79,7 +79,10 @@ ok(structRole(notCaptured.roles)?.needed === false, 'no captured intervention �
 
 console.log('\n[smoke-thin-state] cleanup — Legal-landscape procedure row cites the procedure §, not the form §…')
 for (const bundesland of ['mv', 'sh', 'sachsen', 'berlin'] as const) {
-  const domains = composeLegalDomains({ facts: [] }, 'en', bundesland)
+  // Meta-sweep item 1 — composeLegalDomains now REQUIRES the canonical
+  // decision (no local verdict re-derivation); build it the way the tab does.
+  const decision = resolveProcedure({ intent: 'sanierung', bundesland, eingriff_tragende_teile: true, ...baseCase } as never)
+  const domains = composeLegalDomains({ facts: [] }, 'en', bundesland, decision)
   const rows = domains.flatMap((d) => d.rows ?? [])
   const proc = rows.find((r) => /permit procedure/i.test(r.status ?? ''))
   const form = getStateLocalization(bundesland) // §68 form is permitForm; assert the row is NOT §68

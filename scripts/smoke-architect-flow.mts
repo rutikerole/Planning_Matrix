@@ -32,7 +32,7 @@ import { stripVersionTokens } from '../src/lib/stripVersionTokens.ts'
 import { pickSmartSuggestions } from '../src/features/result/lib/smartSuggestionsMatcher.ts'
 import { computeChamberProgress } from '../src/features/chat/lib/chamberProgress.ts'
 import { factLabel } from '../src/lib/factLabel.ts'
-import { resolveProcedure, procedureLabel, intentFromTemplate } from '../src/legal/resolveProcedure.ts'
+import { resolveProcedure, procedureLabel, intentFromTemplate, buildProcedureCase } from '../src/legal/resolveProcedure.ts'
 import { composeExecutiveRead } from '../src/features/result/lib/composeExecutiveRead.ts'
 import { computeConfidence } from '../src/features/result/lib/computeConfidence.ts'
 import { deriveBaselineProcedure } from '../src/features/result/lib/deriveBaselineProcedure.ts'
@@ -45,9 +45,24 @@ const REPO_ROOT = join(dirname(fileURLToPath(import.meta.url)), '..')
 function loadFixtureState(file: string): {
   state: Record<string, unknown>
   bundesland: string
+  project: Record<string, unknown>
 } {
   const fx = JSON.parse(readFileSync(join(REPO_ROOT, file), 'utf-8'))
-  return { state: fx.project.state, bundesland: fx.project.bundesland }
+  return {
+    state: fx.project.state,
+    bundesland: fx.project.bundesland,
+    project: fx.project,
+  }
+}
+
+// Meta-sweep item 1 — composeLegalDomains now REQUIRES the canonical
+// ProcedureDecision (same source as the procedure card / PDF); build it from
+// the fixture project exactly the way the tab does.
+function fixtureDecision(
+  project: Record<string, unknown>,
+  state: Record<string, unknown>,
+) {
+  return resolveProcedure(buildProcedureCase(project as never, state as never))
 }
 
 interface Tally {
@@ -294,8 +309,13 @@ function runLegalDomains(): Tally {
   // procedure citation now lands in the Regional band; GEG/DIN/TA Lärm
   // (federal) land in the National band.
   const labelsOf = (file: string, lang: 'de' | 'en', key: 'N' | 'R' | 'M') => {
-    const { state, bundesland } = loadFixtureState(file)
-    const domains = composeLegalDomains(state as never, lang, bundesland)
+    const { state, bundesland, project } = loadFixtureState(file)
+    const domains = composeLegalDomains(
+      state as never,
+      lang,
+      bundesland,
+      fixtureDecision(project, state),
+    )
     return (domains.find((d) => d.key === key)?.rows ?? []).map((r) => r.label)
   }
 
@@ -412,9 +432,14 @@ function runBayernBleed(): Tally {
 
   // Hamburg T-02 — the Legal Landscape tab renders findRuleSnippet for every
   // composeLegalDomains row label. None may carry a Bayern/München token.
-  const { state, bundesland } = loadFixtureState('test/fixtures/hamburg-t02-mfh.json')
+  const { state, bundesland, project } = loadFixtureState('test/fixtures/hamburg-t02-mfh.json')
   for (const lang of ['de', 'en'] as const) {
-    const domains = composeLegalDomains(state as never, lang, bundesland)
+    const domains = composeLegalDomains(
+      state as never,
+      lang,
+      bundesland,
+      fixtureDecision(project, state),
+    )
     const labels = domains.flatMap((d) => d.rows.map((r) => r.label))
     // The fixture must actually exercise the historically-bleeding rows.
     ok(t, labels.includes('Brandschutz'), `Hamburg ${lang}: Brandschutz row present (exercises bleed path)`)
@@ -701,7 +726,12 @@ function runSaxonyT04(): Tally {
   // jurisdictional band: TA Lärm + DIN 4109 are federal → National (N);
   // Rettungsweg + Brandschutz are state-governed → Regional (R).
   for (const lang of ['de', 'en'] as const) {
-    const domains = composeLegalDomains(state, lang, project.bundesland)
+    const domains = composeLegalDomains(
+      state,
+      lang,
+      project.bundesland,
+      fixtureDecision(project, state),
+    )
     const n = (domains.find((d) => d.key === 'N')?.rows ?? []).map((r) => r.label)
     const r = (domains.find((d) => d.key === 'R')?.rows ?? []).map((r) => r.label)
     ok(t, n.includes('TA Lärm'), `T-04 ${lang}: National band has TA Lärm (Bug 89)`)
