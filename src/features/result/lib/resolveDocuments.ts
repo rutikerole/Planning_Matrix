@@ -88,6 +88,7 @@ export function resolveDocuments(
     eingriff_aussenhuelle: procedureCase.eingriff_aussenhuelle,
     denkmalschutz: procedureCase.denkmalschutz,
     grenzstaendig: procedureCase.grenzstaendig,
+    gebaeude_freistehend: procedureCase.gebaeude_freistehend,
     geg_trigger:
       procedureCase.eingriff_aussenhuelle &&
       (procedureCase.fassadenflaeche_m2 ?? 0) > 0,

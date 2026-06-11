@@ -20,9 +20,10 @@
 // ───────────────────────────────────────────────────────────────────────
 
 import type { BundeslandCode } from './states/_types'
-import type {
-  ProcedureIntent,
-  ProcedureKind,
+import {
+  beseitigungCitationFor,
+  type ProcedureIntent,
+  type ProcedureKind,
 } from './resolveProcedure'
 import { getStateCitations } from './stateCitations'
 
@@ -53,6 +54,9 @@ export interface DocumentCase {
   eingriff_aussenhuelle: boolean
   denkmalschutz: boolean
   grenzstaendig?: boolean
+  /** T-05 sprint — tri-state freestanding fact; false = attached (the
+   *  neighbour-stability attestation becomes required). */
+  gebaeude_freistehend?: boolean
   /** GEG triggered when external-shell work crosses the threshold
    *  (10% Fassadenfläche) OR complete window replacement. The
    *  caller computes this; default true when eingriff_aussenhuelle
@@ -74,6 +78,19 @@ export interface DocumentCase {
 export function requiredDocumentsForCase(
   c: DocumentCase,
 ): RequiredDocument[] {
+  // ── T-05 sprint — DEMOLITION document set, gated on the DECISION. A
+  // verfahrensfrei/anzeige demolition has NO Bauantragsformular, NO § 68-class
+  // permit form and NO new-build trio (site plan / drawings existing+proposed
+  // / project description) — exactly the set the Sachsen walk wrongly rendered.
+  // Only documents with a real legal basis are emitted (honest minimal set —
+  // nothing fabricated); a genuinely permit-required demolition (standard /
+  // bauvoranfrage kinds) keeps the generic permit path below.
+  if (
+    c.intent === 'abbruch' &&
+    (c.procedureKind === 'verfahrensfrei' || c.procedureKind === 'anzeige')
+  ) {
+    return demolitionDocuments(c)
+  }
   const out: RequiredDocument[] = []
   // v1.0.21 Bug 23b — every § citation now resolves from the project's
   // Bundesland. v1.0.19/v1.0.20 hard-coded NRW citations
@@ -328,16 +345,100 @@ export function requiredDocumentsForCase(
   // intents (sanierung / umnutzung / abbruch / aufstockung / anbau), and there
   // only unless the year is explicitly ≥ 1995.
   if (c.intent !== 'neubau' && c.baujahr_pre_1995 !== false) {
-    out.push({
-      key: 'asbest_voruntersuchung',
-      name_de: 'Asbest-/PCB-Voruntersuchung (bei Altbau vor 1995)',
-      name_en: 'Asbestos/PCB pre-investigation (Altbau before 1995)',
-      status: 'recommended',
-      delivery_de: 'Schadstoffsachverständige:r',
-      delivery_en: 'Pollutant-survey specialist',
-      citation: 'TRGS 519',
-    })
+    out.push(pollutantPreInvestigation())
   }
 
+  return out
+}
+
+/** Shared Asbest/PCB pre-investigation entry (TRGS 519). */
+function pollutantPreInvestigation(): RequiredDocument {
+  return {
+    key: 'asbest_voruntersuchung',
+    name_de: 'Asbest-/PCB-Voruntersuchung (bei Altbau vor 1995)',
+    name_en: 'Asbestos/PCB pre-investigation (Altbau before 1995)',
+    status: 'recommended',
+    delivery_de: 'Schadstoffsachverständige:r',
+    delivery_en: 'Pollutant-survey specialist',
+    citation: 'TRGS 519',
+  }
+}
+
+/**
+ * T-05 sprint — the verfahrensfrei/anzeige demolition set. Anzeige form only
+ * on the anzeige kind (verfahrensfrei means NO notification); the
+ * neighbour-stability attestation is REQUIRED when attached/grenzständig and
+ * conditional otherwise; pollutant pre-investigation + disposal records carry
+ * the established citations (TRGS 519; KrWG act-name-only, the F3 pattern for
+ * out-of-corpus acts); DSchG consent appended on denkmalschutz.
+ */
+function demolitionDocuments(c: DocumentCase): RequiredDocument[] {
+  const out: RequiredDocument[] = []
+  const beseitigungCit = beseitigungCitationFor(c.bundesland)
+  if (c.procedureKind === 'anzeige') {
+    out.push({
+      key: 'beseitigungsanzeige',
+      name_de: 'Beseitigungs-/Abbruchanzeige (Wartefrist vor Beginn beachten)',
+      name_en: 'Demolition notification (observe the statutory pre-work period)',
+      status: 'required',
+      delivery_de: 'Bauherr:in oder Architekt:in',
+      delivery_en: 'Owner or architect',
+      ...(beseitigungCit ? { citation: beseitigungCit } : {}),
+    })
+    out.push({
+      key: 'lageplan_abbruch',
+      name_de: 'Lageplan (Beilage zur Anzeige)',
+      name_en: 'Site plan (notification annex)',
+      status: 'conditional',
+      delivery_de: 'Architekt:in oder ÖbVI',
+      delivery_en: 'Architect or licensed surveyor',
+      condition_note_de:
+        'Umfang der Anzeige-Unterlagen ist landesrechtlich — mit der unteren Bauaufsichtsbehörde klären.',
+      condition_note_en:
+        'The notification annexes are state law — clarify the scope with the lower building authority.',
+    })
+  }
+  const attached =
+    c.gebaeude_freistehend === false || c.grenzstaendig === true
+  out.push({
+    key: 'standsicherheit_nachbar',
+    name_de: 'Standsicherheitsbescheinigung Nachbarbebauung',
+    name_en: 'Stability attestation for neighbouring buildings',
+    status: attached ? 'required' : 'conditional',
+    delivery_de: 'Tragwerksplaner:in',
+    delivery_en: 'Structural engineer',
+    ...(attached
+      ? {}
+      : {
+          condition_note_de:
+            'Erforderlich bei angebauter oder grenzständiger Lage.',
+          condition_note_en:
+            'Required for attached or parcel-edge buildings.',
+        }),
+  })
+  if (c.baujahr_pre_1995 !== false) {
+    out.push(pollutantPreInvestigation())
+  }
+  out.push({
+    key: 'entsorgungsnachweise',
+    name_de: 'Entsorgungs-/Verwertungsnachweise (Bauabfälle)',
+    name_en: 'Disposal/recovery records (construction waste)',
+    status: 'recommended',
+    delivery_de: 'Abbruchunternehmen / Entsorgungsfachbetrieb',
+    delivery_en: 'Demolition contractor / certified disposal firm',
+    citation: 'KrWG',
+  })
+  if (c.denkmalschutz) {
+    out.push({
+      key: 'denkmalschutz_erlaubnis',
+      name_de: 'Erlaubnis der Denkmalschutzbehörde',
+      name_en: 'Heritage authority consent',
+      status: 'required',
+      delivery_de:
+        'Untere Denkmalschutzbehörde (Gemeinde bzw. Landkreis des Bauvorhabens)',
+      delivery_en: 'Local heritage authority',
+      citation: getStateCitations(c.bundesland).denkmalSchutzAct,
+    })
+  }
   return out
 }

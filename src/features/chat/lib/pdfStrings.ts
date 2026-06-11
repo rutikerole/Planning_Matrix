@@ -196,6 +196,16 @@ const EN: PdfStrings = {
   'timeline.demo.milestone': 'Completion milestone',
   'timeline.demo.milestone.detail':
     '— demolition complete around week ≈ 9 · no Baugenehmigung required (verfahrensfrei)',
+  // T-05 sprint — ANZEIGE demolition timeline (notification + statutory wait).
+  'timeline.demo.anzeige.sub':
+    'Total duration ~ 9–12 weeks · notification procedure (statutory wait before work, no Bauamt review cycle)',
+  'timeline.demo.anzeige': 'Submit demolition notification',
+  'timeline.demo.anzeige.duration': '1 week',
+  'timeline.demo.wait': 'Statutory notification period',
+  'timeline.demo.wait.duration': '~4 weeks · state law',
+  'timeline.demo.anzeige.milestone': 'Notification period ends',
+  'timeline.demo.anzeige.milestone.detail':
+    '— statutory period elapsed around week ≈ 9 · demolition may begin · no Baugenehmigung milestone (notification procedure)',
 
   // ─── v1.0.17 Renaissance Part 3 — Recommendations ─────────────
   'recs.kicker': 'SECTION 08 · RECOMMENDATIONS',
@@ -441,6 +451,16 @@ const DE: PdfStrings = {
   'timeline.demo.milestone': 'Abschluss-Meilenstein',
   'timeline.demo.milestone.detail':
     '— Abbruch abgeschlossen etwa in Woche ≈ 9 · keine Baugenehmigung erforderlich (verfahrensfrei)',
+  // T-05 sprint — ANZEIGE-Abbruch-Zeitplan (Anzeige + gesetzliche Wartefrist).
+  'timeline.demo.anzeige.sub':
+    'Gesamtdauer ~ 9–12 Wochen · Anzeigeverfahren (Wartefrist vor Beginn, keine Bauamt-Prüfung)',
+  'timeline.demo.anzeige': 'Abbruchanzeige einreichen',
+  'timeline.demo.anzeige.duration': '1 Woche',
+  'timeline.demo.wait': 'Gesetzliche Anzeigefrist',
+  'timeline.demo.wait.duration': '~4 Wochen · landesrechtlich',
+  'timeline.demo.anzeige.milestone': 'Anzeigefrist läuft ab',
+  'timeline.demo.anzeige.milestone.detail':
+    '— Wartefrist endet etwa in Woche ≈ 9 · Abbruch darf beginnen · kein Baugenehmigungs-Meilenstein (Anzeigeverfahren)',
 
   // ─── v1.0.17 Renaissance Part 3 — Recommendations ─────────────
   'recs.kicker': 'ABSCHNITT 08 · EMPFEHLUNGEN',

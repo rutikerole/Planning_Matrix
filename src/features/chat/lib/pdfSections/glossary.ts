@@ -38,6 +38,10 @@ export interface GlossaryData {
    *  stateCitations.ts. Falls back to legacy bundeslandCode-driven
    *  {state} substitution when not provided. */
   bundeslandLower?: string
+  /** T-05 sprint (item c) — a demolition has no GEG obligation; the GEG
+   *  glossary entry is suppressed on T-05 exports so the brief cites no GEG
+   *  anywhere. */
+  omitGeg?: boolean
 }
 
 export interface GlossaryFooterData {
@@ -219,7 +223,9 @@ export function renderGlossaryBody(
   // present; state-specific BauO + DSchG entries derived from
   // stateCitations.ts. Stub states render the honest-deferral
   // phrasing rather than fabricated §§.
-  const entries = getEntriesForBundesland(data.bundeslandLower)
+  const entries = getEntriesForBundesland(data.bundeslandLower).filter(
+    (e) => !(data.omitGeg && e.term.startsWith('GEG')),
+  )
   entries.forEach((entry, idx) => {
     const col = idx % 2
     const row = Math.floor(idx / 2)
