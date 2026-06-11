@@ -1,18 +1,25 @@
 // ───────────────────────────────────────────────────────────────────────
-// v1.0.9 Bug 13 — German postal-code → Bundesland inference.
+// v1.0.9 Bug 13 → fix/plz-detect (2026-06-12) — German postal-code →
+// Bundesland inference.
 //
-// Deterministic first-two-digits lookup against the Deutsche Post
-// postal-sector map. Each prefix 00..99 maps to a Bundesland registry
-// code (`bayern`, `nrw`, etc.). Several prefixes legitimately span
-// border regions (notably 03/06/07 in the east, 49/66/67 along the
-// NRW/Niedersachsen/Saarland/RLP edges). In those cases we route to
-// the dominant Land for the prefix and rely on the wizard's manual
-// override to catch the edge cases — the dropdown is always present
-// and the user knows their plot better than a 2-digit lookup.
+// HISTORY: v1.0.9 shipped a hand-typed first-TWO-digits sector table.
+// Two-digit Leitregionen do not align with state borders, so every
+// boundary prefix silently mis-detected: the T-06 Jena walk ran a full
+// consultation on SächsBO because 07743 (Thüringen) resolved 'sachsen'
+// via `setRange(1, 9, 'sachsen')`. The same table sent Potsdam to
+// Berlin, Halle to Sachsen, Cottbus to Sachsen, Bremerhaven to
+// Niedersachsen, Ulm to Bayern, Lindau to BW, Aschaffenburg to Hessen —
+// 21 of the 47 smoke fixtures failed (scripts/smoke-plz-bundesland.mts,
+// RED pre-fix).
 //
-// Reference table is the same as the one the user-of-record signed
-// off for v1.0.9 Bug 13. Single source of truth — do not duplicate
-// in tests; tests import the function and assert known outputs.
+// NOW: longest-prefix match against PLZ_PREFIX_TO_BUNDESLAND
+// (plzBundesland.generated.ts) — a minimal-depth table derived from the
+// GeoNames postal dataset by scripts/gen-plz-bundesland.mjs and
+// validated at generation time against a 61-city ground-truth checklist
+// (hard-fail). Mixed granularity 2..5 digits; a handful of PLZ genuinely
+// span a state border (e.g. 19273 Amt Neuhaus) and resolve to their
+// majority side — the wizard's always-visible "Change if wrong" dropdown
+// stays the documented escape hatch.
 //
 // Fallback: when the address is unparseable (no 5-digit postcode
 // detected), returns 'bayern' — the project's historical default,
@@ -21,43 +28,7 @@
 
 import type { BundeslandCode } from '@/legal/states/_types'
 import { extractPostcode } from '@/lib/addressParse'
-
-const PREFIX_TO_BUNDESLAND: Record<number, BundeslandCode> = (() => {
-  const m: Record<number, BundeslandCode> = {}
-  const setRange = (from: number, to: number, code: BundeslandCode) => {
-    for (let i = from; i <= to; i++) m[i] = code
-  }
-  setRange(1, 9, 'sachsen')
-  setRange(10, 14, 'berlin')
-  setRange(15, 16, 'brandenburg')
-  setRange(17, 19, 'mv')
-  setRange(20, 22, 'hamburg')
-  setRange(23, 25, 'sh')
-  setRange(26, 27, 'niedersachsen')
-  m[28] = 'bremen'
-  setRange(29, 31, 'niedersachsen')
-  setRange(32, 33, 'nrw')
-  setRange(34, 36, 'hessen')
-  setRange(37, 38, 'niedersachsen')
-  m[39] = 'sachsen-anhalt'
-  setRange(40, 48, 'nrw')
-  m[49] = 'niedersachsen'
-  setRange(50, 53, 'nrw')
-  setRange(54, 56, 'rlp')
-  setRange(57, 59, 'nrw')
-  setRange(60, 65, 'hessen')
-  m[66] = 'saarland'
-  m[67] = 'rlp'
-  setRange(68, 69, 'bw')
-  setRange(70, 79, 'bw')
-  setRange(80, 87, 'bayern')
-  m[88] = 'bw'
-  m[89] = 'bayern'
-  setRange(90, 96, 'bayern')
-  m[97] = 'bayern'
-  setRange(98, 99, 'thueringen')
-  return m
-})()
+import { PLZ_PREFIX_TO_BUNDESLAND } from './plzBundesland.generated'
 
 export interface InferenceResult {
   /** The Bundesland the postcode resolves to. 'bayern' on fallback. */
@@ -68,14 +39,15 @@ export interface InferenceResult {
 
 /**
  * Resolve a free-text German address to the Bundesland its postcode
- * sits in. See module docstring for the lookup table and fallback
- * behaviour.
+ * sits in. Longest-prefix match (5 → 1 digits) over the generated
+ * GeoNames-derived table; see module docstring for fallback behaviour.
  */
 export function inferBundeslandFromPostcode(addr: string | null | undefined): InferenceResult {
   const plz = extractPostcode(addr ?? '')
   if (!plz) return { bundesland: 'bayern', postcode: null }
-  const prefix = Number.parseInt(plz.slice(0, 2), 10)
-  if (!Number.isFinite(prefix)) return { bundesland: 'bayern', postcode: plz }
-  const resolved = PREFIX_TO_BUNDESLAND[prefix]
-  return { bundesland: resolved ?? 'bayern', postcode: plz }
+  for (let len = 5; len >= 1; len--) {
+    const hit = PLZ_PREFIX_TO_BUNDESLAND[plz.slice(0, len)]
+    if (hit) return { bundesland: hit, postcode: plz }
+  }
+  return { bundesland: 'bayern', postcode: plz }
 }
