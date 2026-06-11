@@ -3999,65 +3999,48 @@ async function runStaticGate() {
   // can pull the TS source via tsx-less means — we transpile-strip
   // the TS by reading the source and validating shape statically.
   const inferSrc = await readFileText('src/features/wizard/lib/inferBundeslandFromPostcode.ts')
-  results.push(failures('v1.0.9 Bug 13: inferBundeslandFromPostcode module shape', [
+  results.push(failures('v1.0.9 Bug 13 + fix/plz-detect: inferBundeslandFromPostcode module shape', [
     {
       ok: /export\s+function\s+inferBundeslandFromPostcode/.test(inferSrc),
       msg: 'helper must export inferBundeslandFromPostcode',
     },
+    // fix/plz-detect — the hand-typed 2-digit sector table mis-assigned every
+    // boundary prefix (07743 Jena → 'sachsen' on a live walk; Potsdam → berlin;
+    // Halle → sachsen; 21/47 fixtures RED). The module now does longest-prefix
+    // lookup over the GeoNames-derived generated table; behaviour fixtures live
+    // in scripts/smoke-plz-bundesland.mts (48 pins, in smoke:guards).
     {
-      ok: /setRange\(1,\s*9,\s*'sachsen'\)/.test(inferSrc),
-      msg: 'must declare 01-09 → sachsen',
+      ok: /PLZ_PREFIX_TO_BUNDESLAND/.test(inferSrc) && /plzBundesland\.generated/.test(inferSrc),
+      msg: 'helper must look up the generated GeoNames-derived prefix table (no hand-typed 2-digit table)',
     },
     {
-      ok: /setRange\(10,\s*14,\s*'berlin'\)/.test(inferSrc),
-      msg: 'must declare 10-14 → berlin',
+      // (matches the helper DEFINITION, not the docstring's history note)
+      ok: !/setRange\s*=/.test(inferSrc) && !/PREFIX_TO_BUNDESLAND\s*:/.test(inferSrc),
+      msg: 'the buggy hand-typed setRange sector table must stay deleted',
     },
     {
-      ok: /setRange\(17,\s*19,\s*'mv'\)/.test(inferSrc),
-      msg: 'must declare 17-19 → mv (mecklenburg-vorpommern)',
+      ok: /for\s*\(let\s+len\s*=\s*5;\s*len\s*>=\s*1;\s*len--\)/.test(inferSrc),
+      msg: 'lookup must be longest-prefix (5 → 1 digits)',
     },
     {
-      ok: /setRange\(20,\s*22,\s*'hamburg'\)/.test(inferSrc),
-      msg: 'must declare 20-22 → hamburg',
-    },
-    {
-      ok: /setRange\(40,\s*48,\s*'nrw'\)/.test(inferSrc),
-      msg: 'must declare 40-48 → nrw',
-    },
-    {
-      ok: /setRange\(60,\s*65,\s*'hessen'\)/.test(inferSrc),
-      msg: 'must declare 60-65 → hessen',
-    },
-    {
-      ok: /setRange\(70,\s*79,\s*'bw'\)/.test(inferSrc),
-      msg: 'must declare 70-79 → bw',
-    },
-    {
-      ok: /setRange\(80,\s*87,\s*'bayern'\)/.test(inferSrc),
-      msg: 'must declare 80-87 → bayern',
-    },
-    {
-      ok: /setRange\(98,\s*99,\s*'thueringen'\)/.test(inferSrc),
-      msg: 'must declare 98-99 → thueringen',
-    },
-    {
-      ok: /m\[28\]\s*=\s*'bremen'/.test(inferSrc),
-      msg: 'must declare 28 → bremen',
-    },
-    {
-      ok: /m\[39\]\s*=\s*'sachsen-anhalt'/.test(inferSrc),
-      msg: 'must declare 39 → sachsen-anhalt',
-    },
-    {
-      ok: /m\[66\]\s*=\s*'saarland'/.test(inferSrc),
-      msg: 'must declare 66 → saarland',
+      ok: /bundesland:\s*'bayern',\s*postcode:\s*null/.test(inferSrc),
+      msg: 'unparseable input must keep the documented bayern fallback (v1.0.6 contract)',
     },
   ]))
-  // Runtime assertions: dynamic-import the helper through a tsx-less
-  // path by writing the inference table inline. (We avoid importing
-  // the .ts module directly — Node can't ESM-import it without a
-  // build step.) Instead, mirror the same lookup in the test and
-  // assert per known sample.
+  // Runtime assertion against the GENERATED table: parse the Record literal
+  // out of plzBundesland.generated.ts and resolve known PLZ via the same
+  // longest-prefix rule the module uses. Includes the live walk bug (07743)
+  // and the boundary cities the old table got wrong.
+  const genSrc = await readFileText('src/features/wizard/lib/plzBundeslandSENTINEL.generated.ts'.replace('SENTINEL', ''))
+  const genTable = {}
+  for (const m of genSrc.matchAll(/'(\d{1,5})':\s*'([a-z-]+)'/g)) genTable[m[1]] = m[2]
+  const lookupGen = (plz) => {
+    for (let len = 5; len >= 1; len--) {
+      const hit = genTable[plz.slice(0, len)]
+      if (hit) return hit
+    }
+    return null
+  }
   const KNOWN_PLZ = [
     { plz: '40212', expected: 'nrw' },
     { plz: '60311', expected: 'hessen' },
@@ -4068,35 +4051,27 @@ async function runStaticGate() {
     { plz: '20095', expected: 'hamburg' },
     { plz: '80331', expected: 'bayern' },
     { plz: '99084', expected: 'thueringen' },
+    // fix/plz-detect — the walk bug + old-table casualties
+    { plz: '07743', expected: 'thueringen' },
+    { plz: '14467', expected: 'brandenburg' },
+    { plz: '06108', expected: 'sachsen-anhalt' },
+    { plz: '03046', expected: 'brandenburg' },
+    { plz: '27568', expected: 'bremen' },
+    { plz: '89073', expected: 'bw' },
+    { plz: '88131', expected: 'bayern' },
   ]
-  // Construct the lookup the same way the helper does, so this is a
-  // belt-and-braces verification that the source's setRange calls
-  // match the user-signed-off table verbatim.
-  const PREFIX = {}
-  const setR = (a, b, c) => { for (let i = a; i <= b; i++) PREFIX[i] = c }
-  setR(1, 9, 'sachsen'); setR(10, 14, 'berlin'); setR(15, 16, 'brandenburg')
-  setR(17, 19, 'mv'); setR(20, 22, 'hamburg'); setR(23, 25, 'sh')
-  setR(26, 27, 'niedersachsen'); PREFIX[28] = 'bremen'
-  setR(29, 31, 'niedersachsen'); setR(32, 33, 'nrw'); setR(34, 36, 'hessen')
-  setR(37, 38, 'niedersachsen'); PREFIX[39] = 'sachsen-anhalt'
-  setR(40, 48, 'nrw'); PREFIX[49] = 'niedersachsen'
-  setR(50, 53, 'nrw'); setR(54, 56, 'rlp'); setR(57, 59, 'nrw')
-  setR(60, 65, 'hessen'); PREFIX[66] = 'saarland'; PREFIX[67] = 'rlp'
-  setR(68, 69, 'bw'); setR(70, 79, 'bw')
-  setR(80, 87, 'bayern'); PREFIX[88] = 'bw'; PREFIX[89] = 'bayern'
-  setR(90, 96, 'bayern'); PREFIX[97] = 'bayern'; setR(98, 99, 'thueringen')
-  const sampleResults = KNOWN_PLZ.map((s) => ({
-    plz: s.plz,
-    expected: s.expected,
-    actual: PREFIX[parseInt(s.plz.slice(0, 2), 10)],
-  }))
-  const mismatches = sampleResults.filter((r) => r.actual !== r.expected)
-  results.push(failures('v1.0.9 Bug 13: known-PLZ → Bundesland inference correctness', [
+  const mismatches = KNOWN_PLZ.map((sample) => ({ ...sample, actual: lookupGen(sample.plz) }))
+    .filter((r) => r.actual !== r.expected)
+  results.push(failures('v1.0.9 Bug 13 + fix/plz-detect: known-PLZ → Bundesland inference correctness', [
+    {
+      ok: Object.keys(genTable).length > 500,
+      msg: `generated table must be populated (got ${Object.keys(genTable).length} entries)`,
+    },
     {
       ok: mismatches.length === 0,
       msg:
         mismatches.length === 0
-          ? '(all 9 known-PLZ samples resolve correctly)'
+          ? `(all ${KNOWN_PLZ.length} known-PLZ samples resolve correctly against the generated table)`
           : `Mismatches: ${mismatches.map((m) => `${m.plz} → ${m.actual} (expected ${m.expected})`).join(' · ')}`,
     },
   ]))

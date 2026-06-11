@@ -70,7 +70,8 @@
     "eval:run": "node scripts/eval-harness/run.mjs",
     "eval:dry-run": "node scripts/eval-harness/run.mjs --dry-run",
     "smoke:composer-parity": "npm run smoke:t01-composer && npm run smoke:t02-composer && npm run smoke:t03-composer && npm run smoke:t04-composer && npm run smoke:t06-composer && npm run smoke:t07-composer && npm run smoke:t08-composer",
-    "smoke:guards": "npm run smoke:thin-state && npm run smoke:role-gating && npm run smoke:confidence && npm run smoke:qualifier-gate && npm run smoke:citation-heading-gate && npm run smoke:docno-date && npm run smoke:class2-capture && npm run smoke:export-parity && npm run smoke:double-submit && npm run smoke:cost-procedure"
+    "smoke:plz-bundesland": "npx tsx scripts/smoke-plz-bundesland.mts",
+    "smoke:guards": "npm run smoke:plz-bundesland && npm run smoke:thin-state && npm run smoke:role-gating && npm run smoke:confidence && npm run smoke:qualifier-gate && npm run smoke:citation-heading-gate && npm run smoke:docno-date && npm run smoke:class2-capture && npm run smoke:export-parity && npm run smoke:double-submit && npm run smoke:cost-procedure"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
