@@ -87,15 +87,17 @@ Deno.serve(async (req: Request) => {
   // chat-turn" class. Reaching here still requires a platform-verified
   // JWT (verify_jwt = true), same as every other request.
   if (req.method === 'GET') {
-    return jsonResponse(
-      {
+    // Plain JSON — jsonResponse() is the ERROR-envelope helper ({ok:false,
+    // error}) and would bury the fingerprint one level deep (caught by the
+    // first live verify:deploy edge-rail run against v20).
+    return new Response(
+      JSON.stringify({
         function: 'chat-turn',
         fingerprint: EDGE_FINGERPRINT,
         fingerprint_files: EDGE_FINGERPRINT_FILES,
         function_version: Deno.env.get('FUNCTION_VERSION') ?? null,
-      },
-      200,
-      corsHeaders,
+      }),
+      { status: 200, headers: { 'Content-Type': 'application/json', ...corsHeaders } },
     )
   }
   if (req.method !== 'POST') {
