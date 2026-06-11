@@ -299,6 +299,28 @@ const tabSrc = readFileSync('src/features/result/components/tabs/CostTimelineTab
 ok(/selectTimelineVariant\(/.test(tabSrc) && !/PROCEDURE_PHASES/.test(tabSrc), 'CostTimelineTab uses the shared selector; static PROCEDURE_PHASES mapping is gone (source pin)')
 ok(/selectTimelineVariant\(/.test(pdfSrc), 'exportPdf timeline gating goes through the SAME shared selector (source pin)')
 
+// ── F11: output-budget cap — single source + telemetry (fix/output-budget) ──
+// The 2026-06-11 Thüringen walk proved MAX_TOKENS=1280 starved the emission
+// contract (100% stop_reason=max_tokens; dense turns emitted ZERO facts).
+// Pins: the cap lives ONLY in anthropic.ts (with its ledger), streaming.ts
+// imports it (never a local redefinition), and BOTH call sites carry the
+// truncated_max_tokens turn-level gauge. Source pins — anthropic.ts has
+// npm: imports tsx can't resolve, so value pins are textual.
+console.log('F11 — output-budget cap (single source + telemetry):')
+const anthropicSrc = readFileSync('supabase/functions/chat-turn/anthropic.ts', 'utf-8')
+const streamingSrc = readFileSync('supabase/functions/chat-turn/streaming.ts', 'utf-8')
+const tracerSrc = readFileSync('supabase/functions/chat-turn/tracer.ts', 'utf-8')
+ok(/export const MAX_TOKENS = 2560/.test(anthropicSrc), 'anthropic.ts exports MAX_TOKENS = 2560 (ledgered value)')
+ok(/MAX_TOKENS LEDGER/.test(anthropicSrc), 'the re-baseline ledger comment exists next to the constant')
+ok(!/const MAX_TOKENS\s*=/.test(streamingSrc), 'streaming.ts has NO local MAX_TOKENS redefinition')
+ok(/MAX_TOKENS,?\s*[\s\S]{0,200}from '\.\/anthropic\.ts'/.test(streamingSrc) || /\{[^}]*MAX_TOKENS[^}]*\}\s*from '\.\/anthropic\.ts'/.test(streamingSrc), 'streaming.ts imports the cap from anthropic.ts (single source)')
+ok(!/const ABORT_TIMEOUT_MS\s*=/.test(streamingSrc), 'streaming.ts has NO local ABORT_TIMEOUT_MS redefinition')
+const jsonHook = /stop_reason === 'max_tokens'/.test(anthropicSrc) && /setWarning\(\s*'truncated_max_tokens'/.test(anthropicSrc)
+const streamHook = /stop_reason === 'max_tokens'/.test(streamingSrc) && /setWarning\(\s*'truncated_max_tokens'/.test(streamingSrc)
+ok(jsonHook, 'json path fires the truncated_max_tokens turn-level warning')
+ok(streamHook, 'streaming path fires the truncated_max_tokens turn-level warning')
+ok(/setWarning\(warning_class/.test(tracerSrc) && /if \(error_class === null\)/.test(tracerSrc), 'tracer.setWarning exists and never clobbers a real error')
+
 console.log(`\n${pass} passed · ${fail} failed`)
 if (fail > 0) {
   console.error('[smoke-t05-composer] FAILED')

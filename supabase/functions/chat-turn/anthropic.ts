@@ -41,10 +41,32 @@ import type { Span, Tracer } from './tracer.ts'
 // latency at ~43s vs 46s observed; the model truncates cleanly mid-
 // thought when a real response would have run longer.
 //
-// TODO(phase-4): evaluate streaming or Sonnet 4.6 upgrade if
-// truncation rate climbs above 5% in production telemetry.
-const MAX_TOKENS = 1280
-const ABORT_TIMEOUT_MS = 50_000
+// MAX_TOKENS LEDGER (intentional re-baselines only):
+//   2026-06-11  1280 → 2560  (fix/output-budget)
+//     Cause: the post-T-05-sprint emission contract (bilingual prose +
+//     typed facts + verfahren_indikation verdict + labels/deltas) is
+//     STARVED at 1280 — production telemetry showed stop_reason=
+//     max_tokens on 100% of successful calls across two full walks
+//     (Sachsen d255b219, Thüringen b1416734). extracted_facts rides the
+//     tail of the tool call, so truncation silently eats the capture
+//     contract (Thüringen dense turns emitted ZERO facts while the prose
+//     acknowledged them) and, when the cut lands before message_de,
+//     hard-fails Zod (4 traces, user-visible retry stalls). The Phase 3.1
+//     revisit threshold was 5% truncation; we are at 100%.
+//     Re-evaluation criterion: the `truncated_max_tokens` turn-level
+//     warning (tracer.setWarning below) is the standing gauge — 2560 is
+//     provisional; if the warning still fires on a meaningful share of
+//     turns, raise again (or shorten the contract); if it never fires,
+//     consider lowering toward p99+headroom.
+//     ABORT_TIMEOUT_MS raised 50s → 90s in the same change: worst-case
+//     generation at 2560 tokens (~60 tok/s observed) is ~45-50s and an
+//     abort loses the WHOLE turn — strictly worse than truncation.
+//
+// Exported as the single source of truth for BOTH call sites (this
+// json path + streaming.ts) — smoke-t05-composer F11 source-pins that
+// streaming.ts imports it and never redefines a local cap.
+export const MAX_TOKENS = 2560
+export const ABORT_TIMEOUT_MS = 90_000
 
 // Sonnet 4.6 pricing in USD per million tokens (March 2026 — identical
 // to the prior 4.5 schedule per Anthropic's announcement). If pricing
@@ -268,6 +290,22 @@ export async function callAnthropic(
     validation_result: 'ok',
   })
   span?.end('ok')
+
+  // fix/output-budget — turn-level truncation gauge. stop_reason=
+  // max_tokens means the output cap cut the tool call; the lenient
+  // parse can still pass Zod with extracted_facts silently missing
+  // (the 2026-06-11 Thüringen capture-loss class). Lift the existing
+  // span attribute to the trace row so the Logs panel shows it per
+  // turn without flipping the trace to error.
+  if (response.stop_reason === 'max_tokens') {
+    console.warn(
+      `[chat-turn] anthropic.attempt_${attemptLabel ?? '1'} hit MAX_TOKENS (${MAX_TOKENS}) — output truncated; capture contract at risk`,
+    )
+    tracer?.setWarning(
+      'truncated_max_tokens',
+      `stop_reason=max_tokens at cap ${MAX_TOKENS} — extracted_facts may be cut; gauge for the MAX_TOKENS ledger (anthropic.ts)`,
+    )
+  }
 
   // Accumulate on the trace so the trace row's totals reflect every
   // attempt (schema-reminder retry + outer backoff retry both feed in).

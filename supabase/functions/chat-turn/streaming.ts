@@ -33,7 +33,17 @@ import Anthropic from '@anthropic-ai/sdk'
 import type { SupabaseClient } from 'npm:@supabase/supabase-js@2'
 import { buildSystemBlocks } from './systemPrompt.ts'
 import { MODEL, respondToolDefinition, respondToolChoice } from './toolSchema.ts'
-import { estimateCostUsd, UpstreamError, type AnthropicUsage } from './anthropic.ts'
+import {
+  // fix/output-budget — MAX_TOKENS + ABORT_TIMEOUT_MS come from
+  // anthropic.ts (the single source of truth, with the re-baseline
+  // ledger) so the streaming and json-fallback paths can never diverge
+  // silently. smoke-t05-composer F11 source-pins this import.
+  ABORT_TIMEOUT_MS,
+  MAX_TOKENS,
+  estimateCostUsd,
+  UpstreamError,
+  type AnthropicUsage,
+} from './anthropic.ts'
 import { commitChatTurnAtomic } from './persistence.ts'
 import { validateFactPlausibility } from './factPlausibility.ts'
 import { enforceCitationHeadingMatch } from './citationHeadingGate.ts'
@@ -56,9 +66,6 @@ import type { ProjectState } from '../../../src/types/projectState.ts'
 import type { AssistantMessageRow } from '../../../src/types/chatTurn.ts'
 import type { Span, Tracer } from './tracer.ts'
 import type { TraceStatus } from '../../../src/types/observability.ts'
-
-const MAX_TOKENS = 1280
-const ABORT_TIMEOUT_MS = 50_000
 
 interface StreamingTurnArgs {
   apiKey: string
@@ -213,6 +220,19 @@ export function runStreamingTurn(args: StreamingTurnArgs): Response {
           validation_result: 'ok',
         })
         callSpan.end('ok')
+        // fix/output-budget — turn-level truncation gauge (mirrors the
+        // json path in anthropic.ts): stop_reason=max_tokens means the
+        // cap cut the tool call and extracted_facts may be silently
+        // missing. Lifted to the trace row so the Logs panel shows it.
+        if (finalMessage.stop_reason === 'max_tokens') {
+          console.warn(
+            `[chat-turn] anthropic.stream hit MAX_TOKENS (${MAX_TOKENS}) — output truncated; capture contract at risk`,
+          )
+          tracer.setWarning(
+            'truncated_max_tokens',
+            `stop_reason=max_tokens at cap ${MAX_TOKENS} — extracted_facts may be cut; gauge for the MAX_TOKENS ledger (anthropic.ts)`,
+          )
+        }
         tracer.setTokens({
           input_tokens: usage.inputTokens,
           output_tokens: usage.outputTokens,
