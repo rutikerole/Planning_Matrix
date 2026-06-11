@@ -404,6 +404,34 @@ re-baseline rather than forcing one:
    the intended pattern (the `in_gestaltungssatzung` Erfurt case); the
    ungrounded-value ban stays asymmetric (negatives only).
 
+Logged 2026-06-11 (fix/t06-walk1, BW/Stuttgart T-06 walk 1 — RECORD ONLY,
+do not implement outside the bundle):
+3. **C-1 double pin — `gebaeudeklasse` temporal meaning + GK height
+   measure.** (a) Pin WHICH state the single `gebaeudeklasse` key carries
+   on T-06 per state-privilege regime: post-addition GK in states without
+   a retention privilege; the retained GK where a privilege fixes it
+   (Bayern Art. 46 Abs. 6) — and require the `gk_sprung` companion fact
+   whenever a flip is detected. (b) Pin the GK height MEASURE: Höhe =
+   Fußbodenoberkante des höchstgelegenen Aufenthaltsraum-Geschosses über
+   Gelände im Mittel (BW § 2 Abs. 4 Satz 2, corpus body ingested) — NEVER
+   Trauf-/Firsthöhe. Walk 1 derived "GK 4 · CALCULATED" from
+   `traufhoehe_geplant_m: 9.8` — wrong measure, classification unproven.
+4. **Contract promotion** of the walk-1 free-form keys (all rendered via
+   the generic fact path today, zero readers): `gk_sprung` (pinned format
+   "GK\<a\> auf GK\<b\>"), `stellplatz_realisierbar`,
+   `stellplatz_abloesung_erforderlich`, `kenntnisgabeverfahren_anwendbar`.
+   Directive-name them + add readers (Key-Data labels, cost line for
+   Ablösung where legally applicable, procedure caveat for Kenntnisgabe).
+   NB the Ablösung key's SEMANTICS must encode the § 37 Abs. 7 LBO BW
+   dwelling exclusion (see LRL-1) before any reader puts a € figure on it.
+5. **Lex-specialis-unapplied → ASSUMED valve refinement.** Walk 1 emitted
+   `stellplatz_abloesung_erforderlich=true · CALCULATED` from the § 37
+   baseline while the privilege family (§ 37 Abs. 3 S. 2, Abs. 7) was
+   unexamined. Valve addition: a verdict-like key whose value depends on
+   a NAMED-but-unapplied lex specialis (the cell names the privilege; the
+   persona has not checked its conditions) must be emitted ASSUMED + open
+   question, never CALCULATED.
+
 ### Confidence recalibration — TICKET, needs design before touching weights
 
 Logged 2026-06-11. Two structural issues in `computeConfidence`, evidenced
