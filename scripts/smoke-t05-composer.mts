@@ -321,6 +321,46 @@ ok(jsonHook, 'json path fires the truncated_max_tokens turn-level warning')
 ok(streamHook, 'streaming path fires the truncated_max_tokens turn-level warning')
 ok(/setWarning\(warning_class/.test(tracerSrc) && /if \(error_class === null\)/.test(tracerSrc), 'tracer.setWarning exists and never clobbers a real error')
 
+// ── F12: wall-clock budget — retry can never outrun the platform kill ──
+// Meta-sweep item 4b: when ABORT_TIMEOUT_MS went 50s → 90s the retry
+// arithmetic silently broke (90+2+90+6+90 ≈ 278s vs the ~150s wall; a
+// platform kill skips `finally` and ERASES THE TRACE). wallBudget.ts is
+// pure → value pins import it directly; the wiring pins are textual.
+console.log('F12 — wall-clock budget (typed failure before the platform kill):')
+const {
+  WALL_CLOCK_BUDGET_MS,
+  RESPONSE_SAFETY_MS,
+  MIN_ATTEMPT_MS,
+  attemptAbortMs,
+  shouldRetryWithinBudget,
+} = await import('../supabase/functions/chat-turn/wallBudget.ts')
+ok(WALL_CLOCK_BUDGET_MS < 150_000, `WALL_CLOCK_BUDGET_MS ${WALL_CLOCK_BUDGET_MS} sits under the ~150s platform wall`)
+// Simulate the worst case that previously overran: 3 retryable failures
+// with 90s aborts. The budget must cap attempt 2 and refuse attempt 3.
+const T0 = 1_000_000 // arbitrary epoch anchor — math is relative
+const deadline = T0 + WALL_CLOCK_BUDGET_MS
+const a1 = attemptAbortMs(deadline, T0, 90_000)
+ok(a1 === 90_000, `attempt 1 at t=0 gets the full 90s abort (got ${a1})`)
+const t2 = T0 + 90_000 + 2_000 // attempt 1 timed out + 2s backoff
+ok(shouldRetryWithinBudget(deadline, T0 + 90_000, 2_000), 'retry 2 is allowed (fits the budget)')
+const a2 = attemptAbortMs(deadline, t2, 90_000)
+ok(a2 !== null && a2 < 90_000 && t2 + a2 + RESPONSE_SAFETY_MS <= deadline,
+  `attempt 2 abort is CAPPED to the remaining budget (got ${a2}ms, not 90s — old code overran here)`)
+const t3 = t2 + (a2 ?? 0) + 6_000 // attempt 2 timed out + 6s backoff
+ok(!shouldRetryWithinBudget(deadline, t2 + (a2 ?? 0), 6_000),
+  'retry 3 is REFUSED — no useful attempt fits; the loop fails typed before the wall')
+ok(attemptAbortMs(deadline, t3, 90_000) === null || t3 > deadline,
+  'an attempt started this late would be refused outright (null budget)')
+ok(MIN_ATTEMPT_MS >= 5_000 && RESPONSE_SAFETY_MS >= 1_000, 'budget floors are sane (min attempt + response tail)')
+// Wiring pins: both call paths consume the budget; index anchors the deadline.
+const indexSrc = readFileSync('supabase/functions/chat-turn/index.ts', 'utf-8')
+ok(/attemptAbortMs\(/.test(anthropicSrc) && /shouldRetryWithinBudget\(/.test(anthropicSrc), 'anthropic.ts caps attempts + gates retries via wallBudget')
+ok(/attemptAbortMs\(/.test(streamingSrc), 'streaming.ts caps its single attempt via wallBudget')
+ok(/requestStartMs \+ WALL_CLOCK_BUDGET_MS/.test(indexSrc), 'index.ts anchors deadlineAtMs at request start (both call paths)')
+// Deploy-identity probe (item 4a) — the GET health path serves the bundle
+// fingerprint the verify:deploy edge rail compares against the local tree.
+ok(/req\.method === 'GET'/.test(indexSrc) && /EDGE_FINGERPRINT/.test(indexSrc), 'index.ts serves the GET deploy-identity probe (edge rail)')
+
 console.log(`\n${pass} passed · ${fail} failed`)
 if (fail > 0) {
   console.error('[smoke-t05-composer] FAILED')

@@ -34,6 +34,7 @@ import {
   type RespondToolInput,
 } from '../../../src/types/respondTool.ts'
 import type { Span, Tracer } from './tracer.ts'
+import { attemptAbortMs, shouldRetryWithinBudget } from './wallBudget.ts'
 
 // ── Configuration ──────────────────────────────────────────────────────
 // Phase 3.1 #33: dropped from 2048 → 1280 based on batch-4 telemetry
@@ -96,6 +97,12 @@ export interface CallAnthropicArgs {
   /** Internal — set by callAnthropicWithRetry / WithSchemaReminder
    *  so the leaf span name reflects the attempt position. */
   attemptLabel?: string
+  /** Meta-sweep item 4b — absolute wall deadline (requestStart +
+   *  WALL_CLOCK_BUDGET_MS). Each attempt's abort timer is capped to the
+   *  remaining budget and retries are only scheduled while a minimum
+   *  useful attempt still fits, so the loop always fails TYPED before
+   *  the ~150 s platform kill (which would erase the trace itself). */
+  deadlineAtMs?: number
 }
 
 export interface AnthropicUsage {
@@ -160,7 +167,24 @@ export async function callAnthropic(
     tracer,
     parentSpan,
     attemptLabel,
+    deadlineAtMs,
   } = args
+
+  // Meta-sweep item 4b — cap this attempt's abort timer to the remaining
+  // wall budget; refuse to start an attempt that cannot finish before the
+  // platform kill. Failing TYPED here keeps the trace + client envelope.
+  const abortBudgetMs =
+    deadlineAtMs != null
+      ? attemptAbortMs(deadlineAtMs, Date.now(), ABORT_TIMEOUT_MS)
+      : ABORT_TIMEOUT_MS
+  if (abortBudgetMs == null) {
+    throw new UpstreamError(
+      'timeout',
+      null,
+      `wall budget exhausted before attempt ${attemptLabel ?? '1'} — ` +
+        'failing typed instead of risking the platform kill',
+    )
+  }
 
   const span = tracer?.startSpan(
     `anthropic.attempt_${attemptLabel ?? '1'}`,
@@ -172,12 +196,13 @@ export async function callAnthropic(
     messages_count: messages.length,
     system_blocks_count: systemBlocks.length,
     tool_choice: 'respond',
+    abort_budget_ms: abortBudgetMs,
   })
 
   const controller = new AbortController()
   const timeoutId = setTimeout(
     () => controller.abort(new Error('upstream_timeout')),
-    ABORT_TIMEOUT_MS,
+    abortBudgetMs,
   )
   if (externalSignal) {
     if (externalSignal.aborted) controller.abort(externalSignal.reason)
@@ -403,10 +428,17 @@ async function callAnthropicWithSchemaReminder(
  *     Retry-After header) when set.
  *   • Other 4xx (non-429) → no retry, bubbles up.
  *
- * The outer retry is bound by the function's wall clock (150s); each
- * attempt has its own 50s ABORT_TIMEOUT. Worst case: 50s + 2s + 50s +
- * 6s + 50s = 158s. Slightly over the wall clock; the platform abort
- * is the floor and we'd rather try than abort early.
+ * Meta-sweep item 4b — the outer retry is bound by an EXPLICIT wall
+ * budget (WALL_CLOCK_BUDGET_MS = 145 s, see wallBudget.ts), not by the
+ * platform kill. The previous comment ("50+2+50+6+50 = 158s, the
+ * platform abort is the floor") went stale when ABORT_TIMEOUT_MS rose
+ * 50 s → 90 s: the uncapped worst case became 90+2+90+6+90 ≈ 278 s, and
+ * a platform kill mid-retry skips the `finally` tracer.finalize — the
+ * failure erases its own trace. Now: each attempt's abort timer is
+ * capped to the remaining budget (attemptAbortMs) and a retry is only
+ * scheduled while a minimum useful attempt still fits
+ * (shouldRetryWithinBudget), so the loop always fails typed BEFORE the
+ * wall.
  */
 export async function callAnthropicWithRetry(
   args: CallAnthropicArgs,
@@ -423,6 +455,23 @@ export async function callAnthropicWithRetry(
       if (!isRetryable(err)) throw err
       if (attempt >= MAX_ATTEMPTS) break
       const wait = backoffMsFor(attempt + 1, err)
+      // Meta-sweep item 4b — no retry unless a minimum useful attempt
+      // still fits inside the wall budget (see wallBudget.ts).
+      if (
+        args.deadlineAtMs != null &&
+        !shouldRetryWithinBudget(args.deadlineAtMs, Date.now(), wait)
+      ) {
+        args.parentSpan?.addEvent('anthropic.retry_skipped_wall_budget', {
+          trigger: (err as { code?: string }).code ?? 'unknown',
+          previous_attempt: attempt,
+          backoff_ms: wait,
+        })
+        console.log(
+          `[chat-turn] upstream ${err.code} on attempt ${attempt}/${MAX_ATTEMPTS}; ` +
+            'wall budget exhausted — failing typed instead of retrying past the platform kill',
+        )
+        break
+      }
       // Phase 9 — record the retry decision as an event on the
       // outer parent span, so the Gantt visualization shows the gap.
       args.parentSpan?.addEvent('anthropic.retry', {
