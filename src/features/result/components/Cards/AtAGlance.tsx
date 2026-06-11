@@ -4,7 +4,7 @@ import type { ProjectState } from '@/types/projectState'
 import {
   buildCostBreakdown,
   costModeShowsEuroFigure,
-  detectKlasse,
+  resolveCostKlasse,
   formatEurRange,
   resolveCostAreaSqm,
   resolveCostDisplayMode,
@@ -93,7 +93,7 @@ export function AtAGlance({ project, state }: Props) {
   // resolveProcedures the procedure label above already uses), so cost +
   // timeline + the other surfaces can't diverge.
   const procedureType = resolveCostProcedureType(project, state)
-  const klasseDetected = detectKlasse(corpus)
+  const klasseDetected = resolveCostKlasse(facts, corpus)
   // Sprint 0 (P1-A) — single shared cost-area resolver (template-aware,
   // with corpus-regex backstop) so this card cannot diverge from the
   // Cost tab / PDF / Executive Read for a T-02 MFH.

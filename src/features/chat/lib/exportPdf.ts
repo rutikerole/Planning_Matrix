@@ -30,7 +30,7 @@ import type { ProjectState } from '@/types/projectState'
 import {
   buildCostBreakdown,
   costBandFor,
-  detectKlasse,
+  resolveCostKlasse,
   formatEurRange,
   resolveCostAreaSqm,
   resolveCostDisplayMode,
@@ -680,7 +680,7 @@ export async function buildExportPdf({
     .map((f) => `${f.key} ${typeof f.value === 'string' ? f.value : ''}`)
     .join(' ')
     .toLowerCase()
-  const klasse = detectKlasse(corpus)
+  const klasse = resolveCostKlasse(state.facts, corpus)
   // Sprint 0 (P1-A) — single shared cost-area resolver, identical to the
   // result-page surfaces. undefined (no area resolvable) flows into
   // buildCostBreakdown, which applies the BASE_AREA_SQM default — the same

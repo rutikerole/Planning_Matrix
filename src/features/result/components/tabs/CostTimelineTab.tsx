@@ -5,7 +5,7 @@ import {
   buildCostBreakdown,
   costBandFor,
   describeCostInputs,
-  detectKlasse,
+  resolveCostKlasse,
   formatEurRange,
   resolveCostAreaSqm,
   resolveCostDisplayMode,
@@ -89,7 +89,7 @@ export function CostTimelineTab({ project, state }: Props) {
     .map((f) => `${f.key} ${typeof f.value === 'string' ? f.value : ''}`)
     .join(' ')
     .toLowerCase()
-  const klasse = detectKlasse(corpus)
+  const klasse = resolveCostKlasse(state.facts, corpus)
   // Sprint 0 (P1-A) — single shared cost-area resolver (template-aware
   // first, corpus-regex backstop) used by every cost surface so the
   // Cost tab can never diverge from the PDF / At-a-Glance / Executive Read.

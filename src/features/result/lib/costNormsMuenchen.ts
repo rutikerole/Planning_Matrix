@@ -460,11 +460,46 @@ export function detectProcedure(rationale: string | undefined): ProcedureType {
   return 'unknown'
 }
 
-/** Heuristic Gebäudeklasse detection from facts text. */
+/**
+ * Heuristic Gebäudeklasse detection from facts text.
+ *
+ * Meta-sweep item 2 — the persona directive pins the typed fact as key
+ * `gebaeudeklasse`, value `GK<N>` ("GK 5"). Cost corpora are built as
+ * `${key} ${value}` so the canonical emission reads "gebaeudeklasse gk 5" —
+ * a shape the old regex (`gebäudeklasse\s*[1-5]`) could never match: a
+ * perfectly obedient persona got KLASSE_MULT 1.0 instead of 1.85 on every
+ * cost surface. Accept every directive-legal shape ("GK 5", "GK5",
+ * "gebaeudeklasse 5", umlaut variants).
+ */
 export function detectKlasse(corpus: string): Gebaeudeklasse {
-  const m = corpus.match(/geb(ä|ae)udeklasse\s*([1-5])/i)
-  if (m) return m[2] as Gebaeudeklasse
+  const keyed = corpus.match(/geb(?:ä|ae)udeklasse\s*(?:gk\s*)?([1-5])\b/i)
+  if (keyed) return keyed[1] as Gebaeudeklasse
+  const bare = corpus.match(/\bgk\s*([1-5])\b/i)
+  if (bare) return bare[1] as Gebaeudeklasse
   return 'unknown'
+}
+
+/**
+ * Meta-sweep item 2 — THE shared GK resolver for the cost surfaces
+ * (At-a-Glance · Cost tab · Executive Read · PDF). Prefer the TYPED
+ * `gebaeudeklasse` fact (same key-normalisation + first-digit parse as
+ * buildProcedureCase's `gebaeudeklasse_num`, the procedure surfaces' read)
+ * over the corpus heuristic, so prose mentions of other classes can never
+ * outrank the pinned emission.
+ */
+export function resolveCostKlasse(
+  facts: ReadonlyArray<{ key: string; value: unknown }> | undefined,
+  corpus: string,
+): Gebaeudeklasse {
+  const f = (facts ?? []).find((x) => {
+    const k = x.key.toLowerCase().replace(/[._\s-]/g, '')
+    return k === 'gebaeudeklasse' || k === 'buildingclass'
+  })
+  if (f) {
+    const m = String(f.value).match(/([1-5])/)
+    if (m) return m[1] as Gebaeudeklasse
+  }
+  return detectKlasse(corpus)
 }
 
 // ─── Phase 10 commit 12 — per-template cost bands ───────────────────────
