@@ -1,4 +1,5 @@
 import type { ProjectState } from '@/types/projectState'
+import { detectSonderbauCount } from '@/legal/resolveProcedure'
 import { computeSectionCompleteness } from './computeSectionCompleteness'
 import { aggregateQualifiers } from './qualifierAggregate'
 import { computeOpenItems } from './computeOpenItems'
@@ -56,7 +57,11 @@ function countHardBlockers(state: Partial<ProjectState>): number {
   let count = 0
   if (factBool('mk_gebietsart')) count++
   if (factBool('denkmalschutz')) count++
-  if (factBool('sonderbau_scope')) count++
+  // T-05 sprint 2.75 — sonderbau_scope RETIRED: the legacy key's one consumer
+  // now reads the canonical Sonderbau contract (anzahl_sonderbau_tatbestaende
+  // / sonderbau_tatbestand_* via detectSonderbauCount) so the directive set
+  // never has to immortalize the old key.
+  if (detectSonderbauCount(facts) >= 1) count++
   // bauvoranfrage_hard_blocker is the catch-all flag; only count it
   // when no specific blocker fact is set (mirrors detectHardBlockers
   // in resolveProcedure.ts so the two surfaces agree on N).

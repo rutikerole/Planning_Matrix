@@ -142,7 +142,9 @@ import {
   type ProcedureDecision,
 } from '@/legal/resolveProcedure'
 import {
+  baujahrPre1995FromFacts,
   requiredDocumentsForCase,
+  schadstoffverdachtFromFacts,
   type DocumentCase,
   type RequiredDocument,
 } from '@/legal/requiredDocuments'
@@ -493,6 +495,18 @@ export async function buildExportPdf({
     // (e.g. § 65 BauO NRW), and the intent-correct GEG § (§ 10 new-build /
     // § 48 renovation — see Y-3).
     const planningRef = (() => {
+      // T-05 sprint 2.75 — the canonical `planungsrecht_paragraph` fact is
+      // the PRIMARY source (pinned vocabulary § 30/§ 34/§ 35 BauGB); the
+      // free-text any-fact §-scan stays as FALLBACK only.
+      const canonical = (state.facts ?? []).find(
+        (f) =>
+          f.key.toLowerCase().replace(/[._\s-]/g, '') ===
+          'planungsrechtparagraph',
+      )
+      if (canonical && typeof canonical.value === 'string') {
+        const m = canonical.value.match(/§\s*3[045]\s*BauGB/i)
+        if (m) return m[0].replace(/\s+/g, ' ').trim()
+      }
       for (const f of state.facts ?? []) {
         if (typeof f.value !== 'string') continue
         const m = f.value.match(/§\s*\d+[a-z]?\s*BauGB/i)
@@ -939,6 +953,10 @@ export async function buildExportPdf({
     denkmalschutz: procedureCase.denkmalschutz,
     grenzstaendig: procedureCase.grenzstaendig,
     gebaeude_freistehend: procedureCase.gebaeude_freistehend,
+    // T-05 sprint 2.75 — the baujahr_pre_1995 reader existed since v1.0.19
+    // but was never populated; schadstoffverdacht promotes the pollutant doc.
+    baujahr_pre_1995: baujahrPre1995FromFacts(state.facts),
+    schadstoffverdacht: schadstoffverdachtFromFacts(state.facts),
     geg_trigger:
       procedureCase.eingriff_aussenhuelle &&
       (procedureCase.fassadenflaeche_m2 ?? 0) > 0,

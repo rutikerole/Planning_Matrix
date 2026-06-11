@@ -160,6 +160,11 @@ export interface ProcedureCase {
   /** T-05 sprint — Gebäudeklasse number parsed from the canonical
    *  `gebaeudeklasse` fact ("GK 3" → 3); undefined when not captured. */
   gebaeudeklasse_num?: number
+  /** T-05 sprint 2.75 — Vollabbruch vs Teilabbruch (canonical `abbruch_typ`
+   *  fact). A Teilabbruch is an ÄNDERUNG of the building, not a Beseitigung —
+   *  it must never take the demolition tiers. undefined = not captured
+   *  (treated as Vollabbruch family, the conservative demolition default). */
+  abbruch_typ?: 'vollabbruch' | 'teilabbruch'
 }
 
 /**
@@ -1062,6 +1067,36 @@ function decideProcedure(c: ProcedureCase): ProcedureDecision {
   // regular building permit. Citation source: corpus abbruch_beseitigung pick
   // (corpusCitations.generated beseitigung), falling back to the state's free §.
   if (c.intent === 'abbruch') {
+    // T-05 sprint 2.75 — TEILABBRUCH ROUTING. A partial demolition is an
+    // ÄNDERUNG of the building (Bayern model: Art. 58/57 Abs. 1, NOT the
+    // Art. 57 Abs. 5 Beseitigung tier) — letting it take the Beseitigung
+    // path renders verfahrensfrei/Anzeige framing on a permit-shaped
+    // intervention. Route to the simplified (Änderung) family with honest
+    // framing; an explicit persona verdict still wins above this branch.
+    if (c.abbruch_typ === 'teilabbruch') {
+      const loc = getStateLocalization(c.bundesland)
+      const simp = loc.procedure.simplified
+      const simpCitation = simp.citation.trim()
+      const hasCitation = simpCitation.length > 0
+      return {
+        kind: 'vereinfachtes',
+        citation: hasCitation
+          ? simpCitation
+          : 'landesrechtliche Detail-Spezifika in Vorbereitung',
+        reasoning_de: `Teilabbruch ist eine ÄNDERUNG des Gebäudes, kein Abbruch im Sinne der Beseitigungs-Vorschriften — regelmäßig genehmigungspflichtig, für nicht-Sonderbauten typischerweise im vereinfachten Verfahren${hasCitation ? ` (${simpCitation})` : ''}. Eingriffstiefe (tragende Teile, Brandwände) bestimmt den Prüfumfang.`,
+        reasoning_en: `A partial demolition is an ALTERATION of the building, not a removal under the Beseitigung provisions — typically permit-required, for non-Sonderbau cases via the simplified procedure${hasCitation ? ` (${simpCitation})` : ''}. The intervention depth (load-bearing parts, fire walls) determines the review scope.`,
+        confidence: 'CALCULATED',
+        caveats: [
+          {
+            kind: 'bebauungsplan_specific',
+            message_de:
+              'Verfahrensart für den Teilabbruch mit dem lokalen Bauamt bestätigen; bei Eingriff in tragende Teile Standsicherheitsnachweis erforderlich.',
+            message_en:
+              'Confirm the procedure for the partial demolition with the local building authority; intervention in load-bearing parts requires a structural certificate.',
+          },
+        ],
+      }
+    }
     const cited = extractProcedureCitation(viRaw)
     const beseitigungCit = cited ?? beseitigungCitationFor(c.bundesland)
     const citDeSuffix = beseitigungCit ? ` (${beseitigungCit})` : ''
@@ -1447,6 +1482,17 @@ export function buildProcedureCase(
     const m = String(f.value).match(/(\d)/)
     return m ? Number(m[1]) : undefined
   })()
+  // T-05 sprint 2.75 — Vollabbruch/Teilabbruch from the canonical abbruch_typ.
+  const abbruch_typ = ((): 'vollabbruch' | 'teilabbruch' | undefined => {
+    const f = facts.find(
+      (x) => x.key.toLowerCase().replace(/[._\s-]/g, '') === 'abbruchtyp',
+    )
+    if (!f) return undefined
+    const v = String(f.value).toLowerCase()
+    if (/teil/.test(v)) return 'teilabbruch'
+    if (/voll/.test(v)) return 'vollabbruch'
+    return undefined
+  })()
   return {
     intent: intentFromTemplate((state.templateId ?? 'T-03') as TemplateId),
     bundesland: (project.bundesland ?? 'nrw') as BundeslandCode,
@@ -1465,5 +1511,6 @@ export function buildProcedureCase(
     verfahren_konflikt,
     gebaeude_freistehend,
     gebaeudeklasse_num,
+    abbruch_typ,
   }
 }

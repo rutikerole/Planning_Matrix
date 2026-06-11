@@ -20,7 +20,9 @@ import type {
   ProjectState,
 } from '@/types/projectState'
 import {
+  baujahrPre1995FromFacts,
   requiredDocumentsForCase,
+  schadstoffverdachtFromFacts,
   type RequiredDocument,
 } from '@/legal/requiredDocuments'
 import {
@@ -89,6 +91,8 @@ export function resolveDocuments(
     denkmalschutz: procedureCase.denkmalschutz,
     grenzstaendig: procedureCase.grenzstaendig,
     gebaeude_freistehend: procedureCase.gebaeude_freistehend,
+    baujahr_pre_1995: baujahrPre1995FromFacts(state.facts),
+    schadstoffverdacht: schadstoffverdachtFromFacts(state.facts),
     geg_trigger:
       procedureCase.eingriff_aussenhuelle &&
       (procedureCase.fassadenflaeche_m2 ?? 0) > 0,

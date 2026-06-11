@@ -54,7 +54,24 @@ A.5/D.5 STRUKTUR-FAKTEN list (one SHA re-baseline covers all).
 | Use-change matrix (alt → neu) — T-04 LEITFRAGE 1 | prose only | `nutzung_alt` / `nutzung_neu` | T-04 Sonderbau detection grounding |
 | Demolition volume (€/m³ basis) — T-05 cost frame | cost norms already read `bruttoraumflaeche_m3` (T-05) but cost is an honest stub pending BKI factors | `bruttoraumflaeche_m3` | cost engine once GAP-4 closes |
 
-## Recommendation (decision pending — operator checkpoint)
+## Phase 2.75 resolution (operator decision 2026-06-11)
+
+IMPLEMENTED: one A.5/D.5 directive extension covering section B's four live
+keys (gebaeude_freistehend, grenzstaendig, in_gestaltungssatzung,
+fassadenflaeche_m2 — sonderbau_scope RETIRED instead: its one consumer,
+computeConfidence, now reads the canonical Sonderbau contract) + abbruch_typ,
+baujahr, schadstoffverdacht, planungsrecht_paragraph from section C. Frontend
+wirings: baujahr→baujahr_pre_1995 in BOTH DocumentCase builders; teilabbruch
+routing (Änderung/simplified family, never the Beseitigung path);
+schadstoffverdacht promotes the pollutant doc recommended→REQUIRED and is the
+PRIMARY risk-bump signal (free-text pattern = fallback).
+
+EXPLICITLY DEFERRED to their templates' own campaigns (defensible coarse
+baselines exist; the directive must not grow past what the next walks can
+validate): T-07 75-m³ tier key, T-06 Art.-46 privilege, bestandsschutz
+tri-state, T-04 nutzung_alt/nutzung_neu matrix, cost m³ basis (GAP-4).
+
+## Recommendation (superseded by the resolution above)
 
 One additional A.5/D.5 directive block covering section B's five keys +
 `abbruch_typ` + `baujahr` + `schadstoffverdacht` (the highest-leverage subset

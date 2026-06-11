@@ -39,7 +39,11 @@ import {
   resolveProcedures,
   selectProcedures,
 } from '../src/features/result/lib/resolveProcedures.ts'
-import { requiredDocumentsForCase } from '../src/legal/requiredDocuments.ts'
+import {
+  baujahrPre1995FromFacts,
+  requiredDocumentsForCase,
+  schadstoffverdachtFromFacts,
+} from '../src/legal/requiredDocuments.ts'
 import { resolveRoles } from '../src/features/result/lib/resolveRoles.ts'
 import {
   ANZEIGE_DEMOLITION_PHASES,
@@ -217,6 +221,30 @@ const dCiteOnly = resolveProcedure(buildProcedureCase(sachsenProject, { template
 ok(dCiteOnly.kind === 'vereinfachtes' && dCiteOnly.confidence === 'CALCULATED', `citation-only simplified-§ verdict resolves by CLASS, not the abbruch tier (got ${dCiteOnly.kind}·${dCiteOnly.confidence})`)
 const dCite63a = resolveProcedure(buildProcedureCase({ bundesland: 'hessen', intent: 'abbruch' } as never, { templateId: 'T-05', facts: [{ key: 'verfahren_indikation', value: 'verfahrensfrei nach § 63a HBO', qualifier: q }], procedures: [], documents: [], roles: [], recommendations: [] } as never))
 ok(dCite63a.kind === 'verfahrensfrei' && /63a/.test(dCite63a.citation), `beseitigung-§ verdict (§ 63a HBO) honored with its § (got ${dCite63a.kind} · ${dCite63a.citation})`)
+
+// ── F9 (2.75): teilabbruch routing + baujahr wiring + schadstoff promotion ──
+console.log('F9 — 2.75 capture-contract wirings:')
+// Teilabbruch is an ÄNDERUNG — must NOT take the Beseitigung path (cross-surface).
+const teilState = { templateId: 'T-05', facts: [{ key: 'abbruch_typ', value: 'Teilabbruch — nur der Anbau wird entfernt', qualifier: q }], procedures: [], documents: [], roles: [], recommendations: [] } as never
+const dTeil = resolveProcedure(buildProcedureCase(sachsenProject, teilState))
+ok(dTeil.kind === 'vereinfachtes' && /§ 63 SächsBO/.test(dTeil.citation) && dTeil.confidence === 'CALCULATED', `teilabbruch → simplified Änderung family, never Beseitigung (got ${dTeil.kind} · ${dTeil.citation} · ${dTeil.confidence})`)
+ok(/Änderung|alteration/i.test(dTeil.reasoning_de + dTeil.reasoning_en), 'teilabbruch framing says Änderung, not Beseitigung')
+const selTeil = selectProcedures(resolveProcedures(sachsenProject, teilState).procedures)
+const mdTeil = buildExportMarkdown({ project: { id: 't', name: 'x', plot_address: 'x', bundesland: 'sachsen', intent: 'abbruch', template_id: 'T-05', status: 'in_progress', state: teilState } as never, events: [], lang: 'en' })
+ok((selTeil.primary?.title_en ?? '').includes('§ 63 SächsBO') && mdTeil.includes('§ 63 SächsBO') && !/§ 61 SächsBO/.test(mdTeil), 'teilabbruch cross-surface: web + .md show the Änderung verdict, no § 61 Beseitigung leak')
+// Vollabbruch + absent stay on the demolition tiers (non-vacuous counter-case).
+const dVoll = resolveProcedure(buildProcedureCase(sachsenProject, { templateId: 'T-05', facts: [{ key: 'abbruch_typ', value: 'Vollabbruch', qualifier: q }, { key: 'gebaeude_freistehend', value: true, qualifier: q }, { key: 'gebaeudeklasse', value: 'GK 3', qualifier: q }], procedures: [], documents: [], roles: [], recommendations: [] } as never))
+ok(dVoll.kind === 'verfahrensfrei', `vollabbruch keeps the demolition tiers (got ${dVoll.kind})`)
+// baujahr → baujahr_pre_1995 (reader was never populated before 2.75).
+const docs1960 = requiredDocumentsForCase({ procedureKind: 'verfahrensfrei', intent: 'abbruch', bundesland: 'sachsen', eingriff_tragende_teile: false, eingriff_aussenhuelle: false, denkmalschutz: false, geg_trigger: false, baujahr_pre_1995: baujahrPre1995FromFacts([{ key: 'baujahr_ca', value: 'ca. 1960' }]) } as never)
+ok(docs1960.some((d) => d.key === 'asbest_voruntersuchung'), 'baujahr 1960 → asbest doc fires')
+const docs1996 = requiredDocumentsForCase({ procedureKind: 'verfahrensfrei', intent: 'abbruch', bundesland: 'sachsen', eingriff_tragende_teile: false, eingriff_aussenhuelle: false, denkmalschutz: false, geg_trigger: false, baujahr_pre_1995: baujahrPre1995FromFacts([{ key: 'baujahr', value: 1996 }]) } as never)
+ok(!docs1996.some((d) => d.key === 'asbest_voruntersuchung'), 'baujahr 1996 → asbest doc SUPPRESSED (the never-wired reader now works)')
+const docsAbsent = requiredDocumentsForCase({ procedureKind: 'verfahrensfrei', intent: 'abbruch', bundesland: 'sachsen', eingriff_tragende_teile: false, eingriff_aussenhuelle: false, denkmalschutz: false, geg_trigger: false, baujahr_pre_1995: baujahrPre1995FromFacts([]) } as never)
+ok(docsAbsent.some((d) => d.key === 'asbest_voruntersuchung'), 'baujahr absent → asbest doc fires (conservative)')
+// schadstoffverdacht → recommended becomes REQUIRED.
+const docsSusp = requiredDocumentsForCase({ procedureKind: 'verfahrensfrei', intent: 'abbruch', bundesland: 'sachsen', eingriff_tragende_teile: false, eingriff_aussenhuelle: false, denkmalschutz: false, geg_trigger: false, schadstoffverdacht: schadstoffverdachtFromFacts([{ key: 'schadstoffverdacht', value: 'Asbest, sonstige Altlasten (KMF, PCB möglich)' }]) } as never)
+ok(docsSusp.find((d) => d.key === 'asbest_voruntersuchung')?.status === 'required', 'schadstoffverdacht captured → pollutant doc REQUIRED (was recommended)')
 
 // ── F7: heading-gate beseitigung concept (C4 guard) ──────────────────────
 console.log('F7 — heading-gate beseitigung concept:')

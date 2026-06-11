@@ -67,6 +67,54 @@ export interface DocumentCase {
   /** Pre-1995 Altbau → Asbest/PCB recommendation surfaces. Defaults
    *  to true for inner-city Düsseldorf addresses when unknown. */
   baujahr_pre_1995?: boolean
+  /** T-05 sprint 2.75 — confirmed pollutant suspicion (canonical
+   *  `schadstoffverdacht` fact). Promotes the pre-investigation
+   *  recommended → REQUIRED. */
+  schadstoffverdacht?: boolean
+}
+
+/**
+ * T-05 sprint 2.75 — derive baujahr_pre_1995 from the captured build-year
+ * facts. The reader field existed since v1.0.19 but NEITHER DocumentCase
+ * builder ever populated it, so the Asbest/PCB doc was never suppressed for
+ * confirmed ≥ 1995 buildings. Accepts the canonical `baujahr` plus the
+ * ad-hoc keys live walks have produced (baujahr_ca, bestandsgebaeude_baujahr,
+ * baujahr_geschaetzt, BUILDING.YEAR_BUILT); a free-text value like
+ * "ca. 1960" parses via the first plausible year. Absent/unparseable →
+ * undefined (conservative: the doc fires).
+ */
+export function baujahrPre1995FromFacts(
+  facts: ReadonlyArray<{ key: string; value: unknown }> | undefined,
+): boolean | undefined {
+  if (!facts) return undefined
+  const f = facts.find((x) => {
+    const k = x.key.toLowerCase().replace(/[._\s-]/g, '')
+    return k.includes('baujahr') || k === 'buildingyearbuilt'
+  })
+  if (!f) return undefined
+  const m = String(f.value).match(/(1[89]\d{2}|20\d{2})/)
+  if (!m) return undefined
+  return Number(m[1]) < 1995
+}
+
+/**
+ * T-05 sprint 2.75 — read the canonical `schadstoffverdacht` fact. A
+ * non-negated non-empty string ("Asbest, KMF, PCB möglich") or true reads as
+ * suspicion; explicit negation/false reads false; absent → undefined.
+ */
+export function schadstoffverdachtFromFacts(
+  facts: ReadonlyArray<{ key: string; value: unknown }> | undefined,
+): boolean | undefined {
+  if (!facts) return undefined
+  const f = facts.find(
+    (x) => x.key.toLowerCase().replace(/[._\s-]/g, '') === 'schadstoffverdacht',
+  )
+  if (!f) return undefined
+  if (f.value === true) return true
+  if (f.value === false) return false
+  const t = String(f.value).trim().toLowerCase()
+  if (t.length === 0) return undefined
+  return !/^(false|nein|no|0|keine?|kein|none|nicht|n\/a|entf[äa]llt|-|–|—)/.test(t)
 }
 
 /**
@@ -344,20 +392,26 @@ export function requiredDocumentsForCase(
   // T-02 Friedrichstraße new-build brief). Applies only to existing-building
   // intents (sanierung / umnutzung / abbruch / aufstockung / anbau), and there
   // only unless the year is explicitly ≥ 1995.
-  if (c.intent !== 'neubau' && c.baujahr_pre_1995 !== false) {
-    out.push(pollutantPreInvestigation())
+  if (c.intent !== 'neubau' && (c.baujahr_pre_1995 !== false || c.schadstoffverdacht === true)) {
+    out.push(pollutantPreInvestigation(c.schadstoffverdacht === true))
   }
 
   return out
 }
 
-/** Shared Asbest/PCB pre-investigation entry (TRGS 519). */
-function pollutantPreInvestigation(): RequiredDocument {
+/** Shared Asbest/PCB pre-investigation entry (TRGS 519). T-05 sprint 2.75 —
+ *  REQUIRED when a pollutant suspicion is captured (schadstoffverdacht),
+ *  recommended otherwise. */
+function pollutantPreInvestigation(suspected?: boolean): RequiredDocument {
   return {
     key: 'asbest_voruntersuchung',
-    name_de: 'Asbest-/PCB-Voruntersuchung (bei Altbau vor 1995)',
-    name_en: 'Asbestos/PCB pre-investigation (Altbau before 1995)',
-    status: 'recommended',
+    name_de: suspected
+      ? 'Asbest-/PCB-Voruntersuchung (Schadstoffverdacht erfasst)'
+      : 'Asbest-/PCB-Voruntersuchung (bei Altbau vor 1995)',
+    name_en: suspected
+      ? 'Asbestos/PCB pre-investigation (pollutant suspicion captured)'
+      : 'Asbestos/PCB pre-investigation (Altbau before 1995)',
+    status: suspected ? 'required' : 'recommended',
     delivery_de: 'Schadstoffsachverständige:r',
     delivery_en: 'Pollutant-survey specialist',
     citation: 'TRGS 519',
@@ -416,8 +470,8 @@ function demolitionDocuments(c: DocumentCase): RequiredDocument[] {
             'Required for attached or parcel-edge buildings.',
         }),
   })
-  if (c.baujahr_pre_1995 !== false) {
-    out.push(pollutantPreInvestigation())
+  if (c.baujahr_pre_1995 !== false || c.schadstoffverdacht === true) {
+    out.push(pollutantPreInvestigation(c.schadstoffverdacht === true))
   }
   out.push({
     key: 'entsorgungsnachweise',
