@@ -91,7 +91,9 @@ export function AtAGlance({ project, state }: Props) {
       ? t('result.workspace.ataglance.gkUseConversion')
       : gkCarveOut === 'storey-addition'
         ? t('result.workspace.ataglance.gkAufstockung')
-        : formatGebaeudeklasseValue(derivedKlasse, lang)
+        : gkCarveOut === 'extension'
+          ? t('result.workspace.ataglance.gkAnbau')
+          : formatGebaeudeklasseValue(derivedKlasse, lang)
 
   // Cost — reuse the München heuristic engine, now with area + zone +
   // region inputs flowing through (A.4).

@@ -1850,9 +1850,14 @@ async function runStaticGate() {
     // Meta-sweep item 3a — the carve-outs are now single-sourced in
     // gkDerivationCarveOut (T-04 use-conversion + T-06 storey-addition); the
     // final fallback is STILL formatGebaeudeklasseValue.
-    { ok: /gkAufstockung'\)\s*:\s*formatGebaeudeklasseValue\(derivedKlasse, lang\)/.test(winAtAGlance)
+    // fix/t07-prewalk item 2 — chain gained the T-07 'extension' arm
+    // (gkAnbau); the assertion's meaning is unchanged: every carve-out
+    // resolves via gkDerivationCarveOut and the null case STILL falls
+    // through to formatGebaeudeklasseValue.
+    { ok: /gkAnbau'\)\s*:\s*formatGebaeudeklasseValue\(derivedKlasse, lang\)/.test(winAtAGlance)
+        && /gkAufstockung/.test(winAtAGlance)
         && /gkDerivationCarveOut\(state\.templateId\)/.test(winAtAGlance),
-      msg: 'At-a-Glance GK value: carve-outs via gkDerivationCarveOut, null case via formatGebaeudeklasseValue (PDF-consistent honest deferral)' },
+      msg: 'At-a-Glance GK value: carve-outs via gkDerivationCarveOut (incl. T-07 extension), null case via formatGebaeudeklasseValue (PDF-consistent honest deferral)' },
     // WIN 4 — state isolation: the bleed guard must scrub BW tokens on the wrong state.
     { ok: /state:\s*'bw',\s*pattern:\s*\/\\bLBO\\s\+BW\\b\//.test(winBleedGuard),
       msg: 'cross-state bleed guard must keep the BW LBO-token scrubber (no Bayern/NRW bleed into BW)' },

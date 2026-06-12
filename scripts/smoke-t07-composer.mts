@@ -12,6 +12,7 @@ import {
   resolveProcedure,
 } from '../src/legal/resolveProcedure.ts'
 import { resolveProcedures, selectProcedures } from '../src/features/result/lib/resolveProcedures.ts'
+import { gkCarveOutValue, gkDerivationCarveOut } from '../src/legal/deriveGebaeudeklasse.ts'
 
 const t: Tally = { pass: 0, fail: 0 }
 const ok = makeOk(t)
@@ -121,5 +122,32 @@ ok(classifyVerdictDirection('anzeigepflichtig nach Art. 57 Abs. 7') === 'anzeige
 ok(classifyVerdictDirection('verfahrensfrei nach § 61 SächsBO') === 'free', 'free direction unchanged')
 ok(classifyVerdictDirection('vereinfachtes Baugenehmigungsverfahren § 64') === 'simplified', 'simplified direction unchanged')
 ok(classifyVerdictDirection('Genehmigungsfreistellung nach § 62 SächsBO') === null, 'freistellung stays branch-matched (direction null, unchanged)')
+
+// ── fix/t07-prewalk item 2 — derived-GK Key-Data carve-out extends to T-07.
+// An Anbau modifies an EXISTING building and can change the GK via the
+// NE-size/count thresholds (a Nutzungseinheit crossing 400 m² flips GK 1/2→3
+// or 4→5); the derivation is static math with no pre/post-extension model —
+// the same rationale that carved out T-06. Pre-fix gkDerivationCarveOut
+// returned null for T-07, so PDF Key Data + At-a-Glance printed a freshly
+// derived (plausibly pre-extension) GK. The carve-out is the proven single
+// source consumed by both surfaces (pinned in smoke-t06-composer).
+console.log('T-07 — derived-GK carve-out (fix/t07-prewalk item 2):')
+ok(gkDerivationCarveOut('T-07') === 'extension', `gkDerivationCarveOut('T-07') === 'extension' (got ${gkDerivationCarveOut('T-07')})`)
+ok(
+  /Anbau/.test(gkCarveOutValue('extension', 'de')) && /extension/i.test(gkCarveOutValue('extension', 'en')),
+  'extension carve-out text names the Anbau case in both languages',
+)
+ok(
+  !/Aufstockung|Nutzungsänderung/.test(gkCarveOutValue('extension', 'de')),
+  'extension carve-out text is its own, not T-04/T-06 copy',
+)
+ok(
+  gkDerivationCarveOut('T-04') === 'use-conversion' && gkDerivationCarveOut('T-06') === 'storey-addition',
+  'T-04/T-06 carve-outs unchanged (no over-fix)',
+)
+ok(
+  gkDerivationCarveOut('T-01') === null && gkDerivationCarveOut('T-03') === null && gkDerivationCarveOut('T-02') === null,
+  'T-01/T-02/T-03 still derive normally (no over-fix)',
+)
 
 finish('smoke-t07-composer', t)

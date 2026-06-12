@@ -402,12 +402,6 @@ export function detectHardBlockers(c: ProcedureCase): ProcedureHardBlocker[] {
 
 export interface ProcedureDecision {
   kind: ProcedureKind
-  /** fix/t07-prewalk item 1 — the case intent, set once by resolveProcedure()
-   *  so label consumers (web card, PDF S05/Key Data, .md) can render the
-   *  intent-correct anzeige wording without re-deriving the case. Optional
-   *  for backward compatibility; absent intent renders the NEUTRAL wording
-   *  (never the demolition variant). */
-  intent?: ProcedureIntent
   citation: string
   /** German one-sentence rationale (rendered as Area B body / procedure card body). */
   reasoning_de: string
@@ -415,6 +409,11 @@ export interface ProcedureDecision {
   reasoning_en: string
   /** Qualifier hint for the PDF qualifier pill. */
   confidence: 'CALCULATED' | 'ASSUMED'
+  /** fix/t07-prewalk item 1 — the case intent, stamped once by
+   *  resolveProcedure() so label consumers render the intent-correct anzeige
+   *  wording. Optional for compat; absent intent renders NEUTRAL wording
+   *  (the demolition variant is opt-in by intent, never a default). */
+  intent?: ProcedureIntent
   caveats: ReadonlyArray<ProcedureCaveat>
 }
 

@@ -1211,8 +1211,8 @@ export async function buildExportPdf({
     // the GK; a derived post-addition number would contradict the persona's
     // GK-retention statement on the template's central legal claim). An
     // explicit gebaeudeklasse fact, if present, still renders above via
-    // hasExplicitKlasse. T-04 states a definite rule → CALCULATED; T-06 defers
-    // an open assessment → ASSUMED.
+    // hasExplicitKlasse. T-04 states a definite rule → CALCULATED; T-06 and
+    // T-07 (fix/t07-prewalk item 2) defer an open assessment → ASSUMED.
     const carveOut = gkDerivationCarveOut(state.templateId)
     keyDataRows.push({
       field: lang === 'en' ? 'Building class' : 'Gebäudeklasse',
@@ -1222,7 +1222,7 @@ export async function buildExportPdf({
         quality:
           carveOut === 'use-conversion'
             ? 'CALCULATED'
-            : carveOut === 'storey-addition'
+            : carveOut === 'storey-addition' || carveOut === 'extension'
               ? 'ASSUMED'
               : derived.qualifier,
       },

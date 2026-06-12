@@ -1929,6 +1929,7 @@
         "tbd": "—",
         "gkUseConversion": "Not re-classified · use conversion",
         "gkAufstockung": "Not auto-derived · storey addition can change class",
+        "gkAnbau": "Not auto-derived · extension can change class",
         "costByQuote": "By quote · no HOAI schedule"
       },
       "actions": {
