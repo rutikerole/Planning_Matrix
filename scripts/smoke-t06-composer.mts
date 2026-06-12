@@ -7,6 +7,11 @@ import { buildProcedureCase, resolveProcedure } from '../src/legal/resolveProced
 import { deriveGebaeudeklasse, gkDerivationCarveOut, isExplicitKlasseFactKey } from '../src/legal/deriveGebaeudeklasse.ts'
 import { composeDoNext } from '../src/features/result/lib/composeDoNext.ts'
 import { deriveBaselineRoles } from '../src/features/result/lib/deriveBaselineRoles.ts'
+import { buildExportMarkdown } from '../src/lib/export/exportMarkdown.ts'
+import { aggregateQualifiers } from '../src/features/result/lib/qualifierAggregate.ts'
+import { computeOpenItems } from '../src/features/result/lib/computeOpenItems.ts'
+import { readFile as readFileFs } from 'node:fs/promises'
+const readFile = (p: string) => readFileFs(p, 'utf8')
 
 const t: Tally = { pass: 0, fail: 0 }
 const ok = makeOk(t)
@@ -123,5 +128,84 @@ ok(isExplicitKlasseFactKey('gebaeudeklasse'), 'canonical gebaeudeklasse stays cl
 ok(isExplicitKlasseFactKey('gebaeudeklasse_geplant') && isExplicitKlasseFactKey('geb_klasse'), 'gebaeudeklasse_geplant / geb_klasse stay class-bearing')
 ok(isExplicitKlasseFactKey('gk_geplant') && isExplicitKlasseFactKey('klasse'), 'gk_geplant / klasse stay class-bearing')
 ok(isExplicitKlasseFactKey('kenntnisgabeverfahren_anwendbar') === false, 'unrelated walk-1 free-form key is not class-bearing (control)')
+
+// ── fix/t06-walk2 — Thüringen/Jena walk-2 regression pins ──────────────────
+// Walk evidence (storey-addition-wagnergasse-2026-06-12 PDF/.md): FOUR
+// duplicate structural-engineer recs (Section VIII items 01/02/04/06)
+// because the PDF Section VIII + Executive AND the .md Top-3 raw-sort
+// state.recommendations (no dedup), and the walk-1 verb lexicon was an
+// open set ("Appoint"/"bestellen" not enumerated). Class fix: ONE shared
+// resolveRecommendations selector (actor+TOPIC discrimination) consumed by
+// every surface. Plus: abbruch_typ (a T-05 contract key) leaked onto T-06
+// and rendered on five surfaces; plot.outside_munich_acknowledged leaked
+// into the .md Eckdaten + quality denominator (isSystemFlagKey existed but
+// only the PDF consumed it).
+const Q = { source: 'LEGAL', quality: 'CALCULATED', setAt: 'x', setBy: 'system' }
+const walk2Recs = [
+  { id: 'r1', rank: 1, title_en: 'Engage a structural engineer for existing-building assessment', title_de: 'Tragwerksplaner:in zur Bestandsbewertung hinzuziehen', detail_en: 'Commission a structural engineer registered in Thuringia to assess the load-bearing capacity of the existing floors and walls (building from 1955). Legal basis: § 72 ThürBO.', detail_de: 'Lastreserven prüfen. § 72 ThürBO.' },
+  { id: 'r2', rank: 2, title_en: 'Appoint a structural engineer to assess the existing structure', title_de: 'Tragwerksplaner:in zur Bewertung des Bestands bestellen', detail_en: 'Appoint a structural engineer registered in Thuringia. Contact: Kammer der Ingenieure Thüringen (KIT).', detail_de: 'Kammer der Ingenieure Thüringen (KIT).' },
+  { id: 'r3', rank: 3, title_en: 'Clarify second means of escape — contact Feuerwehr Jena and Bauamt', title_de: 'Zweiten Rettungsweg klären — Feuerwehr Jena und Bauamt kontaktieren', detail_en: 'Have the fire brigade confirm ladder reach. § 36 ThürBO.', detail_de: 'Anleiterbarkeit bestätigen lassen. § 36 ThürBO.' },
+  { id: 'r4', rank: 4, title_en: 'Commission a structural engineer for existing-building assessment', title_de: 'Tragwerksplaner:in für die Bestandsaufnahme beauftragen', detail_en: 'A structural assessment of the existing floors and walls (built 1955) is mandatory under § 72 ThürBO before any permit application. Use the Kammer der Ingenieure Thüringen (KIT) register.', detail_de: 'Statische Bewertung zwingend nach § 72 ThürBO; KIT-Verzeichnis nutzen.' },
+  { id: 'r5', rank: 5, title_en: 'Clarify parking space obligation with Bauamt Jena', title_de: 'Stellplatzpflicht beim Bauamt Jena klären', detail_en: 'Ask Bauamt Jena whether additional parking spaces are required under § 52 ThürBO.', detail_de: 'Stellplatzfrage nach § 52 ThürBO klären.' },
+  { id: 'r6', rank: 6, title_en: 'Engage a structural engineer for existing-building assessment', title_de: 'Tragwerksplaner:in mit Erfahrung im Nachkriegsbestand einschalten', detail_en: 'Engage a structural engineer experienced in post-war building stock. KIT maintains a public register at kit-ht.de.', detail_de: 'Nachkriegsbestand-Erfahrung; KIT-Register.' },
+]
+const isStructural = (s: string) => /structural engineer|tragwerksplaner/i.test(s)
+const w2Project = (recs: unknown[], facts: unknown[] = []) => ({
+  id: 'w2', name: 'Storey addition Wagnergasse', plot_address: 'Wagnergasse 25, 07743 Jena',
+  intent: 'aufstockung', bundesland: 'thueringen', template_id: 'T-06', status: 'in_progress',
+  created_at: '2026-06-12T00:00:00Z',
+  state: { templateId: 'T-06', facts, procedures: [], documents: [], roles: [], recommendations: recs },
+}) as never
+
+console.log('T-06 — walk-2: shared recommendations selector (the 01/02/04/06 dup set):')
+const w2State = { templateId: 'T-06', facts: [], procedures: [], documents: [], roles: [], recommendations: walk2Recs } as never
+const w2DoNext = composeDoNext({ project: w2Project(walk2Recs), state: w2State, lang: 'en' })
+ok(w2DoNext.filter((i) => isStructural(i.title)).length === 1, `walk-2 verbatim 4-dup set → ONE structural item on the card (got ${w2DoNext.filter((i) => isStructural(i.title)).length})`)
+const w2Md = buildExportMarkdown({ project: w2Project(walk2Recs), events: [], lang: 'en' })
+const w2MdTop = w2Md.split('## Top 3')[1]?.split('---')[0] ?? ''
+ok((w2MdTop.match(/structural engineer/gi) ?? []).length <= 2, '.md Top-3 carries ONE structural rec (title+detail), not the raw rank-1+rank-2 dup pair')
+ok(/escape|Rettungsweg/i.test(w2MdTop) && /parking|Stellplatz/i.test(w2MdTop), '.md Top-3 backfills with the genuine non-duplicates (escape + parking)')
+// Novel-verb pair — in NO lexicon, must still collapse (topic+actor, not verbs).
+const novelRecs = [
+  { id: 'n1', rank: 1, title_en: 'Retain a structural engineer to review the load-bearing structure', title_de: 'Tragwerksplaner:in zur Prüfung der Tragstruktur gewinnen', detail_en: 'Short.', detail_de: 'Kurz.' },
+  { id: 'n2', rank: 2, title_en: 'Bring in a structural engineer for the existing floors', title_de: 'Tragwerksplaner:in für die Bestandsdecken einbeziehen', detail_en: 'Much richer rationale with all the load-bearing detail the bauherr needs.', detail_de: 'Reichere Begründung.' },
+  { id: 'n3', rank: 3, title_en: 'Clarify parking space obligation with Bauamt Jena', title_de: 'Stellplatzpflicht beim Bauamt klären', detail_en: 'Distinct topic.', detail_de: 'Anderes Thema.' },
+]
+const novelOut = composeDoNext({ project: w2Project(novelRecs), state: { templateId: 'T-06', facts: [], procedures: [], documents: [], roles: [], recommendations: novelRecs } as never, lang: 'en' })
+ok(novelOut.filter((i) => isStructural(i.title)).length === 1, `NOVEL verbs (Retain/Bring in/gewinnen/einbeziehen) still collapse — topic axis, not verb lexicon (got ${novelOut.filter((i) => isStructural(i.title)).length})`)
+ok(novelOut.some((i) => /parking|Stellplatz/i.test(i.title)), 'distinct topic survives the novel-verb dedup (never drop non-duplicates)')
+// Cross-surface: PDF Section VIII + Executive must consume the SAME selector
+// (source pin — the raw `state.recommendations` sort is the CLASS-1 split).
+const exportPdfSrcW2 = await readFile('src/features/chat/lib/exportPdf.ts')
+const exportMdSrcW2 = await readFile('src/lib/export/exportMarkdown.ts')
+ok(/resolveRecommendations\(/.test(exportPdfSrcW2) && !/state\.recommendations \?\? \[\]\)\s*\n?\s*\.slice\(\)\s*\n?\s*\.sort/.test(exportPdfSrcW2), 'exportPdf Section VIII + Executive consume resolveRecommendations (no raw rank-sort)')
+ok(/resolveRecommendations\(/.test(exportMdSrcW2), '.md Top-3 consumes resolveRecommendations (no raw rank-sort)')
+
+console.log('T-06 — walk-2: abbruch_typ template-foreign quarantine:')
+const foreignFacts = [
+  { key: 'abbruch_typ', value: 'teilabbruch', qualifier: { ...Q, quality: 'ASSUMED' } },
+  { key: 'baujahr', value: 1955, qualifier: { ...Q, quality: 'DECIDED', source: 'CLIENT' } },
+]
+const mdForeign = buildExportMarkdown({ project: w2Project([], foreignFacts), events: [], lang: 'en' })
+ok(!/abbruch/i.test(mdForeign.split('## Key data')[1] ?? mdForeign), 'T-06 .md Eckdaten suppresses the T-05 contract key abbruch_typ')
+const aggT06 = aggregateQualifiers({ templateId: 'T-06', facts: foreignFacts } as never)
+ok(aggT06.total === 1, `T-06 quality denominator excludes the foreign key (got total ${aggT06.total}, want 1)`)
+const openT06 = computeOpenItems({ templateId: 'T-06', facts: foreignFacts } as never, 'en', 4, 'thueringen')
+ok(!openT06.topPriority.some((i) => /abbruch/i.test(i.label)) && !openT06.topPriority.some((i) => /abbruch/i.test(i.id)), 'T-06 verify-with-architect/exec flags exclude abbruch_typ')
+// Control — same key on T-05 renders + counts normally.
+const aggT05 = aggregateQualifiers({ templateId: 'T-05', facts: foreignFacts } as never)
+ok(aggT05.total === 2, `T-05 keeps abbruch_typ in the denominator (got total ${aggT05.total}, want 2)`)
+const mdT05 = buildExportMarkdown({ project: { ...(w2Project([], foreignFacts) as Record<string, unknown>), intent: 'abbruch', template_id: 'T-05', state: { templateId: 'T-05', facts: foreignFacts, procedures: [], documents: [], roles: [], recommendations: [] } } as never, events: [], lang: 'en' })
+ok(/abbruch/i.test(mdT05.split(/## Key data|## Eckdaten/)[1] ?? ''), 'T-05 .md still renders abbruch_typ (quarantine is template-scoped, not a blanket hide)')
+
+console.log('T-06 — walk-2: internal system-flag suppression on the remaining surfaces:')
+const internalFacts = [
+  { key: 'plot.outside_munich_acknowledged', value: true, qualifier: { ...Q, quality: 'DECIDED', source: 'CLIENT' } },
+  { key: 'baujahr', value: 1955, qualifier: { ...Q, quality: 'DECIDED', source: 'CLIENT' } },
+]
+const mdInternal = buildExportMarkdown({ project: w2Project([], internalFacts), events: [], lang: 'en' })
+ok(!/outside.?munich|acknowledged/i.test(mdInternal), '.md never renders plot.outside_munich_acknowledged (PDF was already clean — v1.0.23 isSystemFlagKey)')
+const aggInternal = aggregateQualifiers({ templateId: 'T-06', facts: internalFacts } as never)
+ok(aggInternal.total === 1, `quality denominator excludes system flags (got total ${aggInternal.total}, want 1)`)
 
 finish('smoke-t06-composer', t)

@@ -1,4 +1,5 @@
 import type { ProjectState } from '@/types/projectState'
+import { isDeliverableFactKey } from '@/legal/systemFlagFilter'
 import { humanizeFact } from './humanizeFact'
 import { resolveAreas } from './resolveAreas'
 
@@ -42,7 +43,12 @@ export function computeOpenItems(
   // surface München/BayBO citations on the Verify-with-Architect card.
   bundesland?: string | null,
 ): OpenItems {
-  const facts = state.facts ?? []
+  // fix/t06-walk2 — verify-with-architect + exec flags must not surface
+  // system flags or template-foreign typed facts (walk-2: "Abbruch Typ:
+  // teilabbruch" became a headline flag on a T-06 Aufstockung).
+  const facts = (state.facts ?? []).filter((f) =>
+    isDeliverableFactKey(f.key, state.templateId),
+  )
   // Phase 8.5 (A.2): use the resolved Areas (auto-flips to ACTIVE
   // when ≥3 domain-matching facts with non-assumed quality exist).
   // Without this, legacy projects with a complete consultation but

@@ -32,3 +32,43 @@ export function isSystemFlagKey(key: string): boolean {
   if (k.endsWith('.acknowledged')) return true
   return false
 }
+
+// ── fix/t06-walk2 — template-foreign typed-fact quarantine ─────────────
+// The A.5/D.5 TYPISIERTE PROJEKT-FAKTEN directive ships in EVERY
+// template's prompt, so a typed contract key can leak onto a foreign
+// template (walk-2: `abbruch_typ=teilabbruch · ASSUMED` on a T-06
+// Aufstockung — the persona reasoned about the partial roof demolition
+// and obeyed the T-05 contract). The fact still PERSISTS (information
+// kept, Logs see it raw); deliverable surfaces treat it as
+// TEMPLATE-FOREIGN: excluded from PDF Key Data, .md Eckdaten, the
+// verify-with-architect / exec-flags path (computeOpenItems) and the
+// quality denominator + confidence inputs (aggregateQualifiers).
+// Quarantine is READ-time on purpose: legacy facts carry no persist-time
+// tag, so readers need this derivation anyway — and the edge graph stays
+// untouched. Directive-side template scoping rides the SHA bundle
+// (SPRINT_PLAN, persona directive bundle).
+// Registry: ONLY keys whose contract is genuinely template-scoped.
+// Universal keys (gebaeudeklasse, denkmalschutz, …) must NOT be listed.
+const TYPED_KEY_APPLICABLE_TEMPLATES: Readonly<Record<string, readonly string[]>> = {
+  // T-05 sprint 2.75 — drives the Beseitigungs- vs Änderungs-Routing;
+  // meaningless (and exec-flag noise) on every other template.
+  abbruch_typ: ['T-05'],
+}
+
+export function isTemplateForeignFact(
+  key: string,
+  templateId: string | null | undefined,
+): boolean {
+  const allowed = TYPED_KEY_APPLICABLE_TEMPLATES[key.toLowerCase()]
+  if (!allowed) return false
+  return templateId == null || !allowed.includes(templateId)
+}
+
+/** Combined deliverable-surface filter: system flags + template-foreign
+ *  typed facts. Single predicate so the five surfaces cannot drift. */
+export function isDeliverableFactKey(
+  key: string,
+  templateId: string | null | undefined,
+): boolean {
+  return !isSystemFlagKey(key) && !isTemplateForeignFact(key, templateId)
+}

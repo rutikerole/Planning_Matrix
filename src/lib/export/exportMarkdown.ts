@@ -8,6 +8,8 @@
 import type { ProjectRow } from '@/types/db'
 import type { ProjectState, AreaState } from '@/types/projectState'
 import { factLabel, factValueWithUnit } from '@/lib/factLabel'
+import { isDeliverableFactKey } from '@/legal/systemFlagFilter'
+import { resolveRecommendations } from '@/features/result/lib/resolveRecommendations'
 import { resolveRoles } from '@/features/result/lib/resolveRoles'
 import { resolveDocuments } from '@/features/result/lib/resolveDocuments'
 import {
@@ -77,7 +79,9 @@ export function buildExportMarkdown({ project, events, lang }: BuildArgs): strin
   lines.push('---')
 
   // ── Top-3 ───────────────────────────────────────────────────────
-  const recs = (state.recommendations ?? []).slice().sort((a, b) => a.rank - b.rank)
+  // fix/t06-walk2 — the raw rank-sort here printed the walk-2 duplicate
+  // pair as Top-3 #1+#2; every surface now shares resolveRecommendations.
+  const recs = resolveRecommendations(state)
   if (recs.length > 0) {
     lines.push('')
     lines.push(`## ${t('Top 3 Schritte', 'Top 3 Next Steps')}`)
@@ -238,7 +242,12 @@ export function buildExportMarkdown({ project, events, lang }: BuildArgs): strin
   }
 
   // ── Eckdaten (extracted facts) ──────────────────────────────────
-  const facts = state.facts ?? []
+  // fix/t06-walk2 — same deliverable filter as the PDF Key Data table:
+  // system flags (plot.outside_munich_acknowledged leaked into walk-2's
+  // .md) + template-foreign typed facts (abbruch_typ on T-06).
+  const facts = (state.facts ?? []).filter((f) =>
+    isDeliverableFactKey(f.key, state.templateId),
+  )
   if (facts.length > 0) {
     lines.push('')
     lines.push(`## ${t('Eckdaten', 'Key data')}`)
