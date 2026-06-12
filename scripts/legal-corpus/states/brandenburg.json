@@ -8,8 +8,14 @@
     "last_amendment_de": "Fassung der Bekanntmachung vom 15. November 2018 (GVBl.I/18, Nr. 39), zuletzt geändert durch Gesetz vom 28. September 2023 (GVBl.I/23, Nr. 18)",
     "last_amendment_date": "2023-09-28",
     "data_current_as_of": "2026-05-27",
-    "sources": ["https://www.baunormenlexikon.de/norm/bbgbo/9e43e85a-7c8d-4041-b0bd-4b91f839545f"],
-    "verification_summary": { "primary-source": 0, "secondary-mirror": 98, "unverified": 0 },
+    "sources": [
+      "https://www.baunormenlexikon.de/norm/bbgbo/9e43e85a-7c8d-4041-b0bd-4b91f839545f"
+    ],
+    "verification_summary": {
+      "primary-source": 0,
+      "secondary-mirror": 98,
+      "unverified": 0
+    },
     "notes": "Official portal bravors.brandenburg.de/gesetze/bbgbo served only the SUPERSEDED 2008 version (außer Kraft seit 1. Juli 2016, completely different § numbering) — not usable as a current-law primary source. Current 2018 version captured from baunormenlexikon.de (secondary-mirror)."
   },
   "paragraphs": {
@@ -27,7 +33,9 @@
       "heading_source_url": "https://www.baunormenlexikon.de/norm/bbgbo/9e43e85a-7c8d-4041-b0bd-4b91f839545f",
       "heading_fetched_at": "2026-05-27",
       "verification_tier": "secondary-mirror",
-      "archetypes": ["gebaeudeklasse"],
+      "archetypes": [
+        "gebaeudeklasse"
+      ],
       "scope_summary_de": "Begriffsbestimmungen der Bauordnung, insbesondere Gebäudeklassen, Geschosse und Sonderbauten.",
       "scope_summary_en": "Statutory definitions, in particular building classes, storeys and special buildings."
     },
@@ -61,7 +69,9 @@
       "heading_source_url": "https://www.baunormenlexikon.de/norm/bbgbo/9e43e85a-7c8d-4041-b0bd-4b91f839545f",
       "heading_fetched_at": "2026-05-27",
       "verification_tier": "secondary-mirror",
-      "archetypes": ["abstandsflaechen"],
+      "archetypes": [
+        "abstandsflaechen"
+      ],
       "scope_summary_de": "Regelt die einzuhaltenden Abstandsflächen und Abstände vor Außenwänden gegenüber Nachbargrenzen.",
       "scope_summary_en": "Governs the setback areas and distances required in front of exterior walls toward neighbouring boundaries.",
       "procedure_relevance": "applies-to: T-01,T-02,T-05,T-07"
@@ -112,7 +122,9 @@
       "heading_source_url": "https://www.baunormenlexikon.de/norm/bbgbo/9e43e85a-7c8d-4041-b0bd-4b91f839545f",
       "heading_fetched_at": "2026-05-27",
       "verification_tier": "secondary-mirror",
-      "archetypes": ["bautechnische_nachweise"],
+      "archetypes": [
+        "bautechnische_nachweise"
+      ],
       "scope_summary_de": "Verlangt die Standsicherheit jeder baulichen Anlage und die Tragfähigkeit des Baugrunds.",
       "scope_summary_en": "Requires the structural stability of every building and the load-bearing capacity of the ground."
     },
@@ -130,7 +142,9 @@
       "heading_source_url": "https://www.baunormenlexikon.de/norm/bbgbo/9e43e85a-7c8d-4041-b0bd-4b91f839545f",
       "heading_fetched_at": "2026-05-27",
       "verification_tier": "secondary-mirror",
-      "archetypes": ["brandschutz"],
+      "archetypes": [
+        "brandschutz"
+      ],
       "scope_summary_de": "Allgemeine Grundpflicht zum vorbeugenden Brandschutz baulicher Anlagen.",
       "scope_summary_en": "General duty of preventive fire protection for buildings."
     },
@@ -252,7 +266,9 @@
       "heading_source_url": "https://www.baunormenlexikon.de/norm/bbgbo/9e43e85a-7c8d-4041-b0bd-4b91f839545f",
       "heading_fetched_at": "2026-05-27",
       "verification_tier": "secondary-mirror",
-      "archetypes": ["brandschutz"],
+      "archetypes": [
+        "brandschutz"
+      ],
       "scope_summary_de": "Bestimmt die Brandverhaltensanforderungen an Baustoffe und Bauteile nach Gebäudeklasse.",
       "scope_summary_en": "Sets fire-behaviour requirements for building materials and components by building class."
     },
@@ -310,7 +326,9 @@
       "heading_source_url": "https://www.baunormenlexikon.de/norm/bbgbo/9e43e85a-7c8d-4041-b0bd-4b91f839545f",
       "heading_fetched_at": "2026-05-27",
       "verification_tier": "secondary-mirror",
-      "archetypes": ["pv_pflicht"],
+      "archetypes": [
+        "pv_pflicht"
+      ],
       "scope_summary_de": "Begründet eine Photovoltaik-Pflicht für die Stromerzeugung auf Dächern bestimmter Gebäude.",
       "scope_summary_en": "Establishes a photovoltaic obligation for electricity generation on roofs of certain buildings."
     },
@@ -448,7 +466,9 @@
       "heading_source_url": "https://www.baunormenlexikon.de/norm/bbgbo/9e43e85a-7c8d-4041-b0bd-4b91f839545f",
       "heading_fetched_at": "2026-05-27",
       "verification_tier": "secondary-mirror",
-      "archetypes": ["stellplaetze"],
+      "archetypes": [
+        "stellplaetze"
+      ],
       "scope_summary_de": "Regelt die Pflicht zur Herstellung von Stellplätzen, Garagen und Fahrrad-Abstellplätzen.",
       "scope_summary_en": "Governs the obligation to provide parking spaces, garages and bicycle storage."
     },
@@ -466,7 +486,9 @@
       "heading_source_url": "https://www.baunormenlexikon.de/norm/bbgbo/9e43e85a-7c8d-4041-b0bd-4b91f839545f",
       "heading_fetched_at": "2026-05-27",
       "verification_tier": "secondary-mirror",
-      "archetypes": ["sonderbauten"],
+      "archetypes": [
+        "sonderbauten"
+      ],
       "scope_summary_de": "Erlaubt besondere Anforderungen oder Erleichterungen für Sonderbauten.",
       "scope_summary_en": "Allows special requirements or relief for special buildings."
     },
@@ -550,9 +572,17 @@
       "heading_source_url": "https://www.baunormenlexikon.de/norm/bbgbo/9e43e85a-7c8d-4041-b0bd-4b91f839545f",
       "heading_fetched_at": "2026-05-27",
       "verification_tier": "secondary-mirror",
-      "archetypes": ["verfahrensfrei"],
+      "archetypes": [
+        "verfahrensfrei"
+      ],
       "scope_summary_de": "Listet die genehmigungsfreien (verfahrensfreien) Bauvorhaben.",
-      "scope_summary_en": "Lists the permit-free (procedure-free) building projects."
+      "scope_summary_en": "Lists the permit-free (procedure-free) building projects.",
+      "body_de_official": "(1) Baugenehmigungsfrei sind: 1. folgende Gebäude oder bauliche Anlagen: a) Gebäude ohne Aufenthaltsräume, Toiletten oder Feuerstätten mit nicht mehr als 75 Kubikmeter Brutto-Rauminhalt, die nicht im Außenbereich liegen; dies gilt nicht für Garagen, Ställe sowie Gebäude, die Verkaufs- oder Ausstellungszwecken dienen, […] j) Terrassenüberdachungen mit einer Fläche bis zu 30 Quadratmeter und einer Tiefe bis zu 4 Meter, außer im Außenbereich, k) vor der Außenwand eines Wohngebäudes aus lichtdurchlässigen Baustoffen errichtete unbeheizte Wintergärten mit nicht mehr als 20 Quadratmeter Grundfläche und 75 Kubikmeter Brutto-Rauminhalt, […]",
+      "body_scope_note": "Abs. 1 Nr. 1 Buchst. a, j, k vollständig (Anbau-relevante Tatbestände); übrige Buchstaben/Nummern/Absätze als […] elidiert. Buchstabenzuordnung aus der amtlichen Listenstruktur (lower-alpha) abgeleitet.",
+      "body_source_url": "https://bravors.brandenburg.de/gesetze/bbgbo_2016",
+      "body_source_note": "BRAVORS — amtliches Brandenburgisches Vorschriftensystem. BbgBO i.d.F. der Bek. v. 15.11.2018 (GVBl. I/18 Nr. 39), zuletzt geändert durch Gesetz v. 28.09.2023 (GVBl. I/23 Nr. 18).",
+      "body_fetched_at": "2026-06-12",
+      "body_verification_tier": "primary-source"
     },
     "62": {
       "marker": "§ 62",
@@ -560,10 +590,18 @@
       "heading_source_url": "https://www.baunormenlexikon.de/norm/bbgbo/9e43e85a-7c8d-4041-b0bd-4b91f839545f",
       "heading_fetched_at": "2026-05-27",
       "verification_tier": "secondary-mirror",
-      "archetypes": ["verfahren_freistellung"],
+      "archetypes": [
+        "verfahren_freistellung"
+      ],
       "scope_summary_de": "Regelt das Bauanzeigeverfahren als anzeigepflichtigen, genehmigungsfreigestellten Weg für bestimmte Vorhaben.",
       "scope_summary_en": "Governs the building-notification procedure as a notification-based, permit-exempt route for certain projects.",
-      "procedure_relevance": "applies-to: T-01,T-02"
+      "procedure_relevance": "applies-to: T-01,T-02",
+      "body_de_official": "(1) Für die Errichtung und Änderung von Wohngebäuden der Gebäudeklassen 1 und 2, einschließlich der zugehörigen notwendigen Stellplätze, notwendigen Abstellplätze für Fahrräder, Garagen, Nebengebäude und Nebenanlagen im Geltungsbereich eines rechtswirksamen Bebauungsplans nach § 30 Absatz 1 oder Absatz 2 des Baugesetzbuchs wird abweichend von den §§ 63 und 64 auf Wunsch der Bauherrin oder des Bauherrn ein Bauanzeigeverfahren durchgeführt, wenn das Vorhaben den Festsetzungen des Bebauungsplans nicht widerspricht und die Erschließung gesichert ist. (2) Die Bauaufsichtsbehörde hat der Bauherrin oder dem Bauherrn binnen einer Woche den Tag des Eingangs der Bauanzeige bei der Bauaufsichtsbehörde zu bestätigen. (3) Mit der Bauausführung darf nach Ablauf eines Monats nach Eingang der Bauanzeige bei der Bauaufsichtsbehörde begonnen werden, sofern die Bauaufsichtsbehörde die Bauausführung nicht untersagt oder vorher freigegeben hat. Die Berechtigung zur Bauausführung erlischt nach vier Jahren. Die Berechtigung zur Bauausführung erlischt nicht, wenn das Vorhaben innerhalb der Frist nach Satz 2 begonnen worden und spätestens ein Jahr nach Ablauf der Frist fertig gestellt ist. (4) Die Bauausführung ist zu untersagen, wenn 1. die Voraussetzungen des Absatzes 1 nicht vorliegen, 2. die Bauanzeige, die Bauvorlagen oder Nachweise nicht vollständig oder unrichtig sind, 3. die Voraussetzungen des § 14 oder § 15 des Baugesetzbuchs vorliegen. Die Untersagungsgründe sind im Einzelnen zu benennen und der Bauherrin oder dem Bauherrn innerhalb der Frist nach Absatz 3 Satz 1 bekannt zu geben. Widerspruch und Anfechtungsklage gegen die Untersagung haben keine aufschiebende Wirkung. (5) Im Übrigen gelten § 63 Absatz 2 und die Verfahrensvorschriften dieses Gesetzes entsprechend.",
+      "body_scope_note": "Vollständig (Abs. 1 bis 5).",
+      "body_source_url": "https://bravors.brandenburg.de/gesetze/bbgbo_2016",
+      "body_source_note": "BRAVORS — amtliches Brandenburgisches Vorschriftensystem. BbgBO i.d.F. der Bek. v. 15.11.2018 (GVBl. I/18 Nr. 39), zuletzt geändert durch Gesetz v. 28.09.2023 (GVBl. I/23 Nr. 18).",
+      "body_fetched_at": "2026-06-12",
+      "body_verification_tier": "primary-source"
     },
     "63": {
       "marker": "§ 63",
@@ -571,7 +609,9 @@
       "heading_source_url": "https://www.baunormenlexikon.de/norm/bbgbo/9e43e85a-7c8d-4041-b0bd-4b91f839545f",
       "heading_fetched_at": "2026-05-27",
       "verification_tier": "secondary-mirror",
-      "archetypes": ["verfahren_vereinfacht"],
+      "archetypes": [
+        "verfahren_vereinfacht"
+      ],
       "scope_summary_de": "Regelt das vereinfachte Baugenehmigungsverfahren mit reduziertem Prüfumfang.",
       "scope_summary_en": "Governs the simplified building-permit procedure with reduced scope of review.",
       "procedure_relevance": "applies-to: T-01,T-02,T-07"
@@ -582,7 +622,9 @@
       "heading_source_url": "https://www.baunormenlexikon.de/norm/bbgbo/9e43e85a-7c8d-4041-b0bd-4b91f839545f",
       "heading_fetched_at": "2026-05-27",
       "verification_tier": "secondary-mirror",
-      "archetypes": ["verfahren_regulaer"],
+      "archetypes": [
+        "verfahren_regulaer"
+      ],
       "scope_summary_de": "Regelt das reguläre (volle) Baugenehmigungsverfahren mit umfassender Prüfung.",
       "scope_summary_en": "Governs the regular (full) building-permit procedure with comprehensive review.",
       "procedure_relevance": "applies-to: T-04,T-08"
@@ -593,7 +635,9 @@
       "heading_source_url": "https://www.baunormenlexikon.de/norm/bbgbo/9e43e85a-7c8d-4041-b0bd-4b91f839545f",
       "heading_fetched_at": "2026-05-27",
       "verification_tier": "secondary-mirror",
-      "archetypes": ["bauvorlageberechtigung"],
+      "archetypes": [
+        "bauvorlageberechtigung"
+      ],
       "scope_summary_de": "Bestimmt, wer bauvorlageberechtigt ist und Bauvorlagen unterzeichnen darf.",
       "scope_summary_en": "Determines who is entitled to prepare and sign building submission documents."
     },
@@ -635,7 +679,9 @@
       "heading_source_url": "https://www.baunormenlexikon.de/norm/bbgbo/9e43e85a-7c8d-4041-b0bd-4b91f839545f",
       "heading_fetched_at": "2026-05-27",
       "verification_tier": "secondary-mirror",
-      "archetypes": ["bautechnische_nachweise"],
+      "archetypes": [
+        "bautechnische_nachweise"
+      ],
       "scope_summary_de": "Regelt die bautechnischen Nachweise, insbesondere Standsicherheit und Brandschutz.",
       "scope_summary_en": "Governs the structural-engineering proofs, in particular stability and fire safety."
     },
@@ -653,7 +699,9 @@
       "heading_source_url": "https://www.baunormenlexikon.de/norm/bbgbo/9e43e85a-7c8d-4041-b0bd-4b91f839545f",
       "heading_fetched_at": "2026-05-27",
       "verification_tier": "secondary-mirror",
-      "archetypes": ["bauantrag_bauvorlagen"],
+      "archetypes": [
+        "bauantrag_bauvorlagen"
+      ],
       "scope_summary_de": "Bestimmt Form und Inhalt des Bauantrags und der einzureichenden Bauvorlagen.",
       "scope_summary_en": "Determines the form and content of the building application and the documents to be submitted."
     },
@@ -759,7 +807,9 @@
       "heading_source_url": "https://www.baunormenlexikon.de/norm/bbgbo/9e43e85a-7c8d-4041-b0bd-4b91f839545f",
       "heading_fetched_at": "2026-05-27",
       "verification_tier": "secondary-mirror",
-      "archetypes": ["abbruch_beseitigung"],
+      "archetypes": [
+        "abbruch_beseitigung"
+      ],
       "scope_summary_de": "Ermächtigt zur Beseitigung baurechtswidriger Anlagen und zur Untersagung ihrer Nutzung.",
       "scope_summary_en": "Empowers the authority to order removal of unlawful structures and to prohibit their use."
     },
