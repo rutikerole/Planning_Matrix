@@ -54,3 +54,35 @@ the change; content rolled back).
 - **Gate:** `verify:template-tail-citations` Tier-3 now requires ingested
   body text for every operative-effect § in this cell (registry
   `OPERATIVE_BODY_REQUIRED['T-06|bw']`).
+
+---
+
+# Corpus verification ledger — standing
+
+Verification items that need a primary-source confirmation (not a licensed
+reviewer). Filed 2026-06-12 (fix/t07-prewalk, T-07 deep-dive Finding 0 —
+previously these existed only in session memory). An entry closes when the
+corpus entry is re-verified against the official source and the commit
+references the entry id.
+
+## CVL-1 · §§ 15 / 38 LBO BW heading-check against the 2026 Neufassung
+
+- **Status:** OPEN (headings consistent at mirror tier; primary re-check pending)
+- **What:** `§ 15 LBO BW` (cited as Brandschutz, `stateCitations.ts:139`,
+  `states/bw.ts:382`) and `§ 38 LBO BW` (Sonderbauten, `states/bw.ts:388`,
+  `stateOverrides.ts:908`). The 2026-06-12 deep dive confirmed both corpus
+  headings match their usage ("Brandschutz" / "Sonderbauten") — but the
+  bw.json heading layer is the 2025-03-18 secondary-mirror stand, while the
+  BW systemBlock attests a 16.03.2026 Neufassung ("Bauturbo"-Anpassung).
+  Confirm neither § was renumbered/retitled by the Neufassung (AKBW
+  Merkblatt 610 Volltext is the proven source for LBO BW).
+
+## CVL-2 · § 51 NBauO primary-source verify
+
+- **Status:** OPEN
+- **What:** `§ 51 NBauO` = "Sonderbauten" exists in
+  `scripts/legal-corpus/states/niedersachsen.json` heading-only at
+  `verification_tier: secondary-mirror` (fetched 2026-05-27,
+  baunormenlexikon.de). It is allowlisted and instructed (the ni-s51 class).
+  Confirm heading + currency against voris/Nds. primary source and upgrade
+  the tier field.
