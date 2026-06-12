@@ -27,8 +27,8 @@ function procedureFromDecision(decision: ProcedureDecision): Procedure {
   const suffix = decision.citation ? ` · ${decision.citation}` : ''
   return {
     id: 'P-Decision',
-    title_de: `${procedureLabel(decision.kind, 'de')}${suffix}`,
-    title_en: `${procedureLabel(decision.kind, 'en')}${suffix}`,
+    title_de: `${procedureLabel(decision.kind, 'de', decision.intent)}${suffix}`,
+    title_en: `${procedureLabel(decision.kind, 'en', decision.intent)}${suffix}`,
     status:
       decision.kind === 'verfahrensfrei' ? 'nicht_erforderlich' : 'erforderlich',
     rationale_de: decision.reasoning_de,

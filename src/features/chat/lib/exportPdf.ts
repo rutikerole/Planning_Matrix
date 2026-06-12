@@ -929,7 +929,7 @@ export async function buildExportPdf({
       ? (lang === 'en'
           ? `Procedure determination deferred · ${procedureDecision.citation}`
           : `Verfahrensbestimmung zurückgestellt · ${procedureDecision.citation}`)
-      : procedureLabel(procedureDecision.kind, lang) + ' · ' + procedureDecision.citation
+      : procedureLabel(procedureDecision.kind, lang, procedureDecision.intent) + ' · ' + procedureDecision.citation
   const procRows: ProcRow[] = [
     {
       title: procRowTitle,
@@ -1173,8 +1173,8 @@ export async function buildExportPdf({
     // its § to truncation (no § in Key Data → no URI link annotation). The §
     // leads so it always survives; the label truncates harmlessly.
     value: procedureDecision.citation
-      ? `${procedureDecision.citation} · ${procedureLabel(procedureDecision.kind, lang)}`
-      : procedureLabel(procedureDecision.kind, lang),
+      ? `${procedureDecision.citation} · ${procedureLabel(procedureDecision.kind, lang, procedureDecision.intent)}`
+      : procedureLabel(procedureDecision.kind, lang, procedureDecision.intent),
     qualifier: {
       source: 'LEGAL',
       quality: procedureDecision.confidence,

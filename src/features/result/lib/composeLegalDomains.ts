@@ -41,6 +41,8 @@ export function procedureAnchorStatus(
     verfahrensfrei: { de: 'verfahrensfrei', en: 'permit-free' },
     genehmigungsfreigestellt: { de: 'Genehmigungsfreistellung', en: 'notification-only' },
     anzeige: { de: 'anzeigepflichtig', en: 'notification required' },
+    // fix/t07-prewalk item 3 — § 51 LBO BW institute, duty-not-permit.
+    kenntnisgabe: { de: 'kenntnisgabepflichtig', en: 'Kenntnisgabe (notification)' },
     vereinfachtes: { de: 'Genehmigungsverfahren', en: 'permit procedure' },
     standard: { de: 'Genehmigungsverfahren', en: 'permit procedure' },
     bauvoranfrage: { de: 'Bauvoranfrage erforderlich', en: 'pre-decision required' },

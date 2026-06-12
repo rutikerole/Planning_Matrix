@@ -155,7 +155,7 @@ export function assertFlip(
   ok(expect.citation.test(d.citation), `${p.templateId} flip citation matches (got "${d.citation}")`)
   ok(d.confidence === 'CALCULATED', `${p.templateId} flip CALCULATED (persona verdict honored)`)
   const sel = selectProcedures(resolveProcedures(project, state).procedures)
-  const keyDataValue = d.citation ? `${d.citation} · ${procedureLabel(d.kind, 'en')}` : procedureLabel(d.kind, 'en')
+  const keyDataValue = d.citation ? `${d.citation} · ${procedureLabel(d.kind, 'en', d.intent)}` : procedureLabel(d.kind, 'en', d.intent)
   const md = buildExportMarkdown({ project, events: [], lang: 'en' })
   const mdProc = md.split('## Procedures')[1]?.split('---')[0] ?? ''
   ok(
