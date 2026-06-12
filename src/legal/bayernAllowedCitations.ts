@@ -75,4 +75,9 @@ export const BAYERN_ALLOWED_CITATIONS: readonly string[] = [
   'GEG § 10',
   'BauGB § 31 Abs. 3',
   'BauGB § 34 Abs. 3b',
+  // fix/t07-prewalk item 4 (audit:instructed federal slice) — instructed by
+  // the Bayern systemBlock (§ 22 BauNVO Bauweise) and the T-04 template
+  // BLOCK (§ 1 BauNVO); both corpus-verified primary-source in federal.json.
+  'BauNVO § 1',
+  'BauNVO § 22',
 ] as const
