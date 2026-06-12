@@ -347,6 +347,25 @@ const ALLOWED_CITATIONS: readonly string[] = [
   'BauGB § 35',
   'BauNVO § 19',
   'GEG § 10',
+  // fix/t07-prewalk item 4 (audit:instructed federal slice) — the B2-era
+  // short federal list missed §§ this state's own T-02..T-08 cells instruct
+  // (e.g. § 23 BauNVO + § 48 GEG in the T-07 Anbau cell), so citationLint
+  // would flag a compliant persona on every live walk. All entries below are
+  // corpus-verified primary-source in scripts/legal-corpus/federal.json.
+  'BauGB § 31',
+  'BauGB § 172',
+  'BauNVO § 1',
+  'BauNVO § 3',
+  'BauNVO § 4',
+  'BauNVO § 4a',
+  'BauNVO § 6',
+  'BauNVO § 9',
+  'BauNVO § 12',
+  'BauNVO § 16',
+  'BauNVO § 20',
+  'BauNVO § 23',
+  'GEG § 48',
+  'GEG § 80',
 ] as const
 
 export const NIEDERSACHSEN_DELTA: StateDelta = {

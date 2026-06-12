@@ -580,6 +580,22 @@ const OPERATIVE_BODY_REQUIRED: Record<string, string[]> = {
   // Ablöse-Ausschluss für Wohnungen (§ 37 Abs. 3 S. 2, Abs. 7), zwingende
   // Abweichung für Wohnraum-Vorhaben (§ 56 Abs. 2 Nr. 1).
   'T-06|bw': ['2', '5', '27f', '37', '56'],
+  // fix/t07-prewalk item 5 — T-07 pre-walk body ingestion (the deep dive's
+  // R7: every T-07 routing § was heading-only; the F2 ancestor class):
+  // HE × T-07 routes Wohn-Anbauten via § 64a HBO ("Erweiterte Genehmigungs-
+  // freistellung für die Errichtung von Wohngebäuden") — whether an ANBAU
+  // qualifies as "Errichtung" is exactly the body-level question.
+  'T-07|hessen': ['64a'],
+  // BB × T-07 routes via the BB-unique § 62 BbgBO Bauanzeigeverfahren —
+  // institute conditions are body-level; § 61 (verfahrensfrei catalog)
+  // ingested alongside for the walk, gated here too since the walk decision
+  // hinges on the § 61/§ 62 boundary.
+  'T-07|brandenburg': ['61', '62'],
+  // Bayern × T-07 has no stateOverrides cell — the BASE block t07-anbau.ts
+  // IS the Bayern content and hangs its decisive 75-m³ threshold on
+  // Art. 57 Abs. 1 Nr. 1 a (+ the Abs. 7 Anzeige). The gate mechanics only
+  // check corpus body presence, so the bayern key works despite no cell.
+  'T-07|bayern': ['57'],
 }
 const bodyViolations: Array<{ cell: string; num: string; missing: string[] }> = []
 for (const [cell, nums] of Object.entries(OPERATIVE_BODY_REQUIRED)) {

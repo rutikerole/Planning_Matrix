@@ -117,14 +117,24 @@ const HONEST_DEFER_EN =
  *    CONTRADICTS the persona's (prose) GK-retention statement, on the
  *    template's central legal claim. Honest deferral instead; an explicit
  *    gebaeudeklasse fact, when captured, still renders normally.
+ *  - T-07 'extension' (fix/t07-prewalk item 2): an Anbau modifies an
+ *    EXISTING building and can change the GK via the NE-size/count
+ *    thresholds (a Nutzungseinheit crossing 400 m² flips GK 1/2→3 or 4→5);
+ *    the derivation has no pre/post-extension model — same rationale as
+ *    T-06. The deep dive flagged the exclusion as an unreviewed edge.
  */
-export type GkDerivationCarveOut = 'use-conversion' | 'storey-addition' | null
+export type GkDerivationCarveOut =
+  | 'use-conversion'
+  | 'storey-addition'
+  | 'extension'
+  | null
 
 export function gkDerivationCarveOut(
   templateId: string | null | undefined,
 ): GkDerivationCarveOut {
   if (templateId === 'T-04') return 'use-conversion'
   if (templateId === 'T-06') return 'storey-addition'
+  if (templateId === 'T-07') return 'extension'
   return null
 }
 
@@ -137,6 +147,11 @@ export function gkCarveOutValue(
     return lang === 'en'
       ? 'Not re-classified — use conversion (existing building unchanged)'
       : 'Keine Neueinstufung — Nutzungsänderung (Bestand unverändert)'
+  }
+  if (carveOut === 'extension') {
+    return lang === 'en'
+      ? 'Not auto-derived — an extension can change the building class (architect to assess)'
+      : 'Keine automatische Einstufung — Anbau kann die Gebäudeklasse ändern (Prüfung durch Architekt:in)'
   }
   return lang === 'en'
     ? 'Not auto-derived — adding a storey can change the building class (architect to assess)'

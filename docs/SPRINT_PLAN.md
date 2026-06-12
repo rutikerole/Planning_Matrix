@@ -442,6 +442,42 @@ ONLY):
    the directive-side fix is to scope template-bound typed keys to their
    templates (or instruct "emit only on the named template") — SHA move.
 
+Recorded 2026-06-12 (fix/t07-prewalk, T-07 deep-dive Finding 0 — these four
+items existed only in session memory since the 2026-06-11 meta-sweep; filing
+them here so the repo can replay them. RECORD ONLY, all ride the bundle):
+7. **A.1/B.1 Bayern meta-leak relocation.** The A.1 PLZ→district table and
+   the B.1 ZITATE-DISZIPLIN block are Bayern-only content that ships in ALL
+   16 states' prompts — adversarial context for the other 15. Relocate both
+   into the Bayern-scoped block on the next intentional SHA move.
+8. **Cost-basis directive-naming.** The `COST_BASIS_FIELD_BY_TEMPLATE` keys
+   (`costNormsMuenchen.ts:330-345`) are never directive-named — the last
+   improvisation+silent-default combo on a headline € (Bug-64 class).
+   Directive-name them per template, including `anbau_flaeche_m2` (T-07's
+   sole cost-basis key, today a dead pin) AND a new Brutto-Rauminhalt
+   volume key for T-07 (the 75 m³ BayBO Art. 57 Abs. 1 Nr. 1 a threshold
+   has NO fact channel — the persona is mandated to compute the m³ figure,
+   t07-anbau.ts:235-250, and can only improvise a key for it).
+9. **D-1 Art. 76 gloss.** Meta-sweep item D-1 — the Art. 76 BayBO gloss in
+   the Bayern prompt content needs correction/scoping. Substance was
+   recorded in the 2026-06-11 sweep session only; RE-DERIVE the exact wording
+   against that session's notes (or re-diagnose) before implementing. Filed
+   here so the pointer survives; do not implement from this line alone.
+10. **Bayern base-block heading-gate hole.** The runtime citation heading
+    gate (`chat-turn/citationHeadingGate.ts`) skips when no canonical entry
+    exists for a state×concept (`:140`), and its concept anchors do not
+    cover the Bayern template base-blocks' Art.-citations — a wrong-topic
+    Art. cited by the persona on a Bayern walk passes unchecked. Extend the
+    canonical concept map to the Bayern base-block citation set (frontend/
+    edge-config; pairs with a directive clarification on the bundle).
+11. **`verfahren_indikation` Kenntnisgabe vocabulary form.** The pinned
+    6-form verdict vocabulary (`personaBehaviour.ts:244-249`) has no
+    Kenntnisgabe form, so a BW persona must mislabel the § 51 LBO BW
+    institute. The READER side (first-class `kenntnisgabe` ProcedureKind:
+    classifier token, decision branch, labels) shipped frontend-only on
+    `fix/t07-prewalk` 2026-06-12; the directive-side vocabulary form is the
+    SHA-move piece and rides the bundle with item 4's
+    `kenntnisgabeverfahren_anwendbar` key promotion.
+
 ### Confidence recalibration — TICKET, needs design before touching weights
 
 Logged 2026-06-11. Two structural issues in `computeConfidence`, evidenced

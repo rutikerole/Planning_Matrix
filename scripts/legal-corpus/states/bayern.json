@@ -8,9 +8,15 @@
     "last_amendment_de": "zuletzt geändert durch § 2 des Gesetzes vom 23. April 2026 (GVBl. S. 190)",
     "last_amendment_date": "2026-04-23",
     "data_current_as_of": "2026-05-27",
-    "sources": ["https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True"],
+    "sources": [
+      "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True"
+    ],
     "source_note": "Official consolidated PDF from gesetze-bayern.de (Bayerisches Staatsministerium / juris Bürgerservice). Article headings extracted verbatim via pdftotext. Cross-checked against baunormenlexikon.de (secondary).",
-    "verification_summary": { "primary-source": 84, "secondary-mirror": 0, "unverified": 0 },
+    "verification_summary": {
+      "primary-source": 84,
+      "secondary-mirror": 0,
+      "unverified": 0
+    },
     "structural_notes": [
       "BayBO uses 'Art.' markers, NOT '§' — the citation firewall (bayernAllowedCitations.ts) and verifier must treat 'Art. N BayBO'.",
       "Art. 23 is weggefallen (no article between Art. 22 and Art. 24 in the current consolidation).",
@@ -19,94 +25,735 @@
     ]
   },
   "paragraphs": {
-    "1": { "marker": "Art. 1", "heading_de_official": "Anwendungsbereich", "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source" },
-    "2": { "marker": "Art. 2", "heading_de_official": "Begriffe", "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source", "archetypes": ["gebaeudeklasse", "sonderbauten"], "scope_summary_de": "Begriffsbestimmungen; enthält Gebäudeklassen (Abs. 3) und Sonderbauten (Abs. 4).", "scope_summary_en": "Definitions; holds the building-class (para 3) and special-building (para 4) definitions." },
-    "3": { "marker": "Art. 3", "heading_de_official": "Allgemeine Anforderungen", "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source" },
-    "4": { "marker": "Art. 4", "heading_de_official": "Bebauung der Grundstücke mit Gebäuden", "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source" },
-    "5": { "marker": "Art. 5", "heading_de_official": "Zugänge und Zufahrten auf den Grundstücken", "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source" },
-    "6": { "marker": "Art. 6", "heading_de_official": "Abstandsflächen, Abstände", "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source", "archetypes": ["abstandsflaechen"], "scope_summary_de": "Tiefe und Lage der Abstandsflächen vor Außenwänden.", "scope_summary_en": "Setback areas in front of external walls." },
-    "7": { "marker": "Art. 7", "heading_de_official": "Begrünung", "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source" },
-    "8": { "marker": "Art. 8", "heading_de_official": "Baugestaltung", "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source" },
-    "9": { "marker": "Art. 9", "heading_de_official": "Baustelle", "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source" },
-    "10": { "marker": "Art. 10", "heading_de_official": "Standsicherheit", "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source" },
-    "11": { "marker": "Art. 11", "heading_de_official": "Schutz gegen Einwirkungen", "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source" },
-    "12": { "marker": "Art. 12", "heading_de_official": "Brandschutz", "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source", "archetypes": ["brandschutz"], "scope_summary_de": "Allgemeine Brandschutzanforderung an bauliche Anlagen.", "scope_summary_en": "General fire-safety requirement for structures." },
-    "13": { "marker": "Art. 13", "heading_de_official": "Wärme-, Schall- und Erschütterungsschutz", "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source" },
-    "14": { "marker": "Art. 14", "heading_de_official": "Verkehrssicherheit", "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source" },
-    "15": { "marker": "Art. 15", "heading_de_official": "Bauarten", "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source" },
-    "16": { "marker": "Art. 16", "heading_de_official": "Verwendung von Bauprodukten", "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source" },
-    "17": { "marker": "Art. 17", "heading_de_official": "Verwendbarkeitsnachweise", "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source" },
-    "18": { "marker": "Art. 18", "heading_de_official": "Allgemeine bauaufsichtliche Zulassung", "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source" },
-    "19": { "marker": "Art. 19", "heading_de_official": "Allgemeines bauaufsichtliches Prüfzeugnis", "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source" },
-    "20": { "marker": "Art. 20", "heading_de_official": "Zustimmung im Einzelfall", "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source" },
-    "21": { "marker": "Art. 21", "heading_de_official": "Übereinstimmungserklärung, Zertifizierung", "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source" },
-    "22": { "marker": "Art. 22", "heading_de_official": "Besondere Sachkunde- und Sorgfaltsanforderungen", "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source" },
-    "24": { "marker": "Art. 24", "heading_de_official": "Allgemeine Anforderungen an das Brandverhalten von Baustoffen und Bauteilen", "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source", "archetypes": ["brandschutz"] },
-    "25": { "marker": "Art. 25", "heading_de_official": "Tragende Wände, Stützen", "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source" },
-    "26": { "marker": "Art. 26", "heading_de_official": "Außenwände", "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source" },
-    "27": { "marker": "Art. 27", "heading_de_official": "Trennwände", "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source" },
-    "28": { "marker": "Art. 28", "heading_de_official": "Brandwände", "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source", "archetypes": ["brandschutz"] },
-    "29": { "marker": "Art. 29", "heading_de_official": "Decken", "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source" },
-    "30": { "marker": "Art. 30", "heading_de_official": "Dächer", "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source" },
-    "31": { "marker": "Art. 31", "heading_de_official": "Rettungswege", "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source", "archetypes": ["brandschutz"], "scope_summary_de": "Erster und zweiter Rettungsweg.", "scope_summary_en": "First and second escape routes." },
-    "32": { "marker": "Art. 32", "heading_de_official": "Treppen", "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source" },
-    "33": { "marker": "Art. 33", "heading_de_official": "Notwendige Treppenräume, Ausgänge", "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source" },
-    "34": { "marker": "Art. 34", "heading_de_official": "Notwendige Flure, offene Gänge", "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source" },
-    "35": { "marker": "Art. 35", "heading_de_official": "Fenster, Türen, sonstige Öffnungen", "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source" },
-    "36": { "marker": "Art. 36", "heading_de_official": "Umwehrungen", "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source" },
-    "37": { "marker": "Art. 37", "heading_de_official": "Aufzüge", "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source" },
-    "38": { "marker": "Art. 38", "heading_de_official": "Leitungsanlagen, Installationsschächte und -kanäle", "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source" },
-    "39": { "marker": "Art. 39", "heading_de_official": "Lüftungsanlagen", "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source" },
-    "40": { "marker": "Art. 40", "heading_de_official": "Feuerungsanlagen, sonstige Anlagen zur Wärmeerzeugung, Brennstoffversorgung", "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source" },
-    "41": { "marker": "Art. 41", "heading_de_official": "Nicht durch Sammelkanalisation erschlossene Anwesen", "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source" },
-    "42": { "marker": "Art. 42", "heading_de_official": "Sanitäre Anlagen", "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source" },
-    "43": { "marker": "Art. 43", "heading_de_official": "Aufbewahrung fester Abfallstoffe", "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source" },
-    "44": { "marker": "Art. 44", "heading_de_official": "Blitzschutzanlagen", "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source" },
-    "44a": { "marker": "Art. 44a", "heading_de_official": "Solaranlagen", "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source", "archetypes": ["pv_pflicht"], "scope_summary_de": "Anforderungen an Solaranlagen; Grundlage der von der App genannten 'PV-Pflicht' bei Wohnneubauten.", "scope_summary_en": "Solar-installation requirements; basis of the app's 'PV obligation' for new residential builds." },
-    "45": { "marker": "Art. 45", "heading_de_official": "Aufenthaltsräume", "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source" },
-    "46": { "marker": "Art. 46", "heading_de_official": "Wohnungen", "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source" },
-    "47": { "marker": "Art. 47", "heading_de_official": "Stellplätze, Verordnungsermächtigung", "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source", "archetypes": ["stellplaetze"], "scope_summary_de": "Notwendige Stellplätze; Ermächtigung der Gemeinden zur Stellplatzsatzung (z. B. LHM StPlS).", "scope_summary_en": "Required parking; municipal authority to issue parking statutes." },
-    "48": { "marker": "Art. 48", "heading_de_official": "Barrierefreies Bauen", "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source" },
-    "49": { "marker": "Art. 49", "heading_de_official": "Grundpflichten", "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source" },
-    "50": { "marker": "Art. 50", "heading_de_official": "Bauherr", "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source" },
-    "51": { "marker": "Art. 51", "heading_de_official": "Entwurfsverfasser", "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source" },
-    "52": { "marker": "Art. 52", "heading_de_official": "Unternehmer", "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source" },
-    "53": { "marker": "Art. 53", "heading_de_official": "Aufbau und Zuständigkeit der Bauaufsichtsbehörden, Verordnungsermächtigung", "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source" },
-    "54": { "marker": "Art. 54", "heading_de_official": "Aufgaben und Befugnisse der Bauaufsichtsbehörden", "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source" },
-    "55": { "marker": "Art. 55", "heading_de_official": "Grundsatz", "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source", "scope_summary_de": "Grundsatz der Genehmigungsbedürftigkeit (Errichtung/Änderung/Nutzungsänderung).", "scope_summary_en": "Principle that erection/alteration/change-of-use require permission." },
-    "56": { "marker": "Art. 56", "heading_de_official": "Vorrang anderer Gestattungsverfahren", "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source" },
-    "57": { "marker": "Art. 57", "heading_de_official": "Verfahrensfreie Bauvorhaben, Beseitigung von Anlagen", "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source", "archetypes": ["verfahrensfrei", "abbruch_beseitigung"], "scope_summary_de": "Verfahrensfreie Bauvorhaben und verfahrensfreie Beseitigung von Anlagen.", "scope_summary_en": "Procedure-free projects and procedure-free removal of structures." },
-    "58": { "marker": "Art. 58", "heading_de_official": "Genehmigungsfreistellung", "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source", "archetypes": ["verfahren_freistellung"], "scope_summary_de": "Genehmigungsfreistellung bei qualifiziertem B-Plan (NICHT Art. 58a — der existiert nicht).", "scope_summary_en": "Permit exemption where a qualified development plan applies (NOT Art. 58a — which does not exist)." },
-    "59": { "marker": "Art. 59", "heading_de_official": "Vereinfachtes Baugenehmigungsverfahren", "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source", "archetypes": ["verfahren_vereinfacht"], "scope_summary_de": "Vereinfachtes Baugenehmigungsverfahren (reduzierter Prüfumfang).", "scope_summary_en": "Simplified building-permit procedure (reduced scope of review)." },
-    "60": { "marker": "Art. 60", "heading_de_official": "Baugenehmigungsverfahren", "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source", "archetypes": ["verfahren_regulaer"], "scope_summary_de": "Reguläres (volles) Baugenehmigungsverfahren, v. a. bei Sonderbauten.", "scope_summary_en": "Full building-permit procedure (notably for special buildings)." },
-    "61": { "marker": "Art. 61", "heading_de_official": "Bauvorlageberechtigung", "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source", "archetypes": ["bauvorlageberechtigung"], "scope_summary_de": "Wer bauvorlageberechtigt ist (Entwurfsverfasser-Berechtigung).", "scope_summary_en": "Who is entitled to submit building documents." },
-    "62": { "marker": "Art. 62", "heading_de_official": "Bautechnische Nachweise", "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source", "archetypes": ["bautechnische_nachweise"], "scope_summary_de": "Bautechnische Nachweise (Standsicherheit, Brandschutz).", "scope_summary_en": "Structural-engineering proofs (stability, fire safety)." },
-    "62a": { "marker": "Art. 62a", "heading_de_official": "Standsicherheitsnachweis", "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source", "archetypes": ["bautechnische_nachweise"], "scope_summary_de": "Standsicherheitsnachweis und dessen Prüfung.", "scope_summary_en": "Structural-stability proof and its review." },
-    "62b": { "marker": "Art. 62b", "heading_de_official": "Brandschutznachweis", "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source", "archetypes": ["bautechnische_nachweise", "brandschutz"], "scope_summary_de": "Brandschutznachweis und dessen Prüfung.", "scope_summary_en": "Fire-safety proof and its review." },
-    "63": { "marker": "Art. 63", "heading_de_official": "Abweichungen", "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source" },
-    "64": { "marker": "Art. 64", "heading_de_official": "Bauantrag, Bauvorlagen", "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source", "archetypes": ["bauantrag_bauvorlagen"], "scope_summary_de": "Bauantrag und einzureichende Bauvorlagen.", "scope_summary_en": "Building application and documents to be submitted." },
-    "65": { "marker": "Art. 65", "heading_de_official": "Behandlung des Bauantrags", "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source" },
-    "66": { "marker": "Art. 66", "heading_de_official": "Beteiligung des Nachbarn", "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source" },
-    "67": { "marker": "Art. 67", "heading_de_official": "Ersetzung des gemeindlichen Einvernehmens", "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source" },
-    "68": { "marker": "Art. 68", "heading_de_official": "Baugenehmigung, Genehmigungsfiktion und Baubeginn", "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source" },
-    "69": { "marker": "Art. 69", "heading_de_official": "Geltungsdauer der Baugenehmigung und der Teilbaugenehmigung", "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source" },
-    "70": { "marker": "Art. 70", "heading_de_official": "Teilbaugenehmigung", "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source" },
-    "71": { "marker": "Art. 71", "heading_de_official": "Vorbescheid", "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source", "scope_summary_de": "Vorbescheid (verbindliche Vorabklärung einzelner Fragen).", "scope_summary_en": "Preliminary ruling on individual questions." },
-    "72": { "marker": "Art. 72", "heading_de_official": "Genehmigung fliegender Bauten", "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source" },
-    "73": { "marker": "Art. 73", "heading_de_official": "Bauaufsichtliche Zustimmung", "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source" },
-    "74": { "marker": "Art. 74", "heading_de_official": "Verbot unrechtmäßig gekennzeichneter Bauprodukte", "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source" },
-    "75": { "marker": "Art. 75", "heading_de_official": "Einstellung von Arbeiten", "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source" },
-    "76": { "marker": "Art. 76", "heading_de_official": "Beseitigung von Anlagen, Nutzungsuntersagung", "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source", "archetypes": ["abbruch_beseitigung", "nutzungsaenderung"], "scope_summary_de": "Beseitigungsanordnung und Nutzungsuntersagung durch die Bauaufsicht.", "scope_summary_en": "Removal orders and use-prohibition by the building authority." },
-    "77": { "marker": "Art. 77", "heading_de_official": "Bauüberwachung", "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source" },
-    "78": { "marker": "Art. 78", "heading_de_official": "Bauzustandsanzeigen, Aufnahme der Nutzung", "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source" },
-    "79": { "marker": "Art. 79", "heading_de_official": "Ordnungswidrigkeiten", "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source" },
-    "80": { "marker": "Art. 80", "heading_de_official": "Rechtsverordnungen", "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source" },
-    "81": { "marker": "Art. 81", "heading_de_official": "Örtliche Bauvorschriften", "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source", "scope_summary_de": "Ermächtigung der Gemeinden zu örtlichen Bauvorschriften (Gestaltungs-/Stellplatzsatzungen).", "scope_summary_en": "Municipal authority for local building rules (design/parking statutes)." },
-    "82": { "marker": "Art. 82", "heading_de_official": "Windenergie und Nutzungsänderung ehemaliger landwirtschaftlicher Gebäude", "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source" },
-    "82a": { "marker": "Art. 82a", "heading_de_official": "Feste Abstandsvorschriften für Windenergieanlagen", "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source" },
-    "82b": { "marker": "Art. 82b", "heading_de_official": "Windenergiegebiete", "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source" },
-    "82c": { "marker": "Art. 82c", "heading_de_official": "Bau-Turbo", "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source", "archetypes": ["bauplanungsrecht"], "scope_summary_de": "Bayerischer 'Bau-Turbo' (beschleunigte Zulässigkeit zugunsten des Wohnungsbaus).", "scope_summary_en": "Bavarian 'Bau-Turbo' accelerator favouring housing." },
-    "83": { "marker": "Art. 83", "heading_de_official": "Übergangsvorschriften", "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source" },
-    "84": { "marker": "Art. 84", "heading_de_official": "Inkrafttreten", "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True", "heading_fetched_at": "2026-05-27", "verification_tier": "primary-source" }
+    "1": {
+      "marker": "Art. 1",
+      "heading_de_official": "Anwendungsbereich",
+      "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "primary-source"
+    },
+    "2": {
+      "marker": "Art. 2",
+      "heading_de_official": "Begriffe",
+      "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "primary-source",
+      "archetypes": [
+        "gebaeudeklasse",
+        "sonderbauten"
+      ],
+      "scope_summary_de": "Begriffsbestimmungen; enthält Gebäudeklassen (Abs. 3) und Sonderbauten (Abs. 4).",
+      "scope_summary_en": "Definitions; holds the building-class (para 3) and special-building (para 4) definitions."
+    },
+    "3": {
+      "marker": "Art. 3",
+      "heading_de_official": "Allgemeine Anforderungen",
+      "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "primary-source"
+    },
+    "4": {
+      "marker": "Art. 4",
+      "heading_de_official": "Bebauung der Grundstücke mit Gebäuden",
+      "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "primary-source"
+    },
+    "5": {
+      "marker": "Art. 5",
+      "heading_de_official": "Zugänge und Zufahrten auf den Grundstücken",
+      "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "primary-source"
+    },
+    "6": {
+      "marker": "Art. 6",
+      "heading_de_official": "Abstandsflächen, Abstände",
+      "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "primary-source",
+      "archetypes": [
+        "abstandsflaechen"
+      ],
+      "scope_summary_de": "Tiefe und Lage der Abstandsflächen vor Außenwänden.",
+      "scope_summary_en": "Setback areas in front of external walls."
+    },
+    "7": {
+      "marker": "Art. 7",
+      "heading_de_official": "Begrünung",
+      "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "primary-source"
+    },
+    "8": {
+      "marker": "Art. 8",
+      "heading_de_official": "Baugestaltung",
+      "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "primary-source"
+    },
+    "9": {
+      "marker": "Art. 9",
+      "heading_de_official": "Baustelle",
+      "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "primary-source"
+    },
+    "10": {
+      "marker": "Art. 10",
+      "heading_de_official": "Standsicherheit",
+      "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "primary-source"
+    },
+    "11": {
+      "marker": "Art. 11",
+      "heading_de_official": "Schutz gegen Einwirkungen",
+      "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "primary-source"
+    },
+    "12": {
+      "marker": "Art. 12",
+      "heading_de_official": "Brandschutz",
+      "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "primary-source",
+      "archetypes": [
+        "brandschutz"
+      ],
+      "scope_summary_de": "Allgemeine Brandschutzanforderung an bauliche Anlagen.",
+      "scope_summary_en": "General fire-safety requirement for structures."
+    },
+    "13": {
+      "marker": "Art. 13",
+      "heading_de_official": "Wärme-, Schall- und Erschütterungsschutz",
+      "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "primary-source"
+    },
+    "14": {
+      "marker": "Art. 14",
+      "heading_de_official": "Verkehrssicherheit",
+      "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "primary-source"
+    },
+    "15": {
+      "marker": "Art. 15",
+      "heading_de_official": "Bauarten",
+      "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "primary-source"
+    },
+    "16": {
+      "marker": "Art. 16",
+      "heading_de_official": "Verwendung von Bauprodukten",
+      "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "primary-source"
+    },
+    "17": {
+      "marker": "Art. 17",
+      "heading_de_official": "Verwendbarkeitsnachweise",
+      "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "primary-source"
+    },
+    "18": {
+      "marker": "Art. 18",
+      "heading_de_official": "Allgemeine bauaufsichtliche Zulassung",
+      "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "primary-source"
+    },
+    "19": {
+      "marker": "Art. 19",
+      "heading_de_official": "Allgemeines bauaufsichtliches Prüfzeugnis",
+      "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "primary-source"
+    },
+    "20": {
+      "marker": "Art. 20",
+      "heading_de_official": "Zustimmung im Einzelfall",
+      "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "primary-source"
+    },
+    "21": {
+      "marker": "Art. 21",
+      "heading_de_official": "Übereinstimmungserklärung, Zertifizierung",
+      "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "primary-source"
+    },
+    "22": {
+      "marker": "Art. 22",
+      "heading_de_official": "Besondere Sachkunde- und Sorgfaltsanforderungen",
+      "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "primary-source"
+    },
+    "24": {
+      "marker": "Art. 24",
+      "heading_de_official": "Allgemeine Anforderungen an das Brandverhalten von Baustoffen und Bauteilen",
+      "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "primary-source",
+      "archetypes": [
+        "brandschutz"
+      ]
+    },
+    "25": {
+      "marker": "Art. 25",
+      "heading_de_official": "Tragende Wände, Stützen",
+      "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "primary-source"
+    },
+    "26": {
+      "marker": "Art. 26",
+      "heading_de_official": "Außenwände",
+      "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "primary-source"
+    },
+    "27": {
+      "marker": "Art. 27",
+      "heading_de_official": "Trennwände",
+      "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "primary-source"
+    },
+    "28": {
+      "marker": "Art. 28",
+      "heading_de_official": "Brandwände",
+      "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "primary-source",
+      "archetypes": [
+        "brandschutz"
+      ]
+    },
+    "29": {
+      "marker": "Art. 29",
+      "heading_de_official": "Decken",
+      "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "primary-source"
+    },
+    "30": {
+      "marker": "Art. 30",
+      "heading_de_official": "Dächer",
+      "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "primary-source"
+    },
+    "31": {
+      "marker": "Art. 31",
+      "heading_de_official": "Rettungswege",
+      "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "primary-source",
+      "archetypes": [
+        "brandschutz"
+      ],
+      "scope_summary_de": "Erster und zweiter Rettungsweg.",
+      "scope_summary_en": "First and second escape routes."
+    },
+    "32": {
+      "marker": "Art. 32",
+      "heading_de_official": "Treppen",
+      "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "primary-source"
+    },
+    "33": {
+      "marker": "Art. 33",
+      "heading_de_official": "Notwendige Treppenräume, Ausgänge",
+      "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "primary-source"
+    },
+    "34": {
+      "marker": "Art. 34",
+      "heading_de_official": "Notwendige Flure, offene Gänge",
+      "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "primary-source"
+    },
+    "35": {
+      "marker": "Art. 35",
+      "heading_de_official": "Fenster, Türen, sonstige Öffnungen",
+      "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "primary-source"
+    },
+    "36": {
+      "marker": "Art. 36",
+      "heading_de_official": "Umwehrungen",
+      "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "primary-source"
+    },
+    "37": {
+      "marker": "Art. 37",
+      "heading_de_official": "Aufzüge",
+      "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "primary-source"
+    },
+    "38": {
+      "marker": "Art. 38",
+      "heading_de_official": "Leitungsanlagen, Installationsschächte und -kanäle",
+      "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "primary-source"
+    },
+    "39": {
+      "marker": "Art. 39",
+      "heading_de_official": "Lüftungsanlagen",
+      "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "primary-source"
+    },
+    "40": {
+      "marker": "Art. 40",
+      "heading_de_official": "Feuerungsanlagen, sonstige Anlagen zur Wärmeerzeugung, Brennstoffversorgung",
+      "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "primary-source"
+    },
+    "41": {
+      "marker": "Art. 41",
+      "heading_de_official": "Nicht durch Sammelkanalisation erschlossene Anwesen",
+      "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "primary-source"
+    },
+    "42": {
+      "marker": "Art. 42",
+      "heading_de_official": "Sanitäre Anlagen",
+      "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "primary-source"
+    },
+    "43": {
+      "marker": "Art. 43",
+      "heading_de_official": "Aufbewahrung fester Abfallstoffe",
+      "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "primary-source"
+    },
+    "44": {
+      "marker": "Art. 44",
+      "heading_de_official": "Blitzschutzanlagen",
+      "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "primary-source"
+    },
+    "44a": {
+      "marker": "Art. 44a",
+      "heading_de_official": "Solaranlagen",
+      "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "primary-source",
+      "archetypes": [
+        "pv_pflicht"
+      ],
+      "scope_summary_de": "Anforderungen an Solaranlagen; Grundlage der von der App genannten 'PV-Pflicht' bei Wohnneubauten.",
+      "scope_summary_en": "Solar-installation requirements; basis of the app's 'PV obligation' for new residential builds."
+    },
+    "45": {
+      "marker": "Art. 45",
+      "heading_de_official": "Aufenthaltsräume",
+      "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "primary-source"
+    },
+    "46": {
+      "marker": "Art. 46",
+      "heading_de_official": "Wohnungen",
+      "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "primary-source"
+    },
+    "47": {
+      "marker": "Art. 47",
+      "heading_de_official": "Stellplätze, Verordnungsermächtigung",
+      "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "primary-source",
+      "archetypes": [
+        "stellplaetze"
+      ],
+      "scope_summary_de": "Notwendige Stellplätze; Ermächtigung der Gemeinden zur Stellplatzsatzung (z. B. LHM StPlS).",
+      "scope_summary_en": "Required parking; municipal authority to issue parking statutes."
+    },
+    "48": {
+      "marker": "Art. 48",
+      "heading_de_official": "Barrierefreies Bauen",
+      "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "primary-source"
+    },
+    "49": {
+      "marker": "Art. 49",
+      "heading_de_official": "Grundpflichten",
+      "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "primary-source"
+    },
+    "50": {
+      "marker": "Art. 50",
+      "heading_de_official": "Bauherr",
+      "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "primary-source"
+    },
+    "51": {
+      "marker": "Art. 51",
+      "heading_de_official": "Entwurfsverfasser",
+      "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "primary-source"
+    },
+    "52": {
+      "marker": "Art. 52",
+      "heading_de_official": "Unternehmer",
+      "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "primary-source"
+    },
+    "53": {
+      "marker": "Art. 53",
+      "heading_de_official": "Aufbau und Zuständigkeit der Bauaufsichtsbehörden, Verordnungsermächtigung",
+      "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "primary-source"
+    },
+    "54": {
+      "marker": "Art. 54",
+      "heading_de_official": "Aufgaben und Befugnisse der Bauaufsichtsbehörden",
+      "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "primary-source"
+    },
+    "55": {
+      "marker": "Art. 55",
+      "heading_de_official": "Grundsatz",
+      "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "primary-source",
+      "scope_summary_de": "Grundsatz der Genehmigungsbedürftigkeit (Errichtung/Änderung/Nutzungsänderung).",
+      "scope_summary_en": "Principle that erection/alteration/change-of-use require permission."
+    },
+    "56": {
+      "marker": "Art. 56",
+      "heading_de_official": "Vorrang anderer Gestattungsverfahren",
+      "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "primary-source"
+    },
+    "57": {
+      "marker": "Art. 57",
+      "heading_de_official": "Verfahrensfreie Bauvorhaben, Beseitigung von Anlagen",
+      "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "primary-source",
+      "archetypes": [
+        "verfahrensfrei",
+        "abbruch_beseitigung"
+      ],
+      "scope_summary_de": "Verfahrensfreie Bauvorhaben und verfahrensfreie Beseitigung von Anlagen.",
+      "scope_summary_en": "Procedure-free projects and procedure-free removal of structures.",
+      "body_de_official": "(1) Verfahrensfrei sind: 1. folgende Gebäude: a) Gebäude mit einem Brutto-Rauminhalt bis zu 75 m³, außer im Außenbereich, sowie Gebäude ohne Aufenthaltsräume, Toiletten oder Feuerstätten, wenn die Gebäude weder Verkaufs- noch Ausstellungszwecken dienen, im Außenbereich bis 20 m³ Brutto-Rauminhalt, b) Garagen einschließlich überdachter Stellplätze im Sinn des Art. 6 Abs. 7 Satz 1 Nr. 1 mit einer Fläche bis zu 50 m², außer im Außenbereich, c) freistehende Gebäude ohne Feuerungsanlagen, die einem land- oder forstwirtschaftlichen Betrieb oder einem Betrieb der gartenbaulichen Erzeugung im Sinn der § 35 Abs. 1 Nr. 1 und 2, § 201 BauGB dienen, nur eingeschossig und nicht unterkellert sind, höchstens 100 m² Brutto-Grundfläche und höchstens 140 m² überdachte Fläche haben und nur zur Unterbringung von Sachen oder zum vorübergehenden Schutz von Tieren bestimmt sind, […] (5) Verfahrensfrei ist die Beseitigung von 1. Anlagen nach Abs. 1 bis 3, 2. freistehenden Gebäuden der Gebäudeklassen 1 und 3, 3. sonstigen Anlagen, die keine Gebäude sind, mit einer Höhe bis zu 10 m. Im Übrigen ist die beabsichtigte Beseitigung von Anlagen mindestens einen Monat zuvor der Gemeinde und der Bauaufsichtsbehörde anzuzeigen. […] (7) Ausbauten im Sinne von Abs. 1 Nr. 18 sind der Gemeinde zwei Wochen vor Baubeginn in Textform anzuzeigen, Nutzungsänderungen nach Abs. 4 Nr. 1 zwei Wochen vor Aufnahme der geänderten Nutzung.",
+      "body_scope_note": "Abs. 1 Nr. 1 Buchst. a–c, Abs. 5 und Abs. 7 vollständig; übrige Absätze/Nummern als […] elidiert. Abs.-1-Einleitungssatz sinngemäß rekonstruiert („Verfahrensfrei sind“); Buchstabentexte wörtlich.",
+      "body_source_url": "https://www.gesetze-bayern.de/Content/Document/BayBO-57",
+      "body_source_note": "BAYERN.RECHT — amtliches Portal des Freistaats Bayern, Text gilt ab 01.05.2026 (Fassung v. 14.08.2007, zuletzt geändert). Zwei unabhängige Abrufe konsistent (2026-06-12). dejure.org-Querprüfung nicht verfügbar (HTTP 404, Art.-Schema).",
+      "body_fetched_at": "2026-06-12",
+      "body_verification_tier": "primary-source"
+    },
+    "58": {
+      "marker": "Art. 58",
+      "heading_de_official": "Genehmigungsfreistellung",
+      "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "primary-source",
+      "archetypes": [
+        "verfahren_freistellung"
+      ],
+      "scope_summary_de": "Genehmigungsfreistellung bei qualifiziertem B-Plan (NICHT Art. 58a — der existiert nicht).",
+      "scope_summary_en": "Permit exemption where a qualified development plan applies (NOT Art. 58a — which does not exist)."
+    },
+    "59": {
+      "marker": "Art. 59",
+      "heading_de_official": "Vereinfachtes Baugenehmigungsverfahren",
+      "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "primary-source",
+      "archetypes": [
+        "verfahren_vereinfacht"
+      ],
+      "scope_summary_de": "Vereinfachtes Baugenehmigungsverfahren (reduzierter Prüfumfang).",
+      "scope_summary_en": "Simplified building-permit procedure (reduced scope of review)."
+    },
+    "60": {
+      "marker": "Art. 60",
+      "heading_de_official": "Baugenehmigungsverfahren",
+      "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "primary-source",
+      "archetypes": [
+        "verfahren_regulaer"
+      ],
+      "scope_summary_de": "Reguläres (volles) Baugenehmigungsverfahren, v. a. bei Sonderbauten.",
+      "scope_summary_en": "Full building-permit procedure (notably for special buildings)."
+    },
+    "61": {
+      "marker": "Art. 61",
+      "heading_de_official": "Bauvorlageberechtigung",
+      "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "primary-source",
+      "archetypes": [
+        "bauvorlageberechtigung"
+      ],
+      "scope_summary_de": "Wer bauvorlageberechtigt ist (Entwurfsverfasser-Berechtigung).",
+      "scope_summary_en": "Who is entitled to submit building documents."
+    },
+    "62": {
+      "marker": "Art. 62",
+      "heading_de_official": "Bautechnische Nachweise",
+      "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "primary-source",
+      "archetypes": [
+        "bautechnische_nachweise"
+      ],
+      "scope_summary_de": "Bautechnische Nachweise (Standsicherheit, Brandschutz).",
+      "scope_summary_en": "Structural-engineering proofs (stability, fire safety)."
+    },
+    "62a": {
+      "marker": "Art. 62a",
+      "heading_de_official": "Standsicherheitsnachweis",
+      "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "primary-source",
+      "archetypes": [
+        "bautechnische_nachweise"
+      ],
+      "scope_summary_de": "Standsicherheitsnachweis und dessen Prüfung.",
+      "scope_summary_en": "Structural-stability proof and its review."
+    },
+    "62b": {
+      "marker": "Art. 62b",
+      "heading_de_official": "Brandschutznachweis",
+      "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "primary-source",
+      "archetypes": [
+        "bautechnische_nachweise",
+        "brandschutz"
+      ],
+      "scope_summary_de": "Brandschutznachweis und dessen Prüfung.",
+      "scope_summary_en": "Fire-safety proof and its review."
+    },
+    "63": {
+      "marker": "Art. 63",
+      "heading_de_official": "Abweichungen",
+      "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "primary-source"
+    },
+    "64": {
+      "marker": "Art. 64",
+      "heading_de_official": "Bauantrag, Bauvorlagen",
+      "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "primary-source",
+      "archetypes": [
+        "bauantrag_bauvorlagen"
+      ],
+      "scope_summary_de": "Bauantrag und einzureichende Bauvorlagen.",
+      "scope_summary_en": "Building application and documents to be submitted."
+    },
+    "65": {
+      "marker": "Art. 65",
+      "heading_de_official": "Behandlung des Bauantrags",
+      "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "primary-source"
+    },
+    "66": {
+      "marker": "Art. 66",
+      "heading_de_official": "Beteiligung des Nachbarn",
+      "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "primary-source"
+    },
+    "67": {
+      "marker": "Art. 67",
+      "heading_de_official": "Ersetzung des gemeindlichen Einvernehmens",
+      "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "primary-source"
+    },
+    "68": {
+      "marker": "Art. 68",
+      "heading_de_official": "Baugenehmigung, Genehmigungsfiktion und Baubeginn",
+      "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "primary-source"
+    },
+    "69": {
+      "marker": "Art. 69",
+      "heading_de_official": "Geltungsdauer der Baugenehmigung und der Teilbaugenehmigung",
+      "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "primary-source"
+    },
+    "70": {
+      "marker": "Art. 70",
+      "heading_de_official": "Teilbaugenehmigung",
+      "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "primary-source"
+    },
+    "71": {
+      "marker": "Art. 71",
+      "heading_de_official": "Vorbescheid",
+      "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "primary-source",
+      "scope_summary_de": "Vorbescheid (verbindliche Vorabklärung einzelner Fragen).",
+      "scope_summary_en": "Preliminary ruling on individual questions."
+    },
+    "72": {
+      "marker": "Art. 72",
+      "heading_de_official": "Genehmigung fliegender Bauten",
+      "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "primary-source"
+    },
+    "73": {
+      "marker": "Art. 73",
+      "heading_de_official": "Bauaufsichtliche Zustimmung",
+      "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "primary-source"
+    },
+    "74": {
+      "marker": "Art. 74",
+      "heading_de_official": "Verbot unrechtmäßig gekennzeichneter Bauprodukte",
+      "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "primary-source"
+    },
+    "75": {
+      "marker": "Art. 75",
+      "heading_de_official": "Einstellung von Arbeiten",
+      "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "primary-source"
+    },
+    "76": {
+      "marker": "Art. 76",
+      "heading_de_official": "Beseitigung von Anlagen, Nutzungsuntersagung",
+      "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "primary-source",
+      "archetypes": [
+        "abbruch_beseitigung",
+        "nutzungsaenderung"
+      ],
+      "scope_summary_de": "Beseitigungsanordnung und Nutzungsuntersagung durch die Bauaufsicht.",
+      "scope_summary_en": "Removal orders and use-prohibition by the building authority."
+    },
+    "77": {
+      "marker": "Art. 77",
+      "heading_de_official": "Bauüberwachung",
+      "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "primary-source"
+    },
+    "78": {
+      "marker": "Art. 78",
+      "heading_de_official": "Bauzustandsanzeigen, Aufnahme der Nutzung",
+      "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "primary-source"
+    },
+    "79": {
+      "marker": "Art. 79",
+      "heading_de_official": "Ordnungswidrigkeiten",
+      "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "primary-source"
+    },
+    "80": {
+      "marker": "Art. 80",
+      "heading_de_official": "Rechtsverordnungen",
+      "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "primary-source"
+    },
+    "81": {
+      "marker": "Art. 81",
+      "heading_de_official": "Örtliche Bauvorschriften",
+      "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "primary-source",
+      "scope_summary_de": "Ermächtigung der Gemeinden zu örtlichen Bauvorschriften (Gestaltungs-/Stellplatzsatzungen).",
+      "scope_summary_en": "Municipal authority for local building rules (design/parking statutes)."
+    },
+    "82": {
+      "marker": "Art. 82",
+      "heading_de_official": "Windenergie und Nutzungsänderung ehemaliger landwirtschaftlicher Gebäude",
+      "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "primary-source"
+    },
+    "82a": {
+      "marker": "Art. 82a",
+      "heading_de_official": "Feste Abstandsvorschriften für Windenergieanlagen",
+      "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "primary-source"
+    },
+    "82b": {
+      "marker": "Art. 82b",
+      "heading_de_official": "Windenergiegebiete",
+      "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "primary-source"
+    },
+    "82c": {
+      "marker": "Art. 82c",
+      "heading_de_official": "Bau-Turbo",
+      "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "primary-source",
+      "archetypes": [
+        "bauplanungsrecht"
+      ],
+      "scope_summary_de": "Bayerischer 'Bau-Turbo' (beschleunigte Zulässigkeit zugunsten des Wohnungsbaus).",
+      "scope_summary_en": "Bavarian 'Bau-Turbo' accelerator favouring housing."
+    },
+    "83": {
+      "marker": "Art. 83",
+      "heading_de_official": "Übergangsvorschriften",
+      "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "primary-source"
+    },
+    "84": {
+      "marker": "Art. 84",
+      "heading_de_official": "Inkrafttreten",
+      "heading_source_url": "https://www.gesetze-bayern.de/Content/Pdf/BayBO?all=True",
+      "heading_fetched_at": "2026-05-27",
+      "verification_tier": "primary-source"
+    }
   }
 }

@@ -16,6 +16,17 @@
 // Scope notes (v1):
 //   • OWN-STATE §§ only — federal (BauGB/GEG/…) instructions are a future
 //     extension; cross-state mentions are the bleed-guard's domain.
+//
+// v2 (fix/t07-prewalk item 4) — the FEDERAL slice. The T-07 deep dive found
+// the BW/HE/NRW/NI cells instruct "§ 23 BauNVO" and "§ 48 GEG" while those
+// four allowlists carry only the B2-era short federal list (BauGB 30/34/35 +
+// BauNVO 19 + GEG 10) — so citationLint would flag a compliant persona on
+// every live walk. Every federal § our prompt content instructs must be in
+// that state's ALLOWED_CITATIONS, same rule as own-state §§. Laws covered =
+// the corpus federal.json set actually instructed by cells (BauGB / BauNVO /
+// GEG); allowlist entries appear in BOTH historical formats ('BauGB § 34'
+// law-first in B2 states, '§ 34 BauGB' marker-first in C-batch states) and
+// both are accepted.
 //   • ✗-prefixed lines (FALSCHE/VERBOTENE ZITATE entries) are NEGATIVE
 //     instructions ("never cite this") and are skipped.
 //   • Match granularity is the BASE § number (an instructed "§ 2 Abs. 5"
@@ -85,6 +96,33 @@ function allowedNums(allow: ReadonlyArray<string>, lawShort: string): Set<string
   return out
 }
 
+/** v2 — federal laws the prompt content instructs (corpus federal.json set). */
+const FEDERAL_LAWS = ['BauGB', 'BauNVO', 'GEG'] as const
+
+/** Extract instructed federal base §-numbers ("§ 23 BauNVO" / "BauNVO § 23"). */
+function extractInstructedFederal(text: string, law: string): Set<string> {
+  const out = new Set<string>()
+  const l = escapeRe(law)
+  for (const m of text.matchAll(new RegExp(`§\\s*(\\d+[a-z]?)(?:\\s+Abs\\.\\s*\\d+)?\\s+${l}(?![\\wÄÖÜäöü-])`, 'g'))) out.add(m[1].toLowerCase())
+  for (const m of text.matchAll(new RegExp(`${l}\\s+§\\s*(\\d+[a-z]?)`, 'g'))) out.add(m[1].toLowerCase())
+  return out
+}
+
+/** Allowlisted federal base §-numbers — accepts both entry formats. */
+function allowedFederalNums(allow: ReadonlyArray<string>, law: string): Set<string> {
+  const out = new Set<string>()
+  const l = escapeRe(law)
+  for (const entry of allow) {
+    // Base-number leniency mirrors allowedNums + the runtime lint, which key
+    // (law, base-number) tuples: 'BauGB § 31 Abs. 3' satisfies '§ 31 BauGB'.
+    const m =
+      entry.match(new RegExp(`^${l}\\s+§\\s*(\\d+[a-z]?)(?:\\s+Abs\\..*)?$`)) ??
+      entry.match(new RegExp(`^§\\s*(\\d+[a-z]?)(?:\\s+Abs\\..*)?\\s+${l}$`))
+    if (m) out.add(m[1].toLowerCase())
+  }
+  return out
+}
+
 interface Violation { state: string; src: string; section: string }
 const violations: Violation[] = []
 let checkedStates = 0
@@ -111,13 +149,27 @@ for (const code of listRegisteredStates()) {
     for (const [tpl, block] of Object.entries(BLOCKS)) sources.push([`template BLOCK ${tpl}`, block as string])
   }
 
+  const fedAllow = new Map<string, Set<string>>(
+    FEDERAL_LAWS.map((law) => [law, allowedFederalNums(delta.allowedCitations, law)]),
+  )
+
   for (const [src, text] of sources) {
     if (!text) continue
-    const instructed = extractInstructed(positiveLines(text), lawShort)
+    const positive = positiveLines(text)
+    const instructed = extractInstructed(positive, lawShort)
     for (const num of instructed) {
       checkedNums++
       if (!allow.has(num)) {
         violations.push({ state: code, src, section: `§/Art. ${num} ${lawShort}` })
+      }
+    }
+    // v2 — federal slice.
+    for (const law of FEDERAL_LAWS) {
+      for (const num of extractInstructedFederal(positive, law)) {
+        checkedNums++
+        if (!fedAllow.get(law)?.has(num)) {
+          violations.push({ state: code, src, section: `§ ${num} ${law}` })
+        }
       }
     }
   }

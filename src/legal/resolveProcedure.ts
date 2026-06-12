@@ -52,7 +52,8 @@ export function beseitigungCitationFor(bundesland: BundeslandCode): string {
 export type ProcedureKind =
   | 'verfahrensfrei' // § 62/61 BauO — no permit needed
   | 'genehmigungsfreigestellt' // § 63 — notification, 1-month wait
-  | 'anzeige' // T-05 — Beseitigungs-/Abbruchanzeige: notification + statutory wait, NOT a permit and NOT Freistellung
+  | 'anzeige' // T-05 — Anzeige: notification + statutory wait, NOT a permit and NOT Freistellung. Wording is intent-aware (fix/t07-prewalk item 1): only abbruch reads as Beseitigungs-/Abbruchanzeige.
+  | 'kenntnisgabe' // fix/t07-prewalk item 3 — § 51 LBO BW Kenntnisgabeverfahren: BW-specific institute, Bauvorlagen to the Gemeinde + waiting period, no permit decision. First-class so a BW verdict can never fall to the vereinfachtes baseline (the T-05-Sachsen anzeige class).
   | 'vereinfachtes' // § 64 — simplified permit
   | 'standard' // § 65 — full permit
   | 'bauvoranfrage' // § 71 — precursor query
@@ -233,7 +234,7 @@ const EXPLICIT_VERDICT_KEYS = [
  *      (classifyVerdictDirection !== null) — a key match alone never fires.
  */
 const BESPOKE_VERDICT_KEY_TOKEN =
-  /(verfahrensfrei|anzeigepflicht|verfahrensart|verfahrensweg)/
+  /(verfahrensfrei|anzeigepflicht|verfahrensart|verfahrensweg|kenntnisgabe)/
 const BESPOKE_VERDICT_KEY_BLOCK =
   /(frage|hinweis|ausschluss|ausgeschlossen|excluded|begruendung)/
 
@@ -273,12 +274,18 @@ export function resolveVerfahrensIndikation(
 // facts > intent baseline) with conservative conflict resolution.
 // ───────────────────────────────────────────────────────────────────────
 
-export type VerdictDirection = 'free' | 'anzeige' | 'simplified' | 'regular'
+export type VerdictDirection =
+  | 'free'
+  | 'anzeige'
+  | 'kenntnisgabe' // fix/t07-prewalk item 3 — § 51 LBO BW institute, same duty weight as anzeige
+  | 'simplified'
+  | 'regular'
 
 /** Higher = more procedural duty. Conflicts resolve to the HIGHER rank. */
 const DIRECTION_RANK: Record<VerdictDirection, number> = {
   free: 0,
   anzeige: 1,
+  kenntnisgabe: 1,
   simplified: 2,
   regular: 3,
 }
@@ -299,6 +306,9 @@ export function classifyVerdictDirection(s: string): VerdictDirection | null {
   ) {
     return 'free'
   }
+  // fix/t07-prewalk item 3 — checked BEFORE anzeige so a combined statement
+  // ("Kenntnisgabe … keine Anzeige …") classifies to the actual institute.
+  if (/kenntnisgabe/.test(t)) return 'kenntnisgabe'
   if (/anzeigepflichtig|anzeigeverfahren|abbruchanzeige|beseitigungsanzeige|notification (?:required|procedure|requirement)/.test(t)) {
     return 'anzeige'
   }
@@ -399,15 +409,39 @@ export interface ProcedureDecision {
   reasoning_en: string
   /** Qualifier hint for the PDF qualifier pill. */
   confidence: 'CALCULATED' | 'ASSUMED'
+  /** fix/t07-prewalk item 1 — the case intent, stamped once by
+   *  resolveProcedure() so label consumers render the intent-correct anzeige
+   *  wording. Optional for compat; absent intent renders NEUTRAL wording
+   *  (the demolition variant is opt-in by intent, never a default). */
+  intent?: ProcedureIntent
   caveats: ReadonlyArray<ProcedureCaveat>
 }
 
-/** Localized label for a ProcedureKind. */
+/**
+ * Localized label for a ProcedureKind.
+ *
+ * fix/t07-prewalk item 1 — the anzeige label is INTENT-AWARE: the T-05 sprint
+ * authored the single kind table assuming anzeige is only reachable from
+ * abbruch, but the verdict keyword branch makes it reachable from ANY intent
+ * (T-07 Bayern Art. 57 Abs. 7, BB § 62 BbgBO Bauanzeige are instructed
+ * wording). A non-demolition Anzeige must never read "(Abbruchanzeige)" /
+ * "(demolition notice)". Absent intent renders the neutral variant — the
+ * demolition wording is opt-IN by intent, never a default.
+ */
 export function procedureLabel(
   kind: ProcedureKind,
   lang: 'de' | 'en',
+  intent?: ProcedureIntent,
 ): string {
-  const labels: Record<ProcedureKind, { de: string; en: string }> = {
+  if (kind === 'anzeige') {
+    if (intent === 'abbruch') {
+      return lang === 'de'
+        ? 'Anzeigeverfahren (Abbruchanzeige)'
+        : 'Notification procedure (demolition notice)'
+    }
+    return lang === 'de' ? 'Anzeigeverfahren' : 'Notification procedure'
+  }
+  const labels: Record<Exclude<ProcedureKind, 'anzeige'>, { de: string; en: string }> = {
     verfahrensfrei: {
       // T-05 sprint — dropped the "(Anzeige)" parenthetical: verfahrensfrei
       // means NO notification; the notification duty is its own kind now.
@@ -418,9 +452,9 @@ export function procedureLabel(
       de: 'Genehmigungsfreigestellt',
       en: 'Notification-only',
     },
-    anzeige: {
-      de: 'Anzeigeverfahren (Abbruchanzeige)',
-      en: 'Notification procedure (demolition notice)',
+    kenntnisgabe: {
+      de: 'Kenntnisgabeverfahren',
+      en: 'Kenntnisgabe (notification) procedure',
     },
     vereinfachtes: {
       de: 'Vereinfachtes Baugenehmigungsverfahren',
@@ -447,6 +481,10 @@ export function procedureStatusLabel(
   // must not read as "Baugenehmigung required".
   if (kind === 'anzeige') {
     return lang === 'de' ? 'ANZEIGEPFLICHTIG' : 'NOTIFICATION REQUIRED'
+  }
+  // fix/t07-prewalk item 3 — Kenntnisgabe is likewise a duty, not a permit.
+  if (kind === 'kenntnisgabe') {
+    return lang === 'de' ? 'KENNTNISGABEPFLICHTIG' : 'NOTIFICATION REQUIRED'
   }
   return lang === 'de' ? 'ERFORDERLICH' : 'REQUIRED'
 }
@@ -512,7 +550,9 @@ function honorContradictingVerdict(
 }
 
 export function resolveProcedure(c: ProcedureCase): ProcedureDecision {
-  let d = decideProcedure(c)
+  // fix/t07-prewalk item 1 — stamp the case intent once, at the single public
+  // entry, so every label consumer renders the intent-correct anzeige wording.
+  let d: ProcedureDecision = { ...decideProcedure(c), intent: c.intent }
   // ── T-05 sprint — abbruch × Denkmal: DSchG-Erlaubnis OVERLAY, not a hard
   // blocker. Demolition of a listed building needs heritage consent under the
   // state DSchG IN ADDITION to (and independent of) the LBO tier — routing it
@@ -702,20 +742,58 @@ function decideProcedure(c: ProcedureCase): ProcedureDecision {
       ],
     }
   }
+  // fix/t07-prewalk item 3 — honor an explicit KENNTNISGABE verdict (§ 51
+  // LBO BW institute). Checked BEFORE the anzeige branch so a Kenntnisgabe
+  // statement that also mentions an Anzeige negation cannot mislabel, and
+  // BEFORE simplified/regular. Without this branch the verdict fell to the
+  // template-blind vereinfachtes baseline (the T-05-Sachsen anzeige class,
+  // recurring) — contradicting the BW cell's instructed routing.
+  if (/kenntnisgabe/.test(vi)) {
+    const cited = extractProcedureCitation(viRaw)
+    const kgCitation = cited ?? ''
+    return {
+      kind: 'kenntnisgabe',
+      citation: kgCitation || viRaw.trim(),
+      reasoning_de: `Kenntnisgabeverfahren${kgCitation ? ` nach ${kgCitation}` : ''} — keine Baugenehmigung; die Bauvorlagen werden der Gemeinde zur Kenntnis gebracht und die landesrechtliche Wartefrist vor Baubeginn ist einzuhalten. Die Voraussetzungen (insbesondere qualifizierter Bebauungsplan) müssen vollständig vorliegen.`,
+      reasoning_en: `Kenntnisgabe procedure${kgCitation ? ` under ${kgCitation}` : ''} — no building permit; the building documents are submitted to the municipality for information and the statutory waiting period before construction applies. The preconditions (in particular a qualified Bebauungsplan) must be fully met.`,
+      confidence: 'CALCULATED',
+      caveats: [
+        {
+          kind: 'bebauungsplan_specific',
+          message_de:
+            'Kenntnisgabe-Voraussetzungen (qualifizierter B-Plan, kein Sonderbau) mit der Gemeinde bestätigen — fehlt eine, greift das Genehmigungsverfahren.',
+          message_en:
+            'Confirm the Kenntnisgabe preconditions (qualified B-Plan, no Sonderbau scope) with the municipality — if any is missing, the permit procedure applies.',
+        },
+      ],
+    }
+  }
   // T-05 sprint — honor an explicit ANZEIGE verdict (anzeigepflichtig /
   // Abbruchanzeige / Beseitigungsanzeige). Checked AFTER verfahrensfrei (so
   // "verfahrensfrei — keine förmliche Anzeige" stays free) and BEFORE the
   // simplified/regular branches. A notification duty is its own kind — it is
   // neither a permit nor Freistellung, and shoehorning it into 'standard'
   // re-creates the §-64-on-a-demolition silent-wrong this sprint closes.
+  //
+  // fix/t07-prewalk item 1 — this branch is keyword-triggered and therefore
+  // reachable from EVERY intent (T-07 Bayern Art. 57 Abs. 7 / BB § 62 BbgBO
+  // instruct exactly this vocabulary). The Beseitigung prose and the state
+  // DEMOLITION-§ fallback are correct ONLY for abbruch; a non-demolition
+  // Anzeige gets neutral wording and never inherits the demolition §.
   if (/anzeigepflichtig|anzeigeverfahren|abbruchanzeige|beseitigungsanzeige|notification (?:required|procedure|requirement)/.test(vi)) {
     const cited = extractProcedureCitation(viRaw)
-    const anzCitation = cited ?? beseitigungCitationFor(c.bundesland)
+    const isDemolition = c.intent === 'abbruch'
+    const anzCitation =
+      cited ?? (isDemolition ? beseitigungCitationFor(c.bundesland) : '')
     return {
       kind: 'anzeige',
       citation: anzCitation || viRaw.trim(),
-      reasoning_de: `Anzeigepflichtige Beseitigung${anzCitation ? ` nach ${anzCitation}` : ''} — Anzeige bei der unteren Bauaufsichtsbehörde mit landesrechtlicher Wartefrist (häufig 1 Monat) vor Beginn; kein Bauantrag erforderlich. Standsicherheit angrenzender Gebäude und Nebenpflichten (Schadstoffe, Entsorgung) bleiben unberührt.`,
-      reasoning_en: `Notification-required demolition${anzCitation ? ` under ${anzCitation}` : ''} — notify the lower building authority and observe the statutory waiting period (often one month) before work begins; no building application is required. Stability of adjoining buildings and ancillary duties (pollutants, disposal) remain unaffected.`,
+      reasoning_de: isDemolition
+        ? `Anzeigepflichtige Beseitigung${anzCitation ? ` nach ${anzCitation}` : ''} — Anzeige bei der unteren Bauaufsichtsbehörde mit landesrechtlicher Wartefrist (häufig 1 Monat) vor Beginn; kein Bauantrag erforderlich. Standsicherheit angrenzender Gebäude und Nebenpflichten (Schadstoffe, Entsorgung) bleiben unberührt.`
+        : `Anzeigepflichtiges Vorhaben${anzCitation ? ` nach ${anzCitation}` : ''} — Anzeige bei der zuständigen Behörde mit landesrechtlicher Wartefrist vor Beginn; kein Bauantrag erforderlich. Anzeigetatbestand, Frist und Unterlagen mit der unteren Bauaufsichtsbehörde bestätigen.`,
+      reasoning_en: isDemolition
+        ? `Notification-required demolition${anzCitation ? ` under ${anzCitation}` : ''} — notify the lower building authority and observe the statutory waiting period (often one month) before work begins; no building application is required. Stability of adjoining buildings and ancillary duties (pollutants, disposal) remain unaffected.`
+        : `Notification-required project${anzCitation ? ` under ${anzCitation}` : ''} — notify the competent authority and observe the statutory waiting period before work begins; no building application is required. Confirm the notification basis, period and documents with the lower building authority.`,
       confidence: 'CALCULATED',
       caveats: [
         {
