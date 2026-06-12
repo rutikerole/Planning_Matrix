@@ -137,6 +137,7 @@ import {
   isExplicitKlasseFactKey,
 } from '@/legal/deriveGebaeudeklasse'
 import { pickSmartSuggestions } from '@/features/result/lib/smartSuggestionsMatcher'
+import { resolveRecommendations } from '@/features/result/lib/resolveRecommendations'
 import { computeConfidence } from '@/features/result/lib/computeConfidence'
 import {
   buildProcedureCase,
@@ -409,9 +410,10 @@ export async function buildExportPdf({
   // only and rendered a single card on projects (like NRW × T-03
   // Königsallee) where the GEG rec was the only persisted entry —
   // the other two visible recs lived in smartPicks.
-  const sortedRecs = (state.recommendations ?? [])
-    .slice()
-    .sort((a, b) => a.rank - b.rank)
+  // fix/t06-walk2 — the raw rank-sort printed walk-2's duplicate set as
+  // Section VIII items 01/02/04/06 (two byte-identical titles) and fed the
+  // Executive Top-3 a DIFFERENT list than the web card. Single source now:
+  const sortedRecs = resolveRecommendations(state)
   const smartPicksForExec = pickSmartSuggestions({
     project,
     state: state as ProjectState,
@@ -1071,9 +1073,9 @@ export async function buildExportPdf({
   // ── Page VIII: Recommendations (all, prioritised) ──────────────
   const recsPage = doc.addPage([PDF_PAGE_WIDTH, PDF_PAGE_HEIGHT])
   const recsPageNumber = doc.getPageCount()
-  const allRecs = (state.recommendations ?? [])
-    .slice()
-    .sort((a, b) => a.rank - b.rank)
+  // fix/t06-walk2 — THIS was the surface that printed the walk-2 duplicate
+  // set as items 01/02/04/06: Section VIII raw-sorted state.recommendations.
+  const allRecs = resolveRecommendations(state)
   const allSmartPicks = pickSmartSuggestions({
     project,
     state: state as ProjectState,
@@ -1143,7 +1145,7 @@ export async function buildExportPdf({
   // re-mapped to LEGAL (quality preserved or downgraded to ASSUMED
   // for DECIDED/VERIFIED). Rule lives in src/lib/qualifierNormalize
   // alongside the Bug Q v1.0.22 normalization.
-  const { isSystemFlagKey } = await import('@/legal/systemFlagFilter')
+  const { isSystemFlagKey, isTemplateForeignFact } = await import('@/legal/systemFlagFilter')
   // v1.0.24 Bug R extension — use the shared hasInvitedDesignerForRender
   // computed at the top of buildExportPdf (Top-3 and Section VIII
   // already consume it). normalizeDesignerWithoutInLoop is now a
@@ -1151,6 +1153,8 @@ export async function buildExportPdf({
   const keyDataRows: KeyDataRow[] = facts
     .filter((f) => f.key !== 'verfahren_indikation')
     .filter((f) => !isSystemFlagKey(f.key))
+    // fix/t06-walk2 — template-foreign typed facts (abbruch_typ on T-06)
+    .filter((f) => !isTemplateForeignFact(f.key, state.templateId))
     .map((f) => ({
       field: factLabel(f.key, lang).label,
       value: factValueWithUnit(f.key, f.value, lang),

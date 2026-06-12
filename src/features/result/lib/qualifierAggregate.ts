@@ -13,6 +13,7 @@
  */
 
 import type { ProjectState } from '@/types/projectState'
+import { isDeliverableFactKey } from '@/legal/systemFlagFilter'
 
 export type SliceKey = 'DECIDED' | 'CALCULATED' | 'VERIFIED' | 'ASSUMED' | 'UNKNOWN'
 
@@ -43,7 +44,12 @@ export function aggregateQualifiers(state: Partial<ProjectState>): Aggregate {
     }
   }
 
-  ;(state.facts ?? []).forEach((f) => tally(f.qualifier))
+  // fix/t06-walk2 — the quality denominator + confidence inputs must not
+  // count system flags or template-foreign typed facts (walk-2: 41-fact
+  // donut included plot.outside_munich_acknowledged + abbruch_typ-on-T-06).
+  ;(state.facts ?? [])
+    .filter((f) => isDeliverableFactKey(f.key, state.templateId))
+    .forEach((f) => tally(f.qualifier))
   ;(state.procedures ?? []).forEach((p) => tally(p.qualifier))
   ;(state.documents ?? []).forEach((d) => tally(d.qualifier))
   ;(state.roles ?? []).forEach((r) => tally(r.qualifier))

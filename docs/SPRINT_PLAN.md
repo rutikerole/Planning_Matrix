@@ -432,6 +432,16 @@ do not implement outside the bundle):
    persona has not checked its conditions) must be emitted ASSUMED + open
    question, never CALCULATED.
 
+Logged 2026-06-12 (fix/t06-walk2, Thüringen/Jena T-06 walk 2 — RECORD
+ONLY):
+6. **Template-scope the TYPISIERTE PROJEKT-FAKTEN block.** Walk 2 emitted
+   `abbruch_typ=teilabbruch · ASSUMED` on a T-06 Aufstockung — the
+   directive's "(T-05)" parenthetical is prose, not scoping, and the block
+   ships in every template's prompt. Frontend read-time quarantine shipped
+   on fix/t06-walk2 (systemFlagFilter TYPED_KEY_APPLICABLE_TEMPLATES);
+   the directive-side fix is to scope template-bound typed keys to their
+   templates (or instruct "emit only on the named template") — SHA move.
+
 ### Confidence recalibration — TICKET, needs design before touching weights
 
 Logged 2026-06-11. Two structural issues in `computeConfidence`, evidenced
