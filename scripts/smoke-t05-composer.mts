@@ -299,27 +299,47 @@ const tabSrc = readFileSync('src/features/result/components/tabs/CostTimelineTab
 ok(/selectTimelineVariant\(/.test(tabSrc) && !/PROCEDURE_PHASES/.test(tabSrc), 'CostTimelineTab uses the shared selector; static PROCEDURE_PHASES mapping is gone (source pin)')
 ok(/selectTimelineVariant\(/.test(pdfSrc), 'exportPdf timeline gating goes through the SAME shared selector (source pin)')
 
-// ── F11: output-budget cap — single source + telemetry (fix/output-budget) ──
-// The 2026-06-11 Thüringen walk proved MAX_TOKENS=1280 starved the emission
-// contract (100% stop_reason=max_tokens; dense turns emitted ZERO facts).
-// Pins: the cap lives ONLY in anthropic.ts (with its ledger), streaming.ts
-// imports it (never a local redefinition), and BOTH call sites carry the
-// truncated_max_tokens turn-level gauge. Source pins — anthropic.ts has
-// npm: imports tsx can't resolve, so value pins are textual.
-console.log('F11 — output-budget cap (single source + telemetry):')
+// ── F11: output-budget cap — single source + FAIL-CLOSED on truncation ──
+// fix/synthesis-truncation: MAX_TOKENS 2560 → 4096 (the T-07 Hessen synthesis
+// hit 2560 on a SIMPLE case — zero headroom). The truncated_max_tokens
+// turn-level WARNING (silent warn-and-continue) is REPLACED by a fail-closed
+// gate: stop_reason=max_tokens cut the structured tail (extracted_facts/
+// procedures emit last), so the turn fails loudly (typed UpstreamError
+// 'truncated') and is NEVER persisted as if whole. anthropic.ts has npm:
+// imports tsx can't resolve → value/wiring pins are textual; the discriminator
+// predicate lives in pure wallBudget.ts and is behaviorally tested.
+console.log('F11 — output-budget cap + fail-closed truncation gate (fix/synthesis-truncation):')
 const anthropicSrc = readFileSync('supabase/functions/chat-turn/anthropic.ts', 'utf-8')
 const streamingSrc = readFileSync('supabase/functions/chat-turn/streaming.ts', 'utf-8')
 const tracerSrc = readFileSync('supabase/functions/chat-turn/tracer.ts', 'utf-8')
-ok(/export const MAX_TOKENS = 2560/.test(anthropicSrc), 'anthropic.ts exports MAX_TOKENS = 2560 (ledgered value)')
+// item 1 — budget raise, ledgered, single-source.
+ok(/export const MAX_TOKENS = 4096/.test(anthropicSrc), 'anthropic.ts exports MAX_TOKENS = 4096 (ledgered re-baseline)')
 ok(/MAX_TOKENS LEDGER/.test(anthropicSrc), 'the re-baseline ledger comment exists next to the constant')
+ok(/2560\s*→\s*4096/.test(anthropicSrc), 'ledger records the 2560 → 4096 re-baseline')
 ok(!/const MAX_TOKENS\s*=/.test(streamingSrc), 'streaming.ts has NO local MAX_TOKENS redefinition')
 ok(/MAX_TOKENS,?\s*[\s\S]{0,200}from '\.\/anthropic\.ts'/.test(streamingSrc) || /\{[^}]*MAX_TOKENS[^}]*\}\s*from '\.\/anthropic\.ts'/.test(streamingSrc), 'streaming.ts imports the cap from anthropic.ts (single source)')
 ok(!/const ABORT_TIMEOUT_MS\s*=/.test(streamingSrc), 'streaming.ts has NO local ABORT_TIMEOUT_MS redefinition')
-const jsonHook = /stop_reason === 'max_tokens'/.test(anthropicSrc) && /setWarning\(\s*'truncated_max_tokens'/.test(anthropicSrc)
-const streamHook = /stop_reason === 'max_tokens'/.test(streamingSrc) && /setWarning\(\s*'truncated_max_tokens'/.test(streamingSrc)
-ok(jsonHook, 'json path fires the truncated_max_tokens turn-level warning')
-ok(streamHook, 'streaming path fires the truncated_max_tokens turn-level warning')
-ok(/setWarning\(warning_class/.test(tracerSrc) && /if \(error_class === null\)/.test(tracerSrc), 'tracer.setWarning exists and never clobbers a real error')
+// item 1 — cap stays under the abort token-equivalent; abort/wall NOT raised.
+const abortMs = Number((anthropicSrc.match(/export const ABORT_TIMEOUT_MS = ([\d_]+)/)?.[1] ?? 'NaN').replace(/_/g, ''))
+const maxTok = Number(anthropicSrc.match(/export const MAX_TOKENS = (\d+)/)?.[1] ?? 'NaN')
+const TOK_PER_SEC = 60 // ledgered generation rate
+ok(abortMs === 90_000, `ABORT_TIMEOUT_MS stays 90s, not raised (got ${abortMs})`)
+ok(maxTok < (abortMs / 1000) * TOK_PER_SEC, `MAX_TOKENS ${maxTok} < abort token-equivalent ${(abortMs / 1000) * TOK_PER_SEC} (a future raise past the abort ceiling fails this gate)`)
+// item 2 — FAIL-CLOSED gate replaces the silent warn-and-continue.
+ok(/\|\s*'truncated'/.test(anthropicSrc), "anthropic.ts UpstreamError union includes the 'truncated' code")
+ok(/isTruncatedStop\(/.test(anthropicSrc) && /throw new UpstreamError\(\s*\n?\s*'truncated'/.test(anthropicSrc), 'json path FAILS CLOSED: throws UpstreamError(truncated) on isTruncatedStop')
+ok(/isTruncatedStop\(/.test(streamingSrc) && /throw new UpstreamError\(\s*\n?\s*'truncated'/.test(streamingSrc), 'streaming path FAILS CLOSED: throws UpstreamError(truncated) on isTruncatedStop')
+ok(!/setWarning\(\s*'truncated_max_tokens'/.test(anthropicSrc) && !/setWarning\(\s*'truncated_max_tokens'/.test(streamingSrc), 'the silent setWarning+continue gauge is GONE (replaced by the fail-closed throw)')
+// item 2 — behavioral: discriminator keys on stop_reason (cut-by-cap), NOT token count.
+const { isTruncatedStop } = await import('../supabase/functions/chat-turn/wallBudget.ts')
+ok(isTruncatedStop('max_tokens') === true, 'isTruncatedStop(max_tokens) = true (cut by the cap → fail closed)')
+ok(isTruncatedStop('end_turn') === false, 'isTruncatedStop(end_turn) = false (clean stop persists — no over-fire)')
+ok(isTruncatedStop('tool_use') === false, 'isTruncatedStop(tool_use) = false (clean tool stop; legit zero-facts turn persists)')
+ok(isTruncatedStop(null) === false && isTruncatedStop(undefined) === false, 'isTruncatedStop(null/undefined) = false')
+// item 3 — truncated turns surface as non-ok (error) traces with a truncation
+// error_class, not a green row + tiny chip (wired in index.ts/streaming catch).
+ok(/truncated_max_tokens/.test(readFileSync('supabase/functions/chat-turn/index.ts', 'utf-8')), 'index.ts json catch labels the truncated turn error_class truncation-specific')
+ok(/setWarning\(warning_class/.test(tracerSrc), 'tracer.setWarning mechanism still defined (kept for future use)')
 
 // ── F12: wall-clock budget — retry can never outrun the platform kill ──
 // Meta-sweep item 4b: when ABORT_TIMEOUT_MS went 50s → 90s the retry

@@ -418,7 +418,14 @@ Deno.serve(async (req: Request) => {
   } catch (err) {
     callSpan.setError(err instanceof Error ? err.message : String(err))
     callSpan.end('error')
-    tracer.setError('anthropic_call_failed', err instanceof Error ? err.message : String(err))
+    // fix/synthesis-truncation — label a truncated turn distinctly so the
+    // Logs drawer shows a truncation-specific (red) error_class, not a
+    // generic anthropic_call_failed and not a green-ok row with a chip.
+    const failClass =
+      err instanceof UpstreamError && err.code === 'truncated'
+        ? 'truncated_max_tokens'
+        : 'anthropic_call_failed'
+    tracer.setError(failClass, err instanceof Error ? err.message : String(err))
     traceStatus = 'error'
     console.error(`[chat-turn] [${requestId}] upstream error`, err)
     return respond(translateUpstream(err), upstreamStatus(err))
@@ -859,7 +866,7 @@ function findLastSpecialist(
 
 function translateUpstream(err: unknown): ChatTurnError {
   if (err instanceof UpstreamError) {
-    if (err.code === 'invalid_response') {
+    if (err.code === 'invalid_response' || err.code === 'truncated') {
       // Phase 8.6 (B.2) — server already attempted schema-reminder retry
       // inside callAnthropicWithSchemaReminder (anthropic.ts). If we
       // still landed here, both attempts failed. Hint the SPA to
@@ -868,6 +875,11 @@ function translateUpstream(err: unknown): ChatTurnError {
       // existing thinking indicator hang on longer instead of an
       // immediate error toast for what's effectively a transient
       // model-output glitch.
+      // fix/synthesis-truncation — 'truncated' (stop_reason=max_tokens) shares
+      // this envelope: the SPA auto-retries the whole turn (rare with
+      // MAX_TOKENS=4096) and the turn is NEVER persisted half-cut. The trace
+      // error_class is truncation-specific (json catch below) so the operator
+      // can tell truncation from a genuine malformed output.
       return {
         code: 'model_response_invalid',
         message: err.message,
