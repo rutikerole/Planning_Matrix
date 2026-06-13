@@ -399,6 +399,19 @@ re-baseline rather than forcing one:
    BEFORE the bilingual prose fields, so facts survive any future
    output-cap truncation (defense-in-depth behind the MAX_TOKENS raise;
    evidence: Thüringen b1416734 dense turns where the cap ate the tail).
+   **STATUS 2026-06-13 (fix/synthesis-truncation):** the OTHER two legs of
+   the three-part fix SHIPPED on `fix/synthesis-truncation` — (a) MAX_TOKENS
+   2560→4096 (makes truncation rare; the T-07 Hessen synthesis hit 2560 on a
+   simple case) and (b) a FAIL-CLOSED gate (`isTruncatedStop` →
+   `UpstreamError('truncated')` in both call paths; a truncated turn is now a
+   loud typed error + red trace, NEVER a silent partial persist). Those two
+   make truncation rare AND fail-closed but still REJECT the turn when it
+   happens. **This emission-order rule is the durable third leg:** with facts
+   emitted FIRST, a truncation clips only the trailing prose, so the capture
+   contract is *structurally* the last thing ever cut — turning the rare
+   truncation from a rejected turn into a fully-captured one. It is the only
+   leg that moves the Bayern SHA (directive prefix), so it rides the next
+   intentional re-baseline. All three together = the complete fix.
 2. **§3 clarifying example** (grounded-emission valve) — one line stating
    that an inferred-likely POSITIVE as `true·ASSUMED` + open question is
    the intended pattern (the `in_gestaltungssatzung` Erfurt case); the
