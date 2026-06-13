@@ -18,6 +18,7 @@
 // ───────────────────────────────────────────────────────────────────────
 
 import { selectProcedures } from '../src/features/result/lib/resolveProcedures.ts'
+import { buildProcedureCase, resolveProcedure } from '../src/legal/resolveProcedure.ts'
 import { composeDoNext } from '../src/features/result/lib/composeDoNext.ts'
 import { composeRisks } from '../src/features/result/lib/composeRisks.ts'
 import { buildExportMarkdown } from '../src/lib/export/exportMarkdown.ts'
@@ -86,6 +87,29 @@ const risks = (intent: string) =>
   })
 ok(!risks('umnutzung').visible.some((r) => /altlast/i.test(r.entry.id)), 'umnutzung Risk Register has NO altlast / "before excavation" risk')
 ok(risks('sanierung').visible.some((r) => /altlast/i.test(r.entry.id)), 'sanierung still surfaces altlast (non-vacuous)')
+
+// ── fix/t07-walk1 item 1 — phantom-conflict coverage for T-04 (umnutzung).
+// The conflict bug is in template-agnostic buildProcedureCase; T-04 is the one
+// composer smoke that does not use the shared assertBaseline probe, so pin it
+// here too: an agreeing persona entry whose rationale mentions verfahrensfrei
+// in an exceedance sense must NOT trigger a phantom conflict.
+const t04Conflict = resolveProcedure(buildProcedureCase(
+  { bundesland: 'nrw', intent: 'umnutzung' } as never,
+  {
+    templateId: 'T-04',
+    facts: [{ key: 'verfahren_indikation', value: 'vereinfachtes Verfahren nach § 64 BauO NRW' }],
+    procedures: [{
+      id: 'p', status: 'erforderlich',
+      title_de: 'Vereinfachtes Baugenehmigungsverfahren (§ 64 BauO NRW)',
+      title_en: 'Simplified building permit (§ 64 BauO NRW)',
+      rationale_de: 'Die Nutzfläche übersteigt jede verfahrensfreie Schwelle.',
+      rationale_en: 'The floor area exceeds any verfahrensfreie threshold.',
+      qualifier: { source: 'LEGAL', quality: 'CALCULATED' },
+    }],
+  } as never,
+))
+ok(!t04Conflict.caveats.some((c) => c.kind === 'verdikt_konflikt') && t04Conflict.confidence === 'CALCULATED',
+  'T-04 umnutzung: agreeing rationale mentioning verfahrensfrei → NO phantom conflict, stays CALCULATED')
 
 console.log(`\n${pass} passed · ${fail} failed`)
 if (fail > 0) process.exit(1)

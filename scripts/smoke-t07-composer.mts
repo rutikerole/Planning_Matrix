@@ -150,4 +150,78 @@ ok(
   'T-01/T-02/T-03 still derive normally (no over-fix)',
 )
 
+// ── fix/t07-walk1 item 1 — phantom procedure conflict (CLASS-3). The Hessen
+// walk 1 PDF flagged "Conflicting procedure signals" on a §65-vs-§65 project:
+// the persona's rationale explained the simplified verdict with "Brutto-
+// Rauminhalt … übersteigt jede verfahrensfreie Schwelle" / "exceeds any
+// verfahrensfreie threshold", and buildProcedureCase RE-classified that full
+// title+rationale blob → 'free' while the fact classified 'simplified' →
+// false conflict → ASSUMED downgrade. See docs/T07_HESSEN_WALK1_DIAGNOSIS.
+console.log('T-07 — phantom procedure conflict (fix/t07-walk1 item 1):')
+
+// 1b — classifyVerdictDirection must not read an EXCEEDED/negated verfahrensfrei
+// token as a free verdict (the genehmigungsfrei(?!gestellt) lineage).
+ok(classifyVerdictDirection('Brutto-Rauminhalt 144 m³ übersteigt jede verfahrensfreie Schwelle') !== 'free',
+  'exceedance DE ("übersteigt … verfahrensfreie Schwelle") is NOT free')
+ok(classifyVerdictDirection('Gross volume 144 m³ exceeds any verfahrensfreie threshold') !== 'free',
+  'exceedance EN ("exceeds any verfahrensfreie threshold") is NOT free')
+ok(classifyVerdictDirection('die verfahrensfreie Grenze wird überschritten') !== 'free',
+  'exceedance DE verb-after ("verfahrensfreie Grenze … überschritten") is NOT free')
+ok(classifyVerdictDirection('liegt oberhalb der verfahrensfreien Schwelle') !== 'free',
+  'exceedance DE ("oberhalb der verfahrensfreien Schwelle") is NOT free')
+// no over-fix: a BELOW/within mention and a bare verdict are still free.
+ok(classifyVerdictDirection('das Vorhaben liegt unterhalb der verfahrensfreien Schwelle') === 'free',
+  'BELOW the threshold ("unterhalb der verfahrensfreien Schwelle") IS still free (no over-fix)')
+ok(classifyVerdictDirection('das Vorhaben ist verfahrensfrei nach Art. 57 Abs. 1 Nr. 1 a') === 'free',
+  'bare positive verdict ("ist verfahrensfrei nach …") IS still free (no over-fix)')
+ok(classifyVerdictDirection('nicht verfahrensfrei') !== 'free',
+  'adjacency negation ("nicht verfahrensfrei") still suppressed (preserved)')
+
+// 1a — the conflict must not re-classify the rationale. VERBATIM live case.
+const PBW2 = { templateId: 'T-07', intent: 'anbau', bundesland: 'hessen' }
+const personaLive = [{
+  id: 'p', status: 'erforderlich',
+  title_de: 'Vereinfachtes Baugenehmigungsverfahren (§ 65 HBO)',
+  title_en: 'Simplified Baugenehmigung procedure (§ 65 HBO)',
+  rationale_de: 'Brutto-Rauminhalt 144 m³ übersteigt jede verfahrensfreie Schwelle; kein qualifizierter Bebauungsplan.',
+  rationale_en: 'Gross volume 144 m³ exceeds any verfahrensfreie threshold; no qualifying Bebauungsplan.',
+  qualifier: { source: 'LEGAL', quality: 'CALCULATED' },
+}]
+const sLive = mkState(PBW2, [{ key: 'verfahren_indikation', value: 'vereinfachtes Verfahren nach § 65 HBO' }], personaLive)
+const pcLive = buildProcedureCase(mkProject(PBW2, sLive), sLive)
+const dLive = resolveProcedure(pcLive)
+ok(pcLive.verfahren_konflikt === undefined, 'live §65-vs-§65 case: NO verfahren_konflikt set')
+ok(dLive.kind === 'vereinfachtes', `live case kind vereinfachtes (got ${dLive.kind})`)
+ok(dLive.confidence === 'CALCULATED', `live case confidence CALCULATED, not downgraded (got ${dLive.confidence})`)
+ok(!dLive.caveats.some((c) => c.kind === 'verdikt_konflikt'), 'live case: no verdikt_konflikt caveat')
+
+// 1a robustness — a NOVEL exceedance phrasing not in any lexicon must STILL
+// produce no conflict (the conflict no longer reads the rationale at all).
+const personaNovel = [{
+  id: 'p', status: 'erforderlich',
+  title_de: 'Vereinfachtes Baugenehmigungsverfahren (§ 65 HBO)',
+  title_en: 'Simplified building permit (§ 65 HBO)',
+  rationale_de: 'Das Bauvorhaben ist schlicht zu groß, um noch verfahrensfrei bleiben zu können.',
+  rationale_en: 'The project is simply far too big to remain verfahrensfrei here.',
+  qualifier: { source: 'LEGAL', quality: 'CALCULATED' },
+}]
+const sNovel = mkState(PBW2, [{ key: 'verfahren_indikation', value: 'vereinfachtes Verfahren nach § 65 HBO' }], personaNovel)
+const dNovel = resolveProcedure(buildProcedureCase(mkProject(PBW2, sNovel), sNovel))
+ok(!dNovel.caveats.some((c) => c.kind === 'verdikt_konflikt'),
+  'NOVEL exceedance phrasing (not in lexicon) still produces NO conflict (rationale never re-classified)')
+ok(dNovel.confidence === 'CALCULATED', 'novel-phrasing case stays CALCULATED')
+
+// no over-fix — a GENUINE direction conflict (fact regular vs persona free
+// TITLE) must still fire, mirroring smoke-t05-composer:194.
+const personaFree = [{
+  id: 'pf', status: 'nicht_erforderlich',
+  title_de: 'Verfahrensfreier Anbau nach § 61 BbgBO', title_en: 'Permit-free extension under § 61 BbgBO',
+  rationale_de: '', rationale_en: '', qualifier: { source: 'LEGAL', quality: 'CALCULATED' },
+}]
+const sGenuine = mkState({ templateId: 'T-07', intent: 'anbau', bundesland: 'brandenburg' },
+  [{ key: 'verfahren_indikation', value: 'reguläres Verfahren nach § 63 BbgBO' }], personaFree)
+const dGenuine = resolveProcedure(buildProcedureCase(mkProject({ templateId: 'T-07', intent: 'anbau', bundesland: 'brandenburg' }, sGenuine), sGenuine))
+ok(dGenuine.caveats.some((c) => c.kind === 'verdikt_konflikt'),
+  'GENUINE regular-vs-free conflict still FIRES (no over-fix)')
+
 finish('smoke-t07-composer', t)

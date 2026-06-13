@@ -15,6 +15,8 @@ import { buildExportMarkdown } from '../src/lib/export/exportMarkdown.ts'
 import { resolveRoles } from '../src/features/result/lib/resolveRoles.ts'
 import { resolveDocuments } from '../src/features/result/lib/resolveDocuments.ts'
 import { resolveArchiveLabel, cityFromPlotAddress } from '../src/features/chat/lib/archiveLabel.ts'
+import { buildProcedureCase, resolveProcedure } from '../src/legal/resolveProcedure.ts'
+import { resolveProcedures, selectProcedures } from '../src/features/result/lib/resolveProcedures.ts'
 
 let pass = 0, fail = 0
 const ok = (c: boolean, m: string) => { if (c) { console.log('  ✓ ' + m); pass++ } else { console.log('  ✗ ' + m); fail++ } }
@@ -104,6 +106,55 @@ ok(/Load-bearing parts affected/.test(mdEn) && !/Tragende Teile betroffen/.test(
   'EN .md carries the EN rationale, never the German one (was rationale_de hardcoded)')
 ok(/Tragende Teile betroffen/.test(mdDe),
   'DE .md still carries the DE rationale')
+
+// ── fix/t07-walk1 item 2: CLASS-1 — Key-Data "Procedure indication" must be
+//    single-sourced from the resolved decision on EVERY surface. Pre-fix the
+//    .md Key Data rendered the RAW verfahren_indikation fact (its own stored
+//    qualifier), while PDF/web rendered the decision; on a forced-ASSUMED
+//    decision the .md showed CALCULATED while PDF/web showed ASSUMED (the
+//    Hessen walk split). The .md must read the decision too.
+console.log('  — Key-Data Procedure-indication single-source (fix/t07-walk1 item 2):')
+// genuine conflict → decision.confidence forced ASSUMED; the raw fact's own
+// qualifier is CALCULATED, so the two sources visibly disagree pre-fix.
+const procProject = {
+  id: 'pp', name: 'Conflict', plot_address: 'Dresden, Prager Straße 1',
+  intent: 'sanierung', bundesland: 'sachsen', template_id: 'T-03', status: 'in_progress',
+  created_at: '2026-06-13T00:00:00Z',
+  state: {
+    facts: [
+      // realistic project: address facts are always captured (Street/PLZ/City),
+      // so the Key Data section always renders — the procedure row sits inside it.
+      { key: 'street', value: 'Prager Straße', qualifier: { source: 'CLIENT', quality: 'DECIDED' } },
+      { key: 'postal_code', value: '01069', qualifier: { source: 'CLIENT', quality: 'DECIDED' } },
+      { key: 'verfahren_indikation', value: 'reguläres Verfahren nach § 64 SächsBO', qualifier: { source: 'LEGAL', quality: 'CALCULATED' } },
+    ],
+    procedures: [
+      { id: 'pf', title_de: 'Verfahrensfreier Vollabbruch nach § 61 SächsBO', title_en: 'Permit-free under § 61 SächsBO', status: 'nicht_erforderlich', rationale_de: '', rationale_en: '', qualifier: { source: 'LEGAL', quality: 'CALCULATED' } },
+    ],
+  },
+} as unknown as Parameters<typeof buildExportMarkdown>[0]['project']
+const procState = (procProject as never as { state: never }).state
+const procDecision = resolveProcedure(buildProcedureCase(procProject as never, procState))
+ok(procDecision.confidence === 'ASSUMED',
+  `non-vacuous: the genuine conflict forced decision.confidence ASSUMED (got ${procDecision.confidence})`)
+// web: the decision-first primary carries decision.confidence.
+const webPrimary = selectProcedures(resolveProcedures(procProject as never, procState).procedures).primary
+ok(webPrimary?.qualifier?.quality === 'ASSUMED',
+  `web procedure qualifier == decision.confidence (ASSUMED; got ${webPrimary?.qualifier?.quality})`)
+// .md Key Data "Procedure indication" row must now also read the decision.
+const mdProc = buildExportMarkdown({ project: procProject, events: [], lang: 'en' })
+const keyData = mdProc.split('## Key data')[1] ?? ''
+const procRow = keyData.split('\n').find((l) => /Procedure indication/i.test(l)) ?? ''
+const mdQual = procRow.match(/\(([A-Z]+)\s*·\s*([A-Z]+)\)/)?.[2]
+ok(mdQual === 'ASSUMED',
+  `.md Key-Data Procedure-indication qualifier == decision.confidence (ASSUMED; got ${mdQual ?? 'NONE'}) — single-sourced, not the raw fact's CALCULATED`)
+ok(mdQual === webPrimary?.qualifier?.quality,
+  '.md Key-Data Procedure-indication qualifier == web qualifier (cross-surface parity)')
+// the raw verfahren_indikation fact must NOT also appear as its own separate
+// row (it is replaced by the decision-derived row, mirroring the PDF exclude).
+const rawFactRows = keyData.split('\n').filter((l) => /Procedure indication/i.test(l))
+ok(rawFactRows.length === 1,
+  `.md emits exactly ONE Procedure-indication row, not the raw fact + a decision row (got ${rawFactRows.length})`)
 
 console.log(`\n[smoke-export-parity] ${pass} passed · ${fail} failed`)
 if (fail > 0) { console.error('[smoke-export-parity] FAIL'); process.exit(1) }
