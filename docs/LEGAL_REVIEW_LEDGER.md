@@ -86,3 +86,64 @@ references the entry id.
   baunormenlexikon.de). It is allowlisted and instructed (the ni-s51 class).
   Confirm heading + currency against voris/Nds. primary source and upgrade
   the tier field.
+
+## CVL-3 · § 51 GEG (Erweiterung und Ausbau) corpus ingestion
+
+- **Status:** OPEN
+- **Opened:** 2026-06-13 (T-07 Hessen walk 1, secondary finding)
+- **What:** For a **heated Anbau** to an existing building, the correct GEG
+  provision is **§ 51 GEG 2024 — "Anforderungen an ein bestehendes Gebäude bei
+  Erweiterung und Ausbau"** (new heated/cooled rooms must meet the 1.2×
+  Referenzgebäude transmission-loss limit, Anlage 1; the **50 m²** threshold
+  adds the § 14 summer-heat requirement; for Nichtwohngebäude, >100 %
+  Nutzflächen-extension triggers full new-build §§ 18/19). The corpus
+  (`scripts/legal-corpus/federal.json`, `laws.GEG`) carries only §§ **8, 10,
+  48, 80** — **§ 51 is MISSING**. This is the § 27f-lesson: a real operative
+  provision absent from corpus.
+- **Action:** ingest § 51 GEG body from a primary source (gesetze-im-internet.de
+  / official GEG), add to `federal.json` + the allowlists that need it, re-run
+  `verify:citations`. Then LRL-2 can re-author the cell citation.
+- **Source leads (web, 2026-06-13):** geg-info.de/geg_2024/051_…, BBSR-GEG
+  portal "Anbau, Ausbau und Aufstockung", Haufe GEG-2024 synopsis § 51.
+
+---
+
+# Legal Review Ledger — additional entries (T-07 Hessen walk 1)
+
+## LRL-2 · HE × T-07 and base T-07 block — energy-citation re-author
+
+- **Status:** BLOCKED-ON-LAWYER-CONFIRM (not yet shipped — recorded for a later
+  authoring pass; gated on CVL-3 ingesting § 51 GEG first)
+- **Opened:** 2026-06-13 (T-07 Hessen walk 1)
+- **What needs changing:** the T-07 cells' ENERGIE line cites **§ 10 GEG**
+  ("Grundsatz und Niedrigstenergiegebäude" — the **new-build** principle) for an
+  Anbau. The base block also pairs "§ 10 GEG (Neubau-Teil) · § 48 GEG (Anschluss
+  an Bestand)". For a heated extension the dominant provision is **§ 51 GEG**
+  (Erweiterung/Ausbau, see CVL-3), not § 10 (new-build) and not § 48 (which is
+  exterior-component change). Re-author the HE × T-07 cell
+  (`stateOverrides.ts`, HE ENERGIE line) **and** the base `t07-anbau.ts` energy
+  line to lead with § 51 GEG once it is in corpus.
+- **Reviewer must confirm:** § 51 GEG as the correct primary for a heated Anbau;
+  whether § 10 / § 48 retain any secondary role; the 50 m² § 14 summer-heat hinge
+  (the walked project is 45 m² → below it).
+- **REPORT ONLY this branch** — no cell prose changed on `fix/t07-walk1`.
+
+## LRL-3 · Bayern base T-07 block — Art. 57 Abs. 7 Anzeige is wrong-direction for an Anbau
+
+- **Status:** BLOCKED-ON-LAWYER-CONFIRM / Bayern-architect-gated (SHA-scope:
+  editing the base block re-baselines nothing by itself — `t07-anbau.ts` is a
+  template tail, NOT in the Bayern SHA prefix — but it moves the edge fingerprint
+  and needs the pending Bayern-architect review at `t07-anbau.ts:15`)
+- **Opened:** 2026-06-12 (T-07 body-findings, `docs/T07_BODY_FINDINGS_2026-06-12.md`)
+- **What:** `src/legal/templates/t07-anbau.ts:68` ("Anzeige nach Art. 57 Abs. 7
+  ist auch hier anwendbar") and `:186` ("bei verfahrensfreien Anbauten empfohlen")
+  instruct the persona toward an **Art. 57 Abs. 7 Anzeige for an Anbau**. The
+  ingested body (`scripts/legal-corpus/states/bayern.json` Art. 57, primary-source
+  2026-06-12) shows **Abs. 7 covers only Ausbauten i.S.v. Abs. 1 Nr. 18 +
+  Nutzungsänderungen nach Abs. 4 Nr. 1 — NOT Anbauten**. The instruction is
+  wrong-direction (F2-class). Not walk-blocking for HE/BB (München-gated), but
+  must be corrected before any Bayern T-07 walk leans on Abs. 7.
+- **Reviewer must confirm:** the correct verfahrensfrei/Anzeige routing for a
+  Bayern Anbau (Art. 57 Abs. 1 Nr. 1 a 75 m³ verfahrensfrei; whether any Anzeige
+  duty applies); whether an ≤ 75 m³ Anbau qualifies as a "Gebäude" under Abs. 1
+  Nr. 1 a (doctrine question the body text does not decide).
