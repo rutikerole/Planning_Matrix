@@ -296,10 +296,26 @@ const DIRECTION_RANK: Record<VerdictDirection, number> = {
  * ("nicht verfahrensfrei" must not classify as free); checked free-first so
  * "verfahrensfrei — keine förmliche Anzeige" is free, not anzeige.
  */
+// fix/t07-walk1 item 1b — a verfahrensfrei/permit-free token is NOT a free
+// VERDICT when the prose says the project EXCEEDS the permit-free threshold.
+// The Hessen walk's rationale "Brutto-Rauminhalt … übersteigt jede
+// verfahrensfreie Schwelle" / "exceeds any verfahrensfreie threshold" was read
+// as 'free'. Same root as genehmigungsfrei(?!gestellt): a token mention is not
+// a verdict. Catches an exceedance cue within a clause of a free token, either
+// order; deliberately does NOT touch BELOW/within mentions ("unterhalb der
+// verfahrensfreien Schwelle" stays free — that project IS permit-free).
+const FREE_TOKEN_SRC = '(?:verfahrensfrei\\w*|genehmigungsfrei\\w*|permit[- ]?free|procedure[- ]?free)'
+const EXCEED_SRC =
+  '(?:übersteig\\w*|überschreit\\w*|überschritt\\w*|oberhalb|jenseits|hinaus|exceed\\w*|beyond|above|\\bover\\b|gr[öo]ßer|larger|too\\s+(?:big|large))'
+const EXCEEDS_FREE = new RegExp(`${EXCEED_SRC}[^.;\\n]{0,40}?${FREE_TOKEN_SRC}`)
+const FREE_EXCEEDS = new RegExp(`${FREE_TOKEN_SRC}[^.;\\n]{0,40}?${EXCEED_SRC}`)
+
 export function classifyVerdictDirection(s: string): VerdictDirection | null {
   const t = s.toLowerCase()
   const freeNegated =
-    /(nicht|kein[e]?|not)\s+(verfahrensfrei|genehmigungsfrei|permit[- ]?free|procedure[- ]?free)/.test(t)
+    /(nicht|kein[e]?|not)\s+(verfahrensfrei|genehmigungsfrei|permit[- ]?free|procedure[- ]?free)/.test(t) ||
+    EXCEEDS_FREE.test(t) ||
+    FREE_EXCEEDS.test(t)
   if (
     !freeNegated &&
     /verfahrensfrei|verfahrensfreiheit|genehmigungsfrei(?!gestellt|stellung)|permit[- ]?free|procedure[- ]?free|no permit (?:required|needed)/.test(t)
@@ -338,7 +354,7 @@ export function extractPersonaProcedureVerdict(
         rationale_en?: string
       }>
     | undefined,
-): string | undefined {
+): { text: string; dir: VerdictDirection } | undefined {
   if (!procedures || procedures.length === 0) return undefined
   let best: { dir: VerdictDirection; text: string } | undefined
   for (const p of procedures) {
@@ -352,7 +368,12 @@ export function extractPersonaProcedureVerdict(
       best = { dir, text }
     }
   }
-  return best?.text
+  // fix/t07-walk1 item 1a — return the SELECTED direction alongside the text.
+  // The conflict detector must reuse THIS direction (title-first) and never
+  // re-classify the title+rationale blob (the rationale's explanatory prose —
+  // e.g. "exceeds the verfahrensfreie threshold" — was being read as a second,
+  // contradictory verdict → phantom conflict). One entry, one classification.
+  return best
 }
 
 // v1.0.21 Bug E — describe an active hard blocker for the renderer.
@@ -1526,16 +1547,19 @@ export function buildProcedureCase(
   // flagged via verfahren_konflikt (resolveProcedure downgrades + flags) —
   // never a silent tie-break.
   const factVerdict = resolveVerfahrensIndikation(facts)
-  const personaVerdict = extractPersonaProcedureVerdict(state.procedures)
-  let verdict = factVerdict ?? personaVerdict
+  const persona = extractPersonaProcedureVerdict(state.procedures)
+  let verdict = factVerdict ?? persona?.text
   let verfahren_konflikt: ProcedureCase['verfahren_konflikt']
-  if (factVerdict && personaVerdict) {
+  if (factVerdict && persona) {
     const df = classifyVerdictDirection(factVerdict)
-    const dp = classifyVerdictDirection(personaVerdict)
+    // fix/t07-walk1 item 1a — reuse the direction extractPersonaProcedureVerdict
+    // already computed (title-first); do NOT re-classify persona.text. A persona
+    // entry selected 'simplified' can never be re-read as 'free' by the rationale.
+    const dp = persona.dir
     if (df && dp && df !== dp) {
       verdict =
-        DIRECTION_RANK[df] >= DIRECTION_RANK[dp] ? factVerdict : personaVerdict
-      verfahren_konflikt = { fact: factVerdict, persona: personaVerdict }
+        DIRECTION_RANK[df] >= DIRECTION_RANK[dp] ? factVerdict : persona.text
+      verfahren_konflikt = { fact: factVerdict, persona: persona.text }
     }
   }
   // T-05 sprint — freestanding tri-state. Exact canonical key first, then a

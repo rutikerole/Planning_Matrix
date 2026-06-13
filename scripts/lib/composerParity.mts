@@ -123,6 +123,56 @@ function assertLegalLandscape(
   }
 }
 
+/** fix/t07-walk1 — a verdict word per kind, for the per-template phantom-
+ *  conflict probe below. Each maps to a string classifyVerdictDirection reads
+ *  as that kind's direction. */
+const KIND_VERDICT_WORD: Record<ProcedureKind, string> = {
+  verfahrensfrei: 'verfahrensfrei',
+  genehmigungsfreigestellt: 'Genehmigungsfreistellung',
+  kenntnisgabe: 'Kenntnisgabeverfahren',
+  vereinfachtes: 'vereinfachtes Baugenehmigungsverfahren',
+  standard: 'reguläres Baugenehmigungsverfahren',
+  bauvoranfrage: 'Bauvoranfrage',
+}
+
+/**
+ * fix/t07-walk1 — exercise the verfahren_konflikt path PER TEMPLATE (it was
+ * dormant in every composer smoke because mkState defaults procedures:[]).
+ * A persona structured entry that AGREES with the verdict (same direction)
+ * but whose RATIONALE mentions verfahrensfrei in an EXCEEDANCE sense must NOT
+ * be re-classified into a phantom conflict. RED pre-fix for every non-free
+ * baseline (the rationale re-classified to 'free' → false conflict + ASSUMED).
+ */
+function assertNoPhantomConflict(
+  ok: (c: boolean, m: string) => void,
+  p: ParityProject,
+  d: ProcedureDecision,
+): void {
+  const word = KIND_VERDICT_WORD[d.kind]
+  const verdict = `${word}${d.citation ? ` nach ${d.citation}` : ''}`
+  const persona = [
+    {
+      id: 'pc',
+      status: 'erforderlich',
+      title_de: verdict,
+      title_en: verdict,
+      rationale_de: 'Brutto-Rauminhalt übersteigt jede verfahrensfreie Schwelle.',
+      rationale_en: 'Gross volume exceeds any verfahrensfreie threshold.',
+      qualifier: Q,
+    },
+  ]
+  const state = mkState(p, [{ key: 'verfahren_indikation', value: verdict }], persona)
+  const cd = resolveProcedure(buildProcedureCase(mkProject(p, state), state))
+  ok(
+    !cd.caveats.some((c) => c.kind === 'verdikt_konflikt'),
+    `${p.templateId} no phantom conflict when an agreeing rationale mentions verfahrensfrei`,
+  )
+  ok(
+    cd.confidence === 'CALCULATED',
+    `${p.templateId} same-verdict stays CALCULATED (no phantom downgrade; got ${cd.confidence})`,
+  )
+}
+
 /** Pin 1 — the zero-verdict intent baseline. */
 export function assertBaseline(
   ok: (c: boolean, m: string) => void,
@@ -139,6 +189,8 @@ export function assertBaseline(
   const sel = selectProcedures(resolveProcedures(mkProject(p, state), state).procedures)
   ok(sel.primary?.id === 'P-Decision' && (sel.primary?.title_de ?? '').includes(d.citation), `${p.templateId} web primary IS the decision (no baseline bypass)`)
   assertLegalLandscape(ok, p, state, d, 'baseline')
+  // fix/t07-walk1 — per-template conflict-path coverage.
+  assertNoPhantomConflict(ok, p, d)
 }
 
 /** Pin 2+3 — verdict-fact flip across the four surfaces. */
