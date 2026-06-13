@@ -4,5 +4,5 @@
 // bundler ships). Served by the GET health probe; compared against the local
 // tree by `npm run verify:deploy` (edge rail). Regenerate:
 //   node scripts/gen-edge-fingerprint.mjs
-export const EDGE_FINGERPRINT = '367ccf036b41'
+export const EDGE_FINGERPRINT = '2cbbd4dc2ef3'
 export const EDGE_FINGERPRINT_FILES = 57

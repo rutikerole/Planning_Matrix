@@ -34,7 +34,7 @@ import {
   type RespondToolInput,
 } from '../../../src/types/respondTool.ts'
 import type { Span, Tracer } from './tracer.ts'
-import { attemptAbortMs, shouldRetryWithinBudget } from './wallBudget.ts'
+import { attemptAbortMs, isTruncatedStop, shouldRetryWithinBudget } from './wallBudget.ts'
 
 // ── Configuration ──────────────────────────────────────────────────────
 // Phase 3.1 #33: dropped from 2048 → 1280 based on batch-4 telemetry
@@ -54,19 +54,30 @@ import { attemptAbortMs, shouldRetryWithinBudget } from './wallBudget.ts'
 //     acknowledged them) and, when the cut lands before message_de,
 //     hard-fails Zod (4 traces, user-visible retry stalls). The Phase 3.1
 //     revisit threshold was 5% truncation; we are at 100%.
-//     Re-evaluation criterion: the `truncated_max_tokens` turn-level
-//     warning (tracer.setWarning below) is the standing gauge — 2560 is
-//     provisional; if the warning still fires on a meaningful share of
-//     turns, raise again (or shorten the contract); if it never fires,
-//     consider lowering toward p99+headroom.
-//     ABORT_TIMEOUT_MS raised 50s → 90s in the same change: worst-case
-//     generation at 2560 tokens (~60 tok/s observed) is ~45-50s and an
-//     abort loses the WHOLE turn — strictly worse than truncation.
+//     ABORT_TIMEOUT_MS raised 50s → 90s in the same change.
+//   2026-06-13  2560 → 4096  (fix/synthesis-truncation)
+//     Cause: the T-07 Hessen synthesis hit stop_reason=max_tokens at 2560
+//     on a SIMPLE case (output_tokens=2560 exactly; trace flagged
+//     truncated_max_tokens). The real post-T-05 synthesis distribution is
+//     2000–2560+ (NOT the obsolete "median ~1500" 1280-era batch-4
+//     figure) — 2560 had ~zero headroom, so a denser turn truncates and
+//     silently drops the structured tail. 4096 clears the observed
+//     distribution with headroom.
+//     SAME change replaces the silent `truncated_max_tokens` WARNING with
+//     a FAIL-CLOSED gate (isTruncatedStop → UpstreamError('truncated')):
+//     a truncated turn can no longer persist a half-cut structured tail as
+//     if whole. The standing gauge is now the 'truncated' error-rate.
+//     BUDGET BOUNDS — do NOT raise ABORT_TIMEOUT_MS or the 145s wall here:
+//     4096 @ ~60 tok/s ≈ 68s < 90s abort < 145s wall. ~5120 is the
+//     practical ceiling before the abort would need raising too.
+//     Durable third leg (SHA bundle, NOT in this change): facts-before-
+//     prose emission-order, so structured data is first-emitted and can
+//     never be the part a cut clips.
 //
 // Exported as the single source of truth for BOTH call sites (this
 // json path + streaming.ts) — smoke-t05-composer F11 source-pins that
 // streaming.ts imports it and never redefines a local cap.
-export const MAX_TOKENS = 2560
+export const MAX_TOKENS = 4096
 export const ABORT_TIMEOUT_MS = 90_000
 
 // Sonnet 4.6 pricing in USD per million tokens (March 2026 — identical
@@ -135,7 +146,10 @@ export class UpstreamError extends Error {
       | 'overloaded'
       | 'invalid_response'
       | 'server'
-      | 'timeout',
+      | 'timeout'
+      // fix/synthesis-truncation — stop_reason=max_tokens cut the tool call;
+      // the structured tail is unreliable. Fail closed, never persist partial.
+      | 'truncated',
     public readonly retryAfterMs: number | null,
     message: string,
   ) {
@@ -316,30 +330,33 @@ export async function callAnthropic(
   })
   span?.end('ok')
 
-  // fix/output-budget — turn-level truncation gauge. stop_reason=
-  // max_tokens means the output cap cut the tool call; the lenient
-  // parse can still pass Zod with extracted_facts silently missing
-  // (the 2026-06-11 Thüringen capture-loss class). Lift the existing
-  // span attribute to the trace row so the Logs panel shows it per
-  // turn without flipping the trace to error.
-  if (response.stop_reason === 'max_tokens') {
-    console.warn(
-      `[chat-turn] anthropic.attempt_${attemptLabel ?? '1'} hit MAX_TOKENS (${MAX_TOKENS}) — output truncated; capture contract at risk`,
-    )
-    tracer?.setWarning(
-      'truncated_max_tokens',
-      `stop_reason=max_tokens at cap ${MAX_TOKENS} — extracted_facts may be cut; gauge for the MAX_TOKENS ledger (anthropic.ts)`,
-    )
-  }
-
   // Accumulate on the trace so the trace row's totals reflect every
-  // attempt (schema-reminder retry + outer backoff retry both feed in).
+  // attempt (schema-reminder retry + outer backoff retry both feed in) —
+  // recorded BEFORE the truncation gate so a truncated attempt's tokens
+  // still show on the trace.
   tracer?.setTokens({
     input_tokens: usage.inputTokens,
     output_tokens: usage.outputTokens,
     cache_read_input_tokens: usage.cacheReadTokens,
     cache_creation_input_tokens: usage.cacheWriteTokens,
   })
+
+  // fix/synthesis-truncation — FAIL CLOSED on a truncated structured
+  // emission. stop_reason=max_tokens means the output cap cut the tool call
+  // mid-emission; the structured tail (extracted_facts/procedures, emitted
+  // last) is unreliable and the lenient Zod parse passes with it silently
+  // missing (the 2026-06-11 Thüringen capture-loss class). Refuse to return
+  // a partial capture — throw the typed error a Zod hard-fail takes so
+  // index.ts surfaces it loudly and NEVER persists a half-cut turn as whole.
+  // Keyed on stop_reason (the API's structural cut signal), NOT on
+  // output_tokens===MAX_TOKENS; a clean-stop zero-facts turn is not truncated.
+  if (isTruncatedStop(response.stop_reason)) {
+    throw new UpstreamError(
+      'truncated',
+      null,
+      `truncated_max_tokens: stop_reason=max_tokens at cap ${MAX_TOKENS} cut the tool call — the structured tail (extracted_facts/procedures) is unreliable; refusing to persist a partial capture. Raise MAX_TOKENS or land facts-before-prose emission-order.`,
+    )
+  }
 
   return { toolInput: parsed.data, usage, latencyMs }
 }

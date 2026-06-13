@@ -44,7 +44,7 @@ import {
   UpstreamError,
   type AnthropicUsage,
 } from './anthropic.ts'
-import { attemptAbortMs } from './wallBudget.ts'
+import { attemptAbortMs, isTruncatedStop } from './wallBudget.ts'
 import { commitChatTurnAtomic } from './persistence.ts'
 import { validateFactPlausibility } from './factPlausibility.ts'
 import { enforceCitationHeadingMatch } from './citationHeadingGate.ts'
@@ -233,25 +233,30 @@ export function runStreamingTurn(args: StreamingTurnArgs): Response {
           validation_result: 'ok',
         })
         callSpan.end('ok')
-        // fix/output-budget — turn-level truncation gauge (mirrors the
-        // json path in anthropic.ts): stop_reason=max_tokens means the
-        // cap cut the tool call and extracted_facts may be silently
-        // missing. Lifted to the trace row so the Logs panel shows it.
-        if (finalMessage.stop_reason === 'max_tokens') {
-          console.warn(
-            `[chat-turn] anthropic.stream hit MAX_TOKENS (${MAX_TOKENS}) — output truncated; capture contract at risk`,
-          )
-          tracer.setWarning(
-            'truncated_max_tokens',
-            `stop_reason=max_tokens at cap ${MAX_TOKENS} — extracted_facts may be cut; gauge for the MAX_TOKENS ledger (anthropic.ts)`,
-          )
-        }
+        // tokens recorded BEFORE the truncation gate so a truncated attempt
+        // still shows its token totals on the trace.
         tracer.setTokens({
           input_tokens: usage.inputTokens,
           output_tokens: usage.outputTokens,
           cache_read_input_tokens: usage.cacheReadTokens,
           cache_creation_input_tokens: usage.cacheWriteTokens,
         })
+
+        // fix/synthesis-truncation — FAIL CLOSED (mirrors anthropic.ts). A
+        // truncated tool call (stop_reason=max_tokens) cut the structured tail
+        // (extracted_facts/procedures, emitted last); the lenient Zod parse
+        // passes with it silently missing. Throw the typed error a Zod
+        // hard-fail takes — the outer catch sends the SSE error frame, sets
+        // trace status=error (error_class upstream_truncated), and the turn is
+        // NEVER persisted (this throws before commitChatTurnAtomic). Keyed on
+        // stop_reason, not output_tokens===MAX_TOKENS.
+        if (isTruncatedStop(finalMessage.stop_reason)) {
+          throw new UpstreamError(
+            'truncated',
+            null,
+            `truncated_max_tokens: stop_reason=max_tokens at cap ${MAX_TOKENS} cut the tool call — the structured tail (extracted_facts/procedures) is unreliable; refusing to persist a partial capture. Raise MAX_TOKENS or land facts-before-prose emission-order.`,
+          )
+        }
 
         // ── Phase 8.6 (D.4) — fact-plausibility validation ─────────
         const plausibilitySpan = tracer.startSpan('plausibility.check', rootSpan.span_id)
@@ -576,8 +581,11 @@ export function runStreamingTurn(args: StreamingTurnArgs): Response {
         if (err instanceof UpstreamError) {
           send({
             type: 'error',
+            // fix/synthesis-truncation — 'truncated' shares the invalid-response
+            // client envelope (model_response_invalid) so the SPA auto-retries
+            // the whole turn; the trace error_class is upstream_truncated.
             code:
-              err.code === 'invalid_response'
+              err.code === 'invalid_response' || err.code === 'truncated'
                 ? 'model_response_invalid'
                 : err.code === 'timeout'
                   ? 'upstream_timeout'

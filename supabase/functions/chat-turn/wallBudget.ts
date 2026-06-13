@@ -30,6 +30,27 @@ export const RESPONSE_SAFETY_MS = 5_000
 export const MIN_ATTEMPT_MS = 10_000
 
 /**
+ * fix/synthesis-truncation — output-budget companion to the wall-clock
+ * budget. True when the model's output was cut at MAX_TOKENS
+ * (stop_reason='max_tokens'): the tool call was truncated mid-emission, so
+ * the structured tail (extracted_facts / procedures_delta /
+ * recommendations_delta — emitted last) is unreliable. The caller FAILS
+ * CLOSED on this, never persisting a partial capture as if whole.
+ *
+ * Keyed on stop_reason — the API's structural "I cut your output" signal —
+ * NOT on output_tokens===MAX_TOKENS. A turn that legitimately emits zero
+ * structured data stops cleanly ('end_turn' / 'tool_use') and is NOT
+ * truncated; this predicate distinguishes "no facts to emit" (clean stop,
+ * persists) from "facts cut by the cap" (max_tokens, fails). Pure +
+ * dependency-free so the prebuild smoke (smoke-t05-composer F11) imports it.
+ */
+export function isTruncatedStop(
+  stopReason: string | null | undefined,
+): boolean {
+  return stopReason === 'max_tokens'
+}
+
+/**
  * Abort-timer budget for ONE attempt starting at `nowMs`, given the
  * request-level `deadlineAtMs` (requestStart + WALL_CLOCK_BUDGET_MS) and
  * the per-attempt cap (ABORT_TIMEOUT_MS). Returns null when no useful
