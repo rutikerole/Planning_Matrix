@@ -17,6 +17,11 @@ import {
   selectProcedures,
 } from '@/features/result/lib/resolveProcedures'
 import {
+  buildProcedureCase,
+  procedureLabel,
+  resolveProcedure,
+} from '@/legal/resolveProcedure'
+import {
   MEANINGFUL_EVENT_TYPES,
   summarizeEvent,
 } from '@/features/dashboard/lib/recentActivity'
@@ -245,8 +250,14 @@ export function buildExportMarkdown({ project, events, lang }: BuildArgs): strin
   // fix/t06-walk2 — same deliverable filter as the PDF Key Data table:
   // system flags (plot.outside_munich_acknowledged leaked into walk-2's
   // .md) + template-foreign typed facts (abbruch_typ on T-06).
-  const facts = (state.facts ?? []).filter((f) =>
-    isDeliverableFactKey(f.key, state.templateId),
+  // fix/t07-walk1 item 2 — exclude the raw `verfahren_indikation` fact; the
+  // Procedure-indication row is single-sourced from the resolved decision
+  // below (mirrors exportPdf.ts which excludes the fact + substitutes the
+  // decision row). Pre-fix the .md rendered the fact's OWN qualifier, so a
+  // conflict-downgraded decision (ASSUMED) disagreed with the fact (CALCULATED)
+  // across exports — the Hessen walk split.
+  const facts = (state.facts ?? []).filter(
+    (f) => f.key !== 'verfahren_indikation' && isDeliverableFactKey(f.key, state.templateId),
   )
   if (facts.length > 0) {
     lines.push('')
@@ -258,6 +269,15 @@ export function buildExportMarkdown({ project, events, lang }: BuildArgs): strin
       lines.push(`- **${label}:** ${value} *(${f.qualifier.source} · ${f.qualifier.quality})*`)
       if (f.evidence) lines.push(`  ${f.evidence}`)
     })
+    // fix/t07-walk1 item 2 — decision-derived Procedure-indication row (same
+    // source the PDF Key Data + web procedure tab read: resolveProcedure).
+    const procDecision = resolveProcedure(buildProcedureCase(project, state))
+    const procValue = procDecision.citation
+      ? `${procDecision.citation} · ${procedureLabel(procDecision.kind, lang, procDecision.intent)}`
+      : procedureLabel(procDecision.kind, lang, procDecision.intent)
+    lines.push(
+      `- **${factLabel('verfahren_indikation', lang).label}:** ${procValue} *(LEGAL · ${procDecision.confidence})*`,
+    )
     lines.push('')
     lines.push('---')
   }
