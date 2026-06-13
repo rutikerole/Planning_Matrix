@@ -147,3 +147,22 @@ references the entry id.
   Bayern Anbau (Art. 57 Abs. 1 Nr. 1 a 75 m³ verfahrensfrei; whether any Anzeige
   duty applies); whether an ≤ 75 m³ Anbau qualifies as a "Gebäude" under Abs. 1
   Nr. 1 a (doctrine question the body text does not decide).
+
+## LRL-4 · BB × T-07 cell — § 62 BbgBO chat-prose framing
+
+- **Status:** BLOCKED-ON-LAWYER-CONFIRM (low severity; structured routing
+  already correct, prose-only mischaracterization)
+- **Opened:** 2026-06-13 (T-07 Brandenburg walk 2, Potsdam)
+- **What:** in the live walk the persona described § 62 BbgBO Bauanzeige as
+  "applies only to an exhaustive list of specified cases, not broadly to all
+  development within a qualified Bebauungsplan area." The ingested BbgBO § 62
+  body (`states/brandenburg.json`, primary-source BRAVORS, per
+  `T07_BODY_FINDINGS`) shows § 62 covers "Errichtung und Änderung von
+  Wohngebäuden der Gebäudeklassen 1 und 2" in a qualified B-Plan, ELECTIVE at
+  the Bauherr's option — our exact fact pattern (GK 1 Wohngebäude, qualified
+  B-Plan, Anbau = Änderung). The STRUCTURED deliverable handled this correctly
+  (Top-3 items 01/02 + verify-card flag § 62 as the route to confirm), so this
+  is NOT a silent-wrong in the artifact — but the chat prose framing
+  mischaracterizes the provision and should be corrected in the BB cell to
+  match the ingested body (elective, not narrow-list). Reviewer: confirm the
+  § 62 scope reading and the elective nature for an Anbau-as-Änderung.
