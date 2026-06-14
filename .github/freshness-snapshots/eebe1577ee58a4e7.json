@@ -1,8 +1,8 @@
 {
   "url": "https://geoportal.muenchen.de/geoserver/gsm_wfs/ows",
-  "fingerprint": "6fe83c83cd2f3fd9e000af8417a604fd1df68028056ff77fea5967d34340f990",
-  "lastChecked": "2026-06-07",
-  "lastChanged": "2026-04-30",
+  "fingerprint": "638f73dc2ca236f1df7a2631026f66022c928fc292f8bbf0d9183b37867ede90",
+  "lastChecked": "2026-06-14",
+  "lastChanged": "2026-06-14",
   "statusHistory": [
     {
       "status": "UNCHANGED",
@@ -31,6 +31,10 @@
     {
       "status": "UNCHANGED",
       "date": "2026-06-07"
+    },
+    {
+      "status": "CHANGED",
+      "date": "2026-06-14"
     }
   ]
 }
