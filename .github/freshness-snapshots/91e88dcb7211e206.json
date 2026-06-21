@@ -1,7 +1,7 @@
 {
   "url": "https://www.muenchen.info/plan/bebauungsplan/t_8712_1857.pdf",
   "fingerprint": "a99101767a1f9c6a333050fa01b06871c4a07becba4d02935e3bfce4764bc54b",
-  "lastChecked": "2026-06-14",
+  "lastChecked": "2026-06-21",
   "lastChanged": "2026-05-03",
   "statusHistory": [
     {
@@ -31,6 +31,10 @@
     {
       "status": "UNCHANGED",
       "date": "2026-06-14"
+    },
+    {
+      "status": "UNCHANGED",
+      "date": "2026-06-21"
     }
   ]
 }

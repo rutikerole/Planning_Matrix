@@ -1,8 +1,8 @@
 {
   "url": "https://erlangen.de/amt/304453",
-  "fingerprint": "e9850378b649068e7a788aa1658da93da31256afe0eb3c215d40f6c0b9901ba4",
-  "lastChecked": "2026-06-14",
-  "lastChanged": "2026-06-07",
+  "fingerprint": "76bc13bc0702599b80ef1275a0e89fd61a91f5d1436065d39adce9e25d391580",
+  "lastChecked": "2026-06-21",
+  "lastChanged": "2026-06-21",
   "statusHistory": [
     {
       "status": "UNCHANGED",
@@ -35,6 +35,10 @@
     {
       "status": "UNCHANGED",
       "date": "2026-06-14"
+    },
+    {
+      "status": "CHANGED",
+      "date": "2026-06-21"
     }
   ]
 }

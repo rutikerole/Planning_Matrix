@@ -1,8 +1,8 @@
 {
   "url": "https://www.blfd.bayern.de/",
-  "fingerprint": "58c5d624f538efcb9ff6d3cad6fb57c331c7edc904654b3b5cd4101bc1c82c6f",
-  "lastChecked": "2026-06-14",
-  "lastChanged": "2026-06-14",
+  "fingerprint": "2b0c0f580d70794cebf4b78bbf1d2cfab1d070be9200276a03d5cff6bc7ace21",
+  "lastChecked": "2026-06-21",
+  "lastChanged": "2026-06-21",
   "statusHistory": [
     {
       "status": "UNCHANGED",
@@ -35,6 +35,10 @@
     {
       "status": "CHANGED",
       "date": "2026-06-14"
+    },
+    {
+      "status": "CHANGED",
+      "date": "2026-06-21"
     }
   ]
 }

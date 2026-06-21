@@ -1,8 +1,8 @@
 {
   "url": "https://erlangen.de/aktuelles/bplaene_rechtsgueltig",
-  "fingerprint": "058b2f8b57f3d171a0c44402663a4f8edc664dc8549722ce510838fa4d0c32db",
-  "lastChecked": "2026-06-14",
-  "lastChanged": "2026-04-30",
+  "fingerprint": "cc25c08d03161889d402ebc3adf51d1b2b45832b466832b8aa27787ef295e49b",
+  "lastChecked": "2026-06-21",
+  "lastChanged": "2026-06-21",
   "statusHistory": [
     {
       "status": "UNCHANGED",
@@ -35,6 +35,10 @@
     {
       "status": "UNCHANGED",
       "date": "2026-06-14"
+    },
+    {
+      "status": "CHANGED",
+      "date": "2026-06-21"
     }
   ]
 }

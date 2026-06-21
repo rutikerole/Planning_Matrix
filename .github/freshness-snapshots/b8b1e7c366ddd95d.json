@@ -1,7 +1,7 @@
 {
   "url": "https://www.muenchen.info/plan/bebauungsplan/t_7919_833.pdf",
   "fingerprint": "bd8e92db09e370464c28a224cb7816ea8e2ffdd4e4644d286a0baf3c91bd1e10",
-  "lastChecked": "2026-06-14",
+  "lastChecked": "2026-06-21",
   "lastChanged": "2026-05-03",
   "statusHistory": [
     {
@@ -31,6 +31,10 @@
     {
       "status": "UNCHANGED",
       "date": "2026-06-14"
+    },
+    {
+      "status": "UNCHANGED",
+      "date": "2026-06-21"
     }
   ]
 }

@@ -1,8 +1,8 @@
 {
   "url": "https://www.bayika.de/de/ingenieursuche/",
-  "fingerprint": "b27f9594219e5fdf2672ae8a1001be12afe2dec00d7f0adf38243a088cda8d56",
-  "lastChecked": "2026-06-14",
-  "lastChanged": "2026-06-14",
+  "fingerprint": "7d50bc6af034bb2c2027e0cfba47e387bbc9602d1b744ca36d15768cbd46c86a",
+  "lastChecked": "2026-06-21",
+  "lastChanged": "2026-06-21",
   "statusHistory": [
     {
       "status": "UNCHANGED",
@@ -35,6 +35,10 @@
     {
       "status": "CHANGED",
       "date": "2026-06-14"
+    },
+    {
+      "status": "CHANGED",
+      "date": "2026-06-21"
     }
   ]
 }

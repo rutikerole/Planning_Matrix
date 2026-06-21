@@ -1,8 +1,8 @@
 {
   "url": "https://erlangen.de/service/1839",
-  "fingerprint": "4a0c8eb00785080818f22722ee8658d39a00ec2b0651247f765513bd91a092d3",
-  "lastChecked": "2026-06-14",
-  "lastChanged": "2026-04-30",
+  "fingerprint": "a05f23c735c976031adf8b633b29406b7fd5dd6093e81f5b1b49355a0de6a109",
+  "lastChecked": "2026-06-21",
+  "lastChanged": "2026-06-21",
   "statusHistory": [
     {
       "status": "UNCHANGED",
@@ -35,6 +35,10 @@
     {
       "status": "UNCHANGED",
       "date": "2026-06-14"
+    },
+    {
+      "status": "CHANGED",
+      "date": "2026-06-21"
     }
   ]
 }
