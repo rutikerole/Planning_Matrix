@@ -1,12 +1,16 @@
 {
   "url": "https://www.gesetze-im-internet.de/geg/",
-  "fingerprint": "134b37c6d9ab31d62b27e944d7a72d3edbfd1e3f3492e7b497df6a71454c9a79",
-  "lastChecked": "2026-04-30",
-  "lastChanged": "2026-04-30",
+  "fingerprint": "3289bad3ffbbee08103a57229eaa6f50c3435ea0af56158a155c5f62004efd5c",
+  "lastChecked": "2026-07-05",
+  "lastChanged": "2026-07-05",
   "statusHistory": [
     {
       "status": "UNCHANGED",
       "date": "2026-04-30"
+    },
+    {
+      "status": "CHANGED",
+      "date": "2026-07-05"
     }
   ]
 }

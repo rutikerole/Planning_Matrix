@@ -1,7 +1,7 @@
 {
   "url": "https://stadt.muenchen.de/infos/auslegung-termine.html",
   "fingerprint": "3fee8863ef3ee6f3b782152a6a0848bcbd877f14e197009e721a65c50ba41869",
-  "lastChecked": "2026-06-28",
+  "lastChecked": "2026-07-05",
   "lastChanged": "2026-06-28",
   "statusHistory": [
     {
@@ -35,6 +35,10 @@
     {
       "status": "CHANGED",
       "date": "2026-06-28"
+    },
+    {
+      "status": "UNCHANGED",
+      "date": "2026-07-05"
     }
   ]
 }

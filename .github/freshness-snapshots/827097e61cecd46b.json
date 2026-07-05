@@ -1,8 +1,8 @@
 {
   "url": "https://www.adbv-erlangen.de/",
-  "fingerprint": "c4cb8fa0c8a382f45561cc434ef20f536032cd3438a4ef526cdf48dc1ad4b757",
-  "lastChecked": "2026-06-28",
-  "lastChanged": "2026-06-28",
+  "fingerprint": "39ff121b47c0cff00ad1e3b0ea192724341f8bf5f0ea73a79585010c61d24f1f",
+  "lastChecked": "2026-07-05",
+  "lastChanged": "2026-07-05",
   "statusHistory": [
     {
       "status": "UNCHANGED",
@@ -43,6 +43,10 @@
     {
       "status": "CHANGED",
       "date": "2026-06-28"
+    },
+    {
+      "status": "CHANGED",
+      "date": "2026-07-05"
     }
   ]
 }
