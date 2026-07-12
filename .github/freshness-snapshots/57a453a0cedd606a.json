@@ -1,8 +1,8 @@
 {
   "url": "https://stadt.muenchen.de/infos/werbeanlagen.html",
-  "fingerprint": "98cada4060fcee6593823c0dbca60306254fa2a076f8c372e2ed87ae34d6437f",
-  "lastChecked": "2026-07-05",
-  "lastChanged": "2026-06-28",
+  "fingerprint": "8101182440c46dd2e3b9b5ee85f2ef74600d80cc7a6449a0411940ba58527276",
+  "lastChecked": "2026-07-12",
+  "lastChanged": "2026-07-12",
   "statusHistory": [
     {
       "status": "UNCHANGED",
@@ -39,6 +39,10 @@
     {
       "status": "UNCHANGED",
       "date": "2026-07-05"
+    },
+    {
+      "status": "CHANGED",
+      "date": "2026-07-12"
     }
   ]
 }
