@@ -1,7 +1,7 @@
 {
   "url": "https://www.muenchen.info/plan/bebauungsplan/t_7115_245a.pdf",
   "fingerprint": "0a323a8a3405ea8fbb3077e23d021ce9fd28f84bc3e1a5c1bdbbb1a3c3edc2f1",
-  "lastChecked": "2026-07-12",
+  "lastChecked": "2026-07-19",
   "lastChanged": "2026-05-03",
   "statusHistory": [
     {
@@ -47,6 +47,10 @@
     {
       "status": "UNCHANGED",
       "date": "2026-07-12"
+    },
+    {
+      "status": "UNCHANGED",
+      "date": "2026-07-19"
     }
   ]
 }
