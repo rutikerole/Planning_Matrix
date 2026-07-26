@@ -1,13 +1,9 @@
 {
   "url": "https://www.stmb.bayern.de/buw/baurechtundtechnik/bautechnik/pruefsachverstaendige/index.php",
-  "fingerprint": "f49351c722ce281be5906c78b659886eba375abf0092d17d094f719e411c05c5",
-  "lastChecked": "2026-07-19",
-  "lastChanged": "2026-07-19",
+  "fingerprint": "fd103e434329051d587a462aa533470dabc7d6bc32dcb3d92e3cc49aee39958e",
+  "lastChecked": "2026-07-26",
+  "lastChanged": "2026-07-26",
   "statusHistory": [
-    {
-      "status": "UNCHANGED",
-      "date": "2026-05-03"
-    },
     {
       "status": "UNCHANGED",
       "date": "2026-05-10"
@@ -51,6 +47,10 @@
     {
       "status": "CHANGED",
       "date": "2026-07-19"
+    },
+    {
+      "status": "CHANGED",
+      "date": "2026-07-26"
     }
   ]
 }

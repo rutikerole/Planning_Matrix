@@ -1,13 +1,9 @@
 {
   "url": "https://opendata.muenchen.de/",
   "fingerprint": "f001177365f388b832309e0e518607b09100947683c9c1b3b4c5902e2a9487f6",
-  "lastChecked": "2026-07-19",
+  "lastChecked": "2026-07-26",
   "lastChanged": "2026-07-19",
   "statusHistory": [
-    {
-      "status": "UNCHANGED",
-      "date": "2026-05-03"
-    },
     {
       "status": "CHANGED",
       "date": "2026-05-10"
@@ -51,6 +47,10 @@
     {
       "status": "CHANGED",
       "date": "2026-07-19"
+    },
+    {
+      "status": "UNCHANGED",
+      "date": "2026-07-26"
     }
   ]
 }
