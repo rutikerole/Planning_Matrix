@@ -1,13 +1,9 @@
 {
   "url": "https://stadt.muenchen.de/rathaus/stadtrecht.html",
   "fingerprint": "a6f76c4e7dfbd891c781525d2098b3cd66d858cf72d667f84d85bcaa66dac737",
-  "lastChecked": "2026-07-26",
+  "lastChecked": "2026-08-02",
   "lastChanged": "2026-07-12",
   "statusHistory": [
-    {
-      "status": "UNCHANGED",
-      "date": "2026-04-30"
-    },
     {
       "status": "UNCHANGED",
       "date": "2026-05-03"
@@ -51,6 +47,10 @@
     {
       "status": "UNCHANGED",
       "date": "2026-07-26"
+    },
+    {
+      "status": "UNCHANGED",
+      "date": "2026-08-02"
     }
   ]
 }

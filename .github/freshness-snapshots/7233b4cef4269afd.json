@@ -1,13 +1,9 @@
 {
   "url": "https://erlangen.de/aktuelles/stellplatzsatzung",
   "fingerprint": "16bc82e677dc7941c55b588945e85d2573a76b713335d687187380ab46e808be",
-  "lastChecked": "2026-07-26",
+  "lastChecked": "2026-08-02",
   "lastChanged": "2026-06-21",
   "statusHistory": [
-    {
-      "status": "UNCHANGED",
-      "date": "2026-05-10"
-    },
     {
       "status": "UNCHANGED",
       "date": "2026-05-17"
@@ -51,6 +47,10 @@
     {
       "status": "UNCHANGED",
       "date": "2026-07-26"
+    },
+    {
+      "status": "UNCHANGED",
+      "date": "2026-08-02"
     }
   ]
 }

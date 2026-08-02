@@ -1,13 +1,9 @@
 {
   "url": "https://www.bayika.de/",
-  "fingerprint": "2c9c8e63e47f028f49c6cf4904a1248e85b2d42b97b6fbb70e4adcea60ec412e",
-  "lastChecked": "2026-07-26",
-  "lastChanged": "2026-07-26",
+  "fingerprint": "57ef9157edb8dd812d642b95fe51ae7845ecc2f4e0e341062a0fe8a6ffcf1cd2",
+  "lastChecked": "2026-08-02",
+  "lastChanged": "2026-08-02",
   "statusHistory": [
-    {
-      "status": "CHANGED",
-      "date": "2026-05-10"
-    },
     {
       "status": "CHANGED",
       "date": "2026-05-17"
@@ -51,6 +47,10 @@
     {
       "status": "CHANGED",
       "date": "2026-07-26"
+    },
+    {
+      "status": "CHANGED",
+      "date": "2026-08-02"
     }
   ]
 }

@@ -1,13 +1,9 @@
 {
   "url": "https://stadt.muenchen.de/infos/rechtsverbindliche-bebauungsplaene.html",
-  "fingerprint": "9be34f262c977d0942938f7e26cfb47ae567911afb0c1aad121296e23153b261",
-  "lastChecked": "2026-07-26",
-  "lastChanged": "2026-07-19",
+  "fingerprint": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "lastChecked": "2026-08-02",
+  "lastChanged": "2026-08-02",
   "statusHistory": [
-    {
-      "status": "UNCHANGED",
-      "date": "2026-04-30"
-    },
     {
       "status": "UNCHANGED",
       "date": "2026-05-03"
@@ -51,6 +47,10 @@
     {
       "status": "UNCHANGED",
       "date": "2026-07-26"
+    },
+    {
+      "status": "CHANGED",
+      "date": "2026-08-02"
     }
   ]
 }
