@@ -1,13 +1,9 @@
 {
   "url": "https://gdk.gdi-de.org/geonetwork/srv/api/records/e143c153-234c-4dfe-bfd7-5404d3910db7",
-  "fingerprint": "975c3e40d8278d7ef2ce6906b61f0ef6b967fb038b43a634bd84ecd4676446bf",
-  "lastChecked": "2026-08-02",
-  "lastChanged": "2026-08-02",
+  "fingerprint": "602b68d42233876c27fed07daef5b999360859a2f4c88aea9c7bd97c83200173",
+  "lastChecked": "2026-08-09",
+  "lastChanged": "2026-08-09",
   "statusHistory": [
-    {
-      "status": "CHANGED",
-      "date": "2026-05-10"
-    },
     {
       "status": "CHANGED",
       "date": "2026-05-17"
@@ -51,6 +47,10 @@
     {
       "status": "CHANGED",
       "date": "2026-08-02"
+    },
+    {
+      "status": "CHANGED",
+      "date": "2026-08-09"
     }
   ]
 }

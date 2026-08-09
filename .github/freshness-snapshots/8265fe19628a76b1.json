@@ -1,13 +1,9 @@
 {
   "url": "https://www.muenchen.info/plan/bebauungsplan/t_6999_71b.pdf",
   "fingerprint": "4acd1e8e70444ea8ca707720124874698c78e396145058f7cabd378b9a8a496e",
-  "lastChecked": "2026-08-02",
+  "lastChecked": "2026-08-09",
   "lastChanged": "2026-05-03",
   "statusHistory": [
-    {
-      "status": "UNCHANGED",
-      "date": "2026-05-17"
-    },
     {
       "status": "UNCHANGED",
       "date": "2026-05-24"
@@ -51,6 +47,10 @@
     {
       "status": "UNCHANGED",
       "date": "2026-08-02"
+    },
+    {
+      "status": "UNCHANGED",
+      "date": "2026-08-09"
     }
   ]
 }
