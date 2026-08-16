@@ -1,13 +1,9 @@
 {
   "url": "https://www.bafa.de/DE/Energie/Energieberatung/energieberatung_node.html",
-  "fingerprint": "8bb055db714f19f87760cec3815c267e04da3f3df7eccee71f3d7a27bfd74e5b",
-  "lastChecked": "2026-08-09",
-  "lastChanged": "2026-08-09",
+  "fingerprint": "31f1b0dcfe8835287d03852758c0c7d0a0f8ce2543127a87b2deeabc38f40672",
+  "lastChecked": "2026-08-16",
+  "lastChanged": "2026-08-16",
   "statusHistory": [
-    {
-      "status": "CHANGED",
-      "date": "2026-05-24"
-    },
     {
       "status": "CHANGED",
       "date": "2026-05-31"
@@ -51,6 +47,10 @@
     {
       "status": "CHANGED",
       "date": "2026-08-09"
+    },
+    {
+      "status": "CHANGED",
+      "date": "2026-08-16"
     }
   ]
 }

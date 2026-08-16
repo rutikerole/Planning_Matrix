@@ -1,13 +1,9 @@
 {
   "url": "https://stadt.muenchen.de/rathaus/stadtrecht/alphabetisch.html",
-  "fingerprint": "149ca48db4388ec9486a520703e0dcf9b6b899e3784e38a1b32bf163a15ad1f7",
-  "lastChecked": "2026-08-09",
-  "lastChanged": "2026-07-12",
+  "fingerprint": "a9a15cd090182ca6d338e3b5ac71ccf1fe45fb23203b55aaedb24e45ca23f6f2",
+  "lastChecked": "2026-08-16",
+  "lastChanged": "2026-08-16",
   "statusHistory": [
-    {
-      "status": "UNCHANGED",
-      "date": "2026-05-10"
-    },
     {
       "status": "UNCHANGED",
       "date": "2026-05-17"
@@ -51,6 +47,10 @@
     {
       "status": "UNCHANGED",
       "date": "2026-08-09"
+    },
+    {
+      "status": "CHANGED",
+      "date": "2026-08-16"
     }
   ]
 }

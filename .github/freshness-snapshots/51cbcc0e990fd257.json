@@ -1,13 +1,9 @@
 {
   "url": "https://erlangen.de/uwao-api/faila/files/bypath/Dokumente/Stadtrecht/206_00_stellplatzsatzung.pdf",
   "fingerprint": "de1f0734c76680f08e201a8816ca761e99f41f150d1d17006cb17790bb93d378",
-  "lastChecked": "2026-08-09",
+  "lastChecked": "2026-08-16",
   "lastChanged": "2026-04-30",
   "statusHistory": [
-    {
-      "status": "UNCHANGED",
-      "date": "2026-05-24"
-    },
     {
       "status": "UNCHANGED",
       "date": "2026-05-31"
@@ -51,6 +47,10 @@
     {
       "status": "UNCHANGED",
       "date": "2026-08-09"
+    },
+    {
+      "status": "UNCHANGED",
+      "date": "2026-08-16"
     }
   ]
 }
