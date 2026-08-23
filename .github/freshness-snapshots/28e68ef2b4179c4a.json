@@ -1,13 +1,9 @@
 {
   "url": "https://stadt.muenchen.de/service/info/untere-denkmalschutzbehorde/1073940/",
   "fingerprint": "d2c48bd52491c9e18e4dbe4041552a3a0828681bb625e0eb6ae020d188ab2d7c",
-  "lastChecked": "2026-08-16",
+  "lastChecked": "2026-08-23",
   "lastChanged": "2026-08-16",
   "statusHistory": [
-    {
-      "status": "UNCHANGED",
-      "date": "2026-05-17"
-    },
     {
       "status": "CHANGED",
       "date": "2026-05-24"
@@ -51,6 +47,10 @@
     {
       "status": "CHANGED",
       "date": "2026-08-16"
+    },
+    {
+      "status": "UNCHANGED",
+      "date": "2026-08-23"
     }
   ]
 }

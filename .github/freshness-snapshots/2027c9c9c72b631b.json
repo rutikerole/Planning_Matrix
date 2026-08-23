@@ -1,13 +1,9 @@
 {
   "url": "https://erlangen.de/aktuelles/erhaltungssatzung-burgberg",
   "fingerprint": "18268094dc29f9ed91c95175479c8aa3f066117aadb3657b1d230efc228fd7da",
-  "lastChecked": "2026-08-16",
+  "lastChecked": "2026-08-23",
   "lastChanged": "2026-06-21",
   "statusHistory": [
-    {
-      "status": "UNCHANGED",
-      "date": "2026-05-31"
-    },
     {
       "status": "UNCHANGED",
       "date": "2026-06-07"
@@ -51,6 +47,10 @@
     {
       "status": "UNCHANGED",
       "date": "2026-08-16"
+    },
+    {
+      "status": "UNCHANGED",
+      "date": "2026-08-23"
     }
   ]
 }
