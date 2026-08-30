@@ -1,13 +1,9 @@
 {
   "url": "https://erlangen.de/aktuelles/entwaesserungssatzung",
   "fingerprint": "c7fe91868d0c0a5c67e6eeadc8f1b3a39fb393f5ecd7909629a6c192db66181e",
-  "lastChecked": "2026-08-23",
+  "lastChecked": "2026-08-30",
   "lastChanged": "2026-06-21",
   "statusHistory": [
-    {
-      "status": "UNCHANGED",
-      "date": "2026-06-07"
-    },
     {
       "status": "UNCHANGED",
       "date": "2026-06-14"
@@ -51,6 +47,10 @@
     {
       "status": "UNCHANGED",
       "date": "2026-08-23"
+    },
+    {
+      "status": "UNCHANGED",
+      "date": "2026-08-30"
     }
   ]
 }

@@ -1,13 +1,9 @@
 {
   "url": "https://erlangen.de/themenseite/aktiv/bauen",
-  "fingerprint": "bcb80175e88f7ef6d93b2e3cc77e79fa2b1734ef25428ff328513ac90c537f9f",
-  "lastChecked": "2026-08-23",
-  "lastChanged": "2026-07-26",
+  "fingerprint": "5de714cada0165eaeedf1b015ed37e632fdea58c4dd63b0f993ad745273e9023",
+  "lastChecked": "2026-08-30",
+  "lastChanged": "2026-08-30",
   "statusHistory": [
-    {
-      "status": "UNCHANGED",
-      "date": "2026-06-07"
-    },
     {
       "status": "UNCHANGED",
       "date": "2026-06-14"
@@ -51,6 +47,10 @@
     {
       "status": "UNCHANGED",
       "date": "2026-08-23"
+    },
+    {
+      "status": "CHANGED",
+      "date": "2026-08-30"
     }
   ]
 }

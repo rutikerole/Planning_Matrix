@@ -1,13 +1,9 @@
 {
   "url": "https://www.bayernportal.de/dokumente/behoerde/85554490229",
-  "fingerprint": "b6f0c8964936d249de369ab21010b67eae9fcdb1fe22af882a77eb1d9c898a54",
-  "lastChecked": "2026-08-23",
-  "lastChanged": "2026-08-02",
+  "fingerprint": "3d3a155280dd69b7dac42e8963010cd4725bac62ece6b20a8e372b484a1d555b",
+  "lastChecked": "2026-08-30",
+  "lastChanged": "2026-08-30",
   "statusHistory": [
-    {
-      "status": "UNCHANGED",
-      "date": "2026-06-07"
-    },
     {
       "status": "UNCHANGED",
       "date": "2026-06-14"
@@ -51,6 +47,10 @@
     {
       "status": "UNCHANGED",
       "date": "2026-08-23"
+    },
+    {
+      "status": "CHANGED",
+      "date": "2026-08-30"
     }
   ]
 }
