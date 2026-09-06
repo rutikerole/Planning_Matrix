@@ -1,13 +1,9 @@
 {
   "url": "https://geoportal.muenchen.de/portal/opendata/",
   "fingerprint": "7823f47ad660bd32ceceb9d45209007da33478b0e8db6e366c59533beb3138d4",
-  "lastChecked": "2026-08-30",
+  "lastChecked": "2026-09-06",
   "lastChanged": "2026-07-19",
   "statusHistory": [
-    {
-      "status": "UNCHANGED",
-      "date": "2026-06-14"
-    },
     {
       "status": "UNCHANGED",
       "date": "2026-06-21"
@@ -51,6 +47,10 @@
     {
       "status": "UNCHANGED",
       "date": "2026-08-30"
+    },
+    {
+      "status": "UNCHANGED",
+      "date": "2026-09-06"
     }
   ]
 }

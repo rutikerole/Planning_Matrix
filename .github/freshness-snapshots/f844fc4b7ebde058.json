@@ -1,13 +1,9 @@
 {
   "url": "https://www.muenchen.info/plan/bebauungsplan/t_8939_2146.pdf",
   "fingerprint": "fa00fa6740762f3f987d7aecdceca2ad977a916ac60df076b60933cc406595bf",
-  "lastChecked": "2026-08-30",
+  "lastChecked": "2026-09-06",
   "lastChanged": "2026-05-03",
   "statusHistory": [
-    {
-      "status": "UNCHANGED",
-      "date": "2026-06-14"
-    },
     {
       "status": "UNCHANGED",
       "date": "2026-06-21"
@@ -51,6 +47,10 @@
     {
       "status": "UNCHANGED",
       "date": "2026-08-30"
+    },
+    {
+      "status": "UNCHANGED",
+      "date": "2026-09-06"
     }
   ]
 }
