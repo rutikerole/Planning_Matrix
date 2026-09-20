@@ -1,13 +1,9 @@
 {
   "url": "https://erlangen.de/aktuelles/bebauungsplaene_im_verfahren",
-  "fingerprint": "4de29098f9ff14e289d36c857daea94554d0cf27e7361d9a6ba12b58f6f7b99b",
-  "lastChecked": "2026-09-13",
-  "lastChanged": "2026-07-26",
+  "fingerprint": "678fb8b19e68a5a51d27e3bf76d7f6c11d8b416be1eada602688cbe978c12980",
+  "lastChecked": "2026-09-20",
+  "lastChanged": "2026-09-20",
   "statusHistory": [
-    {
-      "status": "UNCHANGED",
-      "date": "2026-06-28"
-    },
     {
       "status": "UNCHANGED",
       "date": "2026-07-05"
@@ -51,6 +47,10 @@
     {
       "status": "UNCHANGED",
       "date": "2026-09-13"
+    },
+    {
+      "status": "CHANGED",
+      "date": "2026-09-20"
     }
   ]
 }

@@ -1,13 +1,9 @@
 {
   "url": "https://www.bayika.de/de/mitgliedschaft-und-listen/listeneintragung/",
-  "fingerprint": "499dceedce599fd444e4678b3ab085d5df221ec448759720f53cacbcc5c4f488",
-  "lastChecked": "2026-09-13",
-  "lastChanged": "2026-09-13",
+  "fingerprint": "0d3ec7ddcc20f73d43e731d1489ba0f592848e8ee8fef1c4fd9d1486aa99cbfb",
+  "lastChecked": "2026-09-20",
+  "lastChanged": "2026-09-20",
   "statusHistory": [
-    {
-      "status": "CHANGED",
-      "date": "2026-06-28"
-    },
     {
       "status": "CHANGED",
       "date": "2026-07-05"
@@ -51,6 +47,10 @@
     {
       "status": "CHANGED",
       "date": "2026-09-13"
+    },
+    {
+      "status": "CHANGED",
+      "date": "2026-09-20"
     }
   ]
 }

@@ -1,13 +1,9 @@
 {
   "url": "https://www.energie-effizienz-experten.de/",
-  "fingerprint": "09d15cf8ec8b4cab1c03daafafb69c6e49d6f1f81977d224e76fd7af1c8bdaa7",
-  "lastChecked": "2026-09-13",
-  "lastChanged": "2026-09-13",
+  "fingerprint": "4f86d265cca540995daf9803fb50fdcac3e334f9dbb1330ffc0cfd3bac37c5a7",
+  "lastChecked": "2026-09-20",
+  "lastChanged": "2026-09-20",
   "statusHistory": [
-    {
-      "status": "CHANGED",
-      "date": "2026-06-28"
-    },
     {
       "status": "CHANGED",
       "date": "2026-07-05"
@@ -51,6 +47,10 @@
     {
       "status": "CHANGED",
       "date": "2026-09-13"
+    },
+    {
+      "status": "CHANGED",
+      "date": "2026-09-20"
     }
   ]
 }

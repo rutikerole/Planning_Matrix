@@ -1,13 +1,9 @@
 {
   "url": "https://erlangen.de/aktuelles/zentrale-planannahme",
   "fingerprint": "9be1daf7ffcafa6341350d4781ccf3d19a827bfd228991b7b729ba6f89f8308c",
-  "lastChecked": "2026-09-13",
+  "lastChecked": "2026-09-20",
   "lastChanged": "2026-09-13",
   "statusHistory": [
-    {
-      "status": "UNCHANGED",
-      "date": "2026-06-28"
-    },
     {
       "status": "UNCHANGED",
       "date": "2026-07-05"
@@ -51,6 +47,10 @@
     {
       "status": "CHANGED",
       "date": "2026-09-13"
+    },
+    {
+      "status": "UNCHANGED",
+      "date": "2026-09-20"
     }
   ]
 }

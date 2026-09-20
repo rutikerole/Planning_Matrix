@@ -1,13 +1,9 @@
 {
   "url": "https://geodaten.bayern.de/denkmal_static_data/externe_denkmalliste/pdf/denkmalliste_merge_162000.pdf",
-  "fingerprint": "3b63b5ba0906f3739838f19c32bc4c988df18c549fea275e0d4fb2165a9d9f37",
-  "lastChecked": "2026-09-13",
-  "lastChanged": "2026-09-13",
+  "fingerprint": "f383f9adacdd24c1cda95c6d2ea344fecf1e97fe8d93dd1dea85d5862b65542e",
+  "lastChecked": "2026-09-20",
+  "lastChanged": "2026-09-20",
   "statusHistory": [
-    {
-      "status": "CHANGED",
-      "date": "2026-06-28"
-    },
     {
       "status": "CHANGED",
       "date": "2026-07-05"
@@ -51,6 +47,10 @@
     {
       "status": "CHANGED",
       "date": "2026-09-13"
+    },
+    {
+      "status": "CHANGED",
+      "date": "2026-09-20"
     }
   ]
 }
