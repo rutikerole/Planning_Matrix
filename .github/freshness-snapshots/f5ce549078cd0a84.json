@@ -1,13 +1,9 @@
 {
   "url": "https://www.fs-energieberater.de/erlangen",
-  "fingerprint": "dbb4057a37788c9a283e8a5f1ebb847ba274233b048e45d6d592b2f8d5e44284",
-  "lastChecked": "2026-09-20",
-  "lastChanged": "2026-09-20",
+  "fingerprint": "e139cdf247b919cb6021743b6b4c853afc2d3b436ff5570c47b2d7948a17c046",
+  "lastChecked": "2026-09-27",
+  "lastChanged": "2026-09-27",
   "statusHistory": [
-    {
-      "status": "CHANGED",
-      "date": "2026-07-05"
-    },
     {
       "status": "CHANGED",
       "date": "2026-07-12"
@@ -51,6 +47,10 @@
     {
       "status": "CHANGED",
       "date": "2026-09-20"
+    },
+    {
+      "status": "CHANGED",
+      "date": "2026-09-27"
     }
   ]
 }
