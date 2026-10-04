@@ -1,13 +1,9 @@
 {
   "url": "https://energieberater-franken.de/energieberater-erlangen/",
   "fingerprint": "24161a4d526ebb3048519c99d4b528b84a6ef08fd52332524b79920f12bef908",
-  "lastChecked": "2026-09-27",
+  "lastChecked": "2026-10-04",
   "lastChanged": "2026-09-27",
   "statusHistory": [
-    {
-      "status": "CHANGED",
-      "date": "2026-06-28"
-    },
     {
       "status": "CHANGED",
       "date": "2026-07-05"
@@ -51,6 +47,10 @@
     {
       "status": "CHANGED",
       "date": "2026-09-27"
+    },
+    {
+      "status": "UNCHANGED",
+      "date": "2026-10-04"
     }
   ]
 }
