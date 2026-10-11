@@ -1,13 +1,9 @@
 {
   "url": "https://erlangen.de/aktuelles/bauaufsicht-informationen",
   "fingerprint": "dcb2c6695f611bc8dd1162e30aeaf85b97cfc265ba02a8a6937e0deda5f4c6f7",
-  "lastChecked": "2026-10-04",
+  "lastChecked": "2026-10-11",
   "lastChanged": "2026-07-19",
   "statusHistory": [
-    {
-      "status": "CHANGED",
-      "date": "2026-07-19"
-    },
     {
       "status": "UNCHANGED",
       "date": "2026-07-26"
@@ -51,6 +47,10 @@
     {
       "status": "UNCHANGED",
       "date": "2026-10-04"
+    },
+    {
+      "status": "UNCHANGED",
+      "date": "2026-10-11"
     }
   ]
 }

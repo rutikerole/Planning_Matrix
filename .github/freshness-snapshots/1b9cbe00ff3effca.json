@@ -1,13 +1,9 @@
 {
   "url": "https://www.byak.de/planen-und-bauen/architektensuche/architekten-innen-und-landschaftsarchitekten-sowie-stadtplaner.html",
-  "fingerprint": "0dd2169f523735470ab4638c3b14b21cd0799e7befa201d5e69fc56ee8675c0c",
-  "lastChecked": "2026-10-04",
-  "lastChanged": "2026-10-04",
+  "fingerprint": "eca99e51e340a1c32e2c02ce56be5a05fc96045c480ba922cbba71f9a3652eb7",
+  "lastChecked": "2026-10-11",
+  "lastChanged": "2026-10-11",
   "statusHistory": [
-    {
-      "status": "CHANGED",
-      "date": "2026-07-19"
-    },
     {
       "status": "CHANGED",
       "date": "2026-07-26"
@@ -51,6 +47,10 @@
     {
       "status": "CHANGED",
       "date": "2026-10-04"
+    },
+    {
+      "status": "CHANGED",
+      "date": "2026-10-11"
     }
   ]
 }
